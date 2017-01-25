@@ -380,6 +380,7 @@ public interface IKeyword {
 	public static final String SPECIES = "species";
 	public static final String SPECULAR = "specular";
 	public static final String SPEED = "speed";
+	public static final String REAL_SPEED = "real_speed";
 	public static final String SPLINE = "spline";
 	public static final String SPOT_ANGLE = "spot_angle";
 	public static final String STACK = "stack";

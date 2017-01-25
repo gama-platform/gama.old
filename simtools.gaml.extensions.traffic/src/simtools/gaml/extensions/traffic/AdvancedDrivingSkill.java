@@ -61,10 +61,15 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars ({ @var (
-		name = IKeyword.SPEED,
-		type = IType.FLOAT,
-		init = "1.0",
-		doc = @doc ("the speed of the agent (in meter/second)")),
+			name = IKeyword.SPEED,
+			type = IType.FLOAT,
+			init = "1.0",
+			doc = @doc ("the speed of the agent (in meter/second)")),
+		@var (
+			name = IKeyword.REAL_SPEED,
+			type = IType.FLOAT,
+			init = "0.0",
+			doc = @doc ("the actual speed of the agent (in meter/second)")),
 		@var (
 				name = "current_path",
 				type = IType.PATH,
@@ -96,11 +101,6 @@ import msi.gaml.types.Types;
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance = 1#m + security_distance_coeff `*` real_speed )")),
-		@var (
-				name = "real_speed",
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("real speed of the agent (in meter/second)")),
 		@var (
 				name = "current_lane",
 				type = IType.INT,
@@ -189,7 +189,6 @@ import msi.gaml.types.Types;
 public class AdvancedDrivingSkill extends MovingSkill {
 
 	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
-	public final static String REAL_SPEED = "real_speed";
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String CURRENT_LANE = "current_lane";
 	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
@@ -399,11 +398,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		return (IAgent) agent.getAttribute(CURRENT_ROAD);
 	}
 
-	@getter (REAL_SPEED)
-	public double getRealSpeed(final IAgent agent) {
-		return (Double) agent.getAttribute(REAL_SPEED);
-	}
-
+	
 	@getter (VEHICLE_LENGTH)
 	public double getVehiculeLength(final IAgent agent) {
 		return (Double) agent.getAttribute(VEHICLE_LENGTH);
@@ -455,9 +450,9 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// }
 
 		if (tps < t) {
-			agent.setAttribute(REAL_SPEED, this.getRealSpeed(agent) / (t - tps));
+			agent.setAttribute(IKeyword.REAL_SPEED, this.getRealSpeed(agent) / (t - tps));
 		} else {
-			agent.setAttribute(REAL_SPEED, 0.0);
+			agent.setAttribute(IKeyword.REAL_SPEED, 0.0);
 		}
 
 		return tps;
@@ -1641,7 +1636,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		if (path != null)
 			path.setSource(currentLocation.copy(scope));
 
-		agent.setAttribute(REAL_SPEED, realDistance);
+		agent.setAttribute(IKeyword.REAL_SPEED, realDistance);
 		// t37 += java.lang.System.currentTimeMillis() - t;
 		return _distance == 0.0 ? 1.0 : distance / _distance;
 	}
