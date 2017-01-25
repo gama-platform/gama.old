@@ -12,7 +12,7 @@ package ummisco.gama.opengl.scene;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.Gama3DGeometryFile;

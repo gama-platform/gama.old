@@ -13,9 +13,9 @@ import java.awt.geom.Rectangle2D;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -42,7 +42,7 @@ class FileExecuter extends DrawExecuter {
 		final FileDrawingAttributes attributes = computeAttributes(scope, data, file instanceof GamaImageFile);
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
 			final GamaPoint size = attributes.getSize();
 			if (size != null) {
 				// if a size is provided

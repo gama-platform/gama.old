@@ -14,8 +14,8 @@ import java.awt.Color;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 

@@ -36,9 +36,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.Pref;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.ParameterExpandBar;
@@ -84,18 +84,14 @@ public class GamaPreferencesView {
 		preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
 		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
-		prefs_images.put(GamaPreferences.UI, GamaIcons.create("prefs.ui2").image());
-		prefs_images.put(GamaPreferences.EDITOR, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
-		prefs_images.put(GamaPreferences.EXPERIMENTAL, GamaIcons.create("prefs.experimental2").image());
-		prefs_images.put(GamaPreferences.EXPERIMENTS, GamaIcons.create("prefs.simulations2").image());
-		prefs_images.put(GamaPreferences.SIMULATIONS, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
-		prefs_images.put(GamaPreferences.DISPLAY, GamaIcons.create(IGamaIcons.PREFS_DISPLAY).image());
-		// prefs_images.put(GamaPreferences.CODE,
-		// IGamaIcons.PREFS_CODE.image());
-
-		// prefs_images.put(GamaPreferences.WORKSPACE,
-		// IGamaIcons.PREFS_WORKSPACE.image());
-		prefs_images.put(GamaPreferences.LIBRARIES, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
+		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
+		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
+		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create("prefs.simulations2").image());
+		// prefs_images.put(GamaPreferences.Experiments.NAME, GamaIcons.create("prefs.simulations2").image());
+		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create("prefs.runtime2").image());
+		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create("prefs.ui2").image());
+		prefs_images.put(GamaPreferences.OpenGL.NAME, GamaIcons.create("prefs.opengl2").image());
+		prefs_images.put(GamaPreferences.External.NAME, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
 
 	}
 
@@ -164,7 +160,7 @@ public class GamaPreferencesView {
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Label sep = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		final Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
+		final Map<String, Map<String, List<Pref>>> prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 			item.setFont(GamaFonts.getNavigHeaderFont());
@@ -202,7 +198,7 @@ public class GamaPreferencesView {
 
 	}
 
-	private void buildContentsFor(final CTabItem tab, final Map<String, List<Entry>> entries) {
+	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
 		final ParameterExpandBar viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
@@ -233,7 +229,7 @@ public class GamaPreferencesView {
 
 	final Map<String, Boolean> activations = new HashMap();
 
-	private void checkActivables(final Entry e, final Object value) {
+	private void checkActivables(final Pref e, final Object value) {
 		if (e.getActivable() != null) {
 			for (final String activable : e.getActivable()) {
 				final IParameterEditor ed = editors.get(activable);
@@ -264,9 +260,9 @@ public class GamaPreferencesView {
 		}
 	}
 
-	private void buildGroupContents(final Composite compo, final List<Entry> list) {
+	private void buildGroupContents(final Composite compo, final List<Pref> list) {
 
-		for (final Entry e : list) {
+		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
 			checkActivables(e, e.getValue());

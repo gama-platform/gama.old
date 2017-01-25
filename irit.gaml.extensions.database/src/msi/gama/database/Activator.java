@@ -7,7 +7,7 @@ import org.osgi.framework.BundleContext;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.database.sql.SqlUtils;
 import msi.gama.metamodel.topology.projection.IProjection;

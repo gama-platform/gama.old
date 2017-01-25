@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -26,12 +25,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static EPartService partService;
@@ -44,7 +43,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent e) {
 		final String layout = e.getParameter(LAYOUT);
-		final int orientation = GamaPreferences.LAYOUTS.indexOf(layout);
+		final int orientation = GamaPreferences.Displays.LAYOUTS.indexOf(layout);
 		execute(orientation);
 		return true;
 	}
@@ -56,7 +55,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			partService = context.get(EPartService.class);
 			application = WorkbenchHelper.getPage().getWorkbenchWindow().getService(MApplication.class);
 		}
-		if (layout < 0 || layout >= GamaPreferences.LAYOUTS.size())
+		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size())
 			return;
 		// System.out.println("Executing layout " +
 		// GamaPreferences.LAYOUTS.get(layout));
@@ -81,18 +80,18 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		if (displayStack == null)
 			return;
 		switch (layout) {
-		case IUnits.stack:
-			stack(displayStack, holders);
-			break;
-		case IUnits.split:
-			grid(displayStack, holders);
-			break;
-		case IUnits.horizontal:
-		case IUnits.vertical:
-			horizontalOrVertical(displayStack, holders, layout == IUnits.horizontal);
-			break;
-		case IUnits.none:
-			// none(displayStack, holders);
+			case IUnits.stack:
+				stack(displayStack, holders);
+				break;
+			case IUnits.split:
+				grid(displayStack, holders);
+				break;
+			case IUnits.horizontal:
+			case IUnits.vertical:
+				horizontalOrVertical(displayStack, holders, layout == IUnits.horizontal);
+				break;
+			case IUnits.none:
+				// none(displayStack, holders);
 
 		}
 
@@ -161,9 +160,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	static MElementContainer createContainer(final MElementContainer root) {
-		if (keepTabs && !(root instanceof MPartStack)) {
-			return createStack(root);
-		}
+		if (keepTabs && !(root instanceof MPartStack)) { return createStack(root); }
 		return root;
 	}
 

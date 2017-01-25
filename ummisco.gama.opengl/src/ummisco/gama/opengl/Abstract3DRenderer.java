@@ -37,9 +37,9 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -180,8 +180,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
-	protected final TextureCache textureCache =
-			GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
+	protected final TextureCache textureCache = GamaPreferences.OpenGL.DISPLAY_SHARED_CONTEXT.getValue()
+			? TextureCache.getSharedInstance() : new TextureCache();
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> ENVELOPES_CACHE = new ConcurrentHashMap<>();
@@ -197,7 +197,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	@SuppressWarnings ("unused")
 	public GLAutoDrawable createDrawable(final Composite parent) {
-		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
+		final boolean useSharedContext = GamaPreferences.OpenGL.DISPLAY_SHARED_CONTEXT.getValue();
 		final GLProfile profile =
 				useSharedContext ? TextureCache.getSharedContext().getGLProfile() : GLProfile.getDefault();
 		final GLCapabilities cap = new GLCapabilities(profile);
@@ -407,7 +407,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	 * @return
 	 */
 	public static float getLineWidth() {
-		return GamaPreferences.CORE_LINE_WIDTH.getValue().floatValue();
+		return GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue().floatValue();
 	}
 
 	@Override

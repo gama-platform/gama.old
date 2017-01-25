@@ -53,7 +53,7 @@ global {
 		map<road,float> weights_map <- road as_map (each:: (each.destruction_coeff * each.shape.perimeter));
 		the_graph <- the_graph with_weights weights_map;
 	}
-	reflex repair_road when: every(repair_time #hour / step) {
+	reflex repair_road when: every(repair_time #hour ) {
 		road the_road_to_repair <- road with_max_of (each.destruction_coeff) ;
 		ask the_road_to_repair {
 			destruction_coeff <- 1.0 ;
@@ -138,15 +138,15 @@ experiment road_traffic type: gui {
 			species road aspect: base ;
 			species people aspect: base ;
 		}
-		display chart_display refresh: every(10#cycles) { 
-			chart "Road Status" type: series size: {1, 0.5} position: {0, 0} {
-				data "Mean road destruction" value: mean (road collect each.destruction_coeff) style: line color: #green ;
-				data "Max road destruction" value: road max_of each.destruction_coeff style: line color: #red ;
-			}
-			chart "People Objectif" type: pie style: exploded size: {1, 0.5} position: {0, 0.5}{
-				data "Working" value: people count (each.objective="working") color: #magenta ;
-				data "Resting" value: people count (each.objective="resting") color: #blue ;
-			}
-		}
+//		display chart_display refresh: every(10#cycles) { 
+//			chart "Road Status" type: series size: {1, 0.5} position: {0, 0} {
+//				data "Mean road destruction" value: mean (road collect each.destruction_coeff) style: line color: #green ;
+//				data "Max road destruction" value: road max_of each.destruction_coeff style: line color: #red ;
+//			}
+//			chart "People Objectif" type: pie style: exploded size: {1, 0.5} position: {0, 0.5}{
+//				data "Working" value: people count (each.objective="working") color: #magenta ;
+//				data "Resting" value: people count (each.objective="resting") color: #blue ;
+//			}
+//		}
 	}
 }

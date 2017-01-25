@@ -22,8 +22,8 @@ import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.texture.Texture;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;

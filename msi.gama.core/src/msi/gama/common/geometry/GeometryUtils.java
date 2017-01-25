@@ -7,7 +7,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
@@ -50,7 +50,7 @@ import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 import msi.gama.common.interfaces.IEnvelopeComputer;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;

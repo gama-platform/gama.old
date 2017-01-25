@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IDocManager.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IDocManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -21,8 +20,7 @@ public interface IDocManager {
 	public static class NullImpl implements IDocManager {
 
 		@Override
-		public void document(final IDescription description) {
-		}
+		public void document(final IDescription description) {}
 
 		@Override
 		public IGamlDescription getGamlDocumentation(final EObject o) {
@@ -36,12 +34,10 @@ public interface IDocManager {
 
 		@Override
 		public void setGamlDocumentation(final EObject object, final IGamlDescription description,
-				final boolean replace) {
-		}
+				final boolean replace) {}
 
 		@Override
-		public void addCleanupTask(final ModelDescription model) {
-		}
+		public void addCleanupTask(final ModelDescription model) {}
 	}
 
 	public static final IDocManager NULL = new NullImpl();

@@ -28,8 +28,8 @@ import org.opengis.referencing.FactoryException;
 import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;

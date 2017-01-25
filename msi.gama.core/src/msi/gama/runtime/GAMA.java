@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -210,7 +210,8 @@ public class GAMA {
 		g.setReported();
 
 		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
-		final boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
+		final boolean shouldStop =
+				isError && shouldStopSimulation && GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue();
 		return !shouldStop;
 	}
 

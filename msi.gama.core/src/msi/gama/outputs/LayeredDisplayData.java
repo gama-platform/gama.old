@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
@@ -58,19 +58,20 @@ public class LayeredDisplayData {
 	/**
 	 * Colors
 	 */
-	private GamaColor backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
+	private GamaColor backgroundColor = GamaPreferences.Displays.CORE_BACKGROUND.getValue();
 	private GamaColor ambientColor = new GamaColor(120, 120, 120, 255);
-	private GamaColor highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
+	private GamaColor highlightColor = GamaPreferences.Displays.CORE_HIGHLIGHT.getValue();
 
 	/**
 	 * Properties
 	 */
 	private boolean isAutosaving = false;
-	private boolean isSynchronized = GamaPreferences.CORE_SYNC.getValue();
-	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
+	private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
+	private String displayType =
+			GamaPreferences.Displays.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
 	private double envWidth = 0d;
 	private double envHeight = 0d;
-	private boolean isAntialiasing = GamaPreferences.CORE_ANTIALIAS.getValue();
+	private boolean isAntialiasing = GamaPreferences.Displays.CORE_ANTIALIAS.getValue();
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private Double zoomLevel = null;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
@@ -93,7 +94,7 @@ public class LayeredDisplayData {
 	private boolean disableCameraInteraction = false; // "fixed_camera" facet of
 														// the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
-	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
+	private boolean isDrawingEnvironment = GamaPreferences.OpenGL.CORE_DRAW_ENV.getValue();
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
 	private ILocation cameraPos = getNoChange();
 	private ILocation cameraLookPos = getNoChange();
@@ -109,7 +110,7 @@ public class LayeredDisplayData {
 	 * Overlay
 	 */
 
-	private boolean isDisplayingScale = GamaPreferences.CORE_SCALE.getValue();
+	private boolean isDisplayingScale = GamaPreferences.Displays.CORE_SCALE.getValue();
 	private boolean isFullScreen = false;
 
 	/**
@@ -131,11 +132,11 @@ public class LayeredDisplayData {
 	};
 
 	public LayeredDisplayData() {
-		GamaPreferences.CORE_HIGHLIGHT.addChangeListener(highlightListener);
+		GamaPreferences.Displays.CORE_HIGHLIGHT.addChangeListener(highlightListener);
 	}
 
 	public void dispose() {
-		GamaPreferences.CORE_HIGHLIGHT.removeChangeListener(highlightListener);
+		GamaPreferences.Displays.CORE_HIGHLIGHT.removeChangeListener(highlightListener);
 	}
 
 	/**

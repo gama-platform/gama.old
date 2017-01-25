@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'RuntimeExceptionHandler.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'RuntimeExceptionHandler.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,8 +19,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -81,17 +80,17 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 		// System.out.println("Processing " + array.size() + " exceptions");
 		incomingExceptions.clear();
 
-		if (GamaPreferences.CORE_REVEAL_AND_STOP.getValue()) {
+		if (GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue()) {
 			final GamaRuntimeException firstEx = array.get(0);
 			GAMA.getGui().editModel(firstEx.getEditorContext());
 			firstEx.setReported();
-			if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
+			if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
 				final List<GamaRuntimeException> newList = new ArrayList<>();
 				newList.add(firstEx);
 				updateUI(newList);
 			}
 
-		} else if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
+		} else if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
 			final ArrayList<GamaRuntimeException> oldExcp = new ArrayList<>(cleanExceptions);
 			for (final GamaRuntimeException newEx : array) {
 				if (oldExcp.size() == 0) {

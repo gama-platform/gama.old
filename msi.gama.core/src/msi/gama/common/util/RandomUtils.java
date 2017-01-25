@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'RandomUtils.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'RandomUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -15,15 +14,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.random.CellularAutomatonRNG;
 import msi.gama.util.random.GamaRNG;
 import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.fastmaths.FastMath;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {
 
 	/** The seed. */
@@ -58,11 +57,12 @@ public class RandomUtils {
 	}
 
 	public RandomUtils(final String rng) {
-		this(GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null, rng);
+		this(GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue() ? GamaPreferences.Simulations.CORE_SEED.getValue()
+				: (Double) null, rng);
 	}
 
 	public RandomUtils() {
-		this(GamaPreferences.CORE_RNG.getValue());
+		this(GamaPreferences.Simulations.CORE_RNG.getValue());
 	}
 
 	public State getState() {
@@ -208,23 +208,23 @@ public class RandomUtils {
 			l = Double.doubleToRawLongBits(realSeed);
 		final byte[] result = new byte[length];
 		switch (length) {
-		case 4:
-			for (int i1 = 0; i1 < 4; i1++) {
-				result[i1] = (byte) (l & 0xff);
-				l >>= 8;
-			}
-			break;
-		case 8:
-			for (int i = 0; i < 8; i++) {
-				result[i] = (byte) l;
-				l >>= 8;
-			}
-			break;
-		case 16:
-			for (int i = 0; i < 8; i++) {
-				result[i] = result[i + 8] = (byte) (l & 0xff);
-				l >>= 8;
-			}
+			case 4:
+				for (int i1 = 0; i1 < 4; i1++) {
+					result[i1] = (byte) (l & 0xff);
+					l >>= 8;
+				}
+				break;
+			case 8:
+				for (int i = 0; i < 8; i++) {
+					result[i] = (byte) l;
+					l >>= 8;
+				}
+				break;
+			case 16:
+				for (int i = 0; i < 8; i++) {
+					result[i] = result[i + 8] = (byte) (l & 0xff);
+					l >>= 8;
+				}
 		}
 		return result;
 	}
@@ -263,9 +263,7 @@ public class RandomUtils {
 
 	public void shuffle2(final Collection list) {
 		final int size = list.size();
-		if (size < 2) {
-			return;
-		}
+		if (size < 2) { return; }
 		final Object[] a = list.toArray(new Object[size]);
 		list.clear();
 		for (int i = 0; i < size; i++) {
@@ -319,8 +317,7 @@ public class RandomUtils {
 	}
 
 	/**
-	 * @return an uniformly distributed int random number in [min, max]
-	 *         respecting the step
+	 * @return an uniformly distributed int random number in [min, max] respecting the step
 	 */
 	public int between(final int min, final int max, final int step) {
 		final int nbSteps = (max - min) / step;
@@ -429,32 +426,27 @@ public class RandomUtils {
 		private final int length;
 
 		/**
-		 * Store the bits packed in an array of 32-bit ints. This field cannot
-		 * be declared final because it must be cloneable.
+		 * Store the bits packed in an array of 32-bit ints. This field cannot be declared final because it must be
+		 * cloneable.
 		 */
 		private final int[] data;
 
 		/**
-		 * Creates a bit string of the specified length with all bits initially
-		 * set to zero (off).
+		 * Creates a bit string of the specified length with all bits initially set to zero (off).
 		 * 
 		 * @param length
 		 *            The number of bits.
 		 */
 		public BitString(final int length) {
-			if (length < 0) {
-				throw new IllegalArgumentException("Length must be non-negative.");
-			}
+			if (length < 0) { throw new IllegalArgumentException("Length must be non-negative."); }
 			this.length = length;
 			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
 		}
 
 		/**
-		 * Creates a bit string of the specified length with each bit set
-		 * randomly (the distribution of bits is uniform so long as the output
-		 * from the provided RNG is also uniform). Using this constructor is
-		 * more efficient than creating a bit string and then randomly setting
-		 * each bit individually.
+		 * Creates a bit string of the specified length with each bit set randomly (the distribution of bits is uniform
+		 * so long as the output from the provided RNG is also uniform). Using this constructor is more efficient than
+		 * creating a bit string and then randomly setting each bit individually.
 		 * 
 		 * @param length
 		 *            The number of bits.
@@ -482,8 +474,7 @@ public class RandomUtils {
 		}
 
 		/**
-		 * Initialises the bit string from a character string of 1s and 0s in
-		 * big-endian order.
+		 * Initialises the bit string from a character string of 1s and 0s in big-endian order.
 		 * 
 		 * @param value
 		 *            A character string of ones and zeros.
@@ -493,9 +484,8 @@ public class RandomUtils {
 			for (int i = 0; i < value.length(); i++) {
 				if (value.charAt(i) == '1') {
 					setBit(value.length() - (i + 1), true);
-				} else if (value.charAt(i) != '0') {
-					throw new IllegalArgumentException("Illegal character at position " + i);
-				}
+				} else if (value
+						.charAt(i) != '0') { throw new IllegalArgumentException("Illegal character at position " + i); }
 			}
 		}
 
@@ -510,12 +500,10 @@ public class RandomUtils {
 		 * Returns the bit at the specified index.
 		 * 
 		 * @param index
-		 *            The index of the bit to look-up (0 is the
-		 *            least-significant bit).
+		 *            The index of the bit to look-up (0 is the least-significant bit).
 		 * @return A boolean indicating whether the bit is set or not.
 		 * @throws IndexOutOfBoundsException
-		 *             If the specified index is not a bit position in this bit
-		 *             string.
+		 *             If the specified index is not a bit position in this bit string.
 		 */
 		public boolean getBit(final int index) {
 			assertValidIndex(index);
@@ -528,13 +516,11 @@ public class RandomUtils {
 		 * Sets the bit at the specified index.
 		 * 
 		 * @param index
-		 *            The index of the bit to set (0 is the least-significant
-		 *            bit).
+		 *            The index of the bit to set (0 is the least-significant bit).
 		 * @param set
 		 *            A boolean indicating whether the bit should be set or not.
 		 * @throws IndexOutOfBoundsException
-		 *             If the specified index is not a bit position in this bit
-		 *             string.
+		 *             If the specified index is not a bit position in this bit string.
 		 */
 		public void setBit(final int index, final boolean set) {
 			assertValidIndex(index);
@@ -557,9 +543,8 @@ public class RandomUtils {
 		 *             If the index is not valid.
 		 */
 		private void assertValidIndex(final int index) {
-			if (index >= length || index < 0) {
-				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
-			}
+			if (index >= length || index < 0) { throw new IndexOutOfBoundsException(
+					"Invalid index: " + index + " (length: " + length + ")"); }
 		}
 
 		/**
@@ -578,7 +563,6 @@ public class RandomUtils {
 		}
 
 	}
-	
 
 	public GamaRNG getGenerator() {
 		return generator;

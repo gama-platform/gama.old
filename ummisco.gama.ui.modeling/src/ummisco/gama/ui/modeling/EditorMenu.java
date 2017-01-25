@@ -42,7 +42,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -64,7 +65,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	// private static EditorMenu INSTANCE;
 
 	// MenuItem mark;
-	GamaPreferences.Entry<Boolean> markPref;
+	Pref<Boolean> markPref;
 
 	public EditorMenu() {
 		super();

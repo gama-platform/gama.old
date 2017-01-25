@@ -21,9 +21,9 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
@@ -229,8 +229,8 @@ public abstract class SymbolDescription implements IDescription {
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
 			final EObject source, final String... data) throws GamaRuntimeException {
 
-		if (warning && !info && !GamaPreferences.WARNINGS_ENABLED.getValue()) { return; }
-		if (info && !GamaPreferences.INFO_ENABLED.getValue()) { return; }
+		if (warning && !info && !GamaPreferences.Modeling.WARNINGS_ENABLED.getValue()) { return; }
+		if (info && !GamaPreferences.Modeling.INFO_ENABLED.getValue()) { return; }
 
 		IDescription desc = this;
 		EObject e = source;

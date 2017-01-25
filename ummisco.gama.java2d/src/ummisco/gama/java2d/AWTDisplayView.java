@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AWTDisplayView.java, in plugin ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AWTDisplayView.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -36,9 +35,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
 
-		if (getOutput() == null) {
-			return null;
-		}
+		if (getOutput() == null) { return null; }
 
 		surfaceComposite = new SwingControl(parent, SWT.NO_FOCUS) {
 
@@ -49,13 +46,9 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
-				WorkbenchHelper.asyncRun(new Runnable() {
-
-					@Override
-					public void run() {
-						surfaceComposite.setSize(prefSize);
-						parent.layout(true, true);
-					}
+				WorkbenchHelper.asyncRun(() -> {
+					surfaceComposite.setSize(prefSize);
+					parent.layout(true, true);
 				});
 
 			}
@@ -74,7 +67,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			public void afterComponentCreatedSWTThread() {
-				if (GamaPreferences.CORE_OVERLAY.getValue()) {
+				if (GamaPreferences.Displays.CORE_OVERLAY.getValue()) {
 					overlay.setVisible(true);
 				}
 				WorkaroundForIssue1353.install();
@@ -87,8 +80,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 			}
 
 			@Override
-			public void afterComponentCreatedAWTThread() {
-			}
+			public void afterComponentCreatedAWTThread() {}
 		};
 		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
@@ -97,27 +89,23 @@ public class AWTDisplayView extends LayeredDisplayView {
 	}
 
 	/**
-	 * Wait for the AWT environment to be initialized, preventing a thread lock
-	 * when two views want to open at the same time. Must not be called in
-	 * neither the AWT or the SWT thread. A configurable timeout is applied, so
-	 * that other views are not blocked. It remains to be seen what to do if
-	 * this times out, as we should normally cancel the view.
+	 * Wait for the AWT environment to be initialized, preventing a thread lock when two views want to open at the same
+	 * time. Must not be called in neither the AWT or the SWT thread. A configurable timeout is applied, so that other
+	 * views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
 	 * 
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
 
 	@Override
 	public void waitToBeRealized() {
-		if (PlatformHelper.isWin32()) {
-			return;
-		}
+		if (PlatformHelper.isWin32()) { return; }
 		final long start = System.currentTimeMillis();
 		long now = start;
 		boolean openable = false;
 
 		while (/* isVisible && */ !openable) {
 			try {
-				Thread.sleep(GamaPreferences.CORE_OUTPUT_DELAY.getValue());
+				Thread.sleep(GamaPreferences.Displays.CORE_OUTPUT_DELAY.getValue());
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}

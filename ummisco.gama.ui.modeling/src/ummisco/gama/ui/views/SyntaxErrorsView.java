@@ -29,8 +29,8 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -49,8 +49,8 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	public SyntaxErrorsView() {
 		super("msi.gama.lang.gaml.ui.error.generator");
 		listener = new BuildPreferenceChangeListener(this);
-		GamaPreferences.WARNINGS_ENABLED.addChangeListener(listener);
-		GamaPreferences.INFO_ENABLED.addChangeListener(listener);
+		GamaPreferences.Modeling.WARNINGS_ENABLED.addChangeListener(listener);
+		GamaPreferences.Modeling.INFO_ENABLED.addChangeListener(listener);
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	@Override
 	public void dispose() {
 		super.dispose();
-		GamaPreferences.WARNINGS_ENABLED.removeChangeListener(listener);
-		GamaPreferences.INFO_ENABLED.removeChangeListener(listener);
+		GamaPreferences.Modeling.WARNINGS_ENABLED.removeChangeListener(listener);
+		GamaPreferences.Modeling.INFO_ENABLED.removeChangeListener(listener);
 	}
 
 	public static class BuildPreferenceChangeListener implements IPreferenceChangeListener<Boolean> {
@@ -75,7 +75,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		}
 
 		/**
-		 * @see msi.gama.common.GamaPreferences.IPreferenceChangeListener#beforeValueChange(java.lang.Object)
+		 * @see msi.gama.common.preferences.IPreferenceChangeListener#beforeValueChange(java.lang.Object)
 		 */
 		@Override
 		public boolean beforeValueChange(final Boolean newValue) {
@@ -83,7 +83,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		}
 
 		/**
-		 * @see msi.gama.common.GamaPreferences.IPreferenceChangeListener#afterValueChange(java.lang.Object)
+		 * @see msi.gama.common.preferences.IPreferenceChangeListener#afterValueChange(java.lang.Object)
 		 */
 		@Override
 		public void afterValueChange(final Boolean newValue) {
@@ -98,10 +98,10 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 
 	void checkActions() {
 		if (warningAction != null) {
-			warningAction.setSelection(GamaPreferences.WARNINGS_ENABLED.getValue());
+			warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
 		}
 		if (infoAction != null) {
-			infoAction.setSelection(GamaPreferences.INFO_ENABLED.getValue());
+			infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
 		}
 	}
 
@@ -126,20 +126,20 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.WARNINGS_ENABLED.set(b).save();
+				GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 			}
 		}, SWT.RIGHT);
-		warningAction.setSelection(GamaPreferences.WARNINGS_ENABLED.getValue());
+		warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
 
 		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.INFO_ENABLED.set(b).save();
+				GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 			}
 		}, SWT.RIGHT);
-		infoAction.setSelection(GamaPreferences.INFO_ENABLED.getValue());
+		infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("build.all2", "", "Clean and validate all projects", new SelectionAdapter() {

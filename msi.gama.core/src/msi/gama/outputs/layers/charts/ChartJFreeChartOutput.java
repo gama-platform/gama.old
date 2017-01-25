@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartJFreeChartOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartJFreeChartOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,8 +30,8 @@ import msi.gaml.operators.Cast;
 
 public class ChartJFreeChartOutput extends ChartOutput {
 
-	public static final Shape[] defaultmarkers = org.jfree.chart.plot.DefaultDrawingSupplier
-			.createStandardSeriesShapes();
+	public static final Shape[] defaultmarkers =
+			org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
 
 	public ChartRenderingInfo info;
 	ArrayList<Dataset> jfreedataset = new ArrayList<Dataset>();
@@ -75,47 +74,47 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		}
 
 		switch (type) {
-		case SERIES_CHART: {
-			newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-			break;
-		}
-		case PIE_CHART: {
-			newChart = new ChartJFreeChartOutputPie(scope, name, typeexp);
-			break;
-		}
-		case HISTOGRAM_CHART: {
-			newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
-			break;
-		}
-		case XY_CHART:
-			newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-			break;
-		case SCATTER_CHART:
-			newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-			break;
-		case BOX_WHISKER_CHART: {
-			newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
-			break;
-		}
-		case RADAR_CHART: {
-			newChart = new ChartJFreeChartOutputRadar(scope, name, typeexp);
-			break;
-		}
-		case HEATMAP_CHART: {
-			newChart = new ChartJFreeChartOutputHeatmap(scope, name, typeexp);
-			break;
-		}
-		default: {
-			newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-		}
+			case SERIES_CHART: {
+				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
+				break;
+			}
+			case PIE_CHART: {
+				newChart = new ChartJFreeChartOutputPie(scope, name, typeexp);
+				break;
+			}
+			case HISTOGRAM_CHART: {
+				newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
+				break;
+			}
+			case XY_CHART:
+				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
+				break;
+			case SCATTER_CHART:
+				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
+				break;
+			case BOX_WHISKER_CHART: {
+				newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
+				break;
+			}
+			case RADAR_CHART: {
+				newChart = new ChartJFreeChartOutputRadar(scope, name, typeexp);
+				break;
+			}
+			case HEATMAP_CHART: {
+				newChart = new ChartJFreeChartOutputHeatmap(scope, name, typeexp);
+				break;
+			}
+			default: {
+				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
+			}
 		}
 		return newChart;
 	}
 
 	@Override
-	public BufferedImage getImage(final IScope scope, final int sizex, final int sizey) {
-		getJFChart().setAntiAlias(true);
-		getJFChart().setTextAntiAlias(true);
+	public BufferedImage getImage(final IScope scope, final int sizex, final int sizey, final boolean antiAlias) {
+		getJFChart().setAntiAlias(antiAlias);
+		getJFChart().setTextAntiAlias(antiAlias);
 
 		updateOutput(scope);
 		final BufferedImage buf = chart.createBufferedImage(sizex, sizey, info);
@@ -168,9 +167,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	}
 
 	AbstractRenderer getOrCreateRenderer(final IScope scope, final String serieid) {
-		if (RendererSet.containsKey(serieid)) {
-			return RendererSet.get(serieid);
-		}
+		if (RendererSet.containsKey(serieid)) { return RendererSet.get(serieid); }
 		final AbstractRenderer newrenderer = createRenderer(scope, serieid);
 		RendererSet.put(serieid, newrenderer);
 		return newrenderer;

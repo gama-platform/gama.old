@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
 
 public abstract class ColorProperties {
@@ -70,7 +70,7 @@ public abstract class ColorProperties {
 
 		@Override
 		ColorProperties toFilled() {
-			return new FillOnly(GamaPreferences.CORE_COLOR.getValue());
+			return new FillOnly(GamaPreferences.Displays.CORE_COLOR.getValue());
 		}
 
 		@Override
@@ -338,7 +338,7 @@ public abstract class ColorProperties {
 
 		@Override
 		ColorProperties toFilled() {
-			return new FillAndBorder(GamaPreferences.CORE_COLOR.getValue(), border);
+			return new FillAndBorder(GamaPreferences.Displays.CORE_COLOR.getValue(), border);
 		}
 
 		@Override

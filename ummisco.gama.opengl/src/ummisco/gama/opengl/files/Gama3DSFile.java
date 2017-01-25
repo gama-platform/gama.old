@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;

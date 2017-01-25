@@ -32,15 +32,15 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -315,7 +315,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void outputReloaded() {
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySurface"));
-		if (!GamaPreferences.ERRORS_IN_DISPLAYS.getValue())
+		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue())
 			getScope().disableErrorReporting();
 		renderer.initScene();
 		layerManager.outputChanged();

@@ -17,12 +17,12 @@ import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.charts.ChartLayer;

@@ -1,4 +1,4 @@
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;

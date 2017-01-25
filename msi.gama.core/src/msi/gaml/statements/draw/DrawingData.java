@@ -12,7 +12,7 @@ package msi.gaml.statements.draw;
 import java.awt.Color;
 import java.util.List;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -174,7 +174,7 @@ public class DrawingData {
 		}, Types.LIST, null);
 		this.material = create(materialExp, Types.MATERIAL, null);
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
-		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.CORE_LINE_WIDTH.getValue());
+		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
 		ATTRIBUTES = new Attribute[] { size, location, depth, colors, rotation, empty, border, font, texture, material,
 				perspective, lineWidth };
 	}

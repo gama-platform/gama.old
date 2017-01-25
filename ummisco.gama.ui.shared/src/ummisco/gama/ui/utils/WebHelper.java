@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WebHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WebHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,7 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 
 public class WebHelper {
 
@@ -45,18 +44,14 @@ public class WebHelper {
 	}
 
 	public static void openWelcomePage(final boolean ifEmpty) {
-		if (ifEmpty && WorkbenchHelper.getPage().getActiveEditor() != null) {
-			return;
-		}
-		if (ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue()) {
-			return;
-		}
+		if (ifEmpty && WorkbenchHelper.getPage().getActiveEditor() != null) { return; }
+		if (ifEmpty && !GamaPreferences.Interface.CORE_SHOW_PAGE.getValue()) { return; }
 		// get the workspace
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		
+
 		// create the path to the file
 		final IPath location = new Path(getWelcomePageURL().getPath());
-		
+
 		// try to get the IFile (returns null if it could not be found in the
 		// workspace)
 		final IFile file = workspace.getRoot().getFileForLocation(location);
@@ -65,11 +60,11 @@ public class WebHelper {
 			// not found in the workspace, get the IFileStore (external files)
 			final IFileStore fileStore = EFS.getLocalFileSystem().getStore(location);
 			input = new FileStoreEditorInput(fileStore);
-		
+
 		} else {
 			input = new FileEditorInput(file);
 		}
-		
+
 		try {
 			WorkbenchHelper.getPage().openEditor(input, "msi.gama.application.browser");
 		} catch (final PartInitException e) {

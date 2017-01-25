@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UnaryOperator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UnaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,7 +17,7 @@ import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
 import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,7 +33,7 @@ import msi.gaml.types.Types;
 /**
  * The Class UnaryOperator.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	final protected IExpression child;
@@ -43,9 +42,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()) {
-			final IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
-					u.serialize(false));
+		if (u.isConst() && GamaPreferences.Runtime.CONSTANT_OPTIMIZATION.getValue()) {
+			final IExpression e =
+					GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			return e;
 		}
 		return u;
@@ -127,43 +126,30 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	private IType computeType(final int t, final IType def) {
-		if (t == NONE) {
-			return def;
-		}
-		if (t == WRAPPED) {
-			return child.getType().getWrappedType();
-		}
+		if (t == NONE) { return def; }
+		if (t == WRAPPED) { return child.getType().getWrappedType(); }
 		if (t == FIRST_ELEMENT_CONTENT_TYPE) {
 			if (child instanceof ListExpression) {
 				final IExpression[] array = ((ListExpression) child).getElements();
-				if (array.length == 0) {
-					return Types.NO_TYPE;
-				}
+				if (array.length == 0) { return Types.NO_TYPE; }
 				return array[0].getType().getContentType();
 			} else if (child instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) child).valuesArray();
-				if (array.length == 0) {
-					return Types.NO_TYPE;
-				}
+				if (array.length == 0) { return Types.NO_TYPE; }
 				return array[0].getType().getContentType();
 			} else {
 				final IType tt = child.getType().getContentType().getContentType();
-				if (tt != Types.NO_TYPE) {
-					return tt;
-				}
+				if (tt != Types.NO_TYPE) { return tt; }
 			}
 			return def;
 		} else if (t == FIRST_CONTENT_TYPE_OR_TYPE) {
 			final IType firstType = child.getType();
 			final IType t2 = firstType.getContentType();
-			if (t2 == Types.NO_TYPE) {
-				return firstType;
-			}
+			if (t2 == Types.NO_TYPE) { return firstType; }
 			return t2;
 		}
-		return t == FIRST_TYPE ? child.getType()
-				: t == FIRST_CONTENT_TYPE ? child.getType().getContentType()
-						: t == FIRST_KEY_TYPE ? child.getType().getKeyType() : t >= 0 ? Types.get(t) : def;
+		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getType().getContentType()
+				: t == FIRST_KEY_TYPE ? child.getType().getKeyType() : t >= 0 ? Types.get(t) : def;
 	}
 
 	protected void computeType() {
@@ -174,8 +160,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			// fields as well
 			if (contentType.isContainer() && contentType.getKeyType() == Types.NO_TYPE
 					&& contentType.getContentType() == Types.NO_TYPE) {
-				contentType = GamaType.from(contentType, child.getType().getKeyType(),
-						child.getType().getContentType());
+				contentType =
+						GamaType.from(contentType, child.getType().getKeyType(), child.getType().getContentType());
 			}
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
 			type = GamaType.from(type, keyType, contentType);

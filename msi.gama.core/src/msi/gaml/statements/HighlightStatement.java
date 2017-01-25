@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'HighlightStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'HighlightStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,8 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -38,14 +37,30 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.HIGHLIGHT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
-		IConcept.DISPLAY, IConcept.COLOR })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = {
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, doc = @doc("An optional color to highlight the agent. Note that this color will become the default color for further higlight operations"), optional = true),
-		@facet(name = IKeyword.VALUE, type = IType.AGENT, optional = false, doc = @doc("The agent to hightlight")) }, omissible = IKeyword.VALUE)
-@doc(value = "Allows to highlight the agent passed in parameter in all available displays, optionaly setting a color. Passing 'nil' for the agent will remove the current highlight", usages = {
-		@usage(value = "Highlighting an agent", examples = { @example("highlight my_species(0) color: #blue;") }) })
+@symbol (
+		name = IKeyword.HIGHLIGHT,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.DISPLAY, IConcept.COLOR })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@facets (
+		value = { @facet (
+				name = IKeyword.COLOR,
+				type = IType.COLOR,
+				doc = @doc ("An optional color to highlight the agent. Note that this color will become the default color for further higlight operations"),
+				optional = true),
+				@facet (
+						name = IKeyword.VALUE,
+						type = IType.AGENT,
+						optional = false,
+						doc = @doc ("The agent to hightlight")) },
+		omissible = IKeyword.VALUE)
+@doc (
+		value = "Allows to highlight the agent passed in parameter in all available displays, optionaly setting a color. Passing 'nil' for the agent will remove the current highlight",
+		usages = { @usage (
+				value = "Highlighting an agent",
+				examples = { @example ("highlight my_species(0) color: #blue;") }) })
 public class HighlightStatement extends AbstractStatement {
 
 	@Override
@@ -71,7 +86,7 @@ public class HighlightStatement extends AbstractStatement {
 			if (color != null) {
 				final GamaColor c = Cast.asColor(scope, color.value(scope));
 				if (c != null) {
-					GamaPreferences.CORE_HIGHLIGHT.set(c);
+					GamaPreferences.Displays.CORE_HIGHLIGHT.set(c);
 				}
 			}
 			GAMA.getGui().setHighlightedAgent(o);

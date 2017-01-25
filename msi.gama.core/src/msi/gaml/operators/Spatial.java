@@ -49,13 +49,13 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -3222,7 +3222,7 @@ public abstract class Spatial {
 						"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final Double distance) {
-			if (GamaPreferences.AT_DISTANCE_OPTIMIZATION.getValue()) {
+			if (GamaPreferences.Runtime.AT_DISTANCE_OPTIMIZATION.getValue()) {
 				if (scope.getAgent().isPoint()) {
 					final ITopology topo = scope.getTopology();
 					if (topo.isContinuous() && !topo.isTorus()) {

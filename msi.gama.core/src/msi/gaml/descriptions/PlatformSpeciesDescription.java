@@ -14,8 +14,9 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IVarAndActionSupport;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -49,12 +50,12 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 	@Override
 	public void copyJavaAdditions() {
 		super.copyJavaAdditions();
-		for (final Map.Entry<String, GamaPreferences.Entry<?>> pref : GamaPreferences.getAll().entrySet()) {
+		for (final Map.Entry<String, Pref<?>> pref : GamaPreferences.getAll().entrySet()) {
 			addPref(pref.getKey(), pref.getValue());
 		}
 	}
 
-	public void addPref(final String key, final GamaPreferences.Entry<?> entry) {
+	public void addPref(final String key, final Pref<?> entry) {
 
 		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key, entry.getTitle());
 		final VariableDescription var = (VariableDescription) DescriptionFactory.create(entry.getType().toString(),

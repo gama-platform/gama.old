@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.common;
+package msi.gama.common.preferences;
 
 import java.util.prefs.Preferences;
 

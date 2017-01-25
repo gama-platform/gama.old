@@ -15,7 +15,7 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLException;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 
 /**
  * Simple Animator (with target FPS)
@@ -24,7 +24,7 @@ import msi.gama.common.GamaPreferences;
  */
 public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
-	static int FRAME_PER_SECOND = GamaPreferences.OPENGL_FPS.getValue();
+	static int FRAME_PER_SECOND = GamaPreferences.OpenGL.OPENGL_FPS.getValue();
 	protected final int targetFPS = FRAME_PER_SECOND;
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;

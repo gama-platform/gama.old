@@ -24,7 +24,7 @@ import org.opengis.referencing.FactoryException;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.Projection;
 import msi.gama.runtime.IScope;
@@ -140,11 +140,12 @@ public abstract class SqlConnection {
 			// null);
 			try {
 				return scope.getSimulation().getProjectionFactory().forSavingWith(scope,
-						GamaPreferences.LIB_OUTPUT_CRS.getValue());
+						GamaPreferences.External.LIB_OUTPUT_CRS.getValue());
 			} catch (final FactoryException e) {
 
-				throw GamaRuntimeException.error("No factory found for decoding the EPSG "
-						+ GamaPreferences.LIB_OUTPUT_CRS.getValue() + " code. GAMA may be unable to save any GIS data",
+				throw GamaRuntimeException.error(
+						"No factory found for decoding the EPSG " + GamaPreferences.External.LIB_OUTPUT_CRS.getValue()
+								+ " code. GAMA may be unable to save any GIS data",
 						scope);
 
 			}

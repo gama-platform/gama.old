@@ -15,9 +15,9 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -100,7 +100,7 @@ class ShapeExecuter extends DrawExecuter {
 		attributes.type = shape.getGeometricalType();
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
 			final Envelope e = shape.getEnvelope();
 			final Envelope visible = gr.getVisibleRegion();
 			if (visible != null)

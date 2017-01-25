@@ -27,8 +27,10 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.AffineTransform3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -115,9 +117,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 	private void mixAttributes(final IShape source) {
 		if (source == null) { return; }
-		final GamaMap<Object, Object> attr = (GamaMap) source.getAttributes();
+		final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
 		if (attr == null) { return; }
-		for (final Map.Entry entry : attr.entrySet()) {
+		for (final Map.Entry<String, Object> entry : attr.entrySet()) {
 			if (entry.getValue() != source) {
 				setAttribute(entry.getKey(), entry.getValue());
 			}
@@ -685,13 +687,13 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is not present
 	 */
 	@Override
-	public Object getAttribute(final Object s) {
+	public Object getAttribute(final String s) {
 		if (attributes == null) { return null; }
 		return attributes.get(s);
 	}
 
 	@Override
-	public void setAttribute(final Object key, final Object value) {
+	public void setAttribute(final String key, final Object value) {
 		getOrCreateAttributes().put(key, value);
 	}
 
@@ -709,7 +711,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	}
 
 	@Override
-	public boolean hasAttribute(final Object key) {
+	public boolean hasAttribute(final String key) {
 		return attributes != null && attributes.containsKey(key);
 	}
 

@@ -10,13 +10,13 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import msi.gama.common.GamaPreferences.GenericFile;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;

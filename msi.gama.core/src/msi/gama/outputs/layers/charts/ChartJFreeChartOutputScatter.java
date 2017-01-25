@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartJFreeChartOutputScatter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartJFreeChartOutputScatter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -98,9 +97,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	}
 
 	double getScale(final String serie, final int col) {
-		if (MarkerScale.containsKey(serie)) {
-			return MarkerScale.get(serie).get(col);
-		}
+		if (MarkerScale.containsKey(serie)) { return MarkerScale.get(serie).get(col); }
 		return 1;
 	}
 
@@ -122,27 +119,27 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			orientation = PlotOrientation.HORIZONTAL;
 
 		switch (type) {
-		case SERIES_CHART: {
-			chart = ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection) jfreedataset.get(0),
-					orientation, true, false, false);
-			break;
-		}
+			case SERIES_CHART: {
+				chart = ChartFactory.createXYLineChart(getName(), "", "",
+						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
+				break;
+			}
 
-		case XY_CHART:
-			chart = ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection) jfreedataset.get(0),
-					orientation, true, false, false);
-			break;
-		case SCATTER_CHART:
-			chart = ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection) jfreedataset.get(0),
-					orientation, true, false, false);
-			break;
-		case BOX_WHISKER_CHART: {
-			chart = ChartFactory.createBoxAndWhiskerChart(getName(), "Time", "Value",
-					(BoxAndWhiskerCategoryDataset) jfreedataset.get(0), true);
-			chart.setBackgroundPaint(new Color(249, 231, 236));
+			case XY_CHART:
+				chart = ChartFactory.createXYLineChart(getName(), "", "",
+						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
+				break;
+			case SCATTER_CHART:
+				chart = ChartFactory.createXYLineChart(getName(), "", "",
+						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
+				break;
+			case BOX_WHISKER_CHART: {
+				chart = ChartFactory.createBoxAndWhiskerChart(getName(), "Time", "Value",
+						(BoxAndWhiskerCategoryDataset) jfreedataset.get(0), true);
+				chart.setBackgroundPaint(new Color(249, 231, 236));
 
-			break;
-		}
+				break;
+			}
 
 		}
 	}
@@ -153,31 +150,31 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 
 		switch (type_val) {
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-		case ChartDataSource.DATA_TYPE_LIST_POINT:
-		case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE: {
-			source.setCumulative(scope, false);
-			source.setUseSize(scope, false);
-			break;
-		}
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3: {
-			source.setCumulative(scope, true);
-			source.setUseSize(scope, true);
-			break;
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+			case ChartDataSource.DATA_TYPE_LIST_POINT:
+			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE: {
+				source.setCumulative(scope, false);
+				source.setUseSize(scope, false);
+				break;
+			}
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3: {
+				source.setCumulative(scope, true);
+				source.setUseSize(scope, true);
+				break;
 
-		}
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
-			source.setCumulative(scope, false);
-			source.setUseSize(scope, true);
-			break;
+			}
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
+				source.setCumulative(scope, false);
+				source.setUseSize(scope, true);
+				break;
 
-		}
-		default: {
-			source.setCumulative(scope, true);
-			source.setUseSize(scope, false);
-		}
+			}
+			default: {
+				source.setCumulative(scope, true);
+				source.setUseSize(scope, false);
+			}
 		}
 
 	}
@@ -208,52 +205,53 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
 		AbstractRenderer newr = new myXYErrorRenderer();
 		switch (style) {
-		case IKeyword.SPLINE: {
-			newr = new XYSplineRenderer();
-			break;
-		}
-		case IKeyword.STEP: {
-			newr = new XYStepRenderer();
-			break;
-		}
-		case IKeyword.DOT: {
-			newr = new XYShapeRenderer();
-			break;
-		}
-		case IKeyword.WHISKER: {
-			newr = new XYBoxAndWhiskerRenderer();
-			break;
-		}
-		case IKeyword.AREA: {
-			newr = new XYAreaRenderer();
-			break;
-		}
-		case IKeyword.BAR: {
-			newr = new XYBarRenderer();
-			break;
-		}
-		case IKeyword.STACK:
-		case IKeyword.RING:
-		case IKeyword.EXPLODED:
-		case IKeyword.THREE_D: {
-			newr = new XYLine3DRenderer();
-			break;
-		}
-		default: {
-			newr = new myXYErrorRenderer();
-			((myXYErrorRenderer) newr).setMyid(serieid);
-			((myXYErrorRenderer) newr).setOutput(this);
-			break;
+			case IKeyword.SPLINE: {
+				newr = new XYSplineRenderer();
+				break;
+			}
+			case IKeyword.STEP: {
+				newr = new XYStepRenderer();
+				break;
+			}
+			case IKeyword.DOT: {
+				newr = new XYShapeRenderer();
+				break;
+			}
+			case IKeyword.WHISKER: {
+				newr = new XYBoxAndWhiskerRenderer();
+				break;
+			}
+			case IKeyword.AREA: {
+				newr = new XYAreaRenderer();
+				break;
+			}
+			case IKeyword.BAR: {
+				newr = new XYBarRenderer();
+				break;
+			}
+			case IKeyword.STACK:
+			case IKeyword.RING:
+			case IKeyword.EXPLODED:
+			case IKeyword.THREE_D: {
+				newr = new XYLine3DRenderer();
+				break;
+			}
+			default: {
+				// newr = new FastXYItemRenderer();
+				newr = new myXYErrorRenderer();
+				((myXYErrorRenderer) newr).setMyid(serieid);
+				((myXYErrorRenderer) newr).setOutput(this);
+				break;
 
-		}
+			}
 		}
 		return newr;
 	}
 
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, serieid);
-
 		// newr.setSeriesStroke(0, new BasicStroke(0));
+		newr.setBaseCreateEntities(true);
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 
 		if (newr instanceof XYLineAndShapeRenderer) {
@@ -261,6 +259,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			((XYLineAndShapeRenderer) newr).setSeriesShapesFilled(0, myserie.getMysource().fillMarker);
 			((XYLineAndShapeRenderer) newr).setSeriesShapesVisible(0, myserie.getMysource().useMarker);
 
+		}
+
+		if (newr instanceof XYShapeRenderer) {
+			if (!myserie.getMysource().fillMarker) {
+				((XYShapeRenderer) newr).setUseFillPaint(false);
+				// ((XYShapeRenderer) newr).setDrawOutlines(true);
+			}
 		}
 		if (myserie.getMycolor() != null) {
 			newr.setSeriesPaint(0, myserie.getMycolor());
@@ -333,14 +338,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
 		// TODO Auto-generated method stub
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
-		final XYIntervalSeries serie = ((XYIntervalSeriesCollection) jfreedataset
-				.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
+		final XYIntervalSeries serie =
+				((XYIntervalSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))))
+						.getSeries(0);
 		serie.clear();
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
@@ -469,6 +475,37 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				}
 			}
 
+		} else if (newr instanceof XYShapeRenderer) {
+			final XYShapeRenderer serierenderer = (XYShapeRenderer) getOrCreateRenderer(scope, serieid);
+			if (markershape != null) {
+				if (markershape.equals(ChartDataStatement.MARKER_EMPTY)) {
+					serierenderer.setSeriesShape(0, null);
+				} else {
+					Shape myshape = defaultmarkers[0];
+					if (markershape.equals(ChartDataStatement.MARKER_CIRCLE)) {
+						myshape = defaultmarkers[1];
+					} else if (markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE)) {
+						myshape = defaultmarkers[2];
+					} else if (markershape.equals(ChartDataStatement.MARKER_DIAMOND)) {
+						myshape = defaultmarkers[3];
+					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE)) {
+						myshape = defaultmarkers[4];
+					} else if (markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE)) {
+						myshape = defaultmarkers[5];
+					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE)) {
+						myshape = defaultmarkers[6];
+					} else if (markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE)) {
+						myshape = defaultmarkers[7];
+					} else if (markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE)) {
+						myshape = defaultmarkers[8];
+					} else if (markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE)) {
+						myshape = defaultmarkers[9];
+					}
+					serierenderer.setSeriesShape(0, myshape);
+
+				}
+			}
+
 		}
 
 	}
@@ -478,9 +515,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, name);
 		if (newr instanceof myXYErrorRenderer) {
-			final myXYErrorRenderer serierenderer = (myXYErrorRenderer) getOrCreateRenderer(scope, name);
-			serierenderer.setUseSize(scope, b);
-
+			((myXYErrorRenderer) newr).setUseSize(scope, b);
 		}
 
 	}
@@ -510,9 +545,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			@Override
 			public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
 				final int ind = chartdataset.XSeriesValues.indexOf(number);
-				if (ind >= 0) {
-					return new StringBuffer("" + chartdataset.Xcategories.get(ind));
-				}
+				if (ind >= 0) { return new StringBuffer("" + chartdataset.Xcategories.get(ind)); }
 				return new StringBuffer("");
 
 			}
@@ -572,10 +605,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			if (xlabel == null)
 				xlabel = "time";
 		}
-		if (getType() == ChartOutput.XY_CHART) {
-		}
-		if (getType() == ChartOutput.SCATTER_CHART) {
-		}
+		if (getType() == ChartOutput.XY_CHART) {}
+		if (getType() == ChartOutput.SCATTER_CHART) {}
 		if (xlabel != null && !xlabel.isEmpty()) {
 			pp.getDomainAxis().setLabel(xlabel);
 		}

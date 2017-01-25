@@ -15,7 +15,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
@@ -345,15 +346,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public Object getAttribute(final Object key) {
+	public Object getAttribute(final String key) {
 		return null;
 	}
 
 	@Override
-	public void setAttribute(final Object key, final Object value) {}
+	public void setAttribute(final String key, final Object value) {}
 
 	@Override
-	public boolean hasAttribute(final Object key) {
+	public boolean hasAttribute(final String key) {
 		return false;
 	}
 

@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.runtime.IScope;
 
 public class Projection implements IProjection {

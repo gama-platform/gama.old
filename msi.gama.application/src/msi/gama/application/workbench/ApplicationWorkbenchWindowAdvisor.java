@@ -23,7 +23,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import org.osgi.framework.Bundle;
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
@@ -95,7 +95,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
-		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
+		window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
 	}
 
 	@Override

@@ -19,8 +19,8 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;

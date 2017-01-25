@@ -9,11 +9,12 @@
  *
  **********************************************************************************************/
 
-package msi.gama.metamodel.shape;
+package msi.gama.common.geometry;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.operators.fastmaths.FastMath;
 
 /**

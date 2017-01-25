@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BinaryOperator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BinaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,8 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,9 +27,9 @@ public class BinaryOperator extends NAryOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()) {
-			final IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
-					u.serialize(false));
+		if (u.isConst() && GamaPreferences.Runtime.CONSTANT_OPTIMIZATION.getValue()) {
+			final IExpression e =
+					GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			return e;
 		}
 		return u;
@@ -65,9 +64,7 @@ public class BinaryOperator extends NAryOperator {
 	@Override
 	public boolean shouldBeParenthesized() {
 		final String s = getName();
-		if (s.equals(".") || s.equals(":")) {
-			return false;
-		}
+		if (s.equals(".") || s.equals(":")) { return false; }
 		return OperatorProto.binaries.contains(getName());
 	}
 
@@ -109,9 +106,7 @@ public class BinaryOperator extends NAryOperator {
 		@Override
 		public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 			final IAgent agent = Cast.asAgent(scope, exprs[0].value(scope));
-			if (agent == null || agent.dead()) {
-				return;
-			}
+			if (agent == null || agent.dead()) { return; }
 			scope.setAgentVarValue(agent, exprs[1].literalValue(), v);
 		}
 

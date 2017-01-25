@@ -14,9 +14,9 @@ import java.awt.geom.Rectangle2D;
 
 import gnu.trove.impl.Constants;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -114,14 +114,14 @@ public class AspectStatement extends AbstractStatementSequence {
 					final Object value = agent.getDirectVarValue(scope, IKeyword.COLOR);
 					color = Cast.asColor(scope, value);
 				} else {
-					color = GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB());
+					color = GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB());
 				}
-				final String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
+				final String defaultShape = GamaPreferences.Displays.CORE_SHAPE.getValue();
 				final int index = SHAPES.get(defaultShape);
 				IShape ag;
 
 				if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
-					final Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
+					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
 					final ILocation point = agent.getLocation();
 
 					switch (SHAPES.get(defaultShape)) {

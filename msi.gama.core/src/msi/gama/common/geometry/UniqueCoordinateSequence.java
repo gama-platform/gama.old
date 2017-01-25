@@ -1,4 +1,4 @@
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import java.util.Iterator;
 
@@ -8,7 +8,8 @@ import com.google.common.collect.Iterators;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.ICoordinates.IndexedVisitor;
+import msi.gama.common.geometry.ICoordinates.PairVisitor;
 import msi.gama.metamodel.shape.GamaPoint;
 
 /**

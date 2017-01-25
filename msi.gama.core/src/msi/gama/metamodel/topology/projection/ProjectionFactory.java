@@ -20,8 +20,8 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
@@ -36,8 +36,10 @@ import msi.gama.util.file.GamaGisFile;
 public class ProjectionFactory {
 
 	private static final String EPSGPrefix = "EPSG:";
-	private static final String defaultTargetCRS = String.valueOf(GamaPreferences.LIB_TARGET_CRS.getInitialValue(null));
-	private static final String defaultSaveCRS = String.valueOf(GamaPreferences.LIB_OUTPUT_CRS.getInitialValue(null));
+	private static final String defaultTargetCRS =
+			String.valueOf(GamaPreferences.External.LIB_TARGET_CRS.getInitialValue(null));
+	private static final String defaultSaveCRS =
+			String.valueOf(GamaPreferences.External.LIB_OUTPUT_CRS.getInitialValue(null));
 	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap<>();
 
 	private IProjection world;
@@ -55,8 +57,8 @@ public class ProjectionFactory {
 		// normally wiped when an experiment is disposed
 		if (targetCRS != null) { return; }
 		try {
-			if (!GamaPreferences.LIB_TARGETED.getValue()) {
-				targetCRS = computeDefaultCRS(scope, GamaPreferences.LIB_TARGET_CRS.getValue(), true);
+			if (!GamaPreferences.External.LIB_TARGETED.getValue()) {
+				targetCRS = computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 			} else {
 				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution
 																	// can be found
@@ -79,7 +81,7 @@ public class ProjectionFactory {
 		if (targetCRS == null) {
 
 			try {
-				return computeDefaultCRS(scope, GamaPreferences.LIB_TARGET_CRS.getValue(), true);
+				return computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 
 			} catch (final GamaRuntimeException e) {
 				e.addContext(
@@ -92,8 +94,8 @@ public class ProjectionFactory {
 	}
 
 	public CoordinateReferenceSystem getSaveCRS(final IScope scope) {
-		if (GamaPreferences.LIB_USE_DEFAULT.getValue()) { return getWorld().getInitialCRS(scope); }
-		return computeDefaultCRS(scope, GamaPreferences.LIB_OUTPUT_CRS.getValue(), false);
+		if (GamaPreferences.External.LIB_USE_DEFAULT.getValue()) { return getWorld().getInitialCRS(scope); }
+		return computeDefaultCRS(scope, GamaPreferences.External.LIB_OUTPUT_CRS.getValue(), false);
 	}
 
 	public CoordinateReferenceSystem getCRS(final IScope scope, final int code) {
@@ -216,12 +218,12 @@ public class ProjectionFactory {
 	}
 
 	public CoordinateReferenceSystem getDefaultInitialCRS(final IScope scope) {
-		if (!GamaPreferences.LIB_PROJECTED.getValue()) {
+		if (!GamaPreferences.External.LIB_PROJECTED.getValue()) {
 			try {
-				return getCRS(scope, GamaPreferences.LIB_INITIAL_CRS.getValue());
+				return getCRS(scope, GamaPreferences.External.LIB_INITIAL_CRS.getValue());
 			} catch (final GamaRuntimeException e) {
 				throw GamaRuntimeException.error(
-						"The code " + GamaPreferences.LIB_INITIAL_CRS.getValue()
+						"The code " + GamaPreferences.External.LIB_INITIAL_CRS.getValue()
 								+ " does not correspond to a known EPSG code. Try to change it in Gama > Preferences... > External",
 						scope);
 			}

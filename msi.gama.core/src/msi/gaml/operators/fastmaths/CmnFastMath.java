@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'CmnFastMath.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'CmnFastMath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -9,20 +8,18 @@
  *
  **********************************************************************************************/
 /*
- * =============================================================================
- * Notice of fdlibm package this program is partially derived from:
+ * ============================================================================= Notice of fdlibm package this program
+ * is partially derived from:
  *
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
- * Developed at SunSoft, a Sun Microsystems, Inc. business.
- * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice
- * is preserved.
+ * Developed at SunSoft, a Sun Microsystems, Inc. business. Permission to use, copy, modify, and distribute this
+ * software is freely granted, provided that this notice is preserved.
  * =============================================================================
  */
 package msi.gaml.operators.fastmaths;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 
 /**
  * Stuffs for FastMath and StrictFastMath.
@@ -30,61 +27,46 @@ import msi.gama.common.GamaPreferences;
 public abstract class CmnFastMath {
 
 	/*
-	 * For trigonometric functions, use of look-up tables and Taylor-Lagrange
-	 * formula with 4 derivatives (more take longer to compute and don't add
-	 * much accuracy, less require larger tables (which use more memory, take
-	 * more time to initialize, and are slower to access (at least on the
-	 * machine they were developed on))).
+	 * For trigonometric functions, use of look-up tables and Taylor-Lagrange formula with 4 derivatives (more take
+	 * longer to compute and don't add much accuracy, less require larger tables (which use more memory, take more time
+	 * to initialize, and are slower to access (at least on the machine they were developed on))).
 	 *
-	 * For angles reduction of cos/sin/tan functions: - for small values,
-	 * instead of reducing angles, and then computing the best index for look-up
-	 * tables, we compute this index right away, and use it for reduction, - for
-	 * large values, treatments derived from fdlibm package are used, as done in
-	 * java.lang.Math. They are faster but still "slow", so if you work with
-	 * large numbers and need speed over accuracy for them, you might want to
-	 * use normalizeXXXFast treatments before your function, or modify
-	 * cos/sin/tan so that they call the fast normalization treatments instead
-	 * of the accurate ones. NB: If an angle is huge (like PI*1e20), in double
-	 * precision format its last digits are zeros, which most likely is not the
-	 * case for the intended value, and doing an accurate reduction on a very
-	 * inaccurate value is most likely pointless. But it gives some sort of
-	 * coherence that could be needed in some cases.
+	 * For angles reduction of cos/sin/tan functions: - for small values, instead of reducing angles, and then computing
+	 * the best index for look-up tables, we compute this index right away, and use it for reduction, - for large
+	 * values, treatments derived from fdlibm package are used, as done in java.lang.Math. They are faster but still
+	 * "slow", so if you work with large numbers and need speed over accuracy for them, you might want to use
+	 * normalizeXXXFast treatments before your function, or modify cos/sin/tan so that they call the fast normalization
+	 * treatments instead of the accurate ones. NB: If an angle is huge (like PI*1e20), in double precision format its
+	 * last digits are zeros, which most likely is not the case for the intended value, and doing an accurate reduction
+	 * on a very inaccurate value is most likely pointless. But it gives some sort of coherence that could be needed in
+	 * some cases.
 	 *
-	 * Multiplication on double appears to be about as fast (or not much slower)
-	 * than call to <double_array>[<index>], and regrouping some doubles in a
-	 * private class, to use index only once, does not seem to speed things up,
-	 * so: - for uniformly tabulated values, to retrieve the parameter
-	 * corresponding to an index, we recompute it rather than using an array to
-	 * store it, - for cos/sin, we recompute derivatives divided by (multiplied
-	 * by inverse of) factorial each time, rather than storing them in arrays.
+	 * Multiplication on double appears to be about as fast (or not much slower) than call to <double_array>[<index>],
+	 * and regrouping some doubles in a private class, to use index only once, does not seem to speed things up, so: -
+	 * for uniformly tabulated values, to retrieve the parameter corresponding to an index, we recompute it rather than
+	 * using an array to store it, - for cos/sin, we recompute derivatives divided by (multiplied by inverse of)
+	 * factorial each time, rather than storing them in arrays.
 	 *
-	 * Lengths of look-up tables are usually of the form 2^n+1, for their values
-	 * to be of the form (<a_constant> * k/2^n, k in 0 .. 2^n), so that
-	 * particular values (PI/2, etc.) are "exactly" computed, as well as for
-	 * other reasons.
+	 * Lengths of look-up tables are usually of the form 2^n+1, for their values to be of the form (<a_constant> *
+	 * k/2^n, k in 0 .. 2^n), so that particular values (PI/2, etc.) are "exactly" computed, as well as for other
+	 * reasons.
 	 *
-	 * Tables are put in specific inner classes, to be lazily initialized.
-	 * Always doing strict tables initialization, even if StrictFastMath
-	 * delegates to StrictMath and doesn't use tables, which makes tables
-	 * initialization a bit slower but code simpler. Using redefined pure Java
-	 * treatments during tables initialization, instead of Math or StrictMath
-	 * ones (even asin(double)), can be very slow, because class loading is
-	 * likely not to be optimized.
+	 * Tables are put in specific inner classes, to be lazily initialized. Always doing strict tables initialization,
+	 * even if StrictFastMath delegates to StrictMath and doesn't use tables, which makes tables initialization a bit
+	 * slower but code simpler. Using redefined pure Java treatments during tables initialization, instead of Math or
+	 * StrictMath ones (even asin(double)), can be very slow, because class loading is likely not to be optimized.
 	 *
-	 * Most math treatments I could find on the web, including "fast" ones,
-	 * usually take care of special cases (NaN, etc.) at the beginning, and then
-	 * deal with the general case, which adds a useless overhead for the general
-	 * (and common) case. In this class, special cases are only dealt with when
-	 * needed, and if the general case does not already handle them.
+	 * Most math treatments I could find on the web, including "fast" ones, usually take care of special cases (NaN,
+	 * etc.) at the beginning, and then deal with the general case, which adds a useless overhead for the general (and
+	 * common) case. In this class, special cases are only dealt with when needed, and if the general case does not
+	 * already handle them.
 	 */
 
 	/*
 	 * Regarding strictfp-ness:
 	 *
-	 * Switching from/to strictfp has some overhead, so we try to only
-	 * strictfp-ize when needed (or when clueless). Compile-time constants are
-	 * computed in a FP-strict way, so no need to make this whole class
-	 * strictfp.
+	 * Switching from/to strictfp has some overhead, so we try to only strictfp-ize when needed (or when clueless).
+	 * Compile-time constants are computed in a FP-strict way, so no need to make this whole class strictfp.
 	 */
 
 	// --------------------------------------------------------------------------
@@ -95,11 +77,10 @@ public abstract class CmnFastMath {
 	 * FastMath
 	 */
 
-	static boolean FM_USE_JDK_MATH = !GamaPreferences.MATH_OPTIMIZATION.getValue();
+	static boolean FM_USE_JDK_MATH = !GamaPreferences.Runtime.MATH_OPTIMIZATION.getValue();
 
 	/**
-	 * Set it to true if FastMath.sqrt(double) is slow (more tables, but less
-	 * calls to FastMath.sqrt(double)).
+	 * Set it to true if FastMath.sqrt(double) is slow (more tables, but less calls to FastMath.sqrt(double)).
 	 */
 	static final boolean FM_USE_POWTABS_FOR_ASIN = true;
 
@@ -108,27 +89,24 @@ public abstract class CmnFastMath {
 	 */
 
 	/**
-	 * Using two pow tab can just make things barely faster, and could
-	 * relatively hurt in case of cache-misses, especially for methods that
-	 * otherwise wouldn't rely on any tab, so we don't use it.
+	 * Using two pow tab can just make things barely faster, and could relatively hurt in case of cache-misses,
+	 * especially for methods that otherwise wouldn't rely on any tab, so we don't use it.
 	 */
 	static final boolean USE_TWO_POW_TAB = false;
 
 	/**
-	 * Because on some architectures, some casts can be slow, especially for
-	 * large values. Might make things a bit slower for latest architectures,
-	 * but not as much as it makes them faster for older ones.
+	 * Because on some architectures, some casts can be slow, especially for large values. Might make things a bit
+	 * slower for latest architectures, but not as much as it makes them faster for older ones.
 	 */
 	static final boolean ANTI_SLOW_CASTS = true;
 
 	/**
-	 * If some methods get JIT-optimized, they might crash if they contain
-	 * "(var == xxx)" with var being NaN (can happen with Java 6u29).
+	 * If some methods get JIT-optimized, they might crash if they contain "(var == xxx)" with var being NaN (can happen
+	 * with Java 6u29).
 	 *
 	 * The crash does not happen if we replace "==" with "<" or ">".
 	 *
-	 * Only the code that has been observed to trigger the bug has been
-	 * modified.
+	 * Only the code that has been observed to trigger the bug has been modified.
 	 */
 	static final boolean ANTI_JIT_OPTIM_CRASH_ON_NAN = true;
 
@@ -142,15 +120,14 @@ public abstract class CmnFastMath {
 	public static final double E = Math.E;
 
 	/**
-	 * Closest double approximation of pi, which is inferior to mathematical pi:
-	 * pi ~= 3.14159265358979323846... PI ~= 3.141592653589793
+	 * Closest double approximation of pi, which is inferior to mathematical pi: pi ~= 3.14159265358979323846... PI ~=
+	 * 3.141592653589793
 	 */
 	public static final double PI = Math.PI;
 
 	/**
-	 * High double approximation of pi, which is further from pi than the low
-	 * approximation PI: pi ~= 3.14159265358979323846... PI ~= 3.141592653589793
-	 * PI_SUP ~= 3.1415926535897936
+	 * High double approximation of pi, which is further from pi than the low approximation PI: pi ~=
+	 * 3.14159265358979323846... PI ~= 3.141592653589793 PI_SUP ~= 3.1415926535897936
 	 */
 	public static final double PI_SUP = Double.longBitsToDouble(Double.doubleToRawLongBits(Math.PI) + 1);
 
@@ -212,8 +189,7 @@ public abstract class CmnFastMath {
 	// --------------------------------------------------------------------------
 
 	/**
-	 * Table of constants for 1/(PI/2), 282 Hex digits (enough for normalizing
-	 * doubles). 1/(PI/2) approximation = sum of
+	 * Table of constants for 1/(PI/2), 282 Hex digits (enough for normalizing doubles). 1/(PI/2) approximation = sum of
 	 * TWO_OVER_PI_TAB[i]*2^(-24*(i+1)).
 	 *
 	 * double and not int, to avoid int-to-double cast during computations.
@@ -227,8 +203,8 @@ public abstract class CmnFastMath {
 			0x659985, 0x5F14A0, 0x68408D, 0xFFD880, 0x4D7327, 0x310606, 0x1556CA, 0x73A8C9, 0x60E27B, 0xC08C6B };
 
 	/*
-	 * Constants for PI/2. Only the 23 most significant bits of each mantissa
-	 * are used. 2*PI approximation = sum of TWOPI_TAB<i>.
+	 * Constants for PI/2. Only the 23 most significant bits of each mantissa are used. 2*PI approximation = sum of
+	 * TWOPI_TAB<i>.
 	 */
 	private static final double PIO2_TAB0 = Double.longBitsToDouble(0x3FF921FB40000000L);
 	private static final double PIO2_TAB1 = Double.longBitsToDouble(0x3E74442D00000000L);
@@ -270,24 +246,21 @@ public abstract class CmnFastMath {
 	private static final long QUADRANT_PLACE_BITS = 0x3000000000000000L;
 
 	/**
-	 * fdlibm uses 2^19*PI/2 here. With 2^18*PI/2 we would be more accurate, for
-	 * example when normalizing 822245.903631403, which is close to 2^19*PI/2,
-	 * but we are still in our accuracy tolerance with fdlibm's value (but not
-	 * 2^20*PI/2) so we stick to it, to help being faster than (Strict)Math for
-	 * values in [2^18*PI/2,2^19*PI/2].
+	 * fdlibm uses 2^19*PI/2 here. With 2^18*PI/2 we would be more accurate, for example when normalizing
+	 * 822245.903631403, which is close to 2^19*PI/2, but we are still in our accuracy tolerance with fdlibm's value
+	 * (but not 2^20*PI/2) so we stick to it, to help being faster than (Strict)Math for values in
+	 * [2^18*PI/2,2^19*PI/2].
 	 *
-	 * For tests, can use a smaller value, for heavy remainder not to only be
-	 * used with huge values.
+	 * For tests, can use a smaller value, for heavy remainder not to only be used with huge values.
 	 */
 	static final double NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2 = StrictMath.pow(2.0, 19.0) * (Math.PI / 2);
 
 	/**
-	 * 2*Math.PI, normalized into [-PI,PI], as returned by
-	 * StrictMath.asin(StrictMath.sin(2*Math.PI)) (asin behaves as identity for
-	 * this).
+	 * 2*Math.PI, normalized into [-PI,PI], as returned by StrictMath.asin(StrictMath.sin(2*Math.PI)) (asin behaves as
+	 * identity for this).
 	 *
-	 * NB: NumbersUtils.minus2PI(2*Math.PI) returns -2.449293598153844E-16,
-	 * which is different due to not using an accurate enough definition of PI.
+	 * NB: NumbersUtils.minus2PI(2*Math.PI) returns -2.449293598153844E-16, which is different due to not using an
+	 * accurate enough definition of PI.
 	 */
 	static final double TWO_MATH_PI_IN_MINUS_PI_PI = -2.4492935982947064E-16;
 
@@ -343,14 +316,11 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Max abs value for index-based reduction, above which we use regular angle
-	 * normalization. This value must be < (Integer.MAX_VALUE /
-	 * SIN_COS_INDEXER), to stay in range of int type. If too high, error gets
-	 * larger because index-based reduction doesn't use an accurate enough
-	 * definition of PI. If too low, and if we would be using remainder into
-	 * [-PI,PI] instead of into [-PI/4,PI/4], error would get larger as well,
-	 * because remainder would just provide a double, while index-based
-	 * reduction is more accurate, using delta from index values and HI/LO
+	 * Max abs value for index-based reduction, above which we use regular angle normalization. This value must be <
+	 * (Integer.MAX_VALUE / SIN_COS_INDEXER), to stay in range of int type. If too high, error gets larger because
+	 * index-based reduction doesn't use an accurate enough definition of PI. If too low, and if we would be using
+	 * remainder into [-PI,PI] instead of into [-PI/4,PI/4], error would get larger as well, because remainder would
+	 * just provide a double, while index-based reduction is more accurate, using delta from index values and HI/LO
 	 * values.
 	 */
 	static final double SIN_COS_MAX_VALUE_FOR_INT_MODULO = (Integer.MAX_VALUE >> 9) / SIN_COS_INDEXER * 0.99;
@@ -365,15 +335,14 @@ public abstract class CmnFastMath {
 	// ---> we only have to compute tan(x) on [0,A] with PI/4<=A<PI/2.
 
 	/**
-	 * We use indexing past look-up tables, so that indexing information allows
-	 * for fast recomputation of angle in [0,PI/2] range.
+	 * We use indexing past look-up tables, so that indexing information allows for fast recomputation of angle in
+	 * [0,PI/2] range.
 	 */
 	static final int TAN_VIRTUAL_TABS_SIZE = (1 << getTabSizePower(12)) + 1;
 
 	/**
-	 * Must be >= 45deg, and supposed to be >= 51.4deg, as fdlibm code is not
-	 * supposed to work with values inferior to that (51.4deg is about
-	 * (PI/2-Double.longBitsToDouble(0x3FE5942800000000L))).
+	 * Must be >= 45deg, and supposed to be >= 51.4deg, as fdlibm code is not supposed to work with values inferior to
+	 * that (51.4deg is about (PI/2-Double.longBitsToDouble(0x3FE5942800000000L))).
 	 */
 	static final double TAN_MAX_VALUE_FOR_TABS = StrictMath.toRadians(77.0);
 
@@ -414,13 +383,11 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Max abs value for fast modulo, above which we use regular angle
-	 * normalization. This value must be < (Integer.MAX_VALUE / TAN_INDEXER), to
-	 * stay in range of int type. If too high, error gets larger because
-	 * index-based reduction doesn't use an accurate enough definition of PI. If
-	 * too low, error gets larger as well, because we use remainder into
-	 * [-PI/2,PI/2], just provides a double, while index-based reduction is more
-	 * accurate, using delta from index values and HI/LO values.
+	 * Max abs value for fast modulo, above which we use regular angle normalization. This value must be <
+	 * (Integer.MAX_VALUE / TAN_INDEXER), to stay in range of int type. If too high, error gets larger because
+	 * index-based reduction doesn't use an accurate enough definition of PI. If too low, error gets larger as well,
+	 * because we use remainder into [-PI/2,PI/2], just provides a double, while index-based reduction is more accurate,
+	 * using delta from index values and HI/LO values.
 	 */
 	static final double TAN_MAX_VALUE_FOR_INT_MODULO = (Integer.MAX_VALUE >> 9) / TAN_INDEXER * 0.99;
 
@@ -436,9 +403,8 @@ public abstract class CmnFastMath {
 	// for values near +-1, we use code derived from fdlibm.
 
 	/**
-	 * Supposed to be >= sin(77.2deg), as fdlibm code is supposed to work with
-	 * values > 0.975, but seems to work well enough as long as value >=
-	 * sin(25deg).
+	 * Supposed to be >= sin(77.2deg), as fdlibm code is supposed to work with values > 0.975, but seems to work well
+	 * enough as long as value >= sin(25deg).
 	 */
 	static final double ASIN_MAX_VALUE_FOR_TABS = StrictMath.sin(StrictMath.toRadians(73.0));
 
@@ -541,8 +507,7 @@ public abstract class CmnFastMath {
 	// fdlibm.
 
 	/**
-	 * Supposed to be >= tan(67.7deg), as fdlibm code is supposed to work with
-	 * values > 2.4375.
+	 * Supposed to be >= tan(67.7deg), as fdlibm code is supposed to work with values > 2.4375.
 	 */
 	static final double ATAN_MAX_VALUE_FOR_TABS = StrictMath.tan(StrictMath.toRadians(74.0));
 
@@ -599,9 +564,8 @@ public abstract class CmnFastMath {
 	// --------------------------------------------------------------------------
 
 	/**
-	 * Constant found experimentally: StrictMath.tanh(TANH_1_THRESHOLD) = 1,
-	 * StrictMath.tanh(nextDown(TANH_1_THRESHOLD)) =
-	 * FastMath.tanh(nextDown(TANH_1_THRESHOLD)) < 1.
+	 * Constant found experimentally: StrictMath.tanh(TANH_1_THRESHOLD) = 1, StrictMath.tanh(nextDown(TANH_1_THRESHOLD))
+	 * = FastMath.tanh(nextDown(TANH_1_THRESHOLD)) < 1.
 	 */
 	static final double TANH_1_THRESHOLD = 19.061547465398498;
 
@@ -612,8 +576,7 @@ public abstract class CmnFastMath {
 	static final double ASINH_LOG1P_THRESHOLD = 0.04;
 
 	/**
-	 * sqrt(x*x+-1) should yield higher threshold, but it's enough due to
-	 * subsequent log.
+	 * sqrt(x*x+-1) should yield higher threshold, but it's enough due to subsequent log.
 	 */
 	static final double ASINH_ACOSH_SQRT_ELISION_THRESHOLD = 1 << 24;
 
@@ -799,20 +762,17 @@ public abstract class CmnFastMath {
 
 	/**
 	 * For using sqrt, to avoid overflow/underflow, we want values magnitude in
-	 * [1/sqrt(Double.MAX_VALUE/n),sqrt(Double.MAX_VALUE/n)], n being the number
-	 * of arguments.
+	 * [1/sqrt(Double.MAX_VALUE/n),sqrt(Double.MAX_VALUE/n)], n being the number of arguments.
 	 *
-	 * sqrt(Double.MAX_VALUE/2) = 9.480751908109176E153 and
-	 * sqrt(Double.MAX_VALUE/3) = 7.741001517595157E153 so 2^511 =
+	 * sqrt(Double.MAX_VALUE/2) = 9.480751908109176E153 and sqrt(Double.MAX_VALUE/3) = 7.741001517595157E153 so 2^511 =
 	 * 6.7039039649712985E153 works for both.
 	 */
 	static final double HYPOT_MAX_MAG = NumbersUtils.twoPow(511);
 
 	/**
-	 * Large enough to get a value's magnitude back into [2^-511,2^511] from
-	 * Double.MIN_VALUE or Double.MAX_VALUE, and small enough not to get it
-	 * across that range (considering a 2*53 tolerance due to only checking
-	 * magnitude of min/max value, and scaling all values together).
+	 * Large enough to get a value's magnitude back into [2^-511,2^511] from Double.MIN_VALUE or Double.MAX_VALUE, and
+	 * small enough not to get it across that range (considering a 2*53 tolerance due to only checking magnitude of
+	 * min/max value, and scaling all values together).
 	 */
 	static final double HYPOT_FACTOR = NumbersUtils.twoPow(750);
 
@@ -821,14 +781,12 @@ public abstract class CmnFastMath {
 	// --------------------------------------------------------------------------
 
 	/**
-	 * Ensures that all look-up tables are initialized - otherwise they are
-	 * initialized lazily.
+	 * Ensures that all look-up tables are initialized - otherwise they are initialized lazily.
 	 */
 	public static void initTables() {
 		/*
-		 * Taking care not to call init methods here, which would recompute
-		 * tables each time (even though the computations should be identical,
-		 * since done with strictfp and StrictMath).
+		 * Taking care not to call init methods here, which would recompute tables each time (even though the
+		 * computations should be identical, since done with strictfp and StrictMath).
 		 */
 		int antiOptim = 0;
 		antiOptim += MyTSinCos.sinTab.length;
@@ -854,8 +812,7 @@ public abstract class CmnFastMath {
 	/**
 	 * @param value
 	 *            An integer value in [1,Integer.MAX_VALUE].
-	 * @return The integer part of the logarithm, in base 2, of the specified
-	 *         value, i.e. a result in [0,30]
+	 * @return The integer part of the logarithm, in base 2, of the specified value, i.e. a result in [0,30]
 	 * @throws IllegalArgumentException
 	 *             if the specified value is <= 0.
 	 */
@@ -866,8 +823,7 @@ public abstract class CmnFastMath {
 	/**
 	 * @param value
 	 *            An integer value in [1,Long.MAX_VALUE].
-	 * @return The integer part of the logarithm, in base 2, of the specified
-	 *         value, i.e. a result in [0,62]
+	 * @return The integer part of the logarithm, in base 2, of the specified value, i.e. a result in [0,62]
 	 * @throws IllegalArgumentException
 	 *             if the specified value is <= 0.
 	 */
@@ -880,8 +836,7 @@ public abstract class CmnFastMath {
 	 */
 
 	/**
-	 * Returns the exact result, provided it's in double range, i.e. if power is
-	 * in [-1074,1023].
+	 * Returns the exact result, provided it's in double range, i.e. if power is in [-1074,1023].
 	 *
 	 * @param power
 	 *            An int power.
@@ -889,10 +844,9 @@ public abstract class CmnFastMath {
 	 */
 	public static double twoPow(final int power) {
 		/*
-		 * OK to have this method factored here even though it returns a
-		 * floating point value, because it only does integer operations and
-		 * only takes integer arguments, so should behave the same even if
-		 * inlined into FP-wide context.
+		 * OK to have this method factored here even though it returns a floating point value, because it only does
+		 * integer operations and only takes integer arguments, so should behave the same even if inlined into FP-wide
+		 * context.
 		 */
 		if (USE_TWO_POW_TAB) {
 			if (power >= MIN_DOUBLE_EXPONENT) {
@@ -949,26 +903,20 @@ public abstract class CmnFastMath {
 	/**
 	 * @param value
 	 *            An int value.
-	 * @return The absolute value, except if value is Integer.MIN_VALUE, for
-	 *         which it returns Integer.MIN_VALUE.
+	 * @return The absolute value, except if value is Integer.MIN_VALUE, for which it returns Integer.MIN_VALUE.
 	 */
 	public static int abs(final int value) {
-		if (FM_USE_JDK_MATH) {
-			return Math.abs(value);
-		}
+		if (FM_USE_JDK_MATH) { return Math.abs(value); }
 		return NumbersUtils.abs(value);
 	}
 
 	/**
 	 * @param value
 	 *            A long value.
-	 * @return The absolute value, except if value is Long.MIN_VALUE, for which
-	 *         it returns Long.MIN_VALUE.
+	 * @return The absolute value, except if value is Long.MIN_VALUE, for which it returns Long.MIN_VALUE.
 	 */
 	public static long abs(final long value) {
-		if (FM_USE_JDK_MATH) {
-			return Math.abs(value);
-		}
+		if (FM_USE_JDK_MATH) { return Math.abs(value); }
 		return NumbersUtils.abs(value);
 	}
 
@@ -981,8 +929,7 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @return The specified value as int.
 	 * @throws ArithmeticException
-	 *             if the specified value is not in
-	 *             [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
+	 *             if the specified value is not in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int toIntExact(final long value) {
 		return NumbersUtils.asInt(value);
@@ -991,8 +938,7 @@ public abstract class CmnFastMath {
 	/**
 	 * @param value
 	 *            A long value.
-	 * @return The closest int value in [Integer.MIN_VALUE,Integer.MAX_VALUE]
-	 *         range.
+	 * @return The closest int value in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int toInt(final long value) {
 		return NumbersUtils.toInt(value);
@@ -1009,8 +955,7 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @param value
 	 *            An int value.
-	 * @return minValue if value < minValue, maxValue if value > maxValue, value
-	 *         otherwise.
+	 * @return minValue if value < minValue, maxValue if value > maxValue, value otherwise.
 	 */
 	public static int toRange(final int min, final int max, final int value) {
 		return NumbersUtils.toRange(min, max, value);
@@ -1041,9 +986,7 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in int range.
 	 */
 	public static int incrementExact(final int value) {
-		if (value == Integer.MAX_VALUE) {
-			throw new ArithmeticException("integer overflow");
-		}
+		if (value == Integer.MAX_VALUE) { throw new ArithmeticException("integer overflow"); }
 		return value + 1;
 	}
 
@@ -1055,35 +998,27 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in long range.
 	 */
 	public static long incrementExact(final long value) {
-		if (value == Long.MAX_VALUE) {
-			throw new ArithmeticException("long overflow");
-		}
+		if (value == Long.MAX_VALUE) { throw new ArithmeticException("long overflow"); }
 		return value + 1L;
 	}
 
 	/**
 	 * @param value
 	 *            An int value.
-	 * @return The argument incremented by one, or the argument if the
-	 *         mathematical result is not in int range.
+	 * @return The argument incremented by one, or the argument if the mathematical result is not in int range.
 	 */
 	public static int incrementBounded(final int value) {
-		if (value == Integer.MAX_VALUE) {
-			return value;
-		}
+		if (value == Integer.MAX_VALUE) { return value; }
 		return value + 1;
 	}
 
 	/**
 	 * @param value
 	 *            A long value.
-	 * @return The argument incremented by one, or the argument if the
-	 *         mathematical result is not in long range.
+	 * @return The argument incremented by one, or the argument if the mathematical result is not in long range.
 	 */
 	public static long incrementBounded(final long value) {
-		if (value == Long.MAX_VALUE) {
-			return value;
-		}
+		if (value == Long.MAX_VALUE) { return value; }
 		return value + 1L;
 	}
 
@@ -1095,9 +1030,7 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in int range.
 	 */
 	public static int decrementExact(final int value) {
-		if (value == Integer.MIN_VALUE) {
-			throw new ArithmeticException("integer overflow");
-		}
+		if (value == Integer.MIN_VALUE) { throw new ArithmeticException("integer overflow"); }
 		return value - 1;
 	}
 
@@ -1109,35 +1042,27 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in long range.
 	 */
 	public static long decrementExact(final long value) {
-		if (value == Long.MIN_VALUE) {
-			throw new ArithmeticException("long overflow");
-		}
+		if (value == Long.MIN_VALUE) { throw new ArithmeticException("long overflow"); }
 		return value - 1L;
 	}
 
 	/**
 	 * @param value
 	 *            An int value.
-	 * @return The argument decremented by one, or the argument if the
-	 *         mathematical result is not in int range.
+	 * @return The argument decremented by one, or the argument if the mathematical result is not in int range.
 	 */
 	public static int decrementBounded(final int value) {
-		if (value == Integer.MIN_VALUE) {
-			return value;
-		}
+		if (value == Integer.MIN_VALUE) { return value; }
 		return value - 1;
 	}
 
 	/**
 	 * @param value
 	 *            A long value.
-	 * @return The argument decremented by one, or the argument if the
-	 *         mathematical result is not in long range.
+	 * @return The argument decremented by one, or the argument if the mathematical result is not in long range.
 	 */
 	public static long decrementBounded(final long value) {
-		if (value == Long.MIN_VALUE) {
-			return value;
-		}
+		if (value == Long.MIN_VALUE) { return value; }
 		return value - 1L;
 	}
 
@@ -1149,9 +1074,7 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in int range.
 	 */
 	public static int negateExact(final int value) {
-		if (value == Integer.MIN_VALUE) {
-			throw new ArithmeticException("integer overflow");
-		}
+		if (value == Integer.MIN_VALUE) { throw new ArithmeticException("integer overflow"); }
 		return -value;
 	}
 
@@ -1163,35 +1086,27 @@ public abstract class CmnFastMath {
 	 *             if the mathematical result is not in long range.
 	 */
 	public static long negateExact(final long value) {
-		if (value == Long.MIN_VALUE) {
-			throw new ArithmeticException("long overflow");
-		}
+		if (value == Long.MIN_VALUE) { throw new ArithmeticException("long overflow"); }
 		return -value;
 	}
 
 	/**
 	 * @param value
 	 *            An int value.
-	 * @return The argument negated, or Integer.MAX_VALUE if the argument is
-	 *         Integer.MIN_VALUE.
+	 * @return The argument negated, or Integer.MAX_VALUE if the argument is Integer.MIN_VALUE.
 	 */
 	public static int negateBounded(final int value) {
-		if (value == Integer.MIN_VALUE) {
-			return Integer.MAX_VALUE;
-		}
+		if (value == Integer.MIN_VALUE) { return Integer.MAX_VALUE; }
 		return -value;
 	}
 
 	/**
 	 * @param value
 	 *            A long value.
-	 * @return The argument negated, or Long.MAX_VALUE if the argument is
-	 *         Long.MIN_VALUE.
+	 * @return The argument negated, or Long.MAX_VALUE if the argument is Long.MIN_VALUE.
 	 */
 	public static long negateBounded(final long value) {
-		if (value == Long.MIN_VALUE) {
-			return Long.MAX_VALUE;
-		}
+		if (value == Long.MIN_VALUE) { return Long.MAX_VALUE; }
 		return -value;
 	}
 
@@ -1206,8 +1121,7 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @return The mathematical result of a+b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a+b is not in
-	 *             [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
+	 *             if the mathematical result of a+b is not in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int addExact(final int a, final int b) {
 		return NumbersUtils.plusExact(a, b);
@@ -1220,8 +1134,7 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @return The mathematical result of a+b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a+b is not in
-	 *             [Long.MIN_VALUE,Long.MAX_VALUE] range.
+	 *             if the mathematical result of a+b is not in [Long.MIN_VALUE,Long.MAX_VALUE] range.
 	 */
 	public static long addExact(final long a, final long b) {
 		return NumbersUtils.plusExact(a, b);
@@ -1232,8 +1145,8 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @param b
 	 *            An int value.
-	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range
-	 *         which is the closest to mathematical result of a+b.
+	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range which is the closest to mathematical result
+	 *         of a+b.
 	 */
 	public static int addBounded(final int a, final int b) {
 		return NumbersUtils.plusBounded(a, b);
@@ -1244,8 +1157,8 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @param b
 	 *            A long value.
-	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is
-	 *         the closest to mathematical result of a+b.
+	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is the closest to mathematical result of
+	 *         a+b.
 	 */
 	public static long addBounded(final long a, final long b) {
 		return NumbersUtils.plusBounded(a, b);
@@ -1258,8 +1171,7 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @return The mathematical result of a-b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a-b is not in
-	 *             [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
+	 *             if the mathematical result of a-b is not in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int subtractExact(final int a, final int b) {
 		return NumbersUtils.minusExact(a, b);
@@ -1272,8 +1184,7 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @return The mathematical result of a-b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a-b is not in
-	 *             [Long.MIN_VALUE,Long.MAX_VALUE] range.
+	 *             if the mathematical result of a-b is not in [Long.MIN_VALUE,Long.MAX_VALUE] range.
 	 */
 	public static long subtractExact(final long a, final long b) {
 		return NumbersUtils.minusExact(a, b);
@@ -1284,8 +1195,8 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @param b
 	 *            An int value.
-	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range
-	 *         which is the closest to mathematical result of a-b.
+	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range which is the closest to mathematical result
+	 *         of a-b.
 	 */
 	public static int subtractBounded(final int a, final int b) {
 		return NumbersUtils.minusBounded(a, b);
@@ -1296,8 +1207,8 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @param b
 	 *            A long value.
-	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is
-	 *         the closest to mathematical result of a-b.
+	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is the closest to mathematical result of
+	 *         a-b.
 	 */
 	public static long subtractBounded(final long a, final long b) {
 		return NumbersUtils.minusBounded(a, b);
@@ -1310,8 +1221,7 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @return The mathematical result of a*b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a*b is not in
-	 *             [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
+	 *             if the mathematical result of a*b is not in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int multiplyExact(final int a, final int b) {
 		return NumbersUtils.timesExact(a, b);
@@ -1324,8 +1234,7 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @return The mathematical result of a*b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a*b is not in
-	 *             [Long.MIN_VALUE,Long.MAX_VALUE] range.
+	 *             if the mathematical result of a*b is not in [Long.MIN_VALUE,Long.MAX_VALUE] range.
 	 */
 	public static long multiplyExact(final long a, final int b) {
 		return NumbersUtils.timesExact(a, b);
@@ -1338,8 +1247,7 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @return The mathematical result of a*b.
 	 * @throws ArithmeticException
-	 *             if the mathematical result of a*b is not in
-	 *             [Long.MIN_VALUE,Long.MAX_VALUE] range.
+	 *             if the mathematical result of a*b is not in [Long.MIN_VALUE,Long.MAX_VALUE] range.
 	 */
 	public static long multiplyExact(final long a, final long b) {
 		return NumbersUtils.timesExact(a, b);
@@ -1350,8 +1258,8 @@ public abstract class CmnFastMath {
 	 *            An int value.
 	 * @param b
 	 *            An int value.
-	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range
-	 *         which is the closest to mathematical result of a*b.
+	 * @return The int value of [Integer.MIN_VALUE,Integer.MAX_VALUE] range which is the closest to mathematical result
+	 *         of a*b.
 	 */
 	public static int multiplyBounded(final int a, final int b) {
 		return NumbersUtils.timesBounded(a, b);
@@ -1362,8 +1270,8 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @param b
 	 *            An int value.
-	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is
-	 *         the closest to mathematical result of a*b.
+	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is the closest to mathematical result of
+	 *         a*b.
 	 */
 	public static long multiplyBounded(final long a, final int b) {
 		return NumbersUtils.timesBounded(a, b);
@@ -1374,8 +1282,8 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @param b
 	 *            A long value.
-	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is
-	 *         the closest to mathematical result of a*b.
+	 * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is the closest to mathematical result of
+	 *         a*b.
 	 */
 	public static long multiplyBounded(final long a, final long b) {
 		return NumbersUtils.timesBounded(a, b);
@@ -1397,8 +1305,7 @@ public abstract class CmnFastMath {
 	 *            A long value.
 	 * @param y
 	 *            A long value.
-	 * @return The most significant 64 bits of the 128-bit product of two 64-bit
-	 *         factors.
+	 * @return The most significant 64 bits of the 128-bit product of two 64-bit factors.
 	 */
 	public static long multiplyHigh(final long x, final long y) {
 		if ((x | y) < 0) {
@@ -1433,17 +1340,15 @@ public abstract class CmnFastMath {
 	/**
 	 * Returns the largest int <= dividend/divisor.
 	 *
-	 * Unlike "/" operator, which rounds towards 0, this division rounds towards
-	 * -Infinity (which give different result when the exact result is
-	 * negative).
+	 * Unlike "/" operator, which rounds towards 0, this division rounds towards -Infinity (which give different result
+	 * when the exact result is negative).
 	 *
 	 * @param x
 	 *            The dividend.
 	 * @param y
 	 *            The divisor.
-	 * @return The largest int <= dividend/divisor, unless dividend is
-	 *         Integer.MIN_VALUE and divisor is -1, in which case
-	 *         Integer.MIN_VALUE is returned.
+	 * @return The largest int <= dividend/divisor, unless dividend is Integer.MIN_VALUE and divisor is -1, in which
+	 *         case Integer.MIN_VALUE is returned.
 	 * @throws ArithmeticException
 	 *             if the divisor is zero.
 	 */
@@ -1459,17 +1364,15 @@ public abstract class CmnFastMath {
 	/**
 	 * Returns the largest long <= dividend/divisor.
 	 *
-	 * Unlike "/" operator, which rounds towards 0, this division rounds towards
-	 * -Infinity (which give different result when the exact result is
-	 * negative).
+	 * Unlike "/" operator, which rounds towards 0, this division rounds towards -Infinity (which give different result
+	 * when the exact result is negative).
 	 *
 	 * @param x
 	 *            The dividend.
 	 * @param y
 	 *            The divisor.
-	 * @return The largest long <= dividend/divisor, unless dividend is
-	 *         Long.MIN_VALUE and divisor is -1, in which case Long.MIN_VALUE is
-	 *         returned.
+	 * @return The largest long <= dividend/divisor, unless dividend is Long.MIN_VALUE and divisor is -1, in which case
+	 *         Long.MIN_VALUE is returned.
 	 * @throws ArithmeticException
 	 *             if the divisor is zero.
 	 */
@@ -1480,17 +1383,15 @@ public abstract class CmnFastMath {
 	/**
 	 * Returns the largest long <= dividend/divisor.
 	 *
-	 * Unlike "/" operator, which rounds towards 0, this division rounds towards
-	 * -Infinity (which give different result when the exact result is
-	 * negative).
+	 * Unlike "/" operator, which rounds towards 0, this division rounds towards -Infinity (which give different result
+	 * when the exact result is negative).
 	 *
 	 * @param x
 	 *            The dividend.
 	 * @param y
 	 *            The divisor.
-	 * @return The largest long <= dividend/divisor, unless dividend is
-	 *         Long.MIN_VALUE and divisor is -1, in which case Long.MIN_VALUE is
-	 *         returned.
+	 * @return The largest long <= dividend/divisor, unless dividend is Long.MIN_VALUE and divisor is -1, in which case
+	 *         Long.MIN_VALUE is returned.
 	 * @throws ArithmeticException
 	 *             if the divisor is zero.
 	 */
@@ -1504,11 +1405,9 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same
-	 * sign as y, and is in ]-abs(y),abs(y)[.
+	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same sign as y, and is in ]-abs(y),abs(y)[.
 	 *
-	 * The relationship between floorMod and floorDiv is the same than between
-	 * "%" and "/".
+	 * The relationship between floorMod and floorDiv is the same than between "%" and "/".
 	 *
 	 * @param x
 	 *            The dividend.
@@ -1523,11 +1422,9 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same
-	 * sign as y, and is in ]-abs(y),abs(y)[.
+	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same sign as y, and is in ]-abs(y),abs(y)[.
 	 *
-	 * The relationship between floorMod and floorDiv is the same than between
-	 * "%" and "/".
+	 * The relationship between floorMod and floorDiv is the same than between "%" and "/".
 	 *
 	 * @param x
 	 *            The dividend.
@@ -1543,11 +1440,9 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same
-	 * sign as y, and is in ]-abs(y),abs(y)[.
+	 * Returns the floor modulus, which is "x - floorDiv(x,y) * y", has the same sign as y, and is in ]-abs(y),abs(y)[.
 	 *
-	 * The relationship between floorMod and floorDiv is the same than between
-	 * "%" and "/".
+	 * The relationship between floorMod and floorDiv is the same than between "%" and "/".
 	 *
 	 * @param x
 	 *            The dividend.
@@ -1590,9 +1485,7 @@ public abstract class CmnFastMath {
 	 *            Must be in normal values range.
 	 */
 	static double twoPowNormal(final int power) {
-		if (USE_TWO_POW_TAB) {
-			return MyTTwoPow.twoPowTab[power - MIN_DOUBLE_EXPONENT];
-		}
+		if (USE_TWO_POW_TAB) { return MyTTwoPow.twoPowTab[power - MIN_DOUBLE_EXPONENT]; }
 		return Double.longBitsToDouble((long) (power + MAX_DOUBLE_EXPONENT) << 52);
 	}
 
@@ -1601,9 +1494,7 @@ public abstract class CmnFastMath {
 	 *            Must be in normal or subnormal values range.
 	 */
 	static double twoPowNormalOrSubnormal(final int power) {
-		if (USE_TWO_POW_TAB) {
-			return MyTTwoPow.twoPowTab[power - MIN_DOUBLE_EXPONENT];
-		}
+		if (USE_TWO_POW_TAB) { return MyTTwoPow.twoPowTab[power - MIN_DOUBLE_EXPONENT]; }
 		if (power <= -MAX_DOUBLE_EXPONENT) { // Not normal.
 			return Double.longBitsToDouble(0x0008000000000000L >> -(power + MAX_DOUBLE_EXPONENT));
 		}
@@ -1663,9 +1554,7 @@ public abstract class CmnFastMath {
 	 * At least one of the arguments must be NaN.
 	 */
 	static double hypot_NaN(final double xAbs, final double yAbs) {
-		if (xAbs == Double.POSITIVE_INFINITY || yAbs == Double.POSITIVE_INFINITY) {
-			return Double.POSITIVE_INFINITY;
-		}
+		if (xAbs == Double.POSITIVE_INFINITY || yAbs == Double.POSITIVE_INFINITY) { return Double.POSITIVE_INFINITY; }
 		return Double.NaN;
 	}
 
@@ -1673,9 +1562,8 @@ public abstract class CmnFastMath {
 	 * At least one of the arguments must be NaN.
 	 */
 	static double hypot_NaN(final double xAbs, final double yAbs, final double zAbs) {
-		if (xAbs == Double.POSITIVE_INFINITY || yAbs == Double.POSITIVE_INFINITY || zAbs == Double.POSITIVE_INFINITY) {
-			return Double.POSITIVE_INFINITY;
-		}
+		if (xAbs == Double.POSITIVE_INFINITY || yAbs == Double.POSITIVE_INFINITY
+				|| zAbs == Double.POSITIVE_INFINITY) { return Double.POSITIVE_INFINITY; }
 		return Double.NaN;
 	}
 
@@ -1685,17 +1573,13 @@ public abstract class CmnFastMath {
 
 	/**
 	 * @param remainder
-	 *            Must have 1 for 2nd and 3rd exponent bits, which is the case
-	 *            for heavyRemPiO2 remainders (their absolute values are >=
-	 *            Double.longBitsToDouble(0x3000000000000000L) =
-	 *            1.727233711018889E-77, and even if they were not, turning
-	 *            these bits from 0 to 1 on decoding would not change the
-	 *            absolute error much), and also works for +-Infinity or NaN
-	 *            encoding.
+	 *            Must have 1 for 2nd and 3rd exponent bits, which is the case for heavyRemPiO2 remainders (their
+	 *            absolute values are >= Double.longBitsToDouble(0x3000000000000000L) = 1.727233711018889E-77, and even
+	 *            if they were not, turning these bits from 0 to 1 on decoding would not change the absolute error
+	 *            much), and also works for +-Infinity or NaN encoding.
 	 * @param quadrant
 	 *            Must be in [0,3].
-	 * @return Bits holding remainder, and quadrant instead of reamainder's 2nd
-	 *         and 3rd exponent bits.
+	 * @return Bits holding remainder, and quadrant instead of reamainder's 2nd and 3rd exponent bits.
 	 */
 	static long encodeRemainderAndQuadrant(final double remainder, final int quadrant) {
 		final long bits = Double.doubleToRawLongBits(remainder);
@@ -1711,11 +1595,9 @@ public abstract class CmnFastMath {
 	}
 
 	/*
-	 * JDK-based remainders. Since a strict one for (% (PI/2)) is needed for
-	 * heavyRemainderPiO2, we need it in this class. Then, for homogeneity, we
-	 * put them all in this class. Then, to avoid code duplication for these
-	 * slow-anyway methods, we just stick with strict versions, for both
-	 * FastMath and StrictFastMath.
+	 * JDK-based remainders. Since a strict one for (% (PI/2)) is needed for heavyRemainderPiO2, we need it in this
+	 * class. Then, for homogeneity, we put them all in this class. Then, to avoid code duplication for these
+	 * slow-anyway methods, we just stick with strict versions, for both FastMath and StrictFastMath.
 	 */
 
 	/**
@@ -1738,8 +1620,7 @@ public abstract class CmnFastMath {
 		final double sin = StrictMath.sin(angle);
 		final double cos = StrictMath.cos(angle);
 		/*
-		 * Making sure atan2's result ends up in [-PI/2,PI/2], i.e. has maximum
-		 * accuracy.
+		 * Making sure atan2's result ends up in [-PI/2,PI/2], i.e. has maximum accuracy.
 		 */
 		return StrictMath.atan2(sin, Math.abs(cos));
 	}
@@ -1747,16 +1628,16 @@ public abstract class CmnFastMath {
 	/**
 	 * @param angle
 	 *            Angle, in radians.
-	 * @return Bits of double corresponding to remainder of (angle % (PI/2)), in
-	 *         [-PI/4,PI/4], with quadrant encoded in exponent bits.
+	 * @return Bits of double corresponding to remainder of (angle % (PI/2)), in [-PI/4,PI/4], with quadrant encoded in
+	 *         exponent bits.
 	 */
 	static strictfp long jdkRemainderPiO2(final double angle, final boolean negateRem) {
 		final double sin = StrictMath.sin(angle);
 		final double cos = StrictMath.cos(angle);
 
 		/*
-		 * Computing quadrant first, and then computing atan2, to make sure its
-		 * result ends up in [-PI/4,PI/4], i.e. has maximum accuracy.
+		 * Computing quadrant first, and then computing atan2, to make sure its result ends up in [-PI/4,PI/4], i.e. has
+		 * maximum accuracy.
 		 */
 
 		final int q;
@@ -1807,9 +1688,7 @@ public abstract class CmnFastMath {
 		} else if (q == 1) {
 			return rem + PIO2_LO + PIO2_HI;
 		} else if (q == 2) {
-			if (rem < 0.0) {
-				return rem + PI_LO + PI_HI;
-			}
+			if (rem < 0.0) { return rem + PI_LO + PI_HI; }
 			return rem - PI_LO - PI_HI;
 		} else {
 			return rem - PIO2_LO - PIO2_HI;
@@ -1827,50 +1706,42 @@ public abstract class CmnFastMath {
 		final int q = decodeQuadrant(remAndQuad);
 		if ((q & 1) != 0) {
 			// q is 1 or 3
-			if (rem < 0.0) {
-				return rem + PIO2_LO + PIO2_HI;
-			}
+			if (rem < 0.0) { return rem + PIO2_LO + PIO2_HI; }
 			return rem - PIO2_LO - PIO2_HI;
 		}
 		return rem;
 	}
 
 	/**
-	 * Remainder using an accurate definition of PI. Derived from a fdlibm
-	 * treatment called __kernel_rem_pio2.
+	 * Remainder using an accurate definition of PI. Derived from a fdlibm treatment called __kernel_rem_pio2.
 	 *
-	 * Not defining a non-strictfp version for FastMath, to avoid duplicating
-	 * its long and messy code, and because it's slow anyway, and should be
-	 * rarely used when speed matters.
+	 * Not defining a non-strictfp version for FastMath, to avoid duplicating its long and messy code, and because it's
+	 * slow anyway, and should be rarely used when speed matters.
 	 *
 	 * @param angle
 	 *            Angle, in radians. Must not be NaN nor +-Infinity.
 	 * @param negateRem
-	 *            True if remainder must be negated before encoded into returned
-	 *            long.
-	 * @return Bits of double corresponding to remainder of (angle % (PI/2)), in
-	 *         [-PI/4,PI/4], with quadrant encoded in exponent bits.
+	 *            True if remainder must be negated before encoded into returned long.
+	 * @return Bits of double corresponding to remainder of (angle % (PI/2)), in [-PI/4,PI/4], with quadrant encoded in
+	 *         exponent bits.
 	 */
 	static strictfp long heavyRemainderPiO2(final double angle, final boolean negateRem) {
 
 		/*
-		 * fdlibm treatments unrolled, to avoid garbage and be OOME-free,
-		 * corresponding to: 1) initial jk = 4 (precision = 3 = 64 bits
-		 * (extended)), which is more accurate than using precision = 2 (53
-		 * bits, double), even though we work with doubles and use strictfp! 2)
-		 * max lengths of 8 for f[], 6 for q[], fq[] and iq[]. 3) at most one
-		 * recomputation (one goto). These limitations were experimentally found
-		 * to be sufficient for billions of random doubles of random magnitudes.
-		 * For the rare cases that our unrolled treatments can't handle, we fall
-		 * back to a JDK-based implementation.
+		 * fdlibm treatments unrolled, to avoid garbage and be OOME-free, corresponding to: 1) initial jk = 4 (precision
+		 * = 3 = 64 bits (extended)), which is more accurate than using precision = 2 (53 bits, double), even though we
+		 * work with doubles and use strictfp! 2) max lengths of 8 for f[], 6 for q[], fq[] and iq[]. 3) at most one
+		 * recomputation (one goto). These limitations were experimentally found to be sufficient for billions of random
+		 * doubles of random magnitudes. For the rare cases that our unrolled treatments can't handle, we fall back to a
+		 * JDK-based implementation.
 		 */
 
 		int n, i, j, ih;
 		double fw;
 
 		/*
-		 * Turning angle into 24-bits integer chunks. Done outside
-		 * __kernel_rem_pio2, but we factor it inside our method.
+		 * Turning angle into 24-bits integer chunks. Done outside __kernel_rem_pio2, but we factor it inside our
+		 * method.
 		 */
 
 		// Reworking exponent to have a value < 2^24.
@@ -2231,8 +2102,8 @@ public abstract class CmnFastMath {
 	}
 
 	/**
-	 * Use look-up tables size power through this method, to make sure is it
-	 * small in case java.lang.Math is directly used.
+	 * Use look-up tables size power through this method, to make sure is it small in case java.lang.Math is directly
+	 * used.
 	 */
 	private static int getTabSizePower(final int tabSizePower) {
 		return FM_USE_JDK_MATH ? Math.min(2, tabSizePower) : tabSizePower;

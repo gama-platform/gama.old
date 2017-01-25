@@ -15,6 +15,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.interfaces.IValue;

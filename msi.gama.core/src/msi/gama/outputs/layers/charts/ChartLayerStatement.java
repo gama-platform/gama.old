@@ -15,8 +15,8 @@ import java.util.Map;
 
 import org.jfree.chart.JFreeChart;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -532,7 +532,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (face != null) {
 			chartoutput.setTitleFontStyle(scope, getLiteral(TITLEFONTSTYLE));
 		}
-		boolean memorize = GamaPreferences.CHART_MEMORIZE.getValue();
+		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
 		face = getFacet(MEMORIZE);
 		if (face != null) {
 			memorize = Cast.asBool(scope, face.value(scope));

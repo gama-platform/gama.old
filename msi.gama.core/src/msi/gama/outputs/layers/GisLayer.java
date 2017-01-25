@@ -12,9 +12,9 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import java.util.List;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -39,7 +39,7 @@ public class GisLayer extends AbstractLayer {
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) {
 		final GamaColor color =
-				colorExpression == null ? GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB())
+				colorExpression == null ? GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB())
 						: Cast.asColor(scope, colorExpression.value(scope));
 		final List<IShape> shapes = buildGisLayer(scope);
 		if (shapes != null) {

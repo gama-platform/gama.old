@@ -22,8 +22,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
@@ -286,7 +286,7 @@ public class AgentsMenu extends ContributionItem {
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<? extends IAgent> species,
 			final MenuAction... actions) {
 		final boolean isSimulations = species instanceof SimulationPopulation;
-		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
+		int subMenuSize = GamaPreferences.Interface.CORE_MENU_SIZE.getValue();
 		if (subMenuSize < 2) {
 			subMenuSize = 2;
 		}

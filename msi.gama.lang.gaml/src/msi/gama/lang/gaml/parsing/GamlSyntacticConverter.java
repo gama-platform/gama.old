@@ -182,7 +182,7 @@ public class GamlSyntacticConverter {
 
 	// private void addWarning(final String message, final EObject object, final
 	// Set<Diagnostic> errors) {
-	// if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
+	// if (!GamaPreferences.Runtime.WARNINGS_ENABLED.getValue()) {
 	// return;
 	// }
 	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",

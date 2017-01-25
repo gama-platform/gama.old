@@ -35,7 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;

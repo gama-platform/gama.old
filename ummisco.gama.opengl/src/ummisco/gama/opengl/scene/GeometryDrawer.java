@@ -9,15 +9,16 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import static msi.gama.common.util.GeometryUtils.GEOMETRY_FACTORY;
-import static msi.gama.common.util.GeometryUtils.applyToInnerGeometries;
-import static msi.gama.common.util.GeometryUtils.getHolesNumber;
-import static msi.gama.common.util.GeometryUtils.getTypeOf;
-import static msi.gama.common.util.GeometryUtils.getYNegatedCoordinates;
-import static msi.gama.common.util.GeometryUtils.triangulationSimple;
+import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
+import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
+import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
+import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
+import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
+import static msi.gama.common.geometry.GeometryUtils.triangulationSimple;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
@@ -33,8 +34,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.ICoordinates;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -56,13 +57,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	private static final double POINT_COS = Math.cos(POINT_THETA);
 	private static final double POINT_SIN = Math.sin(POINT_THETA);
 	private final LoadingCache<Polygon, Collection<Polygon>> TRIANGULATION_CACHE =
-			CacheBuilder.newBuilder().build(new CacheLoader<Polygon, Collection<Polygon>>() {
+			CacheBuilder.newBuilder().initialCapacity(5000).maximumSize(5000).expireAfterAccess(2, TimeUnit.SECONDS)
+					.build(new CacheLoader<Polygon, Collection<Polygon>>() {
 
-				@Override
-				public Collection<Polygon> load(final Polygon key) throws Exception {
-					return triangulationSimple(null, key);
-				}
-			});
+						@Override
+						public Collection<Polygon> load(final Polygon key) throws Exception {
+							return triangulationSimple(null, key);
+						}
+					});
 
 	final ICoordinates pointVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(10, 3);
 	final ICoordinates quadVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
@@ -296,7 +298,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 		glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
 
-		final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
 
 		glu.gluSphere(quad, height, slices, stacks);
@@ -368,7 +370,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			glu.gluQuadricDrawStyle(quad, solid ? GLU.GLU_FILL : GLU.GLU_LINE);
 			glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 			glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-			final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+			final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 			final int stacks = slices;
 			glu.gluCylinder(quad, height, height, distance, slices, stacks);
 			if (border != null) {
@@ -404,7 +406,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				maxX = (float) coordinates[i].x;
 		}
 		final float radius = (maxX - minX) / 2;
-		final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 		final GLUT glut = renderer.getGlut();
 		if (solid) {
 			glut.glutSolidCone(radius, height, slices, slices);

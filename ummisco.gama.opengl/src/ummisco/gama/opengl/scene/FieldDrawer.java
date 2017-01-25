@@ -20,8 +20,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.util.gl2.GLUT;
 
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 

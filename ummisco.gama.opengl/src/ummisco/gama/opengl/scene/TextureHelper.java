@@ -5,8 +5,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.jogamp.opengl.GL2;
 
-import msi.gama.common.util.ICoordinates;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class TextureHelper {
