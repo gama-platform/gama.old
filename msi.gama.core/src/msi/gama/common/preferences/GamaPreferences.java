@@ -366,6 +366,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces the dimensions of OpenGL textures to be power of 2 (e.g. 8x8, 16x16, etc. Necessary on some hardware configurations)",
 				false, IType.BOOL).in(NAME, OPTIONS);
+		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
+				"Use OpenGL native tesselator to triangulate shapes (false will make GAMA use a more precise, but more CPU intensive, JTS alternative)",
+				false, IType.BOOL).in(NAME, OPTIONS);
 	}
 
 	public static class External {

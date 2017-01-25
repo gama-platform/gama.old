@@ -14,18 +14,10 @@ import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
 import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
 import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
-import static msi.gama.common.geometry.GeometryUtils.simplifiedTriangulation;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Objects;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -58,25 +50,16 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	private static final double POINT_THETA = 2 * Math.PI / POINT_SEGMENTS;
 	private static final double POINT_COS = Math.cos(POINT_THETA);
 	private static final double POINT_SIN = Math.sin(POINT_THETA);
-	private final LoadingCache<Polygon, Collection<Polygon>> TRIANGULATION_CACHE =
-			CacheBuilder.newBuilder().initialCapacity(5000).maximumSize(5000).expireAfterAccess(2, TimeUnit.SECONDS)
-					.build(new CacheLoader<Polygon, Collection<Polygon>>() {
-
-						@Override
-						public Collection<Polygon> load(final Polygon polygon) throws Exception {
-							final List<Polygon> TRIANGLES = new ArrayList<>();
-							simplifiedTriangulation(polygon, TRIANGLES);
-							return TRIANGLES;
-						}
-					});
 
 	final ICoordinates pointVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(10, 3);
 	final ICoordinates quadVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
 	final ICoordinates triangleVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(4, 3);
 	final GamaPoint tempTopPoint = new GamaPoint();
+	final TriangulationHelper triangulator;
 
 	public GeometryDrawer(final JOGLRenderer r) {
 		super(r);
+		triangulator = new TriangulationHelper(r, this);
 	}
 
 	protected boolean applyRotation(final GL2 gl, final GamaPoint location, final Double angle, final GamaPoint axis) {
@@ -167,7 +150,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		}
 	}
 
-	private ICoordinates getCoordinates(final Geometry g) {
+	ICoordinates getCoordinates(final Geometry g) {
 		return getYNegatedCoordinates(g);
 	}
 
@@ -213,7 +196,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	}
 
-	private void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise) {
+	void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise) {
 		final ICoordinates vertices = getCoordinates(p);
 		// Geometries are normally represented clockwise. If the programmer needs to represent a back face, it is
 		// specified by clockwise = false;
@@ -222,9 +205,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final boolean hasHoles = getHolesNumber(p) > 0;
 			final int size = vertices.size();
 			if (hasHoles || size > 5) {
-				for (final Polygon tri : TRIANGULATION_CACHE.apply(p)) {
-					_shape(getCoordinates(tri), 3, solid, clockwise, false, null);
-				}
+				triangulator.drawPolygon(p, vertices, clockwise);
 			} else
 				_shape(vertices, size - 1, solid, clockwise, false, null);
 		}

@@ -25,6 +25,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	boolean textured = false;
 	boolean filled = false;
 	final TextureHelper textureHelper = new TextureHelper();
+
 	protected final GamaPoint tempNormal = new GamaPoint();
 
 	public ObjectDrawer(final JOGLRenderer r) {
