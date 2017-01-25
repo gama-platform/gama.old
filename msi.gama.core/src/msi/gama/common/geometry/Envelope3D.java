@@ -409,6 +409,10 @@ public class Envelope3D extends Envelope {
 		return covers(p.x, p.y, p.z);
 	}
 
+	public boolean covers(final ICoordinates coords) {
+		return coords.isCoveredBy(this);
+	}
+
 	/**
 	 * Tests if the <code>Envelope other</code> lies wholely inside this <code>Envelope</code> (inclusive of the
 	 * boundary).

@@ -26,12 +26,10 @@ import java.util.Set;
 import org.geotools.geometry.jts.JTS;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryComponentFilter;
+import com.vividsolutions.jts.geom.GeometryFilter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -46,6 +44,7 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
 import com.vividsolutions.jts.triangulate.ConstraintEnforcementException;
+import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
 import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
@@ -445,77 +444,32 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static Collection<Polygon> triangulationSimple(final IScope scope, final Geometry geom) {
-		final List<Polygon> geoms = new ArrayList();
-		Double zValue = null;
-		if (geom instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) geom;
-			for (int i = 0; i < gc.getNumGeometries(); i++) {
-				geoms.addAll(triangulationSimple(scope, gc.getGeometryN(i)));
-			}
-		} else if (geom instanceof Polygon) {
-			final Polygon polygon = (Polygon) geom;
-			final Set<Double> zVals = new HashSet<Double>();
-			for (final Coordinate c : polygon.getCoordinates()) {
-				if (!Double.isNaN(c.z)) {
-					zVals.add(c.z);
-					zValue = c.z;
-					if (zVals.size() > 1) {
-						zValue = null;
-						break;
-					}
-				}
-			}
-			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
-			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
-			GeometryCollection tri = null;
-			try {
-				dtb.setSites(polygon);
-				dtb.setConstraints(polygon);
-				dtb.setTolerance(sizeTol);
-				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
-			} catch (final LocateFailureException e) {
-				GamaRuntimeException.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom),
-						scope);
-				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
-			} catch (final ConstraintEnforcementException e) {
-				/* GAMA.reportError(scope, */GamaRuntimeException.warning(
-						"Impossible to triangulate Geometry: " + new WKTWriter().write(geom), scope)/* , false) */;
-				return triangulationSimple(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
-			}
-			final PreparedGeometry pg = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
-			final PreparedGeometry env = PREPARED_GEOMETRY_FACTORY.create(pg.getGeometry().getEnvelope());
-			final int nb = tri.getNumGeometries();
-			final double z = zValue == null ? 0d : zValue;
-			for (int i = 0; i < nb; i++) {
-
-				final Geometry gg = tri.getGeometryN(i);
-
-				if (env.covers(gg) && pg.covers(gg)) {
-					if (zValue != null && gg.getCoordinate().z != z) {
-						gg.apply(new CoordinateSequenceFilter() {
-
-							@Override
-							public void filter(final CoordinateSequence seq, final int i) {
-								seq.getCoordinate(i).z = z;
-							}
-
-							@Override
-							public boolean isDone() {
-								return false;
-							}
-
-							@Override
-							public boolean isGeometryChanged() {
-								return true;
-							}
-						});
-					}
-					geoms.add((Polygon) gg);
-				}
-			}
+	public static void simplifiedTriangulation(final Polygon polygon, final Collection<Polygon> geoms) {
+		final double elevation = getContourCoordinates(polygon).averageZ();
+		final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
+		final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
+		GeometryCollection tri = null;
+		try {
+			dtb.setSites(polygon);
+			dtb.setTolerance(sizeTol);
+			tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
+		} catch (final LocateFailureException | ConstraintEnforcementException e) {
+			final IScope scope = GAMA.getRuntimeScope();
+			GamaRuntimeException.warning("Impossible to triangulate: " + new WKTWriter().write(polygon), scope);
+			geoms.clear();
+			simplifiedTriangulation((Polygon) DouglasPeuckerSimplifier.simplify(polygon, 0.1), geoms);
+			return;
 		}
-		return geoms;
+		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
+		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
+		applyToInnerGeometries(tri, (gg) -> {
+			if (getContourCoordinates(gg).isCoveredBy(env) && buffered.covers(gg)) {
+				getContourCoordinates(gg).setAllZ(elevation);
+				gg.geometryChanged();
+				geoms.add((Polygon) gg);
+			}
+		});
+
 	}
 
 	public static IList<IShape> triangulation(final IScope scope, final Geometry geom) {
@@ -982,19 +936,38 @@ public class GeometryUtils {
 
 	/**
 	 * Applies a GeometryComponentFilter to internal geometries. Concerns the geometries contained in multi-geometries,
-	 * and the holes in polygons.
+	 * and the holes in polygons. Limited to one level (i.e. holes in polygons in a MultiPolygon will not be visited)
 	 * 
 	 * @param g
 	 *            the geometry to visit
 	 * @param f
 	 *            the filter to apply
 	 */
-	public static void applyToInnerGeometries(final Geometry g, final GeometryComponentFilter f) {
-		final LineString r = g instanceof Polygon ? ((Polygon) g).getExteriorRing() : null;
-		g.apply((GeometryComponentFilter) (gg) -> {
-			if (gg != g && gg != r)
-				f.filter(gg);
-		});
+	public static void applyToInnerGeometries(final Geometry g, final GeometryFilter f) {
+		if (g instanceof Polygon)
+			applyToInnerGeometries((Polygon) g, f);
+		else if (g instanceof GeometryCollection) {
+			applyToInnerGeometries((GeometryCollection) g, f);
+		}
+	}
+
+	public static void applyToInnerGeometries(final Polygon g, final GeometryFilter f) {
+		final int holes = g.getNumInteriorRing();
+		if (holes == 0)
+			return;
+		for (int i = 0; i < holes; i++) {
+			g.getInteriorRingN(i).apply(f);
+		}
+	}
+
+	public static void applyToInnerGeometries(final GeometryCollection g, final GeometryFilter f) {
+		final int geoms = g.getNumGeometries();
+		if (geoms == 0)
+			return;
+		for (int i = 0; i < geoms; i++) {
+			final Geometry sub = g.getGeometryN(i);
+			sub.apply(f);
+		}
 	}
 
 	public static void translate(final Geometry geometry, final double dx, final double dy, final double dz) {
