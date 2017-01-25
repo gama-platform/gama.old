@@ -15,10 +15,10 @@ import java.util.Map;
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;

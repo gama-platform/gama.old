@@ -5,8 +5,8 @@ import java.awt.Color;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -42,7 +42,7 @@ public class HelpersDrawer {
 	public void drawRotationHelper(final GL2 gl, final GamaPoint pos, final double distance) {
 		// TODO
 		if (gl == null) { return; }
-		final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
 		final double radius = distance / 400;
 		final GLUT glut = renderer.getGlut();

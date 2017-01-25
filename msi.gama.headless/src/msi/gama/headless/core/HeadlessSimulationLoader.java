@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'HeadlessSimulationLoader.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'HeadlessSimulationLoader.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -19,7 +18,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -59,8 +58,8 @@ public class HeadlessSimulationLoader {
 			throw GamaRuntimeException.create(e1, null);
 		}
 		// SEED HACK // WARNING AD : Why ?
-		GamaPreferences.CORE_SEED_DEFINED.set(true);
-		GamaPreferences.CORE_SEED.set(1.0);
+		GamaPreferences.Simulations.CORE_SEED_DEFINED.set(true);
+		GamaPreferences.Simulations.CORE_SEED.set(1.0);
 		// SEED HACK
 	}
 

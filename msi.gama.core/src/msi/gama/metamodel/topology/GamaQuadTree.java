@@ -18,8 +18,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.set.hash.TLinkedHashSet;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;

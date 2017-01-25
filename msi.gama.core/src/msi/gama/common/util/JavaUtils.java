@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'JavaUtils.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'JavaUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -32,7 +31,7 @@ import msi.gama.common.interfaces.ISkill;
  * Provides some utilities for dealing with reflection.
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class JavaUtils {
 
 	public final static TIntObjectHashMap<List<Class>> IMPLEMENTATION_CLASSES = new TIntObjectHashMap();
@@ -81,28 +80,18 @@ public class JavaUtils {
 			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
 		final int key = keyOf(baseClass, skillClasses);
 		if (!IMPLEMENTATION_CLASSES.containsKey(key)) {
-			final Iterable<Class> basis = Iterables.concat(Collections.singleton(baseClass), skillClasses,
-					allInterfacesOf(baseClass, in));
-			final Iterable<Class> extensions = Iterables
-					.concat(Iterables.transform(basis, each -> allSuperclassesOf(each, in)));
+			final Iterable<Class> basis =
+					Iterables.concat(Collections.singleton(baseClass), skillClasses, allInterfacesOf(baseClass, in));
+			final Iterable<Class> extensions =
+					Iterables.concat(Iterables.transform(basis, each -> allSuperclassesOf(each, in)));
 			final Set<Class> classes = Sets.newHashSet(Iterables.concat(basis, extensions));
 			final ArrayList<Class> classes2 = new ArrayList(classes);
 			Collections.sort(classes2, (o1, o2) -> {
-				if (o1 == o2) {
-					return 0;
-				}
-				if (o1.isAssignableFrom(o2)) {
-					return -1;
-				}
-				if (o2.isAssignableFrom(o1)) {
-					return 1;
-				}
-				if (o1.isInterface() && !o2.isInterface()) {
-					return -1;
-				}
-				if (o2.isInterface() && !o1.isInterface()) {
-					return 1;
-				}
+				if (o1 == o2) { return 0; }
+				if (o1.isAssignableFrom(o2)) { return -1; }
+				if (o2.isAssignableFrom(o1)) { return 1; }
+				if (o1.isInterface() && !o2.isInterface()) { return -1; }
+				if (o2.isInterface() && !o1.isInterface()) { return 1; }
 				return 1;
 			});
 
@@ -113,9 +102,7 @@ public class JavaUtils {
 	}
 
 	public static <F> Iterator<F> iterator(final Object[] array) {
-		if (array != null) {
-			return (Iterator<F>) Iterators.forArray(array);
-		}
+		if (array != null) { return (Iterator<F>) Iterators.forArray(array); }
 		return new UnmodifiableIterator<F>() {
 
 			@Override

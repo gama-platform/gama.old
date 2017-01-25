@@ -15,7 +15,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;

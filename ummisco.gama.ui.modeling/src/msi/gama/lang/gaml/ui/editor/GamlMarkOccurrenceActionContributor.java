@@ -18,9 +18,9 @@ import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 
 import com.google.inject.Singleton;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.Pref;
 import msi.gaml.types.IType;
 
 /**
@@ -48,9 +48,9 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 	}
 
 	// Preference here is an instance variable, but only one will be created as this class is a singleton.
-	public final Entry<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
+	public final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
 			.create("pref_editor_mark_occurrences", "Mark occurrences of symbols in models", true, IType.BOOL)
-			.in(GamaPreferences.EDITOR).group("Presentation")
+			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
 			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 				@Override

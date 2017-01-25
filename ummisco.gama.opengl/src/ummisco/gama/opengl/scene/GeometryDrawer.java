@@ -9,12 +9,12 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import static msi.gama.common.util.GeometryUtils.GEOMETRY_FACTORY;
-import static msi.gama.common.util.GeometryUtils.applyToInnerGeometries;
-import static msi.gama.common.util.GeometryUtils.getHolesNumber;
-import static msi.gama.common.util.GeometryUtils.getTypeOf;
-import static msi.gama.common.util.GeometryUtils.getYNegatedCoordinates;
-import static msi.gama.common.util.GeometryUtils.triangulationSimple;
+import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
+import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
+import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
+import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
+import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
+import static msi.gama.common.geometry.GeometryUtils.triangulationSimple;
 
 import java.awt.Color;
 import java.util.Collection;
@@ -33,8 +33,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Polygon;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.ICoordinates;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -296,7 +296,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 		glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
 
-		final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
 
 		glu.gluSphere(quad, height, slices, stacks);
@@ -368,7 +368,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			glu.gluQuadricDrawStyle(quad, solid ? GLU.GLU_FILL : GLU.GLU_LINE);
 			glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
 			glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-			final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+			final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 			final int stacks = slices;
 			glu.gluCylinder(quad, height, height, distance, slices, stacks);
 			if (border != null) {
@@ -404,7 +404,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				maxX = (float) coordinates[i].x;
 		}
 		final float radius = (maxX - minX) / 2;
-		final int slices = GamaPreferences.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
 		final GLUT glut = renderer.getGlut();
 		if (solid) {
 			glut.glutSolidCone(radius, height, slices, slices);

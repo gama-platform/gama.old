@@ -30,8 +30,8 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
@@ -42,7 +42,7 @@ public class TextureCache {
 
 	static {
 		AWTTextureIO.addTextureProvider(new PGMTextureProvider());
-		GamaPreferences.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
 			public boolean beforeValueChange(final Boolean newValue) {
@@ -54,7 +54,7 @@ public class TextureCache {
 				AWTTextureIO.setTexRectEnabled(newValue);
 			}
 		});
-		AWTTextureIO.setTexRectEnabled(GamaPreferences.DISPLAY_POWER_OF_TWO.getValue());
+		AWTTextureIO.setTexRectEnabled(GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.getValue());
 	}
 
 	final Map<String, Texture> textures = new ConcurrentHashMap<>(100, 0.75f, 4);
@@ -87,7 +87,7 @@ public class TextureCache {
 		if (file == null) { return null; }
 		Texture texture = textures.get(file.getAbsolutePath());
 		if (texture == null) {
-			if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
+			if (!GamaPreferences.OpenGL.DISPLAY_SHARED_CONTEXT.getValue()) {
 				if (!gl.getContext().isCurrent()) {
 					gl.getContext().makeCurrent();
 				}
@@ -118,7 +118,7 @@ public class TextureCache {
 
 	public void initializeStaticTexture(final IScope scope, final GamaImageFile image) {
 		if (contains(scope, image)) { return; }
-		if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
+		if (!GamaPreferences.OpenGL.DISPLAY_SHARED_CONTEXT.getValue()) {
 			saveTextureToProcess(image.getFile(scope));
 			return;
 		}
@@ -187,7 +187,7 @@ public class TextureCache {
 
 	private static BufferedImage correctImage(final BufferedImage image, final boolean force) {
 		BufferedImage corrected = image;
-		if (GamaPreferences.DISPLAY_POWER_OF_TWO.getValue() || force) {
+		if (GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.getValue() || force) {
 			if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {
 				final int width = getClosestPow(image.getWidth());
 				final int height = getClosestPow(image.getHeight());

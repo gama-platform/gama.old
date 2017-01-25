@@ -15,18 +15,18 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Display;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
@@ -323,7 +323,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 				;
 			}
-			final Boolean isOpenGLDefault = !GamaPreferences.CORE_DISPLAY.getValue().equals("Java2D");
+			final Boolean isOpenGLDefault = !GamaPreferences.Displays.CORE_DISPLAY.getValue().equals("Java2D");
 			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
 					: type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 

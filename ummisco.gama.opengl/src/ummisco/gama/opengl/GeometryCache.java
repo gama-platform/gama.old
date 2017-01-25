@@ -9,7 +9,7 @@
  **********************************************************************************************/
 package ummisco.gama.opengl;
 
-import static msi.gama.common.util.GeometryUtils.getTypeOf;
+import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -21,8 +21,8 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFilter;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.files.GamaObjFile;
@@ -78,7 +78,7 @@ public class GeometryCache {
 	}
 
 	void drawSimpleGeometry(final GL2 gl, final JOGLRenderer renderer, final Geometry geom) throws ExecutionException {
-		renderer.setCurrentColor(GamaPreferences.CORE_COLOR.getValue());
+		renderer.setCurrentColor(GamaPreferences.Displays.CORE_COLOR.getValue());
 		final GeometryDrawer drawer = renderer.getGeometryDrawer();
 		geom.apply((GeometryFilter) (g) -> drawer.drawGeometry(g, true, null, 0, null, getTypeOf(geom)));
 	}

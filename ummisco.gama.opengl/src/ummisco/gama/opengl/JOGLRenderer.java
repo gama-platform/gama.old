@@ -26,8 +26,8 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
@@ -95,7 +95,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
-		if (GamaPreferences.ONLY_VISIBLE_FACES.getValue()) {
+		if (GamaPreferences.OpenGL.ONLY_VISIBLE_FACES.getValue()) {
 			gl.glEnable(GL.GL_CULL_FACE);
 			gl.glCullFace(GL.GL_BACK);
 		}

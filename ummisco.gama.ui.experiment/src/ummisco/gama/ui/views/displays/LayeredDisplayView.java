@@ -44,17 +44,17 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.application.workbench.PerspectiveHelper;
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayData;
@@ -147,7 +147,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if (fullScreenShell != null)
 			return;
 		fullScreenShell = new Shell(WorkbenchHelper.getDisplay(),
-				(GamaPreferences.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL)
+				(GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL)
 						| SWT.NO_TRIM);
 		fullScreenShell.setBounds(WorkbenchHelper.getDisplay().getBounds());
 
@@ -280,7 +280,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		sidePanel.setLayout(layout);
 		sidePanel.setBackground(IGamaColors.WHITE.color());
 		final Composite centralPanel =
-				new Composite(form, GamaPreferences.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+				new Composite(form, GamaPreferences.Displays.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 		GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
@@ -320,9 +320,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
 		createOverlay();
-		getOutput().setSynchronized(GamaPreferences.CORE_SYNC.getValue());
+		getOutput().setSynchronized(GamaPreferences.Runtime.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
-		overlay.setVisible(GamaPreferences.CORE_OVERLAY.getValue());
+		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 		if (overlay.isVisible()) {
 			overlay.update();
 		}
@@ -345,7 +345,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if (perspective.getId().equals(PerspectiveHelper.PERSPECTIVE_MODELING_ID)) {
 					if (getOutput() != null && getDisplaySurface() != null) {
-						if (!GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue()) {
+						if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
 							previousState = getOutput().isPaused();
 							getOutput().setPaused(true);
 						}
@@ -354,7 +354,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 						overlay.hide();
 					}
 				} else {
-					if (!GamaPreferences.CORE_DISPLAY_PERSPECTIVE.getValue()) {
+					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
 						if (getOutput() != null && getDisplaySurface() != null) {
 							getOutput().setPaused(previousState);
 						}
@@ -499,7 +499,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		final IDisplaySurface surface = getDisplaySurface();
 		if (surface == null) { return ""; }
 		final boolean openGL = isOpenGL();
-		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
+		String result =
+				GamaPreferences.Displays.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if (!openGL) {
 			return result + "Zoom " + getZoomLevel() + "%";
 		} else {
@@ -539,7 +540,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					}
 
 				}, SWT.LEFT);
-		overlayItem.setSelection(GamaPreferences.CORE_OVERLAY.getValue());
+		overlayItem.setSelection(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 
 		tb.menu(IGamaIcons.MENU_POPULATION, "Browse displayed agents by layers", "Browse through all displayed agents",
@@ -685,7 +686,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		final int width = w == -1 ? surface.getWidth() : w;
 		final int height = h == -1 ? surface.getHeight() : h;
 		BufferedImage snapshot = null;
-		if (GamaPreferences.DISPLAY_FAST_SNAPSHOT.getValue()) {
+		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
 				final Robot robot = new Robot();
 				snapshot = robot.createScreenCapture(surfaceCompositeBounds);

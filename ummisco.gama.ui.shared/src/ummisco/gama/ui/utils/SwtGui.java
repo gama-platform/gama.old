@@ -28,7 +28,6 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.application.workbench.PerspectiveHelper;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
@@ -41,6 +40,7 @@ import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
@@ -90,7 +90,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
-		if (exp == null || !GamaPreferences.CORE_ASK_CLOSING.getValue()) { return true; }
+		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) { return true; }
 		openSimulationPerspective(true);
 		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
 				+ "' of model '" + exp.getModel().getName() + "' ?");

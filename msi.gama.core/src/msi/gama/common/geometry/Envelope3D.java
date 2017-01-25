@@ -7,7 +7,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.metamodel.shape;
+package msi.gama.common.geometry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;

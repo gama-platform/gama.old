@@ -51,10 +51,10 @@ import org.jfree.data.general.PieDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.TextAnchor;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 
@@ -82,8 +82,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	}
 
 	static {
-		enableFlatLook(GamaPreferences.CHART_FLAT.getValue());
-		GamaPreferences.CHART_FLAT.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		enableFlatLook(GamaPreferences.Displays.CHART_FLAT.getValue());
+		GamaPreferences.Displays.CHART_FLAT.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
 			public boolean beforeValueChange(final Boolean newValue) {

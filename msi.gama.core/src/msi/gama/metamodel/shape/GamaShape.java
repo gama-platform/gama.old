@@ -27,8 +27,10 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.ICoordinates;
+import msi.gama.common.geometry.AffineTransform3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;

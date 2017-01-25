@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FrequencyController.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FrequencyController.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,7 +14,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolItem;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.IOutput;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -70,7 +69,7 @@ public class FrequencyController {
 					}
 
 				}, SWT.RIGHT);
-		ti.setSelection(GamaPreferences.CORE_SYNC.getValue());
+		ti.setSelection(GamaPreferences.Runtime.CORE_SYNC.getValue());
 		return ti;
 	}
 

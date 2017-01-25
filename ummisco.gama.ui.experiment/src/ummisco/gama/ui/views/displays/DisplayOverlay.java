@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DisplayOverlay.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DisplayOverlay.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -40,10 +39,10 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterTarget;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors;
@@ -128,7 +127,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		if (provider != null) {
 			provider.setTarget(new ThreadedOverlayUpdater(this), view.getDisplaySurface());
 		}
-		if (GamaPreferences.CORE_SHOW_FPS.getValue()) {
+		if (GamaPreferences.Displays.CORE_SHOW_FPS.getValue()) {
 			timer.schedule(new FPSTask(), 0, 1000);
 		}
 	}
@@ -253,8 +252,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		}
 
 		@Override
-		public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-		}
+		public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
@@ -273,8 +271,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		}
 
 		@Override
-		public void partOpened(final IWorkbenchPartReference partRef) {
-		}
+		public void partOpened(final IWorkbenchPartReference partRef) {}
 
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
@@ -293,8 +290,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		}
 
 		@Override
-		public void partInputChanged(final IWorkbenchPartReference partRef) {
-		}
+		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	};
 	OverlayListener listener = new OverlayListener();
 	protected final MouseListener toggleListener = new MouseAdapter() {
@@ -316,9 +312,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			return;
 		isBusy = true;
 		try {
-			if (getPopup().isDisposed()) {
-				return;
-			}
+			if (getPopup().isDisposed()) { return; }
 			if (!coord.isDisposed()) {
 				try {
 					coord.setText(getView().getOverlayCoordInfo());
@@ -373,9 +367,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 * @param createColor
 	 */
 	private void setForeground(final Label label, final Color color) {
-		if (label == null || label.isDisposed()) {
-			return;
-		}
+		if (label == null || label.isDisposed()) { return; }
 		final Color c = label.getForeground();
 		label.setForeground(color);
 		if (c != IGamaColors.WHITE.color() && c != color) {
@@ -430,8 +422,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 * @see msi.gama.common.interfaces.IUpdaterTarget#resume()
 	 */
 	@Override
-	public void resume() {
-	}
+	public void resume() {}
 
 	public Shell getPopup() {
 		return popup;
@@ -442,13 +433,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	public void display() {
-		if (!isVisible()) {
-			return;
-		}
+		if (!isVisible()) { return; }
 		// We first verify that the popup is still ok
-		if (popup.isDisposed()) {
-			return;
-		}
+		if (popup.isDisposed()) { return; }
 		update();
 		relocate();
 		resize();
@@ -458,18 +445,14 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	public void relocate() {
-		if (!isVisible()) {
-			return;
-		}
+		if (!isVisible()) { return; }
 		if (!popup.isDisposed()) {
 			popup.setLocation(getLocation());
 		}
 	}
 
 	public void resize() {
-		if (!isVisible()) {
-			return;
-		}
+		if (!isVisible()) { return; }
 		if (!popup.isDisposed()) {
 			final Point size = getSize();
 			popup.setSize(popup.computeSize(size.x, size.y));
@@ -521,13 +504,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final boolean[] result = new boolean[] { false };
 		WorkbenchHelper.run(() -> {
 			final IWorkbenchPartSite site = view.getSite();
-			if (site == null) {
-				return;
-			}
+			if (site == null) { return; }
 			final Shell shell = site.getShell();
-			if (shell == null) {
-				return;
-			}
+			if (shell == null) { return; }
 			final String text = shell.getText();
 			result[0] = text == null || text.isEmpty();
 		});

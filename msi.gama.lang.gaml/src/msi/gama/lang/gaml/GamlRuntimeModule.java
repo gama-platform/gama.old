@@ -24,7 +24,8 @@ import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Binder;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
@@ -50,10 +51,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	private static boolean initialized;
 
-	public static GamaPreferences.Entry<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
+	public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
 			.create("pref_optimize_fast_compilation",
-					"Enable faster compilation (but less accurate error reporting in nagivator)", false, IType.BOOL)
-			.in(GamaPreferences.EXPERIMENTAL).group("Compilation");
+					"Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
+			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.VALIDATION);
 
 	public static void staticInitialize() {
 		if (!initialized) {

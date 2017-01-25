@@ -38,9 +38,9 @@ import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import com.vividsolutions.jts.util.AssertionFailedException;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 
+import msi.gama.common.geometry.GamaGeometryFactory;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GamaGeometryFactory;
-import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.DynamicLineString;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;

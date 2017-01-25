@@ -16,9 +16,9 @@ import java.util.Map;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
@@ -148,7 +148,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
 	final protected ExperimentClock clock;
-	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
+	protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
 	// protected SimulationPopulation populationOfSimulations;
 	private Boolean scheduled = false;
@@ -183,18 +183,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public String getDefinedRng() {
-		if (GamaPreferences.CORE_RND_EDITABLE.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters
-				.get(IKeyword.RNG).value(null); }
-		return GamaPreferences.CORE_RNG.getValue();
+		if (GamaPreferences.Simulations.CORE_RND_EDITABLE
+				.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG)
+						.value(null); }
+		return GamaPreferences.Simulations.CORE_RNG.getValue();
 	}
 
 	public Double getDefinedSeed() {
-		if (GamaPreferences.CORE_RND_EDITABLE.getValue()) {
+		if (GamaPreferences.Simulations.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
 			final Double result = p.isDefined() ? (Double) p.value(null) : null;
 			return result;
 		}
-		return GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
+		return GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue()
+				? GamaPreferences.Simulations.CORE_SEED.getValue() : (Double) null;
 	}
 
 	@Override
@@ -348,7 +350,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!GamaPreferences.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
+		if (!GamaPreferences.Simulations.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
@@ -364,7 +366,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				return getSeed();
 			}
 		};
-		p.setDefined(GamaPreferences.CORE_SEED_DEFINED.getValue());
+		p.setDefined(GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue());
 		params.add(p);
 		return params;
 	}

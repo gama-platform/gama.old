@@ -14,7 +14,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;

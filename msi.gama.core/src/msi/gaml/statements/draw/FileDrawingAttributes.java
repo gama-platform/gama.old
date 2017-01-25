@@ -9,7 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -27,7 +27,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 			final Double lineWidth) {
 		super(size, rotation, location, color, border);
 		this.agentIdentifier = AgentIdentifier.of(agent);
-		setLineWidth(lineWidth == null ? GamaPreferences.CORE_LINE_WIDTH.getValue() : lineWidth);
+		setLineWidth(lineWidth == null ? GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue() : lineWidth);
 	}
 
 	public void setLineWidth(final Double d) {
@@ -42,13 +42,13 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	public FileDrawingAttributes(final GamaPoint location) {
 		super(null, null, location, null, null);
 		agentIdentifier = null;
-		setLineWidth(GamaPreferences.CORE_LINE_WIDTH.getValue());
+		setLineWidth(GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
 	}
 
 	public FileDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
 		super(null, null, location, color, border);
 		agentIdentifier = null;
-		setLineWidth(GamaPreferences.CORE_LINE_WIDTH.getValue());
+		setLineWidth(GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
 	}
 
 	/**

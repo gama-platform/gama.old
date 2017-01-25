@@ -12,7 +12,7 @@ package msi.gaml.statements.draw;
 import java.util.Arrays;
 import java.util.List;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
@@ -139,7 +139,7 @@ public abstract class DrawingAttributes {
 	}
 
 	public Double getLineWidth() {
-		return GamaPreferences.CORE_LINE_WIDTH.getValue();
+		return GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue();
 	}
 
 	public void setTexture(final Object o) {

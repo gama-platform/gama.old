@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'FileUtils.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'FileUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -44,9 +43,7 @@ public class FileUtils {
 	private static boolean isAbsolutePath(final String filePath) {
 		final File[] roots = File.listRoots();
 		for (int i = 0; i < roots.length; i++) {
-			if (filePath.startsWith(roots[i].getAbsolutePath())) {
-				return true;
-			}
+			if (filePath.startsWith(roots[i].getAbsolutePath())) { return true; }
 		}
 		return false;
 	}
@@ -70,9 +67,8 @@ public class FileUtils {
 
 		final File[] roots = File.listRoots();
 		for (int i = 0; i < roots.length; i++) {
-			if (absoluteFilePath.startsWith(roots[i].getAbsolutePath())) {
-				return absoluteFilePath.substring(roots[i].getAbsolutePath().length(), absoluteFilePath.length());
-			}
+			if (absoluteFilePath.startsWith(roots[i].getAbsolutePath())) { return absoluteFilePath
+					.substring(roots[i].getAbsolutePath().length(), absoluteFilePath.length()); }
 		}
 		return absoluteFilePath;
 	}
@@ -109,8 +105,8 @@ public class FileUtils {
 		} catch (final UnsupportedEncodingException e1) {
 			filePath = fp;
 		}
-		final GamaRuntimeException ex = new GamaRuntimeFileException(scope,
-				"File denoted by " + filePath + " not found.");
+		final GamaRuntimeException ex =
+				new GamaRuntimeFileException(scope, "File denoted by " + filePath + " not found.");
 		File file = null;
 		if (isAbsolutePath(filePath)) {
 			file = new File(filePath);
@@ -220,8 +216,7 @@ public class FileUtils {
 			final File file = new File(newPath);
 			try {
 				file.createNewFile();
-			} catch (final IOException e1) {
-			}
+			} catch (final IOException e1) {}
 			file.deleteOnExit();
 			return file.getAbsolutePath();
 		}

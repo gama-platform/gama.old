@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.GeometryFilter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 
 /**
  * A dynamical geometry that represents a link between two IShape.

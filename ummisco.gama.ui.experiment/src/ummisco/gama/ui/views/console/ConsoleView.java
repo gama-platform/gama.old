@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ConsoleView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ConsoleView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,9 +26,9 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.fastmaths.CmnFastMath;
@@ -50,8 +49,9 @@ public class ConsoleView extends GamaViewPart
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
 	boolean paused = false;
-	private final StringBuilder pauseBuffer = new StringBuilder(
-			GamaPreferences.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0 : GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
+	private final StringBuilder pauseBuffer =
+			new StringBuilder(GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0
+					: GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue());
 	private final HashMap<Color, BufferedWriter> writers = new HashMap<>();
 
 	public void setCharacterLimit(final int limit) {
@@ -64,8 +64,8 @@ public class ConsoleView extends GamaViewPart
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		msgConsole = new IOConsole("GAMA Console", null);
-		setCharacterLimit(GamaPreferences.CORE_CONSOLE_SIZE.getValue());
-		GamaPreferences.CORE_CONSOLE_SIZE.addChangeListener(new IPreferenceChangeListener<Integer>() {
+		setCharacterLimit(GamaPreferences.Interface.CORE_CONSOLE_SIZE.getValue());
+		GamaPreferences.Interface.CORE_CONSOLE_SIZE.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
 			public boolean beforeValueChange(final Integer newValue) {
@@ -78,7 +78,7 @@ public class ConsoleView extends GamaViewPart
 			}
 		});
 		viewer = new IOConsoleViewer(parent, msgConsole);
-		viewer.setWordWrap(GamaPreferences.CORE_CONSOLE_WRAP.getValue());
+		viewer.setWordWrap(GamaPreferences.Interface.CORE_CONSOLE_WRAP.getValue());
 	}
 
 	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
@@ -125,11 +125,10 @@ public class ConsoleView extends GamaViewPart
 			try {
 				writer.append(text);
 				writer.flush();
-			} catch (final IOException e) {
-			}
+			} catch (final IOException e) {}
 		} else {
-			int maxMemorized = GamaPreferences.CORE_CONSOLE_BUFFER.getValue();
-			final int maxDisplayed = GamaPreferences.CORE_CONSOLE_SIZE.getValue();
+			int maxMemorized = GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue();
+			final int maxDisplayed = GamaPreferences.Interface.CORE_CONSOLE_SIZE.getValue();
 			if (maxDisplayed > -1) {
 				// we limit the size of the buffer to the size of the displayed
 				// characters, as there is no need to buffer more than what can
@@ -182,9 +181,7 @@ public class ConsoleView extends GamaViewPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (viewer == null) {
-			return null;
-		}
+		if (viewer == null) { return null; }
 		return viewer.getTextWidget();
 	}
 
@@ -229,9 +226,8 @@ public class ConsoleView extends GamaViewPart
 	}
 
 	/**
-	 * As ConsoleView is automatically opened by moving to the simulation
-	 * perspective, the automatic closing can cause problems. So the view is
-	 * stated as accepting an "experiment-less" mode. See Issue #1361 Method
+	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause
+	 * problems. So the view is stated as accepting an "experiment-less" mode. See Issue #1361 Method
 	 * shouldBeClosedWhenNoExperiments()
 	 * 
 	 * @see ummisco.gama.ui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
@@ -252,7 +248,6 @@ public class ConsoleView extends GamaViewPart
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
-	public void synchronizeChanged() {
-	}
+	public void synchronizeChanged() {}
 
 }

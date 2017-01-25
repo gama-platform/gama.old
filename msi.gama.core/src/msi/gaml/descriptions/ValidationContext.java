@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ValidationContext.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ValidationContext.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,9 +22,9 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gama.util.TOrderedHashMap;
@@ -50,13 +49,9 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	@Override
 	public boolean add(final GamlCompilationError error) {
 		if (error.isWarning()) {
-			if (!GamaPreferences.WARNINGS_ENABLED.getValue() || noWarning) {
-				return false;
-			}
+			if (!GamaPreferences.Modeling.WARNINGS_ENABLED.getValue() || noWarning) { return false; }
 		} else if (error.isInfo()) {
-			if (!GamaPreferences.INFO_ENABLED.getValue() || noInfo) {
-				return false;
-			}
+			if (!GamaPreferences.Modeling.INFO_ENABLED.getValue() || noInfo) { return false; }
 		}
 		final URI uri = error.getURI();
 		final boolean sameResource = uri.equals(resourceURI);

@@ -62,7 +62,7 @@ public class ChartLayer extends AbstractLayer {
 				x = (int) (Math.min(x, y) * 0.80);
 				y = x;
 			}
-			final BufferedImage im = getChart().getImage(scope, x, y);
+			final BufferedImage im = getChart().getImage(scope, x, y, dg.getSurface().getData().isAntialias());
 			final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 			dg.drawImage(im, attributes);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {

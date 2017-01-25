@@ -1,8 +1,8 @@
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import static com.google.common.collect.Iterators.forArray;
 import static com.vividsolutions.jts.algorithm.CGAlgorithms.signedArea;
-import static msi.gama.common.util.GamaGeometryFactory.isRing;
+import static msi.gama.common.geometry.GamaGeometryFactory.isRing;
 
 import java.util.Iterator;
 
@@ -12,7 +12,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.ICoordinates.IndexedVisitor;
+import msi.gama.common.geometry.ICoordinates.PairVisitor;
 import msi.gama.metamodel.shape.GamaPoint;
 
 /**

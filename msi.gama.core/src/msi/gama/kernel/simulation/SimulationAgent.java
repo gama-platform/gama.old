@@ -14,8 +14,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -28,7 +29,6 @@ import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -244,7 +244,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			initializer = true)
 	public GamaColor getColor() {
 		if (color == null) {
-			color = new GamaColor(GamaPreferences.SIMULATION_COLORS[getIndex() % 5].getValue());
+			color = new GamaColor(GamaPreferences.Simulations.SIMULATION_COLORS[getIndex() % 5].getValue());
 		}
 		return color;
 	}
@@ -528,7 +528,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public String buildPostfix() {
-		final boolean noName = !GamaPreferences.CORE_SIMULATION_NAME.getValue();
+		final boolean noName = !GamaPreferences.Simulations.CORE_SIMULATION_NAME.getValue();
 		if (noName) {
 			if (getPopulation().size() > 1) {
 				return " (S" + getIndex() + ")";

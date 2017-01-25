@@ -1,11 +1,10 @@
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class GamaCoordinateSequenceWithEnvelope extends GamaCoordinateSequence {

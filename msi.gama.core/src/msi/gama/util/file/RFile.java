@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'RFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'RFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,7 +16,7 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
@@ -36,10 +35,14 @@ import msi.gaml.types.Types;
 import rcaller.RCaller;
 import rcaller.RCode;
 
-@file(name = "R", extensions = {
-		"r" }, buffer_type = IType.MAP, buffer_content = IType.LIST, buffer_index = IType.STRING, concept = {
-				IConcept.FILE, IConcept.R })
-@SuppressWarnings({ "rawtypes" })
+@file (
+		name = "R",
+		extensions = { "r" },
+		buffer_type = IType.MAP,
+		buffer_content = IType.LIST,
+		buffer_index = IType.STRING,
+		concept = { IConcept.FILE, IConcept.R })
+@SuppressWarnings ({ "rawtypes" })
 public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
 
 	private final boolean DEBUG = false; // Change DEBUG = false for release
@@ -76,9 +79,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		if (parameters == null) {
 			doRFileEvaluate(scope);
 		} else {
@@ -97,7 +98,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 			// Call R
 			final RCaller caller = new RCaller();
 
-			final String RPath = GamaPreferences.LIB_R.value(scope).getPath(scope);
+			final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
 			caller.setRscriptExecutable(RPath);
 
 			final double[] vectorParam = new double[param.length(scope)];
@@ -181,7 +182,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 			// Call R
 			final RCaller caller = new RCaller();
 
-			final String RPath = GamaPreferences.LIB_R.value(scope).getPath(scope);
+			final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))

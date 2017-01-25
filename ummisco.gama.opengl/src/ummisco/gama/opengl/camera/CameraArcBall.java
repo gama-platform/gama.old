@@ -13,8 +13,8 @@ import java.awt.Point;
 
 import org.eclipse.swt.SWT;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -27,7 +27,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
 
-	private final boolean isDrawingRotateHelper = GamaPreferences.DRAW_ROTATE_HELPER.getValue();
+	private final boolean isDrawingRotateHelper = GamaPreferences.OpenGL.DRAW_ROTATE_HELPER.getValue();
 
 	public CameraArcBall(final Abstract3DRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -316,7 +316,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-		final double step = radius != 0d ? radius / 10d * GamaPreferences.OPENGL_ZOOM.getValue() : 0.1d;
+		final double step = radius != 0d ? radius / 10d * GamaPreferences.OpenGL.OPENGL_ZOOM.getValue() : 0.1d;
 		radius = radius + (in ? -step : step);
 		getRenderer().data.setZoomLevel(zoomLevel());
 		updateCartesianCoordinatesFromAngles();

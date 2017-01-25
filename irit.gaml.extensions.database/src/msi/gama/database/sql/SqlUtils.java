@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
@@ -20,7 +19,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
@@ -31,18 +30,10 @@ import msi.gama.util.IList;
 import msi.gaml.types.IType;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * Created date: 19-Apr-2013
- * Modified:
- * 18-July-2013:
- * Add load extension library for SQLITE case.
- * Last Modified: 18-July-2013
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
+ * 18-July-2013: Add load extension library for SQLITE case. Last Modified: 18-July-2013
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SqlUtils {
 
 	private static boolean DEBUG = false;
@@ -70,7 +61,7 @@ public class SqlUtils {
 		// create connection
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
 			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			final String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath(scope);
+			final String EXTRelativeLocation = GamaPreferences.External.LIB_SPATIALITE.value(scope).getPath(scope);
 			if (EXTRelativeLocation != null && !EXTRelativeLocation.equalsIgnoreCase("")) {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, EXTRelativeLocation, transform);
 
@@ -160,9 +151,8 @@ public class SqlUtils {
 
 			final byte[] geometryAsBytes = baos.toByteArray();
 
-			if (geometryAsBytes.length < 5) {
-				throw new Exception("Invalid geometry inputStream - less than five bytes");
-			}
+			if (geometryAsBytes.length < 5) { throw new Exception(
+					"Invalid geometry inputStream - less than five bytes"); }
 
 			// first four bytes of the geometry are the SRID,
 			// followed by the actual WKB. Determine the SRID

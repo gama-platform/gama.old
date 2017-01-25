@@ -1,4 +1,4 @@
-package msi.gama.common.util;
+package msi.gama.common.geometry;
 
 import org.apache.commons.lang.ArrayUtils;
 

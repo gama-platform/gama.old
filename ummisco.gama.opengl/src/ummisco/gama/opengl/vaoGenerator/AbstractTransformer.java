@@ -17,7 +17,7 @@ import java.util.HashMap;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -39,7 +39,7 @@ abstract class AbstractTransformer {
 	private static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	protected static int BUILT_IN_SHAPE_RESOLUTION = 32; // for sphere / cone / cylinder
 	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
-	private static GamaColor DEFAULT_COLOR = GamaPreferences.CORE_COLOR.getValue();
+	private static GamaColor DEFAULT_COLOR = GamaPreferences.Displays.CORE_COLOR.getValue();
 
 	protected boolean geometryCorrupted = false;
 

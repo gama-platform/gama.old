@@ -9,8 +9,8 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGridFile;

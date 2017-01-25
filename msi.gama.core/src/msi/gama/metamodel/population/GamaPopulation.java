@@ -23,10 +23,10 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;

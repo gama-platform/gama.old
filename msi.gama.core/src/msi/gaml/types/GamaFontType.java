@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaFontType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaFontType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -12,8 +11,9 @@ package msi.gaml.types;
 
 import java.awt.Font;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -38,11 +38,11 @@ import msi.gama.util.GamaFont;
 		concept = { IConcept.TYPE, IConcept.TEXT, IConcept.DISPLAY })
 public class GamaFontType extends GamaType<GamaFont> {
 
-	public static GamaPreferences.Entry<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
+	public static Pref<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
 			.create("pref_display_default_font",
 					"Default font to use in text layers or draw statements when none is specified",
 					new GamaFont("Helvetica", Font.PLAIN, 12), IType.FONT)
-			.in(GamaPreferences.DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
+			.in(GamaPreferences.Displays.NAME, GamaPreferences.Displays.DRAWING);
 
 	@Override
 	public GamaFont cast(final IScope scope, final Object obj, final Object param, final boolean copy)

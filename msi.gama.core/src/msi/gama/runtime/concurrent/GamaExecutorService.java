@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaExecutorService.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaExecutorService.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,9 +9,7 @@
  **********************************************************************************************/
 package msi.gama.runtime.concurrent;
 
-import static msi.gama.common.GamaPreferences.CONCURRENCY;
-import static msi.gama.common.GamaPreferences.EXPERIMENTAL;
-import static msi.gama.common.GamaPreferences.create;
+import static msi.gama.common.preferences.GamaPreferences.create;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,8 +19,9 @@ import java.util.concurrent.ForkJoinTask;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -40,22 +38,22 @@ public abstract class GamaExecutorService {
 	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.sameThreadExecutor();
 
-	public static final Entry<Boolean> CONCURRENCY_SIMULATIONS =
+	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
 			create("pref_parallel_simulations", "Allow experiments to run multiple simulations in parallel", true,
-					IType.BOOL).in(EXPERIMENTAL).group(CONCURRENCY);
-	public static final Entry<Boolean> CONCURRENCY_GRID =
+					IType.BOOL).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Boolean> CONCURRENCY_GRID =
 			create("pref_parallel_grids", "Make grids schedule their agents in parallel by default", false, IType.BOOL)
-					.in(EXPERIMENTAL).group(CONCURRENCY);
-	public static final Entry<Boolean> CONCURRENCY_SPECIES =
+					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Boolean> CONCURRENCY_SPECIES =
 			create("pref_parallel_species", "Make regular species schedule their agents in parallel by default", false,
-					IType.BOOL).in(EXPERIMENTAL).group(CONCURRENCY);
-	public static final Entry<Integer> CONCURRENCY_THRESHOLD =
+					IType.BOOL).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Integer> CONCURRENCY_THRESHOLD =
 			create("pref_parallel_threshold", "Number under which agents will always be executed sequentially", 20,
-					IType.INT).between(1, null).in(EXPERIMENTAL).group(CONCURRENCY);
-	public static final Entry<Integer> CONCURRENCY_THREADS_NUMBER = create("pref_parallel_threads",
+					IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Integer> CONCURRENCY_THREADS_NUMBER = create("pref_parallel_threads",
 			"Max. number of threads to use for parallel operations (available processors: "
 					+ Runtime.getRuntime().availableProcessors() + ")",
-			4, IType.INT).between(1, null).in(EXPERIMENTAL).group(CONCURRENCY)
+			4, IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
 					.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 						@Override

@@ -38,8 +38,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -81,39 +82,40 @@ public class Dates {
 		}
 	};
 
-	public final static GamaPreferences.Entry<String> DATES_CUSTOM_FORMATTER =
-			GamaPreferences
-					.create("pref_date_custom_formatter",
-							"Custom date pattern (see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)",
-							DEFAULT_FORMAT, IType.STRING)
-					.in(GamaPreferences.SIMULATIONS).group("Dates").onChange((e) -> {
-						try {
-							FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e)));
-							if (DEFAULT_VALUE.equals(CUSTOM_KEY)) {
-								FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(CUSTOM_KEY));
-							}
-						} catch (final Exception ex) {
-							java.lang.System.out.println("Formatter not valid: " + e);
-						}
-					});
+	public final static Pref<String> DATES_CUSTOM_FORMATTER = GamaPreferences
+			.create("pref_date_custom_formatter",
+					"Custom date pattern (see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)",
+					DEFAULT_FORMAT, IType.STRING)
+			.in(GamaPreferences.Simulations.NAME, GamaPreferences.Simulations.DATES).onChange((e) -> {
+				try {
+					FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e)));
+					if (DEFAULT_VALUE.equals(CUSTOM_KEY)) {
+						FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(CUSTOM_KEY));
+					}
+				} catch (final Exception ex) {
+					java.lang.System.out.println("Formatter not valid: " + e);
+				}
+			});
 
-	public final static GamaPreferences.Entry<String> DATES_DEFAULT_FORMATTER = GamaPreferences
+	public final static Pref<String> DATES_DEFAULT_FORMATTER = GamaPreferences
 			.create("pref_date_default_formatter",
 					"Default date pattern for writing dates if none is specified (i.e. string(date1))", CUSTOM_KEY,
 					IType.STRING)
-			.in(GamaPreferences.SIMULATIONS).group("Dates")
+			.in(GamaPreferences.Simulations.NAME, GamaPreferences.Simulations.DATES)
 			.among(ISO_LOCAL_KEY, ISO_OFFSET_KEY, ISO_ZONED_KEY, ISO_SIMPLE_KEY, CUSTOM_KEY).onChange((e) -> {
 				DEFAULT_VALUE = e;
 				FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(e));
 			});
 
-	public final static GamaPreferences.Entry<GamaDate> DATES_STARTING_DATE =
-			GamaPreferences.create("pref_date_starting_date", "Default starting date of models when it is not set",
-					GamaDateType.EPOCH, IType.DATE).in(GamaPreferences.SIMULATIONS).group("Dates");
+	public final static Pref<GamaDate> DATES_STARTING_DATE =
+			GamaPreferences
+					.create("pref_date_starting_date", "Default starting date of models when it is not set",
+							GamaDateType.EPOCH, IType.DATE)
+					.in(GamaPreferences.Simulations.NAME, GamaPreferences.Simulations.DATES);
 
-	public final static GamaPreferences.Entry<Double> DATES_TIME_STEP = GamaPreferences
+	public final static Pref<Double> DATES_TIME_STEP = GamaPreferences
 			.create("pref_date_time_step", "Default time step of models when it is not set", 1d, IType.FLOAT)
-			.in(GamaPreferences.SIMULATIONS).group("Dates").between(1d, null);
+			.in(GamaPreferences.Simulations.NAME, GamaPreferences.Simulations.DATES).between(1d, null);
 
 	static {
 		FORMATTERS.put(CUSTOM_KEY, DateTimeFormatter.ofPattern(DATES_CUSTOM_FORMATTER.getValue()));

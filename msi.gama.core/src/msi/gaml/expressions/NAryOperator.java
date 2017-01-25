@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'NAryOperator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'NAryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -17,7 +16,7 @@ import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 
 import java.util.Arrays;
 
-import msi.gama.common.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -29,9 +28,9 @@ public class NAryOperator extends AbstractNAryOperator {
 
 	public static IExpression create(final OperatorProto proto, final IExpression... child) {
 		final NAryOperator u = new NAryOperator(proto, child);
-		if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()) {
-			final IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
-					u.serialize(false));
+		if (u.isConst() && GamaPreferences.Runtime.CONSTANT_OPTIMIZATION.getValue()) {
+			final IExpression e =
+					GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + "
 			// into " + e.toGaml());
 			return e;
@@ -61,12 +60,12 @@ public class NAryOperator extends AbstractNAryOperator {
 			if (index != -1 && exprs != null && index < exprs.length) {
 				final IExpression expr = exprs[index];
 				switch (kind_of_index) {
-				case GamaType.TYPE:
-					return expr.getType();
-				case GamaType.CONTENT:
-					return expr.getType().getContentType();
-				case GamaType.KEY:
-					return expr.getType().getKeyType();
+					case GamaType.TYPE:
+						return expr.getType();
+					case GamaType.CONTENT:
+						return expr.getType().getContentType();
+					case GamaType.KEY:
+						return expr.getType().getKeyType();
 				}
 			}
 		}

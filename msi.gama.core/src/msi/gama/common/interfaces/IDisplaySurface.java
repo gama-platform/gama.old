@@ -16,9 +16,9 @@ import java.util.Collection;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 // import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;

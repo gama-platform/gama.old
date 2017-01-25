@@ -18,7 +18,7 @@ import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;

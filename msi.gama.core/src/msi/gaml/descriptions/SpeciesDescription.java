@@ -22,10 +22,10 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.IVarAndActionSupport;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -307,7 +307,7 @@ public class SpeciesDescription extends TypeDescription {
 		if (parent != null && parent != this && !getParent().useMinimalAgents())
 			return false;
 		if (!hasFacet("use_regular_agents"))
-			return GamaPreferences.AGENT_OPTIMIZATION.getValue();
+			return GamaPreferences.Runtime.AGENT_OPTIMIZATION.getValue();
 		return FALSE.equals(getLitteral("use_regular_agents"));
 	}
 

@@ -18,7 +18,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;

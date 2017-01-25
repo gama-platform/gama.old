@@ -28,10 +28,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.Entry;
-import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.Pref;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
@@ -43,38 +43,38 @@ import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class PreferencesHelper {
 
-	public static final Entry<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
 			.create("pref_shapefile_background_color", "Default shapefile viewer fill color",
 					GamaColor.getNamed("lightgray"), IType.COLOR)
-			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
-	public static final Entry<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
 			GamaPreferences
 					.create("pref_shapefile_line_color", "Default shapefile viewer line color",
 							GamaColor.getNamed("black"), IType.COLOR)
-					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
-	public static final Entry<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
+	public static final Pref<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
 			.create("pref_error_text_color", "Text color of errors in error view",
 					GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
-			.in(GamaPreferences.EXPERIMENTS).group("Errors");
+			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
-	public static final Entry<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
+	public static final Pref<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
 			.create("pref_warning_text_color", "Text color of warnings in error view",
 					GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
-			.in(GamaPreferences.EXPERIMENTS).group("Errors");
+			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
-	public static final Entry<GamaColor> IMAGE_VIEWER_BACKGROUND =
+	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND =
 			GamaPreferences
 					.create("pref_image_background_color", "Default image viewer background color",
 							GamaColor.getNamed("white"), IType.COLOR)
-					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
-	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
-			.create("pref_button_font", "Font of buttons (applies to new buttons)",
+	public static final Pref<GamaFont> BASE_BUTTON_FONT = GamaPreferences
+			.create("pref_button_font", "Font of buttons and dialogs (applies to new buttons)",
 					new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
-			.in(GamaPreferences.UI).group("Fonts")
-			.addChangeListener(new GamaPreferences.IPreferenceChangeListener<GamaFont>() {
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
+			.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
 
 				@Override
 				public boolean beforeValueChange(final GamaFont newValue) {
@@ -87,10 +87,11 @@ public class PreferencesHelper {
 				}
 			});
 
-	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
+	public static Pref<String> COLOR_MENU_SORT =
 			GamaPreferences.create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING)
 					.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
-					.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
+					.addChangeListener(new IPreferenceChangeListener<String>() {
 
 						@Override
 						public boolean beforeValueChange(final String newValue) {
@@ -111,9 +112,10 @@ public class PreferencesHelper {
 							// GamaColorMenu.instance.reset();
 						}
 					});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
+	public static Pref<Boolean> COLOR_MENU_REVERSE =
 			GamaPreferences.create("pref_menu_colors_reverse", "Reverse order", false, IType.BOOL)
-					.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
+					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 						@Override
 						public boolean beforeValueChange(final Boolean newValue) {
@@ -126,9 +128,10 @@ public class PreferencesHelper {
 							// GamaColorMenu.instance.reset();
 						}
 					});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
-			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI)
-					.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+	public static Pref<Boolean> COLOR_MENU_GROUP =
+			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
+					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 						@Override
 						public boolean beforeValueChange(final Boolean newValue) {
@@ -141,10 +144,11 @@ public class PreferencesHelper {
 							// GamaColorMenu.instance.reset();
 						}
 					});
-	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
+	public static final Pref<Boolean> NAVIGATOR_METADATA = GamaPreferences
 			.create("pref_navigator_display_metadata", "Display metadata of data and GAML files in navigator", true,
 					IType.BOOL)
-			.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
+			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 				@Override
 				public boolean beforeValueChange(final Boolean newValue) {
@@ -166,9 +170,10 @@ public class PreferencesHelper {
 	public static void initialize() {
 		final int memory = readMaxMemoryInMegabytes();
 		if (memory > 0) {
-			final GamaPreferences.Entry<Integer> p = GamaPreferences
-					.create("pref_memory_max", "Maximum memory allocated to GAMA in megabytes", memory, 1)
-					.in(GamaPreferences.EXPERIMENTAL).group("Memory (restart GAMA for it to take effect)");
+			final Pref<Integer> p = GamaPreferences
+					.create("pref_memory_max",
+							"Maximum memory allocated to GAMA in megabytes (restart to enable changes)", memory, 1)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
 			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 				@Override

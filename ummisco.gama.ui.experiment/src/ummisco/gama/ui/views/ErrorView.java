@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ErrorView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ErrorView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,11 +29,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.resources.GamaColors;
@@ -46,8 +45,8 @@ import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException> implements IGamaView.Error {
 
 	public static String ID = IGui.ERROR_VIEW_ID;
-	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
-	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
+	int numberOfDisplayedErrors = GamaPreferences.Runtime.CORE_ERRORS_NUMBER.getValue();
+	boolean mostRecentFirst = GamaPreferences.Runtime.CORE_RECENT.getValue();
 
 	@Override
 	protected boolean areItemsClosable() {
@@ -67,8 +66,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	@Override
-	public void ownCreatePartControl(final Composite view) {
-	}
+	public void ownCreatePartControl(final Composite view) {}
 
 	@Override
 	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
@@ -88,8 +86,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			}
 
 			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-			}
+			public void widgetDefaultSelected(final SelectionEvent e) {}
 		});
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
@@ -126,12 +123,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	@Override
-	public void pauseItem(final GamaRuntimeException obj) {
-	}
+	public void pauseItem(final GamaRuntimeException obj) {}
 
 	@Override
-	public void resumeItem(final GamaRuntimeException obj) {
-	}
+	public void resumeItem(final GamaRuntimeException obj) {}
 
 	@Override
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
@@ -155,9 +150,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		final List<GamaRuntimeException> errors = new ArrayList<>();
 		final List<GamaRuntimeException> exceptions = getExceptionHandler().getCleanExceptions();
 		final int size = exceptions.size();
-		if (size == 0) {
-			return errors;
-		}
+		if (size == 0) { return errors; }
 		final int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;

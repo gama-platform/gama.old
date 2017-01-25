@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ChartOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ChartOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -84,7 +83,6 @@ public abstract class ChartOutput {
 
 	// copy from previous dataLayerStatement
 
-	StringBuilder history;
 	static String chartFolder = "charts";
 
 	final Map<String, Integer> expressions_index = new HashMap<>();
@@ -92,16 +90,15 @@ public abstract class ChartOutput {
 
 	// HashMap<String,Object> chartParameters=new HashMap<String,Object>();
 
-	public abstract BufferedImage getImage(IScope scope, int sizex, int sizey);
+	public abstract BufferedImage getImage(IScope scope, int sizex, int sizey, boolean antiAlias);
 
 	public ChartOutput(final IScope scope, final String name, final IExpression typeexp) {
 		final String t = typeexp == null ? IKeyword.SERIES : Cast.asString(scope, typeexp.value(scope));
 		type = IKeyword.SERIES.equals(t) ? SERIES_CHART
 				: IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
 						: IKeyword.RADAR.equals(t) ? RADAR_CHART
-								: IKeyword.PIE.equals(t) ? PIE_CHART
-										: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
-												: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
+								: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t)
+										? BOX_WHISKER_CHART : IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
 		axesColor = new GamaColor(Color.black);
 	}
 
@@ -224,17 +221,12 @@ public abstract class ChartOutput {
 	}
 
 	int toFontStyle(final String style) {
-		if (style.equals("bold")) {
-			return Font.BOLD;
-		}
-		if (style.equals("italic")) {
-			return Font.ITALIC;
-		}
+		if (style.equals("bold")) { return Font.BOLD; }
+		if (style.equals("italic")) { return Font.ITALIC; }
 		return Font.PLAIN;
 	}
 
 	public void initChart(final IScope scope, final String chartname) {
-		history = new StringBuilder(500);
 		chname = chartname;
 
 	}

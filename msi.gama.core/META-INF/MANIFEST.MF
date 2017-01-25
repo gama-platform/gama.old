@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.guava
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
+ msi.gama.common.geometry,
  msi.gama.common.interfaces;
   uses:="org.eclipse.emf.ecore.resource,
    msi.gama.precompiler,
@@ -30,6 +31,7 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions",
+ msi.gama.common.preferences,
  msi.gama.common.util;
   uses:="msi.gama.precompiler,
    msi.gama.util.random,
