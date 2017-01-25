@@ -212,18 +212,18 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public boolean hasAttribute(final Object key) {
-		return getGeometry().hasAttribute(String.valueOf(key));
+	public boolean hasAttribute(final String key) {
+		return getGeometry().hasAttribute(key);
 	}
 
 	@Override
-	public Object getAttribute(final Object key) {
-		return getGeometry().getAttribute(String.valueOf(key));
+	public Object getAttribute(final String key) {
+		return getGeometry().getAttribute(key);
 	}
 
 	@Override
-	public void setAttribute(final Object name, final Object val) {
-		getOrCreateAttributes().put(String.valueOf(name), val);
+	public void setAttribute(final String name, final Object val) {
+		getOrCreateAttributes().put(name, val);
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'SavedAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'SavedAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -25,8 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 
 /**
- * A helper class to save agent and restore/recreate agent as a member of a
- * population.
+ * A helper class to save agent and restore/recreate agent as a member of a population.
  */
 public class SavedAgent {
 
@@ -100,12 +98,12 @@ public class SavedAgent {
 				// geometry.
 				// We cannot keep all the GamaShape, because it contains
 				// populations too.
-				final GamaShape shape = new GamaShape(
-						((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
+				final GamaShape shape =
+						new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 
 				if (agent.getAttributes() != null) {
-					for (final Object keyAttr : agent.getAttributes().keySet()) {
-						final String attrName = (String) keyAttr;
+					for (final String keyAttr : agent.getAttributes().keySet()) {
+						final String attrName = keyAttr;
 						if (UNSAVABLE_VARIABLES.contains(attrName)) {
 							continue;
 						}
@@ -185,8 +183,8 @@ public class SavedAgent {
 						microAttrs.add(sa.variables);
 					}
 
-					final List<? extends IAgent> microAgents = microPop.createAgents(scope, savedMicros.size(),
-							microAttrs, true, true);
+					final List<? extends IAgent> microAgents =
+							microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
 
 					for (int i = 0; i < microAgents.size(); i++) {
 						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));

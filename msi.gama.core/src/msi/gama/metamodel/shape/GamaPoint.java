@@ -346,15 +346,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public Object getAttribute(final Object key) {
+	public Object getAttribute(final String key) {
 		return null;
 	}
 
 	@Override
-	public void setAttribute(final Object key, final Object value) {}
+	public void setAttribute(final String key, final Object value) {}
 
 	@Override
-	public boolean hasAttribute(final Object key) {
+	public boolean hasAttribute(final String key) {
 		return false;
 	}
 

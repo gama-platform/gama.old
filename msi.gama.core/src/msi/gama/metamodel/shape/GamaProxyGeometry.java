@@ -160,7 +160,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IAttributed#getAttribute(java.lang.Object)
 	 */
 	@Override
-	public Object getAttribute(final Object key) {
+	public Object getAttribute(final String key) {
 		if (attributes == null) { return null; }
 		return attributes.get(key);
 		// return getReferenceGeometry().getAttribute(key);
@@ -172,7 +172,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IAttributed#setAttribute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void setAttribute(final Object key, final Object value) {
+	public void setAttribute(final String key, final Object value) {
 		getOrCreateAttributes().put(key, value);
 		// getReferenceGeometry().setAttribute(key, value);
 	}
@@ -183,7 +183,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IAttributed#hasAttribute(java.lang.Object)
 	 */
 	@Override
-	public boolean hasAttribute(final Object key) {
+	public boolean hasAttribute(final String key) {
 		return attributes != null && attributes.containsKey(key);
 		// return getReferenceGeometry().hasAttribute(key);
 	}

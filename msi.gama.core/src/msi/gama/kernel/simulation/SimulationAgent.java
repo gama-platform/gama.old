@@ -374,7 +374,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
 		if (microSpec == null) { return null; }
 		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
-		setAttribute(microSpec, pop);
+		setAttribute(speciesName, pop);
 		pop.initializeFor(getScope());
 		return pop;
 	}
