@@ -46,6 +46,13 @@ public class GamaDateType extends GamaType<GamaDate> {
 			Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
 	public static final GamaDate EPOCH = GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
 
+	// public static final ZoneOffset DEFAULT_OFFSET_IN_SECONDS = ZoneOffset.UTC; // ofTotalSeconds(0);
+	// public static final ZoneId DEFAULT_ZONE =
+	// ZoneId.ofOffset("UTC", DEFAULT_OFFSET_IN_SECONDS);/* ZoneId.ofOffset("", DEFAULT_OFFSET_IN_SECONDS); */
+	// // Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
+	// public static final GamaDate EPOCH = /** GamaDate.of(LocalDateTime.of(1970, 1, 1, 0, 0)); **/
+	// GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
+
 	@Override
 	public GamaDate cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {

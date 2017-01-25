@@ -25,13 +25,15 @@ import static java.time.temporal.ChronoUnit.WEEKS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalQueries;
+import java.time.temporal.TemporalQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +72,7 @@ public class Dates {
 	public static final String DEFAULT_KEY = "DEFAULT";
 	public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ISO_SIMPLE_FORMAT = "yy-MM-dd HH:mm:ss";
+	private static final DurationFormatter DURATION_FORMATTER = new DurationFormatter();
 
 	public static HashMap<String, DateTimeFormatter> FORMATTERS = new HashMap<String, DateTimeFormatter>() {
 		{
@@ -862,59 +865,76 @@ public class Dates {
 		private static final DateTimeFormatter HMS = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 		static String format(final Duration duration) {
-			return new DurationFormatter(duration).toString();
+			return DURATION_FORMATTER.toString(duration);
 		}
 
 		private Temporal temporal;
-		private final Duration duration;
 
-		private DurationFormatter(final Duration duration) {
-			this(duration, null);
-		}
-
-		private DurationFormatter(final Duration duration, final DateTimeFormatter df) {
-			this.duration = duration;
-			this.temporal = duration.addTo(Dates.DATES_STARTING_DATE.getValue());
-			if (duration.toDays() == 0l)
-				temporal = LocalTime.from(temporal);
+		private String toString(final Duration duration) {
+			this.temporal = duration.addTo(Dates.DATES_STARTING_DATE.getValue())
+					.minus(GamaDateType.DEFAULT_OFFSET_IN_SECONDS.getTotalSeconds(), SECONDS);
+			// if (duration.toDays() == 0l)
+			// temporal = LocalDateTime.(temporal);
+			return toString();
 		}
 
 		private DateTimeFormatter getFormatter() {
-			if (isSupported(YEAR))
-				return YMDHMS;
-			if (isSupported(MONTH_OF_YEAR)) {
-				if (getLong(MONTH_OF_YEAR) < 2) {
-					if (getLong(DAY_OF_MONTH) < 2) {
+			if (getLong(YEAR) > 0) { return YMDHMS; }
+			final long month = getLong(MONTH_OF_YEAR);
+			final long day = getLong(DAY_OF_MONTH);
+			if (month > 0) {
+				if (month < 2) {
+					if (day < 2)
 						return M1D1HMS;
-					} else
+					else
 						return M1DHMS;
-				}
-				return MDHMS;
+				} else
+					return MDHMS;
 			}
-			if (isSupported(DAY_OF_MONTH))
-				if (getLong(DAY_OF_MONTH) < 2)
+			if (day > 0) {
+				if (day < 2) {
 					return D1HMS;
-				else
+				} else
 					return DHMS;
+			}
 			return HMS;
 		}
 
 		@Override
 		public boolean isSupported(final TemporalField field) {
-			if (!temporal.isSupported(field))
-				return false;
-			final long value = temporal.getLong(field) - Dates.DATES_STARTING_DATE.getValue().getLong(field);
-			return value != 0l;
+			return temporal.isSupported(field);
 		}
 
 		@Override
 		public long getLong(final TemporalField field) {
-			return temporal.getLong(field) - Dates.DATES_STARTING_DATE.getValue().getLong(field);
+			if (field == SECOND_OF_MINUTE) {
+				return temporal.getLong(SECOND_OF_MINUTE);
+			} else if (field == MINUTE_OF_HOUR) {
+				return temporal.getLong(MINUTE_OF_HOUR);
+			} else if (field == HOUR_OF_DAY) {
+				return temporal.getLong(HOUR_OF_DAY);
+			} else if (field == DAY_OF_MONTH) {
+				return temporal.getLong(DAY_OF_MONTH) - 1l;
+			} else if (field == MONTH_OF_YEAR) {
+				return temporal.getLong(MONTH_OF_YEAR) - 1;
+			} else if (field == YEAR)
+				return temporal.getLong(YEAR) - Dates.DATES_STARTING_DATE.getValue().getLong(YEAR);
+			return 0;
 		}
 
 		@Override
 		public String toString() {
 			return getFormatter().format(this);
+		}
+
+		@SuppressWarnings ("unchecked")
+		@Override
+		public <R> R query(final TemporalQuery<R> query) {
+			if (query == TemporalQueries.precision())
+				return (R) SECONDS;
+			if (query == TemporalQueries.chronology()) { return (R) IsoChronology.INSTANCE; }
+			if (query == TemporalQueries.zone() || query == TemporalQueries.zoneId()) { return null; }
+			return query.queryFrom(this);
 		}
 
 	}
