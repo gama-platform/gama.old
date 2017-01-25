@@ -14,10 +14,12 @@ import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
 import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
 import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
-import static msi.gama.common.geometry.GeometryUtils.triangulationSimple;
+import static msi.gama.common.geometry.GeometryUtils.simplifiedTriangulation;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Objects;
@@ -61,8 +63,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					.build(new CacheLoader<Polygon, Collection<Polygon>>() {
 
 						@Override
-						public Collection<Polygon> load(final Polygon key) throws Exception {
-							return triangulationSimple(null, key);
+						public Collection<Polygon> load(final Polygon polygon) throws Exception {
+							final List<Polygon> TRIANGLES = new ArrayList<>();
+							simplifiedTriangulation(polygon, TRIANGLES);
+							return TRIANGLES;
 						}
 					});
 

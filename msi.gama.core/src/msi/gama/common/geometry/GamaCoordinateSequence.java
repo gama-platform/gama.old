@@ -12,8 +12,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.geometry.ICoordinates.IndexedVisitor;
-import msi.gama.common.geometry.ICoordinates.PairVisitor;
 import msi.gama.metamodel.shape.GamaPoint;
 
 /**
@@ -414,6 +412,23 @@ public class GamaCoordinateSequence implements ICoordinates {
 			result += points[i].euclidianDistanceTo(points[i - 1]);
 		}
 		return result;
+	}
+
+	@Override
+	public void setAllZ(final double elevation) {
+		for (int i = 0; i < points.length; i++) {
+			points[i].z = elevation;
+		}
+
+	}
+
+	@Override
+	public boolean isCoveredBy(final Envelope3D env) {
+		for (int i = 0; i < points.length; i++) {
+			if (!env.covers(points[i]))
+				return false;
+		}
+		return true;
 	}
 
 }

@@ -212,4 +212,8 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	boolean isHorizontal();
 
 	double getLength();
+
+	void setAllZ(double elevation);
+
+	boolean isCoveredBy(Envelope3D envelope3d);
 }

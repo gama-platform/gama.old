@@ -78,7 +78,7 @@ public class Projection implements IProjection {
 		Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
 		if (transformer != null) {
 			try {
-				geom = transformer.transform(g);
+				geom = transformer.transform(geom);
 			} catch (final TransformException e) {
 				e.printStackTrace();
 			}

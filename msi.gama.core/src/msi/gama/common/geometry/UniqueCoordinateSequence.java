@@ -8,8 +8,6 @@ import com.google.common.collect.Iterators;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.geometry.ICoordinates.IndexedVisitor;
-import msi.gama.common.geometry.ICoordinates.PairVisitor;
 import msi.gama.metamodel.shape.GamaPoint;
 
 /**
@@ -184,6 +182,17 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public double getLength() {
 		return 0;
+	}
+
+	@Override
+	public void setAllZ(final double elevation) {
+		point.z = elevation;
+
+	}
+
+	@Override
+	public boolean isCoveredBy(final Envelope3D env) {
+		return env.covers(point);
 	}
 
 }
