@@ -187,7 +187,10 @@ public class MovingSkill extends Skill {
 	
 	@getter ("real_speed")
 	public double getRealSpeed(final IAgent agent) {
-		return (Double) agent.getAttribute("real_speed");
+		if (agent == null) return 0.0;
+		Double rs =  (Double) agent.getAttribute("real_speed");
+		if (rs != null) return rs;
+		return 0.0;
 	}
 	
 	@setter ("current_path")
