@@ -18,6 +18,7 @@ import static msi.gama.common.geometry.GeometryUtils.triangulationSimple;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
@@ -56,13 +57,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	private static final double POINT_COS = Math.cos(POINT_THETA);
 	private static final double POINT_SIN = Math.sin(POINT_THETA);
 	private final LoadingCache<Polygon, Collection<Polygon>> TRIANGULATION_CACHE =
-			CacheBuilder.newBuilder().build(new CacheLoader<Polygon, Collection<Polygon>>() {
+			CacheBuilder.newBuilder().initialCapacity(5000).maximumSize(5000).expireAfterAccess(2, TimeUnit.SECONDS)
+					.build(new CacheLoader<Polygon, Collection<Polygon>>() {
 
-				@Override
-				public Collection<Polygon> load(final Polygon key) throws Exception {
-					return triangulationSimple(null, key);
-				}
-			});
+						@Override
+						public Collection<Polygon> load(final Polygon key) throws Exception {
+							return triangulationSimple(null, key);
+						}
+					});
 
 	final ICoordinates pointVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(10, 3);
 	final ICoordinates quadVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
