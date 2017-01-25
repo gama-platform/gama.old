@@ -44,9 +44,11 @@ import com.vividsolutions.jts.awt.PointTransformation;
 import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.Puntal;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -259,15 +261,28 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawShape(final IShape geometry, final ShapeDrawingAttributes attributes) {
 		if (geometry == null) { return null; }
+		final Geometry inner = geometry.getInnerGeometry();
+		return drawShape(inner, attributes);
+	}
+
+	private Rectangle2D drawShape(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+		if (geometry == null) { return null; }
+		if (geometry instanceof GeometryCollection) {
+			final Rectangle2D result = new Rectangle2D.Double();
+			GeometryUtils.applyToInnerGeometries(geometry, (g) -> result.add(drawShape(g, attributes)));
+			return result;
+		}
 		GamaColor border = attributes.getBorder();
+		if (border == null && attributes.isEmpty()) {
+			border = attributes.getColor();
+		}
 		if (highlight) {
 			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
 			if (border != null)
 				border = attributes.getColor();
 		}
-		final Geometry geom = geometry.getInnerGeometry();
-		final boolean isLine = geom instanceof Lineal || geom instanceof Puntal;
-		final Shape s = sw.toShape(geom);
+		final boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
+		final Shape s = sw.toShape(geometry);
 		try {
 			final Rectangle2D r = s.getBounds2D();
 			currentRenderer.setColor(attributes.getColor());
