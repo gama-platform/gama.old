@@ -96,10 +96,10 @@ import msi.gaml.types.Types;
 				init = "nil",
 				doc = @doc ("Represents the agent/geometry on which the agent is located (only used with a graph)")),
 		@var (
-				name = "real_speed",
+				name = IKeyword.REAL_SPEED,
 				type = IType.FLOAT,
 				init = "0.0",
-				doc = @doc ("real speed of the agent (in meter/second)")),
+				doc = @doc ("Represents the actual speed of the agent (in meter/second)")),
 	
 		@var (
 				name = IKeyword.DESTINATION,
@@ -148,6 +148,13 @@ public class MovingSkill extends Skill {
 		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.SPEED);
 	}
+	
+	@getter (IKeyword.REAL_SPEED)
+	public double getRealSpeed(final IAgent agent) {
+		if (agent == null) return 0.0;
+		return  (Double) agent.getAttribute(IKeyword.REAL_SPEED);
+	}
+	
 
 	@setter (IKeyword.SPEED)
 	public void setSpeed(final IAgent agent, final double s) {
@@ -155,6 +162,12 @@ public class MovingSkill extends Skill {
 		agent.setAttribute(IKeyword.SPEED, s);
 	}
 	
+	
+	@setter (IKeyword.REAL_SPEED)
+	public void setRealSpeed(final IAgent agent, final double s) {
+		if (agent == null) { return; }
+		agent.setAttribute(IKeyword.REAL_SPEED, s);
+	}
 	
 
 	@getter (
@@ -180,18 +193,8 @@ public class MovingSkill extends Skill {
 		agent.setLocation(p);
 	}
 
-	@setter ("real_speed")
-	public void setCurrentPath(final IAgent agent, final Double s) {
-		// READ_ONLY
-	}
 	
-	@getter ("real_speed")
-	public double getRealSpeed(final IAgent agent) {
-		if (agent == null) return 0.0;
-		Double rs =  (Double) agent.getAttribute("real_speed");
-		if (rs != null) return rs;
-		return 0.0;
-	}
+	
 	
 	@setter ("current_path")
 	public void setCurrentPath(final IAgent agent, final IPath p) {
@@ -387,7 +390,7 @@ public class MovingSkill extends Skill {
 			// Enable to use wander in 3D space. An agent will wander in the
 			// plan define by its z value.
 			((GamaPoint) loc).z = agent.getLocation().getZ();
-			agent.setAttribute("real_speed", (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
+			agent.setAttribute(IKeyword.REAL_SPEED, (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
 			
 			setLocation(agent, loc);
 			if (newHeading != null) {
@@ -442,7 +445,7 @@ public class MovingSkill extends Skill {
 			// GamaList.with(location, loc));
 			setLocation(agent, loc);
 		}
-		agent.setAttribute("real_speed", (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
+		agent.setAttribute(IKeyword.REAL_SPEED, (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
 		
 		// scope.setStatus(loc == null ? ExecutionStatus.failure :
 		// ExecutionStatus.success);
@@ -941,7 +944,7 @@ public class MovingSkill extends Skill {
 			}
 			indexSegment = 1;
 		}
-		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
+		agent.setAttribute(IKeyword.REAL_SPEED, (travelledDist/scope.getClock().getStepInSeconds()));
 		
 		agent.setAttribute("index_on_path", index);
 		setCurrentEdge(agent, graph);
@@ -1035,7 +1038,8 @@ public class MovingSkill extends Skill {
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
-		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
+		agent.setAttribute(IKeyword.REAL_SPEED, (travelledDist/scope.getClock().getStepInSeconds()));
+		
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
 		path.setSource(currentLocation.copy(scope));
@@ -1175,7 +1179,7 @@ public class MovingSkill extends Skill {
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
 		path.setSource(currentLocation.copy(scope));
-		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
+		agent.setAttribute(IKeyword.REAL_SPEED, (travelledDist/scope.getClock().getStepInSeconds()));
 		
 		if (segments.isEmpty()) { return null; }
 		final IPath followedPath =
