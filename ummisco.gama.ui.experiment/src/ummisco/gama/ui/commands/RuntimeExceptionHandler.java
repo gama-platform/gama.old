@@ -33,17 +33,16 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	volatile BlockingQueue<GamaRuntimeException> incomingExceptions = new LinkedBlockingQueue<>();
 	volatile List<GamaRuntimeException> cleanExceptions = new ArrayList<>();
 	volatile boolean running;
+	volatile int remainingTime = 5000;
 
 	@Override
 	public void offer(final GamaRuntimeException ex) {
-		// System.out.println(toString() + " Offering 1 exception " +
-		// incomingExceptions.size());
+		remainingTime = 5000;
 		incomingExceptions.offer(ex);
 	}
 
 	@Override
 	public void clearErrors() {
-		// System.out.println(toString() + " Clearing");
 		incomingExceptions.clear();
 		cleanExceptions.clear();
 		updateUI(null);
@@ -52,18 +51,20 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
 		while (running) {
-			while (incomingExceptions.isEmpty() && running) {
+			while (incomingExceptions.isEmpty() && running && remainingTime > 0) {
 				try {
-					// System.out.println(toString() + " Waiting..." +
-					// incomingExceptions.size());
 					Thread.sleep(500);
+					remainingTime -= 500;
 				} catch (final InterruptedException e) {
 					return Status.OK_STATUS;
 				}
 			}
 			if (!running)
 				return Status.CANCEL_STATUS;
-			// System.out.println("Processing");
+			if (remainingTime <= 0) {
+				stop();
+				return Status.OK_STATUS;
+			}
 			process();
 		}
 		return Status.OK_STATUS;
@@ -71,7 +72,6 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	@Override
 	public void stop() {
-		// System.out.println("Handler stopped");
 		running = false;
 	}
 
