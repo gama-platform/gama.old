@@ -618,6 +618,7 @@ Export-Package: com.kitfox.svg;
  org.opengis.feature.type,
  org.opengis.filter,
  org.opengis.filter.expression,
+ org.opengis.filter.identity,
  org.opengis.geometry,
  org.opengis.metadata,
  org.opengis.referencing,
