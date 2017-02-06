@@ -237,13 +237,8 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		// Opens directly an inspector
 		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, StringUtils.toGamlString("Inspect: "),
 				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE, StringUtils.toGamlString(a.getSpeciesName()+" at "+a.getIndex())).validate());
-		String expr =a.getSpeciesName()+" at "+a.getIndex();
-		if ( a instanceof SimulationAgent) {
-			expr = IKeyword.WORLD_AGENT_NAME;
-		}else if (a instanceof ExperimentAgent ) {
-			expr = IKeyword.WORLD_AGENT_NAME +".host";
-		}
-		setValue(GAML.compileExpression(expr, a,true));
+		Object expr =a.get(a.getScope(), ""+a.getIndex());
+		setValue((IExpression) expr);
 		lastValue = a;
 	}
 
