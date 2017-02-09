@@ -470,12 +470,23 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		float[] coords3 = new float[] { 1, 0 }; // top-right
 		float[] coords4 = new float[] { 1, 1 }; // bottom-right
 		if (data.getKeystone() != null) {
-			coords1 =
+			//FIXME: AG (9/02/17) Try to understand the keystone. Put some logic in the coordinates sequences 
+			//(keep it for now, in any case but the following comment might be removed at some point)
+			/*coords1 =
 					new float[] { (float) data.getKeystone().get(2).getX(), (float) data.getKeystone().get(2).getY() };
 			coords2 =
 					new float[] { (float) data.getKeystone().get(0).getX(), (float) data.getKeystone().get(0).getY() };
 			coords3 =
 					new float[] { (float) data.getKeystone().get(1).getX(), (float) data.getKeystone().get(1).getY() };
+			coords4 =
+					new float[] { (float) data.getKeystone().get(3).getX(), (float) data.getKeystone().get(3).getY() };*/
+			
+			coords1 =
+					new float[] { (float) data.getKeystone().get(0).getX(), (float) data.getKeystone().get(0).getY() };
+			coords2 =
+					new float[] { (float) data.getKeystone().get(1).getX(), (float) data.getKeystone().get(1).getY() };
+			coords3 =
+					new float[] { (float) data.getKeystone().get(2).getX(), (float) data.getKeystone().get(2).getY() };
 			coords4 =
 					new float[] { (float) data.getKeystone().get(3).getX(), (float) data.getKeystone().get(3).getY() };
 		}
