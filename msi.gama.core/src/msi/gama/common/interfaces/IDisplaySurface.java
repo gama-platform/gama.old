@@ -45,6 +45,16 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 		 * @return the position of the camera
 		 */
 		ILocation getCameraPosition();
+		
+		/**
+		 * @return the look position of the camera
+		 */
+		ILocation getCameraLookPosition();
+		
+		/**
+		 * @return the upvector of the camera
+		 */
+		ILocation getCameraUpVector();
 
 		Envelope3D getROIDimensions();
 

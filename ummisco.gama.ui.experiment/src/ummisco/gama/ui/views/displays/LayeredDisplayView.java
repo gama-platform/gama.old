@@ -507,8 +507,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
 			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			final ILocation camera = ds.getCameraPosition();
-			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
-					camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
+			final ILocation cameraLook = ds.getCameraLookPosition();
+			final ILocation cameraUpVector = ds.getCameraUpVector();
+			result = result + String.format("Zoom %d%% | [%.2f;%.2f;%.2f] | [%.2f;%.2f;%.2f] | [%.2f;%.2f;%.2f]", getZoomLevel(), 
+					camera.getX(),camera.getY(), camera.getZ(), 
+					cameraLook.getX(),cameraLook.getY(), cameraLook.getZ(),
+					cameraUpVector.getX(),cameraUpVector.getY(), cameraUpVector.getZ()/* , camera.getTheta(), camera.getPhi() */);
 			if (roi != null) {
 				result = result + " ROI [" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2)
 						+ "]";

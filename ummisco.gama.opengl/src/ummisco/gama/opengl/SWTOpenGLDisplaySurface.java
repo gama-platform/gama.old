@@ -502,6 +502,28 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (renderer.camera == null) { return new GamaPoint(0, 0, 0); }
 		return renderer.camera.getPosition();
 	}
+	
+	/**
+	 * Method getCameraLookPosition()
+	 * 
+	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraLookPosition()
+	 */
+	@Override
+	public ILocation getCameraLookPosition() {
+		if (renderer.camera == null) { return new GamaPoint(0, 0, 0); }
+		return renderer.camera.getTarget();
+	}
+	/**
+	 * Method getCameraUpVector()
+	 * 
+	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraUpVector()
+	 */
+	@Override
+	public ILocation getCameraUpVector() {
+		if (renderer.camera == null) { return new GamaPoint(0, 0, 0); }
+		return renderer.camera.getOrientation();
+	}
+	
 
 	/**
 	 * Method setPaused()
@@ -784,5 +806,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// Nothing to do (taken in charge by the camera
 
 	}
+
+	
 
 }
