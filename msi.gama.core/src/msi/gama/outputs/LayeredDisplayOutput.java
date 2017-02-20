@@ -110,9 +110,9 @@ import msi.gaml.types.Types;
 						doc = @doc ("Indicates the condition under which this output should be refreshed (default is true)")),
 				@facet (
 						name = IKeyword.FULLSCREEN,
-						type = IType.BOOL,
+						type = { IType.BOOL, IType.INT },
 						optional = true,
-						doc = @doc ("Indicates whether or not the display should cover the whole screen (default is false")),
+						doc = @doc ("Indicates, when using a boolean value, whether or not the display should cover the whole screen (default is false). If an integer is passed, specifies also the screen to use: 0 for the primary monitor, 1 for the secondary one, and so on and so forth. If the monitor is not available, the first one is used")),
 
 				@facet (
 						name = IKeyword.ZFIGHTING,
@@ -537,7 +537,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression fs = getFacet(IKeyword.FULLSCREEN);
 		if (fs != null) {
-			this.data.setFullScreen(Cast.asBool(scope, fs.value(scope)));
+			int monitor;
+			if (fs.getType() == Types.BOOL) {
+				monitor = Cast.asBool(scope, fs.value(scope)) ? 0 : -1;
+			} else
+				monitor = Cast.asInt(scope, fs.value(scope));
+			this.data.setFullScreen(monitor);
 		}
 
 		SimulationAgent sim = getScope().getSimulation();

@@ -118,7 +118,7 @@ public class LayeredDisplayData {
 	 */
 
 	private boolean isDisplayingScale = GamaPreferences.Displays.CORE_SCALE.getValue();
-	private boolean isFullScreen = false;
+	private int fullScreen = -1;
 
 	/**
 	 *
@@ -626,12 +626,12 @@ public class LayeredDisplayData {
 			notifyListeners(Changes.ZOOM, this.zoomLevel);
 	}
 
-	public boolean isFullScreen() {
-		return isFullScreen;
+	public int fullScreen() {
+		return fullScreen;
 	}
 
-	public void setFullScreen(final boolean fs) {
-		isFullScreen = fs;
+	public void setFullScreen(final int fs) {
+		fullScreen = fs;
 	}
 
 	public void setKeystone(final List<GamaPoint> value) {

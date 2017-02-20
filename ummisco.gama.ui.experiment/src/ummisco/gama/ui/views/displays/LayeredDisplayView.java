@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -128,7 +129,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
 			this.setFocus();
-
 		} else {
 			createFullScreenShell();
 			normalParentOfFullScreenControl = controlToSetFullScreen().getParent();
@@ -166,10 +166,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	private void createFullScreenShell() {
 		if (fullScreenShell != null)
 			return;
+		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
+		int monitorId = getOutput().getData().fullScreen();
+		if (monitorId < 0)
+			monitorId = 0;
+		if (monitorId > monitors.length - 1)
+			monitorId = monitors.length - 1;
+
 		fullScreenShell = new Shell(WorkbenchHelper.getDisplay(),
 				(GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL)
 						| SWT.NO_TRIM);
-		fullScreenShell.setBounds(WorkbenchHelper.getDisplay().getBounds());
+		fullScreenShell.setBounds(monitors[monitorId].getBounds());
 
 		// fullScreenShell.setMaximized(true);
 		final GridLayout gl = new GridLayout(1, true);
@@ -389,7 +396,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		WorkbenchHelper.getWindow().addPerspectiveListener(perspectiveListener);
 		keyAndMouseListener = new LayeredDisplayMultiListener(this);
 		menuManager = new DisplaySurfaceMenu(getDisplaySurface(), parent, this);
-		if (getOutput().getData().isFullScreen()) {
+		if (getOutput().getData().fullScreen() > -1) {
 			toggleFullScreen();
 		}
 	}
