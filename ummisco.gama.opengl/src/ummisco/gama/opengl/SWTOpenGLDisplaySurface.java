@@ -782,9 +782,4 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	}
 
-	@Override
-	public boolean inKeystoneMode() {
-		return renderer.camera.inKeystoneMode();
-	}
-
 }
