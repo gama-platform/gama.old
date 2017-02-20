@@ -17,6 +17,7 @@ import java.util.HashMap;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -88,7 +89,7 @@ abstract class AbstractTransformer {
 		this.coordsForBorder = new float[0];
 
 		this.depth = Objects.firstNonNull(object.getHeight(), 0.0);
-		this.pickingId = object.index;
+		this.pickingId = object.getIndex();
 		final Color c = object.getColor();
 		if (c != null)
 			this.color = new GamaColor(c, c.getAlpha() / 255.0 * layerAlpha);
@@ -103,8 +104,9 @@ abstract class AbstractTransformer {
 		this.translation = object.getLocation();
 		if (translation == null)
 			translation = new GamaPoint(0, 0, 0); // ex : charts
-		this.rotation = object.getRotationAngle() == null ? null
-				: new GamaPair<>(object.getRotationAngle(), object.getRotationAxis(), Types.FLOAT, Types.POINT);
+		final AxisAngle rot = object.getRotation();
+		// Change to a negative rotation to fix Issue #1514
+		this.rotation = rot == null ? null : new GamaPair<>(rot.getAngle(), rot.getAxis(), Types.FLOAT, Types.POINT);
 		this.isWireframe = !object.isFilled();
 	}
 

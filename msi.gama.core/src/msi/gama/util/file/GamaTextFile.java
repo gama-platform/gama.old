@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaTextFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaTextFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -16,8 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -30,9 +28,13 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "text", extensions = { "txt", "data",
-		"text" }, buffer_type = IType.LIST, buffer_content = IType.STRING, buffer_index = IType.INT, concept = {
-				IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
+@file (
+		name = "text",
+		extensions = { "txt", "data", "text" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.STRING,
+		buffer_index = IType.INT,
+		concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
 public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -66,9 +68,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			final IList<String> allLines = GamaListFactory.create(Types.STRING);
 			String str = in.readLine();
@@ -103,7 +103,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

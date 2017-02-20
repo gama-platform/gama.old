@@ -9,9 +9,6 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -29,7 +26,8 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * AgentLocation.
+ * A mutable point in 3D, deriving from JTS Coordinate, that serves muliple purposes (location of agents, of geometries
+ * -- through GamaCoordinateSequence --, vectors -- see Rotation3D and AxisAngle, etc.)
  *
  * @author drogoul 11 oct. 07
  */
@@ -44,6 +42,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = 0.0d;
 		y = 0.0d;
 		z = 0.0d;
+	}
+
+	@Override
+	public GamaPoint toGamaPoint() {
+		return this;
 	}
 
 	public GamaPoint(final double... coords) {
@@ -67,14 +70,18 @@ public class GamaPoint extends Coordinate implements ILocation {
 		setLocation(al.getX(), al.getY(), al.getZ());
 	}
 
-	public void setLocation(final Vector3D al) {
-		setLocation(al.getX(), al.getY(), al.getZ());
+	public GamaPoint setLocation(final GamaPoint al) {
+		x = al.x;
+		y = al.y;
+		z = al.z;
+		return this;
 	}
 
-	public void setLocation(final double x, final double y, final double z) {
+	public GamaPoint setLocation(final double x, final double y, final double z) {
 		this.x = x;
 		this.y = y;
 		setZ(z);
+		return this;
 	}
 
 	@Override
@@ -189,22 +196,39 @@ public class GamaPoint extends Coordinate implements ILocation {
 		setZ(z + loc.getZ());
 	}
 
-	public void add(final GamaPoint loc) {
-		setX(x + loc.x);
-		setY(y + loc.y);
+	public GamaPoint add(final GamaPoint loc) {
+		x += loc.x;
+		y += loc.y;
 		setZ(z + loc.z);
+		return this;
 	}
 
-	public void multiplyBy(final double value) {
+	public GamaPoint add(final double ax, final double ay, final double az) {
+		x += ax;
+		y += ay;
+		setZ(z + az);
+		return this;
+	}
+
+	public GamaPoint subtract(final GamaPoint loc) {
+		x -= loc.x;
+		y -= loc.y;
+		setZ(z - loc.z);
+		return this;
+	}
+
+	public GamaPoint multiplyBy(final double value) {
 		x *= value;
 		y *= value;
 		setZ(z * value);
+		return this;
 	}
 
-	public void divideBy(final double value) {
+	public GamaPoint divideBy(final double value) {
 		x /= value;
 		y /= value;
 		setZ(z / value);
+		return this;
 	}
 
 	public Coordinate toCoordinate() {
@@ -380,8 +404,16 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(x - other.x, y - other.y, z - other.z);
 	}
 
+	public GamaPoint minus(final double ax, final double ay, final double az) {
+		return new GamaPoint(x - ax, y - ay, z - az);
+	}
+
 	public GamaPoint plus(final GamaPoint other) {
 		return new GamaPoint(x + other.x, y + other.y, z + other.z);
+	}
+
+	public GamaPoint plus(final double ax, final double ay, final double az) {
+		return new GamaPoint(x + ax, y + ay, z + az);
 	}
 
 	public double norm() {
@@ -403,6 +435,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(this.x / r, this.y / r, this.z / r);
 	}
 
+	public GamaPoint normalize() {
+		final double r = this.norm();
+		if (r == 0d) { return this; }
+		x = x / r;
+		y = y / r;
+		z = z / r;
+		return this;
+	}
+
 	public GamaPoint negated() {
 		return new GamaPoint(-x, -y, -z);
 	}
@@ -412,10 +453,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public final static GamaPoint cross(final GamaPoint v1, final GamaPoint v2) {
-		final double x = v1.y * v2.z - v1.z * v2.y;
-		final double y = v2.x * v1.z - v2.z * v1.x;
-		final double z = v1.x * v2.y - v1.y * v2.x;
-		return new GamaPoint(x, y, z);
+		return new GamaPoint(v1.y * v2.z - v1.z * v2.y, v2.x * v1.z - v2.z * v1.x, v1.x * v2.y - v1.y * v2.x);
 	}
 
 	/**
@@ -588,13 +626,29 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void copyShapeAttributesFrom(final IShape other) {}
 
-	public Vector3D toVector3D() {
-		return new Vector3D(x, y, z);
+	public GamaPoint crossProduct(final GamaPoint u2) {
+		return cross(this, u2);
 	}
 
-	public void applyRotation(final Rotation r) {
-		final Vector3D v = toVector3D();
-		setLocation(r.applyTo(v));
+	public double dotProduct(final GamaPoint u2) {
+		return dotProduct(this, u2);
+	}
+
+	public GamaPoint orthogonal() {
+
+		final double threshold = 0.6 * norm();
+		if (threshold == 0) { return this; }
+
+		if (Math.abs(x) <= threshold) {
+			final double inverse = 1 / Math.sqrt(y * y + z * z);
+			return new GamaPoint(0, inverse * z, -inverse * y);
+		} else if (Math.abs(y) <= threshold) {
+			final double inverse = 1 / Math.sqrt(x * x + z * z);
+			return new GamaPoint(-inverse * z, 0, inverse * x);
+		}
+		final double inverse = 1 / Math.sqrt(x * x + y * y);
+		return new GamaPoint(inverse * y, -inverse * x, 0);
+
 	}
 
 }

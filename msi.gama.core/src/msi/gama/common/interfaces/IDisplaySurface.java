@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -54,6 +53,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 
 		void selectionIn(Envelope3D env);
 
+		boolean inKeystoneMode();
+
 	}
 
 	public static final double SELECTION_SIZE = 5; // pixels
@@ -64,8 +65,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 	void dispose();
 
 	/**
-	 * Asks the surface to update its display, optionnaly forcing it to do so
-	 * (if it is paused, for instance)
+	 * Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance)
 	 **/
 	void updateDisplay(boolean force);
 
@@ -151,14 +151,12 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 	int getFPS();
 
 	/**
-	 * @return true if the surface is considered as "realized" (i.e. displayed
-	 *         on the UI)
+	 * @return true if the surface is considered as "realized" (i.e. displayed on the UI)
 	 */
 	boolean isRealized();
 
 	/**
-	 * @return true if the surface has been "rendered" (i.e. all the layers have
-	 *         been displayed)
+	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
 	 */
 	boolean isRendered();
 

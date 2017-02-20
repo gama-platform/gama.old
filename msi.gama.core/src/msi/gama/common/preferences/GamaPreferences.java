@@ -360,9 +360,9 @@ public class GamaPreferences {
 		public static final Pref<Integer> OPENGL_FPS =
 				create("pref_display_max_fps", "Set the maximum number of frames per second to display", 20, IType.INT)
 						.in(NAME, OPTIONS);
-		public static final Pref<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
-				"Enable OpenGL background loading of textures (faster, but can cause issues on Linux and Windows)",
-				false, IType.BOOL).in(NAME, OPTIONS);
+		// public static final Pref<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
+		// "Enable OpenGL background loading of textures (faster, but can cause issues on Linux and Windows)",
+		// false, IType.BOOL).in(NAME, OPTIONS);
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces the dimensions of OpenGL textures to be power of 2 (e.g. 8x8, 16x16, etc. Necessary on some hardware configurations)",
 				false, IType.BOOL).in(NAME, OPTIONS);

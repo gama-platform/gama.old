@@ -14,16 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.TOrderedHashMap;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -31,8 +26,6 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.TextureCache;
-import ummisco.gama.webgl.SceneReceiver;
 import ummisco.gama.webgl.SimpleLayer;
 import ummisco.gama.webgl.SimpleScene;
 
@@ -56,10 +49,9 @@ public class ModelScene {
 	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
 	protected final Abstract3DRenderer renderer;
-	private final Map<BufferedImage, Texture> localVolatileTextures = new THashMap<BufferedImage, Texture>(2);
 	private volatile boolean rendered = false;
-	private volatile double visualZIncrement;
 	private volatile int objectNumber;
+	private double zIncrement;
 
 	public static abstract class ObjectVisitor {
 		public abstract void process(AbstractObject object);
@@ -91,7 +83,7 @@ public class ModelScene {
 	 * @param context
 	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
-	public void wipe(final GL2 gl) {
+	public void wipe(final OpenGL gl) {
 
 		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
 			final LayerObject obj = entry.getValue();
@@ -100,45 +92,22 @@ public class ModelScene {
 			}
 		}
 		// Wipe the textures.
-		final int size = localVolatileTextures.size();
-		if (size != 0) {
-			final int[] textureIdsToDestroy = new int[size];
-			int index = 0;
-			for (final Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet()) {
-				final Texture t = entry.getValue();
-				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
+		gl.deleteVolatileTextures();
+	}
+
+	public void draw(final OpenGL gl) {
+
+		if (renderer.useShader()) {
+			// if the rotation helper layer exists, put it at the end of the map
+			// (otherwise, transparency issues)
+			final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
+			if (rotLayer != null) {
+				layers.remove(ROTATION_HELPER_KEY);
+				layers.put(ROTATION_HELPER_KEY, rotLayer);
 			}
-			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
-			localVolatileTextures.clear();
 		}
-	}
 
-	public Texture getTexture(final GL gl, final BufferedImage image) {
-		if (image == null) { return null; }
-		Texture texture = localVolatileTextures.get(image);
-		if (texture == null) {
-			texture = TextureCache.buildTexture(gl, image);
-			localVolatileTextures.put(image, texture);
-		}
-		return texture;
-	}
-
-	// Must have been stored before
-	public Texture getTexture(final GL gl, final GamaImageFile file) {
-		if (file == null) { return null; }
-		final Texture texture = renderer.getSharedTextureCache().get(renderer.getSurface().getScope(), gl, file);
-		return texture;
-	}
-
-	public void draw(final GL2 gl) {
-		// if the rotation helper layer exists, put it at the end of the map
-		// (otherwise, transparency issues)
-
-		final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
-		if (rotLayer != null) {
-			layers.remove(ROTATION_HELPER_KEY);
-			layers.put(ROTATION_HELPER_KEY, rotLayer);
-		}
+		gl.setZIncrement(zIncrement);
 
 		for (final LayerObject layer : layers.values()) {
 			if (layer != null && !layer.isInvalid()) {
@@ -151,20 +120,17 @@ public class ModelScene {
 				}
 			}
 		}
+		gl.setZIncrement(0);
 		rendered = true;
 	}
 
-	private void computeVisualZIncrement() {
+	private double computeVisualZIncrement() {
 		if (objectNumber == 0)
-			return;
+			return 0d;
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 		final double maxZ = renderer.getMaxEnvDim() / 2000d;
 		// The increment is simply
-		visualZIncrement = maxZ / objectNumber;
-	}
-
-	public double getVisualZIncrement() {
-		return visualZIncrement;
+		return maxZ / objectNumber;
 	}
 
 	public boolean cannotAdd() {
@@ -173,38 +139,39 @@ public class ModelScene {
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
 
-	private void configure(final AbstractObject object) {
-		object.setZFightingOffset(objectNumber++);
+	private <T extends AbstractObject> T configure(final T object) {
+		objectNumber++;
+		return object;
 	}
 
-	public void addString(final String string, final DrawingAttributes attributes) {
-		if (cannotAdd()) { return; }
-		configure(currentLayer.addString(string, attributes));
+	public StringObject addString(final String string, final DrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addString(string, attributes));
 	}
 
-	@SuppressWarnings ("rawtypes")
-	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (cannotAdd()) { return; }
-		if (file instanceof GamaImageFile) {
-			configure(currentLayer.addImage(file, attributes));
-		} else if (file instanceof GamaGeometryFile) {
-			configure(currentLayer.addFile((GamaGeometryFile) file, attributes));
-		}
+	public GeometryObject addImageFile(final GamaImageFile file, final FileDrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addImage(file, attributes));
 	}
 
-	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		if (cannotAdd()) { return; }
-		configure(currentLayer.addImage(img, attributes));
+	public ResourceObject addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addFile(file, attributes));
 	}
 
-	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
-		if (cannotAdd()) { return; }
-		configure(currentLayer.addGeometry(geometry, attributes));
+	public GeometryObject addImage(final BufferedImage img, final DrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addImage(img, attributes));
 	}
 
-	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (cannotAdd()) { return; }
-		configure(currentLayer.addField(fieldValues, attributes));
+	public GeometryObject addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addGeometry(geometry, attributes));
+	}
+
+	public FieldObject addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+		if (cannotAdd()) { return null; }
+		return configure(currentLayer.addField(fieldValues, attributes));
 	}
 
 	public void dispose() {
@@ -212,15 +179,13 @@ public class ModelScene {
 		currentLayer = null;
 	}
 
-	public void beginDrawingLayers() {
-		visualZIncrement = 0;
-	}
+	public void beginDrawingLayers() {}
 
 	public void endDrawingLayers() {
-		computeVisualZIncrement();
-		if (!SceneReceiver.getInstance().canReceive())
-			return;
-		SceneReceiver.getInstance().receive(this.toSimpleScene());
+		zIncrement = computeVisualZIncrement();
+		// if (!SceneReceiver.getInstance().canReceive())
+		// return;
+		// SceneReceiver.getInstance().receive(this.toSimpleScene());
 	}
 
 	public boolean rendered() {

@@ -48,8 +48,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.Puntal;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -109,11 +109,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	}
 
-	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
-		super(surface);
+	public AWTDisplayGraphics(final Graphics2D g2) {
 		setGraphics2D(g2);
 		sw.setRemoveDuplicatePoints(true);
-
 	}
 
 	@Override
@@ -167,10 +165,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if (!(file instanceof GamaGeometryFile)) { return null; }
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) { return null; }
-		final Double rotation = attributes.getAngle();
+		final AxisAngle rotation = attributes.getRotation();
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
-		return drawShape(shape, new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
+		return drawShape(shape.getInnerGeometry(),
+				new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 	}
 
 	@Override
@@ -259,13 +258,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawShape(final IShape geometry, final ShapeDrawingAttributes attributes) {
-		if (geometry == null) { return null; }
-		final Geometry inner = geometry.getInnerGeometry();
-		return drawShape(inner, attributes);
-	}
-
-	private Rectangle2D drawShape(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public Rectangle2D drawShape(final Geometry geometry, final ShapeDrawingAttributes attributes) {
 		if (geometry == null) { return null; }
 		if (geometry instanceof GeometryCollection) {
 			final Rectangle2D result = new Rectangle2D.Double();

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AgentAttributesEditorsList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AgentAttributesEditorsList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,14 +29,12 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	private static final String DEAD_MARKER = " dead at step ";
 	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
-	private static final Set<String> HIDDEN = new HashSet<>(
-			Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
+	private static final Set<String> HIDDEN =
+			new HashSet<>(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
 
 	@Override
 	public String getItemDisplayName(final IAgent ag, final String name) {
-		if (name == null) {
-			return AGENT_MARKER + ag.getName();
-		}
+		if (name == null) { return AGENT_MARKER + ag.getName(); }
 		if (ag.dead() && !name.contains(DEAD_MARKER)) {
 			final long cycle = ag.getScope().getClock().getCycle();
 			final String result = AGENT_MARKER + ItemList.ERROR_CODE
@@ -81,7 +78,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			if (!entry.getKey().dead()) {
 				for (final IParameterEditor<?> gp : entry.getValue().values()) {
-					gp.updateValue();
+					gp.updateValue(false);
 				}
 
 			}
@@ -91,8 +88,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final IAgent data, final int x, final int y) {

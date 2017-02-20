@@ -872,4 +872,9 @@ public class ExecutionScope implements IScope {
 		return scope;
 	}
 
+	@Override
+	public IExecutionContext getExecutionContext() {
+		return executionContext;
+	}
+
 }

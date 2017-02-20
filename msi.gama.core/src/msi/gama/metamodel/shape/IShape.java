@@ -103,6 +103,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		CIRCLE,
 		CONE,
 		CUBE,
+		SQUARE,
 		CYLINDER,
 		ENVIRONMENT,
 		GRIDLINE,
@@ -121,7 +122,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		SPHERE,
 		TEAPOT,
 		LINECYLINDER,
-		POLYLINECYLINDER;
+		THREED_FILE;
 
 		Type() {}
 

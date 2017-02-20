@@ -17,6 +17,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -477,22 +478,18 @@ public class Envelope3D extends Envelope {
 	 * Creates an envelope for a region defined by maximum and minimum values.
 	 *
 	 * @param x1
-	 *            The first x-value.
+	 *            The first x-value (minx)
 	 * @param x2
-	 *            The second x-value.
+	 *            The second x-value (maxx)
 	 * @param y1
-	 *            The first y-value.
+	 *            The first y-value (miny)
 	 * @param y2
-	 *            The second y-value.
+	 *            The second y-value (maxy)
 	 * @param z1
-	 *            The first y-value.
+	 *            The first z-value (minz)
 	 * @param z2
-	 *            The second y-value.
-	 * @param crs
-	 *            The coordinate reference system.
-	 *
-	 * @throws MismatchedDimensionException
-	 *             if the CRS dimension is not valid.
+	 *            The second z-value (maxz)
+	 * 
 	 */
 	public Envelope3D(final double x1, final double x2, final double y1, final double y2, final double z1,
 			final double z2) {
@@ -652,22 +649,27 @@ public class Envelope3D extends Envelope {
 	}
 
 	public boolean isFlat() {
-		return minz == 0d && maxz == 0d;
+		return minz == maxz;
 	}
 
 	public boolean isHorizontal() {
 		return minz == maxz;
 	}
 
-	public Geometry toGeometry() {
-		if (isFlat()) { return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry(); }
-		return GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
+	public Polygon toGeometry() {
+		if (isFlat()) { return (Polygon) GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre())
+				.getInnerGeometry(); }
+		return (Polygon) GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
 	}
 
 	@Override
 	public String toString() {
 		return "Env[" + getMinX() + " : " + getMaxX() + ", " + getMinY() + " : " + getMaxY() + ",  " + minz + " : "
 				+ maxz + "]";
+	}
+
+	public Envelope3D yNegated() {
+		return new Envelope3D(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
 
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz

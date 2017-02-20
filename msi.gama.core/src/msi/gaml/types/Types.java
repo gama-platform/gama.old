@@ -41,8 +41,15 @@ public class Types {
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL, DATE,
-			MATERIAL, ACTION;
+	public static IType AGENT, PATH, FONT, SKILL, DATE, MATERIAL, ACTION;
+	public static GamaIntegerType INT;
+	public static GamaFloatType FLOAT;
+	public static GamaColorType COLOR;
+	public static GamaBoolType BOOL;
+	public static GamaStringType STRING;
+	public static GamaPointType POINT;
+	public static GamaGeometryType GEOMETRY;
+	public static GamaTopologyType TOPOLOGY;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
 	public static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
@@ -50,16 +57,16 @@ public class Types {
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
 			case IType.INT:
-				INT = instance;
+				INT = (GamaIntegerType) instance;
 				break;
 			case IType.FLOAT:
-				FLOAT = instance;
+				FLOAT = (GamaFloatType) instance;
 				break;
 			case IType.BOOL:
-				BOOL = instance;
+				BOOL = (GamaBoolType) instance;
 				break;
 			case IType.COLOR:
-				COLOR = instance;
+				COLOR = (GamaColorType) instance;
 				break;
 			case IType.DATE:
 				DATE = instance;
@@ -68,16 +75,16 @@ public class Types {
 				MATERIAL = instance;
 				break;
 			case IType.STRING:
-				STRING = instance;
+				STRING = (GamaStringType) instance;
 				break;
 			case IType.POINT:
-				POINT = instance;
+				POINT = (GamaPointType) instance;
 				break;
 			case IType.GEOMETRY:
-				GEOMETRY = instance;
+				GEOMETRY = (GamaGeometryType) instance;
 				break;
 			case IType.TOPOLOGY:
-				TOPOLOGY = instance;
+				TOPOLOGY = (GamaTopologyType) instance;
 				break;
 			case IType.LIST:
 				LIST = (IContainerType) instance;

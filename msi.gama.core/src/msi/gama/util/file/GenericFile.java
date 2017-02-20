@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -46,8 +45,8 @@ public class GenericFile extends GamaFile<IList<String>, String, Integer, String
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
-		return new Envelope(0, 0, 0, 0);
+	public Envelope3D computeEnvelope(final IScope scope) {
+		return new Envelope3D();
 	}
 
 	@Override

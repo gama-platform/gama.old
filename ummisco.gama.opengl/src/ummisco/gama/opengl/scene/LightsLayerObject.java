@@ -11,8 +11,6 @@ package ummisco.gama.opengl.scene;
 
 import java.util.ArrayList;
 
-import com.jogamp.opengl.GL2;
-
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LightPropertiesStructure;
@@ -27,7 +25,7 @@ public class LightsLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL2 gl) {}
+	public void clear(final OpenGL gl) {}
 
 	@Override
 	public boolean isLightInteraction() {
@@ -35,7 +33,7 @@ public class LightsLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void draw(final GL2 gl) {
+	public void draw(final OpenGL gl) {
 		updateObjectList();
 		super.draw(gl);
 	}

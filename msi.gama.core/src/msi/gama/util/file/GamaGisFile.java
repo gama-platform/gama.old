@@ -12,8 +12,8 @@ package msi.gama.util.file;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -79,7 +79,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	 */
 	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
-	protected void computeProjection(final IScope scope, final Envelope env) {
+	protected void computeProjection(final IScope scope, final Envelope3D env) {
 		if (scope == null) { return; }
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
 		final ProjectionFactory pf = scope.getSimulation().getProjectionFactory();

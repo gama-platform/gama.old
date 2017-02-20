@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IntEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IntEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -50,9 +49,7 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected Integer applyPlus() {
-		if (currentValue == null) {
-			return 0;
-		}
+		if (currentValue == null) { return 0; }
 		final Integer i = currentValue;
 		final Integer newVal = i + stepValue.intValue();
 		return newVal;
@@ -60,9 +57,7 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected Integer applyMinus() {
-		if (currentValue == null) {
-			return 0;
-		}
+		if (currentValue == null) { return 0; }
 		final Integer i = currentValue;
 		final Integer newVal = i - stepValue.intValue();
 		return newVal;
@@ -70,13 +65,11 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected void modifyValue(final Integer val) throws GamaRuntimeException {
-		final Integer i = Cast.as(val, Integer.class, false);
-		if (minValue != null && i < minValue.intValue()) {
-			throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
-		}
-		if (maxValue != null && i > maxValue.intValue()) {
-			throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
-		}
+		final Integer i = Cast.asInt(getScope(), val);
+		if (minValue != null && i < minValue.intValue()) { throw GamaRuntimeException
+				.error("Value " + i + " should be greater than " + minValue, getScope()); }
+		if (maxValue != null && i > maxValue.intValue()) { throw GamaRuntimeException
+				.error("Value " + i + " should be smaller than " + maxValue, getScope()); }
 		super.modifyValue(i);
 	}
 
@@ -95,8 +88,7 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected Integer normalizeValues() throws GamaRuntimeException {
-		final Integer valueToConsider = getOriginalValue() == null ? 0
-				: Cast.as(getOriginalValue(), Integer.class, false);
+		final Integer valueToConsider = getOriginalValue() == null ? 0 : Cast.asInt(getScope(), getOriginalValue());
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.intValue();
 		maxValue = maxValue == null ? null : maxValue.intValue();

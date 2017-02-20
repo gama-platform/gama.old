@@ -82,7 +82,8 @@ import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 
 import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
@@ -715,13 +716,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	public void openOutlinePopup() {
 
-		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+		getDocument().readOnly(new CancelableUnitOfWork<Object, XtextResource>() {
 
 			@Override
-			public void process(final XtextResource state) throws Exception {
+			public Object exec(final XtextResource state, final CancelIndicator c) throws Exception {
 				final QuickOutlinePopup popup = new GamlQuickOutlinePopup(GamlEditor.this, toolbar);
 				injector.injectMembers(popup);
-				popup.open();
+				return popup.open();
 			}
 		});
 

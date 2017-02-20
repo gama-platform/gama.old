@@ -49,8 +49,10 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -1141,7 +1143,9 @@ public abstract class Spatial {
 			if (geom == null || geom.isEmpty()) { return null; }
 			// WARNING The attributes of the left-hand shape are kept, but not
 			// those of the right-hand shape
-			return new GamaShape(g1, geom);
+			final GamaShape result = new GamaShape(g1, geom);
+			result.losePredefinedProperty();
+			return result;
 		}
 
 		@operator (
@@ -1191,7 +1195,9 @@ public abstract class Spatial {
 
 			}
 			if (geom == null || geom.isEmpty()) { return null; }
-			return new GamaShape(g1, geom);
+			final GamaShape result = new GamaShape(g1, geom);
+			result.losePredefinedProperty();
+			return result;
 		}
 
 		@operator (
@@ -1229,7 +1235,11 @@ public abstract class Spatial {
 			if (g1 == null || g2 == null || g1.getInnerGeometry() == null
 					|| g2.getInnerGeometry() == null) { return g1; }
 			final Geometry res = difference(g1.getInnerGeometry(), g2.getInnerGeometry());
-			if (res != null && !res.isEmpty()) { return new GamaShape(g1, res); }
+			if (res != null && !res.isEmpty()) {
+				final GamaShape result = new GamaShape(g1, res);
+				result.losePredefinedProperty();
+				return result;
+			}
 			return null;
 		}
 
@@ -1253,7 +1263,9 @@ public abstract class Spatial {
 				}
 			}
 			if (geom1 == null || geom1.isEmpty()) { return null; }
-			return new GamaShape(g1, geom1);
+			final GamaShape result = new GamaShape(g1, geom1);
+			result.losePredefinedProperty();
+			return result;
 		}
 
 		private static Geometry difference(Geometry g1, final Geometry g2) {
@@ -1355,8 +1367,10 @@ public abstract class Spatial {
 				}
 				geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
 			}
-			if (geom_Tmp != null) { return new GamaShape(g, geom_Tmp);
-
+			if (geom_Tmp != null) {
+				final GamaShape result = new GamaShape(g, geom_Tmp);
+				result.losePredefinedProperty();
+				return result;
 			}
 			return g;
 		}
@@ -1690,7 +1704,7 @@ public abstract class Spatial {
 								equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z",
 								test = false) }) })
 		public static IShape scaled_by(final IScope scope, final IShape g, final GamaPoint coefficients) {
-			return new GamaShape(g, null, null, null, coefficients, false);
+			return new GamaShape(g, null, null, null, Scaling3D.of(coefficients), false);
 			// return g1.scaledBy(scope, coefficient);
 			// return new GamaShape(g1.getInnerGeometry()).scaledBy(scope,
 			// coefficient);
@@ -1710,7 +1724,7 @@ public abstract class Spatial {
 						equals = "a geometry corresponding to the geometry of the agent applying the operator scaled so that it fits a square of 10x10",
 						test = false) })
 		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
-			return new GamaShape(g, null, null, null, bounds, true);
+			return new GamaShape(g, null, null, null, Scaling3D.of(bounds), true);
 			// final GamaShape g1 = g.asShapeWithGeometry(scope, null);
 			// return g1.scaledTo(scope, bounds);
 			// return new GamaShape(g1.getInnerGeometry()).scaledTo(scope,
@@ -1840,11 +1854,7 @@ public abstract class Spatial {
 				see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if (g1 == null) { return null; }
-			return new GamaShape(g1, null, angle, null);
-			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
-			// return s.rotatedBy(scope, FastMath.toRadians(angle));
-			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope,
-			// FastMath.toRadians(angle));
+			return new GamaShape(g1, null, new AxisAngle(angle), null);
 		}
 
 		@operator (
@@ -1862,11 +1872,11 @@ public abstract class Spatial {
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
 				final GamaPoint vector) {
 			if (g1 == null) { return null; }
-			if (new GamaPoint().equals(vector) == true) { return g1; }
-			vector.y = -vector.y;// This ugly trick is used to ensure that the
-									// rotate facet and the rotated_by operator
-									// are coherent. (A.G 16/05/2016)
-			return new GamaShape(g1, null, rotation, vector, g1.getLocation());
+			if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
+			// vector.y = -vector.y;// This ugly trick is used to ensure that the
+			// // rotate facet and the rotated_by operator
+			// // are coherent. (A.G 16/05/2016)
+			return new GamaShape(g1, null, new AxisAngle(vector, rotation), g1.getLocation());
 		}
 
 		@operator (
@@ -1879,7 +1889,7 @@ public abstract class Spatial {
 			if (g1 == null) { return null; }
 			if (angle == null) { return g1.copy(scope); }
 			// if ( g1.isPoint() ) { return g1.copy(scope); }
-			return new GamaShape(g1, null, angle.doubleValue(), null);
+			return new GamaShape(g1, null, new AxisAngle(angle.doubleValue()), null);
 			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
 			// return s.rotatedBy(scope, angle);
 			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope,
@@ -1950,7 +1960,7 @@ public abstract class Spatial {
 		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
 				throws GamaRuntimeException {
 			if (g == null) { return null; }
-			return new GamaShape(g, null, (Double) null, p);
+			return new GamaShape(g, null, (AxisAngle) null, p);
 		}
 
 		@operator (
@@ -3357,6 +3367,8 @@ public abstract class Spatial {
 						"agent_closest_to" })
 		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
+			if (list == null)
+				return null;
 			final IType contentType = list.getType().getContentType();
 			if (contentType.isAgentType()) {
 				return _closest(scope, In.list(scope, list), source);
@@ -3901,8 +3913,8 @@ public abstract class Spatial {
 			final IGraphics graphics = scope.getGraphics();
 			if (graphics == null || graphics.cannotDraw())
 				return null;
-			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null);
-			attributes.setDepth(z_factor);
+			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null, false);
+			attributes.setHeight(z_factor);
 
 			if (!graphics.is2D()) {
 				// If we are in the OpenGL world

@@ -12,7 +12,6 @@ package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -25,6 +24,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Maths;
 
 /**
@@ -46,7 +46,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	public static final int SE = 3;
 
 	private final QuadNode root;
-	private final static int maxCapacity = 20;
+	private final static int maxCapacity = 50;
 	private double minSize = 10;
 
 	public static ISpatialIndex create(final Envelope envelope) {
@@ -166,7 +166,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
-		private volatile ConcurrentLinkedQueue<IAgent> objects = null;
+		private final TOrderedHashMap<IAgent, Envelope> objects = new TOrderedHashMap(maxCapacity);
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
@@ -179,40 +179,35 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public void dispose() {
-			if (objects != null)
-				objects.clear();
+			objects.clear();
 			if (nodes != null) {
 				for (final QuadNode n : nodes) {
 					n.dispose();
 				}
 				nodes = null;
 			}
-
 		}
 
 		public IShape remove(final Coordinate p, final IShape a) {
-			if (objects != null) {
-				if (objects.remove(a))
-					return a;
-			} else if (nodes != null) { return nodes[quadrant(p)].remove(p, a); }
+			final Envelope e = objects.remove(a);
+			if (e != null)
+				return a;
+			if (nodes != null) { return nodes[quadrant(p)].remove(p, a); }
 			return null;
 		}
 
 		public boolean shouldSplit() {
-			return canSplit && objects != null && nodes == null && objects.size() >= maxCapacity;
+			return canSplit && nodes == null && objects.size() >= maxCapacity;
 		}
 
-		public boolean add(final Coordinate p, final IAgent a) {
+		public void add(final Coordinate p, final IAgent a) {
 			if (shouldSplit()) {
 				split();
 			}
 			if (nodes == null) {
-				if (objects == null) {
-					objects = new ConcurrentLinkedQueue();
-				}
-				return objects.add(a);
+				objects.put(a, Envelope3D.of(p));
 			} else
-				return nodes[quadrant(p)].add(p, a);
+				nodes[quadrant(p)].add(p, a);
 		}
 
 		int quadrant(final Coordinate p) {
@@ -221,38 +216,27 @@ public class GamaQuadTree implements ISpatialIndex {
 			return north ? west ? NW : NE : west ? SW : SE;
 		}
 
-		public boolean remove(final Envelope bounds, final IShape a) {
+		public void remove(final Envelope bounds, final IShape a) {
 			if (nodes == null) {
-				if (objects != null) {
-					return objects.remove(a);
-				} else
-					return false;
-			}
-			boolean removed = false;
-			for (final QuadNode node : nodes) {
-				if (node.bounds.intersects(bounds)) {
-					removed = node.remove(bounds, a) || removed;
-				}
-			}
-			return removed;
+				objects.remove(a);
+			} else
+				for (final QuadNode node : nodes)
+					if (node.bounds.intersects(bounds)) {
+						node.remove(bounds, a);
+					}
 		}
 
-		public boolean add(final Envelope env, final IAgent o) {
+		public void add(final Envelope env, final IAgent a) {
 			if (shouldSplit()) {
 				split();
 			}
 			if (nodes == null) {
-				if (objects == null) {
-					objects = new ConcurrentLinkedQueue();
-				}
-				return objects.add(o);
-			}
-			boolean retVal = false;
-			for (final QuadNode node : nodes)
-				if (node.bounds.intersects(env)) {
-					retVal = node.add(env, o) || retVal;
-				}
-			return retVal;
+				objects.put(a, env);
+			} else
+				for (final QuadNode node : nodes)
+					if (node.bounds.intersects(env)) {
+						node.add(env, a);
+					}
 		}
 
 		public void split() {
@@ -265,30 +249,27 @@ public class GamaQuadTree implements ISpatialIndex {
 					new QuadNode(new Envelope(minx, halfx, halfy, maxy)),
 					new QuadNode(new Envelope(halfx, maxx, halfy, maxy)) };
 
-			if (objects != null) {// Can happen in concurrent executions
-				for (final IAgent entry : objects) {
-					if (entry != null && !entry.dead()) {
-						final IShape g = entry.getGeometry();
-						if (g.isPoint()) {
-							add((Coordinate) g.getLocation(), entry);
-						} else {
-							add(g.getEnvelope(), entry);
-						}
+			for (final IAgent entry : objects.keySet()) {
+				if (entry != null && !entry.dead()) {
+					final IShape g = entry.getGeometry();
+					if (g.isPoint()) {
+						add((Coordinate) g.getLocation(), entry);
+					} else {
+						add(g.getEnvelope(), entry);
 					}
 				}
-				objects = null;
 			}
+			objects.clear();
 		}
 
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (bounds.intersects(r)) {
-				if (objects != null) {
-					for (final IShape entry : objects) {
-						if (entry.getEnvelope().intersects(r)) {
-							result.add(entry.getAgent());
-						}
-					}
-				}
+				objects.forEachEntry((a, env) -> {
+					if (env.intersects(r))
+						result.add(a);
+					return true;
+				});
+				// }
 				if (nodes != null) {
 					for (final QuadNode node : nodes)
 						node.findIntersects(r, result);

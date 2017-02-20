@@ -1,7 +1,5 @@
 package msi.gama.common.geometry;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -27,7 +25,11 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	@FunctionalInterface
 	public static interface IndexedVisitor {
-		public void process(final double x, final double y, final double z, final int i);
+		public void process(final int i, final double x, final double y, final double z);
+	}
+
+	public static interface VertexVisitor {
+		public void process(final double... ordinates);
 	}
 
 	/**
@@ -44,6 +46,11 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		final GamaPoint p = new GamaPoint();
 		addCenterTo(p);
 		return p;
+	}
+
+	default void getCenter(final GamaPoint center) {
+		center.setLocation(0, 0, 0);
+		addCenterTo(center);
 	}
 
 	/**
@@ -97,6 +104,44 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	void visit(IndexedVisitor v, int max, boolean clockwise);
 
 	/**
+	 * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done in
+	 * the clockwise order. In the case of a line string, the last point is not visited.
+	 * 
+	 * @param v
+	 *            the visitor (cannot be null)
+	 */
+	void visitClockwise(VertexVisitor v);
+
+	/**
+	 * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done in
+	 * the counter-clockwise order. In the case of a line string, the first point is not visited.
+	 * 
+	 * @param v
+	 *            the visitor (cannot be null)
+	 */
+	void visitCounterClockwise(VertexVisitor v);
+
+	/**
+	 * Visits all the coordinates, passing the x, -y, z ordinates of each coordinate to the visitor. The visit is done
+	 * in the counter-clockwise order (same as the clockwise order if y was not negated). In the case of a line string,
+	 * the first point is not visited.
+	 * 
+	 * @param v
+	 *            the visitor (cannot be null)
+	 */
+	void visitYNegatedCounterClockwise(VertexVisitor v);
+
+	/**
+	 * Visits all the coordinates, passing the x, -y, z ordinates of each coordinate to the visitor. The visit is done
+	 * in the clockwise order (same as the counter-clockwise order if y was not negated). In the case of a line string,
+	 * the first point is not visited.
+	 * 
+	 * @param v
+	 *            the visitor (cannot be null)
+	 */
+	void visitYNegatedClockwise(VertexVisitor v);
+
+	/**
 	 * Visits all the coordinates by pairs of adjacent coordinates (n, n+1)
 	 * 
 	 * @param v
@@ -137,6 +182,11 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	Envelope3D getEnvelopeInto(Envelope3D envelope);
 
+	/**
+	 * Returns a new envelope that contains all the points in the sequence
+	 * 
+	 * @return a new Envelope3D containing all the points
+	 */
 	default Envelope3D getEnvelope() {
 		return getEnvelopeInto(new Envelope3D());
 	}
@@ -159,7 +209,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 *            an Array of points
 	 * @return this
 	 */
-	public void replaceWith(GamaPoint... points);
+	public ICoordinates setTo(GamaPoint... points);
 
 	/**
 	 * To prevent excessive garbage to be created, points can be replaced directly with this method. Note that the size
@@ -172,7 +222,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 *            an Array of double x, y, z
 	 * @return this
 	 */
-	public void replaceWith(double... ordinates);
+	public ICoordinates setTo(double... ordinates);
 
 	/**
 	 * Equivalent to the setOrdinate(i, d) method but sets all the ordinates at once. No measure is taken for ensuring
@@ -191,18 +241,18 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Returns the vector between the point considered as the origin of the sequence (i.e. at index 0) and the following
-	 * point in the sequence
+	 * point in the sequence, normalized
 	 * 
 	 * @return a point containing the vector
 	 */
-	GamaPoint directionBetweenOriginAndFirstPoint();
+	GamaPoint directionBetweenLastPointAndOrigin();
 
 	/**
 	 * Applies a 3D rotation to the sequence of points
 	 * 
 	 * @param rotation
 	 */
-	void applyRotation(Rotation rotation);
+	void applyRotation(Rotation3D rotation);
 
 	/**
 	 * Whether this sequence is horizontal or not (i.e. all the z ordinates are equal)
@@ -211,9 +261,63 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	boolean isHorizontal();
 
+	/**
+	 * Return the length of the sequence (i.e. the sum of all the segments)
+	 * 
+	 * @return the length of the sequence
+	 */
 	double getLength();
 
+	/**
+	 * Sets all the z ordinates of the points to the given z ordinate
+	 * 
+	 * @param elevation
+	 */
 	void setAllZ(double elevation);
 
+	/**
+	 * Returns whether or not all the points in this sequence are covered by the envelope in argument
+	 * 
+	 * @param envelope3d
+	 *            an Envelope3D (cannot be null)
+	 * @return true or false if at least one point lies outside the envelope
+	 */
 	boolean isCoveredBy(Envelope3D envelope3d);
+
+	/**
+	 * Creates a sequence filled with {0,0,0} points of the given length
+	 * 
+	 * @param length
+	 *            the length of the sequence
+	 * @return a new ICoordinates with the given length
+	 */
+	public static ICoordinates ofLength(final int length) {
+		return GamaGeometryFactory.COORDINATES_FACTORY.create(length, 3);
+	}
+
+	/**
+	 * Returns whether or not the sequence is ordered in the clockwise order
+	 * 
+	 * @return true or false if CCW
+	 */
+	boolean isClockwise();
+
+	/**
+	 * Replaces the last point in the sequence with the first point (whether or not it has already been filled
+	 */
+	void completeRing();
+
+	/**
+	 * Translates the points in the sequence by the ordinates provided as arguments
+	 * 
+	 * @param i,
+	 *            j, k the ordinates of the translation
+	 */
+	void translateBy(double i, double j, double k);
+
+	/**
+	 * Makes sure the sequence is ordered in the clockwise orientation. Reverses the array if it is not.
+	 */
+	void ensureClockwiseness();
+
 }

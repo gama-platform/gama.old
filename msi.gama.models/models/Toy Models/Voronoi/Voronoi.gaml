@@ -37,26 +37,26 @@ global {
 	}  
 } 
 //Grid for the voronoi clustering
-grid cell width: env_width height: env_height neighbors: 8 use_regular_agents: false {
+grid cell width: env_width height: env_height neighbors: 8 use_regular_agents: false parallel: true {
 	// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
 	center closest_center <- nil update: (center closest_to self.location) using topology(world);
 	rgb color <- #white update: (closest_center).color;
-	float grid_value <- color.red / 10 + 50 update: color.red / 10 + 50;
+	float grid_value <- color.red / 10  update: color.red / 10 ;
 	
 	aspect default {
-		draw shape color: color border: false;
+		draw shape color: color border: false depth: grid_value;
 	}
 
 }
 //Species representing the center of a Voronoi point
-species center skills: [moving] { 
+species center skills: [moving] parallel: 1{ 
 	rgb color <- rgb([rnd (255),rnd (255),rnd (255)]); 
 	//Make the center of the cluster wander in the environment       
 	reflex wander {
 		do wander amplitude: 90;
 	}  
 	aspect default {
-		draw square(1.0) color: color border: #black;
+		draw sphere(1.0) color: color at: location + {0,0, color.red / 10 } ;
 	}
 }
 
@@ -71,9 +71,10 @@ experiment voronoi type: gui{
 	parameter 'Height of the environment:' var: env_height;
 	
 	output {
-		display "Voronoi Display" type: opengl {
+		
+		display "Voronoi 2D" type: opengl use_shader: true{
 			grid cell ;
-			species center;
+			species center {draw sphere(1.0) color: color; }
 		}
 	}	
 }

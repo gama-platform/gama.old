@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaPropertyFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaPropertyFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,8 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -30,9 +28,13 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "property", extensions = {
-		"properties" }, buffer_type = IType.MAP, buffer_content = IType.STRING, buffer_index = IType.STRING, concept = {
-				IConcept.FILE })
+@file (
+		name = "property",
+		extensions = { "properties" },
+		buffer_type = IType.MAP,
+		buffer_content = IType.STRING,
+		buffer_index = IType.STRING,
+		concept = { IConcept.FILE })
 public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -49,7 +51,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	 *
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		final Properties p = new Properties();
@@ -84,13 +86,12 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 			});
 		try (FileWriter fw = new FileWriter(getFile(scope))) {
 			p.store(fw, null);
-		} catch (final IOException e) {
-		}
+		} catch (final IOException e) {}
 
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		// TODO Probably possible to get some information there
 		return null;
 	}

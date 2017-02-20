@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaSVGFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaSVGFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -23,6 +22,7 @@ import com.vividsolutions.jts.awt.ShapeReader;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -36,18 +36,23 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Class GamaSVGFile. Only loads vector shapes right now (and none of the
- * associated elements: textures, colors, fonts, etc.)
+ * Class GamaSVGFile. Only loads vector shapes right now (and none of the associated elements: textures, colors, fonts,
+ * etc.)
  *
  * @author drogoul
  * @since 30 déc. 2013
  *
  */
-@file(name = "svg", extensions = "svg", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-		IConcept.SVG })
+@file (
+		name = "svg",
+		extensions = "svg",
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.SVG })
 public class GamaSVGFile extends GamaGeometryFile {
 
-	GamaPoint size;
+	Scaling3D size;
 
 	public GamaSVGFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -55,7 +60,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	public GamaSVGFile(final IScope scope, final String pathName, final GamaPoint size) throws GamaRuntimeException {
 		super(scope, pathName);
-		this.size = size;
+		this.size = Scaling3D.of(size);
 	}
 
 	@Override
@@ -77,8 +82,8 @@ public class GamaSVGFile extends GamaGeometryFile {
 			final SVGDiagram diagram = svg.getDiagram(uri);
 			final Shape shape = diagram.getRoot().getShape();
 			final Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.GEOMETRY_FACTORY); // flatness
-																						// =
-																						// ??
+			// =
+			// ??
 			// We center and scale the shape in the same operation
 			// final Envelope env = geom.getEnvelopeInternal();
 			// GamaPoint translation = new GamaPoint(-env.getWidth() / 2,

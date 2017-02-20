@@ -2,8 +2,6 @@ package msi.gama.common.geometry;
 
 import java.util.Iterator;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-
 import com.google.common.collect.Iterators;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -107,7 +105,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	public void visit(final IndexedVisitor v, final int max, final boolean reversed) {
 		if (max == 0)
 			return;
-		v.process(point.x, point.y, point.z, 0);
+		v.process(0, point.x, point.y, point.z);
 	}
 
 	@Override
@@ -126,22 +124,24 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public void replaceWith(final GamaPoint... points) {
+	public ICoordinates setTo(final GamaPoint... points) {
 		if (points.length == 0)
-			return;
+			return this;
 		final GamaPoint p = points[0];
 		point.x = p.x;
 		point.y = p.y;
 		point.z = p.z;
+		return this;
 	}
 
 	@Override
-	public void replaceWith(final double... points) {
+	public ICoordinates setTo(final double... points) {
 		if (points.length < 3)
-			return;
+			return this;
 		point.x = points[0];
 		point.y = points[1];
 		point.z = points[2];
+		return this;
 	}
 
 	@Override
@@ -157,13 +157,13 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public GamaPoint directionBetweenOriginAndFirstPoint() {
+	public GamaPoint directionBetweenLastPointAndOrigin() {
 		return new GamaPoint();
 	}
 
 	@Override
-	public void applyRotation(final Rotation rotation) {
-		point.setLocation(rotation.applyTo(point.toVector3D()));
+	public void applyRotation(final Rotation3D rotation) {
+		rotation.applyTo(point);
 	}
 
 	@Override
@@ -193,6 +193,47 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
 		return env.covers(point);
+	}
+
+	@Override
+	public void visitClockwise(final VertexVisitor v) {
+		v.process(point.x, point.y, point.z);
+
+	}
+
+	@Override
+	public void visitCounterClockwise(final VertexVisitor v) {
+		v.process(point.x, point.y, point.z);
+
+	}
+
+	@Override
+	public void visitYNegatedCounterClockwise(final VertexVisitor v) {
+		v.process(point.x, -point.y, point.z);
+
+	}
+
+	@Override
+	public void visitYNegatedClockwise(final VertexVisitor v) {
+		v.process(point.x, -point.y, point.z);
+	}
+
+	@Override
+	public boolean isClockwise() {
+		return true;
+	}
+
+	@Override
+	public void completeRing() {}
+
+	@Override
+	public void translateBy(final double i, final double j, final double k) {
+		point.add(i, j, k);
+	}
+
+	@Override
+	public void ensureClockwiseness() {
+
 	}
 
 }

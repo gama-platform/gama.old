@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'OpenGLToolbarMenu.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OpenGLToolbarMenu.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -35,7 +34,7 @@ public class OpenGLToolbarMenu {
 
 	private Menu menu;
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	public void fillMenu(final Menu menu, final SWTLayeredDisplayView view) {
 
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -90,9 +89,8 @@ public class OpenGLToolbarMenu {
 			}
 		});
 		final MenuItem triangle = new MenuItem(menu, SWT.CHECK);
-		final boolean triangulated = view.getDisplaySurface().getData().isTriangulation();
-		triangle.setText("Triangulate scene");
-		triangle.setSelection(triangulated);
+		triangle.setText("Wireframe");
+		triangle.setSelection(view.getDisplaySurface().getData().isWireframe());
 		triangle.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_TRIANGULATE).image());
 		triangle.addSelectionListener(new SelectionAdapter() {
 
@@ -100,8 +98,7 @@ public class OpenGLToolbarMenu {
 			public void widgetSelected(final SelectionEvent e) {
 
 				view.getDisplaySurface().runAndUpdate(() -> {
-					final boolean triangulated1 = view.getDisplaySurface().getData().isTriangulation();
-					view.getDisplaySurface().getData().setTriangulation(!triangulated1);
+					view.getDisplaySurface().getData().setWireframe(!view.getDisplaySurface().getData().isWireframe());
 				});
 			}
 		});
@@ -119,9 +116,7 @@ public class OpenGLToolbarMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
 				final boolean asMenu = trigger.detail == SWT.ARROW;
-				if (!asMenu) {
-					return;
-				}
+				if (!asMenu) { return; }
 				final ToolItem target = (ToolItem) trigger.widget;
 				final ToolBar toolBar = target.getParent();
 				if (menu != null) {

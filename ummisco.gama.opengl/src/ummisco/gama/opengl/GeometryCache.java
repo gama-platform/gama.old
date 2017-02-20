@@ -11,95 +11,156 @@ package ummisco.gama.opengl;
 
 import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 
-import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFilter;
 
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.IShape.Type;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.files.GamaObjFile;
-import ummisco.gama.opengl.scene.GeometryDrawer;
+import ummisco.gama.opengl.scene.OpenGL;
+import ummisco.gama.opengl.scene.ResourceObject;
 
 public class GeometryCache {
 
-	private final Map<String, Integer> cache = new ConcurrentHashMap<>(100, 0.75f, 4);
-	private final CopyOnWriteArrayList<GamaGeometryFile> geometriesToProcess = new CopyOnWriteArrayList<>();
+	public static class BuiltInGeometry {
+		Integer bottom, top, faces;
 
-	public GeometryCache() {}
+		public static BuiltInGeometry assemble() {
+			return new BuiltInGeometry(null, null, null);
+		}
 
-	public Integer get(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file) {
-		Integer index = cache.get(file.getPath(renderer.getSurface().getScope()));
+		public BuiltInGeometry top(final Integer top) {
+			this.top = top;
+			return this;
+		}
+
+		public BuiltInGeometry faces(final Integer faces) {
+			this.faces = faces;
+			return this;
+		}
+
+		public BuiltInGeometry bottom(final Integer bottom) {
+			this.bottom = bottom;
+			return this;
+		}
+
+		private BuiltInGeometry(final Integer bottom, final Integer top, final Integer faces) {
+			super();
+			this.bottom = bottom;
+			this.top = top;
+			this.faces = faces;
+		}
+
+		public void draw(final OpenGL gl) {
+			if (bottom != null)
+				gl.drawList(bottom);
+			if (top != null)
+				gl.drawList(top);
+			gl.enableAlternateTexture();
+			if (faces != null)
+				gl.drawList(faces);
+		}
+	}
+
+	private final Map<IShape.Type, BuiltInGeometry> shapeCache = new ConcurrentHashMap<>(100, 0.75f, 4);
+	private final Map<String, Integer> fileCache = new ConcurrentHashMap<>(100, 0.75f, 4);
+	private final Map<String, ResourceObject> geometriesToProcess = new ConcurrentHashMap<>();
+	private final Cache<String, Envelope3D> envelopes;
+	private final IScope scope;
+	private final Consumer<Geometry> drawer;
+
+	public GeometryCache(final JOGLRenderer renderer) {
+		this.scope = renderer.getSurface().getScope().copy("Geometry cache");
+		this.drawer = g -> renderer.getGeometryDrawer().drawGeometry(g, true, null, 0, getTypeOf(g));
+		envelopes = CacheBuilder.newBuilder().build();
+	}
+
+	public Integer get(final OpenGL gl, final GamaGeometryFile file) {
+		final String path = file.getPath(scope);
+		Integer index = fileCache.get(path);
 		if (index == null) {
-			try {
-				index = buildList(gl, renderer, file);
-				cache.put(file.getPath(renderer.getSurface().getScope()), index);
-			} catch (final FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			index = buildList(gl, file);
+			fileCache.put(path, index);
 		}
 		return index;
 	}
 
-	private Integer buildList(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file)
-			throws FileNotFoundException {
-		final String extension = file.getExtension(renderer.getSurface().getScope());
+	public BuiltInGeometry get(final OpenGL gl, final IShape.Type id) {
+		final BuiltInGeometry index = shapeCache.get(id);
+		return index;
+	}
+
+	private Integer buildList(final OpenGL gl, final GamaGeometryFile file) {
 		// We generate the list first
-		final Integer index = gl.glGenLists(1);
-		gl.glNewList(index, GL2.GL_COMPILE);
-		// We push the matrix
-		gl.glPushMatrix();
-		// We draw the file in the list
-		if (extension.equals("obj")) {
-			((GamaObjFile) file).drawToOpenGL(gl, renderer);
-		} else {
-			final IDisplaySurface surface = renderer.getSurface();
-			final IShape shape = file.getGeometry(surface.getScope());
-			if (shape == null) { return index; }
-			try {
-				drawSimpleGeometry(gl, renderer, shape.getInnerGeometry());
-			} catch (final ExecutionException e) {
-				e.printStackTrace();
+
+		final Integer index = gl.compileAsList(() -> {
+			// We draw the file in the list
+
+			if (file instanceof GamaObjFile) {
+				final GamaObjFile f = (GamaObjFile) file;
+				f.loadObject(scope, true);
+				f.drawToOpenGL(gl);
+			} else {
+				final IShape shape = file.getGeometry(scope);
+				if (shape == null) { return; }
+				try {
+					drawSimpleGeometry(gl, shape.getInnerGeometry());
+				} catch (final ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		// We then pop the matrix
-		gl.glPopMatrix();
-		// And close the list,
-		gl.glEndList();
-		// Before returning its index
+		});
+
 		return index;
 	}
 
-	void drawSimpleGeometry(final GL2 gl, final JOGLRenderer renderer, final Geometry geom) throws ExecutionException {
-		renderer.setCurrentColor(GamaPreferences.Displays.CORE_COLOR.getValue());
-		final GeometryDrawer drawer = renderer.getGeometryDrawer();
-		geom.apply((GeometryFilter) (g) -> drawer.drawGeometry(g, true, null, 0, null, getTypeOf(geom)));
+	void drawSimpleGeometry(final OpenGL gl, final Geometry geom) throws ExecutionException {
+		geom.apply((GeometryFilter) (g) -> drawer.accept(g));
 	}
 
 	public void dispose(final GL2 gl) {
-		for (final Integer i : cache.values()) {
+		for (final Integer i : fileCache.values()) {
 			gl.glDeleteLists(i, 1);
 		}
-		cache.clear();
+		fileCache.clear();
+		GAMA.releaseScope(scope);
 	}
 
-	public void processUnloadedGeometries(final GL2 gl, final JOGLRenderer renderer) {
-		for (final GamaGeometryFile file : geometriesToProcess) {
-			get(gl, renderer, file);
+	public void processUnloadedGeometries(final OpenGL gl) {
+		for (final ResourceObject object : geometriesToProcess.values()) {
+			get(gl, object.getFile());
 		}
 		geometriesToProcess.clear();
 	}
 
-	public void saveGeometryToProcess(final GamaGeometryFile file) {
-		if (!geometriesToProcess.contains(file))
-			geometriesToProcess.add(file);
+	public void saveGeometryToProcess(final ResourceObject object) {
+		final String path = object.getFile().getPath(scope);
+		if (!geometriesToProcess.containsKey(path))
+			geometriesToProcess.put(path, object);
+	}
+
+	public Envelope3D getEnvelope(final GamaGeometryFile file) {
+		try {
+			return envelopes.get(file.getPath(scope), () -> file.computeEnvelope(scope));
+		} catch (final ExecutionException e) {
+			return new Envelope3D();
+		}
+	}
+
+	public void put(final Type key, final BuiltInGeometry value) {
+		shapeCache.put(key, value);
 	}
 
 }

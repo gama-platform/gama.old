@@ -35,7 +35,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	public FreeFlyCamera(final Abstract3DRenderer renderer) {
 		super(renderer);
-		reset();
+		initialize();
 	}
 
 	protected void updateCartesianCoordinatesFromAngles() {
@@ -50,7 +50,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
 		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z,
 				up.x * forward.y - up.y * forward.x).normalized());
-		target.setLocation(forward.plus(position));
+		setTarget(forward.plus(position));
 	}
 
 	@Override
@@ -61,8 +61,8 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.phi = phi - -getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				position.setLocation(position.plus(forward.times(speed * 200))); // go
-																					// forward
+				setPosition(position.plus(forward.times(speed * 200))); // go
+																		// forward
 			}
 		}
 		if (isBackward()) {
@@ -70,8 +70,8 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.phi = phi - getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				position.setLocation(position.minus(forward.times(speed * 200))); // go
-																					// backward
+				setPosition(position.minus(forward.times(speed * 200))); // go
+																			// backward
 			}
 		}
 		if (isStrafeLeft()) {
@@ -79,10 +79,10 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.theta = theta - -getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				position.setLocation(position.plus(left.times(speed * 200))); // move
-																				// on
-																				// the
-																				// right
+				setPosition(position.plus(left.times(speed * 200))); // move
+																		// on
+																		// the
+																		// right
 			}
 		}
 		if (isStrafeRight()) {
@@ -90,35 +90,35 @@ public class FreeFlyCamera extends AbstractCamera {
 				this.theta = theta - getKeyboardSensivity() * getSensivity();
 				updateCartesianCoordinatesFromAngles();
 			} else {
-				position.setLocation(position.minus(left.times(speed * 200))); // move
-																				// on
-																				// the
-																				// left
+				setPosition(position.minus(left.times(speed * 200))); // move
+																		// on
+																		// the
+																		// left
 			}
 		}
 
-		target.setLocation(position.plus(forward));
+		setTarget(position.plus(forward));
 	}
 
 	@Override
-	public void upPosition(final double xPos, final double yPos, final double zPos) {
+	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		// Not allowed for this camera
 	}
 
 	public void followAgent(final IAgent a, final GLU glu) {
 		final ILocation l = a.getLocation();
-		position.setLocation(l.getX(), l.getY(), l.getZ());
+		setPosition(l.getX(), l.getY(), l.getZ());
 		glu.gluLookAt(0, 0, (float) (getRenderer().getMaxEnvDim() * 1.5), 0, 0, 0, 0.0f, 0.0f, 1.0f);
 	}
 
 	@Override
-	public void reset() {
+	public void initialize() {
 		upVector.setLocation(up);
 		final LayeredDisplayData data = getRenderer().data;
 		final double envWidth = data.getEnvWidth();
 		final double envHeight = data.getEnvHeight();
-		position.setLocation(envWidth / 2, -envHeight * 1.75, getRenderer().getMaxEnvDim());
-		target.setLocation(envWidth / 2, -envHeight * 0.5, 0);
+		setPosition(envWidth / 2, -envHeight * 1.75, getRenderer().getMaxEnvDim());
+		setTarget(envWidth / 2, -envHeight * 0.5, 0);
 		this.phi = -45;
 		this.theta = 90;
 		updateCartesianCoordinatesFromAngles();
@@ -130,12 +130,18 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
+	public void zoom(final double level) {
+		setPosition(position.x, position.y, getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level);
+		updateCartesianCoordinatesFromAngles();
+	}
+
+	@Override
 	public void zoom(final boolean in) {
 		final float step = FastMath.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
 		final GamaPoint vector = forward.times(speed * 800 + step);
-		position.setLocation(getPosition().plus(in ? vector : vector.negated()));
-		target.setLocation(forward.plus(getPosition()));
-		getRenderer().data.setZoomLevel(zoomLevel());
+		setPosition(getPosition().plus(in ? vector : vector.negated()));
+		setTarget(forward.plus(getPosition()));
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override
@@ -143,8 +149,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		final int width = (int) env.getWidth();
 		final int height = (int) env.getHeight();
 		final double maxDim = width > height ? width : height;
-		updatePosition(env.centre().x, env.centre().y, maxDim * 1.5);
-		updateCartesianCoordinatesFromAngles();
+		setPosition(env.centre().x, env.centre().y, maxDim * 1.5);
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override
@@ -153,8 +159,9 @@ public class FreeFlyCamera extends AbstractCamera {
 		final double centerY = shape.getLocation().getY();
 		final double centerZ = shape.getLocation().getZ();
 		final double extent = shape.getEnvelope().maxExtent();
-		updatePosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
-		lookPosition(centerX, -centerY, -(extent * 2));
+		setPosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
+		setTarget(centerX, -centerY, -(extent * 2));
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override

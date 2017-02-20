@@ -21,8 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -89,7 +88,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

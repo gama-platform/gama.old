@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractLayerStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,7 +31,8 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  *
  */
-@inside(symbols = IKeyword.DISPLAY)
+@inside (
+		symbols = IKeyword.DISPLAY)
 public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
 
 	private IDisplayLayerBox box;
@@ -50,10 +50,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 				getFacet(IKeyword.REFRESH), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING),
 				getFacet(IKeyword.SELECTABLE)));
 		setName(desc.getName());
-		// final IExpression title = getFacet(IKeyword.NAME);
-		// if (title != null && title.isConst()) {
-		// setName(title.literalValue());
-		// }
 	}
 
 	@Override
@@ -73,7 +69,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final boolean init(final IScope scope) {
-		// getBox().compute(scope);
 		return _init(scope);
 	}
 
@@ -99,9 +94,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final boolean step(final IScope scope) throws GamaRuntimeException {
-		if (!scope.interrupted()) {
-			return _step(scope);
-		}
+		if (!scope.interrupted()) { return _step(scope); }
 		return false;
 	}
 
@@ -128,8 +121,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> children) {
-	}
+	public void setChildren(final Iterable<? extends ISymbol> children) {}
 
 	public List<? extends ISymbol> getChildren() {
 		return Collections.EMPTY_LIST;

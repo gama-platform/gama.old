@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'RevalidateModelSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'RevalidateModelSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,7 +12,8 @@ package msi.gama.lang.gaml.ui.editor.toolbar;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -42,11 +42,11 @@ public class RevalidateModelSelectionListener implements SelectionListener {
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 
-		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+		editor.getDocument().readOnly(new CancelableUnitOfWork<Object, XtextResource>() {
 
 			@Override
-			public void process(final XtextResource state) throws Exception {
-				GamlModelBuilder.compile(state.getURI(), null);
+			public Object exec(final XtextResource state, final CancelIndicator c) throws Exception {
+				return GamlModelBuilder.compile(state.getURI(), null);
 			}
 		});
 
@@ -56,7 +56,6 @@ public class RevalidateModelSelectionListener implements SelectionListener {
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {
-	}
+	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 }

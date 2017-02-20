@@ -11,6 +11,7 @@ package msi.gaml.statements.draw;
 
 import java.util.List;
 
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -24,12 +25,12 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public GamaMaterial material;
 	public IShape.Type type;
 
-	public ShapeDrawingAttributes(final GamaPoint size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
+	public ShapeDrawingAttributes(final Scaling3D size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
 			final GamaColor border, final List textures, final GamaMaterial material, final IAgent agent,
 			final IShape.Type type, final Double lineWidth) {
-		super(size, rotation, location, color, border, agent, lineWidth);
-		setDepthIfAbsent(depth);
+		super(size, rotation, location, color, border, agent, lineWidth, false);
+		setHeightIfAbsent(depth);
 		setEmpty(empty);
 		setTextures(textures);
 		this.material = material == null ? null : material;
@@ -38,8 +39,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	private void setTextures(final List textures) {
-		colorProperties = colorProperties.withTextures(textures);
-
+		colorProperties.withTextures(textures);
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location) {
@@ -71,9 +71,9 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 				shape.getGeometricalType(), lineWidth);
 	}
 
-	public void setDepthIfAbsent(final Double d) {
-		if (getDepth() == null)
-			setDepth(d);
+	public void setHeightIfAbsent(final Double d) {
+		if (getHeight() == null)
+			setHeight(d);
 	}
 
 	/**
@@ -84,6 +84,11 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	@Override
 	public GamaMaterial getMaterial() {
 		return material;
+	}
+
+	@Override
+	public IShape.Type getType() {
+		return type;
 	}
 
 }

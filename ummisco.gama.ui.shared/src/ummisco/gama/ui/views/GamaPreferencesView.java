@@ -74,7 +74,7 @@ public class GamaPreferencesView {
 			instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 		}
 		for (final IParameterEditor ed : instance.editors.values()) {
-			ed.updateValue();
+			ed.updateValue(true);
 
 		}
 		instance.open();
@@ -341,7 +341,7 @@ public class GamaPreferencesView {
 					return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
-					ed.updateValue();
+					ed.updateValue(true);
 				}
 			}
 
@@ -416,7 +416,7 @@ public class GamaPreferencesView {
 			public void widgetSelected(final SelectionEvent e) {
 				GamaPreferences.revertToDefaultValues(modelValues);
 				for (final IParameterEditor ed : editors.values()) {
-					ed.updateValue();
+					ed.updateValue(true);
 				}
 			}
 

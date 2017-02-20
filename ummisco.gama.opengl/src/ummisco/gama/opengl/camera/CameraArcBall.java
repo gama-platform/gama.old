@@ -29,9 +29,8 @@ public class CameraArcBall extends AbstractCamera {
 
 	private final boolean isDrawingRotateHelper = GamaPreferences.OpenGL.DRAW_ROTATE_HELPER.getValue();
 
-	public CameraArcBall(final Abstract3DRenderer joglawtglRenderer) {
-		super(joglawtglRenderer);
-		reset();
+	public CameraArcBall(final Abstract3DRenderer renderer) {
+		super(renderer);
 	}
 
 	private void updateCartesianCoordinatesFromAngles() {
@@ -50,8 +49,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double sinT = Math.sin(factorT);
 		final double cosP = Math.cos(factorP);
 		final double sinP = Math.sin(factorP);
-		position.setLocation(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y,
-				radius * cosP + target.z);
+		setPosition(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y, radius * cosP + target.z);
 	}
 
 	@Override
@@ -79,7 +77,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
 		final double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
 
-		upPosition(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+		setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
 				-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
 
 		final double phi_vect_x = Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad);
@@ -95,14 +93,11 @@ public class CameraArcBall extends AbstractCamera {
 		final double y_translation_in_world = theta_vect_y_norm + phi_vect_y_norm;
 		final double z_translation_in_world = theta_vect_z_norm + phi_vect_z_norm;
 
-		// double zoom = zoomLevel()*4; // the factor 4 makes the translation a
-		// bit slower. Maybe a future change of this value to make it more
-		// "mathematics" should be better.
-		updatePosition(position.x - x_translation_in_world * radius / 1000,
+		setPosition(position.x - x_translation_in_world * radius / 1000,
 				position.y - y_translation_in_world * radius / 1000,
 				position.z - z_translation_in_world * radius / 1000);
-		lookPosition(target.x - x_translation_in_world * radius / 1000,
-				target.y - y_translation_in_world * radius / 1000, target.z - z_translation_in_world * radius / 1000);
+		setTarget(target.x - x_translation_in_world * radius / 1000, target.y - y_translation_in_world * radius / 1000,
+				target.z - z_translation_in_world * radius / 1000);
 
 		updateSphericalCoordinatesFromLocations();
 	}
@@ -115,8 +110,8 @@ public class CameraArcBall extends AbstractCamera {
 		final double translate_x = target.x - envWidth / 2;
 		final double translate_y = target.y + envHeight / 2;
 		final double translate_z = target.z;
-		target.setLocation(envWidth / 2, -envHeight / 2, 0);
-		position.setLocation(position.x - translate_x, position.y - translate_y, position.z - translate_z);
+		setTarget(envWidth / 2, -envHeight / 2, 0);
+		setPosition(position.x - translate_x, position.y - translate_y, position.z - translate_z);
 		updateSphericalCoordinatesFromLocations();
 	}
 
@@ -193,26 +188,57 @@ public class CameraArcBall extends AbstractCamera {
 	// }
 
 	@Override
-	public void reset() {
+	public void initialize() {
 		final LayeredDisplayData data = getRenderer().data;
-		final double envWidth = data.getEnvWidth();
-		final double envHeight = data.getEnvHeight();
-		final boolean threeD = data.isOutput3D();
-		radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
-		target.setLocation(envWidth / 2, -envHeight / 2, 0);
-		phi = threeD ? 135.0 : 0.0;
-		theta = -90.00;
 		flipped = false;
-		updateCartesianCoordinatesFromAngles();
 		initialized = false;
-		update();
-
+		if (initialPosition == null) {
+			if (data.isCameraDefined()) {
+				updatePosition();
+				updateTarget();
+				updateOrientation();
+				updateSphericalCoordinatesFromLocations();
+			} else {
+				final double envWidth = data.getEnvWidth();
+				final double envHeight = data.getEnvHeight();
+				radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
+				setTarget(envWidth / 2, -envHeight / 2, 0);
+				phi = 0;
+				theta = -90.00;
+				updateCartesianCoordinatesFromAngles();
+				// update();
+			}
+			initialPosition = new GamaPoint(position);
+			initialTarget = new GamaPoint(target);
+			initialUpVector = new GamaPoint(upVector);
+		} else {
+			data.setCameraPos(initialPosition);
+			data.setCameraLookPos(initialTarget);
+			data.setCameraUpVector(initialUpVector, true);
+			// update();
+		}
 	}
+
+	// @Override
+	// public void reset() {
+	// final LayeredDisplayData data = getRenderer().data;
+	// final double envWidth = data.getEnvWidth();
+	// final double envHeight = data.getEnvHeight();
+	// // final boolean threeD = data.isOutput3D();
+	// radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
+	// setTarget(envWidth / 2, -envHeight / 2, 0);
+	// phi = true ? 135.0 : 0.0;
+	// theta = -90.00;
+	// flipped = false;
+	// updateCartesianCoordinatesFromAngles();
+	// // initialized = false;
+	// update();
+	//
+	// }
 
 	@Override
 	public void animate() {
-		// First we position the camera ???
-		super.animate();
+
 		if (cameraInteraction) {
 			// And we animate it if the keyboard is invoked
 			if (isForward()) {
@@ -307,6 +333,8 @@ public class CameraArcBall extends AbstractCamera {
 				}
 			}
 		}
+		// First we position the camera ???
+		super.animate();
 	}
 
 	@Override
@@ -315,11 +343,18 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
+	public void zoom(final double level) {
+		radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level;
+		updateCartesianCoordinatesFromAngles();
+	}
+
+	@Override
 	public void zoom(final boolean in) {
+		if (keystoneMode)
+			return;
 		final double step = radius != 0d ? radius / 10d * GamaPreferences.OpenGL.OPENGL_ZOOM.getValue() : 0.1d;
 		radius = radius + (in ? -step : step);
-		getRenderer().data.setZoomLevel(zoomLevel());
-		updateCartesianCoordinatesFromAngles();
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override
@@ -328,9 +363,8 @@ public class CameraArcBall extends AbstractCamera {
 		final int height = (int) env.getHeight();
 		radius = 1.5 * (width > height ? width : height);
 		// y is already negated
-		target.setLocation(env.centre());
-		updateCartesianCoordinatesFromAngles();
-		// getRenderer().cancelROI();
+		setTarget(env.centre());
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override
@@ -343,21 +377,21 @@ public class CameraArcBall extends AbstractCamera {
 			radius = extent * 1.5;
 		}
 		// y is NOT negated in IShapes
-		target.setLocation(p.getCentroid().yNegated());
-		updateCartesianCoordinatesFromAngles();
+		setTarget(p.getCentroid().yNegated());
+		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
 	@Override
 	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
 
 		if (keystoneMode) {
-			if (getRenderer().getCornerSelected() != -1) {
-				final float[] newCoordForKeystone = {
-						(float) e.x / (float) getRenderer().getDisplayWidth()
-								* getRenderer().getZoomLevel().floatValue(),
-						(float) e.y / (float) getRenderer().getDisplayHeight()
-								* getRenderer().getZoomLevel().floatValue() };
-				getRenderer().setKeystoneCoordinates(getRenderer().getCornerSelected(), newCoordForKeystone);
+			final int selectedCorner = getRenderer().getKeystone().getCornerSelected();
+			if (selectedCorner != -1) {
+				final GamaPoint p = getNormalizedCoordinates(e);
+				getRenderer().getKeystone().setKeystoneCoordinates(selectedCorner, p);
+			} else {
+				final int cornerSelected = hoverOnKeystone(e);
+				getRenderer().getKeystone().setCornerHovered(cornerSelected);
 			}
 			return;
 		}

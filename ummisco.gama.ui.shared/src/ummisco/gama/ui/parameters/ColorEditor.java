@@ -23,7 +23,7 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gaml.types.IType;
+import msi.gaml.types.GamaColorType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -104,7 +104,7 @@ public class ColorEditor extends AbstractEditor<Color> {
 	}
 
 	@Override
-	public IType<Color> getExpectedType() {
+	public GamaColorType getExpectedType() {
 		return Types.COLOR;
 	}
 

@@ -1,0 +1,10 @@
+# Wavefront material library
+# Tue Aug 03 08:00:04 1999
+# Created with Viewpoint Interchange www.viewpoint.com
+
+newmtl blk_ant
+  Ka 0 0 0
+  Kd 0 0 0
+  Ks 0 0 0
+  illum 2
+  map_Kd ant_blk.TIF

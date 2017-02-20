@@ -14,8 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -255,7 +254,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

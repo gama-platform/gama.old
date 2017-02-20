@@ -11,8 +11,7 @@ package ummisco.gama.opengl.scene;
 
 import java.util.ArrayList;
 
-import com.jogamp.opengl.GL2;
-
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -22,6 +21,7 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.ModernRenderer;
 
 public class KeystoneHelperLayerObject extends LayerObject {
 
@@ -37,10 +37,10 @@ public class KeystoneHelperLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL2 gl) {}
+	public void clear(final OpenGL gl) {}
 
 	@Override
-	public void draw(final GL2 gl) {
+	public void draw(final OpenGL gl) {
 		updateObjectList();
 		super.draw(gl);
 	}
@@ -51,7 +51,7 @@ public class KeystoneHelperLayerObject extends LayerObject {
 		final ArrayList<AbstractObject> newElem = new ArrayList<>();
 
 		// build the 4 circles at each corner
-		if (renderer.drawKeystoneHelper()) // if the "K" key is pressed
+		if (renderer.getKeystone().drawKeystoneHelper()) // if the "K" key is pressed
 		{
 			final float[][] keystonePositions = new float[4][2];
 			keystonePositions[1] = new float[] { 0, 0 };
@@ -59,9 +59,9 @@ public class KeystoneHelperLayerObject extends LayerObject {
 			keystonePositions[0] = new float[] { 0, 1 };
 			keystonePositions[3] = new float[] { 1, 1 };
 			for (int cornerId = 0; cornerId < keystonePositions.length; cornerId++) {
-				final GamaColor outsideCircleColor = cornerId == renderer.getCornerSelected()
+				final GamaColor outsideCircleColor = cornerId == renderer.getKeystone().getCornerSelected()
 						? new GamaColor(100, 0, 0, 255) : new GamaColor(0, 100, 0, 255);
-				final GamaColor insideCircleColor = cornerId == renderer.getCornerSelected()
+				final GamaColor insideCircleColor = cornerId == renderer.getKeystone().getCornerSelected()
 						? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
 				final GamaPoint circleLocation =
 						new GamaPoint(keystonePositions[cornerId][0], keystonePositions[cornerId][1]);
@@ -79,8 +79,9 @@ public class KeystoneHelperLayerObject extends LayerObject {
 						createRectangleObject(0.2, 0.05, backgroundLocation, new GamaColor(255, 255, 255, 255));
 				newElem.add(bckgndObj);
 				// build label
-				final String content = "(" + floor4Digit(renderer.getKeystoneCoordinates()[cornerId][0]) + ","
-						+ floor4Digit(renderer.getKeystoneCoordinates()[cornerId][1]) + ")";
+				final String content =
+						"(" + floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].x) + ","
+								+ floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].y) + ")";
 				final GamaPoint testLocation =
 						new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f - 0.08,
 								-((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f);
@@ -113,7 +114,7 @@ public class KeystoneHelperLayerObject extends LayerObject {
 		// 0 for plain, 18 for text size
 		final GamaFont font = new GamaFont("Helvetica", 0, 18);
 		final TextDrawingAttributes textDrawingAttr =
-				new TextDrawingAttributes(new GamaPoint(size, size, size), null, location, color, font, true);
+				new TextDrawingAttributes(Scaling3D.of(size), null, location, color, font, true);
 		final StringObject strObj = new StringObject(content, textDrawingAttr);
 		return strObj;
 	}
@@ -134,7 +135,7 @@ public class KeystoneHelperLayerObject extends LayerObject {
 		return rectGeom;
 	}
 
-	private float floor4Digit(float number) {
+	private double floor4Digit(double number) {
 		number *= 1000;
 		number = Math.round(number);
 		number /= 1000;

@@ -19,10 +19,10 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.runtime.IScope;
 
@@ -31,7 +31,7 @@ public class Projection implements IProjection {
 	private final ProjectionFactory factory;
 	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
 	CoordinateReferenceSystem initialCRS;
-	Envelope projectedEnv;
+	Envelope3D projectedEnv;
 	final IProjection referenceProjection;
 
 	Projection(final IProjection world, final ProjectionFactory fact) {
@@ -39,7 +39,7 @@ public class Projection implements IProjection {
 		factory = fact;
 	}
 
-	Projection(final IScope scope, final IProjection world, final CoordinateReferenceSystem crs, final Envelope env,
+	Projection(final IScope scope, final IProjection world, final CoordinateReferenceSystem crs, final Envelope3D env,
 			final ProjectionFactory fact) {
 		this.factory = fact;
 		this.referenceProjection = world;
@@ -101,14 +101,14 @@ public class Projection implements IProjection {
 		return geom;
 	}
 
-	Envelope transform(final Envelope g, final boolean translate) {
+	Envelope3D transform(final Envelope3D g, final boolean translate) {
 		if (transformer == null) { return g; }
-		return transform(JTS.toGeometry(g), translate).getEnvelopeInternal();
+		return Envelope3D.of(transform(JTS.toGeometry(g), translate).getEnvelopeInternal());
 	}
 
-	Envelope transform(final Envelope g) {
+	Envelope3D transform(final Envelope3D g) {
 		if (transformer == null) { return g; }
-		return transform(JTS.toGeometry(g)).getEnvelopeInternal();
+		return Envelope3D.of(transform(JTS.toGeometry(g)).getEnvelopeInternal());
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class Projection implements IProjection {
 	}
 
 	@Override
-	public Envelope getProjectedEnvelope() {
+	public Envelope3D getProjectedEnvelope() {
 		return projectedEnv;
 	}
 

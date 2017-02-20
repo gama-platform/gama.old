@@ -99,7 +99,8 @@ public class GridLayer extends ImageLayer {
 		}
 		final double[] gridValueMatrix = g.getElevationMatrix(scope);
 		final GamaImageFile textureFile = g.textureFile();
-		final FieldDrawingAttributes attributes = new FieldDrawingAttributes(getName(), lineColor);
+		final FieldDrawingAttributes attributes =
+				new FieldDrawingAttributes(getName(), lineColor, gridValueMatrix == null);
 		attributes.grayScaled = g.isGrayScaled;
 		if (textureFile != null) {
 			attributes.setTextures(Arrays.asList(textureFile));

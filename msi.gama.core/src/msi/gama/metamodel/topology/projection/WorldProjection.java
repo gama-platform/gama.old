@@ -12,16 +12,16 @@ package msi.gama.metamodel.topology.projection;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
 
 public class WorldProjection extends Projection {
 
 	public CoordinateFilter gisToAbsoluteTranslation, absoluteToGisTranslation;
 
-	public WorldProjection(final IScope scope, final CoordinateReferenceSystem crs, final Envelope env,
+	public WorldProjection(final IScope scope, final CoordinateReferenceSystem crs, final Envelope3D env,
 			final ProjectionFactory fact) {
 		super(scope, null, crs, env, fact);
 		// referenceProjection = this;
@@ -45,7 +45,7 @@ public class WorldProjection extends Projection {
 		}
 	}
 
-	public void updateTranslations(final Envelope env) {
+	public void updateTranslations(final Envelope3D env) {
 		if (env != null) {
 			projectedEnv = env;
 		}

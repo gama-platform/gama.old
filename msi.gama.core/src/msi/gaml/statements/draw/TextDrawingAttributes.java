@@ -9,8 +9,10 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMaterial;
@@ -22,7 +24,7 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	public final GamaFont font;
 	public final boolean perspective;
 
-	public TextDrawingAttributes(final GamaPoint size, final GamaPair<Double, GamaPoint> rotation,
+	public TextDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final GamaColor color, final GamaFont font, final Boolean perspective) {
 		super(size, rotation, location, color, null);
 		this.font = font;
@@ -43,6 +45,11 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	@Override
 	public AgentIdentifier getAgentIdentifier() {
 		return null;
+	}
+
+	@Override
+	public Type getType() {
+		return Type.POLYGON;
 	}
 
 }

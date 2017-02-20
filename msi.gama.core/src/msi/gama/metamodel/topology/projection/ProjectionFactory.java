@@ -155,7 +155,7 @@ public class ProjectionFactory {
 		return crs;
 	}
 
-	public IProjection fromParams(final IScope scope, final Map<String, Object> params, final Envelope env) {
+	public IProjection fromParams(final IScope scope, final Map<String, Object> params, final Envelope3D env) {
 		final Boolean lonFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		final Object crs = params.get("crs");
 		if (crs instanceof String) { return fromCRS(scope, getCRS(scope, (String) crs, lonFirst), env); }
@@ -164,7 +164,7 @@ public class ProjectionFactory {
 		return fromCRS(scope, getDefaultInitialCRS(scope), env);
 	}
 
-	public IProjection fromCRS(final IScope scope, final CoordinateReferenceSystem crs, final Envelope env) {
+	public IProjection fromCRS(final IScope scope, final CoordinateReferenceSystem crs, final Envelope3D env) {
 		if (env != null) {
 			testConsistency(scope, crs, env);
 		}

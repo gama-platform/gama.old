@@ -16,6 +16,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLException;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 
 /**
  * Simple Animator (with target FPS)
@@ -25,18 +26,31 @@ import msi.gama.common.preferences.GamaPreferences;
 public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
 	static int FRAME_PER_SECOND = GamaPreferences.OpenGL.OPENGL_FPS.getValue();
-	protected final int targetFPS = FRAME_PER_SECOND;
+	protected int targetFPS = FRAME_PER_SECOND;
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
 
 	protected volatile boolean stopRequested = false;
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
+	protected volatile long starting_time;
 
 	protected int frames = 0;
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
-		// this.targetFPS = FRAME_PER_SECOND;
+		GamaPreferences.OpenGL.OPENGL_FPS.addChangeListener(new IPreferenceChangeListener<Integer>() {
+
+			@Override
+			public boolean beforeValueChange(final Integer newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Integer newValue) {
+				targetFPS = newValue;
+
+			}
+		});
 		this.drawable = drawable;
 		drawable.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");
@@ -75,8 +89,8 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getLastFPS() {
-		final int result = frames;
-		frames = 0;
+		final float result = (float) frames / ((System.currentTimeMillis() - starting_time) / 1000);
+		// frames = 0;
 		return result;
 	}
 
@@ -92,8 +106,8 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getTotalFPS() {
-		final int result = frames;
-		frames = 0;
+		final float result = (float) frames / ((System.currentTimeMillis() - starting_time) / 1000);
+		// frames = 0;
 		return result;
 	}
 
@@ -122,6 +136,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 		this.stopRequested = false;
 		this.pauseRequested = false;
 		this.animatorThread.start();
+		starting_time = System.currentTimeMillis();
 		return true;
 	}
 

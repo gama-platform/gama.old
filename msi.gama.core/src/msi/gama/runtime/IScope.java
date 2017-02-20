@@ -767,6 +767,8 @@ public interface IScope extends Closeable {
 	 */
 	public abstract ExecutionResult update(IAgent agent);
 
+	public abstract IExecutionContext getExecutionContext();
+
 	/**
 	 * @return the current statement or null if none
 	 */

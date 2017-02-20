@@ -15,6 +15,7 @@ import java.util.Arrays;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import ummisco.gama.modernOpenGL.DrawingEntity;
@@ -131,7 +132,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 	@Override
 	protected void computeUVMapping() {
 		super.computeUVMapping();
-		if (type == IShape.Type.CONE || type == IShape.Type.CYLINDER || type == IShape.Type.SPHERE) {
+		if (false && (type == IShape.Type.CONE || type == IShape.Type.CYLINDER || type == IShape.Type.SPHERE)) {
 			// special case for cone, cylinder and sphere
 			int resolution = BUILT_IN_SHAPE_RESOLUTION; // 32 vertex of
 														// resolution for those
@@ -165,8 +166,9 @@ class GeometryObjectTransformer extends AbstractTransformer {
 						// backward
 						uCoords = 1 - uCoords;
 					}
-					uvMapping[(i + resolution + 1) * 2] = uCoords;
-					uvMapping[(i + resolution + 1) * 2 + 1] = 0;
+					final int idx = (i + resolution + 1) * 2;
+					uvMapping[idx] = uCoords;
+					uvMapping[idx + 1] = 0;
 				}
 				uvMapping[resolution * 2] = 0.5f;
 				uvMapping[resolution * 2 + 1] = 1;
@@ -200,7 +202,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		float YSize = (maxY - minY) / 2 == 0 ? 1 : (maxY - minY) / 2;
 		float ZSize = this.depth == 0 ? 1 : (float) this.depth;
 
-		final GamaPoint attrSize = Objects.firstNonNull(geomObj.getDimensions(), new GamaPoint(1, 1, 1));
+		final Scaling3D attrSize = Objects.firstNonNull(geomObj.getDimensions(), Scaling3D.of(1));
 
 		if (isSphere()) {
 			final float realSize = Math.max(YSize, XSize);

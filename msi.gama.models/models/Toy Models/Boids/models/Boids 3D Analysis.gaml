@@ -26,9 +26,9 @@ global torus: torus_environment{
 	//Alignment factor used for the boid group in the range of a boid agent
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
 	//Minimal distance to move
-	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
+	float minimal_distance parameter: 'Minimal Distance' <- 30.0; 
 	//Maximal turn done by the boids
-	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
+	int maximal_turn parameter: 'Maximal Turn' <- 45 min: 0 max: 359; 
 	
 	//Parameters of the environment and the simulations
 	int width_and_height_of_environment parameter: 'Width/Height of the Environment' <- 800;  
@@ -265,8 +265,8 @@ species boids skills: [moving] {
 	//Reflex to do the separation of the agents with the other boids in the minimal distance
 	reflex separation when: apply_separation {
 		point acc <- {0,0}; 
-		loop boid over: (boids overlapping (circle(minimal_distance)))  {
-			acc <- acc - ((location of boid) - location);
+		loop boid over: (boids at_distance minimal_distance)  {
+			acc <- acc - ((boid.location) - location);
 		}  
 		velocity <- velocity + acc;
 	}
@@ -359,7 +359,7 @@ species obstacle skills: [moving] {
 
 experiment start type: gui {
 	output {
-		display RealBoids  type:opengl z_fighting:false {
+		display RealBoids  type:opengl  {
 			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor  position:{0,0,0.1} trace: 30;
 			species boids_goal transparency:0.2 position:{0,0,0.1};
@@ -398,9 +398,9 @@ experiment SpaceTimeCube type: gui {
 		}
 		
 		display SpaceTimeCubeAll  type:opengl {
-			image 'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean refresh: false;
 			species boids trace:true{
-			    draw triangle(20) size: 15 rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) border:hsb (float(heading)/360.0,1.0,1.0) depth:5 at: {location.x ,location.y,location.z+time};	
+			    draw triangle(20) size: 15 rotate: heading color: hsb (float(heading)/360.0,1.0,1.0) border:hsb (float(heading)/360.0,1.0,1.0) depth:5 at: {location.x ,location.y,location.z+time};	
 			}
 			species boids_goal trace:true{
 				draw sphere(10) color: rgb('yellow') at: {location.x ,location.y,location.z+time};
@@ -408,7 +408,7 @@ experiment SpaceTimeCube type: gui {
 		}
 				
 		display SpaceTimeCubeAggregated  type:opengl {
-			image 'background' file:file_path_to_ocean;
+			image 'background' file:file_path_to_ocean refresh: false;
 			species aggregatedboids trace:true{
 			    draw sphere(10) color: rgb('red') at: {location.x ,location.y,location.z+time};	
 			}

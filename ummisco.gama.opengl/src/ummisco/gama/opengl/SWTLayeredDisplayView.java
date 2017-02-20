@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.opengl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -107,5 +110,10 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	public void waitToBeRealized() {
 
 		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTLayeredDisplayView.this));
+	}
+
+	@Override
+	protected List<String> getCameraNames() {
+		return new ArrayList<String>(getDisplaySurface().renderer.camera.PRESETS.keySet());
 	}
 }

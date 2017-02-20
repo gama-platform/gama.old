@@ -10,15 +10,13 @@
 package ummisco.gama.opengl.scene;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
@@ -71,25 +69,23 @@ public class LayerObject {
 	}
 
 	private List newCurrentList() {
-		return Collections.synchronizedList(new ArrayList());
+		return /* Collections.synchronizedList( */new ArrayList()/* ) */;
 	}
 
 	protected boolean isPickable() {
 		return layer == null ? false : layer.isSelectable();
 	}
 
-	public void draw(final GL2 gl) {
+	public void draw(final OpenGL gl) {
 		if (isInvalid()) { return; }
 		if (renderer.useShader()) {
-			drawWithShader(gl);
+			drawWithShader(gl.getGL());
 		} else {
 			drawWithoutShader(gl);
 		}
 	}
 
 	private void drawWithShader(final GL2 gl) {
-		if (!(renderer instanceof ModernRenderer))
-			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
 
 		if (isOverlay()) {
@@ -108,7 +104,8 @@ public class LayerObject {
 				alpha = isFading ? originalAlpha * (alpha + delta) : originalAlpha;
 				synchronized (list) {
 					for (final AbstractObject object : list) {
-						renderer.setCurrentObjectAlpha(alpha);
+						final double alpha1 = alpha;
+						renderer.getOpenGLHelper().setCurrentObjectAlpha(alpha1);
 						final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
 								.generateDrawingEntities(renderer.getSurface().getScope(), object, this, gl);
 						if (overlay) {
@@ -129,52 +126,40 @@ public class LayerObject {
 
 	}
 
-	private void drawWithoutShader(final GL2 gl) {
-		if (overlay) {
-			gl.glDisable(GL.GL_DEPTH_TEST);
-			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-			gl.glLoadIdentity();
-			gl.glPushMatrix();
-			renderer.getGlu().gluOrtho2D(0.0, 500, 500, 0.0);
-			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-			gl.glLoadIdentity();
-		}
+	private void drawWithoutShader(final OpenGL gl) {
+
 		if (objects.size() == 0) { return; }
+		if (overlay) {
+			gl.pushIdentity(GL2.GL_PROJECTION);
+			gl.getGL().glOrtho(0, 1, 0, 1, 1, -1);
+			gl.pushIdentity(GL2.GL_MODELVIEW);
+		}
 		try {
-			gl.glPushMatrix();
+			gl.pushMatrix();
 			final GamaPoint offset = getOffset();
-			gl.glTranslated(offset.x, -offset.y, offset.z);
+			gl.translateBy(offset.x, -offset.y, offset.z);
 			final GamaPoint scale = getScale();
-			gl.glScaled(scale.x, scale.y, scale.z);
+			gl.scaleBy(scale.x, scale.y, scale.z);
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
 			if (picking) {
-				gl.glInitNames();
-				gl.glPushName(0);
-				drawAllObjects(gl, true);
-				gl.glPopName();
+				gl.runWithNames(() -> drawAllObjects(gl, true));
 			} else {
 				if (openGLListIndex == null) {
-					openGLListIndex = gl.glGenLists(1);
-					gl.glNewList(openGLListIndex, GL2.GL_COMPILE);
-					drawAllObjects(gl, false);
-					gl.glEndList();
+					openGLListIndex = gl.compileAsList(() -> drawAllObjects(gl, false));
 				}
-				gl.glCallList(openGLListIndex);
+				gl.drawList(openGLListIndex);
 			}
 		} finally {
-			gl.glPopMatrix();
+			gl.popMatrix();
 			if (overlay) {
-				// Making sure we can render 3d again
-				gl.glEnable(GL.GL_DEPTH_TEST);
-				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-				gl.glPopMatrix();
-				gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+				gl.pop(GL2.GL_MODELVIEW);
+				gl.pop(GL2.GL_PROJECTION);
 			}
 		}
 
 	}
 
-	protected void drawAllObjects(final GL2 gl, final boolean picking) {
+	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
 		if (getTrace() > 0) {
 			double delta = 0;
 			if (isFading) {
@@ -186,7 +171,7 @@ public class LayerObject {
 			drawObjects(gl, currentList, alpha, picking);
 	}
 
-	protected void drawSublists(final GL2 gl, final double alphaDelta, final boolean picking) {
+	protected void drawSublists(final OpenGL gl, final double alphaDelta, final boolean picking) {
 		double alpha = 0d;
 		for (final List<AbstractObject> list : objects) {
 			alpha = alphaDelta == 0d ? this.alpha : this.alpha * (alpha + alphaDelta);
@@ -194,20 +179,17 @@ public class LayerObject {
 		}
 	}
 
-	protected void drawObjects(final GL2 gl, final List<AbstractObject> list, final double alpha,
+	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
 			final boolean picking) {
-		renderer.setCurrentObjectAlpha(alpha);
-		synchronized (list) {
-			for (final AbstractObject object : list) {
-				object.draw(gl, renderer.getDrawerFor(object.getDrawerType()), picking);
-			}
+		gl.setCurrentObjectAlpha(alpha);
+		for (final AbstractObject object : list) {
+			object.draw(gl, renderer.getDrawerFor(object.getDrawerType()), picking);
 		}
 	}
 
 	public boolean isStatic() {
 		if (layer == null) { return true; }
-		final Boolean isDynamic = layer.isDynamic();
-		return isDynamic == null ? false : !isDynamic;
+		return !layer.isDynamic();
 	}
 
 	public void setAlpha(final Double a) {
@@ -248,22 +230,18 @@ public class LayerObject {
 
 	public GeometryObject addImage(final Object o, final DrawingAttributes attributes) {
 		// If no dimensions have been defined, then the image is considered as wide and tall as the environment
-		GamaPoint size = attributes.getSize();
+		Scaling3D size = attributes.getSize();
 		if (size == null) {
-			size = renderer.getWorldsDimensions();
+			size = Scaling3D.of(renderer.getWorldsDimensions());
 			attributes.setSize(size);
 		}
 		final GamaPoint loc = attributes.getLocation();
-		final GamaPoint inc = attributes.getSize().dividedBy(2);
-		final GamaPoint newLoc = loc == null ? inc : loc.plus(inc);
+		final Scaling3D inc = attributes.getSize().dividedBy(2);
+		final GamaPoint newLoc = loc == null ? inc.toGamaPoint() : loc.plus(inc.getX(), inc.getY(), inc.getZ());
 		// We build a rectangle that will serve as a "support" for the image (which will become its texture)
-		final Geometry geometry = GamaGeometryType.buildRectangle(size.x, size.y, newLoc).getInnerGeometry();
-		// If a rotation is defined, we reverse it (to accomodate for the changes in coordinates between GAMA and
-		// OpenGL)
+		final Geometry geometry = GamaGeometryType.buildRectangle(size.getX(), size.getY(), newLoc).getInnerGeometry();
+
 		attributes.setLocation(newLoc);
-		final Double angle = attributes.getAngle();
-		if (angle != null)
-			attributes.setAngle(-angle);
 		attributes.setTexture(o);
 		return addGeometry(geometry, attributes);
 	}
@@ -292,7 +270,7 @@ public class LayerObject {
 		return fading == null ? false : fading;
 	}
 
-	public void clear(final GL2 gl) {
+	public void clear(final OpenGL gl) {
 		final int sizeLimit = getTrace();
 
 		isFading = getFading();
@@ -300,16 +278,13 @@ public class LayerObject {
 		final int size = objects.size();
 		for (int i = 0, n = size - sizeLimit; i < n; i++) {
 			final List<AbstractObject> list = objects.poll();
-			for (final AbstractObject t : list) {
-				t.dispose(gl);
-			}
 		}
 
 		currentList = newCurrentList();
 		objects.offer(currentList);
 		final Integer index = openGLListIndex;
 		if (index != null) {
-			gl.getGL2().glDeleteLists(index, 1);
+			gl.deleteList(index);
 			openGLListIndex = null;
 		}
 

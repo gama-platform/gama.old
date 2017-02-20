@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -26,7 +27,16 @@ import msi.gama.util.GamaColor;
 public class LayeredDisplayData {
 
 	public enum Changes {
-		SPLIT_LAYER, CHANGE_CAMERA, THREED_VIEW, CAMERA_POS, BACKGROUND, HIGHLIGHT, ZOOM;
+		SPLIT_LAYER,
+		CHANGE_CAMERA,
+		CAMERA_POS,
+		CAMERA_TARGET,
+		CAMERA_UP,
+		CAMERA_PRESET,
+		BACKGROUND,
+		HIGHLIGHT,
+		ZOOM,
+		KEYSTONE;
 	}
 
 	public static final String JAVA2D = "java2D";
@@ -36,7 +46,7 @@ public class LayeredDisplayData {
 
 	public static interface DisplayDataListener {
 
-		void changed(Changes property, boolean value);
+		void changed(Changes property, Object value);
 	}
 
 	final Set<DisplayDataListener> listeners = new HashSet<>();
@@ -49,7 +59,7 @@ public class LayeredDisplayData {
 		listeners.remove(listener);
 	}
 
-	public void notifyListeners(final Changes property, final boolean value) {
+	public void notifyListeners(final Changes property, final Object value) {
 		for (final DisplayDataListener listener : listeners) {
 			listener.changed(property, value);
 		}
@@ -59,7 +69,7 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private GamaColor backgroundColor = GamaPreferences.Displays.CORE_BACKGROUND.getValue();
-	private GamaColor ambientColor = new GamaColor(120, 120, 120, 255);
+	private GamaColor ambientColor = new GamaColor(64, 64, 64, 255);
 	private GamaColor highlightColor = GamaPreferences.Displays.CORE_HIGHLIGHT.getValue();
 
 	/**
@@ -75,32 +85,29 @@ public class LayeredDisplayData {
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private Double zoomLevel = null;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
-	private List<ILocation> keystone = null;
-	private double zRotation;
+	public static final ICoordinates KEYSTONE_IDENTITY =
+			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
+
+	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
+	private double zRotationAngle = 0.2;
+	private double currentRotationAboutZ = 0;
 
 	/**
 	 * OpenGL
 	 */
 
-	public static ILocation noChange = new GamaPoint(-1, -1, -1);
-	//
-	private boolean isOutputtingIn3D = false;
-	private boolean isTesselating = false;
-	private boolean isTriangulating = false;
-	// private int traceSize = 0;
-	private boolean isZFighting = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
-	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
+	private boolean isWireframe = false;
 	private boolean ortho = false;
-	private boolean disableCameraInteraction = false; // "fixed_camera" facet of
-														// the display
+	private boolean disableCameraInteraction = false; // "fixed_camera" facet
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean isDrawingEnvironment = GamaPreferences.OpenGL.CORE_DRAW_ENV.getValue();
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-	private ILocation cameraPos = getNoChange();
-	private ILocation cameraLookPos = getNoChange();
-	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
+	private GamaPoint cameraPos = null;
+	private GamaPoint cameraLookPos = null;
+	private GamaPoint cameraUpVector = null;
+	private String presetCamera = "";
 	private int cameraLens = 45;
-	private boolean isDrawingPolygons = true;
+	private final boolean isDrawingPolygons = true;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
@@ -152,7 +159,7 @@ public class LayeredDisplayData {
 	 */
 	public void setBackgroundColor(final GamaColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
-		notifyListeners(Changes.BACKGROUND, true);
+		notifyListeners(Changes.BACKGROUND, backgroundColor);
 	}
 
 	/**
@@ -170,73 +177,12 @@ public class LayeredDisplayData {
 		this.isAutosaving = autosave;
 	}
 
-	public boolean isTriangulation() {
-		return isTriangulating;
+	public boolean isWireframe() {
+		return isWireframe;
 	}
 
-	public void setTriangulation(final boolean t) {
-		isTriangulating = t;
-	}
-
-	/**
-	 * @return the output3D
-	 */
-	public boolean isOutput3D() {
-		return isOutputtingIn3D;
-	}
-
-	/**
-	 * @param output3d
-	 *            the output3D to set
-	 */
-	public void setOutput3D(final boolean output3d) {
-		isOutputtingIn3D = output3d;
-		notifyListeners(LayeredDisplayData.Changes.THREED_VIEW, output3d);
-	}
-
-	/**
-	 * @return the tesselation
-	 */
-	public boolean isTesselation() {
-		return isTesselating;
-	}
-
-	/**
-	 * @param tesselation
-	 *            the tesselation to set
-	 */
-	public void setTesselation(final boolean tesselation) {
-		this.isTesselating = tesselation;
-	}
-
-	/**
-	 * @return the z_fighting
-	 */
-	public boolean isZ_fighting() {
-		return isZFighting;
-	}
-
-	/**
-	 * @param z_fighting
-	 *            the z_fighting to set
-	 */
-	public void setZ_fighting(final boolean z_fighting) {
-		this.isZFighting = z_fighting;
-	}
-
-	/**
-	 * @return the cubeDisplay
-	 */
-	public boolean isCubeDisplay() {
-		return isDisplayingAsACube;
-	}
-
-	/**
-	 * @param cubeDisplay
-	 *            the cubeDisplay to set
-	 */
-	public void setCubeDisplay(final boolean cubeDisplay) {
-		this.isDisplayingAsACube = cubeDisplay;
+	public void setWireframe(final boolean t) {
+		isWireframe = t;
 	}
 
 	/**
@@ -395,10 +341,14 @@ public class LayeredDisplayData {
 		this.ambientColor = ambientLightColor;
 	}
 
+	public boolean isCameraDefined() {
+		return cameraPos != null;
+	}
+
 	/**
 	 * @return the cameraPos
 	 */
-	public ILocation getCameraPos() {
+	public GamaPoint getCameraPos() {
 		return cameraPos;
 	}
 
@@ -406,17 +356,28 @@ public class LayeredDisplayData {
 	 * @param cameraPos
 	 *            the cameraPos to set
 	 */
-	public void setCameraPos(final ILocation cameraPos) {
-		if (!this.cameraPos.equals(cameraPos)) {
-			this.cameraPos = cameraPos == null ? getNoChange() : cameraPos;
-			notifyListeners(Changes.CAMERA_POS, true);
-		}
+	public void setCameraPos(final GamaPoint c) {
+		if (c == null)
+			return;
+		setCameraPos(c.x, c.y, c.z);
+	}
+
+	public void setCameraPos(final double xPos, final double yPos, final double zPos) {
+		if (cameraPos != null)
+			if (xPos == cameraPos.x && yPos == cameraPos.y && zPos == cameraPos.z)
+				return;
+			else
+				cameraPos.setLocation(xPos, yPos, zPos);
+		else
+			cameraPos = new GamaPoint(xPos, yPos, zPos);
+
+		notifyListeners(Changes.CAMERA_POS, cameraPos);
 	}
 
 	/**
 	 * @return the cameraLookPos
 	 */
-	public ILocation getCameraLookPos() {
+	public GamaPoint getCameraLookPos() {
 		return cameraLookPos;
 	}
 
@@ -424,17 +385,28 @@ public class LayeredDisplayData {
 	 * @param cameraLookPos
 	 *            the cameraLookPos to set
 	 */
-	public void setCameraLookPos(final ILocation cameraLookPos) {
-		if (!this.cameraLookPos.equals(cameraLookPos)) {
-			this.cameraLookPos = cameraLookPos == null ? getNoChange() : cameraLookPos;
-			notifyListeners(Changes.CAMERA_POS, true);
-		}
+	public void setCameraLookPos(final GamaPoint c) {
+		if (c == null)
+			return;
+		setCameraLookPos(c.x, c.y, c.z);
+	}
+
+	public void setCameraLookPos(final double xPos, final double yPos, final double zPos) {
+		if (cameraLookPos != null)
+			if (xPos == cameraLookPos.x && yPos == cameraLookPos.y && zPos == cameraLookPos.z)
+				return;
+			else
+				cameraLookPos.setLocation(xPos, yPos, zPos);
+		else
+			cameraLookPos = new GamaPoint(xPos, yPos, zPos);
+
+		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
 	}
 
 	/**
 	 * @return the cameraUpVector
 	 */
-	public ILocation getCameraUpVector() {
+	public GamaPoint getCameraUpVector() {
 		return cameraUpVector;
 	}
 
@@ -442,11 +414,22 @@ public class LayeredDisplayData {
 	 * @param cameraUpVector
 	 *            the cameraUpVector to set
 	 */
-	public void setCameraUpVector(final ILocation cameraUpVector) {
-		if (!this.cameraUpVector.equals(cameraUpVector)) {
-			this.cameraUpVector = cameraUpVector == null ? new GamaPoint(0, 1, 0) : cameraUpVector;
-			notifyListeners(Changes.CAMERA_POS, true);
-		}
+	public void setCameraUpVector(final GamaPoint c, final boolean notify) {
+		if (c == null)
+			return;
+		setCameraUpVector(c.x, c.y, c.z, notify);
+	}
+
+	public void setCameraUpVector(final double xPos, final double yPos, final double zPos, final boolean notify) {
+		if (cameraUpVector != null)
+			if (xPos == cameraUpVector.x && yPos == cameraUpVector.y && zPos == cameraUpVector.z)
+				return;
+			else
+				cameraUpVector.setLocation(xPos, yPos, zPos);
+		else
+			cameraUpVector = new GamaPoint(xPos, yPos, zPos);
+
+		notifyListeners(Changes.CAMERA_UP, cameraUpVector);
 	}
 
 	/**
@@ -464,21 +447,6 @@ public class LayeredDisplayData {
 		if (this.cameraLens != cameraLens) {
 			this.cameraLens = cameraLens;
 		}
-	}
-
-	/**
-	 * @return the polygonMode
-	 */
-	public boolean isPolygonMode() {
-		return isDrawingPolygons;
-	}
-
-	/**
-	 * @param polygonMode
-	 *            the polygonMode to set
-	 */
-	public void setPolygonMode(final boolean polygonMode) {
-		this.isDrawingPolygons = polygonMode;
 	}
 
 	/**
@@ -550,7 +518,7 @@ public class LayeredDisplayData {
 
 	public void setHighlightColor(final GamaColor hc) {
 		highlightColor = hc;
-		notifyListeners(Changes.HIGHLIGHT, true);
+		notifyListeners(Changes.HIGHLIGHT, highlightColor);
 	}
 
 	public boolean isAntialias() {
@@ -570,6 +538,27 @@ public class LayeredDisplayData {
 
 	public void setRotation(final boolean r) {
 		isRotating = r;
+		if (r && zRotationAngle == 0) {
+			zRotationAngle = 0.2;
+		}
+	}
+
+	public double getCurrentRotationAboutZ() {
+		return currentRotationAboutZ;
+	}
+
+	public void setZRotationAngle(final double val) {
+		zRotationAngle = val;
+		if (val != 0)
+			setRotation(true);
+	}
+
+	public void incrementZRotation() {
+		currentRotationAboutZ += zRotationAngle;
+	}
+
+	public void resetZRotation() {
+		currentRotationAboutZ = 0;
 	}
 
 	/**
@@ -607,9 +596,9 @@ public class LayeredDisplayData {
 	// isCameraLock = s;
 	// }
 
-	public static ILocation getNoChange() {
-		return noChange;
-	}
+	// public static ILocation getNoChange() {
+	// return noChange;
+	// }
 
 	public boolean isSynchronized() {
 		return isSynchronized;
@@ -630,10 +619,11 @@ public class LayeredDisplayData {
 	 * @param zoomLevel
 	 *            the zoomLevel to set
 	 */
-	public void setZoomLevel(final Double zoomLevel) {
+	public void setZoomLevel(final Double zoomLevel, final boolean notify) {
 		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) { return; }
 		this.zoomLevel = zoomLevel;
-		notifyListeners(Changes.ZOOM, true);
+		if (notify)
+			notifyListeners(Changes.ZOOM, this.zoomLevel);
 	}
 
 	public boolean isFullScreen() {
@@ -644,20 +634,35 @@ public class LayeredDisplayData {
 		isFullScreen = fs;
 	}
 
-	public void setKeystone(final List<ILocation> value) {
-		this.keystone = value;
+	public void setKeystone(final List<GamaPoint> value) {
+		if (value == null)
+			return;
+		this.keystone.setTo(value.toArray(new GamaPoint[4]));
+		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
 
-	public List<ILocation> getKeystone() {
+	public void setKeystone(final ICoordinates value) {
+		if (value == null)
+			return;
+		this.keystone.setTo(value.toCoordinateArray());
+		notifyListeners(Changes.KEYSTONE, this.keystone);
+	}
+
+	public ICoordinates getKeystone() {
 		return this.keystone;
 	}
 
-	public double getZRotation() {
-		return zRotation;
+	public boolean isKeystoneDefined() {
+		return !keystone.equals(KEYSTONE_IDENTITY);
 	}
 
-	public void setZRotation(final double val) {
-		zRotation = val;
+	public void setPresetCamera(final String newValue) {
+		presetCamera = newValue;
+		notifyListeners(Changes.CAMERA_PRESET, newValue);
+	}
+
+	public String getPresetCamera() {
+		return presetCamera;
 	}
 
 }

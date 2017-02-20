@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LoopStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LoopStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -37,59 +36,172 @@ import msi.gaml.statements.IStatement.Breakable;
 import msi.gaml.statements.LoopStatement.LoopSerializer;
 import msi.gaml.statements.LoopStatement.LoopValidator;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 // A group of commands that can be executed repeatedly.
 
-@symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.LOOP })
-@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true, doc = @doc("an int expression")),
-		@facet(name = IKeyword.TO, type = IType.INT, optional = true, doc = @doc("an int expression")),
-		@facet(name = IKeyword.STEP, type = IType.INT, optional = true, doc = @doc("an int expression")),
-		@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true, doc = @doc("a temporary variable name")),
-		@facet(name = IKeyword.OVER, type = { IType.CONTAINER,
-				IType.POINT }, optional = true, doc = @doc("a list, point, matrix or map expression")),
-		@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true, doc = @doc("a boolean expression")),
-		@facet(name = IKeyword.TIMES, type = IType.INT, optional = true, doc = @doc("an int expression")) }, omissible = IKeyword.NAME)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@doc(value = "Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of integers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.", usages = {
-		@usage(value = "The basic syntax for repeating a fixed number of times a set of statements is:", examples = {
-				@example(value = "loop times: an_int_expression {", isExecutable = false),
-				@example(value = "     // [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "int sumTimes <- 1;", isTestOnly = true),
-				@example(value = "loop times: 3 {sumTimes <- sumTimes + sumTimes;}", isTestOnly = true),
-				@example(var = "sumTimes", equals = "8", isTestOnly = true) }),
-		@usage(value = "The basic syntax for repeating a set of statements while a condition holds is:", examples = {
-				@example(value = "loop while: a_bool_expression {", isExecutable = false),
-				@example(value = "     // [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "int sumWhile <- 1;", isTestOnly = true),
-				@example(value = "loop while: (sumWhile < 5) {sumWhile <- sumWhile + sumWhile;}", isTestOnly = true),
-				@example(var = "sumWhile", equals = "8", isTestOnly = true) }),
-		@usage(value = "The basic syntax for repeating a set of statements by progressing over a container of a point is:", examples = {
-				@example(value = "loop a_temp_var over: a_collection_expression {", isExecutable = false),
-				@example(value = "     // [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "The basic syntax for repeating a set of statements while an index iterates over a range of values with a fixed step of 1 is:", examples = {
-				@example(value = "loop a_temp_var from: int_expression_1 to: int_expression_2 {", isExecutable = false),
-				@example(value = "     // [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "The incrementation step of the index can also be chosen:", examples = {
-				@example(value = "loop a_temp_var from: int_expression_1 to: int_expression_2 step: int_expression3 {", isExecutable = false),
-				@example(value = "     // [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "int sumFor <- 0;", isTestOnly = true),
-				@example(value = "loop i from: 10 to: 30 step: 10 {sumFor <- sumFor + i;}", isTestOnly = true),
-				@example(var = "sumFor", equals = "60", isTestOnly = true) }),
-		@usage(value = "In these latter three cases, the name facet designates the name of a temporary variable, whose scope is the loop, and that takes, in turn, the value of each of the element of the list (or each value in the interval). For example, in the first instance of the \"loop over\" syntax :", examples = {
-				@example(value = "int a <- 0;"), @example(value = "loop i over: [10, 20, 30] {"),
-				@example(value = "     a <- a + i;"), @example(value = "} // a now equals 60"),
-				@example(var = "a", equals = "60", isTestOnly = true) }),
-		@usage(value = "The second (quite common) case of the loop syntax allows one to use an interval of integers. The from and to facets take an integer expression as arguments, with the first (resp. the last) specifying the beginning (resp. end) of the inclusive interval (i.e. [to, from]). If the step is not defined, it is assumed to be equal to 1 or -1, depending on the direction of the range. If it is defined, its sign will be respected, so that a positive step will never allow the loop to enter a loop from i to j where i is greater than j", examples = {
-				@example(value = "list the_list <-list (species_of (self));"),
-				@example(value = "loop i from: 0 to: length (the_list) - 1 {"),
-				@example(value = "     ask the_list at i {"), @example(value = "        // ..."),
-				@example(value = "     }"),
-				@example(value = "} // every  agent of the list is asked to do something") }) })
-@serializer(LoopSerializer.class)
-@validator(LoopValidator.class)
-@SuppressWarnings({ "rawtypes" })
+@symbol (
+		name = IKeyword.LOOP,
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		with_sequence = true,
+		concept = { IConcept.LOOP })
+@facets (
+		value = { @facet (
+				name = IKeyword.FROM,
+				type = IType.INT,
+				optional = true,
+				doc = @doc ("an int expression")),
+				@facet (
+						name = IKeyword.TO,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("an int expression")),
+				@facet (
+						name = IKeyword.STEP,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("an int expression")),
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.NEW_TEMP_ID,
+						optional = true,
+						doc = @doc ("a temporary variable name")),
+				@facet (
+						name = IKeyword.OVER,
+						type = { IType.CONTAINER, IType.POINT },
+						optional = true,
+						doc = @doc ("a list, point, matrix or map expression")),
+				@facet (
+						name = IKeyword.WHILE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("a boolean expression")),
+				@facet (
+						name = IKeyword.TIMES,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("an int expression")) },
+		omissible = IKeyword.NAME)
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@doc (
+		value = "Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of integers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.",
+		usages = { @usage (
+				value = "The basic syntax for repeating a fixed number of times a set of statements is:",
+				examples = { @example (
+						value = "loop times: an_int_expression {",
+						isExecutable = false),
+						@example (
+								value = "     // [statements]",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false),
+						@example (
+								value = "int sumTimes <- 1;",
+								isTestOnly = true),
+						@example (
+								value = "loop times: 3 {sumTimes <- sumTimes + sumTimes;}",
+								isTestOnly = true),
+						@example (
+								var = "sumTimes",
+								equals = "8",
+								isTestOnly = true) }),
+				@usage (
+						value = "The basic syntax for repeating a set of statements while a condition holds is:",
+						examples = { @example (
+								value = "loop while: a_bool_expression {",
+								isExecutable = false),
+								@example (
+										value = "     // [statements]",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false),
+								@example (
+										value = "int sumWhile <- 1;",
+										isTestOnly = true),
+								@example (
+										value = "loop while: (sumWhile < 5) {sumWhile <- sumWhile + sumWhile;}",
+										isTestOnly = true),
+								@example (
+										var = "sumWhile",
+										equals = "8",
+										isTestOnly = true) }),
+				@usage (
+						value = "The basic syntax for repeating a set of statements by progressing over a container of a point is:",
+						examples = { @example (
+								value = "loop a_temp_var over: a_collection_expression {",
+								isExecutable = false),
+								@example (
+										value = "     // [statements]",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "The basic syntax for repeating a set of statements while an index iterates over a range of values with a fixed step of 1 is:",
+						examples = { @example (
+								value = "loop a_temp_var from: int_expression_1 to: int_expression_2 {",
+								isExecutable = false),
+								@example (
+										value = "     // [statements]",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "The incrementation step of the index can also be chosen:",
+						examples = { @example (
+								value = "loop a_temp_var from: int_expression_1 to: int_expression_2 step: int_expression3 {",
+								isExecutable = false),
+								@example (
+										value = "     // [statements]",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false),
+								@example (
+										value = "int sumFor <- 0;",
+										isTestOnly = true),
+								@example (
+										value = "loop i from: 10 to: 30 step: 10 {sumFor <- sumFor + i;}",
+										isTestOnly = true),
+								@example (
+										var = "sumFor",
+										equals = "60",
+										isTestOnly = true) }),
+				@usage (
+						value = "In these latter three cases, the name facet designates the name of a temporary variable, whose scope is the loop, and that takes, in turn, the value of each of the element of the list (or each value in the interval). For example, in the first instance of the \"loop over\" syntax :",
+						examples = { @example (
+								value = "int a <- 0;"),
+								@example (
+										value = "loop i over: [10, 20, 30] {"),
+								@example (
+										value = "     a <- a + i;"),
+								@example (
+										value = "} // a now equals 60"),
+								@example (
+										var = "a",
+										equals = "60",
+										isTestOnly = true) }),
+				@usage (
+						value = "The second (quite common) case of the loop syntax allows one to use an interval of integers. The from and to facets take an integer expression as arguments, with the first (resp. the last) specifying the beginning (resp. end) of the inclusive interval (i.e. [to, from]). If the step is not defined, it is assumed to be equal to 1 or -1, depending on the direction of the range. If it is defined, its sign will be respected, so that a positive step will never allow the loop to enter a loop from i to j where i is greater than j",
+						examples = { @example (
+								value = "list the_list <-list (species_of (self));"),
+								@example (
+										value = "loop i from: 0 to: length (the_list) - 1 {"),
+								@example (
+										value = "     ask the_list at i {"),
+								@example (
+										value = "        // ..."),
+								@example (
+										value = "     }"),
+								@example (
+										value = "} // every  agent of the list is asked to do something") }) })
+@serializer (LoopSerializer.class)
+@validator (LoopValidator.class)
+@SuppressWarnings ({ "rawtypes" })
 public class LoopStatement extends AbstractStatementSequence implements Breakable {
 
 	public static class LoopValidator implements IDescriptionValidator<IDescription> {
@@ -195,9 +307,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (key.equals(NAME)) {
-				if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) {
-					return null;
-				}
+				if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) { return null; }
 			}
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
@@ -296,11 +406,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 						return null;
 					}
 				}
-				for (int i = f, n = t - 1; i > n && loopBody(scope, i); i += s) {
-				}
+				for (int i = f, n = t - 1; i > n && loopBody(scope, i); i += s) {}
 			} else {
-				for (int i = f, n = t + 1; i < n && loopBody(scope, i); i += s) {
-				}
+				for (int i = f, n = t + 1; i < n && loopBody(scope, i); i += s) {}
 			}
 			return true;
 		}
@@ -313,8 +421,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object obj = over.value(scope);
-			final Iterable list_ = !(obj instanceof IContainer) ? Cast.asList(scope, obj)
-					: ((IContainer) obj).iterable(scope);
+			final Iterable list_ =
+					!(obj instanceof IContainer) ? Cast.asList(scope, obj) : ((IContainer) obj).iterable(scope);
 			for (final Object each : list_) {
 				if (!loopBody(scope, each)) {
 					break;
@@ -331,15 +439,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		Times() throws GamaRuntimeException {
 			if (times.isConst()) {
-				constantTimes = Cast.as(times, Integer.class, false);
+				constantTimes = Types.INT.cast(null, times.value(null), null, false);
 			}
 		}
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
-			for (int i = 0; i < max && loopBody(scope, null); i++) {
-			}
+			for (int i = 0; i < max && loopBody(scope, null); i++) {}
 			return null;
 		}
 
@@ -351,8 +458,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {
-			}
+			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {}
 			return null;
 		}
 	}

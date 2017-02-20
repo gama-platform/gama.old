@@ -11,12 +11,9 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Font;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.fixedfunc.GLLightingFunc;
-import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -35,21 +32,11 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 	}
 
 	@Override
-	protected void _draw(final GL2 gl, final StringObject s) {
-
-		final float x = (float) s.getLocation().x;
-		final float y = (float) s.getLocation().y;
-		final float z = (float) s.getLocation().z;
-
+	protected void _draw(final StringObject s) {
+		final GamaPoint p = s.getLocation();
 		if (s.getFont() != null && s.iisInPerspective()) {
-			final float scale = 1f / (float) (renderer.getViewHeight() / renderer.getEnvHeight());
 			final Font f = s.getFont();
-			final TextRenderer r = renderer.getTextRendererFor(f);
-			if (r == null) { return; }
-			r.begin3DRendering();
-			r.draw3D(s.string, x, y, z, scale);
-			r.flush();
-			r.end3DRendering();
+			gl.perspectiveText(s.string, f, p.x, p.y, p.z);
 		} else {
 			int fontToUse = GLUT.BITMAP_HELVETICA_18;
 			final Font f = s.getFont();
@@ -60,14 +47,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 					fontToUse = GLUT.BITMAP_HELVETICA_12;
 				}
 			}
-			gl.glPushMatrix();
-			gl.glDisable(GLLightingFunc.GL_LIGHTING);
-			gl.glDisable(GL.GL_BLEND);
-			gl.glRasterPos3d(x, y, z);
-			renderer.getGlut().glutBitmapString(fontToUse, s.string);
-			gl.glEnable(GL.GL_BLEND);
-			gl.glEnable(GLLightingFunc.GL_LIGHTING);
-			gl.glPopMatrix();
+			gl.rasterText(s.string, fontToUse, p.x, p.y, p.z);
 		}
 	}
 

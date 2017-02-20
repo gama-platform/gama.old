@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlFile.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlFile.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,8 +11,7 @@ package msi.gama.lang.gaml.resource;
 
 import org.eclipse.emf.common.util.URI;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -40,10 +38,14 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@file(name = "gaml", extensions = {
-		"gaml" }, buffer_type = IType.LIST, buffer_content = IType.SPECIES, buffer_index = IType.INT, concept = {
-				IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "gaml",
+		extensions = { "gaml" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.SPECIES,
+		buffer_index = IType.INT,
+		concept = { IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	private final IModel mymodel;
@@ -115,15 +117,13 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		setBuffer(GamaListFactory.<IModel> create(Types.SPECIES));
 		((IList) getBuffer()).add(mymodel.getSpecies());
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

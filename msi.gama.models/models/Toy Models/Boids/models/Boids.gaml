@@ -19,7 +19,7 @@ global torus: torus_environment{
 	int cohesion_factor <- 200;
 	int alignment_factor <- 100; 
 	//Variables for the movement of the boids
-	float minimal_distance <- 10.0; 
+	float minimal_distance <- 30.0; 
 	
 	int width_and_height_of_environment <- 1000;  
 	bool torus_environment <- false; 

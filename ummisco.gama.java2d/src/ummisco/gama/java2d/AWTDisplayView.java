@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
@@ -114,6 +117,11 @@ public class AWTDisplayView extends LayeredDisplayView {
 		}
 		// System.out.println("Realized in " + (now - start) + "ms");
 
+	}
+
+	@Override
+	protected List<String> getCameraNames() {
+		return Collections.EMPTY_LIST;
 	}
 
 }

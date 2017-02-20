@@ -201,7 +201,7 @@ species elector skills: [moving]{
 	candidate my_candidate;  
 	
 	aspect base {
-		draw triangle(2) color: color ;
+		draw pyramid(2) color: color ;
 	} 
 	//Action to define the candidate
 	action definition_candidate {
@@ -249,16 +249,16 @@ species candidate skills:[moving]{
 	//Boolean to know if the candidate is elected
 	bool is_elected <- false;
 	aspect default {
-		draw circle(3) color: color;
+		draw sphere(3) color: color;
 	} 
 	aspect dynamic {
 		if (active) {
 			float radius  <- 1 + (percentage_vote / 4.0);
 			if (is_elected) {
-				draw square( radius *1.5) color: #red; 
-				draw circle(radius) color: color;
+				draw cube( radius *1.5) color: #red; 
+				draw sphere(radius) color: color;
 			} else {
-				draw circle(radius) color: color;
+				draw sphere(radius) color: color;
 			}
 			draw string(percentage_vote) size: 5 color: #white;
 		}

@@ -32,9 +32,9 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
@@ -303,7 +303,7 @@ public class GamaShapeFile extends GamaGisFile {
 		try {
 			store = getDataStore(file.toURI().toURL());
 			final ContentFeatureSource source = store.getFeatureSource();
-			final Envelope env = source.getBounds();
+			final Envelope3D env = Envelope3D.of(source.getBounds());
 			size = source.getCount(Query.ALL);
 			int index = 0;
 			computeProjection(scope, env);
@@ -345,15 +345,15 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) {
 			ShapefileDataStore store = null;
 			try {
 				store = getDataStore(getFile(scope).toURI().toURL());
-				final Envelope env = store.getFeatureSource().getBounds();
+				final Envelope3D env = Envelope3D.of(store.getFeatureSource().getBounds());
 				computeProjection(scope, env);
 			} catch (final IOException e) {
-				return new Envelope();
+				return new Envelope3D();
 			} finally {
 				if (store != null) {
 					store.dispose();

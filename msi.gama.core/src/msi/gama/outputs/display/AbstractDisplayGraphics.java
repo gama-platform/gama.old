@@ -25,15 +25,20 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	protected static final GamaPoint origin = new GamaPoint(0, 0);
 	protected double currentLayerAlpha = 1;
-	public final LayeredDisplayData data;
-	protected final IDisplaySurface surface;
+	public LayeredDisplayData data;
+	protected IDisplaySurface surface;
 	public boolean highlight = false;
 
 	protected ILayer currentLayer;
 
-	public AbstractDisplayGraphics(final IDisplaySurface surface) {
+	public void setDisplaySurface(final IDisplaySurface surface) {
 		this.surface = surface;
 		data = surface.getData();
+	}
+
+	@Override
+	public boolean isNotReadyToUpdate() {
+		return surface.isDisposed();
 	}
 
 	@Override

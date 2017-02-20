@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaGridFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaGridFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -33,6 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -47,10 +47,14 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "grid", extensions = { "asc",
-		"tif" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-				IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "grid",
+		extensions = { "asc", "tif" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
@@ -160,8 +164,8 @@ public class GamaGridFile extends GamaGisFile {
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
-				final Envelope env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
-						genv.getMaximum(1));
+				final Envelope3D env = new Envelope3D(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
+						genv.getMaximum(1), 0, 0);
 				computeProjection(scope, env);
 				final Envelope envP = gis.getProjectedEnvelope();
 				final double cellHeight = envP.getHeight() / numRows;
@@ -177,9 +181,7 @@ public class GamaGridFile extends GamaGisFile {
 				shapes.add(new GamaPoint(originX, maxY));
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
-				if (!fillBuffer) {
-					return;
-				}
+				if (!fillBuffer) { return; }
 
 				final GamaPoint p = new GamaPoint(0, 0);
 				coverage = store.read(null);
@@ -292,7 +294,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		fillBuffer(scope);
 		return gis.getProjectedEnvelope();
 	}
@@ -300,18 +302,14 @@ public class GamaGridFile extends GamaGisFile {
 	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
 		if (gis == null) {
 			final GamaGridReader rd = createReader(scope, false);
-			if (rd == null) {
-				return null;
-			}
+			if (rd == null) { return null; }
 		}
 		return gis.getProjectedEnvelope();
 	}
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		createReader(scope, true);
 	}
 

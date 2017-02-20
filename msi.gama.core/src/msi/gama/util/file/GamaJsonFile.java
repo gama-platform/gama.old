@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaJsonFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaJsonFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -21,8 +20,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -40,10 +38,14 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "json", extensions = { "json" }, buffer_type = IType.MAP, buffer_index = IType.STRING, concept = {
-		IConcept.FILE })
-@doc("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@file (
+		name = "json",
+		extensions = { "json" },
+		buffer_type = IType.MAP,
+		buffer_index = IType.STRING,
+		concept = { IConcept.FILE })
+@doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, String, Object> {
 
 	public GamaJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -55,7 +57,7 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

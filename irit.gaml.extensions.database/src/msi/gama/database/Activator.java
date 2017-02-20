@@ -5,8 +5,7 @@ import java.util.Map;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.database.sql.SqlUtils;
@@ -29,7 +28,7 @@ public class Activator implements BundleActivator {
 			// params.get("longitudeFirst")
 			// : true;
 			SqlConnection sqlConn;
-			Envelope env = null;
+			Envelope3D env = null;
 			// create connection
 			sqlConn = SqlUtils.createConnectionObject(scope, params);
 			// get data

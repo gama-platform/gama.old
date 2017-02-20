@@ -22,9 +22,9 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
@@ -363,7 +363,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		try {
 			final QueryInfo queryInfo = new QueryInfo(scope, this.dataStore, tableName, filterStr);
 			final int size = queryInfo.getSize();
-			final Envelope env = queryInfo.getEnvelope();
+			final Envelope3D env = queryInfo.getEnvelope();
 			int index = 0;
 			computeProjection(scope, env); // ??
 			// reader = store.getFeatureReader();
@@ -426,7 +426,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		final CoordinateReferenceSystem crs;
 		final double width;
 		final double height;
-		final Envelope env;
+		final Envelope3D env;
 		final Map<String, String> attributes; // meta data of query
 		final SimpleFeatureCollection features; // data/recordsets
 
@@ -474,7 +474,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			} finally {
 				this.width = env.getWidth();
 				this.height = env.getHeight();
-				this.env = env;
+				this.env = Envelope3D.of(env);
 				this.itemNumber = number; // number of records
 				this.crs = crs;
 				this.features = sfeatures; // data
@@ -491,7 +491,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			return itemNumber;
 		}
 
-		public Envelope getEnvelope() {
+		public Envelope3D getEnvelope() {
 			return env;
 		}
 

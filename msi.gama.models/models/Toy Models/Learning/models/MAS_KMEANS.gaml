@@ -18,7 +18,7 @@ global
 // It corresponds to the centroids
 	int k <- 4;
 	// the number of points
-	int N <- 100;
+	int N ;
 	//number of dimensions
 	int dimensions;
 	init
@@ -146,7 +146,7 @@ species centroids
 experiment clustering2D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init: 100;
+	parameter "Number of points to be clustered" var: N init: 5000;
 	parameter "Number of dimensions" var: dimensions init: 2 min: 2 max: 2;
 	font regular <- font("Helvetica", 14, # bold);
 		
@@ -179,12 +179,12 @@ experiment clustering2D type: gui
 experiment clustering3D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init: 100;
+	parameter "Number of points to be clustered" var: N init: 5000;
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
 	parameter "Number of dimensions" var: dimensions init: 3 min: 3 max: 3;
 	action _init_ {
-		create MASKMEANS_model with: [dimensions::3];
+		create MASKMEANS_model with: [dimensions::3, N::5000];
 	}
 	output
 	{

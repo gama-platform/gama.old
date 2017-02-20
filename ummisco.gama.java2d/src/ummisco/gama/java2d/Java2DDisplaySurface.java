@@ -20,6 +20,7 @@ package ummisco.gama.java2d;
  **********************************************************************************************/
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -392,7 +393,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int imageHeight = Math.max(1, point[1]);
 		setDisplayHeight(imageHeight);
 		setDisplayWidth(imageWidth);
-		iGraphics = new AWTDisplayGraphics(this, (Graphics2D) this.getGraphics());
+		iGraphics = new AWTDisplayGraphics((Graphics2D) this.getGraphics());
+		iGraphics.setDisplaySurface(this);
 		return true;
 
 	}
@@ -489,13 +491,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	public void newZoomLevel(final double newZoomLevel) {
-		getData().setZoomLevel(newZoomLevel);
+		getData().setZoomLevel(newZoomLevel, true);
 	}
 
 	@Override
 	public double getZoomLevel() {
 		if (getData().getZoomLevel() == null) {
-			getData().setZoomLevel(1.0);
+			getData().setZoomLevel(1.0, true);
 		}
 		return getData().getZoomLevel();
 	}
@@ -687,11 +689,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
 	 */
 	@Override
-	public void changed(final Changes property, final boolean value) {
+	public void changed(final Changes property, final Object value) {
 
 		switch (property) {
 			case BACKGROUND:
-				setBackground(getData().getBackgroundColor());
+				setBackground((Color) value);
 				break;
 			default:
 				;

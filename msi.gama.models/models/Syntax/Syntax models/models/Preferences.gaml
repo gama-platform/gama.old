@@ -185,8 +185,6 @@ experiment 'Display Preferences' type: gui
 		//Only process for display the agents that are visible
 		write sample(gama.pref_display_visible_agents);
 
-		//Enable OpenGL background loading of textures (can cause problems with some graphics cards on Linux and Windows)
-		write sample(gama.pref_display_shared_cache);
 
 		//Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)
 		write sample(gama.pref_display_fast_snapshot);
@@ -491,9 +489,6 @@ experiment 'Set Preferences' type: gui
 
 		//Only process for display the agents that are visible
 		gama.pref_display_visible_agents <- false;
-
-		//Enable OpenGL background loading of textures (can cause problems with some graphics cards on Linux and Windows)
-		gama.pref_display_shared_cache <- false;
 
 		//Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)
 		gama.pref_display_fast_snapshot <- false;

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IParameterEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IParameterEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,7 +20,7 @@ import msi.gaml.types.IType;
  * @since 18 d�c. 2011
  * 
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public interface IParameterEditor<T> extends IScoped {
 
 	public abstract IType getExpectedType();
@@ -32,7 +31,7 @@ public interface IParameterEditor<T> extends IScoped {
 
 	public abstract IParameter getParam();
 
-	public abstract void updateValue();
+	public abstract void updateValue(boolean force);
 
 	public abstract void setActive(Boolean value);
 

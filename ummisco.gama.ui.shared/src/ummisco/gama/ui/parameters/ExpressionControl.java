@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExpressionControl.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExpressionControl.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,7 +28,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -141,10 +139,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				if (expectedType == Types.STRING)
 					setCurrentValue(StringUtils.toJavaString(GamaStringType.staticCast(null, s, false)));
 				else
-					setCurrentValue(Cast.as(s, expectedType.toClass(), false));
+					setCurrentValue(expectedType.cast(scope, s, null, false));
 			} else {
-				// return evaluateExpression ? GAML.evaluateExpression(s, agent)
-				// : GAML.compileExpression(s, agent);
 				setCurrentValue(evaluateExpression ? GAML.evaluateExpression(s, agent)
 						: GAML.compileExpression(s, agent, true));
 			}

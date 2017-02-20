@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FloatEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FloatEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -54,16 +53,14 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected void modifyValue(final Double val) throws GamaRuntimeException {
-		Double i = Cast.as(val, Double.class, false);
+		Double i = Cast.asFloat(getScope(), val);
 		if (acceptNull && val == null) {
 			i = null;
 		} else {
-			if (minValue != null && i < minValue.doubleValue()) {
-				throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
-			}
-			if (maxValue != null && i > maxValue.doubleValue()) {
-				throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
-			}
+			if (minValue != null && i < minValue.doubleValue()) { throw GamaRuntimeException
+					.error("Value " + i + " should be greater than " + minValue, getScope()); }
+			if (maxValue != null && i > maxValue.doubleValue()) { throw GamaRuntimeException
+					.error("Value " + i + " should be smaller than " + maxValue, getScope()); }
 		}
 		super.modifyValue(i);
 	}
@@ -78,8 +75,7 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected Double normalizeValues() throws GamaRuntimeException {
-		final Double valueToConsider = getOriginalValue() == null ? 0.0
-				: Cast.as(getOriginalValue(), Double.class, false);
+		final Double valueToConsider = getOriginalValue() == null ? 0.0 : Cast.asFloat(getScope(), getOriginalValue());
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.doubleValue();
 		maxValue = maxValue == null ? null : maxValue.doubleValue();
@@ -93,9 +89,7 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected Double applyPlus() {
-		if (currentValue == null) {
-			return 0.0;
-		}
+		if (currentValue == null) { return 0.0; }
 		final Double i = currentValue;
 		final Double newVal = i + stepValue.doubleValue();
 		return newVal;
@@ -103,9 +97,7 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected Double applyMinus() {
-		if (currentValue == null) {
-			return 0.0;
-		}
+		if (currentValue == null) { return 0.0; }
 		final Double i = currentValue;
 		final Double newVal = i - stepValue.doubleValue();
 		return newVal;

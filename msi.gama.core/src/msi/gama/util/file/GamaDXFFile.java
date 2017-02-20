@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaDXFFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaDXFFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -32,6 +31,7 @@ import org.kabeja.parser.ParserBuilder;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -53,10 +53,14 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@file(name = "dxf", extensions = {
-		"dxf" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-				IConcept.DXF, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "dxf",
+		extensions = { "dxf" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.DXF, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaDXFFile extends GamaGeometryFile {
 
 	GamaPoint size;
@@ -97,28 +101,20 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape createPolyline(final IScope scope, final IList pts) {
-		if (pts.isEmpty()) {
-			return null;
-		}
+		if (pts.isEmpty()) { return null; }
 		final IShape shape = GamaGeometryType.buildPolyline(pts);
 		if (shape != null) {
-			if (size != null) {
-				return Spatial.Transformations.scaled_to(scope, shape, size);
-			}
+			if (size != null) { return Spatial.Transformations.scaled_to(scope, shape, size); }
 			return shape;
 		}
 		return null;
 	}
 
 	public IShape createPolygone(final IScope scope, final IList pts) {
-		if (pts.isEmpty()) {
-			return null;
-		}
+		if (pts.isEmpty()) { return null; }
 		final IShape shape = GamaGeometryType.buildPolygon(pts);
 		if (shape != null) {
-			if (size != null) {
-				return Spatial.Transformations.scaled_to(scope, shape, size);
-			}
+			if (size != null) { return Spatial.Transformations.scaled_to(scope, shape, size); }
 			return shape;
 		}
 		return null;
@@ -127,18 +123,14 @@ public class GamaDXFFile extends GamaGeometryFile {
 	public IShape createCircle(final IScope scope, final GamaPoint location, final double radius) {
 		final IShape shape = GamaGeometryType.buildCircle(radius, location);
 		if (shape != null) {
-			if (size != null) {
-				return Spatial.Transformations.scaled_to(scope, shape, size);
-			}
+			if (size != null) { return Spatial.Transformations.scaled_to(scope, shape, size); }
 			return shape;
 		}
 		return null;
 	}
 
 	public IShape manageObj(final IScope scope, final DXFSolid obj) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
 		list.add(new GamaPoint(obj.getPoint1().getX() * (unit == null ? 1 : unit) - x_t,
 				obj.getPoint1().getY() * (unit == null ? 1 : unit) - y_t,
@@ -159,9 +151,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape manageObj(final IScope scope, final DXFCircle obj) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		final GamaPoint pt = new GamaPoint(obj.getCenterPoint().getX() * (unit == null ? 1 : unit) - x_t,
 				obj.getCenterPoint().getY() * (unit == null ? 1 : unit) - y_t,
 				obj.getCenterPoint().getZ() * (unit == null ? 1 : unit));
@@ -169,9 +159,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape manageObj(final IScope scope, final DXFLine obj) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
 		list.add(new GamaPoint(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t,
 				obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t,
@@ -183,9 +171,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape manageObj(final IScope scope, final DXFArc obj) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
 		list.add(new GamaPoint(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t,
 				obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t,
@@ -197,9 +183,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape manageObj(final IScope scope, final DXFPolyline obj) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		IList list = GamaListFactory.create(Types.POINT);
 		final Iterator it = obj.getVertexIterator();
 		while (it.hasNext()) {
@@ -213,9 +197,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			list.remove(pt);
 
 		}
-		if (list.size() < 2) {
-			return null;
-		}
+		if (list.size() < 2) { return null; }
 		return createPolyline(scope, list);
 	}
 
@@ -223,21 +205,11 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 		if (obj != null) {
 
-			if (obj instanceof DXFArc) {
-				return manageObj(scope, (DXFArc) obj);
-			}
-			if (obj instanceof DXFLine) {
-				return manageObj(scope, (DXFLine) obj);
-			}
-			if (obj instanceof DXFPolyline) {
-				return manageObj(scope, (DXFPolyline) obj);
-			}
-			if (obj instanceof DXFSolid) {
-				return manageObj(scope, (DXFSolid) obj);
-			}
-			if (obj instanceof DXFCircle) {
-				return manageObj(scope, (DXFCircle) obj);
-			}
+			if (obj instanceof DXFArc) { return manageObj(scope, (DXFArc) obj); }
+			if (obj instanceof DXFLine) { return manageObj(scope, (DXFLine) obj); }
+			if (obj instanceof DXFPolyline) { return manageObj(scope, (DXFPolyline) obj); }
+			if (obj instanceof DXFSolid) { return manageObj(scope, (DXFSolid) obj); }
+			if (obj instanceof DXFCircle) { return manageObj(scope, (DXFCircle) obj); }
 
 		}
 		return null;
@@ -330,9 +302,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		final Parser parser = ParserBuilder.createDefaultParser();
 		try (InputStream in = new FileInputStream(getFile(scope))) {
 			parser.parse(in, DXFParser.DEFAULT_ENCODING);
@@ -349,7 +319,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		final Parser parser = ParserBuilder.createDefaultParser();
 		try (InputStream in = new FileInputStream(getFile(scope))) {
 
@@ -358,9 +328,9 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 			// get the documnet and the layer
 			final DXFDocument doc = parser.getDocument();
-			final Envelope env = new Envelope(0,
+			final Envelope3D env = Envelope3D.of(new Envelope(0,
 					(doc.getBounds().getMaximumX() - doc.getBounds().getMinimumX()) * (unit == null ? 1 : unit), 0,
-					(doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit));
+					(doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit)));
 
 			return env;
 		} catch (final Exception e) {

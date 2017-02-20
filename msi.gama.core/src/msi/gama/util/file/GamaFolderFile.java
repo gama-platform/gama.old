@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaFolderFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaFolderFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,8 +9,7 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -34,13 +32,11 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 
 	@Override
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (!getFile(scope).isDirectory()) {
-			throw GamaRuntimeException.error(getFile(scope).getAbsolutePath() + "is not a folder", scope);
-		}
-		if (!getFile(scope).exists()) {
-			throw GamaRuntimeException.error("The folder " + getFile(scope).getAbsolutePath()
-					+ " does not exist. Please use 'new_folder' instead", scope);
-		}
+		if (!getFile(scope).isDirectory()) { throw GamaRuntimeException
+				.error(getFile(scope).getAbsolutePath() + "is not a folder", scope); }
+		if (!getFile(scope).exists()) { throw GamaRuntimeException.error(
+				"The folder " + getFile(scope).getAbsolutePath() + " does not exist. Please use 'new_folder' instead",
+				scope); }
 	}
 
 	@Override
@@ -66,9 +62,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		setBuffer(GamaListFactory.createWithoutCasting(Types.STRING, getFile(scope).list()));
 	}
 
@@ -82,14 +76,14 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 		// Nothing to do
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		final IContainer<Integer, String> files = getContents(scope);
-		Envelope globalEnv = null;
+		Envelope3D globalEnv = null;
 		for (final String s : files.iterable(scope)) {
 			final IGamaFile f = Files.from(scope, s);
-			final Envelope env = f.computeEnvelope(scope);
+			final Envelope3D env = f.computeEnvelope(scope);
 			if (globalEnv == null) {
 				globalEnv = env;
 			} else {

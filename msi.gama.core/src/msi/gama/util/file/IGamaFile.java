@@ -9,8 +9,7 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -138,7 +137,7 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 			initializer = true)
 	public abstract Boolean isWritable(IScope scope);
 
-	public Envelope computeEnvelope(final IScope scope);
+	public Envelope3D computeEnvelope(final IScope scope);
 
 	public abstract void save(IScope scope, Facets parameters);
 

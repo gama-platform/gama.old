@@ -80,7 +80,7 @@ species cylinder_species
 	
 	aspect base
 	{
-		draw cylinder(size,size) material:cylinder_mat color:color;
+		draw cone3D(size,size * 2) rotated_by (90, {1,0,0}) material:cylinder_mat color:color;
 	}
 }
 
@@ -109,7 +109,16 @@ experiment specular_light type: gui
 {
 	output {
 		// we set the "use_shader" facet to true, in order to activate "advanced" 3D display properties.
-		display my_world use_shader:true type:opengl background:#darkblue ambient_light:20 {
+		display "OpenGL Shaders" use_shader:true type:opengl background:#darkgreen ambient_light:20 {
+			light 1 type:point position:{7,7,48} color:#white draw_light:true;
+			species sphere_species aspect:base;
+			species cube_species aspect:base;
+			species cylinder_species aspect:base;
+			species board aspect:base;
+			species lamp aspect:base;
+		}
+		
+				display "OpenGL Fixed Pipeline" use_shader:false type:opengl background:#darkgreen ambient_light:20 {
 			light 1 type:point position:{7,7,48} color:#white draw_light:true;
 			species sphere_species aspect:base;
 			species cube_species aspect:base;

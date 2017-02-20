@@ -10,6 +10,7 @@
 package msi.gama.outputs.layers;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
@@ -54,11 +55,11 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage(scope);
 		if (file == null) { return; }
-		final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 		if (env != null) {
 			final GamaPoint loc = new GamaPoint(env.getMinX(), env.getMinY());
 			attributes.setLocation(loc);
-			attributes.setSize(new GamaPoint(env.getWidth(), env.getHeight()));
+			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));
 		}
 		dg.drawFile(file, attributes);
 	}

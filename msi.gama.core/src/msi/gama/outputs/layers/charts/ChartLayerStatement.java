@@ -55,15 +55,11 @@ import msi.gaml.types.IType;
 @inside (
 		symbols = IKeyword.DISPLAY)
 @facets (
-		value = {
-				/*
-				 * @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true),
-				 */
-				@facet (
-						name = ChartLayerStatement.XRANGE,
-						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
-						optional = true,
-						doc = @doc ("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+		value = { @facet (
+				name = ChartLayerStatement.XRANGE,
+				type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
+				optional = true,
+				doc = @doc ("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 				@facet (
 						name = ChartLayerStatement.YRANGE,
 						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
@@ -73,7 +69,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.POSITION,
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+						doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 				@facet (
 						name = IKeyword.SIZE,
 						type = IType.POINT,
@@ -99,11 +95,6 @@ import msi.gaml.types.IType;
 						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
 						optional = true,
 						doc = @doc ("change the default common x series labels (replace x value or categories) for an other value (string or numerical).")),
-				// @facet(name = IKeyword.Y_SERIES,
-				// type = {IType.LIST, IType.FLOAT, IType.INT},
-				// optional = true,
-				// doc = @doc("change the default common y serie for an other value
-				// (list or numerical).")),
 				@facet (
 						name = IKeyword.Y_LABELS,
 						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
@@ -129,9 +120,6 @@ import msi.gaml.types.IType;
 								IKeyword.EXPLODED, IKeyword.DEFAULT },
 						doc = @doc ("The sub-style style, also default style for the series."),
 						optional = true),
-				// @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional =
-				// true, doc = @doc("the style of the chart")),
-				// unused?
 				@facet (
 						name = IKeyword.GAP,
 						type = IType.FLOAT,

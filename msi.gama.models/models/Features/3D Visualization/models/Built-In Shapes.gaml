@@ -9,7 +9,7 @@ model shape
 
 global {
 	
-	file gamaRaster <- file('../images/Gama.png');
+	file gamaRaster <- file('../images/Gama.jpg');
 	
 	int size <- 10;
 	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size), square(size) - square(size / 2)];
@@ -44,7 +44,8 @@ global {
 			myGeometry <- geometries3D[curGeom3D];
 			curGeom3D <- curGeom3D+1;
 		} 
-		
+
+
 		int curTextGeom <-0;
 		create TexturedGeometry3D number: length(texturedGeometries){ 
 			location <- {size+curTextGeom*size*2, size*6.0, 0};	
@@ -59,9 +60,12 @@ species Geometry2D{
 
 	geometry myGeometry;
 	
+	reflex rotate {
+		myGeometry <- myGeometry rotated_by (1,{1,1,0});
+	}
 	
 	aspect default {
-		draw myGeometry color:°orange at:location border:#blue rotate:angle::{1,0,0};
+		draw myGeometry color:°green at:location border:#blue ;
     }
 } 
 
@@ -71,7 +75,7 @@ species TexturedGeometry2D{
 	file myTexture;
 	
 	aspect default {
-		draw myGeometry texture:myTexture.path at:location border:#red rotate:angle::{0,1,0};
+		draw myGeometry texture:myTexture.path at:location border:#red rotate: angle::{0,1,0};
     }
 } 
     
@@ -79,8 +83,11 @@ species Geometry3D{
 
 	geometry myGeometry;
 
+	reflex rotate {
+		myGeometry <- myGeometry rotated_by (-1,{1,0,0});
+	}
 	aspect default {
-		draw myGeometry  color:°orange at:location border:#red rotate: angle;
+		draw myGeometry color:°gray at:location border: #black ;
     }
 }
 
@@ -90,11 +97,11 @@ species TexturedGeometry3D{
 	file myTexture;
 
 	aspect default {
-		draw myGeometry rotated_by -angle texture:myTexture.path at:location border:#green ;
+		draw myGeometry rotated_by (-angle, {1,0,1}) texture:myTexture.path at:location ;
     }
 }
 
-experiment Display  type: gui {
+experiment "3D Shapes"  type: gui {
 	output {
 		display View1 type:opengl  background:rgb(10,40,55)   {
 			species Geometry2D aspect:default;

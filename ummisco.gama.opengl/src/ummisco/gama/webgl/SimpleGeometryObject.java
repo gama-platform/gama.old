@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
@@ -35,13 +36,13 @@ public class SimpleGeometryObject {
 	Double depth;
 	GamaPair<Double, GamaPoint> rotation;
 	GamaPoint location;
-	GamaPoint size;
+	Scaling3D size;
 	IShape.Type type;
 	Boolean empty;
 	List textures;
 
 	public SimpleGeometryObject(final Geometry geometry, final Color color, final Color border, final Double depth,
-			final Double angle, final GamaPoint axis, final GamaPoint location, final GamaPoint size, final Type type,
+			final Double angle, final GamaPoint axis, final GamaPoint location, final Scaling3D size, final Type type,
 			final Boolean empty, final List textures) {
 		this.geometry = geometry;
 		this.color = color;

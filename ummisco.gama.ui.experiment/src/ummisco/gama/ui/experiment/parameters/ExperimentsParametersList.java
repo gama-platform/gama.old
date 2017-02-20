@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentsParametersList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentsParametersList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,7 +20,7 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class ExperimentsParametersList extends EditorsList<String> {
 	final IScope scope;
 
@@ -65,7 +64,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public void updateItemValues() {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			for (final IParameterEditor gp : entry.getValue().values()) {
-				gp.updateValue();
+				gp.updateValue(true);
 			}
 			;
 		}
@@ -74,8 +73,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final String data, final int x, final int y) {

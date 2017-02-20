@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaGeometryFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaGeometryFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,21 +9,18 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import com.vividsolutions.jts.geom.Envelope;
-
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.Types;
 
 /**
- * Class GamaGeometryFile. An abstract class that supports loading and saving
- * geometries in specific subclasses. The buffer is a GamaList of points
- * (GamaPoint) from which the GamaGeometry can be constructed (using
+ * Class GamaGeometryFile. An abstract class that supports loading and saving geometries in specific subclasses. The
+ * buffer is a GamaList of points (GamaPoint) from which the GamaGeometry can be constructed (using
  * geometry(file("..."));)
  *
  * @author drogoul
@@ -50,7 +46,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return getGeometry(scope).getEnvelope();
 	}
 
@@ -70,8 +66,12 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 		geometry = null;
 	}
 
-	public GamaPair<Double, GamaPoint> getInitRotation() {
+	public AxisAngle getInitRotation() {
 		return null;
+	}
+
+	public boolean is2D() {
+		return true;
 	}
 
 }

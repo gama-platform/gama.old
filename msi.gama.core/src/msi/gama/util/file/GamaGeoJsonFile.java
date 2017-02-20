@@ -15,7 +15,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -113,7 +112,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		final SimpleFeatureCollection fc = getFeatureCollection(scope);
 		if (fc == null)
 			return;
-		final Envelope env = fc.getBounds();
+		final Envelope3D env = Envelope3D.of(fc.getBounds());
 		size = fc.size();
 		int index = 0;
 		computeProjection(scope, env);
@@ -147,12 +146,12 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) {
 			final SimpleFeatureCollection store = getFeatureCollection(scope);
 			if (store == null)
 				return new Envelope3D();
-			final Envelope env = store.getBounds();
+			final Envelope3D env = Envelope3D.of(store.getBounds());
 			computeProjection(scope, env);
 		}
 		return gis.getProjectedEnvelope();

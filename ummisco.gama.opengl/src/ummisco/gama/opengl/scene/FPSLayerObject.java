@@ -11,8 +11,7 @@ package ummisco.gama.opengl.scene;
 
 import java.util.ArrayList;
 
-import com.jogamp.opengl.GL2;
-
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -39,10 +38,10 @@ public class FPSLayerObject extends LayerObject {
 	private double fps;
 
 	@Override
-	public void clear(final GL2 gl) {}
+	public void clear(final OpenGL gl) {}
 
 	@Override
-	public void draw(final GL2 gl) {
+	public void draw(final OpenGL gl) {
 		updateObjectList();
 		super.draw(gl);
 	}
@@ -81,8 +80,8 @@ public class FPSLayerObject extends LayerObject {
 		final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain,
 																// 18 for text
 																// size.
-		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.0015, 0.0015, 0.0015),
-				null, new GamaPoint(0.005, -0.03, 0), new GamaColor(0, 0, 0, 1), font, true);
+		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(Scaling3D.of(0.0015), null,
+				new GamaPoint(0.005, -0.03, 0), new GamaColor(0, 0, 0, 1), font, true);
 		final StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr);
 		newElem.add(strObj);
 

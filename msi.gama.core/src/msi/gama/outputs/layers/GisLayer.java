@@ -47,7 +47,7 @@ public class GisLayer extends AbstractLayer {
 				if (geom != null) {
 					final ShapeDrawingAttributes attributes =
 							new ShapeDrawingAttributes(geom, (IAgent) null, color, new GamaColor(Color.black));
-					g.drawShape(geom, attributes);
+					g.drawShape(geom.getInnerGeometry(), attributes);
 				}
 			}
 		}

@@ -152,7 +152,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 				final IShape ag2 = ag.copy(scope);
 				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
-				final Rectangle2D r = g.drawShape(ag2, attributes);
+				final Rectangle2D r = g.drawShape(ag2.getInnerGeometry(), attributes);
 				return r;
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed

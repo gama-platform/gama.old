@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ILayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ILayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,10 +11,14 @@ package msi.gama.common.interfaces;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -62,7 +65,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	ILocation getExtent();
 
-	Boolean isDynamic();
+	boolean isDynamic();
 
 	public abstract String getType();
 
@@ -118,5 +121,9 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	boolean isProvidingCoordinates();
 
 	boolean isProvidingWorldCoordinates();
+
+	void addElevation(double d);
+
+	double getAddedElevation();
 
 }

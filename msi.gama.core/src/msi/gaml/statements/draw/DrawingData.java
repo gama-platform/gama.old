@@ -12,6 +12,7 @@ package msi.gaml.statements.draw;
 import java.awt.Color;
 import java.util.List;
 
+import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
@@ -97,7 +98,6 @@ public class DrawingData {
 		return new ExpressionAttribute(ev);
 	}
 
-	static final GamaPoint DEFAULT_AXIS = new GamaPoint(0, 0, 1);
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
 	final Attribute<GamaPointType, GamaPoint> size;
@@ -136,7 +136,7 @@ public class DrawingData {
 				return currentRotation;
 			} else {
 				final GamaPair currentRotation =
-						new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
+						new GamaPair(scope, rotationExp.value(scope), Rotation3D.PLUS_K, Types.FLOAT, Types.POINT);
 				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				return currentRotation;
 			}

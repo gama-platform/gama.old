@@ -150,7 +150,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
-		displayGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
+		displayGraphics = new AWTDisplayGraphics((Graphics2D) buffImage.getGraphics());
 		((AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D) buffImage.getGraphics());
 		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D) buffImage.getGraphics());
 	}
@@ -449,7 +449,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 *      boolean)
 	 */
 	@Override
-	public void changed(final Changes property, final boolean value) {}
+	public void changed(final Changes property, final Object value) {}
 
 	/**
 	 * Method getVisibleRegionForLayer()

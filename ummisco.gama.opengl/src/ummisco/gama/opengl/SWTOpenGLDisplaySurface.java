@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
-import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
@@ -72,7 +70,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 @msi.gama.precompiler.GamlAnnotations.display ("opengl")
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
-	final GLAnimatorControl animator;
+	GLAnimatorControl animator;
 	Abstract3DRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
@@ -102,17 +100,18 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public SWTOpenGLDisplaySurface(final Composite parent, final LayeredDisplayOutput output) {
 		this.output = output;
 		this.parent = parent;
-		// parent.setLayout(new GridLayout(1, false));
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
 		if (getOutput().useShader()) {
-			renderer = createModernRenderer();
+			renderer = new ModernRenderer();
+
 		} else {
-			renderer = createJOGLRenderer();
+			renderer = new JOGLRenderer();
 		}
+		renderer.setDisplaySurface(this);
 		animator = createAnimator();
-		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
+
 		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 
@@ -216,6 +215,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
+		if (renderer.data.cameraInteractionDisabled())
+			return;
 		renderer.camera.zoom(true);
 	}
 
@@ -226,6 +227,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
+		if (renderer.data.cameraInteractionDisabled())
+			return;
 		renderer.camera.zoom(false);
 	}
 
@@ -236,9 +239,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomFit() {
-		renderer.currentZRotation = output.getData().getZRotation();
-		renderer.camera.reset();
-		output.getData().setZoomLevel(1d);
+		if (renderer.data.cameraInteractionDisabled())
+			return;
+		renderer.camera.initialize();
+		output.getData().resetZRotation();
+		output.getData().setZoomLevel(1d, true);
 		zoomFit = true;
 
 	}
@@ -462,7 +467,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public double getZoomLevel() {
 		if (output.getData().getZoomLevel() == null) {
-			output.getData().setZoomLevel(computeInitialZoomLevel());
+			output.getData().setZoomLevel(computeInitialZoomLevel(), true);
 		}
 		return output.getData().getZoomLevel();
 	}
@@ -627,32 +632,39 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
 	 */
 	@Override
-	public void changed(final Changes property, final boolean value) {
+	public void changed(final Changes property, final Object value) {
+		if (renderer == null || renderer.camera == null) // Init
+			return;
 		switch (property) {
+
 			case CHANGE_CAMERA:
 				renderer.switchCamera();
 				break;
 			case SPLIT_LAYER:
+				final boolean yes = (Boolean) value;
 				final int nbLayers = this.getManager().getItems().size();
-				int i = 0;
-				final Iterator<ILayer> it = this.getManager().getItems().iterator();
-				while (it.hasNext()) {
-					final ILayer curLayer = it.next();
-					if (value) {// Split layer
-						curLayer.setElevation((double) i / nbLayers);
-					} else {// put all the layer at zero
-						curLayer.setElevation(0.0);
-					}
-					i++;
+				final double gap = yes ? 1d / (nbLayers * 2) : 0;
+				double currentElevation = 0;
+				for (final ILayer layer : this.getManager().getItems()) {
+					layer.addElevation(currentElevation);
+					currentElevation += gap;
 				}
-
 				updateDisplay(true);
 				break;
-			case THREED_VIEW:
-				// FIXME What is this ???
-				break;
 			case CAMERA_POS:
-				renderer.updateCameraPosition();
+				renderer.camera.updatePosition();
+				break;
+			case CAMERA_UP:
+				renderer.camera.updateOrientation();
+				break;
+			case CAMERA_TARGET:
+				renderer.camera.updateTarget();
+				break;
+			case CAMERA_PRESET:
+				renderer.camera.applyPreset((String) value);
+				break;
+			case ZOOM:
+				renderer.camera.zoom((Double) value);
 				break;
 			default:
 				break;
@@ -668,21 +680,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void setSize(final int x, final int y) {}
-
-	/**
-	 * @return
-	 */
-	public Composite getParent() {
-		return parent;
-	}
-
-	private JOGLRenderer createJOGLRenderer() {
-		return new JOGLRenderer(this);
-	}
-
-	private ModernRenderer createModernRenderer() {
-		return new ModernRenderer(this);
-	}
 
 	private GLAnimatorControl createAnimator() {
 		final GLAutoDrawable drawable = renderer.createDrawable(parent);
@@ -783,6 +780,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void draggedTo(final int x, final int y) {
 		// Nothing to do (taken in charge by the camera
 
+	}
+
+	@Override
+	public boolean inKeystoneMode() {
+		return renderer.camera.inKeystoneMode();
 	}
 
 }

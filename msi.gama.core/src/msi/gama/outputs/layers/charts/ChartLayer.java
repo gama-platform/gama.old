@@ -63,7 +63,7 @@ public class ChartLayer extends AbstractLayer {
 				y = x;
 			}
 			final BufferedImage im = getChart().getImage(scope, x, y, dg.getSurface().getData().isAntialias());
-			final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
+			final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 			dg.drawImage(im, attributes);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
 			// Do nothing. See Issue #1605

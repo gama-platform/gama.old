@@ -21,7 +21,7 @@ public class ExecutionContext implements IExecutionContext {
 	IScope scope;
 
 	public ExecutionContext(final IScope scope) {
-		this(scope, null);
+		this(scope, (IExecutionContext) null);
 	}
 
 	public ExecutionContext(final IExecutionContext outer) {
@@ -36,6 +36,11 @@ public class ExecutionContext implements IExecutionContext {
 	ExecutionContext(final IScope scope, final IExecutionContext outer) {
 		this.outer = outer;
 		this.scope = scope;
+	}
+
+	public ExecutionContext(final IScope scope, final Map<String, Object> vars) {
+		this(scope);
+		local = vars;
 	}
 
 	@Override

@@ -34,6 +34,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The Class MonitorOutput.
@@ -106,7 +107,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	private void setColor(final IExpression facet) {
 		colorExpression = facet;
 		if (facet != null && facet.isConst()) {
-			constantColor = Cast.as(facet, GamaColor.class, false);
+			constantColor = Types.COLOR.cast(null, facet.value(null), null, false);
 		}
 	}
 

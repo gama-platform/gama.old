@@ -54,9 +54,11 @@ public abstract class AbstractLayer implements ILayer {
 
 	protected ILayerStatement definition;
 	private String name;
+	protected double addedElevation;
 	protected final Point positionInPixels;
 	protected final Point sizeInPixels;
 	private Envelope visibleModelRegion;
+	boolean hasBeenDrawnOnce;
 
 	protected AbstractLayer(final ILayerStatement layer) {
 		definition = layer;
@@ -68,7 +70,9 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void reloadOn(final IDisplaySurface surface) {}
+	public void reloadOn(final IDisplaySurface surface) {
+		hasBeenDrawnOnce = false;
+	}
 
 	@Override
 	public void firstLaunchOn(final IDisplaySurface surface) {}
@@ -99,6 +103,10 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		if (!g.is2D() && !isDynamic() && hasBeenDrawnOnce)
+			return;
+		if (g.isNotReadyToUpdate() && hasBeenDrawnOnce)
+			return;
 		if (definition != null) {
 			definition.getBox().compute(scope);
 			setPositionAndSize(definition.getBox(), g);
@@ -107,6 +115,7 @@ public abstract class AbstractLayer implements ILayer {
 		g.beginDrawingLayer(this);
 		privateDrawDisplay(scope, g);
 		g.endDrawingLayer(this);
+		hasBeenDrawnOnce = true;
 	}
 
 	@Override
@@ -146,8 +155,17 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public Boolean isDynamic() {
-		return definition.getRefresh();
+	public void addElevation(final double elevation) {
+		addedElevation = elevation;
+	}
+
+	public double getAddedElevation() {
+		return addedElevation;
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return definition.getRefresh() == null || definition.getRefresh();
 	}
 
 	/**

@@ -15,20 +15,19 @@ import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Display;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IOverlayProvider;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.AbstractLayerStatement;
@@ -51,6 +50,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -113,25 +113,15 @@ import msi.gaml.types.Types;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Indicates whether or not the display should cover the whole screen (default is false")),
-				@facet (
-						name = IKeyword.TESSELATION,
-						internal = true,
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc ("")),
+
 				@facet (
 						name = IKeyword.ZFIGHTING,
 						internal = true,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
-				@facet (
-						name = IKeyword.TRACE,
-						type = { IType.BOOL, IType.INT },
-						optional = true,
 						doc = @doc (
-								deprecated = "The value of the trace must instead be defined in each layer's definition now.",
-								value = "Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
+								deprecated = "now done automatically by default",
+								value = "Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 				@facet (
 						name = IKeyword.SCALE,
 						type = { IType.BOOL, IType.FLOAT },
@@ -219,28 +209,17 @@ import msi.gaml.types.Types;
 						name = IKeyword.KEYSTONE,
 						type = IType.CONTAINER,
 						optional = true,
-						doc = @doc ("Set the position of the 4 corners of your screen ([topLeft,topRight,botLeft,botRight]), in (x,y) coordinate ( the (0,0) position is the top left corner, while the (1,1) position is the bottom right corner). The default value is : [{0,0},{1,0},{0,1},{1,1}]. Note that this statement can only work with the \"use_shader\" facet set to true.")),
+						doc = @doc ("Set the position of the 4 corners of your screen ([topLeft,topRight,botLeft,botRight]), in (x,y) coordinate ( the (0,0) position is the top left corner, while the (1,1) position is the bottom right corner). The default value is : [{0,0},{1,0},{0,1},{1,1}]")),
 				@facet (
 						name = IKeyword.ROTATE,
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("Set the angle for the rotation around the Z axis")),
 				@facet (
-						name = IKeyword.POLYGONMODE,
-						internal = true,
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc ("")),
-				@facet (
 						name = IKeyword.AUTOSAVE,
 						type = { IType.BOOL, IType.POINT },
 						optional = true,
-						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
-				@facet (
-						name = IKeyword.OUTPUT3D,
-						internal = true,
-						type = { IType.BOOL, IType.POINT },
-						optional = true) },
+						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")), },
 		omissible = IKeyword.NAME)
 @inside (
 		symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
@@ -408,17 +387,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// }
 		}
 
-		// OpenGL parameter initialization
-		final IExpression tess = getFacet(IKeyword.TESSELATION);
-		if (tess != null) {
-			this.data.setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
-		}
-
-		final IExpression z = getFacet(IKeyword.ZFIGHTING);
-		if (z != null) {
-			this.data.setZ_fighting(Cast.asBool(getScope(), z.value(getScope())));
-		}
-
 		final IExpression scale = getFacet(IKeyword.SCALE);
 		if (scale != null) {
 			if (scale.getType().equals(Types.BOOL)) {
@@ -457,8 +425,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression keystone_exp = getFacet(IKeyword.KEYSTONE);
 		if (keystone_exp != null) {
-			final List<ILocation> val = Cast.asList(getScope(), keystone_exp.value(getScope()));
-			if (val.size() == 4) {
+			@SuppressWarnings ("unchecked") final List<GamaPoint> val =
+					GamaListFactory.create(scope, Types.POINT, Cast.asList(getScope(), keystone_exp.value(getScope())));
+			if (val.size() >= 4) {
 				data.setKeystone(val);
 			}
 		}
@@ -466,7 +435,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression rotate_exp = getFacet(IKeyword.ROTATE);
 		if (rotate_exp != null) {
 			final double val = Cast.asFloat(getScope(), rotate_exp.value(getScope()));
-			data.setZRotation(val);
+			data.setZRotationAngle(val);
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
@@ -535,8 +504,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if (camera != null) {
-			final ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
-			location.setY(-location.getY()); // y component need to be reverted
+			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), camera.value(getScope()));
+			location.y = -location.y; // y component need to be reverted
 			this.data.setCameraPos(location);
 			constantCamera = camera.isConst();
 			// cameraFix = true;
@@ -544,7 +513,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if (cameraLook != null) {
-			final ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraLook.value(getScope()));
 			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
@@ -553,9 +522,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if (cameraUp != null) {
-			final ILocation location = Cast.asPoint(getScope(), cameraUp.value(getScope()));
+			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraUp.value(getScope()));
 			location.setY(-location.getY()); // y component need to be reverted
-			this.data.setCameraUpVector(location);
+			this.data.setCameraUpVector(location, true);
 			// cameraFix = true;
 		}
 
@@ -564,22 +533,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (cameraLens != null) {
 			final int lens = Cast.asInt(getScope(), cameraLens.value(getScope()));
 			this.data.setCameraLens(lens);
-		}
-
-		final IExpression poly = getFacet(IKeyword.POLYGONMODE);
-		if (poly != null) {
-			this.data.setPolygonMode(Cast.asBool(getScope(), poly.value(getScope())));
-		}
-
-		final IExpression out3D = getFacet(IKeyword.OUTPUT3D);
-		if (out3D != null) {
-			if (out3D.getType().equals(Types.POINT)) {
-				this.data.setOutput3D(true);
-				// this.data.setOutput3DNbCycles(Cast.asPoint(getScope(),
-				// out3D.value(getScope())));
-			} else {
-				this.data.setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
-			}
 		}
 
 		final IExpression fs = getFacet(IKeyword.FULLSCREEN);
@@ -629,6 +582,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
+		// final IGraphics g = scope.getGraphics();
+		// if (g == null)
+		// return true;
+		// if (g.isNotReadyToUpdate())
+		// return true;
 		for (final ILayerStatement layer : getLayers()) {
 			getScope().setCurrentSymbol(layer);
 			getScope().step(layer);
@@ -676,10 +634,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (!constantCamera) {
 			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if (camera != null) {
-				final ILocation location = Cast.asPoint(getScope(), camera.value(getScope()));
+				final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), camera.value(getScope()));
 				if (location != null)
-					location.setY(-location.getY()); // y component need to be
-														// reverted
+					location.y = -location.y; // y component need to be
+												// reverted
 				this.data.setCameraPos(location);
 			}
 			// graphics.setCameraPosition(getCameraPos());
@@ -688,7 +646,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (!constantCameraLook) {
 			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if (cameraLook != null) {
-				final ILocation location = Cast.asPoint(getScope(), cameraLook.value(getScope()));
+				final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraLook.value(getScope()));
 				if (location != null)
 					location.setY(-location.getY()); // y component need to be
 														// reverted
@@ -829,7 +787,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public boolean useShader() {
-		if (data.getKeystone() != null) { return true; }
+		// if (data.getKeystone() != null) { return true; }
 		return useShader;
 	}
 

@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -236,14 +235,10 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 	public InspectDisplayOutput(final IAgent a) {
 		// Opens directly an inspector
 		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, StringUtils.toGamlString("Inspect: "),
-				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE, StringUtils.toGamlString(a.getSpeciesName()+" at "+a.getIndex())).validate());
-		String expr =a.getSpeciesName()+" at "+a.getIndex();
-		if ( a instanceof SimulationAgent) {
-			expr = IKeyword.WORLD_AGENT_NAME;
-		}else if (a instanceof ExperimentAgent ) {
-			expr = IKeyword.WORLD_AGENT_NAME +".host";
-		}
-		setValue(GAML.compileExpression(expr, a,true));
+				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE,
+				StringUtils.toGamlString(a.getSpeciesName() + " at " + a.getIndex())).validate());
+		final String expr = a.getSpeciesName() + " at " + a.getIndex();
+		setValue(GAML.getExpressionFactory().createConst(a, a.getType()));
 		lastValue = a;
 	}
 

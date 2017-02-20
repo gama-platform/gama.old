@@ -355,7 +355,10 @@ public class GAML {
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final boolean onlyExpression) throws GamaRuntimeException {
-		return compileExpression(expression, agent, null, onlyExpression);
+		if (agent == null)
+			throw GamaRuntimeException.error("Agent is nil", GAMA.getRuntimeScope());
+		final IExecutionContext tempContext = agent.getScope().getExecutionContext();
+		return compileExpression(expression, agent, tempContext, onlyExpression);
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,

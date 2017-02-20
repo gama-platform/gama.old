@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.geotools.geometry.jts.JTS;
 
@@ -83,8 +84,7 @@ import msi.gaml.types.Types;
 public class GeometryUtils {
 
 	public static GamaPoint toCoordinate(final ILocation l) {
-		if (l instanceof GamaPoint) { return (GamaPoint) l/* .toCoordinate() */; }
-		return null;
+		return l.toGamaPoint();
 	}
 
 	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList<>();
@@ -463,13 +463,39 @@ public class GeometryUtils {
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
 		applyToInnerGeometries(tri, (gg) -> {
-			if (getContourCoordinates(gg).isCoveredBy(env) && buffered.covers(gg)) {
-				getContourCoordinates(gg).setAllZ(elevation);
+			final ICoordinates cc = getContourCoordinates(gg);
+			if (cc.isCoveredBy(env) && buffered.covers(gg)) {
+				cc.setAllZ(elevation);
 				gg.geometryChanged();
 				geoms.add((Polygon) gg);
 			}
 		});
 
+	}
+
+	public static void iterateOverTriangles(final Polygon polygon, final Consumer<Geometry> action) {
+		final double elevation = getContourCoordinates(polygon).averageZ();
+		final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
+		final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
+		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
+		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
+		try {
+			dtb.setSites(polygon);
+			dtb.setTolerance(sizeTol);
+			applyToInnerGeometries(dtb.getTriangles(GEOMETRY_FACTORY), (gg) -> {
+				final ICoordinates cc = getContourCoordinates(gg);
+				if (cc.isCoveredBy(env) && buffered.covers(gg)) {
+					cc.setAllZ(elevation);
+					gg.geometryChanged();
+					action.accept(gg);
+				}
+			});
+		} catch (final LocateFailureException | ConstraintEnforcementException e) {
+			final IScope scope = GAMA.getRuntimeScope();
+			GamaRuntimeException.warning("Impossible to triangulate: " + new WKTWriter().write(polygon), scope);
+			iterateOverTriangles((Polygon) DouglasPeuckerSimplifier.simplify(polygon, 0.1), action);
+			return;
+		}
 	}
 
 	public static IList<IShape> triangulation(final IScope scope, final Geometry geom) {
@@ -755,8 +781,8 @@ public class GeometryUtils {
 	// Created date:24-Feb-2013: Process for SQL - MAP type
 	// Modified: 03-Jan-2014
 
-	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
-		Envelope result = new Envelope3D();
+	public static Envelope3D computeEnvelopeFrom(final IScope scope, final Object obj) {
+		Envelope3D result = new Envelope3D();
 		if (obj instanceof ISpecies) {
 			return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
 		} else if (obj instanceof Number) {
@@ -774,9 +800,9 @@ public class GeometryUtils {
 		} else if (obj instanceof IGamaFile) {
 			result = ((IGamaFile) obj).computeEnvelope(scope);
 		} else if (obj instanceof IList) {
-			Envelope boundsEnv = null;
+			Envelope3D boundsEnv = null;
 			for (final Object bounds : (IList) obj) {
-				final Envelope env = computeEnvelopeFrom(scope, bounds);
+				final Envelope3D env = computeEnvelopeFrom(scope, bounds);
 				if (boundsEnv == null) {
 					boundsEnv = env;
 				} else {

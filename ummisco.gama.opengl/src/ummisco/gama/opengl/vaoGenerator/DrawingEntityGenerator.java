@@ -79,7 +79,7 @@ public class DrawingEntityGenerator {
 			textures[0] = fontTextCache.getFontTexture(fontName + style);
 			float ratio = (float) (layer.isOverlay() ? 1
 					: renderer.getGlobalYRatioBetweenPixelsAndModelUnits() / renderer.getZoomLevel());
-			ratio = (float) (object.getDimensions() != null ? ratio / object.getDimensions().x : ratio);
+			ratio = (float) (object.getDimensions() != null ? ratio / object.getDimensions().getX() : ratio);
 			final TextMeshData textMeshData =
 					fontTextCache.getTextMeshData(fontName + style, strObj.string, ratio, fontSize);
 			final String[] texturePaths = new String[1];
@@ -87,17 +87,17 @@ public class DrawingEntityGenerator {
 			final int[] textureIds = new int[1];
 			textureIds[0] = textures[0].getTextureObject();
 			transformer = new StringObjectTransformer(strObj, textureIds, texturePaths, textMeshData, layer.isOverlay(),
-					renderer.data.isTriangulation(), renderer.getCurrentObjectAlpha());
+					renderer.data.isWireframe(), renderer.getOpenGLHelper().getCurrentObjectAlpha());
 		} else if (object instanceof GeometryObject) {
 			final GeometryObject geomObj = (GeometryObject) object;
 			// final String[] texturePaths = geomObj.getTexturePaths(scope);
 			// final int[] textureIDs = texturePaths == null ? null : new int[texturePaths.length];
 			int[] ids = null;
 			if (computeTextureIds) {
-				ids = geomObj.getTexturesId(gl, renderer);
+				ids = geomObj.getTexturesId(renderer.getOpenGLHelper());
 			}
 			transformer = new GeometryObjectTransformer(geomObj, ids, layer.isLightInteraction(), layer.isOverlay(),
-					renderer.data.isTriangulation(), renderer.getCurrentObjectAlpha());
+					renderer.data.isWireframe(), renderer.getOpenGLHelper().getCurrentObjectAlpha());
 		}
 		if (transformer != null)
 			result = transformer.getDrawingEntities();

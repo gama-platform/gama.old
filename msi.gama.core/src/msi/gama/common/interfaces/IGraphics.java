@@ -15,9 +15,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
@@ -37,6 +37,8 @@ public interface IGraphics {
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
+	public void setDisplaySurface(final IDisplaySurface surface);
+
 	public abstract int getDisplayWidth();
 
 	public abstract int getDisplayHeight();
@@ -49,7 +51,7 @@ public interface IGraphics {
 
 	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes);
+	public abstract Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes);
 
 	public abstract void setOpacity(double i);
 
@@ -103,5 +105,7 @@ public interface IGraphics {
 	public void dispose();
 
 	boolean cannotDraw();
+
+	public abstract boolean isNotReadyToUpdate();
 
 }

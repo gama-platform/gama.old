@@ -9,22 +9,32 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
+import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.geometry.Rotation3D;
+import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
 public abstract class DrawingAttributes {
 
-	protected ColorProperties colorProperties = ColorProperties.NONE;
+	private static int INDEX = 0;
+	static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
+	private final int uniqueIndex;
+	protected final ColorProperties colorProperties = new ColorProperties();
 	protected GeometricProperties geometryProperties = GeometricProperties.create();
+	protected boolean selected;
+	protected GamaColor highlight;
 
-	public DrawingAttributes(final GamaPoint size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
+	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border) {
 		setBorder(border);
 		setColor(color);
@@ -33,10 +43,25 @@ public abstract class DrawingAttributes {
 		if (rotation != null) {
 			setRotation(rotation.key, rotation.value);
 		}
+		uniqueIndex = INDEX++;
 	}
 
-	public DrawingAttributes(final GamaPoint location) {
-		this(location, null, null, null, null);
+	public int getIndex() {
+		return uniqueIndex;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(final boolean b) {
+		selected = b;
+	}
+
+	public abstract IShape.Type getType();
+
+	public boolean isImage() {
+		return false;
 	}
 
 	public DrawingAttributes(final GamaPoint location, final GamaColor color) {
@@ -44,11 +69,11 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setColor(final GamaColor fill) {
-		colorProperties = colorProperties.withFill(fill);
+		colorProperties.withFill(fill);
 	}
 
 	protected void setColors(final List<GamaColor> cc) {
-		colorProperties = colorProperties.withColors(cc == null ? null : cc.toArray(new GamaColor[cc.size()]));
+		colorProperties.withColors(cc == null ? null : cc.toArray(new GamaColor[cc.size()]));
 	}
 
 	public boolean isEmpty() {
@@ -57,24 +82,33 @@ public abstract class DrawingAttributes {
 
 	public void setEmpty(final Boolean b) {
 		if (b == null || !b)
-			colorProperties = colorProperties.toFilled();
+			colorProperties.toFilled();
 		else
-			colorProperties = colorProperties.toEmpty();
+			colorProperties.toEmpty();
 	}
 
 	public void setBorder(final GamaColor border) {
-		colorProperties = colorProperties.withBorder(border);
+		colorProperties.withBorder(border);
 	}
 
-	public void setSize(final GamaPoint size) {
+	public void setSize(final Scaling3D size) {
 		geometryProperties = geometryProperties.withSize(size);
 	}
 
 	public void setRotation(final Double angle, final GamaPoint axis) {
-		geometryProperties = geometryProperties.withRotation(angle, axis);
+		if (angle == null) {
+			geometryProperties = geometryProperties.withRotation(null);
+		} else if (axis == null) {
+			geometryProperties = geometryProperties.withRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
+		} else
+			geometryProperties = geometryProperties.withRotation(new AxisAngle(axis, angle));
 	}
 
-	public GamaColor getColor() {
+	public final GamaColor getColor() {
+		if (selected)
+			return SELECTED_COLOR;
+		if (highlight != null)
+			return highlight;
 		return colorProperties.getFillColor();
 	}
 
@@ -86,16 +120,16 @@ public abstract class DrawingAttributes {
 		return geometryProperties.getLocation();
 	}
 
-	public GamaPoint getSize() {
+	public Scaling3D getSize() {
 		return geometryProperties.getSize();
 	}
 
-	public Double getDepth() {
-		return geometryProperties.getDepth();
+	public Double getHeight() {
+		return geometryProperties.getHeight();
 	}
 
-	public void setDepth(final Double d) {
-		geometryProperties = geometryProperties.withDepth(d);
+	public void setHeight(final Double d) {
+		geometryProperties = geometryProperties.withHeight(d);
 	}
 
 	public void setLocationIfAbsent(final GamaPoint point) {
@@ -125,17 +159,23 @@ public abstract class DrawingAttributes {
 		geometryProperties = geometryProperties.withLocation(location);
 	}
 
+	public AxisAngle getRotation() {
+		return geometryProperties.getRotation();
+	}
+
+	/**
+	 * Returns the angle of the rotation in degrees (or null if no rotation is defined)
+	 * 
+	 * @return
+	 */
 	public Double getAngle() {
-		return geometryProperties.getAngle();
+		if (geometryProperties.getRotation() == null) { return null; }
+		return geometryProperties.getRotation().angle;
 	}
 
 	public GamaPoint getAxis() {
-		return geometryProperties.getAxis();
-	}
-
-	public void setAngle(final Double angle) {
-		geometryProperties = geometryProperties.withRotation(angle, geometryProperties.getAxis());
-
+		if (geometryProperties.getRotation() == null) { return null; }
+		return geometryProperties.getRotation().getAxis();
 	}
 
 	public Double getLineWidth() {
@@ -144,14 +184,18 @@ public abstract class DrawingAttributes {
 
 	public void setTexture(final Object o) {
 		if (o == null)
-			colorProperties = colorProperties.withTextures(null);
+			colorProperties.withTextures(null);
 		else
-			colorProperties = colorProperties.withTextures(Arrays.asList(o));
+			colorProperties.withTextures(Arrays.asList(o));
 
 	}
 
 	public void setHighlighted(final GamaColor color) {
-		colorProperties = colorProperties.withHighlight(color);
+		highlight = color;
+	}
+
+	public void markSelected(final int pickedIndex) {
+		setSelected(pickedIndex == uniqueIndex);
 	}
 
 }

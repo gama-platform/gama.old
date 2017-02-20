@@ -11,9 +11,12 @@ package ummisco.gama.opengl.scene;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -32,6 +35,7 @@ public class GeometryObject extends AbstractObject {
 	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final boolean empty) {
 		this(geometry, color, type, JOGLRenderer.getLineWidth());
 		attributes.setEmpty(empty);
+		attributes.setHeight(geometry.getDepth());
 	}
 
 	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final double lineWidth) {
@@ -39,8 +43,7 @@ public class GeometryObject extends AbstractObject {
 	}
 
 	public IShape.Type getType() {
-		if (!(attributes instanceof ShapeDrawingAttributes)) { return IShape.Type.POLYGON; }
-		return ((ShapeDrawingAttributes) attributes).type;
+		return attributes.getType();
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class GeometryObject extends AbstractObject {
 	}
 
 	public SimpleGeometryObject toSimpleGeometryObject() {
-		return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getDepth(),
+		return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getHeight(),
 				attributes.getAngle(), attributes.getAxis(), getLocation(), attributes.getSize(), getType(),
 				!isFilled(), attributes.getTextures());
 	}
@@ -65,6 +68,23 @@ public class GeometryObject extends AbstractObject {
 	@Override
 	public DrawerType getDrawerType() {
 		return DrawerType.GEOMETRY;
+	}
+
+	public GamaGeometryFile getFile() {
+		return null;
+	}
+
+	public AxisAngle getInitRotation() {
+		return null;
+	}
+
+	public Envelope3D getEnvelope(final OpenGL gl) {
+		return Envelope3D.of(geometry);
+	}
+
+	@Override
+	public AxisAngle getRotation() {
+		return attributes.getRotation();
 	}
 
 }

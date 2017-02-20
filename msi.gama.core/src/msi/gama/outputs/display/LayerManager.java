@@ -135,13 +135,13 @@ public class LayerManager implements ILayerManager {
 	}
 
 	@Override
-	public void enableLayer(final ILayer display, final Boolean enable) {
+	public void enableLayer(final ILayer layer, final Boolean enable) {
 
 		surface.runAndUpdate(() -> {
 			if (enable) {
-				enable(display);
+				enable(layer);
 			} else {
-				disable(display);
+				disable(layer);
 			}
 			surface.layersChanged();
 

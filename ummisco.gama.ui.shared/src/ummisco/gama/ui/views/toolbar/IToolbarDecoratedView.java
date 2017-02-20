@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IToolbarDecoratedView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IToolbarDecoratedView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,6 +11,7 @@ package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
+
 import msi.gama.outputs.IDisplayOutput;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
@@ -23,8 +23,6 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  *
  */
 public interface IToolbarDecoratedView {
-
-	public final static int SEP = Integer.MAX_VALUE;
 
 	public IWorkbenchSite getSite();
 
@@ -78,10 +76,5 @@ public interface IToolbarDecoratedView {
 		boolean zoomWhenScrolling();
 
 	}
-
-	/**
-	 * @param toggle
-	 */
-	// public void setToogle(Action toggle);
 
 }

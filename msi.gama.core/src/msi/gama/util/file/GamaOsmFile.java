@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaOsmFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaOsmFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -54,12 +53,12 @@ import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 import org.openstreetmap.osmosis.xml.common.SaxParserFactory;
 import org.openstreetmap.osmosis.xml.v0_6.impl.OsmHandler;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import crosby.binary.osmosis.OsmosisReader;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -80,10 +79,14 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "osm", extensions = { "osm", "pbf", "bz2",
-		"gz" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-				IConcept.OSM, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "osm",
+		extensions = { "osm", "pbf", "bz2", "gz" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.OSM, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaOsmFile extends GamaGisFile {
 
 	public static class OSMInfo extends GamaFileMetaData {
@@ -285,8 +288,8 @@ public class GamaOsmFile extends GamaGisFile {
 				final boolean toFilter = filteringOptions != null && !filteringOptions.isEmpty();
 				if (entity instanceof Bound) {
 					final Bound bound = (Bound) entity;
-					final Envelope env = new Envelope(bound.getLeft(), bound.getRight(), bound.getBottom(),
-							bound.getTop());
+					final Envelope3D env =
+							new Envelope3D(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop(), 0, 0);
 					computeProjection(scope, env);
 				} else if (returnIt) {
 					if (entity instanceof Node) {
@@ -313,9 +316,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 								}
 							}
-							if (!keepObject) {
-								return;
-							}
+							if (!keepObject) { return; }
 						}
 						registerHighway((Way) entity, usedNodes, intersectionNodes);
 						ways.add((Way) entity);
@@ -325,16 +326,13 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 
 			@Override
-			public void release() {
-			}
+			public void release() {}
 
 			@Override
-			public void complete() {
-			}
+			public void complete() {}
 
 			@Override
-			public void initialize(final Map<String, Object> arg0) {
-			}
+			public void initialize(final Map<String, Object> arg0) {}
 		};
 		readFile(scope, sinkImplementation, getFile(scope));
 		if (returnIt) {
@@ -344,9 +342,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 	private void addAttribute(final Map<String, String> atts, final String nameAt, final Object val) {
 		final String type = atts.get(nameAt);
-		if (type != null && type.equals("string")) {
-			return;
-		}
+		if (type != null && type.equals("string")) { return; }
 		String newType = "int";
 		try {
 			Integer.parseInt(val.toString());
@@ -368,9 +364,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		getFeatureIterator(scope, true);
 	}
@@ -536,9 +530,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	private IShape createRoad(final List<IShape> points, final Map<String, Object> values) {
-		if (points.size() < 2) {
-			return null;
-		}
+		if (points.size() < 2) { return null; }
 		final IShape geom = GamaGeometryType.buildPolyline(points);
 		if (geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty()
 				&& geom.getInnerGeometry().isSimple() && geom.getPerimeter() > 0) {
@@ -574,17 +566,17 @@ public class GamaOsmFile extends GamaGisFile {
 		final String ext = getExtension(scope);
 		RunnableSource reader = null;
 		switch (ext) {
-		case "pbf":
-			try (FileInputStream stream = new FileInputStream(osmFile)) {
-				reader = new OsmosisReader(stream);
-				reader.setSink(sink);
-				reader.run();
-			} catch (final IOException e) {
-				throw GamaRuntimeException.create(e, scope);
-			}
-			break;
-		default:
-			readXML(scope, sink);
+			case "pbf":
+				try (FileInputStream stream = new FileInputStream(osmFile)) {
+					reader = new OsmosisReader(stream);
+					reader.setSink(sink);
+					reader.run();
+				} catch (final IOException e) {
+					throw GamaRuntimeException.create(e, scope);
+				}
+				break;
+			default:
+				readXML(scope, sink);
 		}
 
 	}
@@ -594,12 +586,12 @@ public class GamaOsmFile extends GamaGisFile {
 			InputStream inputStream = new FileInputStream(getFile(scope));
 			final String ext = getExtension(scope);
 			switch (ext) {
-			case "gz":
-				inputStream = new GZIPInputStream(inputStream);
-				break;
-			case "bz2":
-				inputStream = new BZip2CompressorInputStream(inputStream);
-				break;
+				case "gz":
+					inputStream = new GZIPInputStream(inputStream);
+					break;
+				case "bz2":
+					inputStream = new BZip2CompressorInputStream(inputStream);
+					break;
 			}
 			try (InputStream stream = inputStream) {
 				final SAXParser parser = SaxParserFactory.createParser();
@@ -613,7 +605,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) {
 			getFeatureIterator(scope, false);
 		}

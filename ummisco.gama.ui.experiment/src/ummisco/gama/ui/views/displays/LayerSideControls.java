@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import java.awt.Color;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,7 +29,6 @@ import msi.gama.outputs.layers.ImageLayerStatement;
 import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -55,46 +52,10 @@ public class LayerSideControls {
 		// }
 	}
 
-	public static void fill(final Composite compo, final IDisplaySurface container) {
-		EditorFactory.create(container.getScope(), compo, "Antialias:", container.getData().isAntialias(),
-				(EditorListener<Boolean>) newValue -> {
-					container.getData().setAntialias(newValue);
-					updateIfPaused(null, container);
-				});
-		EditorFactory.create(container.getScope(), compo, "Background:", container.getData().getBackgroundColor(),
-				(EditorListener<Color>) newValue -> {
-					container.getData().setBackgroundColor(new GamaColor(newValue));
-					updateIfPaused(null, container);
-				});
-		EditorFactory.create(container.getScope(), compo, "Highlight:", container.getData().getHighlightColor(),
-				(EditorListener<Color>) newValue -> {
-					container.getData().setHighlightColor(new GamaColor(newValue));
-					updateIfPaused(null, container);
-				});
-		// if (container.getOutput().isOpenGL() && container.getOutput().cameraFix) {
-		// EditorFactory.create(container.getScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
-		// (EditorListener<Boolean>) newValue -> {
-		// container.getData().setCameraLock(newValue);
-		// updateIfPaused(null, container);
-		// });
-		// }
-
-	}
-
 	public static void fill(final Composite compo, final ILayer layer, final IDisplaySurface container) {
 
 		final ILayerStatement definition = layer.getDefinition();
 
-		// EditorFactory.create(compo, "Visible:",
-		// container.getManager().isEnabled(layer), new
-		// EditorListener<Boolean>() {
-		//
-		// @Override
-		// public void valueModified(final Boolean newValue) {
-		// container.getManager().enableLayer(layer, newValue);
-		// updateIfPaused(layer, container);
-		// }
-		// });
 		EditorFactory.create(container.getScope(), compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1,
 				false, newValue -> {
 					layer.setTransparency(1 - newValue);
@@ -143,39 +104,6 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			// case ILayerStatement.TEXT: {
-			// EditorFactory.createExpression(compo, "Expression:",
-			// ((TextLayerStatement) definition).getTextExpr(),
-			// new EditorListener<IExpression>() {
-			//
-			// @Override
-			// public void valueModified(final IExpression newValue) {
-			// ((TextLayerStatement) definition).setTextExpr(newValue);
-			// updateIfPaused(layer, container);
-			// }
-			// }, Types.STRING);
-			// EditorFactory.create(compo, "Color:", ((TextLayerStatement)
-			// definition).getColor(),
-			// new EditorListener<Color>() {
-			//
-			// @Override
-			// public void valueModified(final Color newValue) {
-			// ((TextLayerStatement) definition).setColor(newValue);
-			// updateIfPaused(layer, container);
-			// }
-			// });
-			// EditorFactory.create(compo, "Font:", ((TextLayerStatement)
-			// definition).getFont(),
-			// new EditorListener<GamaFont>() {
-			//
-			// @Override
-			// public void valueModified(final GamaFont newValue) {
-			// ((TextLayerStatement) definition).setFont(newValue);
-			// updateIfPaused(layer, container);
-			// }
-			// });
-			// break;
-			// }
 			case ILayerStatement.IMAGE: {
 				if (definition instanceof ImageLayerStatement) {
 					EditorFactory.create(container.getScope(), compo, "Image:",
@@ -209,7 +137,6 @@ public class LayerSideControls {
 						p.y = p.y + 30;
 						final SWTChartEditor editor = new SWTChartEditor(WorkbenchHelper.getDisplay(),
 								((ChartLayerStatement) definition).getChart(), p);
-						// TODO Revoir cet �diteur, tr�s laid !
 						editor.open();
 						updateIfPaused(layer, container);
 					}

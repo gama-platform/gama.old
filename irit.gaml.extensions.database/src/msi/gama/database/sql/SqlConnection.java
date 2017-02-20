@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.opengis.referencing.FactoryException;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.Projection;
@@ -330,7 +330,7 @@ public abstract class SqlConnection {
 				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis != null) // create envelope for environment
 				{
-					final Envelope env = scope.getSimulation().getEnvelope();
+					final Envelope3D env = scope.getSimulation().getEnvelope();
 					gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}
@@ -467,9 +467,9 @@ public abstract class SqlConnection {
 
 	// public static Envelope getBounds(final GamaList<? extends GamaList<?
 	// super GamaList>> gamaList) {
-	public static Envelope getBounds(final IList<? super IList<? super IList>> gamaList) {
+	public static Envelope3D getBounds(final IList<? super IList<? super IList>> gamaList) {
 
-		Envelope envelope;
+		Envelope3D envelope;
 		// get Column name
 		final IList colNames = (IList) gamaList.get(0);
 		// get Column type
@@ -487,7 +487,7 @@ public abstract class SqlConnection {
 			} else {
 				GamaList<Object> rowList = (GamaList<Object>) initValue.get(0);
 				Geometry geo = (Geometry) rowList.get(index);
-				envelope = geo.getEnvelopeInternal();
+				envelope = Envelope3D.of(geo);
 				double maxX = envelope.getMaxX();
 				double maxY = envelope.getMaxY();
 				double minX = envelope.getMinX();
@@ -495,7 +495,7 @@ public abstract class SqlConnection {
 				for (int i = 1; i < n && i < Integer.MAX_VALUE; i++) {
 					rowList = (GamaList<Object>) initValue.get(i);
 					geo = (Geometry) rowList.get(index);
-					envelope = geo.getEnvelopeInternal();
+					envelope = Envelope3D.of(geo);
 					final double maxX1 = envelope.getMaxX();
 					final double maxY1 = envelope.getMaxY();
 					final double minX1 = envelope.getMinX();
@@ -717,7 +717,7 @@ public abstract class SqlConnection {
 			if (columns.contains(GEOMETRYTYPE) && transformed) {
 				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis != null) {
-					final Envelope env = scope.getSimulation().getEnvelope();
+					final Envelope3D env = scope.getSimulation().getEnvelope();
 					gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}

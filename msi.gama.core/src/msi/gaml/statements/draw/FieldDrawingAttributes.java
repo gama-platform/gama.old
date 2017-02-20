@@ -11,10 +11,8 @@ package msi.gaml.statements.draw;
 
 import java.util.List;
 
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaPair;
 
 public class FieldDrawingAttributes extends FileDrawingAttributes {
 
@@ -28,17 +26,18 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	public boolean withText;
 	public GamaPoint cellSize;
 
-	public FieldDrawingAttributes(final GamaPoint size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-			final GamaPoint location, final Boolean empty, final GamaColor color, final GamaColor border,
-			final List<?> textures, final IAgent agent) {
-		super(size, rotation, location, color, border, agent, null);
-		setDepth(depth == null ? 1.0 : depth.doubleValue());
-		setEmpty(empty);
-		setTextures(textures);
-	}
+	// public FieldDrawingAttributes(final GamaPoint size, final Double depth, final GamaPair<Double, GamaPoint>
+	// rotation,
+	// final GamaPoint location, final Boolean empty, final GamaColor color, final GamaColor border,
+	// final List<?> textures, final IAgent agent) {
+	// super(size, rotation, location, color, border, agent, null);
+	// setHeight(depth == null ? 1.0 : depth.doubleValue());
+	// setEmpty(empty);
+	// setTextures(textures);
+	// }
 
 	public void setTextures(final List<?> textures) {
-		colorProperties = colorProperties.withTextures(textures);
+		colorProperties.withTextures(textures);
 
 	}
 
@@ -46,8 +45,8 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	 * @param name
 	 * @param lineColor
 	 */
-	public FieldDrawingAttributes(final String name, final GamaColor border) {
-		super(null, null, border);
+	public FieldDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
+		super(null, isImage);
 		speciesName = name;
 	}
 

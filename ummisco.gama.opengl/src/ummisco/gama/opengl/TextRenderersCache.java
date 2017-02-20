@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
 /**
@@ -57,7 +56,7 @@ public class TextRenderersCache {
 	/**
 	 * @param gl
 	 */
-	public void dispose(final GL gl) {
+	public void dispose() {
 		for (final String key1 : cache.keySet()) {
 			final Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(key1);
 			for (final Integer key2 : map1.keySet()) {

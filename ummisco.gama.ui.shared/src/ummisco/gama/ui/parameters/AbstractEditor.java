@@ -594,20 +594,23 @@ public abstract class AbstractEditor<T>
 		if (!isValueDifferent(val))
 			return;
 		currentValue = val;
-		if (titleLabel != null && !titleLabel.isDisposed()) {
-			titleLabel
-					.setBackground(isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
-		}
+		WorkbenchHelper.run(() -> {
+			if (titleLabel != null && !titleLabel.isDisposed()) {
+				titleLabel.setBackground(
+						isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+			}
+		});
+
 		if (!internalModification) {
 			setParameterValue(val);
 		}
 	}
 
 	@Override
-	public void updateValue() {
+	public void updateValue(final boolean force) {
 		try {
 			final T newVal = getParameterValue();
-			if (!isValueDifferent(newVal)) { return; }
+			if (!force && !isValueDifferent(newVal)) { return; }
 			internalModification = true;
 			if (titleLabel != null && !titleLabel.isDisposed()) {
 				modifyAndDisplayValue(newVal);
@@ -630,14 +633,17 @@ public abstract class AbstractEditor<T>
 
 	protected final void modifyAndDisplayValue(final T val) {
 		modifyValue(val);
-		if (!isEditable) {
-			fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
-		} else if (isCombo) {
-			combo.select(possibleValues.indexOf(val));
-		} else {
-			displayParameterValueAndCheckButtons();
-		}
-		composite.update();
+		WorkbenchHelper.asyncRun(() -> {
+			if (!isEditable) {
+				fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
+			} else if (isCombo) {
+				combo.select(possibleValues.indexOf(val));
+			} else {
+				displayParameterValueAndCheckButtons();
+			}
+			composite.update();
+		});
+
 	}
 
 	protected IAgent getAgent() {

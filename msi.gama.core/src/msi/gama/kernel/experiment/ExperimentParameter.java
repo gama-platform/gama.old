@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentParameter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentParameter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -44,30 +43,92 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 import msi.gaml.variables.Variable;
 
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true, doc = @doc("The message displayed in the interface")),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
-		@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
-		@facet(name = IKeyword.MIN, type = IType.NONE, optional = true, doc = @doc("the minimum value")),
-		@facet(name = IKeyword.MAX, type = IType.NONE, optional = true, doc = @doc("the maximum value")),
-		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("a category label, used to group parameters in the interface")),
-		@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the name of the variable (that should be declared in the global)")),
-		@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
-		@facet(name = IKeyword.ON_CHANGE, type = IType.NONE, optional = true, doc = @doc("Provides a block of statements that will be executed whenever the value of the parameter changes")),
-		@facet(name = "slider", type = IType.BOOL, optional = true, doc = @doc("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
-		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false, concept = {
-		IConcept.EXPERIMENT, IConcept.PARAMETER })
-@inside(kinds = { ISymbolKind.EXPERIMENT })
-@validator(Variable.VarValidator.class)
-@doc(value = "The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.", usages = {
-		@usage(value = "In gui experiment, the general syntax is the following:", examples = {
-				@example(value = "parameter title var: global_var category: cat;", isExecutable = false) }),
-		@usage(value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:", examples = {
-				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ", isExecutable = false),
-				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable = false) }), })
-@SuppressWarnings({ "rawtypes" })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.LABEL,
+				optional = true,
+				doc = @doc ("The message displayed in the interface")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("the variable type")),
+				@facet (
+						name = IKeyword.INIT,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("the init value")),
+				@facet (
+						name = IKeyword.MIN,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("the minimum value")),
+				@facet (
+						name = IKeyword.MAX,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("the maximum value")),
+				@facet (
+						name = IKeyword.CATEGORY,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("a category label, used to group parameters in the interface")),
+				@facet (
+						name = IKeyword.VAR,
+						type = IType.ID,
+						optional = false,
+						doc = @doc ("the name of the variable (that should be declared in the global)")),
+				@facet (
+						name = IKeyword.UNIT,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("the variable unit")),
+				@facet (
+						name = IKeyword.ON_CHANGE,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("Provides a block of statements that will be executed whenever the value of the parameter changes")),
+				@facet (
+						name = "slider",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
+				@facet (
+						name = IKeyword.STEP,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the increment step (mainly used in batch mode to express the variation step between simulation)")),
+				@facet (
+						name = IKeyword.AMONG,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc ("the list of possible values")) },
+		omissible = IKeyword.NAME)
+@symbol (
+		name = { IKeyword.PARAMETER },
+		kind = ISymbolKind.PARAMETER,
+		with_sequence = false,
+		concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
+@inside (
+		kinds = { ISymbolKind.EXPERIMENT })
+@validator (Variable.VarValidator.class)
+@doc (
+		value = "The parameter statement specifies which global attributes (i) will change through the successive simulations (in batch experiments), (ii) can be modified by user via the interface (in gui experiments). In GUI experiments, parameters are displayed depending on their type.",
+		usages = { @usage (
+				value = "In gui experiment, the general syntax is the following:",
+				examples = { @example (
+						value = "parameter title var: global_var category: cat;",
+						isExecutable = false) }),
+				@usage (
+						value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:",
+						examples = { @example (
+								value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ",
+								isExecutable = false),
+								@example (
+										value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ",
+										isExecutable = false) }), })
+@SuppressWarnings ({ "rawtypes" })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -225,8 +286,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		if (value != UNDEFINED && onChange != null) {
 			// Already initialized, we call the on_change behavior
-			final IExecutable on_changer = scope.getAgent().getSpecies()
-					.getAction(Cast.asString(scope, onChange.value(scope)));
+			final IExecutable on_changer =
+					scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
 			scope.getExperiment().executeAction(on_changer);
 			// scope.execute(on_changer, scope.getAgentScope(), null,
 			// JunkResults);
@@ -258,12 +319,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	public void tryToInit(final IScope scope) {
-		if (value != UNDEFINED) {
-			return;
-		}
-		if (init == null) {
-			return;
-		}
+		if (value != UNDEFINED) { return; }
+		if (init == null) { return; }
 		setValue(scope, init.value(scope));
 
 	}
@@ -297,7 +354,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if (type.id() == IType.INT) {
 			final int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			final int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			final int val = Cast.as(value(scope), Integer.class, false);
+			final int val = Cast.asInt(scope, value(scope));
 			if (val >= min + (int) step) {
 				neighborValues.add(val - (int) step);
 			}
@@ -340,11 +397,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public void setCategory(final String cat) {
 		category = cat;
 	}
-
-	// @Override
-	// public Integer getDefinitionOrder() {
-	// return order;
-	// }
 
 	@Override
 	public Object value(final IScope scope) {
@@ -406,8 +458,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> commands) {
-	}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
 	@Override
 	public String toString() {
@@ -425,17 +476,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
-		if (unitLabel == null && canBeExplored()) {
-			return computeExplorableLabel(scope);
-		}
+		if (unitLabel == null && canBeExplored()) { return computeExplorableLabel(scope); }
 		return unitLabel;
 	}
 
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
-		if (l != null) {
-			return "among " + l;
-		}
+		if (l != null) { return "among " + l; }
 		final Number max = getMaxValue(scope);
 		final Number min = getMinValue(scope);
 		final Number step = getStepValue(scope);

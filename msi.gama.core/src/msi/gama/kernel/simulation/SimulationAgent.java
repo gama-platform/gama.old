@@ -221,7 +221,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			topology.updateEnvironment(shape);
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
-			final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class, false);
+			final boolean torus = expr == null ? false : Cast.asBool(scope, expr.value(scope));
 			topology = new RootTopology(scope, shape, torus);
 		}
 	}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'URLFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'URLFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,8 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -33,8 +31,12 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "URL", extensions = { "url" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = {
-		IConcept.TEXT, IConcept.FILE })
+@file (
+		name = "URL",
+		extensions = { "url" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.STRING,
+		concept = { IConcept.TEXT, IConcept.FILE })
 public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	private final String URL;
@@ -116,9 +118,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 
 		setBuffer(getURLContent(scope, this.URL));
 		// scope.getGui().informConsole(""+getURLContent(this.URL));
@@ -126,7 +126,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
 	}
 

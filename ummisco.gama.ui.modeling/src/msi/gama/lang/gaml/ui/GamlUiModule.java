@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlUiModule.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlUiModule.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,7 +40,6 @@ import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
-import org.eclipse.xtext.ui.editor.model.XtextDocumentProvider;
 import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -60,7 +58,6 @@ import msi.gama.lang.gaml.ui.decorators.GamlImageHelper;
 import msi.gama.lang.gaml.ui.decorators.GamlMarkerUpdater;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
 import msi.gama.lang.gaml.ui.editor.GamaSourceViewerFactory;
-import msi.gama.lang.gaml.ui.editor.GamlDocumentProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
@@ -102,7 +99,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
-		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
+		// binder.bind(XtextDocumentProvider.class).to(XtextDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class).asEagerSingleton();
 	}
@@ -113,7 +110,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	@Override
-	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
+			bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
 	}
 
@@ -122,7 +120,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	@Override
-	@SingletonBinding(eager = true)
+	@SingletonBinding (
+			eager = true)
 	public Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider() {
 		return msi.gama.lang.gaml.ui.labeling.GamlLabelProvider.class;
 	}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractPostprocessingShader.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractPostprocessingShader.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,49 +16,49 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 
 public abstract class AbstractPostprocessingShader extends AbstractShader {
-	
+
 	protected final static String containingFolder = "postprocessing";
-	
+
 	private int location_texture;
-	
-	private boolean useNormal = false;
-	private boolean useTexture = true;
-	
+
 	private int textureIDStored = -1;
-	
-	protected AbstractPostprocessingShader(GL2 gl, String vertexFile, String fragmentFile) {
+
+	protected AbstractPostprocessingShader(final GL2 gl, final String vertexFile, final String fragmentFile) {
 		super(gl, vertexFile, fragmentFile);
 	}
-	
+
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(POSITION_ATTRIBUTE_IDX, "attribute_Position");
 		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords");
 	}
-	
-	public void loadTexture(int textureId) {
-		super.loadInt(location_texture,textureId);
-	}
-	
-	public boolean useTexture() {
-		return useTexture;
-	}
-	
-	public boolean useNormal() {
-		return useNormal;
+
+	public void loadTexture(final int textureId) {
+		super.loadInt(location_texture, textureId);
 	}
 
-	public void storeTextureID(int textureID) {
+	@Override
+	public boolean useTexture() {
+		return true;
+	}
+
+	@Override
+	public boolean useNormal() {
+		return false;
+	}
+
+	public void storeTextureID(final int textureID) {
 		textureIDStored = textureID;
 	}
-	
+
+	@Override
 	public int getTextureID() {
 		return textureIDStored;
 	}
 
 	@Override
 	public Vector3f getTranslation() {
-		return new Vector3f(0,0,0);
+		return new Vector3f(0, 0, 0);
 	}
-	
+
 }

@@ -284,7 +284,7 @@ experiment main_gui type: gui {
    output { 
       display map type: opengl {
          grid cell triangulation: true;
-         species buildings aspect: geometry;
+         species buildings aspect: geometry refresh: false;
          species dyke aspect: geometry ;
       }
       display chart_display refresh: every(24#cycles) { 

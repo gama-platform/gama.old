@@ -69,6 +69,12 @@ public class EditorFactory {
 			final EditorListener<Double> whenModified) {
 		return new FloatEditor(scope, parent, title, value, min, max, step, canBeNull, whenModified);
 	}
+
+	public static IntEditor create(final IScope scope, final Composite parent, final String title, final String unit,
+			final Integer value, final Integer min, final Integer max, final Integer step,
+			final EditorListener<Integer> whenModified) {
+		return new IntEditor(scope, parent, title, unit, value, min, max, step, whenModified, false);
+	}
 	//
 	// private static GenericEditor createGeneric(final Composite parent, final
 	// String title, final Object value,

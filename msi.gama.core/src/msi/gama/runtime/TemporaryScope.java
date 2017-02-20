@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TemporaryScope.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TemporaryScope.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -42,7 +41,7 @@ import msi.gaml.types.Types;
  * @since 5 déc. 2015
  *
  */
-class TemporaryScope implements IScope {
+class TemporaryScope implements IScope, IExecutionContext {
 
 	Map<String, Object> vars = new HashMap<>();
 
@@ -644,20 +643,86 @@ class TemporaryScope implements IScope {
 
 	@Override
 	public void setOnUserHold(final boolean b) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean isOnUserHold() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isPaused() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public IExecutionContext getExecutionContext() {
+		return this;
+	}
+
+	@Override
+	public IScope getScope() {
+		return this;
+	}
+
+	@Override
+	public void setTempVar(final String name, final Object value) {
+		vars.put(name, value);
+
+	}
+
+	@Override
+	public Object getTempVar(final String name) {
+		return vars.get(name);
+	}
+
+	@Override
+	public Map<? extends String, ? extends Object> getLocalVars() {
+		return vars;
+	}
+
+	@Override
+	public void clearLocalVars() {
+		vars.clear();
+
+	}
+
+	@Override
+	public void putLocalVar(final String varName, final Object val) {
+		vars.put(varName, val);
+
+	}
+
+	@Override
+	public Object getLocalVar(final String string) {
+		return vars.get(string);
+	}
+
+	@Override
+	public boolean hasLocalVar(final String name) {
+		return vars.containsKey(name);
+	}
+
+	@Override
+	public void removeLocalVar(final String name) {
+		vars.remove(name);
+
+	}
+
+	@Override
+	public IExecutionContext getOuterContext() {
+		return null;
+	}
+
+	@Override
+	public IExecutionContext createCopyContext() {
+		return this;
+	}
+
+	@Override
+	public IExecutionContext createChildContext() {
+		return this;
 	}
 
 }

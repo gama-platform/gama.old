@@ -14,6 +14,7 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +23,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -31,8 +35,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -45,9 +51,11 @@ import org.eclipse.ui.PartInitException;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
@@ -55,6 +63,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayData;
@@ -65,10 +74,21 @@ import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gaml.operators.Files;
 import msi.gaml.operators.Maths;
+import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
+import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.parameters.BooleanEditor;
+import ummisco.gama.ui.parameters.ColorEditor;
+import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.IntEditor;
+import ummisco.gama.ui.parameters.PointEditor;
+import ummisco.gama.ui.parameters.StringEditor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -406,7 +426,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}
 		disposed = true;
 		if (surfaceComposite != null) {
-			surfaceComposite.dispose();
+			try {
+				surfaceComposite.dispose();
+			} catch (final RuntimeException ex) {
+
+			}
 		}
 		// final IDisplaySurface s = getDisplaySurface();
 		// if ( s != null ) {
@@ -431,22 +455,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	@Override
-	public void changed(final Changes changes, final boolean value) {
+	public void changed(final Changes changes, final Object value) {
 		switch (changes) {
 			case ZOOM:
 				WorkbenchHelper.asyncRun(() -> overlay.update());
-				break;
-			case BACKGROUND:
-				break;
-			case CAMERA_POS:
-				break;
-			case CHANGE_CAMERA:
-				break;
-			case HIGHLIGHT:
-				break;
-			case SPLIT_LAYER:
-				break;
-			case THREED_VIEW:
 				break;
 			default:
 				break;
@@ -504,14 +516,19 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if (!openGL) {
 			return result + "Zoom " + getZoomLevel() + "%";
 		} else {
-			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
 			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			final ILocation camera = ds.getCameraPosition();
 			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
 					camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
+			final Envelope3D roi = ds.getROIDimensions();
 			if (roi != null) {
 				result = result + " ROI [" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2)
 						+ "]";
+
+			} else {
+				// if (ds.inKeystoneMode()) {
+				// result = result + " - Press 'k' to exit, 'c' to copy keystone values";
+				// }
 			}
 			return result;
 		}
@@ -769,51 +786,274 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public Composite fillLayerSideControls(final Composite parent) {
 		//
 
-		Composite compo = new Composite(parent, SWT.NONE);
-		compo.setBackground(IGamaColors.WHITE.color());
+		final Composite column = new Composite(parent, SWT.NONE);
+		column.setBackground(IGamaColors.WHITE.color());
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
-		compo.setLayoutData(data);
-		GridLayout layout = new GridLayout(2, false);
+		column.setLayoutData(data);
+		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
-		compo.setLayout(layout);
-		LayerSideControls.fill(compo, getDisplaySurface());
+		column.setLayout(layout);
 
-		final Composite content = new Composite(parent, SWT.None);
-		content.setBackground(IGamaColors.WHITE.color());
+		final Composite viewersComposite = new Composite(parent, SWT.None);
+		viewersComposite.setBackground(IGamaColors.WHITE.color());
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		content.setLayoutData(data);
-		content.setLayout(new GridLayout());
+		viewersComposite.setLayoutData(data);
+		viewersComposite.setLayout(new GridLayout(1, true));
+
+		final ParameterExpandBar propertiesViewer =
+				new ParameterExpandBar(viewersComposite, SWT.V_SCROLL, false, false, false, false, null);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		propertiesViewer.setLayoutData(data);
+		propertiesViewer.setSpacing(5);
 		final ItemList<ILayer> list = getDisplayManager();
-		final ParameterExpandBar viewer = new ParameterExpandBar(content, SWT.V_SCROLL, false, false, true, true, list);
+		final ParameterExpandBar layerViewer =
+				new ParameterExpandBar(viewersComposite, SWT.V_SCROLL, false, false, true, true, list);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		viewer.setLayoutData(data);
-		viewer.setSpacing(5);
-
-		for (final ILayer layer : list.getItems()) {
-			final String name = "Layer " + layer.getName();
-			compo = new Composite(viewer, SWT.NONE);
-			compo.setBackground(IGamaColors.WHITE.color());
-			layout = new GridLayout(2, false);
-			layout.verticalSpacing = 0;
-			compo.setLayout(layout);
-			if (layer instanceof AbstractLayer) {
-				LayerSideControls.fill(compo, layer, getDisplaySurface());
-			}
-			final Composite control = compo;
-			final ParameterExpandItem i = new ParameterExpandItem(viewer, layer, SWT.None, null);
-			i.setText(name);
-			control.pack(true);
-			control.layout();
-			i.setControl(control);
-			i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			i.setExpanded(false);
+		layerViewer.setLayoutData(data);
+		layerViewer.setSpacing(5);
+		// Fill the 2 viewers
+		fillGeneralParameters(propertiesViewer);
+		if (getOutput().isOpenGL()) {
+			fillCameraParameters(propertiesViewer);
+			fillKeystoneParameters(propertiesViewer);
 		}
-		content.layout();
-		viewer.addListener(SWT.Collapse, e -> content.redraw());
-		viewer.addListener(SWT.Expand, e -> content.redraw());
-		parent.layout();
-		return content;
+		for (final ILayer layer : list.getItems()) {
+			fillLayerParameters(layerViewer, layer);
+		}
 
+		viewersComposite.layout();
+		layerViewer.addListener(SWT.Collapse, e -> viewersComposite.redraw());
+		layerViewer.addListener(SWT.Expand, e -> viewersComposite.redraw());
+		propertiesViewer.addListener(SWT.Collapse, e -> viewersComposite.redraw());
+		propertiesViewer.addListener(SWT.Expand, e -> viewersComposite.redraw());
+		parent.layout();
+		return viewersComposite;
+
+	}
+
+	PointEditor cameraPos, cameraTarget, cameraUp;
+	StringEditor preset;
+	IntEditor zoom;
+
+	private void fillCameraParameters(final ParameterExpandBar viewer) {
+		final Composite contents = createContentsComposite(viewer);
+		final IDisplaySurface ds = getDisplaySurface();
+		final IScope scope = getDisplaySurface().getScope();
+		final LayeredDisplayData data = getDisplaySurface().getData();
+
+		final BooleanEditor lock =
+				EditorFactory.create(scope, contents, "Lock camera:", false, (EditorListener<Boolean>) newValue -> {
+					preset.setActive(!newValue);
+					cameraPos.setActive(!newValue);
+					cameraTarget.setActive(!newValue);
+					cameraUp.setActive(!newValue);
+					zoom.setActive(!newValue);
+					getOutput().getData().disableCameraInteractions(newValue);
+				});
+
+		preset = EditorFactory.choose(scope, contents, "Preset camera:", "Choose...", true, getCameraNames(),
+				(EditorListener<String>) newValue -> {
+					if (newValue.isEmpty())
+						return;
+					data.setPresetCamera(newValue);
+					ds.updateDisplay(true);
+				});
+
+		cameraPos = EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraPos((GamaPoint) newValue);
+					ds.updateDisplay(true);
+				});
+		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraLookPos(),
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraLookPos((GamaPoint) newValue);
+					ds.updateDisplay(true);
+				});
+		cameraUp = EditorFactory.create(scope, contents, "Orientation:", data.getCameraUpVector(),
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraUpVector((GamaPoint) newValue, true);
+					ds.updateDisplay(true);
+				});
+		data.addListener((p, v) -> {
+			switch (p) {
+				case CAMERA_POS:
+					cameraPos.getParam().setValue(scope, data.getCameraPos());
+					cameraPos.updateValue(true);
+					break;
+				case CAMERA_TARGET:
+					cameraTarget.getParam().setValue(scope, data.getCameraLookPos());
+					cameraTarget.updateValue(true);
+					break;
+				case CAMERA_UP:
+					cameraUp.getParam().setValue(scope, data.getCameraUpVector());
+					cameraUp.updateValue(true);
+					break;
+				case CAMERA_PRESET:
+					// Reverting the value back to ""
+					final String ps = (String) v;
+					preset.getParam().setValue(scope, "Choose...");
+					preset.updateValue(true);
+					break;
+				default:
+					;
+			}
+
+		});
+		final Label l = new Label(contents, SWT.None);
+		l.setText("");
+		final Button copy = new Button(contents, SWT.PUSH);
+		copy.setText("Copy as facets");
+		copy.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
+		copy.setToolTipText(
+				"Copy the definition of the camera properties to the clipboard in a format suitable for pasting them in the definition of a display in GAML");
+		copy.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
+				String text = IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().serialize(false);
+				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
+						+ cameraTarget.getCurrentValue().yNegated().serialize(false);
+				text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().serialize(false);
+				final TextTransfer textTransfer = TextTransfer.getInstance();
+				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
+
+			}
+
+		});
+		createItem(viewer, "Camera", null, contents);
+
+	}
+
+	protected abstract List<String> getCameraNames();
+
+	private void fillKeystoneParameters(final ParameterExpandBar viewer) {
+		final Composite contents = createContentsComposite(viewer);
+		final IDisplaySurface ds = getDisplaySurface();
+		final IScope scope = getDisplaySurface().getScope();
+		final LayeredDisplayData data = getDisplaySurface().getData();
+
+		final PointEditor[] point = new PointEditor[4];
+		final ICoordinates points = data.getKeystone();
+		int i = 0;
+		for (final GamaPoint p : points) {
+			final int j = i;
+			i++;
+			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":",
+					(GamaPoint) data.getKeystone().at(j).clone(), (EditorListener<ILocation>) newValue -> {
+						data.getKeystone().at(j).setLocation(newValue);
+						data.setKeystone(data.getKeystone());
+						ds.updateDisplay(true);
+					});
+		}
+
+		data.addListener((p, v) -> {
+			switch (p) {
+				case KEYSTONE:
+					for (int k = 0; k < 4; k++) {
+						point[k].getParam().setValue(scope, data.getKeystone().at(k));
+						point[k].updateValue(true);
+					}
+					break;
+				default:
+					;
+			}
+
+		});
+		final Label l = new Label(contents, SWT.None);
+		l.setText("");
+		final Button copy = new Button(contents, SWT.PUSH);
+		copy.setText("Copy as facet");
+		copy.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
+		copy.setToolTipText(
+				"Copy the definition of the keystone values to the clipboard in a format suitable for pasting them in the definition of a display in GAML");
+		copy.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
+				final IList<GamaPoint> pp =
+						GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
+				final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
+				final TextTransfer textTransfer = TextTransfer.getInstance();
+				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
+			}
+
+		});
+		createItem(viewer, "Keystone", null, contents);
+	}
+
+	private void fillGeneralParameters(final ParameterExpandBar viewer) {
+		final Composite contents = createContentsComposite(viewer);
+		final IDisplaySurface ds = getDisplaySurface();
+		final IScope scope = getDisplaySurface().getScope();
+		final LayeredDisplayData data = getDisplaySurface().getData();
+		EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(), (EditorListener<Boolean>) newValue -> {
+			data.setAntialias(newValue);
+			ds.updateDisplay(true);
+		});
+		final ColorEditor background = EditorFactory.create(scope, contents, "Background:", data.getBackgroundColor(),
+				(EditorListener<Color>) newValue -> {
+					data.setBackgroundColor(new GamaColor(newValue));
+					ds.updateDisplay(true);
+				});
+		final ColorEditor highlight = EditorFactory.create(scope, contents, "Highlight:", data.getHighlightColor(),
+				(EditorListener<Color>) newValue -> {
+					data.setHighlightColor(new GamaColor(newValue));
+					ds.updateDisplay(true);
+				});
+		zoom = EditorFactory.create(scope, contents, "Zoom (%):", "",
+				Integer.valueOf((int) (data.getZoomLevel() * 100)), 0, null, 1, (EditorListener<Integer>) newValue -> {
+					data.setZoomLevel(newValue.doubleValue() / 100d, true);
+					ds.updateDisplay(true);
+				});
+
+		createItem(viewer, "General", null, contents);
+
+		ds.getData().addListener((p, v) -> {
+			switch (p) {
+				case ZOOM:
+					zoom.getParam().setValue(scope, (int) (data.getZoomLevel() * 100));
+					zoom.updateValue(false);
+					break;
+				case BACKGROUND:
+					background.getParam().setValue(scope, data.getBackgroundColor());
+					background.updateValue(false);
+					break;
+				default:
+					;
+			}
+
+		});
+
+	}
+
+	public void createItem(final ParameterExpandBar viewer, final String name, final Object data,
+			final Composite contents) {
+		final ParameterExpandItem i = new ParameterExpandItem(viewer, data, SWT.None, null);
+		i.setText(name);
+		contents.pack(true);
+		contents.layout();
+		i.setControl(contents);
+		i.setHeight(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		i.setExpanded(false);
+	}
+
+	public void fillLayerParameters(final ParameterExpandBar viewer, final ILayer layer) {
+		final Composite contents = createContentsComposite(viewer);
+		if (layer instanceof AbstractLayer) {
+			LayerSideControls.fill(contents, layer, getDisplaySurface());
+		}
+		createItem(viewer, "Layer " + layer.getName(), layer, contents);
+	}
+
+	public Composite createContentsComposite(final ParameterExpandBar viewer) {
+		final Composite contents = new Composite(viewer, SWT.NONE);
+		contents.setBackground(IGamaColors.WHITE.color());
+		final GridLayout layout = new GridLayout(2, false);
+		layout.verticalSpacing = 0;
+		contents.setLayout(layout);
+		return contents;
 	}
 
 	/**
@@ -844,6 +1084,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if (outputs.isEmpty()) {
 			close();
 		}
+	}
+
+	private ToolItem message;
+
+	public void setMessage(final String msg) {
+		if (message != null) {
+			message.dispose();
+			message = null;
+		}
+		if (msg != null)
+			toolbar.status((String) null, msg, null, SWT.LEFT);
 	}
 
 }

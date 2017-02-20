@@ -24,7 +24,7 @@ species object skills: [moving]{
 		do wander amplitude: 30 speed: 0.001;
 	}
 	aspect obj {
-		draw obj_file("../includes/teapot.obj") color: color size: size rotate: cycle/rot::{0,1,0} border: #white;
+		draw obj_file("../includes/teapot.obj") color: color size: size rotate: cycle/rot::{0,1,0} ;
 	}
 }	
 

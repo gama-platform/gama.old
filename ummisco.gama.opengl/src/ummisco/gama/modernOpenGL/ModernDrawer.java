@@ -22,6 +22,7 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
@@ -178,19 +179,16 @@ public class ModernDrawer {
 	}
 
 	public void prepareFrameBufferObject() {
-		gl.glClearColor(0, 0, 0, 1.0f);
-		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		if (renderer.renderToTexture) {
-			if (fbo_scene == null) {
-				fbo_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 1);
-			}
-			fbo_scene.setDisplayDimensions(
-					(int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel().doubleValue()),
-					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()));
-			// redirect the rendering to the fbo_scene (will be rendered later,
-			// as a texture)
-			fbo_scene.bindFrameBuffer();
+		// gl.glClearColor(0, 0, 0, 1.0f);
+		// gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		if (fbo_scene == null) {
+			fbo_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight());
 		}
+		fbo_scene.setDisplayDimensions((int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel().doubleValue()),
+				(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()));
+		// redirect the rendering to the fbo_scene (will be rendered later,
+		// as a texture)
+		fbo_scene.bindFrameBuffer();
 	}
 
 	public void redraw() {
@@ -297,7 +295,7 @@ public class ModernDrawer {
 		if (!lastEffect) {
 			outputFbo = new FrameBufferObject(gl,
 					(int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel().doubleValue()),
-					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()), effectNumber);
+					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()));
 		}
 
 		// unbind the last fbo
@@ -336,7 +334,7 @@ public class ModernDrawer {
 		isRenderingToTexture = true;
 		fboHandles = new int[5];
 
-		final boolean applyBlur = renderer.data.getKeystone() != null ? true : false;
+		final boolean applyBlur = renderer.data.isKeystoneDefined();
 
 		if (applyBlur) {
 			final FrameBufferObject fbo_with_horiz_blur =
@@ -379,19 +377,15 @@ public class ModernDrawer {
 	public void createScreenSurface(final int shaderNumber, final int textureID) {
 		final ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		final ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
-
+		final GamaPoint[] coords = renderer.getKeystone().getCoords();
 		// Keystoning computation (cf
 		// http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0)
 		// Coordinates of the screen (change this for keystoning effect)
 		// transform the coordinates [0,1] --> [-1,+1]
-		final float[] p0 = new float[] { renderer.getKeystoneCoordinates()[0][0] * 2f - 1f,
-				-(renderer.getKeystoneCoordinates()[0][1] * 2f - 1f) }; // bottom-left
-		final float[] p1 = new float[] { renderer.getKeystoneCoordinates()[1][0] * 2f - 1f,
-				-(renderer.getKeystoneCoordinates()[1][1] * 2f - 1f) }; // top-left
-		final float[] p2 = new float[] { renderer.getKeystoneCoordinates()[2][0] * 2f - 1f,
-				-(renderer.getKeystoneCoordinates()[2][1] * 2f - 1f) }; // top-right
-		final float[] p3 = new float[] { renderer.getKeystoneCoordinates()[3][0] * 2f - 1f,
-				-(renderer.getKeystoneCoordinates()[3][1] * 2f - 1f) }; // bottom-right
+		final float[] p0 = new float[] { (float) (coords[0].x * 2f - 1f), (float) -(coords[0].y * 2f - 1f) }; // bottom-left
+		final float[] p1 = new float[] { (float) (coords[1].x * 2f - 1f), (float) -(coords[1].y * 2f - 1f) }; // top-left
+		final float[] p2 = new float[] { (float) (coords[2].x * 2f - 1f), (float) -(coords[2].y * 2f - 1f) }; // top-right
+		final float[] p3 = new float[] { (float) (coords[3].x * 2f - 1f), (float) -(coords[3].y * 2f - 1f) }; // bottom-right
 
 		final float ax = (p2[0] - p0[0]) / 2f;
 		final float ay = (p2[1] - p0[1]) / 2f;
@@ -547,7 +541,7 @@ public class ModernDrawer {
 
 		final Vector3f layerTranslation = new Vector3f((float) currentLayer.getOffset().x,
 				(float) currentLayer.getOffset().y, (float) currentLayer.getOffset().z);
-		final float[] quat = new float[] { 0, 0, 1, (float) Math.toRadians(renderer.getZRotation()) };
+		final float[] quat = new float[] { 0, 0, 1, (float) Math.toRadians(renderer.getCurrentZRotation()) };
 		final float scale = (float) currentLayer.getScale().x;
 
 		final float env_width = (float) renderer.getWorldsDimensions().x;
