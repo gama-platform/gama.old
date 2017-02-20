@@ -238,6 +238,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE,
 				StringUtils.toGamlString(a.getSpeciesName() + " at " + a.getIndex())).validate());
 		final String expr = a.getSpeciesName() + " at " + a.getIndex();
+
 		setValue(GAML.getExpressionFactory().createConst(a, a.getType()));
 		lastValue = a;
 	}
