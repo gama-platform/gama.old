@@ -549,8 +549,6 @@ public class LayeredDisplayData {
 
 	public void setZRotationAngle(final double val) {
 		zRotationAngle = val;
-		if (val != 0)
-			setRotation(true);
 	}
 
 	public void incrementZRotation() {

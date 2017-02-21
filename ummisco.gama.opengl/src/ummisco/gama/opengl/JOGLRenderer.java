@@ -341,12 +341,14 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	// Use when the rotation button is on.
 	public void rotateModel() {
 		if (data.isRotationOn() && !data.cameraInteractionDisabled()) {
+			data.incrementZRotation();
+		}
+		if (getCurrentZRotation() != 0d) {
 			final double env_width = worldDimensions.x;
 			final double env_height = worldDimensions.y;
 			openGL.translateBy(env_width / 2, -env_height / 2, 0d);
 			openGL.rotateBy(getCurrentZRotation(), 0, 0, 1);
 			openGL.translateBy(-env_width / 2, +env_height / 2, 0d);
-			data.incrementZRotation();
 		}
 	}
 
