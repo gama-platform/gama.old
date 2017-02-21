@@ -36,7 +36,8 @@ public class LayeredDisplayData {
 		BACKGROUND,
 		HIGHLIGHT,
 		ZOOM,
-		KEYSTONE;
+		KEYSTONE,
+		ROTATION;
 	}
 
 	public static final String JAVA2D = "java2D";
@@ -89,7 +90,7 @@ public class LayeredDisplayData {
 			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
-	private double zRotationAngle = 0.2;
+	private double zRotationAngle = 0;
 	private double currentRotationAboutZ = 0;
 
 	/**
@@ -541,6 +542,9 @@ public class LayeredDisplayData {
 		if (r && zRotationAngle == 0) {
 			zRotationAngle = 0.2;
 		}
+		if (!r) {
+			zRotationAngle = 0;
+		}
 	}
 
 	public double getCurrentRotationAboutZ() {
@@ -549,6 +553,8 @@ public class LayeredDisplayData {
 
 	public void setZRotationAngle(final double val) {
 		zRotationAngle = val;
+		currentRotationAboutZ = val;
+		notifyListeners(Changes.ROTATION, val);
 	}
 
 	public void incrementZRotation() {
@@ -556,7 +562,7 @@ public class LayeredDisplayData {
 	}
 
 	public void resetZRotation() {
-		currentRotationAboutZ = 0;
+		currentRotationAboutZ = zRotationAngle;
 	}
 
 	/**

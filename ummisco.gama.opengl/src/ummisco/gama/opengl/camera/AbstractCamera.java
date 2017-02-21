@@ -572,12 +572,13 @@ public abstract class AbstractCamera implements ICamera {
 	protected void quickDownTurn() {}
 
 	protected final void activateKeystoneMode() {
-		keystoneMode = !keystoneMode;
-		if (keystoneMode) {
+		if (!keystoneMode) {
+			getRenderer().getSurface().zoomFit();
 			getRenderer().getKeystone().startDrawHelper();
 		} else {
 			getRenderer().getKeystone().stopDrawHelper();
 		}
+		keystoneMode = !keystoneMode;
 	}
 
 	/**

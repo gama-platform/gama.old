@@ -87,6 +87,7 @@ import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.parameters.BooleanEditor;
 import ummisco.gama.ui.parameters.ColorEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.FloatEditor;
 import ummisco.gama.ui.parameters.IntEditor;
 import ummisco.gama.ui.parameters.PointEditor;
 import ummisco.gama.ui.parameters.StringEditor;
@@ -843,6 +844,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	PointEditor cameraPos, cameraTarget, cameraUp;
 	StringEditor preset;
 	IntEditor zoom;
+	FloatEditor rotate;
 
 	private void fillCameraParameters(final ParameterExpandBar viewer) {
 		final Composite contents = createContentsComposite(viewer);
@@ -1016,6 +1018,12 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					data.setZoomLevel(newValue.doubleValue() / 100d, true);
 					ds.updateDisplay(true);
 				});
+		rotate = EditorFactory.create(scope, contents, "Rotation angle about z-axis (degrees):",
+				Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
+				(EditorListener<Double>) newValue -> {
+					data.setZRotationAngle(newValue);
+					ds.updateDisplay(true);
+				});
 
 		createItem(viewer, "General", null, contents);
 
@@ -1028,6 +1036,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				case BACKGROUND:
 					background.getParam().setValue(scope, data.getBackgroundColor());
 					background.updateValue(false);
+					break;
+				case ROTATION:
+					rotate.getParam().setValue(scope, (double) v);
+					rotate.updateValue(false);
 					break;
 				default:
 					;
