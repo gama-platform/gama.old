@@ -53,7 +53,7 @@ import msi.gaml.types.Types;
 
 @file (
 		name = "image",
-		extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
+		extensions = { "tiff", "jpg", "jpeg", "png", "pict", "bmp" },
 		buffer_type = IType.MATRIX,
 		buffer_content = IType.INT,
 		buffer_index = IType.POINT,
@@ -175,7 +175,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	}
 
-	private BufferedImage image;
+	protected BufferedImage image;
 	private boolean isGeoreferenced = false;
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -239,7 +239,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
-	private void loadImage(final IScope scope) {
+	protected void loadImage(final IScope scope) {
 		if (image == null) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope));
@@ -464,6 +464,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	public void setImage(final IScope scope, final BufferedImage image2) {
 		// AD QUESTION : Shouldnt we also erase the buffer in that case ?
 		image = image2;
+	}
+
+	public boolean isAnimated() {
+		return false;
 	}
 
 }

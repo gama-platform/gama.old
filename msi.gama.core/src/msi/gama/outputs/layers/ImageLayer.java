@@ -17,6 +17,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.types.GamaFileType;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -44,7 +45,7 @@ public class ImageLayer extends AbstractLayer {
 			file = null;
 			grid = null;
 		} else {
-			file = new GamaImageFile(scope, imageFileName);
+			file = (GamaImageFile) GamaFileType.createFile(scope, imageFileName, null);
 			env = file.getGeoDataFile(scope) == null ? scope.getSimulation().getEnvelope()
 					: file.computeEnvelope(scope);
 		}

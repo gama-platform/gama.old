@@ -74,7 +74,7 @@ public abstract class AbstractObject {
 	private int getTexture(final OpenGL gl, final int order) {
 		if (textures == null) { return OpenGL.NO_TEXTURE; }
 		if (order < 0 || order > textures.length - 1) { return OpenGL.NO_TEXTURE; }
-		if (textures[order] == OpenGL.NO_TEXTURE) {
+		if (isAnimated() || textures[order] == OpenGL.NO_TEXTURE) {
 			Object obj = null;
 			try {
 				obj = attributes.getTextures().get(order);
@@ -87,6 +87,10 @@ public abstract class AbstractObject {
 			}
 		}
 		return textures[order];
+	}
+
+	protected boolean isAnimated() {
+		return attributes.isAnimated();
 	}
 
 	public boolean isTextured() {

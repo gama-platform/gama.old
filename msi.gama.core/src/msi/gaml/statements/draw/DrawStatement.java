@@ -70,7 +70,7 @@ import msi.gaml.types.Types;
 				// AD 18/01/13: geometry is now accepting any type of data
 				@facet (
 						name = TEXTURE,
-						type = { IType.STRING, IType.LIST },
+						type = { IType.STRING, IType.LIST, IType.FILE },
 						optional = true,
 						doc = @doc ("the texture(s) that should be applied to the geometry. Either a path to a file or a list of paths")),
 				@facet (

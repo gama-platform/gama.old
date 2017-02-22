@@ -5,6 +5,7 @@ import java.util.List;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaGifFile;
 
 public class ColorProperties {
 
@@ -84,6 +85,35 @@ public class ColorProperties {
 
 	boolean isEmpty() {
 		return empty;
+	}
+
+	public boolean isAnimated() {
+		if (textures == null)
+			return false;
+		final Object o = textures.get(0);
+		if (!(o instanceof GamaGifFile))
+			return false;
+		return true;
+	}
+
+	public int getFrameCount() {
+		if (textures == null)
+			return 1;
+		final Object o = textures.get(0);
+		if (!(o instanceof GamaGifFile))
+			return 1;
+		return ((GamaGifFile) o).getFrameCount();
+
+	}
+
+	public int getAverageDelay() {
+		if (textures == null)
+			return 0;
+		final Object o = textures.get(0);
+		if (!(o instanceof GamaGifFile))
+			return 0;
+		return ((GamaGifFile) o).getAverageDelay();
+
 	}
 
 }

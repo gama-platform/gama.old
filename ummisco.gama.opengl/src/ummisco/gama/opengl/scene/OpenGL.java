@@ -23,8 +23,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -208,10 +206,13 @@ public class OpenGL {
 		if (geometryCache != null)
 			geometryCache.dispose(gl);
 		volatileTextures.invalidateAll();
-		staticTextures.asMap().forEach((s, t) -> t.destroy(gl));
+		staticTextures.asMap().forEach((s, t) -> {
+			t.destroy(gl);
+		});
 		staticTextures.invalidateAll();
 		staticTextures.cleanUp();
 		gl = null;
+
 		// transformations.clear();
 	}
 
@@ -667,29 +668,17 @@ public class OpenGL {
 	}
 
 	public void processUnloadedTextures() {
-		// getTexture("display_top_right.png", getClass().getResourceAsStream("display_top_right.png"));
 		for (final String path : texturesToProcess) {
-			getTexture(new File(path));
+			getTexture(new File(path), false);
 		}
 	}
 
 	public Texture getTexture(final GamaImageFile file) {
-		return getTexture(file.getFile(null));
+		return getTexture(file.getFile(null), file.isAnimated());
 	}
 
 	public Texture getTexture(final BufferedImage img) {
 		return volatileTextures.apply(img);
-	}
-
-	public Texture getTexture(final String name, final InputStream file) {
-		if (file == null) { return null; }
-		Texture texture = null;
-		try {
-			texture = staticTextures.get(name, () -> buildTexture(gl, file));
-		} catch (final ExecutionException e) {
-			e.printStackTrace();
-		}
-		return texture;
 	}
 
 	public Texture getTexture(final String name) {
@@ -698,19 +687,25 @@ public class OpenGL {
 		return texture;
 	}
 
-	public Texture getTexture(final File file) {
+	public Texture getTexture(final File file, final boolean isAnimated) {
 		if (file == null) { return null; }
 		Texture texture = null;
-		try {
-			texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl, file));
-		} catch (final ExecutionException e) {
-			e.printStackTrace();
-		}
+		if (isAnimated) {
+			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file);
+			texture = getTexture(image);
+
+		} else
+			try {
+				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl, file));
+			} catch (final ExecutionException e) {
+				e.printStackTrace();
+			}
 		return texture;
 	}
 
-	public static Texture buildTexture(final GL gl, final File file) {
+	private static Texture buildTexture(final GL gl, final File file) {
 		try {
+			// if (file.getName().endsWith("gif")) { return buildMultiTextures(gl, file); }
 			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file);
 			return buildTexture(gl, im);
 		} catch (final GLException e) {
@@ -719,16 +714,19 @@ public class OpenGL {
 		}
 	}
 
-	public static Texture buildTexture(final GL gl, final InputStream file) {
-		try {
-			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), file, true, "PNG");
-			final Texture texture = new Texture(gl, data);
-			return texture;
-		} catch (final GLException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	// private static Texture[] buildMultiTextures(final GL gl, final File file) {
+	// BufferedImage[] images;
+	// try {
+	// images = ImageUtils.getInstance().getImagesFromFile(file);
+	// } catch (ExecutionException | IOException e) {
+	// return new Texture[0];
+	// }
+	// final Texture[] result = new Texture[images.length];
+	// for (int i = 0; i < images.length; i++) {
+	// result[i] = buildTextures(gl, images[i])[0];
+	// }
+	// return result;
+	// }
 
 	public static Texture buildTexture(final OpenGL gl, final BufferedImage image) {
 		return buildTexture(gl.getGL(), image);
@@ -1199,7 +1197,6 @@ public class OpenGL {
 		setLineWidth(object.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getColor());
-
 	}
 
 	public void beginScene(final Color backgroundColor) {

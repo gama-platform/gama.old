@@ -198,4 +198,16 @@ public abstract class DrawingAttributes {
 		setSelected(pickedIndex == uniqueIndex);
 	}
 
+	public boolean isAnimated() {
+		return colorProperties.isAnimated();
+	}
+
+	public int getFrameCount() {
+		return colorProperties.getFrameCount();
+	}
+
+	public int getAverageDelay() {
+		return colorProperties.getAverageDelay();
+	}
+
 }

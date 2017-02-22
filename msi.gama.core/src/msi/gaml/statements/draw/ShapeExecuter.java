@@ -35,6 +35,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaFileType;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
@@ -145,7 +146,7 @@ class ShapeExecuter extends DrawExecuter {
 			if (s instanceof GamaImageFile) {
 				image = (GamaImageFile) s;
 			} else if (s instanceof String) {
-				image = new GamaImageFile(scope, (String) s);
+				image = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
 			}
 			if (image == null || !image.exists(scope)) {
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);

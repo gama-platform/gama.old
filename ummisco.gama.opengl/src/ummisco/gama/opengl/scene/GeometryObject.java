@@ -24,6 +24,19 @@ import ummisco.gama.webgl.SimpleGeometryObject;
 
 public class GeometryObject extends AbstractObject {
 
+	public static class GeometryObjectWithAnimation extends GeometryObject {
+
+		public GeometryObjectWithAnimation(final Geometry geometry, final DrawingAttributes attributes) {
+			super(geometry, attributes);
+		}
+
+		@Override
+		public boolean isAnimated() {
+			return true;
+		}
+
+	}
+
 	protected Geometry geometry;
 
 	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes) {

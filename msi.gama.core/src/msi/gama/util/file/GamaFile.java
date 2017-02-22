@@ -47,7 +47,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		implements IGamaFile<C, ValueToAdd, K, V> {
 
 	private File file;
-	private String path;
+	protected String path;
 	protected final String originalPath;
 	protected URL url;
 	protected boolean writable = false;

@@ -19,10 +19,12 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
@@ -40,6 +42,8 @@ public class ImageUtils {
 
 	private final static BufferedImage NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
 	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().build();
+	private final Cache<String, GifDecoder> gifCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
+			.removalListener(notification -> ((GifDecoder) notification.getValue()).dispose()).build();
 
 	private static GraphicsConfiguration cachedGC;
 
@@ -52,6 +56,7 @@ public class ImageUtils {
 	}
 
 	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
+	private static final List<String> gifExt = Arrays.asList(".gif", ".GIF");
 
 	private static ImageUtils instance = new ImageUtils();
 
@@ -68,10 +73,27 @@ public class ImageUtils {
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName) throws IOException {
 		final BufferedImage image = cache.getIfPresent(fileName);
 		if (image != null) { return image; }
+		final GifDecoder gif = gifCache.getIfPresent(fileName);
+		if (gif != null)
+			return gif.getImage();
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
 		final BufferedImage result = getImageFromFile(f);
 		return result == NO_IMAGE ? null : result;
+	}
+
+	public int getFrameCount(final String path) {
+		final GifDecoder gif = gifCache.getIfPresent(path);
+		if (gif == null)
+			return 1;
+		return gif.getFrameCount();
+	}
+
+	public int getDuration(final String path) {
+		final GifDecoder gif = gifCache.getIfPresent(path);
+		if (gif == null)
+			return 0;
+		return gif.getDuration();
 	}
 
 	private BufferedImage privateReadFromFile(final File file) throws IOException {
@@ -87,6 +109,10 @@ public class ImageUtils {
 					final RenderedOp image1 = JAI.create("tiff", params);
 					return image1.getAsBufferedImage();
 				}
+			} else if (gifExt.contains(ext)) {
+				final GifDecoder d = new GifDecoder();
+				d.read(new FileInputStream(file.getAbsolutePath()));
+				return d.getImage();
 			} else {
 				return ImageIO.read(file);
 			}
@@ -94,10 +120,24 @@ public class ImageUtils {
 		return NO_IMAGE;
 	}
 
+	private GifDecoder privateReadGifFromFile(final File file) throws IOException {
+		final GifDecoder d = new GifDecoder();
+		d.read(new FileInputStream(file.getAbsolutePath()));
+		return d;
+	}
+
 	public BufferedImage getImageFromFile(final File file) {
-		BufferedImage image;
+		final BufferedImage image;
+		String name, ext = null;
 		try {
-			image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
+			name = file.getName();
+			if (name.contains(".")) {
+				ext = name.substring(file.getName().lastIndexOf("."));
+			}
+			if (gifExt.contains(ext)) {
+				image = gifCache.get(file.getAbsolutePath(), () -> privateReadGifFromFile(file)).getImage();
+			} else
+				image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
 			return image == NO_IMAGE ? null : image;
 		} catch (final ExecutionException e) {
 			e.printStackTrace();
@@ -298,4 +338,5 @@ public class ImageUtils {
 		cache.invalidate(pathName);
 
 	}
+
 }

@@ -26,6 +26,7 @@ import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.ModernRenderer;
+import ummisco.gama.opengl.scene.GeometryObject.GeometryObjectWithAnimation;
 import ummisco.gama.webgl.SimpleLayer;
 
 /**
@@ -51,6 +52,7 @@ public class LayerObject {
 	volatile boolean isInvalid;
 	volatile boolean overlay;
 	volatile boolean locked;
+	boolean isAnimated;
 	final Abstract3DRenderer renderer;
 	final LinkedList<List<AbstractObject>> objects = new LinkedList();
 	List<AbstractObject> currentList;
@@ -144,10 +146,14 @@ public class LayerObject {
 			if (picking) {
 				gl.runWithNames(() -> drawAllObjects(gl, true));
 			} else {
-				if (openGLListIndex == null) {
-					openGLListIndex = gl.compileAsList(() -> drawAllObjects(gl, false));
+				if (isAnimated) {
+					drawAllObjects(gl, false);
+				} else {
+					if (openGLListIndex == null) {
+						openGLListIndex = gl.compileAsList(() -> drawAllObjects(gl, false));
+					}
+					gl.drawList(openGLListIndex);
 				}
-				gl.drawList(openGLListIndex);
 			}
 		} finally {
 			gl.popMatrix();
@@ -253,7 +259,13 @@ public class LayerObject {
 	}
 
 	public GeometryObject addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		final GeometryObject geom = new GeometryObject(geometry, attributes);
+		final GeometryObject geom;
+		if (attributes.isAnimated()) {
+			isAnimated = true;
+			geom = new GeometryObjectWithAnimation(geometry, attributes);
+		} else {
+			geom = new GeometryObject(geometry, attributes);
+		}
 		currentList.add(geom);
 		return geom;
 	}
