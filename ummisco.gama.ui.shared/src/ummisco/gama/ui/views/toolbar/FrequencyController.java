@@ -69,7 +69,8 @@ public class FrequencyController {
 					}
 
 				}, SWT.RIGHT);
-		ti.setSelection(GamaPreferences.Runtime.CORE_SYNC.getValue());
+		ti.setSelection(view.getOutput() != null && view.getOutput().isSynchronized()
+				|| GamaPreferences.Runtime.CORE_SYNC.getValue());
 		return ti;
 	}
 

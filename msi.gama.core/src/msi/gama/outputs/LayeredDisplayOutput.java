@@ -104,6 +104,12 @@ import msi.gaml.types.Types;
 								value = "Allows to refresh the display every n time steps (default is 1)",
 								deprecated = "Use refresh: every(n) instead")),
 				@facet (
+						name = "synchronized",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Indicates whether the display should be directly synchronized with the simulation")),
+
+				@facet (
 						name = IKeyword.REFRESH,
 						type = IType.BOOL,
 						optional = true,
@@ -399,6 +405,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression fps = getFacet(IKeyword.SHOWFPS);
 		if (fps != null) {
 			this.data.setShowfps(Cast.asBool(getScope(), fps.value(getScope())));
+		}
+
+		final IExpression sync = getFacet("synchronized");
+		if (sync != null) {
+			setSynchronized(Cast.asBool(getScope(), sync.value(getScope())));
 		}
 
 		// computeTrace(getScope());

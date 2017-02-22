@@ -348,7 +348,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gd.verticalIndent = 0;
 		surfaceComposite.setLayoutData(gd);
 		createOverlay();
-		getOutput().setSynchronized(GamaPreferences.Runtime.CORE_SYNC.getValue());
+		getOutput().setSynchronized(getOutput().isSynchronized() || GamaPreferences.Runtime.CORE_SYNC.getValue());
 		getOutput().getData().addListener(this);
 		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 		if (overlay.isVisible()) {
