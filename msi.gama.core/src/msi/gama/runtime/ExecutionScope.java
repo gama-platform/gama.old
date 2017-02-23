@@ -344,12 +344,14 @@ public class ExecutionScope implements IScope {
 		if (statement == null || agent == null || interrupted() || agent.dead()) { return FAILED; }
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
+		boolean callerSet = false;
 		try {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
 			if (args != null && statement instanceof IStatement.WithArgs) {
 				args.setCaller(caller);
 				((IStatement.WithArgs) statement).setRuntimeArgs(this, args);
+				callerSet = true;
 			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
@@ -359,6 +361,8 @@ public class ExecutionScope implements IScope {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return FAILED;
 		} finally {
+			if (callerSet)
+				args.setCaller(null);
 			// Whatever the outcome, we pop the agent from the stack if it has
 			// been previously pushed
 			if (pushed) {

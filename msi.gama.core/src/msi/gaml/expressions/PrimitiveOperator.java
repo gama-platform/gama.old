@@ -173,7 +173,7 @@ public class PrimitiveOperator implements IExpression {
 	@Override
 	public void dispose() {
 		if (parameters != null)
-			parameters.clear();
+			parameters.dispose();
 	}
 
 	@Override
