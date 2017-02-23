@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -233,6 +234,14 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			if (set[index] != FREE && set[index] != REMOVED && !procedure.execute((K) set[index])) { return false; }
 		}
 		return true;
+	}
+
+	@Override
+	public void forEach(final BiConsumer<? super K, ? super V> action) {
+		forEachEntry((TObjectObjectProcedure<? super K, ? super V>) (k, v) -> {
+			action.accept(k, v);
+			return true;
+		});
 	}
 
 	@Override
