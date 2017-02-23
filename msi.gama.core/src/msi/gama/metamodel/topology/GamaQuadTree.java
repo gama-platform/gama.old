@@ -46,7 +46,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	public static final int SE = 3;
 
 	private final QuadNode root;
-	private final static int maxCapacity = 50;
+	private final static int maxCapacity = 100;
 	private double minSize = 10;
 
 	public static ISpatialIndex create(final Envelope envelope) {
