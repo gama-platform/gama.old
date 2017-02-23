@@ -1,0 +1,7 @@
+instructions.configure=\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:0,location:http${#58}//updates.gama-platform.org,name:Gama);\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:1,location:http${#58}//updates.gama-platform.org,name:Gama);\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:0,location:http${#58}//download.eclipse.org/tm/terminal/marketplace,name:TerminalTM);\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:1,location:http${#58}//download.eclipse.org/tm/terminal/marketplace,name:TerminalTM);\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:0,location:http${#58}//anb0s.github.io/EasyShell,name:EasyShell);\
+org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(type:1,location:http${#58}//anb0s.github.io/EasyShell,name:EasyShell);

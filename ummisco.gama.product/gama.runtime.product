@@ -274,16 +274,16 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" />
-      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier"/>
    </features>
 
    <configurations>
@@ -300,6 +300,8 @@ openFile
 
    <repositories>
       <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
    </repositories>
 
    <preferencesInfo>

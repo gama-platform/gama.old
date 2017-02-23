@@ -299,6 +299,8 @@ openFile
    </configurations>
 
    <repositories>
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
       <repository location="http://updates.gama-platform.org" enabled="true" />
    </repositories>
 
