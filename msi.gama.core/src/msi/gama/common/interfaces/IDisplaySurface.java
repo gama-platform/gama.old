@@ -40,11 +40,6 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 
 	public interface OpenGL extends IDisplaySurface {
 
-		/**
-		 * @return the position of the camera
-		 */
-		ILocation getCameraPosition();
-
 		Envelope3D getROIDimensions();
 
 		void setPaused(boolean flag);
@@ -166,7 +161,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 	/**
 	 * @return
 	 */
-	String getModelCoordinatesInfo();
+	void getModelCoordinatesInfo(StringBuilder receiver);
 
 	void dispatchKeyEvent(char character);
 

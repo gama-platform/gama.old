@@ -427,10 +427,8 @@ public abstract class ChartOutput {
 
 	}
 
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
-			final Point positionInPixels) {
-		return "";
-	}
+	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final Point positionInPixels, final StringBuilder sb) {}
 
 	public void setReverseAxis(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub

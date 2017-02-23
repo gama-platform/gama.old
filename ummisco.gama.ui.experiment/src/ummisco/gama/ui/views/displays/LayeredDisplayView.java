@@ -505,42 +505,37 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		return envWidth / displayWidth;
 	}
 
-	public String getOverlayCoordInfo() {
+	public void getOverlayCoordInfo(final StringBuilder sb) {
 		final LayeredDisplayOutput output = getOutput();
-		if (output == null) { return ""; }
+		if (output == null) { return; }
 		final boolean paused = output.isPaused();
 		final boolean synced = output.getData().isSynchronized();
 		final IDisplaySurface surface = getDisplaySurface();
-		final String point = surface == null ? null : surface.getModelCoordinatesInfo();
-		return point + (paused ? " | Paused" : "") + (synced ? " | Synchronized" : "");
+		if (surface != null)
+			surface.getModelCoordinatesInfo(sb);
+		if (paused)
+			sb.append(" | Paused");
+		if (synced)
+			sb.append(" | Synchronized");
 	}
 
-	public String getOverlayZoomInfo() {
+	public void getOverlayZoomInfo(final StringBuilder sb) {
 		final IDisplaySurface surface = getDisplaySurface();
-		if (surface == null) { return ""; }
-		final boolean openGL = isOpenGL();
-		String result =
-				GamaPreferences.Displays.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
-		if (!openGL) {
-			return result + "Zoom " + getZoomLevel() + "%";
-		} else {
-			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
-			final ILocation camera = ds.getCameraPosition();
-
-			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
-					camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
-			final Envelope3D roi = ds.getROIDimensions();
-
+		if (surface == null) { return; }
+		if (GamaPreferences.Displays.CORE_SHOW_FPS.getValue()) {
+			sb.append(surface.getFPS());
+			sb.append(" fps | ");
+		}
+		sb.append("Zoom ").append(getZoomLevel()).append("%");
+		if (isOpenGL()) {
+			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
 			if (roi != null) {
-				result = result + " ROI [" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2)
-						+ "]";
-
-			} else {
-				// if (ds.inKeystoneMode()) {
-				// result = result + " - Press 'k' to exit, 'c' to copy keystone values";
-				// }
+				sb.append(" ROI [");
+				sb.append(Maths.round(roi.getWidth(), 2));
+				sb.append(" x ");
+				sb.append(Maths.round(roi.getHeight(), 2));
+				sb.append("]");
 			}
-			return result;
 		}
 	}
 

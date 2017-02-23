@@ -514,8 +514,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
-			final Point positionInPixels) {
+	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final Point positionInPixels, final StringBuilder sb) {
 		final int x = xOnScreen - positionInPixels.x;
 		final int y = yOnScreen - positionInPixels.y;
 		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
@@ -539,31 +539,27 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			if (StringUtils.isBlank(yTitle)) {
 				yTitle = "Y";
 			}
-			final StringBuilder sb = new StringBuilder();
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
-			return sb.toString();
+			return;
 		} else if (entity instanceof PieSectionEntity) {
 			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
 			final PieDataset data = ((PieSectionEntity) entity).getDataset();
 			final int index = ((PieSectionEntity) entity).getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
-			final StringBuilder sb = new StringBuilder();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return sb.toString();
+			return;
 		} else if (entity instanceof CategoryItemEntity) {
 			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 			final String title = columnKey.toString();
 			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
 			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
-			final StringBuilder sb = new StringBuilder();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return sb.toString();
+			return;
 		}
-		return "";
 	}
 
 }

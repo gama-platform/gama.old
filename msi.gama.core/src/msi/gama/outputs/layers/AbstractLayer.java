@@ -159,6 +159,7 @@ public abstract class AbstractLayer implements ILayer {
 		addedElevation = elevation;
 	}
 
+	@Override
 	public double getAddedElevation() {
 		return addedElevation;
 	}
@@ -237,14 +238,14 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final StringBuilder sb) {
 		// By default, returns the coordinates in the world. Redefined for
 		// charts
 		final ILocation point = getModelCoordinatesFrom(xOnScreen, yOnScreen, g);
 		final String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
-		final Object[] objects = new Object[] { x, y };
-		return String.format("X%10s | Y%10s", objects);
+		sb.append(String.format("X%10s | Y%10s", x, y));
 	}
 
 	@Override

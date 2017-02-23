@@ -81,8 +81,9 @@ public class ChartLayer extends AbstractLayer {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		return getChart().getModelCoordinatesInfo(xOnScreen, yOnScreen, g, positionInPixels);
+	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final StringBuilder sb) {
+		getChart().getModelCoordinatesInfo(xOnScreen, yOnScreen, g, positionInPixels, sb);
 	}
 
 }

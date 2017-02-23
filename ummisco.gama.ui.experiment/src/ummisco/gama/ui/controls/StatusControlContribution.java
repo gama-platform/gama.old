@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StatusControlContribution.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StatusControlContribution.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -58,6 +57,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	private final static int WIDTH = 400;
 	private GamaUIColor color;
 	int agentIndex; // 0 for experiments, > 0 for simulation(s)
+	StringBuilder text = new StringBuilder(2000);
 
 	static StatusControlContribution INSTANCE;
 
@@ -129,9 +129,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if (exp == null)
 			return null;
 		// final ITopLevelAgent agent;
-		if (agentIndex == 0) {
-			return exp.getAgent();
-		}
+		if (agentIndex == 0) { return exp.getAgent(); }
 		if (exp.getAgent() == null)
 			return null;
 		final IPopulation<? extends IAgent> pop = exp.getAgent().getSimulationPopulation();
@@ -166,12 +164,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		final IExperimentAgent exp = agent.getExperiment();
 
-		final StringBuilder sb = new StringBuilder(300);
+		text.setLength(0);
 		SimulationClock clock = exp.getClock();
-		sb.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
-		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
+		text.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
+		text.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
-		result.add(GamaColors.get(exp.getColor()), sb.toString());
+		result.add(GamaColors.get(exp.getColor()), text.toString());
 		final IPopulation<? extends IAgent> pop = exp.getSimulationPopulation();
 		if (pop == null) {
 			result.add(IGamaColors.NEUTRAL, "No simulations available");
@@ -180,15 +178,15 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		final IAgent[] simulations = pop.toArray();
 
 		for (final IAgent a : simulations) {
-			sb.setLength(0);
+			text.setLength(0);
 			final SimulationAgent sim = (SimulationAgent) a;
 			clock = sim.getClock();
 
-			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
+			text.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
 					Dates.asDuration(clock.getStartingDate(), clock.getCurrentDate())));
-			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
+			text.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 					(int) clock.getAverageDuration(), clock.getTotalDuration()));
-			result.add(GamaColors.get(sim.getColor()), sb.toString());
+			result.add(GamaColors.get(sim.getColor()), text.toString());
 
 		}
 
@@ -200,12 +198,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	// @Override
 	public GamaUIColor getPopupBackground() {
-		if (inUserStatus && color != null) {
-			return color;
-		}
-		return state == IGui.ERROR ? IGamaColors.ERROR
-				: state == IGui.WAIT ? IGamaColors.WARNING
-						: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
+		if (inUserStatus && color != null) { return color; }
+		return state == IGui.ERROR ? IGamaColors.ERROR : state == IGui.WAIT ? IGamaColors.WARNING
+				: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
 
 	@Override
@@ -225,14 +220,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public void updateWith(final IStatusMessage m) {
-		if (isUpdating) {
-			return;
-		}
+		if (isUpdating) { return; }
 		isUpdating = true;
 		if (m instanceof SubTaskMessage) {
-			if (inUserStatus) {
-				return;
-			}
+			if (inUserStatus) { return; }
 			final SubTaskMessage m2 = (SubTaskMessage) m;
 			final Boolean beginOrEnd = m2.getBeginOrEnd();
 			if (beginOrEnd == null) {
@@ -265,9 +256,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				mainTaskName = m.getText();
 			}
 		} else if (m instanceof StatusMessage) {
-			if (inUserStatus) {
-				return;
-			}
+			if (inUserStatus) { return; }
 			inSubTask = false; // in case
 			mainTaskName = m.getText();
 			state = m.getCode();

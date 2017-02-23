@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartJFreeChartOutputHeatmap.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartJFreeChartOutputHeatmap.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -77,23 +76,23 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 
 		switch (type_val) {
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12: {
-			source.setCumulative(scope, false);
-			source.setCumulativeY(scope, true);
-			source.setUseSize(scope, true);
-			break;
-		}
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-		case ChartDataSource.DATA_TYPE_LIST_POINT:
-		case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
-		default: {
-			source.setCumulative(scope, false);
-			source.setUseSize(scope, true);
-		}
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12: {
+				source.setCumulative(scope, false);
+				source.setCumulativeY(scope, true);
+				source.setUseSize(scope, true);
+				break;
+			}
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+			case ChartDataSource.DATA_TYPE_LIST_POINT:
+			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+			default: {
+				source.setCumulative(scope, false);
+				source.setUseSize(scope, true);
+			}
 		}
 
 	}
@@ -117,31 +116,33 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
 		AbstractRenderer newr = new XYBlockRenderer();
 		switch (style) {
-		case IKeyword.SPLINE:
-		case IKeyword.STEP:
-		case IKeyword.DOT:
-		case IKeyword.WHISKER:
-		case IKeyword.AREA:
-		case IKeyword.BAR:
-		case IKeyword.STACK:
-		case IKeyword.RING:
-		case IKeyword.EXPLODED:
-		case IKeyword.THREE_D:
-		default: {
-			newr = new XYBlockRenderer();
-			break;
+			case IKeyword.SPLINE:
+			case IKeyword.STEP:
+			case IKeyword.DOT:
+			case IKeyword.WHISKER:
+			case IKeyword.AREA:
+			case IKeyword.BAR:
+			case IKeyword.STACK:
+			case IKeyword.RING:
+			case IKeyword.EXPLODED:
+			case IKeyword.THREE_D:
+			default: {
+				newr = new XYBlockRenderer();
+				break;
 
-		}
+			}
 		}
 		return newr;
 	}
 
 	protected static final LookupPaintScale createLUT(final int ncol, final float vmin, final float vmax,
 			final Color start, final Color med, final Color end) {
-		final float[][] colors = new float[][] {
-				{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f, start.getAlpha() / 255f },
-				{ med.getRed() / 255f, med.getGreen() / 255f, med.getBlue() / 255f, med.getAlpha() / 255f },
-				{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
+		final float[][] colors =
+				new float[][] {
+						{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f,
+								start.getAlpha() / 255f },
+						{ med.getRed() / 255f, med.getGreen() / 255f, med.getBlue() / 255f, med.getAlpha() / 255f },
+						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = new float[] { 0, 0.5f, 1 };
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, med);
 		float val;
@@ -166,9 +167,11 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 	protected static final LookupPaintScale createLUT(final int ncol, final float vmin, final float vmax,
 			final Color start, final Color end) {
-		final float[][] colors = new float[][] {
-				{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f, start.getAlpha() / 255f },
-				{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
+		final float[][] colors =
+				new float[][] {
+						{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f,
+								start.getAlpha() / 255f },
+						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = new float[] { 0, 1 };
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, start);
 		float val;
@@ -307,8 +310,8 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 		this.createNewSerie(scope, serieid);
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
-		final MatrixSeries serie = ((MatrixSeriesCollection) jfreedataset
-				.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
+		final MatrixSeries serie =
+				((MatrixSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
@@ -387,9 +390,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			@Override
 			public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
 				final int ind = chartdataset.XSeriesValues.indexOf(number);
-				if (ind >= 0) {
-					return new StringBuffer("" + chartdataset.Xcategories.get(ind));
-				}
+				if (ind >= 0) { return new StringBuffer("" + chartdataset.Xcategories.get(ind)); }
 				return new StringBuffer("");
 
 			}
@@ -418,9 +419,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			@Override
 			public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
 				final int ind = chartdataset.YSeriesValues.indexOf(number);
-				if (ind >= 0) {
-					return new StringBuffer("" + chartdataset.Ycategories.get(ind));
-				}
+				if (ind >= 0) { return new StringBuffer("" + chartdataset.Ycategories.get(ind)); }
 				return new StringBuffer("");
 
 			}
@@ -488,8 +487,8 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
-			final Point positionInPixels) {
+	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final Point positionInPixels, final StringBuilder sb) {
 		final int x = xOnScreen - positionInPixels.x;
 		final int y = yOnScreen - positionInPixels.y;
 		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
@@ -513,31 +512,27 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			if (StringUtils.isBlank(yTitle)) {
 				yTitle = "Y";
 			}
-			final StringBuilder sb = new StringBuilder();
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
-			return sb.toString();
+			return;
 		} else if (entity instanceof PieSectionEntity) {
 			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
 			final PieDataset data = ((PieSectionEntity) entity).getDataset();
 			final int index = ((PieSectionEntity) entity).getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
-			final StringBuilder sb = new StringBuilder();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return sb.toString();
+			return;
 		} else if (entity instanceof CategoryItemEntity) {
 			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 			final String title = columnKey.toString();
 			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
 			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
-			final StringBuilder sb = new StringBuilder();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return sb.toString();
+			return;
 		}
-		return "";
 	}
 
 }

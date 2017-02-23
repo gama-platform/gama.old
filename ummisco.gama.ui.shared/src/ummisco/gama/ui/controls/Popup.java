@@ -9,6 +9,11 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -113,29 +118,29 @@ public class Popup {
 			return;
 		}
 
-		int index = 0;
-		// int maxTextWidth = 0;
-		Control[] labels = popup.getChildren();
-		if (labels.length != s.size()) {
-			for (final Control control : labels) {
-				control.dispose();
+		final Control[] array = popup.getChildren();
+		final int labelsSize = s.size();
+		final List<Control> labels = new ArrayList<Control>(Arrays.asList(array));
+		final int controlsSize = array.length;
+		if (controlsSize > labelsSize) {
+			for (int i = labelsSize; i < controlsSize; i++) {
+				labels.get(i).dispose();
 			}
-			labels = new Control[s.size()];
-			int i = 0;
-			for (final PopupText.Pair entry : s.contents) {
+		} else if (labelsSize > controlsSize) {
+			for (int i = 0; i < labelsSize - controlsSize; i++) {
 				final Label label = new Label(popup, SWT.None);
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				label.setBackground(entry.color.color());
-				label.setForeground(GamaColors.getTextColorForBackground(entry.color.color()).color());
-				label.setText(GAML.toText(entry.text));
-				labels[i++] = label;
+				labels.add(label);
 			}
-		} else
-			for (final PopupText.Pair entry : s.contents) {
-				final Label label = (Label) labels[index++];
-				label.setBackground(entry.color.color());
-				label.setText(GAML.toText(entry.text));
-			}
+		}
+
+		final Iterator<Control> it = labels.iterator();
+		s.forEach((text, color) -> {
+			final Label label = (Label) it.next();
+			label.setBackground(color.color());
+			label.setForeground(GamaColors.getTextColorForBackground(color.color()).color());
+			label.setText(GAML.toText(text));
+		});
 
 		final Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);

@@ -116,7 +116,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 * @param java2dDisplaySurface
 	 * @return
 	 */
-	String getModelCoordinatesInfo(int xc, int yc, IDisplaySurface java2dDisplaySurface);
+	void getModelCoordinatesInfo(int xc, int yc, IDisplaySurface java2dDisplaySurface, StringBuilder sb);
 
 	boolean isProvidingCoordinates();
 

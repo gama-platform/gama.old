@@ -59,6 +59,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	Label coord, zoom, left, center, right;
+	StringBuilder text = new StringBuilder();
 	Canvas scalebar;
 	volatile boolean isBusy;
 	private final Shell popup;
@@ -75,7 +76,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		public void run() {
 			WorkbenchHelper.asyncRun(() -> {
 				if (!zoom.isDisposed()) {
-					zoom.setText(getView().getOverlayZoomInfo());
+					text.setLength(0);
+					getView().getOverlayZoomInfo(text);
+					zoom.setText(text.toString());
 				}
 			});
 
@@ -315,14 +318,18 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if (getPopup().isDisposed()) { return; }
 			if (!coord.isDisposed()) {
 				try {
-					coord.setText(getView().getOverlayCoordInfo());
+					text.setLength(0);
+					getView().getOverlayCoordInfo(text);
+					coord.setText(text.toString());
 				} catch (final Exception e) {
 					coord.setText("Not initialized yet");
 				}
 			}
 			if (!zoom.isDisposed()) {
 				try {
-					zoom.setText(getView().getOverlayZoomInfo());
+					text.setLength(0);
+					getView().getOverlayZoomInfo(text);
+					zoom.setText(text.toString());
 				} catch (final Exception e) {
 					GAMA.getGui().debug("Error in updating overlay: " + e.getMessage());
 					zoom.setText("Not initialized yet");

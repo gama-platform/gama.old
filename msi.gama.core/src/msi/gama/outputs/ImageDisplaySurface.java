@@ -497,9 +497,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
 	 */
 	@Override
-	public String getModelCoordinatesInfo() {
-		return null;
-	}
+	public void getModelCoordinatesInfo(final StringBuilder sb) {}
 
 	@Override
 	public void dispatchKeyEvent(final char character) {

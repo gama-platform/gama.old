@@ -392,17 +392,23 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo() {
+	public void getModelCoordinatesInfo(final StringBuilder sb) {
 		boolean canObtainInfo = getManager().isProvidingCoordinates();
-		if (!canObtainInfo) { return "No world coordinates"; }
+		if (!canObtainInfo) {
+			sb.append("No world coordinates");
+			return;
+		}
 		canObtainInfo = getManager().isProvidingWorldCoordinates();
-		if (!canObtainInfo) { return "No world coordinates"; }
+		if (!canObtainInfo) {
+			sb.append("No world coordinates");
+			return;
+		}
 		// By default, returns the coordinates in the world.
 		final ILocation point = getModelCoordinates();
 		final String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
 		final Object[] objects = new Object[] { x, y };
-		return String.format("X%10s | Y%10s", objects);
+		sb.append(String.format("X%10s | Y%10s", objects));
 	}
 
 	@Override
@@ -495,17 +501,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public LayeredDisplayOutput getOutput() {
 		return output;
-	}
-
-	/**
-	 * Method getCameraPosition()
-	 * 
-	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraPosition()
-	 */
-	@Override
-	public ILocation getCameraPosition() {
-		if (renderer.camera == null) { return new GamaPoint(0, 0, 0); }
-		return renderer.camera.getPosition();
 	}
 
 	/**
