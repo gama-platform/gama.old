@@ -439,17 +439,20 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public String getModelCoordinatesInfo() {
+	public void getModelCoordinatesInfo(final StringBuilder sb) {
 		final Point origin = getOrigin();
 		final Point mouse = getMousePosition();
-		if (mouse == null) { return null; }
+		if (mouse == null) { return; }
 		final int xc = mouse.x - origin.x;
 		final int yc = mouse.y - origin.y;
 		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		for (final ILayer layer : layers) {
-			if (layer.isProvidingCoordinates()) { return layer.getModelCoordinatesInfo(xc, yc, this); }
+			if (layer.isProvidingCoordinates()) {
+				layer.getModelCoordinatesInfo(xc, yc, this, sb);
+				return;
+			}
 		}
-		return "No world coordinates";
+		sb.append("No world coordinates");
 	}
 
 	@Override
