@@ -12,6 +12,7 @@ package msi.gama.runtime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGraphics;
@@ -391,60 +392,49 @@ public class ExecutionScope implements IScope {
 		}
 	}
 
-	/**
-	 * Method evaluate()
-	 * 
-	 * @see msi.gama.runtime.IScope#evaluate(msi.gaml.expressions.IExpression, msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
-		if (agent == null || interrupted() || agent.dead()) { return FAILED; }
-		final boolean pushed = push(agent);
-		try {
-			return new ExecutionResultWithValue(expr.value(this));
-		} catch (final GamaRuntimeException g) {
-			// g.addAgent(agent.toString());
-			GAMA.reportAndThrowIfNeeded(this, g, true);
-			return FAILED;
-		} finally {
-			if (pushed) {
-				pop(agent);
-			}
-		}
-	}
-
 	@Override
 	public ExecutionResult step(final IStepable agent) {
-		final boolean isAgent = agent instanceof IAgent;
-		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) { return FAILED; }
-		final boolean pushed = isAgent && push((IAgent) agent);
-		try {
-			return new ExecutionResultWithValue(agent.step(this));
-		} catch (final Throwable ex) {
-			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
-			GAMA.reportAndThrowIfNeeded(this, g, true);
+		if (agent == null || interrupted())
 			return FAILED;
-		} finally {
-			if (pushed) {
-				pop((IAgent) agent);
-			}
-		}
+		return agent instanceof IAgent
+				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.step(this)))
+				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.step(this)));
 	}
 
 	@Override
 	public ExecutionResult init(final IStepable agent) {
-		final boolean isAgent = agent instanceof IAgent;
-		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) { return FAILED; }
-		final boolean pushed = isAgent && push((IAgent) agent);
+		if (agent == null || interrupted())
+			return FAILED;
+		return agent instanceof IAgent
+				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.init(this)))
+				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.init(this)));
+	}
+
+	@Override
+	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
+		if (agent == null || interrupted()) { return FAILED; }
+		return pushRunAndCatch(agent, (a) -> new ExecutionResultWithValue(expr.value(this)));
+	}
+
+	private ExecutionResult pushRunAndCatch(final IAgent a, final Function<IAgent, ExecutionResult> f) {
+		if (a == null || a.dead())
+			return FAILED;
+		final boolean pushed = push(a);
 		try {
-			return new ExecutionResultWithValue(agent.init(this));
-		} catch (final GamaRuntimeException g) {
+			return runAndCatch(a, f);
+		} finally {
+			if (pushed)
+				pop(a);
+		}
+	}
+
+	private <S extends IStepable> ExecutionResult runAndCatch(final S a, final Function<S, ExecutionResult> f) {
+		try {
+			return f.apply(a);
+		} catch (final Throwable ex) {
+			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return FAILED;
-		} finally {
-			if (pushed) {
-				pop((IAgent) agent);
-			}
 		}
 	}
 
