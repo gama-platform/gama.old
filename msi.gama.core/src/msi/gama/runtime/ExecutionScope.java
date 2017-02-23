@@ -340,28 +340,28 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public ExecutionResult execute(final IExecutable statement, final IAgent agent, final Arguments args) {
-		final IAgent caller = this.getAgent();
 		if (statement == null || agent == null || interrupted() || agent.dead()) { return FAILED; }
+		// We keep the current pushed agent (context of this execution)
+		final IAgent caller = this.getAgent();
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
-		boolean callerSet = false;
 		try {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
 			if (args != null && statement instanceof IStatement.WithArgs) {
 				args.setCaller(caller);
 				((IStatement.WithArgs) statement).setRuntimeArgs(this, args);
-				callerSet = true;
 			} else if (statement instanceof RemoteSequence) {
+				// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
 				((RemoteSequence) statement).setMyself(caller);
-				// We delegate to the remote scope
 			}
 			return new ExecutionResultWithValue(statement.executeOn(this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return FAILED;
 		} finally {
-			if (callerSet)
+			// We clean the caller that may have been set previously so as to keep the arguments clean
+			if (args != null)
 				args.setCaller(null);
 			// Whatever the outcome, we pop the agent from the stack if it has
 			// been previously pushed
