@@ -368,7 +368,7 @@ public class GamaPreferences {
 				false, IType.BOOL).in(NAME, OPTIONS);
 		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
 				"Use OpenGL native tesselator to triangulate shapes (false will make GAMA use a more precise, but more CPU intensive, JTS alternative)",
-				false, IType.BOOL).in(NAME, OPTIONS);
+				true, IType.BOOL).in(NAME, OPTIONS);
 	}
 
 	public static class External {
