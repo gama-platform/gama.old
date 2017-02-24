@@ -33,7 +33,6 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -47,6 +46,7 @@ public class GamaMetaModel {
 	private final Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
 	private GamlModelSpecies abstractModelSpecies;
+	public volatile boolean isInitialized;
 
 	private static class SpeciesProto {
 
@@ -117,6 +117,7 @@ public class GamaMetaModel {
 		tempSpecies.clear();
 		model.buildTypes();
 		model.finalizeDescription();
+		isInitialized = true;
 	}
 
 	public SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
