@@ -49,9 +49,9 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
@@ -257,7 +257,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	static {
 		// AD 15/01/16: added to make sure that the XText builder can wait
 		// until, at least, the main artefacts of GAMA have been built.
-		while (ModelDescription.ROOT == null) {
+		while (!GamaMetaModel.INSTANCE.isInitialized) {
 			try {
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {
@@ -441,7 +441,8 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			for (final OperatorProto t : AbstractGamlAdditions.getAllFields()) {
 				addVar(t.getName(), t, "field");
 			}
-			//addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
+			if (!GAMA.isInHeadLessMode())
+				addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
 				addVar(t.getName(), t, "variable");
 			}
