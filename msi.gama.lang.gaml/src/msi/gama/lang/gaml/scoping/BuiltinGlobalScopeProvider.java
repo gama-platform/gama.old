@@ -441,7 +441,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			for (final OperatorProto t : AbstractGamlAdditions.getAllFields()) {
 				addVar(t.getName(), t, "field");
 			}
-			addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
+			//addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
 				addVar(t.getName(), t, "variable");
 			}
