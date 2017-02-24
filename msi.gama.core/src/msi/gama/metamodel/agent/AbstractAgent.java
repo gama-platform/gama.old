@@ -11,6 +11,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
@@ -604,6 +605,28 @@ public abstract class AbstractAgent implements IAgent {
 	public void updateWith(final IScope s, final SavedAgent sa) {
 		throw new RuntimeException(
 				"Method updateWith(final IScope s, final SavedAgent sa) has not been implemented for " + this);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof AbstractAgent))
+			return false;
+		final AbstractAgent other = (AbstractAgent) o;
+		if (other.getIndex() == index && other.getPopulation().equals(getPopulation()))
+			return true;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		final IPopulation<?> p = getPopulation();
+		int ph = Objects.hashCode(p.getName());
+		final IAgent a = p.getHost();
+		if (a != null)
+			ph += Objects.hashCode(a.getName());
+		return ph + index;
 	}
 
 }
