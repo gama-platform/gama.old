@@ -144,7 +144,7 @@ public class Maths {
 							value = "abs (200 * -1 + 0.5)",
 							equals = "199.5") }) })
 	public static Double abs(final Double rv) {
-		return rv < 0 ? -rv : rv;
+		return Math.abs(rv);
 	}
 
 	@operator (
