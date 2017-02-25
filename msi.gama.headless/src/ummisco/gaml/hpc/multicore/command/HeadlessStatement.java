@@ -84,7 +84,7 @@ public class HeadlessStatement extends AbstractStatement {
 		System.out.println(
 				"chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
 
-		final ExperimentJob sim = new ExperimentJob(this.getSimulationId(), modelPath, expName, 1000, lseed);
+		final ExperimentJob sim = new ExperimentJob(this.getSimulationId(), modelPath, expName, 1000, "", lseed);
 
 		this.processorQueue.pushSimulation(sim);
 

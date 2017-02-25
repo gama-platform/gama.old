@@ -47,6 +47,10 @@ public class Experiment implements IExperiment {
 		this.model = mdl;
 	}
 
+	public SimulationAgent getSimulation() {
+		return currentSimulation;
+	}
+	
 	protected IScope getScope() {
 		return this.currentExperiment.getCurrentSimulation().getScope();
 	}
