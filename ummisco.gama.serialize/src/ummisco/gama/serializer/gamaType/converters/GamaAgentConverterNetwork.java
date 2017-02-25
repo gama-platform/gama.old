@@ -47,52 +47,21 @@ public class GamaAgentConverterNetwork implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		final MinimalAgent agt = (MinimalAgent) arg0;
-		writer.startNode("agentpopulation");
-		writer.setValue(agt.getPopulation().getName());
-		writer.endNode();
-		writer.startNode("agentData");
-		System.out.println("ConvertAnother : AgentConverter Network " + agt.getClass());
+		final IAgent agt = (IAgent) arg0;
+	//	writer.startNode("save_agent network");
 		context.convertAnother(new SavedAgent(convertScope.getScope(), agt));
 		System.out.println("===========END ConvertAnother : GamaAgent Network");
-		writer.endNode();
-		writer.startNode("agentReference");
-		writer.setValue(agt.getName());
-		writer.endNode();
-
+	//	writer.endNode();
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		reader.moveDown();
-		final String populationName = reader.getValue();
-		reader.moveUp();
-		reader.moveDown();
+		
+		System.out.println("lecture d'un save agent");
+		//reader.moveDown();
 		final SavedAgent rmt = (SavedAgent) arg1.convertAnother(null, SavedAgent.class);
-		final IPopulation<? extends IAgent> mpop = convertScope.getScope().getAgent().getPopulationFor(populationName);
-		rmt.restoreTo(convertScope.getScope(), mpop);
-		reader.moveUp();
-		reader.moveDown();
-		final SimulationAgent simAgt = convertScope.getSimulationAgent();
-		List<IAgent> lagt;
-		if (simAgt == null) {
-			lagt = convertScope.getScope().getSimulation().getAgents(convertScope.getScope());
-		} else {
-			lagt = simAgt.getAgents(convertScope.getScope());
-		}
-
-		boolean found = false;
-		int i = 0;
-		IAgent agt = null;
-		while (!found && i < lagt.size()) {
-			if (lagt.get(i).getName().equals(reader.getValue())) {
-				found = true;
-				agt = lagt.get(i);
-			}
-			i++;
-		}
-		reader.moveUp();
-		return agt;
+		//reader.moveUp();
+		return rmt;
 	}
 
 }

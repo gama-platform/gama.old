@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
  * A helper class to save agent and restore/recreate agent as a member of a population.
  */
 @SuppressWarnings ("unchecked")
-public class SavedAgent extends GamaMap<String, Object> {
+public class SavedAgent extends GamaMap<String, Object> implements Cloneable {
 
 	/** Variables which are not saved during the capture and release process. */
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
@@ -38,8 +38,21 @@ public class SavedAgent extends GamaMap<String, Object> {
 	int index;
 	Map<String, List<SavedAgent>> innerPopulations;
 
-	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	@Override
+	public SavedAgent clone() {
+		final SavedAgent result = new SavedAgent();
+		result.putAll(this);
+		result.innerPopulations = innerPopulations;
+		result.index = index;
+		return result;
+	}
+
+	private SavedAgent() {
 		super(11, Types.STRING, Types.NO_TYPE);
+	}
+
+	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		this();
 		index = agent.getIndex();
 		saveAttributes(scope, agent);
 		if (agent instanceof IMacroAgent) {
@@ -56,6 +69,11 @@ public class SavedAgent extends GamaMap<String, Object> {
 		super(v.size(), Types.STRING, Types.NO_TYPE);
 		putAll(v);
 		innerPopulations = inPop;
+	}
+
+	public SavedAgent(final GamaMap<String, Object> map) {
+		this();
+		putAll(map);
 	}
 
 	public Object getAttributeValue(final String attrName) {

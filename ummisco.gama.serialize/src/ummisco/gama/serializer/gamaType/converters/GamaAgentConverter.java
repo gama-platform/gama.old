@@ -53,7 +53,7 @@ public class GamaAgentConverter implements Converter {
 		writer.startNode("agentReference");
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
 		writer.setValue(agt.getName());
-		System.out.println("===========END ConvertAnother : GamaAgent");
+		System.out.println("===========END ConvertAnother : GamaAgent truc youpi");
 		
 		writer.endNode();
 	}

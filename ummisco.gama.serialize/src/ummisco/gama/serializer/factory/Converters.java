@@ -39,7 +39,7 @@ public abstract class Converters {
 	{
 		Converter[] converters= new Converter[12];
 		converters[0]= new GamaBasicTypeConverter(cs);
-		converters[1]=new GamaAgentConverter(cs);
+		converters[1]=new GamaAgentConverter(cs);		
 		converters[2]=new GamaListConverter(cs);
 		converters[3]=new GamaMapConverter(cs);
 		converters[4]=new GamaPairConverter();

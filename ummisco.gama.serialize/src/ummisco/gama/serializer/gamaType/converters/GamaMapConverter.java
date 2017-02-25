@@ -16,6 +16,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.util.GamaMap;
 import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
@@ -30,7 +31,7 @@ public class GamaMapConverter implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
-		if (GamaMap.class.equals(arg0)) {
+		if (GamaMap.class.equals(arg0)&&!(SavedAgent.class.equals(arg0))) {
 			return true;
 		}
 		return false;
