@@ -26,10 +26,15 @@ global {
 		write "Init";
 		write "nb_preys_init: " + nb_preys_init;
 		write "nb_predators_init: " + nb_predators_init;
+		write "seed : " + seed;
  	}
 	
 	reflex aff {
-		write "Hello dans la console " + cycle;
+		write "Message at cycle " + cycle ;
+	}
+	
+	reflex stop when: cycle>100 {
+		do halt();
 	}
 }
 

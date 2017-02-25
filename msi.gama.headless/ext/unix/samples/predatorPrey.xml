@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" sourcePath="./predatorPrey/predatorPrey.gaml" finalStep="1000" experiment="prey_predatorExp">
+<Simulation id="2" sourcePath="./predatorPrey/predatorPrey.gaml" finalStep="50" experiment="prey_predatorExp" seed="3">
   <Parameters>
     <Parameter name="Nb predators: " type="INT" value="2" />
     <Parameter var="nb_preys_init" type="INT" value="6" />
