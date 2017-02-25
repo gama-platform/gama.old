@@ -96,7 +96,7 @@ public abstract class StreamConverter {
 	
 	public static synchronized String convertNetworkObjectToStream(IScope scope, Object o)
 	{
-		return loadAndBuild(new ConverterScope(scope)).toXML(o);
+		return loadAndBuildNetwork(new ConverterScope(scope)).toXML(o);
 	}
 	
 	public static Object convertNetworkStreamToObject(ConverterScope scope,String data)
@@ -106,7 +106,7 @@ public abstract class StreamConverter {
 	
 	public static Object convertNetworkStreamToObject(IScope scope,String data)
 	{
-		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
+		return loadAndBuildNetwork(new ConverterScope(scope)).fromXML(data);
 	}	
 	
 	// END TODO

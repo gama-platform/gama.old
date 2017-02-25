@@ -28,7 +28,7 @@ public class CompositeGamaMessage extends GamaMessage {
 	public CompositeGamaMessage(IScope scope,GamaMessage message)
 	{
 		super(scope,message.getSender(),message.getReceivers(),message.getContents(scope));
-		this.contents = StreamConverter.convertObjectToStream(scope, (message.getContents(scope)));
+		this.contents = StreamConverter.convertNetworkObjectToStream(scope, (message.getContents(scope)));
 		this.emissionTimeStamp = message.getEmissionTimestamp();
 		this.setUnread(true);
 		deserializeContent=null;
@@ -45,7 +45,7 @@ public class CompositeGamaMessage extends GamaMessage {
 	public Object getContents(IScope scope) {
 		this.setUnread(false);
 		if(deserializeContent == null)
-			deserializeContent = StreamConverter.convertStreamToObject(scope, (String)contents);//StreamConverter.convertStreamToObject(scope, (String)(super.getContents(scope)));
+			deserializeContent = StreamConverter.convertNetworkStreamToObject(scope, (String)contents);//StreamConverter.convertStreamToObject(scope, (String)(super.getContents(scope)));
 		return deserializeContent; 
 	}
 }
