@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FileOpen.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FileOpen.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import msi.gama.common.GamlFileExtension;
 
 /**
  * Opens a file
@@ -30,11 +30,11 @@ public class FileOpen extends AbstractHandler {
 
 		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-		dialog.setFilterExtensions(new String[] { "*.gaml", "*.*" });
+		dialog.setFilterExtensions(new String[] { "*.gaml", "*.experiment", "*.*" });
 		dialog.setFilterNames(new String[] { "GAML model files", "All Files" });
 		final String fileSelected = dialog.open();
 
-		if (fileSelected != null && fileSelected.endsWith(".gaml")) {
+		if (fileSelected != null && GamlFileExtension.isAny(fileSelected)) {
 			// Perform Action, like open the file.
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(fileSelected);
 		}

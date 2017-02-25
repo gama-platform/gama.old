@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 
+import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamaCSVFile;
@@ -487,14 +488,14 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	@Override
 	public boolean isGAML(final IFile p) {
-		return p != null && "gaml".equals(p.getFileExtension());
+		return p != null && GamlFileExtension.isAny(p.getName());
 	}
 
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
 		if (ct != null) { return ct.getId(); }
+		if (GamlFileExtension.isAny(p.getName())) { return GAML_CT_ID; }
 		final String ext = p.getFileExtension();
-		if ("gaml".equals(ext)) { return GAML_CT_ID; }
 		if ("shp".equals(ext)) { return SHAPEFILE_CT_ID; }
 		if (OSMExt.contains(ext)) { return OSM_CT_ID; }
 		if (longNames.containsKey(ext)) { return SHAPEFILE_SUPPORT_CT_ID; }

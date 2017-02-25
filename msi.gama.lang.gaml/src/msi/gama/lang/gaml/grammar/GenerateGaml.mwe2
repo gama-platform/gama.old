@@ -5,7 +5,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var grammarURI = "classpath:/msi/gama/lang/gaml/grammar/Gaml1.6v2.xtext"
-var file.extensions = "gaml"
+var file.extensions = "gaml,experiment"
 var projectName = "msi.gama.lang.gaml"
 var uiProjectName = "ummisco.gama.ui.modeling"
 var runtimeProject = "../${projectName}"
