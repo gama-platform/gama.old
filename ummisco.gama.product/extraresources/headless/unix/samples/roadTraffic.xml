@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" sourcePath="./roadTraffic/models/model7.gaml" finalstep="1000" experiment="road_traffic">
+<Simulation id="2" sourcePath="./roadTraffic/models/model7.gaml" finalStep="1000" experiment="road_traffic">
   <Parameters>
   </Parameters>
   <Outputs>

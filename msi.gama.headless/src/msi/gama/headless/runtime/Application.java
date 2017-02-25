@@ -72,6 +72,7 @@ public class Application implements IApplication {
 		 "\n      -help     -- get the help of the command line" +
 		 "\n      -m mem    -- allocate memory (ex 2048m)" +
 		 "\n      -c        -- start the console to write xml parameter file" +
+		 "\n      -v 		-- verbose mode" +
 		 "\n      -hpc core -- set the number of core available for experimentation" +
 		 "\n      -p        -- start piplines to interact with another framework" +
 		 "\n" +
@@ -208,7 +209,7 @@ public class Application implements IApplication {
 	
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-//		SystemLogger.removeDisplay();
+		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if(containHelpParameter(args))
