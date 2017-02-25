@@ -53,8 +53,7 @@ public class Envelope3D extends Envelope {
 		for (int j = 1; j < i; j++) {
 			result.expandToInclude(of(g.getGeometryN(j)));
 		}
-		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
-		return sq.getEnvelope();
+		return result;
 	}
 
 	public static Envelope3D of(final GamaShape s) {
