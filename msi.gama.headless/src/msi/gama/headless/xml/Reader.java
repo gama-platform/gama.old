@@ -18,7 +18,8 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import msi.gama.headless.common.*;
 import msi.gama.headless.job.*;
-import msi.gama.util.GAML;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 
 public class Reader {
 
@@ -31,7 +32,6 @@ public class Reader {
 		try {
 			this.myStream.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		myStream = null;
@@ -121,6 +121,12 @@ public class Reader {
 		
 		String sourcePath = e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
 		String experimentName = e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
+		try {
+			((HeadlessListener) GAMA.getHeadlessGui()).setBufferedWriter(new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/" + Globals.CONSOLE_OUTPUT_FILENAME)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 
 		String seed = e.getAttribute(XmlTAG.SEED_TAG);
 		long selectedSeed = seed == null || seed.length() == 0 ? 0l : Long.valueOf(seed).longValue();

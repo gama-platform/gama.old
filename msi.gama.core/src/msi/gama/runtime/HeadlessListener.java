@@ -38,12 +38,16 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
+import java.io.*;
 
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 
+	BufferedWriter outputWriter;
+	
 	static {
 
 		if (GAMA.isInHeadLessMode()) {
@@ -60,6 +64,10 @@ public class HeadlessListener implements IGui {
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
 		return null;
+	}
+	
+	public void setBufferedWriter(final BufferedWriter w) {
+		this.outputWriter = w;
 	}
 
 	@Override
@@ -108,7 +116,6 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
 		System.out.println("Runtime error: " + g.getMessage());
-		// System.out.println("Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -117,9 +124,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentPlan exp) {
-		System.out.println("Prepare for experiment");
-	}
+	public void prepareForExperiment(final IExperimentPlan exp) {}
 
 	// @Override
 	// public boolean openModelingPerspective(final boolean immediately) {
@@ -163,7 +168,15 @@ public class HeadlessListener implements IGui {
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment() {}
+	public void cleanAfterExperiment() {
+		try {
+			if(outputWriter != null) {
+				outputWriter.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void runModel(final Object object, final String exp) {}
@@ -340,8 +353,13 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-			// TODO Auto-generated method stub
 			System.out.println(s);
+			try {
+				outputWriter.write(s+Strings.LN);
+				outputWriter.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
