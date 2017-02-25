@@ -11,6 +11,7 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -42,23 +43,20 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 	public static GamaMap staticCast(final IScope scope, final Object obj, final IType keyType,
 			final IType contentsType, final boolean copy) {
 		if (obj == null) { return GamaMapFactory.create(keyType, contentsType); }
-		// if ( obj instanceof GamaPair ) { return
-		// GamaMapFactory.create(GamaPairType.staticCast(scope, obj, keyType,
-		// contentsType)); }
-		if (obj instanceof IAgent) {
-			// We collect all the variables / attributes of the agent
-			final IAgent agent = (IAgent) obj;
-			final GamaMap<String, Object> map = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
-			for (final String s : agent.getSpecies().getVarNames()) {
-				map.put(s, agent.getDirectVarValue(scope, s));
-			}
-			// map.putAll(agent.getAttributes());
-			final GamaMap shapeAttr = (GamaMap) agent.getGeometry().getAttributes();
-			if (shapeAttr != null) {
-				map.putAll(shapeAttr);
-			}
-			final IType kt = keyType == null || keyType == Types.NO_TYPE ? Types.STRING : keyType;
-			return map.mapValue(scope, kt, contentsType, false);
+		if (obj instanceof IAgent) { return new SavedAgent(scope, (IAgent) obj);
+		// We collect all the variables / attributes of the agent
+		// final IAgent agent = (IAgent) obj;
+		// final GamaMap<String, Object> map = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		// for (final String s : agent.getSpecies().getVarNames()) {
+		// map.put(s, agent.getDirectVarValue(scope, s));
+		// }
+		// map.putAll(agent.getAttributes());
+		// final GamaMap shapeAttr = (GamaMap) agent.getGeometry().getAttributes();
+		// if (shapeAttr != null) {
+		// map.putAll(shapeAttr);
+		// }
+		// final IType kt = keyType == null || keyType == Types.NO_TYPE ? Types.STRING : keyType;
+		// return map.mapValue(scope, kt, contentsType, false);
 		}
 		if (obj instanceof IContainer) { return ((IContainer) obj).mapValue(scope, keyType, contentsType, copy); }
 		final GamaMap result = GamaMapFactory.create(keyType, contentsType);

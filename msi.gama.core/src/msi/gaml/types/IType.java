@@ -64,6 +64,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public final static int MESSAGE = 24;
 	public final static int MATERIAL = 25;
 	public final static int ACTION = 26;
+	public final static int ATTRIBUTES = 27;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 

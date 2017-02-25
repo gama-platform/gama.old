@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
 @facets (
 		value = { @facet (
 				name = IKeyword.TARGET,
-				type = { IType.AGENT, IType.LIST, IType.MAP },
+				type = { IType.AGENT, IType.LIST, IType.ATTRIBUTES },
 				of = IType.AGENT,
 				optional = false,
 				doc = @doc ("an expression that is evaluated as an agent/a list of the agents to be released or an agent saved as a map")),
