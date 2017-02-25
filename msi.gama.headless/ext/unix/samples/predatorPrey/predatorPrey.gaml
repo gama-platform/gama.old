@@ -24,7 +24,9 @@ global {
 		create predator number: nb_predators_init ;
 		
 		write "Init";
-	}
+		write "nb_preys_init: " + nb_preys_init;
+		write "nb_predators_init: " + nb_predators_init;
+ 	}
 	
 	reflex aff {
 		write "Hello dans la console " + cycle;

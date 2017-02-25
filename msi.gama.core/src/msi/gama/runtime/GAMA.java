@@ -19,6 +19,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
@@ -124,9 +125,17 @@ public class GAMA {
 				.error("Experiment " + expName + " cannot be created", getRuntimeScope()); }
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
+			
+			final IParameter.Batch v = currentExperiment.getParameterByTitle(entry.getKey());
+			if (v != null) {
+				currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
+						entry.getValue());
+			} else {
+				currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
+						entry.getValue());
+			}
+			
 
-			currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
-					entry.getValue());
 		}
 		currentExperiment.open();
 		if (seed != null) {

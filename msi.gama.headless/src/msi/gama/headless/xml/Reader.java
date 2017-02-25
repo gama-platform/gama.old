@@ -55,9 +55,10 @@ public class Reader {
 	private Parameter readParameter(final Element e) {
 		String name = e.getAttribute(XmlTAG.NAME_TAG);
 		String value = e.getAttribute(XmlTAG.VALUE_TAG);
+		String var = e.getAttribute(XmlTAG.VAR_TAG);
 		String type = e.getAttribute(XmlTAG.TYPE_TAG);
 		DataType dtype = DataType.valueOf(type);
-		return new Parameter(name, DataTypeFactory.getObjectFromText(value, dtype), dtype);
+		return new Parameter(name, var, DataTypeFactory.getObjectFromText(value, dtype), dtype);
 	}
 
 	private Output readOutput(final Element e) {
@@ -132,7 +133,7 @@ public class Reader {
 
 	private ArrayList<ExperimentJob> readSimulation(final Document dom) {
 		ArrayList<ExperimentJob> res = new ArrayList<ExperimentJob>();
-		Element docEle = dom.getDocumentElement();
+//		Element docEle = dom.getDocumentElement();
 		NodeList nl = dom.getElementsByTagName(XmlTAG.SIMULATION_TAG);
 		if ( nl != null && nl.getLength() > 0 ) {
 			for ( int i = 0; i < nl.getLength(); i++ ) {
