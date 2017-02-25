@@ -242,6 +242,9 @@ public class GAMA {
 		}
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
+			if(isInHeadLessMode()) {
+				throw g;
+			}
 			final IExperimentController controller = getFrontmostController();
 			if (controller == null || controller.isDisposing()) { return; }
 			controller.userPause();
