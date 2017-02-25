@@ -35,9 +35,15 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class ExperimentJob implements IExperimentJob {
 
@@ -121,7 +127,9 @@ public class ExperimentJob implements IExperimentJob {
 	 */
 	private String experimentID;
 	public long finalStep;
-
+	private String untilCond;
+	IExpression endCondition;
+	
 	private static long generateID() {
 		return ExperimentJob.GLOBAL_ID_GENERATOR++;
 	}
@@ -167,15 +175,16 @@ public class ExperimentJob implements IExperimentJob {
 
 	}
 
-	public ExperimentJob(final String sourcePath, final String exp, final long max, final long s) {
-		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, s);
+	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond, final long s) {
+		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, untilCond, s);
 	}
 
-	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max, final long s) {
+	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max, final String untilCond, final long s) {
 		this();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.finalStep = max;
+		this.untilCond = untilCond;
 		this.experimentName = exp;
 		this.seed = s;
 		this.modelName = null;
@@ -191,7 +200,12 @@ public class ExperimentJob implements IExperimentJob {
 
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter temp = parameters.get(i);
-			this.simulator.setParameter(temp.getName(), temp.getValue());
+
+			if("".equals(temp.getName())) {
+				this.simulator.setParameter(temp.getVar(), temp.getValue());				
+			} else {
+				this.simulator.setParameter(temp.getName(), temp.getValue());								
+			}
 		}
 		this.setup();
 		simulator.setup(experimentName, this.seed);
@@ -201,6 +215,15 @@ public class ExperimentJob implements IExperimentJob {
 					simulator.getTypeOf(temp.getName()), temp.getOutputPath());
 		}
 
+		// Initialize the enCondition
+		if("".equals(untilCond)) {
+			endCondition = IExpressionFactory.FALSE_EXPR;
+		} else {
+			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);			
+		}
+		if(endCondition.getType() != Types.BOOL) {
+			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean", simulator.getSimulation().getScope());
+		}
 	}
 
 	public void load(final RuntimeContext ctx)
@@ -224,15 +247,32 @@ public class ExperimentJob implements IExperimentJob {
 		System.out.println("Simulation is running...");
 		final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
-		for (; step < finalStep; step++) {
+				
+		//while
+		int step = 0;
+		while( ! Types.BOOL.cast(simulator.getSimulation().getScope(), endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue() 
+				 && ((finalStep >= 0) ? (step < finalStep) : true)) {
 			if (step % affDelay == 0) {
 				System.out.print(".");
 			}
 			if (simulator.isInterrupted())
 				break;
-			doStep();
-
-		}
+			doStep();			
+			
+			step++;
+		} 
+		
+		//
+		//for (; step < finalStep; step++) {
+		//	if (step % affDelay == 0) {
+		//		System.out.print(".");
+		//	}
+		//	if (simulator.isInterrupted())
+		//		break;
+		//	doStep();
+		//
+		//}
+		//
 		final long endDate = Calendar.getInstance().getTimeInMillis();
 		this.simulator.dispose();
 		if (this.outputFile != null) {
@@ -291,6 +331,7 @@ public class ExperimentJob implements IExperimentJob {
 			simulator.dispose();
 			simulator = null;
 		}
+		untilCond = "";
 	}
 
 	@Override
@@ -361,14 +402,18 @@ public class ExperimentJob implements IExperimentJob {
 			final Attr ap1 = doc.createAttribute(XmlTAG.NAME_TAG);
 			ap1.setValue(p.getName());
 			aparameter.setAttributeNode(ap1);
+			
+			final Attr ap2 = doc.createAttribute(XmlTAG.VAR_TAG);
+			ap1.setValue(p.getVar());
+			aparameter.setAttributeNode(ap2);			
 
-			final Attr ap2 = doc.createAttribute(XmlTAG.TYPE_TAG);
+			final Attr ap3 = doc.createAttribute(XmlTAG.TYPE_TAG);
 			ap2.setValue(p.getType().toString());
-			aparameter.setAttributeNode(ap2);
-
-			final Attr ap3 = doc.createAttribute(XmlTAG.VALUE_TAG);
-			ap3.setValue(p.getValue().toString());
 			aparameter.setAttributeNode(ap3);
+
+			final Attr ap4 = doc.createAttribute(XmlTAG.VALUE_TAG);
+			ap3.setValue(p.getValue().toString());
+			aparameter.setAttributeNode(ap4);
 		}
 
 		final Element outputs = doc.createElement(XmlTAG.OUTPUTS_TAG);
@@ -403,7 +448,7 @@ public class ExperimentJob implements IExperimentJob {
 		}
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
 		final ExperimentJob expJob = new ExperimentJob(path, new Long(ExperimentJob.generateID()).toString(), expName,
-				0, mseed);
+				0, "", mseed);
 
 		if (d != null) {
 			final Iterable<IDescription> monitors = d.getChildrenWithKeyword(IKeyword.MONITOR);

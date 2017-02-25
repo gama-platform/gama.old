@@ -177,7 +177,6 @@ public interface IKeyword {
 	public static final String FUNCTION = "function";
 	public static final String FULLSCREEN = "fullscreen";
 	public static final String GAP = "gap";
-	// public static final String GAML = "gaml";
 	public static final String GENETIC = "genetic";
 	public static final String GIS = "gis";
 	public static final String GLOBAL = "global";

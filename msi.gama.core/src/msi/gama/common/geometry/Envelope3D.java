@@ -17,6 +17,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -38,8 +39,21 @@ import msi.gaml.types.GamaGeometryType;
 public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
+		if (g instanceof GeometryCollection)
+			return of((GeometryCollection) g);
 		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
 		return sq.getEnvelope();
+	}
+
+	public static Envelope3D of(final GeometryCollection g) {
+		final int i = g.getNumGeometries();
+		if (i == 0)
+			return new Envelope3D();
+		final Envelope3D result = of(g.getGeometryN(0));
+		for (int j = 1; j < i; j++) {
+			result.expandToInclude(of(g.getGeometryN(j)));
+		}
+		return result;
 	}
 
 	public static Envelope3D of(final GamaShape s) {

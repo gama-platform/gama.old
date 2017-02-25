@@ -16,4 +16,5 @@ public abstract class Globals {
 	public static String IMAGES_PATH;
 	public static String OUTPUT_PATH;
 	public final static String OUTPUT_FILENAME = "simulation-outputs";
+	public static final String CONSOLE_OUTPUT_FILENAME = "console_output.txt";
 }

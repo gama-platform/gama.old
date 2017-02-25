@@ -18,6 +18,8 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import msi.gama.headless.common.*;
 import msi.gama.headless.job.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 
 public class Reader {
 
@@ -30,7 +32,6 @@ public class Reader {
 		try {
 			this.myStream.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		myStream = null;
@@ -55,9 +56,10 @@ public class Reader {
 	private Parameter readParameter(final Element e) {
 		String name = e.getAttribute(XmlTAG.NAME_TAG);
 		String value = e.getAttribute(XmlTAG.VALUE_TAG);
+		String var = e.getAttribute(XmlTAG.VAR_TAG);
 		String type = e.getAttribute(XmlTAG.TYPE_TAG);
 		DataType dtype = DataType.valueOf(type);
-		return new Parameter(name, DataTypeFactory.getObjectFromText(value, dtype), dtype);
+		return new Parameter(name, var, DataTypeFactory.getObjectFromText(value, dtype), dtype);
 	}
 
 	private Output readOutput(final Element e) {
@@ -103,10 +105,28 @@ public class Reader {
 	private ExperimentJob readSimulation(final Element e) {
 
 		String expId = e.getAttribute(XmlTAG.EXPERIMENT_ID_TAG);
-		//String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
-		int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
+		
+		String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
+		int max;
+		if("".equals(finalStep)) {
+			max = -1;
+		} else {
+			max = Integer.valueOf(finalStep);
+		}	
+		if(max < 0){System.out.println("WARNING: the headless simulation has no final step!");}
+		// int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
+		
+		String untilCond = e.getAttribute(XmlTAG.UNTIL_TAG);
+//		GAML.compileExpression(expression, agent, onlyExpression)
+		
 		String sourcePath = e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
 		String experimentName = e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
+		try {
+			((HeadlessListener) GAMA.getHeadlessGui()).setBufferedWriter(new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/" + Globals.CONSOLE_OUTPUT_FILENAME)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 
 		String seed = e.getAttribute(XmlTAG.SEED_TAG);
 		long selectedSeed = seed == null || seed.length() == 0 ? 0l : Long.valueOf(seed).longValue();
@@ -124,7 +144,7 @@ public class Reader {
 			pr = pr.substring(0, pr.length() - 1);
 			sourcePath = pr + sourcePath;
 		}
-		ExperimentJob res = new ExperimentJob(sourcePath, expId, experimentName, max, selectedSeed);
+		ExperimentJob res = new ExperimentJob(sourcePath, expId, experimentName, max, untilCond, selectedSeed);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
 		return res;
@@ -132,7 +152,7 @@ public class Reader {
 
 	private ArrayList<ExperimentJob> readSimulation(final Document dom) {
 		ArrayList<ExperimentJob> res = new ArrayList<ExperimentJob>();
-		Element docEle = dom.getDocumentElement();
+//		Element docEle = dom.getDocumentElement();
 		NodeList nl = dom.getElementsByTagName(XmlTAG.SIMULATION_TAG);
 		if ( nl != null && nl.getLength() > 0 ) {
 			for ( int i = 0; i < nl.getLength(); i++ ) {

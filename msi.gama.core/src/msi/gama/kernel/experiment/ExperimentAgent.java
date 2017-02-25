@@ -243,7 +243,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return true;
+		return !getSpecies().isHeadless();
 	}
 
 	@Override

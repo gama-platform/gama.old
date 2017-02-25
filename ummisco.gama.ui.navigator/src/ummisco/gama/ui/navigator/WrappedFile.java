@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WrappedFile.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WrappedFile.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
+import msi.gama.common.GamlFileExtension;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -53,7 +53,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	@Override
 	public boolean canBeDecorated() {
-		return file.getName().contains(".gaml");
+		return GamlFileExtension.isAny(file.getName());
 	}
 
 	/**
@@ -115,9 +115,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	public boolean handleDoubleClick() {
 		final IEditorInput editorInput = new FileEditorInput(file);
 		final IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-		if (desc == null) {
-			return false;
-		}
+		if (desc == null) { return false; }
 		final IWorkbenchPage page = WorkbenchHelper.getPage();
 		try {
 			page.openEditor(editorInput, desc.getId());
@@ -137,7 +135,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(final Class adapter) {
 		return adapter == IResource.class || adapter == IFile.class ? file : null;
@@ -148,8 +146,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 		final IFile file = getFile();
 		try {
 			return file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-		} catch (final CoreException e) {
-		}
+		} catch (final CoreException e) {}
 		return -1;
 	}
 

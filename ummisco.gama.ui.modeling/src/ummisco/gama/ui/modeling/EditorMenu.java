@@ -42,6 +42,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
+import msi.gama.common.GamlFileExtension;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -302,7 +303,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				if (iResources != null)
 					for (final IResource iR : iResources) {
 						// for gama files
-						if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
+						if (GamlFileExtension.isAny(iR.getName())) {
 							final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
 							if (!uri.equals(without)) {
 								allGamaFiles.add(uri);

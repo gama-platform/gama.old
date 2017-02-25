@@ -21,11 +21,13 @@ import msi.gaml.types.IType;
 public class Parameter {
 
 	private String name;
+	private String var;
 	private Object value;
 	private final DataType type;
 
 	public Parameter(final Parameter p) {
 		this.name = p.name;
+		this.var = p.var;		
 		this.value = p.value;
 		this.type = p.type;
 	}
@@ -39,12 +41,12 @@ public class Parameter {
 		final String varName = paramDesc.getLitteral(IKeyword.VAR);
 		final IExpression exp = paramDesc.getFacetExpr(IKeyword.INIT);
 		final Object val = exp.isConst() ? exp.value(null) : exp.serialize(true);
-		final Parameter res = new Parameter(name, val, translate(paramDesc.getType().id()));
+		final Parameter res = new Parameter(name, varName, val, translate(paramDesc.getType().id()));
 		return res;
 	}
 
 	public static DataType translate(final Integer t) {
-		final DataType res;
+//		final DataType res;
 		if (t.equals(IType.BOOL)) {
 			return DataType.BOOLEAN;
 		} else if (t.equals(IType.INT)) {
@@ -57,9 +59,10 @@ public class Parameter {
 		return DataType.UNDEFINED;
 	}
 
-	public Parameter(final String name, final Object value, final DataType type) {
+	public Parameter(final String name,final String var, final Object value, final DataType type) {
 		super();
 		this.name = name;
+		this.var = var;
 		this.value = value;
 		this.type = type;
 	}
@@ -72,6 +75,14 @@ public class Parameter {
 		this.name = name;
 	}
 
+	public String getVar() {
+		return var;
+	}
+	
+	public void setVar(final String var) {
+		this.var = var;
+	}	
+	
 	public Object getValue() {
 		return this.value;
 	}

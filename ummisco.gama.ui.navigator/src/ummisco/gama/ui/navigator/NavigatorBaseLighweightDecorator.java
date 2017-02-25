@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NavigatorBaseLighweightDecorator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NavigatorBaseLighweightDecorator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,13 +11,12 @@ package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
+import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import ummisco.gama.ui.utils.PreferencesHelper;
@@ -62,27 +60,20 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 	public static int countModels(final IResource element) {
 		final int modelCount[] = new int[1];
 		try {
-			element.accept(new IResourceProxyVisitor() {
-
-				@Override
-				public boolean visit(final IResourceProxy proxy) throws CoreException {
-					if (proxy.getType() == IResource.FILE && proxy.getName().endsWith(".gaml"))
-						modelCount[0]++;
-					return true;
-				}
+			element.accept(proxy -> {
+				if (proxy.getType() == IResource.FILE && GamlFileExtension.isGaml(proxy.getName()))
+					modelCount[0]++;
+				return true;
 			}, IResource.NONE);
-		} catch (final CoreException e) {
-		}
+		} catch (final CoreException e) {}
 		return modelCount[0];
 	}
 
 	@Override
-	public void addListener(final ILabelProviderListener listener) {
-	}
+	public void addListener(final ILabelProviderListener listener) {}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public boolean isLabelProperty(final Object element, final String property) {
@@ -90,7 +81,6 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 	}
 
 	@Override
-	public void removeListener(final ILabelProviderListener listener) {
-	}
+	public void removeListener(final ILabelProviderListener listener) {}
 
 }

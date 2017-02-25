@@ -956,7 +956,7 @@ public class GeometryUtils {
 		if (g instanceof Polygon) { return getContourCoordinates((Polygon) g); }
 		if (g instanceof LineString) { return getContourCoordinates((LineString) g); }
 		if (g instanceof Point) { return getContourCoordinates((Point) g); }
-		if (g instanceof GeometryCollection) { return getContourCoordinates(((GeometryCollection) g).convexHull()); }
+		if (g instanceof GeometryCollection) { return getContourCoordinates(g.convexHull()); }
 		return ICoordinates.EMPTY;
 	}
 

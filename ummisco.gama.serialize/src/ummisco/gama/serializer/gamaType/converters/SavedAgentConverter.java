@@ -11,6 +11,7 @@
 package ummisco.gama.serializer.gamaType.converters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
+import msi.gama.util.GAML;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SavedAgentConverter implements Converter {
@@ -43,31 +45,39 @@ public class SavedAgentConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		System.out.println("ConvertAnother : GamaSavedAgentConverter " + arg0.getClass());
 		final SavedAgent savedAgt = (SavedAgent) arg0;
-
 		writer.startNode("index");
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
 
-		writer.startNode("variables");
-		context.convertAnother(savedAgt.getVariables());
-		writer.endNode();
-
-		writer.startNode("innerPopulations");
-		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if (inPop == null) {
-			context.convertAnother(new THashMap<String, Object>(11, 0.9f));
-		} else {
-			context.convertAnother(inPop);
+		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<Object> datas = new ArrayList<Object>();
+		
+		for(String ky :savedAgt.getKeys())
+		{
+			keys.add(ky);
+			datas.add(savedAgt.get(ky));
 		}
+	
+		writer.startNode("variables");
+			writer.startNode("keys");
+				context.convertAnother(keys);
+			writer.endNode();
+			writer.startNode("data");
+				context.convertAnother(datas);
+			writer.endNode();
 		writer.endNode();
+		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
+		if(inPop.size()>0)
+		{
+			writer.startNode("innerPopulations");
+			context.convertAnother(inPop);
+			writer.endNode();
+		}
 
 		writer.startNode(TAG);
 		context.convertAnother(new Boolean(inPop == null ? false : true));
 		writer.endNode();
-
-		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
 	}
 
 	@Override
@@ -76,65 +86,32 @@ public class SavedAgentConverter implements Converter {
 		final String indexStr = reader.getValue();
 		final Integer index = Integer.parseInt(indexStr);
 		reader.moveUp();
-
 		reader.moveDown();
-		final Map<String, Object> v = (Map<String, Object>) arg1.convertAnother(null, THashMap.class);
+		reader.moveDown();
+		final ArrayList<String> keys = (ArrayList<String>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
-
 		reader.moveDown();
-		final Map<String, List<SavedAgent>> inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null,
-				THashMap.class);
+		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
-
+		reader.moveUp();
+		Map<String, Object> localData = new HashMap<String, Object> ();
+		for(int ii = 0; ii< keys.size(); ii++)
+		{
+			localData.put(keys.get(ii), datas.get(ii));
+		}
 		reader.moveDown();
+		Map<String, List<SavedAgent>> inPop = null;
+		if(reader.getNodeName().equals("innerPopulations"))
+		{
+			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null,Map.class);
+			reader.moveUp();
+			reader.moveDown();
+		}
 		final Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
 		reader.moveUp();
 
-		final SavedAgent agtToReturn = new SavedAgent(index, v, isIMacroAgent.booleanValue() ? inPop : null);
+		final SavedAgent agtToReturn = new SavedAgent(index, localData,  null);
 
-		final SimulationAgent simAgent = convertScope.getSimulationAgent();
-
-		// The unserialization requieres 2 steps.
-		// After the first step: the SavedAgent is restored. simAgt is null
-		// during the first step.
-		// After the second step: the simAgt is not null. Its agents variables
-		// are only updated.
-		if (simAgent != null) {
-			// get the existing agent with the same name in the simulationAgent
-			// update/replace its variables
-
-			final String savedAgtName = (String) agtToReturn.getAttributeValue("name");
-
-			final List<IAgent> lagt = simAgent.getAgents(convertScope.getScope());
-			boolean found = false;
-			int i = 0;
-			IAgent agt = null;
-			while (!found && i < lagt.size()) {
-				if (lagt.get(i).getName().equals(savedAgtName)) {
-					found = true;
-					agt = lagt.get(i);
-				}
-				i++;
-			}
-			// If the agent is not found in the simAgent agents, it should be
-			// the simulationAgent itself
-			if (agt == null) {
-				if (savedAgtName.equals(simAgent.getName())) {
-					agt = simAgent;
-				}
-			}
-
-			if (agt != null) {
-				// We have in agt the chosen agent we need to update variables
-				final List<Map> agentAttrs = new ArrayList<Map>();
-				agentAttrs.add(agtToReturn.getVariables());
-				final ArrayList<IAgent> agentsList = new ArrayList<>();
-				agentsList.add(agt);
-				final GamaPopulation pop = (GamaPopulation) agt.getPopulation();
-
-				pop.createAndUpdateVariablesFor(convertScope.getScope(), agentsList, agentAttrs, true);
-			}
-		}
 		return agtToReturn;
 	}
 

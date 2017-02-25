@@ -214,6 +214,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				add(agent);
 				scope.push(agent);
 				createVariables(scope, agent, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
+				scope.pop(agent);
 			}
 			return this;
 		}
