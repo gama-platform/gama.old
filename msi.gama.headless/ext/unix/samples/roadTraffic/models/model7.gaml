@@ -47,64 +47,66 @@ global {
 	}
 	
 	reflex repair_road when: (cycle mod repair_time) = 0 {
-		let the_road_to_repair type: road value: (road as list) with_max_of (each.destruction_coeff) ;
+		road the_road_to_repair <- road with_max_of (each.destruction_coeff) ;
 		ask the_road_to_repair {
-			set destruction_coeff value: 1.0 ;
+			destruction_coeff <- 1.0 ;
 		}
 	}
 }
-entities {
-	species building {
-		string type; 
-		rgb color <- rgb('gray')  ; 
-		aspect base {
-			draw shape color: color ;
-		}
+
+species building {
+	string type; 
+	rgb color <- rgb('gray')  ; 
+	aspect base {
+		draw shape color: color ;
 	}
-	species road  {
-		float destruction_coeff <- 1.0 max:2.0;
-		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
-		rgb color <- rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0)  update: rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0) ;
-		aspect base {
-			draw  shape color: color ;
-		}
-	}
-	species people skills: [moving]{
-		rgb color <- rgb('yellow') ;
-		building living_place <- nil ;
-		building working_place <- nil ; 
-		int start_work ;
-		int end_work  ;
-		string objective ; 
-		point the_target <- nil ;
-		
-		reflex time_to_work when: day_time = start_work {
-			 objective <- 'working' ;
-			 the_target <- any_location_in (working_place);
-		}
-		reflex time_to_go_home when: day_time = end_work {
-			 objective <- 'go home' ;
-			 the_target <- any_location_in (living_place); 
-		}  
-		reflex move when: the_target != nil {
-			path path_followed <- self goto [target::the_target, on::the_graph, return_path:: true];
-			list<geometry> segments <- path_followed.segments;
-			loop line over: segments {
-				float dist <- line.perimeter;
-				road ag <- road(path_followed agent_from_geometry line); 
-				ask ag {
-					destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
-				}
-			}
-			switch the_target { 
-				match location { the_target <- nil ;}
-			}
-		}
-		aspect base {
-			draw circle(10) color: color;
-		}
-	} 
 }
+
+species road  {
+	float destruction_coeff <- 1.0 max:2.0;
+	int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
+	rgb color <- rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0)  update: rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0) ;
+	aspect base {
+		draw  shape color: color ;
+	}
+}
+
+species people skills: [moving]{
+	rgb color <- rgb('yellow') ;
+	building living_place <- nil ;
+	building working_place <- nil ; 
+	int start_work ;
+	int end_work  ;
+	string objective ; 
+	point the_target <- nil ;
+	
+	reflex time_to_work when: day_time = start_work {
+		 objective <- 'working' ;
+		 the_target <- any_location_in (working_place);
+	}
+	reflex time_to_go_home when: day_time = end_work {
+		 objective <- 'go home' ;
+		 the_target <- any_location_in (living_place); 
+	}  
+	reflex move when: the_target != nil {
+		path path_followed <- self goto [target::the_target, on::the_graph, return_path:: true];
+		list<geometry> segments <- path_followed.segments;
+		loop line over: segments {
+			float dist <- line.perimeter;
+			road ag <- road(path_followed agent_from_geometry line); 
+			ask ag {
+				destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
+			}
+		}
+		if the_target = location {
+			the_target <- nil ;
+		}	
+	}
+
+	aspect base {
+		draw circle(10) color: color;
+	}
+} 
 
 
 experiment road_traffic type: gui {
@@ -121,21 +123,24 @@ experiment road_traffic type: gui {
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
 	parameter 'Number of steps between two road repairs' var: repair_time category: 'Road' ;
 	
+	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display type: opengl refresh: every(1#cycle) {
 			species building aspect: base ;
 			species road aspect: base ;
 			species people aspect: base ;
 		}
-		display chart_display refresh_every: 10 { 
-			chart name: 'Road Status' type: series background: rgb('lightGray') size: {0.9, 0.4} position: {0.05, 0.05} {
-				data name:'Mean road destruction' value: mean (road collect each.destruction_coeff) style: line color: rgb('green') ;
-				data name:'Max road destruction' value: road max_of each.destruction_coeff style: line color: rgb('red') ;
+		
+		display chart_display refresh: every(1#cycle)  { 
+			chart 'Road Status' type: series background: rgb('lightGray') size: {0.9, 0.4} position: {0.05, 0.05} {
+				data 'Mean road destruction' value: mean (road collect each.destruction_coeff) style: line color: rgb('green') ;
+				data 'Max road destruction' value: road max_of each.destruction_coeff style: line color: rgb('red') ;
 			}
-			chart name: 'People Objectif' type: pie background: rgb('lightGray') style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
-				data name:'Working' value: people count (each.objective='working') color: rgb('green') ;
-				data name:'Staying home' value: people count (each.objective='go home') color: rgb('blue') ;
+			chart 'People Objectif' type: pie background: rgb('lightGray') style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
+				data 'Working' value: people count (each.objective='working') color: rgb('green') ;
+				data 'Staying home' value: people count (each.objective='go home') color: rgb('blue') ;
 			}
-		}
+		} 	
 	}
 }
+
