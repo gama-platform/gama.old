@@ -40,7 +40,7 @@ import msi.gaml.types.Types;
  */
 @file (
 		name = "gaml",
-		extensions = { "gaml" },
+		extensions = { "gaml", "experiment" },
 		buffer_type = IType.LIST,
 		buffer_content = IType.SPECIES,
 		buffer_index = IType.INT,
