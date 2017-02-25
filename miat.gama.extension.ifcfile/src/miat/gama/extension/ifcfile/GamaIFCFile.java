@@ -24,6 +24,7 @@ import ifc2x3javatoolbox.ifc2x3tc1.IfcAxis2Placement3D;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcCartesianPoint;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcCurve;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcDirection;
+import ifc2x3javatoolbox.ifc2x3tc1.IfcDoor;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcExtrudedAreaSolid;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcGridPlacement;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcLocalPlacement;
@@ -41,6 +42,7 @@ import ifc2x3javatoolbox.ifc2x3tc1.IfcRelDefinesByProperties;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcRepresentation;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcRepresentationItem;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcSlab;
+import ifc2x3javatoolbox.ifc2x3tc1.IfcSpace;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcWall;
 import ifc4javatoolbox.ifcmodel.IfcModel;
 import msi.gama.common.geometry.Envelope3D;
@@ -133,7 +135,6 @@ public class GamaIFCFile extends GamaGeometryFile {
 			return points;
 		}
 		final GamaPoint locS = toPoint(position.getLocation());
-		// System.out.println("updateLocAxisDir locS: " + locS);
 		if (locS != null) {
 			if (loc == null) {
 				loc = new GamaPoint(locS.toCoordinate());
@@ -472,17 +473,16 @@ public class GamaIFCFile extends GamaGeometryFile {
 			for (final IfcRepresentationItem item : rep.getItems()) {
 
 				if (item instanceof IfcExtrudedAreaSolid) {
+					final IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
+					GamaPoint dir = toPoint(solid.getExtrudedDirection());
 					GamaPoint loc = new GamaPoint(0, 0, 0);
 					GamaPoint axis = new GamaPoint(0, 0, 0);
-					;
 					GamaPoint direction = new GamaPoint(0, 0, 0);
 					final List<GamaPoint> points = new ArrayList<GamaPoint>();
 					points.add(loc);
 					points.add(axis);
 					points.add(direction);
 					relatedTo(scope, s.getObjectPlacement(), points);
-
-					final IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
 					final List<GamaPoint> pts = updateLocAxisDir(solid.getPosition(), loc, axis, direction);
 					loc = pts.get(0);
 					axis = pts.get(1);
@@ -500,8 +500,8 @@ public class GamaIFCFile extends GamaGeometryFile {
 						}
 						if (loc != null)
 							box.setLocation(loc);
-						if (axis == null || axis.x == 0.0 && axis.y == 0.0)
-							box = Spatial.Transformations.translated_by(scope, box, new GamaPoint(0, 0, -depth));
+						if (dir.getY() == 0.0)
+							box = Spatial.Transformations.translated_by(scope, box, new GamaPoint(0, 0,- depth));
 						if (direction != null) {
 							box = Spatial.Transformations.rotated_by(scope, box, direction.x);
 							box = Spatial.Transformations.rotated_by(scope, box, direction.z, new GamaPoint(1, 0, 0));
@@ -517,22 +517,115 @@ public class GamaIFCFile extends GamaGeometryFile {
 							shape.setAttribute(IKeyword.NAME, s.getName().getDecodedValue());
 							if (axis != null) {
 								shape = Spatial.Transformations.rotated_by(scope, shape, axis.x,
-										new GamaPoint(0, -1, 0));
+										new GamaPoint(0, 1, 0));
 								shape = Spatial.Transformations.rotated_by(scope, shape, axis.y,
 										new GamaPoint(-1, 0, 0));
 							}
-							if (loc != null)
-								shape.setLocation(loc);
-							if (axis == null || axis.x == 0.0 && axis.y == 0.0)
-								shape = Spatial.Transformations.translated_by(scope, shape,
-										new GamaPoint(0, 0, -depth));
+							
+								
 							if (direction != null) {
 
 								shape = Spatial.Transformations.rotated_by(scope, shape, direction.x);
 								shape = Spatial.Transformations.rotated_by(scope, shape, direction.z,
 										new GamaPoint(1, 0, 0));
 							}
+							if (dir.getY() == 0.0) {
+								shape = Spatial.Transformations.translated_by(scope, shape,
+										new GamaPoint(0, 0, -2 * depth));
+							}
+							if (loc != null)
+								//shape.setLocation(loc);
+								shape = Spatial.Transformations.translated_by(scope, shape,
+										loc);
+							
+							addAttribtutes(s, shape);
+							return shape;
+						}
+						return null;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public IShape createDoor(final IScope scope, final IfcDoor d) {
+		double height = d.getOverallHeight().value;
+		double width = d.getOverallWidth().value;
+		IShape box = Spatial.Creation.box(scope, width, height, 1);
+		box.setAttribute(IKeyword.NAME, d.getName().getDecodedValue());
+		addAttribtutes(d, box);
+		
+		return box;
+	}
 
+	
+	public IShape createSpace(final IScope scope, final IfcSpace s) {
+		for (final IfcRepresentation rep : s.getRepresentation().getRepresentations()) {
+			for (final IfcRepresentationItem item : rep.getItems()) {
+				if (item instanceof IfcExtrudedAreaSolid) {
+					final IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
+					GamaPoint loc = new GamaPoint(0, 0, 0);
+					GamaPoint axis = new GamaPoint(0, 0, 0);
+					GamaPoint direction = new GamaPoint(0, 0, 0);
+					final List<GamaPoint> points = new ArrayList<GamaPoint>();
+					points.add(loc);
+					points.add(axis);
+					points.add(direction);
+					relatedTo(scope, s.getObjectPlacement(), points);
+					final List<GamaPoint> pts = updateLocAxisDir(solid.getPosition(), loc, axis, direction);
+					loc = pts.get(0);
+					axis = pts.get(1);
+					direction = pts.get(2);
+					if (direction.z == 180.0) direction.z = 0.0; 
+					final Double depth = solid.getDepth().value;
+					if (solid.getSweptArea() instanceof IfcRectangleProfileDef) {
+						final IfcRectangleProfileDef profil = (IfcRectangleProfileDef) solid.getSweptArea();
+						final Double width = profil.getXDim().value;
+						final Double height = profil.getYDim().value;
+						IShape box = Spatial.Creation.box(scope, width, height, depth);
+						box.setAttribute(IKeyword.NAME, s.getName().getDecodedValue());
+						if (axis != null) {
+							
+							box = Spatial.Transformations.rotated_by(scope, box, axis.x, new GamaPoint(0, -1, 0));
+							box = Spatial.Transformations.rotated_by(scope, box, axis.y, new GamaPoint(-1, 0, 0));
+						}
+						if (direction != null ) {
+							box = Spatial.Transformations.rotated_by(scope, box, direction.x);
+							box = Spatial.Transformations.rotated_by(scope, box, direction.z, new GamaPoint(1, 0, 0));
+						}
+						if (loc != null)
+							box.setLocation(loc);
+						
+						addAttribtutes(s, box);
+						return box;
+					} else if (solid.getSweptArea() instanceof IfcArbitraryClosedProfileDef) {
+						final IfcArbitraryClosedProfileDef profil = (IfcArbitraryClosedProfileDef) solid.getSweptArea();
+						final IfcCurve curve = profil.getOuterCurve();
+						if (curve instanceof IfcPolyline) {
+							IShape shape = toGeom(scope, ((IfcPolyline) curve).getPoints(), true);
+							shape.setDepth(depth);
+							shape.setAttribute(IKeyword.NAME, s.getName().getDecodedValue());
+							if (axis != null) {
+								shape = Spatial.Transformations.rotated_by(scope, shape, axis.x,
+										new GamaPoint(0, 1, 0));
+								shape = Spatial.Transformations.rotated_by(scope, shape, axis.y,
+										new GamaPoint(-1, 0, 0));
+							}
+							
+								
+							if (direction != null) {
+
+								shape = Spatial.Transformations.rotated_by(scope, shape, direction.x);
+								shape = Spatial.Transformations.rotated_by(scope, shape, direction.z,
+										new GamaPoint(1, 0, 0));
+							}
+							
+							if (loc != null)
+								//shape.setLocation(loc);
+								shape = Spatial.Transformations.translated_by(scope, shape,
+										loc);
+							
 							addAttribtutes(s, shape);
 							return shape;
 						}
@@ -588,6 +681,14 @@ public class GamaIFCFile extends GamaGeometryFile {
 				if (g != null)
 					geoms.add(g);
 			}
+			
+			final Collection<IfcSpace> spaces = ifcModel.getCollection(IfcSpace.class);
+			for (final IfcSpace s : spaces) {
+				final IShape g = createSpace(scope, s);
+				if (g != null)
+					geoms.add(g);
+			}
+			
 			final Collection<IfcWall> walls = ifcModel.getCollection(IfcWall.class);
 			final Map<String, IShape> ws = new HashMap<>();
 			for (final IfcWall w : walls) {
@@ -598,6 +699,12 @@ public class GamaIFCFile extends GamaGeometryFile {
 					geoms.add(g);
 			}
 
+			final Collection<IfcDoor> doors = ifcModel.getCollection(IfcDoor.class);
+			for (final IfcDoor s : doors) {
+				final IShape g = createDoor(scope, s);
+				if (g != null)
+					geoms.add(g);
+			}
 			final Collection<IfcOpeningElement> openings = ifcModel.getCollection(IfcOpeningElement.class);
 			for (final IfcOpeningElement o : openings) {
 				already.add(o);
