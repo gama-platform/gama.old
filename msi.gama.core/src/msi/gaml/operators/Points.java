@@ -337,6 +337,25 @@ public class Points {
 			return new GamaPoint(-p, -p, -p);
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
+	
+	@operator (
+			value = IKeyword.MINUS,
+			can_be_const = true,
+			category = IOperatorCategory.POINT,
+			concept = { IConcept.POINT })
+	@doc (
+			value = "Returns a point with coordinate resulting from the negation of the operand",
+			usages = @usage (
+					value = "",
+					examples = { @example (
+							value = "-{3.0,5.0}",
+							equals = "{-3.0,-5.0}"),
+							@example (
+									value = "-{1.0,6.0,7.0}",
+									equals = "{-1.0,-6.0,-7.0}") }))
+	public static ILocation subtract(final GamaPoint p) {
+			return new GamaPoint(-p.x, -p.y, -p.z);
+	}
 
 	@operator (
 			value = IKeyword.MINUS,
