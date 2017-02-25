@@ -117,7 +117,9 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentPlan exp) {}
+	public void prepareForExperiment(final IExperimentPlan exp) {
+		System.out.println("Prepare for experiment");
+	}
 
 	// @Override
 	// public boolean openModelingPerspective(final boolean immediately) {
@@ -339,13 +341,13 @@ public class HeadlessListener implements IGui {
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
 			// TODO Auto-generated method stub
-
+			System.out.println(s);
 		}
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
 			// TODO Auto-generated method stub
-
+			System.out.println(s);
 		}
 
 		@Override
