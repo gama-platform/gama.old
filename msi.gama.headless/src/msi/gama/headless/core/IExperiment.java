@@ -13,10 +13,13 @@ package msi.gama.headless.core;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 
 public interface IExperiment { 
 	public IModel getModel();
 	public IExperimentPlan getExperimentPlan();
+	
+	public SimulationAgent getSimulation() ;
 	
 	public void setup(final String experimentName);
 	public void setup(final String experimentName, final double seed);

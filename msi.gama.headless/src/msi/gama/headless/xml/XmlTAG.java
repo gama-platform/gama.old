@@ -20,7 +20,7 @@ public interface XmlTAG {
 	public final static String FRAMERATE_TAG = "framerate";
 	public final static String EXPERIMENT_PLAN_TAG = "Experiment_plan";
 	public final static String OUTPUT_PATH = "output_path";
-	
+	public final static String UNTIL_TAG = "until";
 	
 	
 	

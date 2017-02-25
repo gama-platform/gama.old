@@ -18,6 +18,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import msi.gama.headless.common.*;
 import msi.gama.headless.job.*;
+import msi.gama.util.GAML;
 
 public class Reader {
 
@@ -104,8 +105,20 @@ public class Reader {
 	private ExperimentJob readSimulation(final Element e) {
 
 		String expId = e.getAttribute(XmlTAG.EXPERIMENT_ID_TAG);
-		//String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
-		int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
+		
+		String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
+		int max;
+		if("".equals(finalStep)) {
+			max = -1;
+		} else {
+			max = Integer.valueOf(finalStep);
+		}	
+		if(max < 0){System.out.println("WARNING: the headless simulation has no final step!");}
+		// int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
+		
+		String untilCond = e.getAttribute(XmlTAG.UNTIL_TAG);
+//		GAML.compileExpression(expression, agent, onlyExpression)
+		
 		String sourcePath = e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
 		String experimentName = e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
 
@@ -125,7 +138,7 @@ public class Reader {
 			pr = pr.substring(0, pr.length() - 1);
 			sourcePath = pr + sourcePath;
 		}
-		ExperimentJob res = new ExperimentJob(sourcePath, expId, experimentName, max, selectedSeed);
+		ExperimentJob res = new ExperimentJob(sourcePath, expId, experimentName, max, untilCond, selectedSeed);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
 		return res;
