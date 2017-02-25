@@ -39,4 +39,4 @@ Export-Package:
  msi.gama.headless.util,
  msi.gama.headless.xml;uses:="msi.gama.headless.core"
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
