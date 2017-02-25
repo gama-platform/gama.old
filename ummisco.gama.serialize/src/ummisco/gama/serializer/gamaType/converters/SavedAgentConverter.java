@@ -45,9 +45,7 @@ public class SavedAgentConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		System.out.println("ConvertAnother : GamaSavedAgentConverter " + arg0.getClass());
 		final SavedAgent savedAgt = (SavedAgent) arg0;
-
 		writer.startNode("index");
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
@@ -80,8 +78,6 @@ public class SavedAgentConverter implements Converter {
 		writer.startNode(TAG);
 		context.convertAnother(new Boolean(inPop == null ? false : true));
 		writer.endNode();
-
-		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
 	}
 
 	@Override
@@ -91,8 +87,6 @@ public class SavedAgentConverter implements Converter {
 		final Integer index = Integer.parseInt(indexStr);
 		reader.moveUp();
 		reader.moveDown();
-		System.out.println("node" +reader.getNodeName());
-		System.out.println("=========== Coucou 1");
 		reader.moveDown();
 		final ArrayList<String> keys = (ArrayList<String>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
@@ -103,11 +97,8 @@ public class SavedAgentConverter implements Converter {
 		Map<String, Object> localData = new HashMap<String, Object> ();
 		for(int ii = 0; ii< keys.size(); ii++)
 		{
-			System.out.println("read " + keys+" "+datas.toString());
 			localData.put(keys.get(ii), datas.get(ii));
 		}
-		System.out.println("=========== Coucou 2");
-		
 		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = null;
 		if(reader.getNodeName().equals("innerPopulations"))
@@ -116,7 +107,6 @@ public class SavedAgentConverter implements Converter {
 			reader.moveUp();
 			reader.moveDown();
 		}
-		System.out.println("=========== Coucou 3 booll");
 		final Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
 		reader.moveUp();
 
