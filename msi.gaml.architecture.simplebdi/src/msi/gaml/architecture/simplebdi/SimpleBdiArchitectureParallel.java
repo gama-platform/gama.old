@@ -35,6 +35,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatement;
@@ -78,10 +79,12 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 		
 	}
 	public void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation){
+		final IExpression schedule = gamaPopulation.getSpecies().getSchedule();
+		final List<? extends IAgent> agents = schedule == null ? gamaPopulation : Cast.asList(scope, schedule.value(scope));
 		if (_reflexes != null)
 			for (final IStatement r : _reflexes) {
 				if (!scope.interrupted()) {
-					GamaExecutorService.execute(scope, r, gamaPopulation,parallel) ;
+					GamaExecutorService.execute(scope, r, agents,ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION) ;
 				}
 			}
 			
@@ -90,7 +93,7 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 				if (!scope.interrupted()) {
 					PerceiveStatement statement = _perceptions.get(i);
 					IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
-					GamaExecutorService.execute(scope, statement, gamaPopulation,par) ;
+					GamaExecutorService.execute(scope, statement, agents,par) ;
 				}
 			}
 		}
@@ -98,12 +101,12 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 			for (int i = 0; i < _rulesNumber; i++) {
 				RuleStatement statement = _rules.get(i);
 				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
-				GamaExecutorService.execute(scope, statement, gamaPopulation,par) ;
+				GamaExecutorService.execute(scope, statement, agents,par) ;
 			}
 		}
 		
-		GamaExecutorService.execute(scope, new UpdateEmotions(null), gamaPopulation,parallel) ;
-		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), gamaPopulation,parallel) ;
+		GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
+		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), agents,parallel) ;
 	}
 	
 	@Override
