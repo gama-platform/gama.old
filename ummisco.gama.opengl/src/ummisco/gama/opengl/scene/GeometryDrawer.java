@@ -374,7 +374,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private void drawLineCylinder(final Geometry g, final boolean solid, final double radius, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(g));
-		_vertices.visit((v1, v2) -> {
+		for (int i = 0, n = _vertices.size(); i < n - 1; i++) {
+			final GamaPoint v1 = _vertices.at(i);
+			final GamaPoint v2 = _vertices.at(i + 1);
 			// draw first sphere
 			_center.setLocation(v1);
 			_normal.setLocation(v2);
@@ -382,19 +384,41 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final double height = _normal.norm();
 			_tangent.setLocation(_normal.orthogonal());
 			_normal.normalize();
-			_scale.setTo(radius);
-			drawCachedGeometry(Type.SPHERE, border);
+			if (i > 0) {
+				_scale.setTo(radius);
+				drawCachedGeometry(Type.SPHERE, border);
+			}
 			// draw tube
 			_scale.setTo(radius, radius, height);
 			drawCachedGeometry(Type.CYLINDER, border);
-			// draw second sphere
-			_center.setLocation(v2);
-			_normal.negate();
-			_tangent.setLocation(_normal.orthogonal());
-			_scale.setTo(radius);
-			drawCachedGeometry(Type.SPHERE, border);
 
-		});
+		}
+		// _vertices.visit((v1, v2) -> {
+		// // draw first sphere
+		// _center.setLocation(v1);
+		// _normal.setLocation(v2);
+		// _normal.subtract(v1);
+		// final double height = _normal.norm();
+		// _tangent.setLocation(_normal.orthogonal());
+		// _normal.normalize();
+		// if (!v1.equals(first)) {
+		// _scale.setTo(radius);
+		// drawCachedGeometry(Type.SPHERE, border);
+		// }
+		// // draw tube
+		// _scale.setTo(radius, radius, height);
+		// drawCachedGeometry(Type.CYLINDER, border);
+		// // draw second sphere
+		// if (!v2.equals(last)) {
+		// _center.setLocation(v2);
+		// _normal.negate();
+		// _tangent.setLocation(_normal.orthogonal());
+		// _scale.setTo(radius);
+		// drawCachedGeometry(Type.SPHERE, border);
+		// }
+
+		// });
+
 	}
 
 	private void drawCone3D(final Geometry p, final boolean solid, final double height, final Color border) {

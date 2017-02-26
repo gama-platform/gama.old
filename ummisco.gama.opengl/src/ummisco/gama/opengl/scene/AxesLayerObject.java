@@ -67,12 +67,11 @@ public class AxesLayerObject extends StaticLayerObject.World {
 		else
 			for (int i = 0; i < 3; i++) {
 				final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
+				final GamaShape axis2 = (GamaShape) GamaGeometryType.buildLineCylinder(origin, p, size / 40);
 				final AxisAngle rotation = i == 0 ? new AxisAngle(Rotation3D.PLUS_J, 90)
 						: i == 1 ? new AxisAngle(Rotation3D.MINUS_I, 90) : null;
 				// build axis
-				GamaShape axis = (GamaShape) GamaGeometryType.buildCylinder(size / 40, size, origin);
-				axis = new GamaShape(axis, null, rotation, origin);
-				list.add(new GeometryObject(axis, COLORS[i], IShape.Type.CYLINDER, false));
+				list.add(new GeometryObject(axis2, COLORS[i], IShape.Type.LINECYLINDER, false));
 
 				// build labels
 				final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.

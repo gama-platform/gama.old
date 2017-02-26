@@ -52,6 +52,7 @@ public class ModelScene {
 	private volatile boolean rendered = false;
 	private volatile int objectNumber;
 	private double zIncrement;
+	private int currentLayerTrace;
 
 	public static abstract class ObjectVisitor {
 		public abstract void process(AbstractObject object);
@@ -140,7 +141,7 @@ public class ModelScene {
 	}
 
 	private <T extends AbstractObject> T configure(final T object) {
-		objectNumber++;
+		objectNumber += currentLayerTrace;
 		return object;
 	}
 
@@ -179,7 +180,9 @@ public class ModelScene {
 		currentLayer = null;
 	}
 
-	public void beginDrawingLayers() {}
+	public void beginDrawingLayers() {
+		currentLayerTrace = 0;
+	}
 
 	public void endDrawingLayers() {
 		zIncrement = computeVisualZIncrement();
@@ -213,10 +216,10 @@ public class ModelScene {
 			currentLayer = new LayerObject(renderer, layer);
 			layers.put(key, currentLayer);
 		}
-		// offset.z = offset.z + id * 0.01f;
 		currentLayer.setOffset(offset);
 		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
+		currentLayerTrace = currentLayer.objects.size();
 	}
 
 	public void beginOverlay() {

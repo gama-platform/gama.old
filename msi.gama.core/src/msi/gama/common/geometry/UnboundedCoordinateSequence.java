@@ -383,7 +383,8 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		for (final GamaPoint p : other.toCoordinateArray()) {
 			points.add(p.yNegated());
 		}
-		Collections.reverse(points);
+		if (isRing(points))
+			Collections.reverse(points);
 	}
 
 	public void setTo(final ICoordinates other) {
