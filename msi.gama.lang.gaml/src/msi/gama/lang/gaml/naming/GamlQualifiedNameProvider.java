@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlQualifiedNameProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlQualifiedNameProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,7 +15,6 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.util.IResourceScopeCache;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.Access;
@@ -42,6 +40,7 @@ import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
@@ -106,13 +105,7 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 	public QualifiedName getFullyQualifiedName(final EObject obj) {
 		if (obj == null)
 			return null;
-		return cache.get(obj, obj.eResource(), new Provider<QualifiedName>() {
-
-			@Override
-			public QualifiedName get() {
-				return GamlQualifiedNameProvider.this.get(obj);
-			}
-		});
+		return cache.get(obj, obj.eResource(), () -> GamlQualifiedNameProvider.this.get(obj));
 	}
 
 	private QualifiedName get(final EObject input) {
@@ -157,6 +150,11 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 
 			@Override
 			public String caseS_Experiment(final S_Experiment s) {
+				return s.getName();
+			}
+
+			@Override
+			public String caseHeadlessExperiment(final HeadlessExperiment s) {
 				return s.getName();
 			}
 

@@ -110,6 +110,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createPragmaAdapter();
       }
       @Override
+      public Adapter caseExperimentFileStructure(ExperimentFileStructure object)
+      {
+        return createExperimentFileStructureAdapter();
+      }
+      @Override
+      public Adapter caseHeadlessExperiment(HeadlessExperiment object)
+      {
+        return createHeadlessExperimentAdapter();
+      }
+      @Override
       public Adapter caseStatement(Statement object)
       {
         return createStatementAdapter();
@@ -552,6 +562,36 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createPragmaAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ExperimentFileStructure <em>Experiment File Structure</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.ExperimentFileStructure
+   * @generated
+   */
+  public Adapter createExperimentFileStructureAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.HeadlessExperiment <em>Headless Experiment</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.HeadlessExperiment
+   * @generated
+   */
+  public Adapter createHeadlessExperimentAdapter()
   {
     return null;
   }

@@ -18,6 +18,7 @@ import java.io.File;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gaml.compilation.ast.SyntacticModelElement.SyntacticExperimentModelElement;
 import msi.gaml.statements.Facets;
 
 /**
@@ -30,9 +31,19 @@ import msi.gaml.statements.Facets;
 public class SyntacticFactory {
 
 	public static final String SPECIES_VAR = "species_var";
+	public static final String SYNTHETIC_MODEL = "synthetic_model";
+	public static final String EXPERIMENT_MODEL = "experiment_model";
 
 	public static SyntacticModelElement createSyntheticModel(final EObject statement) {
-		return new SyntacticModelElement("synthetic_model", null, statement, null);
+		return new SyntacticModelElement(SYNTHETIC_MODEL, null, statement, null);
+	}
+
+	public static SyntacticExperimentModelElement createExperimentModel(final EObject root, final EObject expObject,
+			final File path) {
+		final SyntacticExperimentModelElement model = new SyntacticExperimentModelElement(EXPERIMENT_MODEL, root, path);
+		final SyntacticExperimentElement exp = new SyntacticExperimentElement("experiment", null, expObject);
+		model.addChild(exp);
+		return model;
 	}
 
 	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren,

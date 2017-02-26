@@ -29,6 +29,7 @@ import static msi.gama.common.interfaces.IKeyword.FUNCTION;
 import static msi.gama.common.interfaces.IKeyword.GRID;
 import static msi.gama.common.interfaces.IKeyword.GRID_POPULATION;
 import static msi.gama.common.interfaces.IKeyword.GUI_;
+import static msi.gama.common.interfaces.IKeyword.HEADLESS_UI;
 import static msi.gama.common.interfaces.IKeyword.IN;
 import static msi.gama.common.interfaces.IKeyword.INDEX;
 import static msi.gama.common.interfaces.IKeyword.INIT;
@@ -73,11 +74,13 @@ import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.Block;
+import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Pragma;
@@ -100,6 +103,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.compilation.ast.SyntacticModelElement.SyntacticExperimentModelElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
@@ -124,11 +128,20 @@ public class GamlSyntacticConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
 			Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	public SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
+	public ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if (root instanceof StandaloneBlock) {
 			final SyntacticModelElement elt = SyntacticFactory.createSyntheticModel(root);
 			convertBlock(elt, ((StandaloneBlock) root).getBlock(), errors);
 			return elt;
+		}
+		if (root instanceof ExperimentFileStructure) {
+			final HeadlessExperiment he = ((ExperimentFileStructure) root).getExp();
+			final File path = GamlResourceServices.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
+			final SyntacticExperimentModelElement exp = SyntacticFactory.createExperimentModel(root, he, path);
+			convertFacets(he, exp.getExperiment(), errors);
+			exp.setFacet(NAME, LabelExpressionDescription.create(exp.getExperiment().getName()));
+			convStatements(exp.getExperiment(), EGaml.getStatementsOf(he.getBlock()), errors);
+			return exp;
 		}
 		if (!(root instanceof Model)) { return null; }
 		final ModelImpl m = (ModelImpl) root;
@@ -496,6 +509,24 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	private void convertFacets(final HeadlessExperiment stm, final ISyntacticElement elt,
+			final Set<Diagnostic> errors) {
+		final SymbolProto p = DescriptionFactory.getProto(EXPERIMENT, null);
+		for (final Facet f : EGaml.getFacetsOf(stm)) {
+			final String fname = EGaml.getKeyOf(f);
+
+			// We compute (and convert) the expression attached to the facet
+			final boolean label = p == null ? false : p.isLabel(fname);
+			final IExpressionDescription fexpr = convExpr(f, label, errors);
+			addFacet(elt, fname, fexpr, errors);
+		}
+		final IExpressionDescription ed = findExpr(stm, errors);
+		addFacet(elt, NAME, ed, errors);
+		addFacet(elt, TITLE, ed, errors);
+		if (!elt.hasFacet(TYPE))
+			addFacet(elt, TYPE, convertToLabel(null, HEADLESS_UI), errors);
+	}
+
 	private String convertKeyword(final String k, final String upper) {
 		String keyword = k;
 		if ((upper.equals(BATCH) || upper.equals(EXPERIMENT)) && keyword.equals(SAVE)) {
@@ -577,6 +608,13 @@ public class GamlSyntacticConverter {
 		final Expression expr = stm.getExpr();
 		if (expr != null) { return convExpr(expr, errors); }
 		return null;
+	}
+
+	private final IExpressionDescription findExpr(final HeadlessExperiment stm, final Set<Diagnostic> errors) {
+		if (stm == null) { return null; }
+		// The order below should be important
+		return convertToLabel(stm, EGaml.getNameOf(stm));
+
 	}
 
 }

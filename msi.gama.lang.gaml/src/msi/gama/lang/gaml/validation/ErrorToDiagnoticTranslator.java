@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ErrorToDiagnoticTranslator.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ErrorToDiagnoticTranslator.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,7 +24,9 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
@@ -39,8 +40,7 @@ import msi.gaml.descriptions.ValidationContext;
 public class ErrorToDiagnoticTranslator {
 
 	@Inject
-	public ErrorToDiagnoticTranslator() {
-	}
+	public ErrorToDiagnoticTranslator() {}
 
 	public Diagnostic translate(final ValidationContext errors, final GamlResource r, final CheckMode mode) {
 		final BasicDiagnostic chain = new BasicDiagnostic();
@@ -57,10 +57,13 @@ public class ErrorToDiagnoticTranslator {
 		if (!GamlResourceIndexer.equals(errorURI, r.getURI())) {
 			final String uri = URI.decode(errorURI.toFileString());
 			final String s = URI.decode(errorURI.lastSegment());
-			final Model m = (Model) r.getContents().get(0);
+			final EObject m = r.getContents().get(0);
 			final EObject eObject = findImportWith(m, s);
-			final EAttribute feature = eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
-					: GamlPackage.Literals.IMPORT__IMPORT_URI;
+			final EAttribute feature =
+					eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
+							: eObject instanceof HeadlessExperiment
+									? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
+									: GamlPackage.Literals.IMPORT__IMPORT_URI;
 			return createDiagnostic(CheckMode.NORMAL_ONLY, Diagnostic.ERROR, e.toString() + " (in " + s + ")", eObject,
 					feature, ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
 		}
@@ -119,11 +122,14 @@ public class ErrorToDiagnoticTranslator {
 		return diagnosticSeverity;
 	}
 
-	private EObject findImportWith(final Model m, final String s) {
-		for (final Import i : m.getImports()) {
-			if (i.getImportURI().endsWith(s))
-				return i;
-		}
+	private EObject findImportWith(final EObject m, final String s) {
+		if (m instanceof Model)
+			for (final Import i : ((Model) m).getImports()) {
+				if (i.getImportURI().endsWith(s))
+					return i;
+			}
+		else if (m instanceof ExperimentFileStructure)
+			return ((ExperimentFileStructure) m).getExp();
 		return m;
 	}
 
