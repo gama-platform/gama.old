@@ -342,30 +342,31 @@ public class HeadlessListener implements IGui {
 		@Override
 		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
 			// TODO Auto-generated method stub
-
+			debug(s);
 		}
 
 		@Override
 		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
 			// TODO Auto-generated method stub
-
+			debug(s);
 		}
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-			System.out.println(s);
-			try {
-				outputWriter.write(s+Strings.LN);
-				outputWriter.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			informConsole(s,root);
 		}
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
-			// TODO Auto-generated method stub
 			System.out.println(s);
+			if(outputWriter != null) {
+				try {
+					outputWriter.write(s+Strings.LN);
+					outputWriter.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		@Override
@@ -376,8 +377,6 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void eraseConsole(final boolean setToNull) {
-			// TODO Auto-generated method stub
-
 		}
 
 	};
