@@ -20,6 +20,10 @@ import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.types.Types;
 
 public class MoleExperiment extends Experiment implements IMoleExperiment {
 	MoleExperiment(final IModel mdl) {
@@ -31,12 +35,26 @@ public class MoleExperiment extends Experiment implements IMoleExperiment {
 		while(finalStep<this.step());
 	}
 
+	public void play(String finalCondition) {
+		play(finalCondition,-1);
+	}
+
 	@Override
 	public void play(String exp, int finalStep) {
-		IModel toto;
-//		toto.getDescription().
-		// TODO Auto-generated method stub
-		
+			IExpression endCondition = this.compileExpression(exp);
+			if(exp==null ||"".equals(exp)) {
+				endCondition = IExpressionFactory.FALSE_EXPR;
+			} else {
+				endCondition =this.compileExpression(exp);			
+			}
+			if(endCondition.getType() != Types.BOOL) {
+				throw GamaRuntimeException.error("The until condition of the experiment should be a boolean", this.getSimulation().getScope());
+			}
+			long step = 0;
+			while( ! Types.BOOL.cast(this.getSimulation().getScope(), this.evaluateExpression(endCondition), null, false).booleanValue()
+					 && ((finalStep >= 0) ? (step < finalStep) : true)) {
+				step = this.step();
+			}
 	}
 		
 }

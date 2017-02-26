@@ -14,6 +14,7 @@ package msi.gama.headless.core;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gaml.expressions.IExpression;
 
 public interface IExperiment { 
 	public IModel getModel();
@@ -30,7 +31,9 @@ public interface IExperiment {
 	public void setParameter(final String parameterName, final Object value);
 	public Object getOutput(final String parameterName);
 	public Object getVariableOutput(final String parameterName);
-	
+	public IExpression compileExpression(final String expression);
+	public Object evaluateExpression(IExpression exp);
+	public Object evaluateExpression(String exp);
 	public void dispose();
 	
 	

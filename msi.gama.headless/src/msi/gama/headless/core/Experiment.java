@@ -20,6 +20,8 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
+import msi.gaml.expressions.IExpression;
 
 public class Experiment implements IExperiment {
 
@@ -150,4 +152,19 @@ public class Experiment implements IExperiment {
 	public IExperimentPlan getExperimentPlan() {
 		return this.currentExperiment;
 	}
+
+	@Override
+	public IExpression compileExpression(String expression) {
+		return GAML.compileExpression(expression, this.getSimulation(), true);	
+	}
+	public Object evaluateExpression(IExpression exp)
+	{
+		return exp.value(this.getSimulation().getScope());
+	}
+	public Object evaluateExpression(String exp)
+	{
+		IExpression localExpression = compileExpression(exp);
+		return evaluateExpression(localExpression);
+	}
+	
 }

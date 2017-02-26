@@ -216,7 +216,7 @@ public class ExperimentJob implements IExperimentJob {
 		}
 
 		// Initialize the enCondition
-		if("".equals(untilCond)) {
+		if(untilCond==null ||"".equals(untilCond)) {
 			endCondition = IExpressionFactory.FALSE_EXPR;
 		} else {
 			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);			
@@ -248,7 +248,6 @@ public class ExperimentJob implements IExperimentJob {
 		final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 				
-		//while
 		int step = 0;
 		while( ! Types.BOOL.cast(simulator.getSimulation().getScope(), endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue() 
 				 && ((finalStep >= 0) ? (step < finalStep) : true)) {

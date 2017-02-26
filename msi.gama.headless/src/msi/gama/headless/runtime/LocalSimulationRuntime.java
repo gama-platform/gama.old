@@ -222,8 +222,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 			si.play(); 
 			runtime.closeSimulation(this); 
 			runtime.releaseModel(si.getSourcePath(),si.getSimulation().getModel());
-			
-			
 		}
 
 	}
