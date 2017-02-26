@@ -167,6 +167,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final int step = scope.getClock().getCycle();
 			if (frequency == 0 || step % frequency != 0) { return true; }
 		}
+		getSpecies().getArchitecture().preStep(this);
 		return stepAgents(scope);
 
 	}

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -107,6 +109,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		return true;
 	}
 
+	@Override
 	public boolean abort(final IScope scope) throws GamaRuntimeException {
 		if (_aborts == null) { return true; }
 		for (final IStatement init : _aborts) {
@@ -120,5 +123,8 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	public void setEnclosing(final ISymbol enclosing) {
 		// Nothing to do by default
 	}
+
+	@Override
+	public void preStep(final IPopulation<? extends IAgent> gamaPopulation) {}
 
 }

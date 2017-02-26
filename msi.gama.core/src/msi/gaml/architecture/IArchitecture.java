@@ -10,6 +10,8 @@
 package msi.gaml.architecture;
 
 import msi.gama.common.interfaces.ISkill;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
@@ -28,4 +30,6 @@ public interface IArchitecture extends ISkill, IStatement {
 	public abstract boolean abort(IScope scope) throws GamaRuntimeException;
 
 	public abstract void verifyBehaviors(ISpecies context);
+
+	public abstract void preStep(IPopulation<? extends IAgent> gamaPopulation);
 }
