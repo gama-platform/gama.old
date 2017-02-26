@@ -71,6 +71,8 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.PRAGMA: return createPragma();
+      case GamlPackage.EXPERIMENT_FILE_STRUCTURE: return createExperimentFileStructure();
+      case GamlPackage.HEADLESS_EXPERIMENT: return createHeadlessExperiment();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.SGLOBAL: return createS_Global();
       case GamlPackage.SSPECIES: return createS_Species();
@@ -215,6 +217,28 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     PragmaImpl pragma = new PragmaImpl();
     return pragma;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExperimentFileStructure createExperimentFileStructure()
+  {
+    ExperimentFileStructureImpl experimentFileStructure = new ExperimentFileStructureImpl();
+    return experimentFileStructure;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public HeadlessExperiment createHeadlessExperiment()
+  {
+    HeadlessExperimentImpl headlessExperiment = new HeadlessExperimentImpl();
+    return headlessExperiment;
   }
 
   /**

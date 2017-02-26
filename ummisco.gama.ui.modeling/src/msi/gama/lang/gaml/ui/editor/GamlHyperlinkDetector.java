@@ -33,6 +33,7 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 
 import com.google.inject.Inject;
 
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.ui.utils.FileOpener;
@@ -134,12 +135,15 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 					return new IHyperlink[] { hyperlink1 };
 				}
 			}
-			if (!(resolved instanceof Import)) { return NO_HYPERLINKS; }
-			final Import anImport = (Import) resolved;
-			// if ( !imports.isResolved(anImport) ) { return
-			// NO_HYPERLINKS; }
-			final String importUri = anImport.getImportURI();
-			if (importUri == null) { return NO_HYPERLINKS; }
+			String importUri = null;
+			if (resolved instanceof Import) {
+				final Import anImport = (Import) resolved;
+				importUri = ((Import) resolved).getImportURI();
+			} else if (resolved instanceof HeadlessExperiment) {
+				importUri = ((HeadlessExperiment) resolved).getImportURI();
+			}
+			if (importUri == null)
+				return NO_HYPERLINKS;
 			final URI iu2 = URI.createURI(importUri, false).resolve(resource.getURI());
 			IRegion importUriRegion;
 			try {

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WrappedSyntacticContent.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WrappedSyntacticContent.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -44,8 +43,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 						uriProblems = new TObjectIntHashMap<String>();
 					uriProblems.put(s, severity);
 				}
-			} catch (final CoreException ce) {
-			}
+			} catch (final CoreException ce) {}
 		}
 
 		@Override
@@ -87,8 +85,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 						uriProblems = new TObjectIntHashMap<String>();
 					uriProblems.put(s, severity);
 				}
-			} catch (final CoreException ce) {
-			}
+			} catch (final CoreException ce) {}
 		}
 
 		@Override
@@ -125,7 +122,8 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 	public WrappedSyntacticContent(final Object root, final ISyntacticElement e, final String name) {
 		super(root, GAMA.getGui().getGamlLabelProvider().getText(e));
 		element = e;
-		uri = element == null ? null : EcoreUtil.getURI(element.getElement()).toString();
+		uri = element == null || element.getElement() == null ? null
+				: EcoreUtil.getURI(element.getElement()).toString();
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlResourceIndexer.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlResourceIndexer.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,7 +31,9 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.inject.Singleton;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
+import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
@@ -41,7 +42,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.TOrderedHashMap;
 
 @Singleton
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceIndexer {
 
 	private static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
@@ -64,6 +65,19 @@ public class GamlResourceIndexer {
 				}
 			}
 		}
+		return result;
+	}
+
+	protected static TOrderedHashMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI,
+			final ExperimentFileStructure m) {
+		TOrderedHashMap<URI, String> result  = new TOrderedHashMap();
+		final String u = m.getExp().getImportURI();
+		if (u != null) {
+			URI uri = URI.createURI(u, true);
+			uri = GamlResourceServices.properlyEncodedURI(uri.resolve(baseURI));
+			result.put(uri, null);
+		}
+
 		return result;
 	}
 
@@ -110,20 +124,25 @@ public class GamlResourceIndexer {
 	}
 
 	/**
-	 * Synchronized method to avoid concurrent errors in the graph in case of a
-	 * parallel resource loader
+	 * Synchronized method to avoid concurrent errors in the graph in case of a parallel resource loader
 	 */
 	public static synchronized EObject updateImports(final GamlResource r) {
 		final URI baseURI = GamlResourceServices.properlyEncodedURI(r.getURI());
 		final Set<Edge> nativeEdges = index.containsVertex(baseURI) ? index.outgoingEdgesOf(baseURI) : null;
-		final Set<Edge> edges = nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET
-				: new HashSet(nativeEdges);
+		final Set<Edge> edges =
+				nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET : new HashSet(nativeEdges);
 		if (r.getContents().isEmpty())
 			return null;
 		final EObject contents = r.getContents().get(0);
-		if (contents == null || !(contents instanceof Model))
-			return null;
-		final TOrderedHashMap<URI, String> added = getImportsAsAbsoluteURIS(baseURI, (Model) r.getContents().get(0));
+		if (contents == null) return null;
+		final boolean isModel = contents instanceof Model;
+		final boolean isExpe = contents instanceof ExperimentFileStructure;
+		final TOrderedHashMap<URI, String> added;
+		if (isModel)
+			added = getImportsAsAbsoluteURIS(baseURI, (Model) contents);
+		else if (isExpe)
+			added = getImportsAsAbsoluteURIS(baseURI, (ExperimentFileStructure) contents);
+		else return null;
 		final EObject[] faulty = new EObject[1];
 		if (added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
 
@@ -154,10 +173,21 @@ public class GamlResourceIndexer {
 							r.getResourceSet().getResource(uri, true);
 						}
 					} else {
-						faulty[0] = findImport((Model) r.getContents().get(0), uri);
+						if (isModel)
+							faulty[0] = findImport((Model) contents, uri);
+						else
+							faulty[0] = findImport((ExperimentFileStructure) contents, uri);
 						return false;
 					}
 				return true;
+			}
+
+			private EObject findImport(final ExperimentFileStructure model, final URI uri) {
+				if (model.getExp().getImportURI().contains(URI.decode(uri.lastSegment())))
+					return model;
+				if (uri.equals(baseURI) && model.getExp().getImportURI().isEmpty())
+					return model;
+				return null;
 			}
 
 			private EObject findImport(final Model model, final URI uri) {

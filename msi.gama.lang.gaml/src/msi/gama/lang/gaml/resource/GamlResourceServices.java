@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlResourceServices.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlResourceServices.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -39,12 +38,12 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceServices {
 
 	private static int resourceCount = 0;
@@ -58,8 +57,8 @@ public class GamlResourceServices {
 		}
 
 	};
-	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder
-			.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
+	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache =
+			CacheBuilder.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
 
 				@Override
 				public THashMap load(final URI key) throws Exception {
@@ -225,7 +224,7 @@ public class GamlResourceServices {
 		return documenter;
 	}
 
-	public static SyntacticModelElement buildSyntacticContents(final GamlResource r) {
+	public static ISyntacticElement buildSyntacticContents(final GamlResource r) {
 		return converter.buildSyntacticContents(r.getParseResult().getRootASTElement(), null);
 	}
 

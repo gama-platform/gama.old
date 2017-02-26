@@ -23,12 +23,13 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cModelParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cStringEvaluatorParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cStandaloneBlockParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cExperimentFileStructureParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
 		//Entry:
-		//	Model | StringEvaluator | StandaloneBlock;
+		//	Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure;
 		@Override public ParserRule getRule() { return rule; }
 
-		//Model | StringEvaluator | StandaloneBlock
+		//Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//Model
@@ -39,6 +40,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//StandaloneBlock
 		public RuleCall getStandaloneBlockParserRuleCall_2() { return cStandaloneBlockParserRuleCall_2; }
+
+		//ExperimentFileStructure
+		public RuleCall getExperimentFileStructureParserRuleCall_3() { return cExperimentFileStructureParserRuleCall_3; }
 	}
 
 	public class StandaloneBlockElements extends AbstractParserRuleElementFinder {
@@ -232,6 +236,106 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+	}
+
+	public class ExperimentFileStructureElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.ExperimentFileStructure");
+		private final Assignment cExpAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cExpHeadlessExperimentParserRuleCall_0 = (RuleCall)cExpAssignment.eContents().get(0);
+		
+		/// **
+		// * Experiment files
+		// * / ExperimentFileStructure:
+		//	exp=HeadlessExperiment;
+		@Override public ParserRule getRule() { return rule; }
+
+		//exp=HeadlessExperiment
+		public Assignment getExpAssignment() { return cExpAssignment; }
+
+		//HeadlessExperiment
+		public RuleCall getExpHeadlessExperimentParserRuleCall_0() { return cExpHeadlessExperimentParserRuleCall_0; }
+	}
+
+	public class HeadlessExperimentElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.HeadlessExperiment");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cKey_ExperimentKeyParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
+		private final Assignment cFirstFacetAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Keyword cFirstFacetNameKeyword_1_0 = (Keyword)cFirstFacetAssignment_1.eContents().get(0);
+		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cNameAlternatives_2_0 = (Alternatives)cNameAssignment_2.eContents().get(0);
+		private final RuleCall cNameValid_IDParserRuleCall_2_0_0 = (RuleCall)cNameAlternatives_2_0.eContents().get(0);
+		private final RuleCall cNameSTRINGTerminalRuleCall_2_0_1 = (RuleCall)cNameAlternatives_2_0.eContents().get(1);
+		private final Keyword cModelKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cImportURIAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cImportURISTRINGTerminalRuleCall_4_0 = (RuleCall)cImportURIAssignment_4.eContents().get(0);
+		private final Assignment cFacetsAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cFacetsFacetParserRuleCall_5_0 = (RuleCall)cFacetsAssignment_5.eContents().get(0);
+		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
+		private final Assignment cBlockAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
+		private final RuleCall cBlockBlockParserRuleCall_6_0_0 = (RuleCall)cBlockAssignment_6_0.eContents().get(0);
+		private final Keyword cSemicolonKeyword_6_1 = (Keyword)cAlternatives_6.eContents().get(1);
+		
+		//HeadlessExperiment:
+		//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block
+		//	| ';');
+		@Override public ParserRule getRule() { return rule; }
+
+		//key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block |
+		//';')
+		public Group getGroup() { return cGroup; }
+
+		//key=_ExperimentKey
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+
+		//_ExperimentKey
+		public RuleCall getKey_ExperimentKeyParserRuleCall_0_0() { return cKey_ExperimentKeyParserRuleCall_0_0; }
+
+		//firstFacet="name:"?
+		public Assignment getFirstFacetAssignment_1() { return cFirstFacetAssignment_1; }
+
+		//"name:"
+		public Keyword getFirstFacetNameKeyword_1_0() { return cFirstFacetNameKeyword_1_0; }
+
+		//name=(Valid_ID | STRING)
+		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+
+		//(Valid_ID | STRING)
+		public Alternatives getNameAlternatives_2_0() { return cNameAlternatives_2_0; }
+
+		//Valid_ID
+		public RuleCall getNameValid_IDParserRuleCall_2_0_0() { return cNameValid_IDParserRuleCall_2_0_0; }
+
+		//STRING
+		public RuleCall getNameSTRINGTerminalRuleCall_2_0_1() { return cNameSTRINGTerminalRuleCall_2_0_1; }
+
+		//'model:'
+		public Keyword getModelKeyword_3() { return cModelKeyword_3; }
+
+		//importURI=STRING
+		public Assignment getImportURIAssignment_4() { return cImportURIAssignment_4; }
+
+		//STRING
+		public RuleCall getImportURISTRINGTerminalRuleCall_4_0() { return cImportURISTRINGTerminalRuleCall_4_0; }
+
+		//facets+=Facet*
+		public Assignment getFacetsAssignment_5() { return cFacetsAssignment_5; }
+
+		//Facet
+		public RuleCall getFacetsFacetParserRuleCall_5_0() { return cFacetsFacetParserRuleCall_5_0; }
+
+		//(block=Block | ';')
+		public Alternatives getAlternatives_6() { return cAlternatives_6; }
+
+		//block=Block
+		public Assignment getBlockAssignment_6_0() { return cBlockAssignment_6_0; }
+
+		//Block
+		public RuleCall getBlockBlockParserRuleCall_6_0_0() { return cBlockBlockParserRuleCall_6_0_0; }
+
+		//';'
+		public Keyword getSemicolonKeyword_6_1() { return cSemicolonKeyword_6_1; }
 	}
 
 	public class S_SectionElements extends AbstractParserRuleElementFinder {
@@ -4682,6 +4786,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private final ModelBlockElements pModelBlock;
 	private final ImportElements pImport;
 	private final PragmaElements pPragma;
+	private final ExperimentFileStructureElements pExperimentFileStructure;
+	private final HeadlessExperimentElements pHeadlessExperiment;
 	private final S_SectionElements pS_Section;
 	private final S_GlobalElements pS_Global;
 	private final S_SpeciesElements pS_Species;
@@ -4802,6 +4908,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pModelBlock = new ModelBlockElements();
 		this.pImport = new ImportElements();
 		this.pPragma = new PragmaElements();
+		this.pExperimentFileStructure = new ExperimentFileStructureElements();
+		this.pHeadlessExperiment = new HeadlessExperimentElements();
 		this.pS_Section = new S_SectionElements();
 		this.pS_Global = new S_GlobalElements();
 		this.pS_Species = new S_SpeciesElements();
@@ -4935,7 +5043,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Entry:
-	//	Model | StringEvaluator | StandaloneBlock;
+	//	Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure;
 	public EntryElements getEntryAccess() {
 		return pEntry;
 	}
@@ -5003,6 +5111,29 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getPragmaRule() {
 		return getPragmaAccess().getRule();
+	}
+
+	/// **
+	// * Experiment files
+	// * / ExperimentFileStructure:
+	//	exp=HeadlessExperiment;
+	public ExperimentFileStructureElements getExperimentFileStructureAccess() {
+		return pExperimentFileStructure;
+	}
+	
+	public ParserRule getExperimentFileStructureRule() {
+		return getExperimentFileStructureAccess().getRule();
+	}
+
+	//HeadlessExperiment:
+	//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block
+	//	| ';');
+	public HeadlessExperimentElements getHeadlessExperimentAccess() {
+		return pHeadlessExperiment;
+	}
+	
+	public ParserRule getHeadlessExperimentRule() {
+		return getHeadlessExperimentAccess().getRule();
 	}
 
 	/// **

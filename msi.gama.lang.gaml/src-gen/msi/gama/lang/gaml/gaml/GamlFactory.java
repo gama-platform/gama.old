@@ -86,6 +86,24 @@ public interface GamlFactory extends EFactory
   Pragma createPragma();
 
   /**
+   * Returns a new object of class '<em>Experiment File Structure</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Experiment File Structure</em>'.
+   * @generated
+   */
+  ExperimentFileStructure createExperimentFileStructure();
+
+  /**
+   * Returns a new object of class '<em>Headless Experiment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Headless Experiment</em>'.
+   * @generated
+   */
+  HeadlessExperiment createHeadlessExperiment();
+
+  /**
    * Returns a new object of class '<em>Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

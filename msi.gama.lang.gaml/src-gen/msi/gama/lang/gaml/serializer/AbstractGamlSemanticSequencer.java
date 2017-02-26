@@ -20,11 +20,13 @@ import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
+import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
@@ -148,6 +150,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				return; 
 			case GamlPackage.EQUATION_REF:
 				sequence_EquationRef(context, (EquationRef) semanticObject); 
+				return; 
+			case GamlPackage.EXPERIMENT_FILE_STRUCTURE:
+				sequence_ExperimentFileStructure(context, (ExperimentFileStructure) semanticObject); 
 				return; 
 			case GamlPackage.EXPRESSION:
 				if (rule == grammarAccess.getAndRule()
@@ -298,6 +303,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 					return; 
 				}
 				else break;
+			case GamlPackage.HEADLESS_EXPERIMENT:
+				sequence_HeadlessExperiment(context, (HeadlessExperiment) semanticObject); 
+				return; 
 			case GamlPackage.IF:
 				sequence_If(context, (If) semanticObject); 
 				return; 
@@ -943,6 +951,25 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
+	 *     Entry returns ExperimentFileStructure
+	 *     ExperimentFileStructure returns ExperimentFileStructure
+	 *
+	 * Constraint:
+	 *     exp=HeadlessExperiment
+	 */
+	protected void sequence_ExperimentFileStructure(ISerializationContext context, ExperimentFileStructure semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPERIMENT_FILE_STRUCTURE__EXP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPERIMENT_FILE_STRUCTURE__EXP));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getExperimentFileStructureAccess().getExpHeadlessExperimentParserRuleCall_0(), semanticObject.getExp());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Exponentiation returns Expression
 	 *     Exponentiation.Expression_1_0_0 returns Expression
 	 *
@@ -1038,6 +1065,25 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (action=ActionRef (parameters=Parameters | args=ExpressionList))
 	 */
 	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     HeadlessExperiment returns HeadlessExperiment
+	 *
+	 * Constraint:
+	 *     (
+	 *         key=_ExperimentKey 
+	 *         firstFacet='name:'? 
+	 *         (name=Valid_ID | name=STRING) 
+	 *         importURI=STRING 
+	 *         facets+=Facet* 
+	 *         block=Block?
+	 *     )
+	 */
+	protected void sequence_HeadlessExperiment(ISerializationContext context, HeadlessExperiment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
