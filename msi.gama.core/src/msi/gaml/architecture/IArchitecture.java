@@ -31,5 +31,5 @@ public interface IArchitecture extends ISkill, IStatement {
 
 	public abstract void verifyBehaviors(ISpecies context);
 
-	public abstract void preStep(IPopulation<? extends IAgent> gamaPopulation);
+	public abstract void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation);
 }

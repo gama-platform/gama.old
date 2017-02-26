@@ -33,9 +33,9 @@ import msi.gaml.statements.IStatement;
 		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
 public class ReflexArchitecture extends AbstractArchitecture {
 
-	private List<IStatement> _inits;
-	private List<IStatement> _reflexes;
-	private List<IStatement> _aborts;
+	protected List<IStatement> _inits;
+	protected List<IStatement> _reflexes;
+	protected List<IStatement> _aborts;
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
@@ -125,6 +125,6 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	@Override
-	public void preStep(final IPopulation<? extends IAgent> gamaPopulation) {}
+	public void preStep(final IScope scope, final IPopulation<? extends IAgent> gamaPopulation) {}
 
 }

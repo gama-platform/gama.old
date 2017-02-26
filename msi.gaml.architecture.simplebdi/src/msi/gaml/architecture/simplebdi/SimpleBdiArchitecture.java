@@ -161,14 +161,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// An architecture should be stateless and stock the scope dependent values
 	// in the
 	// agent(s).
-	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
-	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
-	private final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
-	private int _plansNumber = 0;
-	private int _perceptionNumber = 0;
-	private boolean iscurrentplaninstantaneous = false;
+	protected final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
+	protected final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
+	protected final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
+	protected int _plansNumber = 0;
+	protected int _perceptionNumber = 0;
+	protected boolean iscurrentplaninstantaneous = false;
 
-	private int _rulesNumber = 0;
+	protected int _rulesNumber = 0;
 
 	@Override
 	protected void clearBehaviors() {
@@ -2515,5 +2515,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@Override
 	public void verifyBehaviors(final ISpecies context) {}
+	
+	
+
 
 }
