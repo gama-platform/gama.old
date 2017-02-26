@@ -88,13 +88,17 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
 				if (!scope.interrupted()) {
-					GamaExecutorService.execute(scope, _perceptions.get(i), gamaPopulation,parallel) ;
+					PerceiveStatement statement = _perceptions.get(i);
+					IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
+					GamaExecutorService.execute(scope, statement, gamaPopulation,par) ;
 				}
 			}
 		}
 		if (_rulesNumber > 0) {
 			for (int i = 0; i < _rulesNumber; i++) {
-				GamaExecutorService.execute(scope, _rules.get(i), gamaPopulation,parallel) ;
+				RuleStatement statement = _rules.get(i);
+				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
+				GamaExecutorService.execute(scope, statement, gamaPopulation,par) ;
 			}
 		}
 		
