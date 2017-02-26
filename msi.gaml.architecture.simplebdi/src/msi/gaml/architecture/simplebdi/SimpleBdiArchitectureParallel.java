@@ -33,9 +33,11 @@ import msi.gama.util.IList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ConstantExpressionDescription;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.AbstractStatement;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
@@ -50,7 +52,31 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
 	IExpression parallel = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
 	
+	public class UpdateEmotions extends AbstractStatement {
+
+		public UpdateEmotions(IDescription desc) {
+			super(desc);
+		}
+
+		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
+			computeEmotions(scope);
+			return null;
+		}
+		
+	}
 	
+	public class UpdateSocialLinks extends AbstractStatement {
+
+		public UpdateSocialLinks(IDescription desc) {
+			super(desc);
+		}
+
+		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
+			updateSocialLinks(scope);
+			return null;
+		}
+		
+	}
 	public void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation){
 		if (_reflexes != null)
 			for (final IStatement r : _reflexes) {
@@ -71,16 +97,13 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 				GamaExecutorService.execute(scope, _rules.get(i), gamaPopulation,parallel) ;
 			}
 		}
-		/*for (IAgent agent: gamaPopulation) {
-			computeEmotions(agent.getScope());
-			updateSocialLinks(agent.getScope());
-		}*/
+		
+		GamaExecutorService.execute(scope, new UpdateEmotions(null), gamaPopulation,parallel) ;
+		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), gamaPopulation,parallel) ;
 	}
 	
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		computeEmotions(scope);
-		updateSocialLinks(scope);
 		return executePlans(scope);
 	}
 
