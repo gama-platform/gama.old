@@ -108,12 +108,27 @@ public class Random {
 			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
 					@example(value = "gauss(0,0.3)", equals = "0.22354", test = false),
-					@example(value = "gauss(0,0.3)", equals = "-0.1357", test = false) }, see = { "truncated_gauss",
+					@example(value = "gauss(0,0.3)", equals = "-0.1357", test = false) }, see = { "skew_gauss", "truncated_gauss",
 							"poisson" })
 	public static Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd);
 	}
 
+	
+	@operator(value = "skew_gauss", category = { IOperatorCategory.RANDOM }, concept = {})
+	@doc(value = "A value from a skew normally distributed random variable with min value (the minimum skewed value possible), max value (the maximum skewed value possible), skew (the degree to which the values cluster around the mode of the distribution; higher values mean tighter clustering) and bias (the tendency of the mode to approach the min, max or midpoint value; positive values bias toward max, negative values toward min)."
+			+ "The algorithm was taken from http://stackoverflow.com/questions/5853187/skewing-java-random-number-generation-toward-a-certain-number", 
+	examples = {
+					@example(value = "skew_gauss(0.0, 1.0, 0.7,0.1)", equals = "0.1729218460343077", test = false)}, see = { "gauss", "truncated_gauss",
+							"poisson" })
+	public static Double opGauss(final IScope scope, final double min, final double max, final double skew, final double bias) {
+		double range = max - min;
+        double mid = min + range / 2.0;
+        double unitGaussian = RANDOM(scope).createGaussian(0.0, 1.0);
+        double biasFactor = Math.exp(bias);
+        double retval = mid+(range*(biasFactor/(biasFactor+Math.exp(-unitGaussian/skew))-0.5));
+        return retval;
+	}
 	@operator(value = "poisson", category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).", comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.", examples = {
 			@example(value = "poisson(3.5)", equals = "a random positive integer", test = false) }, see = { "binomial",
