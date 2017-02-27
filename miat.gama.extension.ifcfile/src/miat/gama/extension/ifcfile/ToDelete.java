@@ -7,6 +7,7 @@ public class ToDelete {
 
 	@operator (
 			value = "eleldkdjxuxsnel")
+	@Deprecated
 	public static String lalalala(final GamaColor c1, final GamaColor c2) {
 		return "lelelel";
 	}
