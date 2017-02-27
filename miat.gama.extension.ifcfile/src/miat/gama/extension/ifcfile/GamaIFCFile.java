@@ -83,11 +83,6 @@ import msi.gaml.types.Types;
 		concept = { "ifc", IConcept.FILE })
 public class GamaIFCFile extends GamaGeometryFile {
 
-	@operator (
-			value = "elelel")
-	public static String lalalala(final GamaColor c1, final GamaColor c2) {
-		return "lelelel";
-	}
 
 	public GamaIFCFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -359,7 +354,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 
 	public IShape createOpening(final IScope scope, final IfcOpeningElement o) {
 		// boolean isOpening = o.getObjectType().getDecodedValue().equals("Opening");
-		// System.out.println("\n Opening "+ o.getName() + " creation");
+		System.out.println("\n Opening "+ o.getName() + " creation");
 		GamaPoint loc = new GamaPoint(0, 0, 0);
 		GamaPoint axis = new GamaPoint(0, 0, 0);
 		;
@@ -370,13 +365,13 @@ public class GamaIFCFile extends GamaGeometryFile {
 		points.add(axis);
 		points.add(direction);
 		relatedTo(scope, o.getObjectPlacement(), points);
-		// System.out.println(o.getName() + " points : " + points);
+		System.out.println(o.getName() + " points : " + points);
 		for (final IfcRepresentation rep : o.getRepresentation().getRepresentations()) {
 			for (final IfcRepresentationItem item : rep.getItems()) {
 				if (item instanceof IfcExtrudedAreaSolid) {
 					final IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
 					final List<GamaPoint> pts = updateLocAxisDir(solid.getPosition(), loc, axis, direction);
-					// System.out.println(o.getName() + " solid : " + pts);
+					System.out.println(o.getName() + " solid : " + pts);
 					loc = pts.get(0);
 					axis = pts.get(1);
 					direction = pts.get(2);
@@ -390,8 +385,8 @@ public class GamaIFCFile extends GamaGeometryFile {
 						box.setAttribute(IKeyword.NAME, o.getName().getDecodedValue());
 						if (loc != null)
 							box.setLocation(loc);
-						// System.out.println(o.getName() + " ici -> " + loc);
-						// System.out.println(o.getName() + " la -> " + box.getLocation());
+						 System.out.println(o.getName() + " ici -> " + loc);
+						 System.out.println(o.getName() + " la -> " + box.getLocation());
 
 						// loc.x -= width;
 						// loc.z -= height/2.0;
@@ -739,12 +734,24 @@ public class GamaIFCFile extends GamaGeometryFile {
 
 	@Override
 	public Envelope3D computeEnvelope(final IScope scope) {
-		if (getBuffer() == null)
+		boolean didFillBuffer = false; 
+		if (getBuffer() == null) {
 			fillBuffer(scope);
+			//didFillBuffer = true;
+		}
 		if (getBuffer() == null)
 			return null;
-		final Envelope3D env = GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
-		invalidateContents();
+		Envelope3D env = GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
+		
+		if (didFillBuffer) {
+			GamaPoint vect = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
+			IList<IShape> newBuffer  = GamaListFactory.create();
+			for (IShape buff: getBuffer()) {
+				newBuffer.add(Spatial.Transformations.translated_by(scope, buff,vect));
+			}
+			setBuffer(newBuffer);
+			env = GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
+		}
 		return env;
 	}
 }

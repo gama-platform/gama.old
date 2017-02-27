@@ -3768,7 +3768,7 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
 		@doc (
 				usages = { @usage (
-						value = "return the Moran Index of the given the given list of interest points (list of floats) and the weight matrix (matrix of float)",
+						value = "return the Moran Index of the given list of interest points (list of floats) and the weight matrix (matrix of float)",
 						examples = { @example (
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
 								equals = "the Moran index computed",
@@ -3779,9 +3779,9 @@ public abstract class Spatial {
 			.error("A squared weight matrix should be given for the moran index computation", scope);
 			int N = vals.size();
 			Double I = 0.0;
-			Double mean = (Double) Containers.mean(scope, vals);
 			Double sumWeights = 0.0;
 			double sumXi = 0;
+			Double mean = (Double) Containers.mean(scope, vals);
 			for (int i = 0; i < N; i++) {
 				double xi = vals.get(i);
 				double xiDev = xi - mean;
