@@ -422,12 +422,19 @@ public class Variable extends Symbol implements IVariable {
 	public VariableDescription getDescription() {
 		return (VariableDescription) description;
 	}
-
+	
 	@Override
 	public boolean isUpdatable() {
 		return updateExpression != null && !isNotModifiable;
 	}
 
+		
+	@Override
+	public boolean isFunction()
+	{
+		return functionExpression!=null;
+	}
+	
 	@Override
 	public IType getType() {
 		return type;

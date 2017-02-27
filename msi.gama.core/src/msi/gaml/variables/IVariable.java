@@ -24,6 +24,8 @@ public interface IVariable extends ISymbol, IParameter {
 	public abstract boolean isUpdatable();
 
 	public abstract boolean isParameter();
+	
+	public abstract boolean isFunction();
 
 	public abstract boolean isConst();
 
