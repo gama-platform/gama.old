@@ -884,26 +884,24 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			switch (p) {
 				case CAMERA_POS:
 					cameraPos.getParam().setValue(scope, data.getCameraPos());
-					cameraPos.updateValue(true);
+					cameraPos.forceUpdateValueAsynchronously();
 					break;
 				case CAMERA_TARGET:
 					cameraTarget.getParam().setValue(scope, data.getCameraLookPos());
-					cameraTarget.updateValue(true);
+					cameraTarget.forceUpdateValueAsynchronously();
 					break;
 				case CAMERA_UP:
 					cameraUp.getParam().setValue(scope, data.getCameraUpVector());
-					cameraUp.updateValue(true);
+					cameraUp.forceUpdateValueAsynchronously();
 					break;
 				case CAMERA_PRESET:
 					// Reverting the value back to ""
-					final String ps = (String) v;
 					preset.getParam().setValue(scope, "Choose...");
-					preset.updateValue(true);
+					preset.forceUpdateValueAsynchronously();
 					break;
 				default:
 					;
 			}
-
 		});
 		final Label l = new Label(contents, SWT.None);
 		l.setText("");
@@ -958,7 +956,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				case KEYSTONE:
 					for (int k = 0; k < 4; k++) {
 						point[k].getParam().setValue(scope, data.getKeystone().at(k));
-						point[k].updateValue(true);
+						point[k].forceUpdateValueAsynchronously();
 					}
 					break;
 				default:
@@ -1026,15 +1024,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			switch (p) {
 				case ZOOM:
 					zoom.getParam().setValue(scope, (int) (data.getZoomLevel() * 100));
-					zoom.updateValue(false);
+					zoom.forceUpdateValueAsynchronously();
 					break;
 				case BACKGROUND:
 					background.getParam().setValue(scope, data.getBackgroundColor());
-					background.updateValue(false);
+					background.forceUpdateValueAsynchronously();
 					break;
 				case ROTATION:
 					rotate.getParam().setValue(scope, (double) v);
-					rotate.updateValue(false);
+					rotate.forceUpdateValueAsynchronously();
 					break;
 				default:
 					;
