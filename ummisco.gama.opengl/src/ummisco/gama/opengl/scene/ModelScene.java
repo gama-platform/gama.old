@@ -10,8 +10,6 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -26,8 +24,6 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.webgl.SimpleLayer;
-import ummisco.gama.webgl.SimpleScene;
 
 /**
  *
@@ -69,7 +65,6 @@ public class ModelScene {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
-			// layers.put(KEYSTONE_HELPER_KEY, new KeystoneHelperLayerObject(renderer));
 		}
 		if (renderer.useShader()) {
 			layers.put(ROTATION_HELPER_KEY, new RotationHelperLayerObject(renderer));
@@ -219,7 +214,7 @@ public class ModelScene {
 		currentLayer.setOffset(offset);
 		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
-		currentLayerTrace = currentLayer.objects.size();
+		currentLayerTrace = currentLayer.numberOfTraces();
 	}
 
 	public void beginOverlay() {
@@ -268,17 +263,17 @@ public class ModelScene {
 
 	}
 
-	private SimpleScene toSimpleScene() {
-		final List<SimpleLayer> simpleLayers = new ArrayList<>();
-		for (final LayerObject layer : this.layers.values()) {
-			simpleLayers.add(layer.toSimpleLayer());
-		}
-		final int[] rgbBackgroundColor = new int[3];
-		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
-		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
-		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
-		return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
-				this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
-	}
+	// private SimpleScene toSimpleScene() {
+	// final List<SimpleLayer> simpleLayers = new ArrayList<>();
+	// for (final LayerObject layer : this.layers.values()) {
+	// simpleLayers.add(layer.toSimpleLayer());
+	// }
+	// final int[] rgbBackgroundColor = new int[3];
+	// rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
+	// rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
+	// rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
+	// return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
+	// this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
+	// }
 
 }
