@@ -45,9 +45,13 @@ public class ImageLayer extends AbstractLayer {
 			file = null;
 			grid = null;
 		} else {
-			file = (GamaImageFile) GamaFileType.createFile(scope, imageFileName, null);
-			env = file.getGeoDataFile(scope) == null ? scope.getSimulation().getEnvelope()
-					: file.computeEnvelope(scope);
+			@SuppressWarnings ("rawtypes") final GamaImageFile f =
+					GamaFileType.createImageFile(scope, imageFileName, null);
+			if (f != null) {
+				file = f;
+				env = file.getGeoDataFile(scope) == null ? scope.getSimulation().getEnvelope()
+						: file.computeEnvelope(scope);
+			}
 		}
 		return env;
 	}

@@ -97,27 +97,35 @@ public class ImageUtils {
 	}
 
 	private BufferedImage privateReadFromFile(final File file) throws IOException {
+		BufferedImage result = NO_IMAGE;
+		if (file == null)
+			return result;
 		final String name = file.getName();
+		String ext = null;
 		if (name.contains(".")) {
-			final String ext = name.substring(file.getName().lastIndexOf("."));
-			if (tiffExt.contains(ext)) {
-				try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
-					final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
-					decodeParam.setDecodePaletteAsShorts(true);
-					final ParameterBlock params = new ParameterBlock();
-					params.add(stream);
-					final RenderedOp image1 = JAI.create("tiff", params);
-					return image1.getAsBufferedImage();
-				}
-			} else if (gifExt.contains(ext)) {
-				final GifDecoder d = new GifDecoder();
-				d.read(new FileInputStream(file.getAbsolutePath()));
-				return d.getImage();
-			} else {
-				return ImageIO.read(file);
-			}
+			ext = name.substring(file.getName().lastIndexOf("."));
 		}
-		return NO_IMAGE;
+		if (tiffExt.contains(ext)) {
+			try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
+				final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+				decodeParam.setDecodePaletteAsShorts(true);
+				final ParameterBlock params = new ParameterBlock();
+				params.add(stream);
+				final RenderedOp image1 = JAI.create("tiff", params);
+				return image1.getAsBufferedImage();
+			}
+		} else if (gifExt.contains(ext)) {
+			final GifDecoder d = new GifDecoder();
+			d.read(new FileInputStream(file.getAbsolutePath()));
+			return d.getImage();
+		}
+
+		try {
+			result = ImageIO.read(file);
+		} catch (final Exception e) {
+			return NO_IMAGE;
+		}
+		return result;
 	}
 
 	private GifDecoder privateReadGifFromFile(final File file) throws IOException {

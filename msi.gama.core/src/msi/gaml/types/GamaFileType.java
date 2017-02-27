@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaFileType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaFileType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -27,7 +26,10 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.GamaFolderFile;
+import msi.gama.util.file.GamaGifFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.IGamaFile;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 
@@ -35,9 +37,13 @@ import msi.gaml.expressions.IExpression;
  * Written by drogoul Modified on 1st Aug. 2010 Modified on 30 Dec. 2013
  *
  */
-@type(name = IKeyword.FILE, id = IType.FILE, wraps = {
-		IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@type (
+		name = IKeyword.FILE,
+		id = IType.FILE,
+		wraps = { IGamaFile.class },
+		kind = ISymbolKind.Variable.CONTAINER,
+		concept = { IConcept.TYPE, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap<>();
@@ -69,8 +75,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		}
 
 		// classToExtensions.put(clazz, exts);
-		final ParametricFileType t = new ParametricFileType(alias + "_file", clazz, builder, bufferType, keyType,
-				contentType);
+		final ParametricFileType t =
+				new ParametricFileType(alias + "_file", clazz, builder, bufferType, keyType, contentType);
 		aliasesToFullType.put(alias, t);
 		for (final String s : aliasesToExtensions.get(alias)) {
 			extensionsToFullType.put(s, t);
@@ -83,9 +89,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	public static ParametricFileType getTypeFromAlias(final String alias) {
 		final ParametricFileType ft = aliasesToFullType.get(alias);
-		if (ft == null) {
-			return ParametricFileType.getGenericInstance();
-		}
+		if (ft == null) { return ParametricFileType.getGenericInstance(); }
 		return ft;
 	}
 
@@ -100,16 +104,14 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	}
 
 	/**
-	 * Verifies if the path has the correct extension with respect to the type
-	 * of the file.
+	 * Verifies if the path has the correct extension with respect to the type of the file.
 	 *
 	 * @param type
 	 *            a string representing the type of the file
 	 * @param path
 	 *            an absolute or relative file path
-	 * @return true if the extension of the path belongs to the extensions of
-	 *         the file type, false if the type is unknown or if the extension
-	 *         does not belong to its extensions
+	 * @return true if the extension of the path belongs to the extensions of the file type, false if the type is
+	 *         unknown or if the extension does not belong to its extensions
 	 */
 
 	public static boolean verifyExtension(final String alias, final String path) {
@@ -119,31 +121,37 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	}
 
 	public static IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
-		if (new File(path).isDirectory()) {
-			return new GamaFolderFile(scope, path);
-		}
+		if (new File(path).isDirectory()) { return new GamaFolderFile(scope, path); }
 		final ParametricFileType ft = getTypeFromFileName(path);
 		return ft.createFile(scope, path, contents);
+	}
+
+	public static GamaImageFile createImageFile(final IScope scope, final String path,
+			final IModifiableContainer contents) {
+		if (new File(path).isDirectory()) { return null; }
+		if (path.endsWith(".gif") || path.endsWith(".GIF")) {
+			if (contents == null)
+				return new GamaGifFile(scope, path);
+			else if (contents instanceof IMatrix)
+				return new GamaGifFile(scope, path, (IMatrix<Integer>) contents);
+		} else if (contents == null)
+			return new GamaImageFile(scope, path);
+		else if (contents instanceof IMatrix)
+			return new GamaImageFile(scope, path, (IMatrix<Integer>) contents);
+		return null;
 	}
 
 	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentType, final boolean copy) {
-		if (obj == null) {
-			return getDefault();
-		}
+		if (obj == null) { return getDefault(); }
 		// 04/03/14 Problem of initialization of files. See if it works or not.
 		// No copy of the file is done.
-		if (obj instanceof IGamaFile) {
-			return (IGamaFile) obj;
-		}
+		if (obj instanceof IGamaFile) { return (IGamaFile) obj; }
 		if (obj instanceof String) {
-			if (param == null) {
-				return createFile(scope, (String) obj, null);
-			}
-			if (param instanceof IModifiableContainer) {
-				return createFile(scope, (String) obj, (IModifiableContainer) param);
-			}
+			if (param == null) { return createFile(scope, (String) obj, null); }
+			if (param instanceof IModifiableContainer) { return createFile(scope, (String) obj,
+					(IModifiableContainer) param); }
 		}
 		return getDefault();
 	}
