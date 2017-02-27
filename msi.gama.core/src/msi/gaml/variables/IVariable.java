@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IVariable.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -24,8 +23,10 @@ public interface IVariable extends ISymbol, IParameter {
 	public abstract boolean isUpdatable();
 
 	public abstract boolean isParameter();
-	
+
 	public abstract boolean isFunction();
+
+	public abstract boolean isMicroPopulation();
 
 	public abstract boolean isConst();
 

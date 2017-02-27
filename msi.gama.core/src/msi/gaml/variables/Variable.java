@@ -422,19 +422,17 @@ public class Variable extends Symbol implements IVariable {
 	public VariableDescription getDescription() {
 		return (VariableDescription) description;
 	}
-	
+
 	@Override
 	public boolean isUpdatable() {
 		return updateExpression != null && !isNotModifiable;
 	}
 
-		
 	@Override
-	public boolean isFunction()
-	{
-		return functionExpression!=null;
+	public boolean isFunction() {
+		return functionExpression != null;
 	}
-	
+
 	@Override
 	public IType getType() {
 		return type;
@@ -625,4 +623,11 @@ public class Variable extends Symbol implements IVariable {
 			buildHelpers((AbstractSpecies) enclosing);
 	}
 
+	@Override
+	public boolean isMicroPopulation() {
+		final VariableDescription desc = getDescription();
+		if (desc == null)
+			return false;
+		return desc.isSyntheticSpeciesContainer();
+	}
 }
