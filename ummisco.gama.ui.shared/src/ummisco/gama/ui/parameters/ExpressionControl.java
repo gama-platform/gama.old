@@ -113,8 +113,6 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			if (text == null || text.isDisposed()) { return; }
 			modifyValue();
 			displayValue(getCurrentValue());
-			// displayTooltip();
-			// modifyNoPopup();
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -126,16 +124,18 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			IAgent agent = getHostAgent();
 			// AD: fix for SWT Issue in Eclipse 4.4
 			if (text == null || text.isDisposed()) { return null; }
-			final String s = text.getText();
+			String s = text.getText();
+			if (expectedType == Types.STRING) {
+				if (!StringUtils.isGamaString(s))
+				s = StringUtils.toGamlString(s);
+			}
 			// AD: Fix for Issue 1042
 			if (agent != null && agent.getScope().interrupted() && agent instanceof SimulationAgent) {
 				agent = agent.getScope().getExperiment();
 			}
 			if (NumberEditor.UNDEFINED_LABEL.equals(s)) {
 				setCurrentValue(null);
-				// return null;
 			} else if (agent == null) {
-				// return Cast.as(s, expectedType.toClass(), false);
 				if (expectedType == Types.STRING)
 					setCurrentValue(StringUtils.toJavaString(GamaStringType.staticCast(null, s, false)));
 				else
@@ -178,38 +178,6 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			}
 		}
 	}
-
-	// void modifyNoPopup() {
-	// if ( editor != null ) {
-	// editor.internalModification = true;
-	// }
-	// currentException = null;
-	// Object oldValue = getCurrentValue();
-	// Object value = computeValue();
-	// if ( currentException != null ) {
-	// value = oldValue;
-	// }
-	//
-	// if ( editor != null ) {
-	// IScope scope = GAMA.obtainNewScope();
-	// try {
-	// if ( editor.acceptNull && value == null ) {
-	// editor.modifyValue(null);
-	// } else {
-	// editor.modifyValue(editor.getExpectedType().cast(scope, value, false,
-	// false));
-	// }
-	// } catch (GamaRuntimeException e) {
-	// value = oldValue;
-	// }
-	// GAMA.releaseScope(scope);
-	// editor.internalModification = false;
-	// editor.checkButtons();
-	// }
-	// if ( !text.isDisposed() ) {
-	// text.setText(StringUtils.toGaml(value, false));
-	// }
-	// }
 
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
 		return new Text(comp, controlStyle);
