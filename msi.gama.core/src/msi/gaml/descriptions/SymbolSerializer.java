@@ -23,6 +23,7 @@ import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
+import msi.gaml.statements.Facets;
 
 /**
  * Class IDescriptionSerializer.
@@ -225,16 +226,34 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected void serializeArgs(final SymbolDescription s, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			final StatementDescription desc = (StatementDescription) s;
-			sb.append("(");
+
 			final Iterable<IDescription> formalArgs = desc.getFormalArgs();
 			if (!Iterables.isEmpty(formalArgs)) {
+				sb.append("(");
 				for (final IDescription arg : formalArgs) {
 					serializeArg(desc, arg, sb, includingBuiltIn);
 					sb.append(", ");
 				}
 				sb.setLength(sb.length() - 2);
+				sb.append(")");
+			} else {
+				final Facets passedArgs = desc.getPassedArgs();
+				if (passedArgs.isEmpty())
+					return;
+				sb.append("(");
+				passedArgs.forEachEntry((name, value) -> {
+					if (Strings.isGamaNumber(name)) {
+						sb.append(value.serialize(includingBuiltIn));
+					} else {
+						sb.append(name).append(":").append(value.serialize(includingBuiltIn));
+					}
+					sb.append(", ");
+					return true;
+				});
+				sb.setLength(sb.length() - 2);
+				sb.append(")");
+
 			}
-			sb.append(")");
 		}
 
 		protected void serializeArg(final IDescription desc, final IDescription arg, final StringBuilder sb,
