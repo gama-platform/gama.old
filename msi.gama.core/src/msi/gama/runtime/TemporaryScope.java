@@ -325,7 +325,7 @@ class TemporaryScope implements IScope, IExecutionContext {
 	 * @see msi.gama.runtime.IScope#getName()
 	 */
 	@Override
-	public Object getName() {
+	public String getName() {
 		return "Temporary scope";
 	}
 

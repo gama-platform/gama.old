@@ -242,7 +242,7 @@ public class ExecutionScope implements IScope {
 	// @Override
 	@Override
 	public synchronized boolean push(final IAgent agent) {
-		final IAgent a = agentContext.getAgent();
+		final IAgent a = agentContext == null ? null : agentContext.getAgent();
 		if (a == null) {
 			if (agent instanceof ITopLevelAgent) {
 				// Previous context didnt have a root.

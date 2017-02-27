@@ -277,7 +277,7 @@ public interface IScope extends Closeable {
 	 *
 	 * @return the name
 	 */
-	public abstract Object getName();
+	public abstract String getName();
 
 	/**
 	 * Copy.

@@ -19,18 +19,18 @@ public class Arguments extends Facets {
 	/*
 	 * The caller represents the agent in the context of which the arguments need to be evaluated.
 	 */
-	IAgent caller;
+	ThreadLocal<IAgent> caller = new ThreadLocal<>();
 
 	public Arguments() {}
 
 	public Arguments(final IAgent caller) {
-		this.caller = caller;
+		setCaller(caller);
 	}
 
 	public Arguments(final Arguments args) {
 		super(args);
 		if (args != null)
-			this.caller = args.caller;
+			setCaller(args.caller.get());
 	}
 
 	@Override
@@ -42,17 +42,17 @@ public class Arguments extends Facets {
 	}
 
 	public void setCaller(final IAgent caller) {
-		this.caller = caller;
+		this.caller.set(caller);
 	}
 
 	public IAgent getCaller() {
-		return caller;
+		return caller.get();
 	}
 
 	@Override
 	public void dispose() {
 		clear();
-		caller = null;
+		caller.set(null);
 	}
 
 }
