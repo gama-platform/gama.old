@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaNavigatorNewMenu.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaNavigatorNewMenu.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,7 +10,10 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
@@ -34,6 +36,15 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu {
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
 			openWizard("msi.gama.gui.wizards.NewFileWizard", selection);
+		}
+
+	};
+
+	private final SelectionListener newExperiment = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			openWizard("msi.gama.gui.wizards.NewExperimentWizard", selection);
 		}
 
 	};
@@ -67,6 +78,7 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu {
 	@Override
 	protected void fillMenu() {
 		action("New model...", newModel, GamaIcons.create("navigator/new.model2").image());
+		action("New experiment...", newExperiment, GamaIcons.create("navigator/new.model2").image());
 		action("New project...", newProject, GamaIcons.create("navigator/new.project2").image());
 		sep();
 		action("New folder...", newFolder, GamaIcons.create("navigator/new.folder2").image());

@@ -98,6 +98,16 @@
                      value="msi.gama.gui.wizards.NewFileWizard">
                </parameter>
             </command>
+            <command
+                  commandId="org.eclipse.ui.newWizard"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+                  label="Experiment…"
+                  style="push">
+               <parameter
+                     name="newWizardId"
+                     value="msi.gama.gui.wizards.NewExperimentWizard">
+               </parameter>
+            </command>
             <separator
                   name="msi.gama.application.separator2"
                   visible="true">
@@ -244,6 +254,16 @@
             <parameter
                   name="newWizardId"
                   value="msi.gama.gui.wizards.NewFileWizard">
+            </parameter>
+         </command>
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+               label="Experiment…"
+               style="push">
+            <parameter
+                  name="newWizardId"
+                  value="msi.gama.gui.wizards.NewExperimentWizard">
             </parameter>
          </command>
          <command
@@ -495,6 +515,14 @@
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
             id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
+            project="false">
+      </wizard>
+       <wizard
+            category="msi.gama.gui.wizards.GAMA"
+            class="ummisco.gama.ui.wizards.NewExperimentWizard"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+            id="msi.gama.gui.wizards.NewExperimentWizard"
+            name="Experiment file"
             project="false">
       </wizard>
       <wizard
