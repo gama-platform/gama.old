@@ -314,6 +314,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public double getPerimeter() {
+		if (geometry instanceof GeometryCollection) {
+			final int[] result = new int[1];
+			GeometryUtils.applyToInnerGeometries((GeometryCollection) geometry,
+					(g) -> result[0] += GeometryUtils.getContourCoordinates(g).getLength());
+			return result[0];
+		}
 		final ICoordinates seq = GeometryUtils.getContourCoordinates(geometry);
 		return seq.getLength();
 	}
