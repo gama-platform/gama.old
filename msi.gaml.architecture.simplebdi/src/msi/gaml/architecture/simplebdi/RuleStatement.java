@@ -59,6 +59,8 @@ import msi.gaml.types.Types;
 		@facet(name = RuleStatement.REMOVE_UNCERTAINTY, type = PredicateType.id, optional = true, doc = @doc("The uncertainty that will be removed")),
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc(" ")),
 		@facet(name = RuleStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("Threshold linked to the emotion.")),
+		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("setting this facet to 'true' will allow 'perceive' to use concurrency with a parallel_bdi architecture; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is true by default.")),
 		@facet(name = RuleStatement.PRIORITY, type = { IType.FLOAT,
 				IType.INT }, optional = true, doc = @doc("The priority of the predicate added as a desire")),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("The name of the rule")) }, omissible = IKeyword.NAME)
@@ -92,6 +94,7 @@ public class RuleStatement extends AbstractStatement {
 	public static final String THRESHOLD = "threshold";
 
 	final IExpression when;
+	final IExpression parallel;
 	final IExpression belief;
 	final IExpression desire;
 	final IExpression emotion;
@@ -142,6 +145,7 @@ public class RuleStatement extends AbstractStatement {
 		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
 		priority = getFacet(RuleStatement.PRIORITY);
 		threshold = getFacet(RuleStatement.THRESHOLD);
+		parallel = getFacet(IKeyword.PARALLEL);
 	}
 
 	@Override
@@ -245,4 +249,10 @@ public class RuleStatement extends AbstractStatement {
 		}
 		return null;
 	}
+
+	public IExpression getParallel() {
+		return parallel;
+	}
+	
+	
 }

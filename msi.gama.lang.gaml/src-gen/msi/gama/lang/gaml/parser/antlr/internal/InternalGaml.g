@@ -106,6 +106,16 @@ ruleEntry returns [EObject current=null]
         $current = $this_StandaloneBlock_2.current; 
         afterParserOrEnumRuleCall();
     }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getEntryAccess().getExperimentFileStructureParserRuleCall_3()); 
+    }
+    this_ExperimentFileStructure_3=ruleExperimentFileStructure
+    { 
+        $current = $this_ExperimentFileStructure_3.current; 
+        afterParserOrEnumRuleCall();
+    }
 )
 ;
 
@@ -460,6 +470,198 @@ rulePragma returns [EObject current=null]
 	    }
 
 )
+))
+;
+
+
+
+
+
+// Entry rule entryRuleExperimentFileStructure
+entryRuleExperimentFileStructure returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getExperimentFileStructureRule()); }
+	 iv_ruleExperimentFileStructure=ruleExperimentFileStructure 
+	 { $current=$iv_ruleExperimentFileStructure.current; } 
+	 EOF 
+;
+
+// Rule ExperimentFileStructure
+ruleExperimentFileStructure returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getExperimentFileStructureAccess().getExpHeadlessExperimentParserRuleCall_0()); 
+	    }
+		lv_exp_0_0=ruleHeadlessExperiment		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getExperimentFileStructureRule());
+	        }
+       		set(
+       			$current, 
+       			"exp",
+        		lv_exp_0_0, 
+        		"msi.gama.lang.gaml.Gaml.HeadlessExperiment");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)
+;
+
+
+
+
+
+// Entry rule entryRuleHeadlessExperiment
+entryRuleHeadlessExperiment returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getHeadlessExperimentRule()); }
+	 iv_ruleHeadlessExperiment=ruleHeadlessExperiment 
+	 { $current=$iv_ruleHeadlessExperiment.current; } 
+	 EOF 
+;
+
+// Rule HeadlessExperiment
+ruleHeadlessExperiment returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		{ 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getKey_ExperimentKeyParserRuleCall_0_0()); 
+	    }
+		lv_key_0_0=rule_ExperimentKey		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		set(
+       			$current, 
+       			"key",
+        		lv_key_0_0, 
+        		"msi.gama.lang.gaml.Gaml._ExperimentKey");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)(
+(
+		lv_firstFacet_1_0=	'name:' 
+    {
+        newLeafNode(lv_firstFacet_1_0, grammarAccess.getHeadlessExperimentAccess().getFirstFacetNameKeyword_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		setWithLastConsumed($current, "firstFacet", lv_firstFacet_1_0, "name:");
+	    }
+
+)
+)?(
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getNameValid_IDParserRuleCall_2_0_0()); 
+	    }
+		lv_name_2_1=ruleValid_ID		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		set(
+       			$current, 
+       			"name",
+        		lv_name_2_1, 
+        		"msi.gama.lang.gaml.Gaml.Valid_ID");
+	        afterParserOrEnumRuleCall();
+	    }
+
+    |		lv_name_2_2=RULE_STRING
+		{
+			newLeafNode(lv_name_2_2, grammarAccess.getHeadlessExperimentAccess().getNameSTRINGTerminalRuleCall_2_0_1()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_2_2, 
+        		"msi.gama.lang.gaml.Gaml.STRING");
+	    }
+
+)
+
+)
+)	otherlv_3='model:' 
+    {
+    	newLeafNode(otherlv_3, grammarAccess.getHeadlessExperimentAccess().getModelKeyword_3());
+    }
+(
+(
+		lv_importURI_4_0=RULE_STRING
+		{
+			newLeafNode(lv_importURI_4_0, grammarAccess.getHeadlessExperimentAccess().getImportURISTRINGTerminalRuleCall_4_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"importURI",
+        		lv_importURI_4_0, 
+        		"msi.gama.lang.gaml.Gaml.STRING");
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getFacetsFacetParserRuleCall_5_0()); 
+	    }
+		lv_facets_5_0=ruleFacet		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		add(
+       			$current, 
+       			"facets",
+        		lv_facets_5_0, 
+        		"msi.gama.lang.gaml.Gaml.Facet");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)*((
+(
+		{ 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getBlockBlockParserRuleCall_6_0_0()); 
+	    }
+		lv_block_6_0=ruleBlock		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getHeadlessExperimentRule());
+	        }
+       		set(
+       			$current, 
+       			"block",
+        		lv_block_6_0, 
+        		"msi.gama.lang.gaml.Gaml.Block");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)
+    |	otherlv_7=';' 
+    {
+    	newLeafNode(otherlv_7, grammarAccess.getHeadlessExperimentAccess().getSemicolonKeyword_6_1());
+    }
 ))
 ;
 

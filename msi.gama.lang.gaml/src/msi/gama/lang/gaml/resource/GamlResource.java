@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -36,12 +37,12 @@ import com.google.common.collect.Multimaps;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.factories.ModelFactory;
@@ -58,7 +59,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	private static boolean MEMOIZE_DESCRIPTION = false;
 	ModelDescription description;
-	SyntacticModelElement element;
+	ISyntacticElement element;
 
 	public ValidationContext getValidationContext() {
 		return GamlResourceServices.getValidationContext(this);
@@ -225,7 +226,7 @@ public class GamlResource extends LazyLinkingResource {
 		description = model;
 	}
 
-	private void setElement(final SyntacticModelElement model) {
+	private void setElement(final ISyntacticElement model) {
 		if (model == element)
 			return;
 		if (element != null)
@@ -264,8 +265,10 @@ public class GamlResource extends LazyLinkingResource {
 		// If the imports are not correctly updated, we cannot proceed
 		final EObject faulty = GamlResourceIndexer.updateImports(this);
 		if (faulty != null) {
+			final EAttribute attribute = getContents().get(0) instanceof Model ? GamlPackage.Literals.IMPORT__IMPORT_URI
+					: GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI;
 			getErrors().add(new EObjectDiagnosticImpl(Severity.ERROR, IGamlIssue.IMPORT_ERROR,
-					"Impossible to locate import", faulty, GamlPackage.Literals.IMPORT__IMPORT_URI, -1, null));
+					"Impossible to locate import", faulty, attribute, -1, null));
 			return;
 		}
 		super.doLinking();

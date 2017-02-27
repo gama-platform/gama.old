@@ -51,6 +51,9 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the name of the perception")),
 		@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true, doc = @doc("an expression that evaluates to a species")),
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("a boolean to tell when does the perceive is active")),
+		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("setting this facet to 'true' will allow 'perceive' to use concurrency with a parallel_bdi architecture; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is true by default.")),
+	
 		@facet(name = IKeyword.IN, type = { IType.FLOAT,
 				IType.GEOMETRY }, optional = true, doc = @doc("a float or a geometry. If it is a float, it's a radius of a detection area. If it is a geometry, it is the area of detection of others species.")),
 		@facet(name = PerceiveStatement.EMOTION, type = EmotionType.id, optional = true, doc = @doc("The emotion needed to do the perception")),
@@ -77,6 +80,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 	final IExpression _in;
 	final IExpression emotion;
 	final IExpression threshold;
+	final IExpression parallel;
 	private final IExpression target = getFacet(IKeyword.TARGET);
 	// AD Dangerous as it may still contain a value after the execution. Better
 	// to use temp arrays
@@ -116,6 +120,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 		}
 		emotion = getFacet(PerceiveStatement.EMOTION);
 		threshold = getFacet(PerceiveStatement.THRESHOLD);
+		parallel = getFacet(IKeyword.PARALLEL);
 	}
 
 	@Override
@@ -178,4 +183,10 @@ public class PerceiveStatement extends AbstractStatementSequence {
 		tempList.add(temp);
 		return ((IContainer) tempList).iterable(scope).iterator();
 	}
+
+	public IExpression getParallel() {
+		return parallel;
+	}
+	
+	
 }

@@ -13,6 +13,7 @@ import java.io.File;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.statements.Facets;
 
 /**
@@ -23,6 +24,22 @@ import msi.gaml.statements.Facets;
  * 
  */
 public class SyntacticModelElement extends SyntacticTopLevelElement {
+
+	public static class SyntacticExperimentModelElement extends SyntacticModelElement {
+		public SyntacticExperimentModelElement(final String keyword, final EObject root, final File path) {
+			super(keyword, null, root, path);
+		}
+
+		@Override
+		public void addChild(final ISyntacticElement e) {
+			super.addChild(e);
+			setFacet(IKeyword.NAME, e.getExpressionAt(IKeyword.NAME));
+		}
+
+		public SyntacticExperimentElement getExperiment() {
+			return (SyntacticExperimentElement) children[0];
+		}
+	}
 
 	final private String path;
 

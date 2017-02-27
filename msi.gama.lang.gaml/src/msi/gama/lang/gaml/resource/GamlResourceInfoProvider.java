@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlResourceInfoProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlResourceInfoProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,6 +24,7 @@ import com.google.inject.Singleton;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.lang.gaml.EGaml;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -35,7 +35,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 @Singleton
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();
@@ -82,6 +82,16 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				if (exps == null)
 					exps = new TLinkedHashSet();
 				exps.add(s);
+			} else if (e instanceof HeadlessExperiment) {
+				String s = ((HeadlessExperiment) e).getName();
+
+				if (EGaml.isBatch((HeadlessExperiment) e)) {
+					s = GamlFileInfo.BATCH_PREFIX + s;
+				}
+
+				if (exps == null)
+					exps = new TLinkedHashSet();
+				exps.add(s);
 			}
 		}
 
@@ -115,8 +125,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		try {
 			resourceSet.eSetDeliver(false);
 			resourceSet.getResources().clear();
-		} catch (final Exception e) {
-		}
+		} catch (final Exception e) {}
 
 		finally {
 			resourceSet.eSetDeliver(wasDeliver);

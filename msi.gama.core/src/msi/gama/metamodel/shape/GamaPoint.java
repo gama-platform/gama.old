@@ -448,6 +448,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(-x, -y, -z);
 	}
 
+	public void negate() {
+		x = -x;
+		y = -y;
+		z = -z;
+	}
+
 	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
@@ -471,6 +477,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	/**
 	 * @return the point with y negated (for OpenGL, for example), without side effect on the point.
 	 */
+	@Override
 	public GamaPoint yNegated() {
 		return new GamaPoint(x, -y, z);
 	}

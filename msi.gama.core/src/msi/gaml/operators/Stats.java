@@ -42,6 +42,7 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaRegression;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -1020,6 +1021,33 @@ public class Stats {
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
 			final GamaList<Double> instance) throws GamaRuntimeException {
 		return regression.predict(scope, instance);
+	}
+
+	@operator (
+				value =  "gini",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
+		@doc (
+				usages = { @usage (
+						value = "return the Gini Index of the given list of values (list of floats)",
+						examples = { @example (
+								value = "gini([1.0, 0.5, 2.0])",
+								equals = "the gini index computed",
+								test = false) }) })
+	public static double giniIndex(final IScope scope,final  IList<Double> vals) {
+		int N = vals.size();
+		Double G = 0.0;
+		double sumXi = 0.0;
+		for (int i = 0; i < N; i++) {
+			double xi = vals.get(i);
+			sumXi += xi;		
+			for (int j = 0; j < N; j++) {
+				double yi = vals.get(j);
+				G += FastMath.abs(xi - yi);
+			}
+		}
+		G /= (2 * N * sumXi);
+		return G;
 	}
 
 }

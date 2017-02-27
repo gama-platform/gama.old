@@ -24,6 +24,7 @@ global {
 		write "kurtosis: " + kurtosis(data);
 		write "skewness: " + skewness(data);
 		write "gamma_rnd: " + gamma_rnd(0.1,1); 
+		write "gini index: " + gini([10.0, 1.0, 2.0, 0.0]);
 	}
 }
 

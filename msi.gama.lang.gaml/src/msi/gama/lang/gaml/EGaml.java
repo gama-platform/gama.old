@@ -33,6 +33,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlFactory;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameter;
@@ -52,6 +53,7 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ActionArgumentsImpl;
 import msi.gama.lang.gaml.gaml.impl.BlockImpl;
 import msi.gama.lang.gaml.gaml.impl.ExpressionListImpl;
+import msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.gaml.impl.S_EquationsImpl;
 import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
@@ -80,6 +82,10 @@ public class EGaml {
 		if (s instanceof GamlDefinition) { return ((GamlDefinition) s).getName(); }
 		if (s instanceof S_Display) { return ((S_Display) s).getName(); }
 		return null;
+	}
+
+	public static String getNameOf(final HeadlessExperiment s) {
+		return s.getName();
 	}
 
 	/**
@@ -120,6 +126,11 @@ public class EGaml {
 		return Collections.EMPTY_LIST;
 	}
 
+	public static List<Facet> getFacetsOf(final HeadlessExperiment s) {
+		if (((HeadlessExperimentImpl) s).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) { return s.getFacets(); }
+		return Collections.EMPTY_LIST;
+	}
+
 	/**
 	 * Gets the facets map of a statement
 	 *
@@ -154,6 +165,12 @@ public class EGaml {
 		public Boolean caseStatement(final Statement object) {
 			return ((StatementImpl) object).eIsSet(GamlPackage.STATEMENT__BLOCK)
 					&& ((StatementImpl) object).getBlock().getFunction() == null;
+		}
+
+		@Override
+		public Boolean caseHeadlessExperiment(final HeadlessExperiment object) {
+			return ((HeadlessExperimentImpl) object).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__BLOCK)
+					&& object.getBlock().getFunction() == null;
 		}
 
 		@Override
@@ -500,6 +517,19 @@ public class EGaml {
 	 */
 	public static boolean isBatch(final Statement e) {
 		if (!((StatementImpl) e).eIsSet(GamlPackage.STATEMENT__FACETS))
+			return false;
+		for (final Facet f : e.getFacets()) {
+			if (getKeyOf(f).equals(IKeyword.TYPE)) {
+				final String type = EGaml.getKeyOf(f.getExpr());
+				if (IKeyword.BATCH.equals(type)) { return true; }
+			}
+		}
+		return false;
+
+	}
+
+	public static boolean isBatch(final HeadlessExperiment e) {
+		if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS))
 			return false;
 		for (final Facet f : e.getFacets()) {
 			if (getKeyOf(f).equals(IKeyword.TYPE)) {

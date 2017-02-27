@@ -32,6 +32,17 @@
     <genClasses ecoreClass="Gaml.ecore#//Pragma">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Pragma/name"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//ExperimentFileStructure">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ExperimentFileStructure/exp"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//HeadlessExperiment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//HeadlessExperiment/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//HeadlessExperiment/firstFacet"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//HeadlessExperiment/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//HeadlessExperiment/importURI"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//HeadlessExperiment/facets"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//HeadlessExperiment/block"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/firstFacet"/>

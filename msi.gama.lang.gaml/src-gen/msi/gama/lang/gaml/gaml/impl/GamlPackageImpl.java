@@ -20,6 +20,7 @@ import msi.gama.lang.gaml.gaml.Entry;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
+import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -27,6 +28,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlFactory;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
@@ -139,6 +141,20 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass pragmaEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass experimentFileStructureEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass headlessExperimentEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -819,6 +835,96 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EAttribute getPragma_Name()
   {
     return (EAttribute)pragmaEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getExperimentFileStructure()
+  {
+    return experimentFileStructureEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getExperimentFileStructure_Exp()
+  {
+    return (EReference)experimentFileStructureEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getHeadlessExperiment()
+  {
+    return headlessExperimentEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getHeadlessExperiment_Key()
+  {
+    return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getHeadlessExperiment_FirstFacet()
+  {
+    return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getHeadlessExperiment_Name()
+  {
+    return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getHeadlessExperiment_ImportURI()
+  {
+    return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getHeadlessExperiment_Facets()
+  {
+    return (EReference)headlessExperimentEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getHeadlessExperiment_Block()
+  {
+    return (EReference)headlessExperimentEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1935,6 +2041,17 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     pragmaEClass = createEClass(PRAGMA);
     createEAttribute(pragmaEClass, PRAGMA__NAME);
 
+    experimentFileStructureEClass = createEClass(EXPERIMENT_FILE_STRUCTURE);
+    createEReference(experimentFileStructureEClass, EXPERIMENT_FILE_STRUCTURE__EXP);
+
+    headlessExperimentEClass = createEClass(HEADLESS_EXPERIMENT);
+    createEAttribute(headlessExperimentEClass, HEADLESS_EXPERIMENT__KEY);
+    createEAttribute(headlessExperimentEClass, HEADLESS_EXPERIMENT__FIRST_FACET);
+    createEAttribute(headlessExperimentEClass, HEADLESS_EXPERIMENT__NAME);
+    createEAttribute(headlessExperimentEClass, HEADLESS_EXPERIMENT__IMPORT_URI);
+    createEReference(headlessExperimentEClass, HEADLESS_EXPERIMENT__FACETS);
+    createEReference(headlessExperimentEClass, HEADLESS_EXPERIMENT__BLOCK);
+
     statementEClass = createEClass(STATEMENT);
     createEAttribute(statementEClass, STATEMENT__KEY);
     createEAttribute(statementEClass, STATEMENT__FIRST_FACET);
@@ -2140,6 +2257,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     modelEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getVarDefinition());
     importEClass.getESuperTypes().add(this.getVarDefinition());
+    experimentFileStructureEClass.getESuperTypes().add(this.getEntry());
     s_GlobalEClass.getESuperTypes().add(this.getStatement());
     s_SpeciesEClass.getESuperTypes().add(this.getStatement());
     s_SpeciesEClass.getESuperTypes().add(this.getS_Declaration());
@@ -2231,6 +2349,17 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(pragmaEClass, Pragma.class, "Pragma", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPragma_Name(), ecorePackage.getEString(), "name", null, 0, 1, Pragma.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(experimentFileStructureEClass, ExperimentFileStructure.class, "ExperimentFileStructure", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getExperimentFileStructure_Exp(), this.getHeadlessExperiment(), null, "exp", null, 0, 1, ExperimentFileStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(headlessExperimentEClass, HeadlessExperiment.class, "HeadlessExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getHeadlessExperiment_Key(), ecorePackage.getEString(), "key", null, 0, 1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getHeadlessExperiment_FirstFacet(), ecorePackage.getEString(), "firstFacet", null, 0, 1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getHeadlessExperiment_Name(), ecorePackage.getEString(), "name", null, 0, 1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getHeadlessExperiment_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getHeadlessExperiment_Facets(), this.getFacet(), null, "facets", null, 0, -1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getHeadlessExperiment_Block(), this.getBlock(), null, "block", null, 0, 1, HeadlessExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStatement_Key(), ecorePackage.getEString(), "key", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

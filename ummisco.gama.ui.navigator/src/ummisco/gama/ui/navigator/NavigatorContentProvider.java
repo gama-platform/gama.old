@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NavigatorContentProvider.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NavigatorContentProvider.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,7 +32,7 @@ import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedModelContent;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	private TopLevelFolder[] virtualFolders;
@@ -49,22 +48,16 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public Object getParent(final Object element) {
-		if (element instanceof VirtualContent) {
-			return ((VirtualContent) element).getParent();
-		}
+		if (element instanceof VirtualContent) { return ((VirtualContent) element).getParent(); }
 		if (element instanceof IProject) {
 			for (final TopLevelFolder folder : virtualFolders) {
-				if (folder.accepts((IProject) element)) {
-					return folder;
-				}
+				if (folder.accepts((IProject) element)) { return folder; }
 			}
 		}
 		if (element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
 				.equals(FileMetaDataProvider.getContentTypeId((IFile) element))) {
 			final IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
-			if (r != null) {
-				return r;
-			}
+			if (r != null) { return r; }
 		}
 		return super.getParent(element);
 	}
@@ -77,9 +70,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 			}
 			return virtualFolders;
 		}
-		if (p instanceof VirtualContent) {
-			return ((VirtualContent) p).getNavigatorChildren();
-		}
+		if (p instanceof VirtualContent) { return ((VirtualContent) p).getNavigatorChildren(); }
 		if (p instanceof IFile) {
 
 			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
@@ -92,9 +83,10 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 					final ISyntacticElement element = GAML
 							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
-
-					l.add(new WrappedModelContent((IFile) p, element));
-					element.visitExperiments(element1 -> l.add(new WrappedExperimentContent((IFile) p, element1)));
+					if (element != null) {
+						l.add(new WrappedModelContent((IFile) p, element));
+						element.visitExperiments(element1 -> l.add(new WrappedExperimentContent((IFile) p, element1)));
+					}
 
 					// for (final String s : info.getExperiments()) {
 					// l.add(new WrappedExperiment((IFile) p, s));
@@ -165,12 +157,8 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public boolean hasChildren(final Object element) {
-		if (element instanceof VirtualContent) {
-			return ((VirtualContent) element).hasChildren();
-		}
-		if (element instanceof NavigatorRoot) {
-			return true;
-		}
+		if (element instanceof VirtualContent) { return ((VirtualContent) element).hasChildren(); }
+		if (element instanceof NavigatorRoot) { return true; }
 		if (element instanceof IFile) {
 			final String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
 			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext))

@@ -58,16 +58,6 @@ public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final GamaShape s) {
 		return of(s.getInnerGeometry());
-		// if (s.hasAttribute(IShape.DEPTH_ATTRIBUTE)) {
-		// // Note: A.G 27/03/14 If I put center.setZ(center.z + d ) it gives
-		// // the issue 898 (that was introduces by
-		// // revision 9047);
-		// // Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
-		// final GamaPoint center = env.centre();
-		// center.setZ(center.z);
-		// env.expandToInclude(center);
-		// }
-		// return env;
 	}
 
 	public static Envelope3D of(final Envelope e) {
@@ -87,7 +77,6 @@ public class Envelope3D extends Envelope {
 		final Envelope3D env = new Envelope3D();
 		env.init(p);
 		return env;
-		// return of(p.getInnerGeometry());
 	}
 
 	public static Envelope3D of(final ICoordinates points) {

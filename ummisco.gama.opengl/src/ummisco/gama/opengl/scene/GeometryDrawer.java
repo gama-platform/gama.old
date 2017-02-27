@@ -214,8 +214,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				drawPyramid(geom, solid, height, border);
 				break;
 			case CYLINDER:
-			case LINECYLINDER:
 				drawCylinder(geom, solid, height, border);
+				break;
+			case LINECYLINDER:
+				drawLineCylinder(geom, solid, height, border);
 				break;
 			case CIRCLE:
 				drawCircle(geom, solid, height, border);
@@ -362,12 +364,61 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private void drawCylinder(final Geometry g, final boolean solid, final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(g));
-		final double radius = g instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : _vertices.getLength();
+		final double radius = g instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : height;
 		_vertices.getCenter(_center);
 		_vertices.getNormal(true, 1, _normal);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(radius, radius, height);
 		drawCachedGeometry(Type.CYLINDER, border);
+	}
+
+	private void drawLineCylinder(final Geometry g, final boolean solid, final double radius, final Color border) {
+		_vertices.setToYNegated(getContourCoordinates(g));
+		for (int i = 0, n = _vertices.size(); i < n - 1; i++) {
+			final GamaPoint v1 = _vertices.at(i);
+			final GamaPoint v2 = _vertices.at(i + 1);
+			// draw first sphere
+			_center.setLocation(v1);
+			_normal.setLocation(v2);
+			_normal.subtract(v1);
+			final double height = _normal.norm();
+			_tangent.setLocation(_normal.orthogonal());
+			_normal.normalize();
+			if (i > 0) {
+				_scale.setTo(radius);
+				drawCachedGeometry(Type.SPHERE, border);
+			}
+			// draw tube
+			_scale.setTo(radius, radius, height);
+			drawCachedGeometry(Type.CYLINDER, border);
+
+		}
+		// _vertices.visit((v1, v2) -> {
+		// // draw first sphere
+		// _center.setLocation(v1);
+		// _normal.setLocation(v2);
+		// _normal.subtract(v1);
+		// final double height = _normal.norm();
+		// _tangent.setLocation(_normal.orthogonal());
+		// _normal.normalize();
+		// if (!v1.equals(first)) {
+		// _scale.setTo(radius);
+		// drawCachedGeometry(Type.SPHERE, border);
+		// }
+		// // draw tube
+		// _scale.setTo(radius, radius, height);
+		// drawCachedGeometry(Type.CYLINDER, border);
+		// // draw second sphere
+		// if (!v2.equals(last)) {
+		// _center.setLocation(v2);
+		// _normal.negate();
+		// _tangent.setLocation(_normal.orthogonal());
+		// _scale.setTo(radius);
+		// drawCachedGeometry(Type.SPHERE, border);
+		// }
+
+		// });
+
 	}
 
 	private void drawCone3D(final Geometry p, final boolean solid, final double height, final Color border) {

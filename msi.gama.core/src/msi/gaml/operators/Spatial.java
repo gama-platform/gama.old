@@ -87,6 +87,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
@@ -3760,9 +3761,43 @@ public abstract class Spatial {
 			}
 			return results;
 		}
-
+		
+		@operator (
+				value =  "moran",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
+		@doc (
+				usages = { @usage (
+						value = "return the Moran Index of the given list of interest points (list of floats) and the weight matrix (matrix of float)",
+						examples = { @example (
+								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
+								equals = "the Moran index computed",
+								test = false) }) })
+		public static double moranIndex(final IScope scope,final  IList<Double> vals,final IMatrix<Double> mat) {
+			GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
+			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows) throw GamaRuntimeException
+			.error("A squared weight matrix should be given for the moran index computation", scope);
+			int N = vals.size();
+			Double I = 0.0;
+			Double sumWeights = 0.0;
+			double sumXi = 0;
+			Double mean = (Double) Containers.mean(scope, vals);
+			for (int i = 0; i < N; i++) {
+				double xi = vals.get(i);
+				double xiDev = xi - mean;
+				sumXi += Math.pow(xiDev, 2);		
+				for (int j = 0; j < N; j++) {
+					Double weight = weightMatrix.get(scope, i, j);
+					sumWeights += weight;
+					I += weight * (xiDev) * (vals.get(j) - mean);
+				}
+			}
+			I /= sumXi;
+			I *= N/sumWeights;
+			return I;
+		}
 	}
-
+	
 	public static abstract class ThreeD {
 
 		@operator (

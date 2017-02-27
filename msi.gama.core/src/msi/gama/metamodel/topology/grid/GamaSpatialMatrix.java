@@ -586,49 +586,39 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public int manhattanDistanceBetween(final IShape g1, final IShape g2) {
-		// New algorithm : we get the cells at the nearest points and compute
-		// the distance between their centroids ?
-		IShape s1 = g1.getAgent() != null && g1.getAgent().getSpecies() == this.getCellSpecies() ? g1 : null;
-		IShape s2 = g2.getAgent() != null && g2.getAgent().getSpecies() == this.getCellSpecies() ? g2 : null;
+
+		IGridAgent s1 = g1.getAgent() != null && g1.getAgent().getSpecies() == this.getCellSpecies() ? (IGridAgent)g1.getAgent() : null;
+		IGridAgent s2 = g2.getAgent() != null && g2.getAgent().getSpecies() == this.getCellSpecies() ? (IGridAgent)g2.getAgent() : null;
 
 		if (s1 == null || s2 == null) {
 			ILocation p1 = g1.isPoint() ? g1.getLocation() : null;
 			ILocation p2 = g2.isPoint() ? g2.getLocation() : null;
+			if (s1 == null) {
+				s1 = (IGridAgent) this.getPlaceAt(g1.getLocation());
+				if (!s1.covers(g1))
+					s1 = null;
+			}
+			if (s2 == null) {
+				s2 = (IGridAgent) this.getPlaceAt(g2.getLocation());
+				if (!s2.covers(g2))
+					s2 = null;
+			}
 			final Coordinate[] coord = new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
 			if (s1 == null) {
 				p1 = new GamaPoint(coord[0]);
-				s1 = this.getPlaceAt(p1);
+				s1 = (IGridAgent) this.getPlaceAt(p1);
 			}
 			if (s2 == null) {
 				p2 = new GamaPoint(coord[1]);
-				s2 = this.getPlaceAt(p2);
+				s2 = (IGridAgent) this.getPlaceAt(p2);
 			}
 		}
 
-		final Coordinate[] coord = new DistanceOp(s1.getInnerGeometry(), s2.getInnerGeometry()).nearestPoints();
-		final int dx = (int) (Maths.abs(coord[0].x - coord[1].x) / cellWidth) + 1;
-		final int dy = (int) (Maths.abs(coord[0].y - coord[1].y) / cellHeight) + 1;
-		if (usesVN) {
-			int result = dx + dy;
-			if (result == 2) {
-				final double centroid_dx = Maths.abs(g2.getLocation().getX() - g1.getLocation().getX());
-				final double centroid_dy = Maths.abs(g2.getLocation().getY() - g1.getLocation().getY());
-				if (centroid_dx < cellWidth) {
-					result -= 1;
-				}
-				if (centroid_dy < cellHeight) {
-					result -= 1;
-				}
-			}
-			return result;
-		}
-		int result = CmnFastMath.max(dx, dy);
-		final double centroid_dx = Maths.abs(g2.getLocation().getX() - g1.getLocation().getX());
-		final double centroid_dy = Maths.abs(g2.getLocation().getY() - g1.getLocation().getY());
-		if (centroid_dx < cellWidth && centroid_dy < cellHeight) {
-			result -= 1;
-		}
-		return result;
+		int dx = CmnFastMath.abs(s1.getX() - s2.getX()) ;
+		int dy = CmnFastMath.abs(s1.getY() - s2.getY()) ;
+		if (usesVN) 
+			return dx + dy;
+		return CmnFastMath.max(dx, dy);
 	}
 
 	/**
