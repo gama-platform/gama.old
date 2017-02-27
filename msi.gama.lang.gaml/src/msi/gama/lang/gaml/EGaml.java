@@ -528,4 +528,17 @@ public class EGaml {
 
 	}
 
+	public static boolean isBatch(final HeadlessExperiment e) {
+		if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS))
+			return false;
+		for (final Facet f : e.getFacets()) {
+			if (getKeyOf(f).equals(IKeyword.TYPE)) {
+				final String type = EGaml.getKeyOf(f.getExpr());
+				if (IKeyword.BATCH.equals(type)) { return true; }
+			}
+		}
+		return false;
+
+	}
+
 }

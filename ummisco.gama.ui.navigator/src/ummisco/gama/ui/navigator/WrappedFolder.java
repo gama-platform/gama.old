@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WrappedFolder.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WrappedFolder.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -68,9 +67,7 @@ public class WrappedFolder extends VirtualContent {
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (fileNames.isEmpty()) {
-			return EMPTY;
-		}
+		if (fileNames.isEmpty()) { return EMPTY; }
 		final List<WrappedFile> files = new ArrayList<>();
 		final IFile file = (IFile) getParent();
 		final IPath filePath = file.getLocation();
@@ -86,8 +83,11 @@ public class WrappedFolder extends VirtualContent {
 			} else {
 				resPath = resPath.makeRelativeTo(projectPath);
 			}
-			final IFile newFile = file.getProject().getFile(resPath);
-			if (newFile.exists()) {
+			IFile newFile = null;
+			try {
+				newFile = file.getProject().getFile(resPath);
+			} catch (final IllegalArgumentException e) {}
+			if (newFile != null && newFile.exists()) {
 				final WrappedFile proxy = new WrappedFile(this, newFile);
 				files.add(proxy);
 			}
