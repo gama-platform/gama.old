@@ -42,7 +42,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 public class ExperimentJob implements IExperimentJob {
@@ -248,36 +247,31 @@ public class ExperimentJob implements IExperimentJob {
 		final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 				
-		int step = 0;
-		while( ! Types.BOOL.cast(simulator.getSimulation().getScope(), endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue() 
-				 && ((finalStep >= 0) ? (step < finalStep) : true)) {
-			if (step % affDelay == 0) {
-				System.out.print(".");
-			}
-			if (simulator.isInterrupted())
-				break;
-			doStep();			
-			
-			step++;
-		} 
-		
-		//
-		//for (; step < finalStep; step++) {
-		//	if (step % affDelay == 0) {
-		//		System.out.print(".");
-		//	}
-		//	if (simulator.isInterrupted())
-		//		break;
-		//	doStep();
-		//
-		//}
-		//
+		try {
+			int step = 0;
+			while( ! Types.BOOL.cast(simulator.getSimulation().getScope(), endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue() 
+					 && ((finalStep >= 0) ? (step < finalStep) : true)) {
+				if (step % affDelay == 0) {
+					System.out.print(".");
+				}
+				if (simulator.isInterrupted())
+					break;
+				doStep();			
+				
+				step++;
+			} 
+		} catch(GamaRuntimeException e) {
+			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
+			e.printStackTrace();
+		}
+
 		final long endDate = Calendar.getInstance().getTimeInMillis();
 		this.simulator.dispose();
 		if (this.outputFile != null) {
 			this.outputFile.close();
 		}
 		System.out.println("\nSimulation duration: " + (endDate - startdate) + "ms");
+		
 	}
 
 	@Override

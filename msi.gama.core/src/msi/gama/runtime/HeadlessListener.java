@@ -98,7 +98,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void error(final String error) {
 		// System.out.println("Error: " + error);
-		System.out.println("Error: " + error);
+		// System.out.println("Error: " + error);
 
 	}
 
