@@ -29,6 +29,7 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
+import msi.gaml.variables.IVariable;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with everything their
@@ -42,7 +43,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	protected GamaMap<String, IPopulation<? extends IAgent>> externMicroPopulations;
 	// Added to optimize the traversal of "non-minimal" agents that contain
 	// micropopulations
-	private IPopulation<? extends IAgent>[] microPopulations;
+	protected IPopulation<? extends IAgent>[] microPopulations;
 	static final IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
 
 	// end-hqnghi
@@ -63,15 +64,26 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		super(gridPopulation, geometry);
 	}
 
+	private Boolean isPopulation(final String name) {
+		final IVariable v = getSpecies().getVar(name);
+		if (v == null)
+			return false;
+		if (v.isMicroPopulation())
+			return true;
+		return false;
+	}
+
 	@Override
 	public IPopulation<? extends IAgent>[] getMicroPopulations() {
 		if (getAttributes() == null) { return NO_POP; }
 		if (microPopulations == null) {
-			microPopulations =
-					Iterables.toArray(Iterables.filter(getAttributes().values(), IPopulation.class), IPopulation.class);
+			microPopulations = Iterables.toArray(
+					Iterables.transform(Iterables.filter(getAttributes().keySet(), input -> isPopulation(input)),
+							input -> (IPopulation) getAttributes().get(input)),
+					IPopulation.class);
 			if (microPopulations.length == 0)
 				microPopulations = NO_POP;
-			Arrays.parallelSort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
+			Arrays.sort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
 		}
 		return microPopulations;
 	}

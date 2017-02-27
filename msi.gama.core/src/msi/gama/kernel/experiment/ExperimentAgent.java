@@ -316,6 +316,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			setAttribute(model.getName(), pop);
 			pop.initializeFor(scope);
 		}
+		microPopulations = new IPopulation[] { pop };
 	}
 
 	@Override
