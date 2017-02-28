@@ -674,6 +674,14 @@ public class Envelope3D extends Envelope {
 	public Envelope3D yNegated() {
 		return new Envelope3D(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
+	
+	public Envelope3D rotate(final AxisAngle rotation) {
+		if (isNull()) { return this; }
+		GamaShape se = new GamaShape(this);
+		se = new GamaShape(se, null, rotation, se.getLocation());
+		init(se.getEnvelope());
+		return this;
+	}
 
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz
 	//
