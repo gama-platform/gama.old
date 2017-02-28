@@ -9,10 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.compilation.kernel;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -158,16 +156,17 @@ public class GamaBundleLoader {
 			e.printStackTrace();
 		}
 		if (url == null) { return false; }
-		File file = null;
-		try {
-			final URL new_url = FileLocator.resolve(url);
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			file = normalizedPath.toFile();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return file != null && file.exists() && file.isDirectory();
+		// File file = null;
+		// try {
+		// final URL new_url = FileLocator.resolve(url);
+		// final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
+		// final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
+		// file = normalizedPath.toFile();
+		// } catch (final Exception e) {
+		// e.printStackTrace();
+		// }
+		// return file != null && file.exists() && file.isDirectory();
+		return true;
 	}
 
 	@SuppressWarnings ("unchecked")
