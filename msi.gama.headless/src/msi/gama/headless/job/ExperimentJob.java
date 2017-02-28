@@ -397,15 +397,15 @@ public class ExperimentJob implements IExperimentJob {
 			aparameter.setAttributeNode(ap1);
 			
 			final Attr ap2 = doc.createAttribute(XmlTAG.VAR_TAG);
-			ap1.setValue(p.getVar());
+			ap2.setValue(p.getVar());
 			aparameter.setAttributeNode(ap2);			
 
 			final Attr ap3 = doc.createAttribute(XmlTAG.TYPE_TAG);
-			ap2.setValue(p.getType().toString());
+			ap3.setValue(p.getType().toString());
 			aparameter.setAttributeNode(ap3);
 
 			final Attr ap4 = doc.createAttribute(XmlTAG.VALUE_TAG);
-			ap3.setValue(p.getValue().toString());
+			ap4.setValue(p.getValue().toString());
 			aparameter.setAttributeNode(ap4);
 		}
 

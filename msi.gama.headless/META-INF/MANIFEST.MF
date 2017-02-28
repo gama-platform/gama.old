@@ -15,28 +15,23 @@ Require-Bundle: com.ibm.icu,
 Bundle-ActivationPolicy: lazy
 Export-Package: 
  msi.gama.headless.classLoader,
- msi.gama.headless.common,
+ msi.gama.headless.common;uses:="msi.gama.headless.job",
  msi.gama.headless.core;
-  uses:="msi.gama.headless.xml,
+  uses:="msi.gama.headless.job,
+   msi.gama.kernel.model,
+   msi.gama.kernel.experiment,
    msi.gama.kernel.simulation,
-   msi.gama.kernel.experiment,
-   msi.gama.headless.common,
-   msi.gama.util,
-   msi.gaml.descriptions",
- msi.gama.headless.openmole,
+   msi.gaml.expressions,
+   msi.gama.runtime",
+ msi.gama.headless.openmole;uses:="msi.gama.kernel.model,msi.gama.headless.core",
  msi.gama.headless.runtime;
-  uses:="msi.gama.common.interfaces,
-   msi.gama.outputs,
-   msi.gama.kernel.experiment,
-   msi.gama.runtime,
-   msi.gama.headless.common,
+  uses:="org.osgi.framework,
+   msi.gama.headless.job,
+   msi.gama.kernel.model,
    org.eclipse.equinox.app,
-   org.osgi.framework,
-   msi.gama.metamodel.agent,
-   msi.gaml.architecture.user,
-   msi.gama.runtime.exceptions",
- msi.gama.headless.script,
- msi.gama.headless.util,
- msi.gama.headless.xml;uses:="msi.gama.headless.core"
+   msi.gama.kernel.experiment",
+ msi.gama.headless.script;uses:="msi.gama.kernel.model,org.w3c.dom",
+ msi.gama.headless.util;uses:="org.w3c.dom",
+ msi.gama.headless.xml;uses:="msi.gama.headless.job"
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
