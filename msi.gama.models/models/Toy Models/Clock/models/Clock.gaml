@@ -56,9 +56,9 @@ species  clock {
 		}
 		aspect default {
 			draw string("#cycles: " + cycle + " cycles")  size:zoom/2 font:"times" color:°black at:{world.shape.width/3,0};
-			draw clock_big_hand rotate: nb_minutes*(360/60)  + 90  size: {7 * zoom, 2}; //Modulo with the representation of a minute in ms and divided by 10000 to get the degree of rotation
-			draw clock_small_hand rotate: nb_hours*(360/12)  + 90  size:{5*zoom, 2} ;			
-			draw clock_alarm rotate:      (alarmCycle/12000)  size: zoom/3 ; // Alarm time
+			draw clock_big_hand rotate: nb_minutes*(360/60)  + 90  size: {7 * zoom, 2} at:location + {0,0,0.1}; //Modulo with the representation of a minute in ms and divided by 10000 to get the degree of rotation
+			draw clock_small_hand rotate: nb_hours*(360/12)  + 90  size:{5*zoom, 2} at:location + {0,0,0.1};			
+			draw clock_alarm rotate:      (alarmCycle/12000)  size: zoom/3 at:location + {0,0,0.1}; // Alarm time
 		}
  
 }
