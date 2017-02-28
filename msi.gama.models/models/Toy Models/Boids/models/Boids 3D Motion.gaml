@@ -152,7 +152,7 @@ experiment boids_3D type: gui {
 	
 	output {
 		
-		display Sky1 type:opengl  z_fighting:false{
+		display Sky1 type:opengl  {
 			image 'background' file:'../images/ocean.jpg' ;
 			species boids aspect: image;
 			species boids_goal;	

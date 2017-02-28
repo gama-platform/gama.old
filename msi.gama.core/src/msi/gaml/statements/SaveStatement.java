@@ -13,10 +13,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
@@ -130,10 +133,18 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 				@facet (
+						name = IKeyword.ATTRIBUTES,
+						type = { IType.MAP },
+						optional = true,
+						doc = @doc (
+								value = "Allows to specify the attributes of a shape file (or other files that accept attributes). The keys of the map are the names of the attributes that will be present in the file, the values are whatever expression neeeded to define their value")),
+				@facet (
 						name = IKeyword.WITH,
 						type = { IType.MAP },
 						optional = true,
-						doc = @doc ("Not yet used")) },
+						doc = @doc (
+								/* deprecated = "Please use 'attributes:' instead", */
+								value = "Allows to define the attributes of a shape file. Keys of the map are the attributes of agents to save, values are the names of attributes in the shape file")) },
 		omissible = IKeyword.DATA)
 @doc (
 		value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"geotiff\", \"text\" or \"csv\".",
@@ -213,7 +224,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	private Arguments init;
+	private Arguments withFacet;
+	private final IExpression attributesFacet;
 	private final IExpression crsCode, item, file, rewriteExpr, header;
 
 	public SaveStatement(final IDescription desc) {
@@ -223,6 +235,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		file = getFacet(IKeyword.TO);
 		rewriteExpr = getFacet(IKeyword.REWRITE);
 		header = getFacet(IKeyword.HEADER);
+		attributesFacet = getFacet(IKeyword.ATTRIBUTES);
 	}
 
 	private boolean shouldOverwrite(final IScope scope) {
@@ -499,7 +512,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);
 			final List<String> attString = new ArrayList<String>();
 			if (species != null) {
-				computeInits(scope, attributes, species);
+				computeInitsFromWithFacet(scope, attributes, species);
 				for (final String e : attributes.keySet()) {
 					final String var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
@@ -510,7 +523,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes, attString);
+			saveShapeFile(scope, path, agents, specs.toString(), attributes, attString);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
@@ -536,16 +549,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					return;
 				}
 				if (isAgent) {
-
 					final Collection<String> attributeNames =
 							values instanceof IPopulation ? ((IPopulation) values).getSpecies().getAttributeNames(scope)
 									: values.getType().getContentType().getSpecies().getAttributeNames();
-					attributeNames.remove(IKeyword.NAME);
-					attributeNames.remove(IKeyword.LOCATION);
-					attributeNames.remove(IKeyword.PEERS);
-					attributeNames.remove(IKeyword.HOST);
-					attributeNames.remove(IKeyword.AGENTS);
-					attributeNames.remove(IKeyword.MEMBERS);
+					attributeNames.removeAll(NON_SAVEABLE_ATTRIBUTE_NAMES);
 					if (header) {
 						// final IAgent ag0 = Cast.asAgent(scope,
 						// values.get(0));
@@ -578,15 +585,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
 							val = val.substring(1, val.length() - 1);
 						fw.write(val + ",");
-						// fw.write(Cast.toGaml(values.get(i)).replace(',', ';')
-						// + ",");
 					}
 					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
 					if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
 						val = val.substring(1, val.length() - 1);
 					fw.write(val + Strings.LN);
-					// fw.write(Cast.toGaml(values.lastValue(scope)).replace(',',
-					// ';') + Strings.LN);
 				}
 
 			}
@@ -600,35 +603,31 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	public String type(final VariableDescription var) {
-		final IType gamaName = var.getType();
-		if (gamaName.id() == IType.BOOL) { return "Boolean"; }
-		if (gamaName.id() == IType.FLOAT) { return "Double"; }
-		if (gamaName.id() == IType.INT) { return "Integer"; }
-		return "String";
+		switch (var.getType().id()) {
+			case IType.BOOL:
+				return "Boolean";
+			case IType.INT:
+				return "Integer";
+			case IType.FLOAT:
+				return "Double";
+			default:
+				return "String";
+		}
 	}
 
-	// private void computeInits(final IScope scope, final Map<String, String>
-	// values) throws GamaRuntimeException {
-	// computeInits(scope, values, null);
-	// }
+	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
+			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
 
-	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species)
-			throws GamaRuntimeException {
-		if (init == null) { return; }
-		if (init.isEmpty() && species != null) {
-			final List<String> attributeNames = new ArrayList<String>();
-			attributeNames.add(IKeyword.PEERS);
-			attributeNames.add(IKeyword.LOCATION);
-			attributeNames.add(IKeyword.HOST);
-			attributeNames.add(IKeyword.AGENTS);
-			attributeNames.add(IKeyword.MEMBERS);
-			attributeNames.add(IKeyword.SHAPE);
+	private void computeInitsFromWithFacet(final IScope scope, final Map<String, String> values,
+			final SpeciesDescription species) throws GamaRuntimeException {
+		if (withFacet == null) { return; }
+		if (withFacet.isEmpty() && species != null) {
 			for (final String var : species.getAttributeNames()) {
-				if (!attributeNames.contains(var))
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var))
 					values.put(var, var);
 			}
 		} else {
-			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
+			for (final Map.Entry<String, IExpressionDescription> f : withFacet.entrySet()) {
 				if (f != null) {
 					values.put(f.getValue().toString(), f.getKey());
 				}
@@ -729,7 +728,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
-		init = args;
+		withFacet = args;
 	}
 
 	@Override

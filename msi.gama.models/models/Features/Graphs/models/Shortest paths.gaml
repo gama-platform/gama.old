@@ -9,7 +9,7 @@
 model Network
 
 global {
-	file shape_file_in <- file('../includes/gis/roads.shp') ;
+	file shape_file_in <- file('../includes/road.shp') ;
 	graph the_graph; 
 	geometry shape <- envelope(shape_file_in);
 	bool save_shortest_paths <- false;
@@ -64,7 +64,7 @@ species road  {
 	
 species goal {
 	aspect default {
-		draw circle(50) color: #red;
+		draw circle(10) color: #red;
 	}
 }
 	
@@ -73,7 +73,7 @@ species people skills: [moving] {
 	path my_path; 
 	
 	aspect default {
-		draw circle(50) color: #green;
+		draw circle(10) color: #green;
 	}
 	reflex movement {
 		do goto on:the_graph target:target speed:1.0;
