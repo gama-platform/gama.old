@@ -274,4 +274,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 		return Types.COLOR;
 	}
 
+	public GamaColor withAlpha(final double d) {
+		return new GamaColor(getRed(), getGreen(), getBlue(), d);
+	}
+
 }

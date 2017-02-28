@@ -384,15 +384,21 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
 
+		// Do it before the mouse position is newly set (in super.internalMouseMove)
 		if (keystoneMode) {
 			final int selectedCorner = getRenderer().getKeystone().getCornerSelected();
 			if (selectedCorner != -1) {
-				final GamaPoint p = getNormalizedCoordinates(e);
+				final GamaPoint origin = getNormalizedCoordinates(getMousePosition().x, getMousePosition().y);
+				GamaPoint p = getNormalizedCoordinates(e.x, e.y);
+				final GamaPoint translation = origin.minus(p).yNegated();
+				p = getRenderer().getKeystone().getKeystoneCoordinates(selectedCorner).plus(-translation.x,
+						translation.y, 0);
 				getRenderer().getKeystone().setKeystoneCoordinates(selectedCorner, p);
 			} else {
 				final int cornerSelected = hoverOnKeystone(e);
 				getRenderer().getKeystone().setCornerHovered(cornerSelected);
 			}
+			super.internalMouseMove(e);
 			return;
 		}
 

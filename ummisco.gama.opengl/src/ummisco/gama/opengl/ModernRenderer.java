@@ -161,6 +161,11 @@ public class ModernRenderer extends Abstract3DRenderer {
 			// TODO Auto-generated method stub
 
 		}
+
+		@Override
+		public GamaPoint getKeystoneCoordinates(final int cornerId) {
+			return new GamaPoint(coords[cornerId][0], coords[cornerId][1]);
+		}
 	}
 
 	@Override

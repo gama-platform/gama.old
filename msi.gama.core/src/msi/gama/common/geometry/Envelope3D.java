@@ -675,6 +675,13 @@ public class Envelope3D extends Envelope {
 		return new Envelope3D(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
 
+	/**
+	 * Sets all coordinates to zero (as oppposed to setToNull, which sets them for the empty geometry)
+	 */
+	public void setToZero() {
+		this.init(0, 0, 0, 0, 0, 0);
+	}
+
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz
 	//
 	// public final GamaPoint normal(final int direction) {

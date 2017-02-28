@@ -18,6 +18,8 @@ public interface IKeystoneState {
 
 	void setKeystoneCoordinates(int cornerId, GamaPoint p);
 
+	GamaPoint getKeystoneCoordinates(int cornerId);
+
 	boolean drawKeystoneHelper();
 
 	/**
