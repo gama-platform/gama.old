@@ -173,7 +173,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return getName();
+		return serialize(true);
 	}
 
 	@Override
