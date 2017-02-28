@@ -12,7 +12,9 @@
 package msi.gama.headless.job;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,6 +37,8 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -193,6 +197,7 @@ public class ExperimentJob implements IExperimentJob {
 	@Override
 	public void loadAndBuild(final RuntimeContext rtx)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+
 
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];

@@ -45,8 +45,7 @@ import java.io.*;
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
-
-	BufferedWriter outputWriter;
+	ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<BufferedWriter>();
 	
 	static {
 
@@ -66,10 +65,19 @@ public class HeadlessListener implements IGui {
 		return null;
 	}
 	
-	public void setBufferedWriter(final BufferedWriter w) {
-		this.outputWriter = w;
+	public void registerJob(final BufferedWriter w)
+	{
+		this.outputWriter.set(w);
 	}
 
+	public BufferedWriter leaveJob()
+	{
+		BufferedWriter res = this.outputWriter.get();
+		this.outputWriter.remove();
+		return res;
+	}
+
+	
 	@Override
 	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
@@ -169,13 +177,14 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void cleanAfterExperiment() {
-		try {
+/*		try {
 			if(outputWriter != null) {
 				outputWriter.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	@Override
@@ -361,8 +370,8 @@ public class HeadlessListener implements IGui {
 			System.out.println(s);
 			if(outputWriter != null) {
 				try {
-					outputWriter.write(s+Strings.LN);
-					outputWriter.flush();
+					outputWriter.get().write(s+Strings.LN);
+				//	outputWriter.get().flush();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
