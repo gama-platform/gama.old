@@ -1,6 +1,8 @@
 package msi.gama.headless.runtime;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,11 +10,14 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 import msi.gaml.descriptions.IDescription;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {
@@ -207,6 +212,12 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		@Override
 		public void run() {
 			try {
+				BufferedWriter file = new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/" + Globals.CONSOLE_OUTPUT_FILENAME+"-"+si.getExperimentID()+".txt"));
+				((HeadlessListener) GAMA.getHeadlessGui()).registerJob(file);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
 					si.loadAndBuild(this.runtime);
 				
 			} catch (InstantiationException e) {
@@ -219,9 +230,11 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				catch (IOException e) {
 					e.printStackTrace();
 				}
-			si.play(); 
+			si.play();
+			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
 			runtime.closeSimulation(this); 
 			runtime.releaseModel(si.getSourcePath(),si.getSimulation().getModel());
+			
 		}
 
 	}

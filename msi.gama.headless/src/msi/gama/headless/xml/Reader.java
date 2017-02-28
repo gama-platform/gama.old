@@ -53,30 +53,51 @@ public class Reader {
 		return this.sims;
 	}
 
-	private Parameter readParameter(final Element e) {
-		String name = e.getAttribute(XmlTAG.NAME_TAG);
-		String value = e.getAttribute(XmlTAG.VALUE_TAG);
-		String var = e.getAttribute(XmlTAG.VAR_TAG);
-		String type = e.getAttribute(XmlTAG.TYPE_TAG);
+	private Parameter readParameter(final Node e) {
+		String name = getAttributeWithoutCase(e,XmlTAG.NAME_TAG);
+		String value = getAttributeWithoutCase(e,XmlTAG.VALUE_TAG);
+		String var = getAttributeWithoutCase(e,XmlTAG.VAR_TAG);
+		String type = getAttributeWithoutCase(e,XmlTAG.TYPE_TAG);
 		DataType dtype = DataType.valueOf(type);
 		return new Parameter(name, var, DataTypeFactory.getObjectFromText(value, dtype), dtype);
 	}
 
-	private Output readOutput(final Element e) {
-		String name = e.getAttribute(XmlTAG.NAME_TAG);
-		String id = e.getAttribute(XmlTAG.ID_TAG);
-		String path = e.getAttribute(XmlTAG.OUTPUT_PATH);
-		int framerate = Integer.valueOf(e.getAttribute(XmlTAG.FRAMERATE_TAG));;
+	private Output readOutput(final Node e) {
+		String name = getAttributeWithoutCase(e,XmlTAG.NAME_TAG);
+		String id = getAttributeWithoutCase(e,XmlTAG.ID_TAG);
+		String path = getAttributeWithoutCase(e,XmlTAG.OUTPUT_PATH);
+		int framerate = Integer.valueOf(getAttributeWithoutCase(e,XmlTAG.FRAMERATE_TAG));;
 		return new Output(name, framerate, id, path);
 	}
 
-	private void readParameter(final ExperimentJob s, final Element docEle) {
-		NodeList nl = docEle.getElementsByTagName(XmlTAG.PARAMETER_TAG);
-		if ( nl != null && nl.getLength() > 0 ) {
-			for ( int i = 0; i < nl.getLength(); i++ ) {
+	private List<Node> findElementByNameWithoutCase(final Node e, final String name)
+	{
+		String lname = name.toLowerCase();
+		ArrayList<Node> res = new ArrayList<Node>();
+		if(e.getNodeName().toLowerCase().equals(lname))
+			{
+				res.add(e);
+				return res;
+			}
+		NodeList nl = e.getChildNodes();
+		//System.out.println("get child "+ nl.getLength()+" "+name+ "  "+e.getNodeName());
+		for(int i = 0; i < nl.getLength(); i++)
+		{
+			Node ee = (Node) nl.item(i);
+			res.addAll(findElementByNameWithoutCase(ee,name));
+			
+		}
+		return res;
+	}
+	
+	
+	private void readParameter(final ExperimentJob s, final Node docEle) {
+		List<Node> nl = findElementByNameWithoutCase(docEle,XmlTAG.PARAMETER_TAG);
+		if ( nl != null && nl.size() > 0 ) {
+			for ( int i = 0; i < nl.size(); i++ ) {
 
 				// get the employee element
-				Element el = (Element) nl.item(i);
+				Node el = (Element) nl.get(i);
 
 				// get the Employee object
 				Parameter e = this.readParameter(el);
@@ -86,13 +107,14 @@ public class Reader {
 		}
 	}
 
-	private void readOutput(final ExperimentJob s, final Element docEle) {
-		NodeList nl = docEle.getElementsByTagName(XmlTAG.OUTPUT_TAG);
-		if ( nl != null && nl.getLength() > 0 ) {
-			for ( int i = 0; i < nl.getLength(); i++ ) {
+	private void readOutput(final ExperimentJob s, final Node docEle) {
+		//NodeList nl = docEle.getElementsByTagName(XmlTAG.OUTPUT_TAG);
+		List<Node> nl = findElementByNameWithoutCase(docEle,XmlTAG.OUTPUT_TAG);
+		if ( nl != null && nl.size() > 0 ) {
+			for ( int i = 0; i < nl.size(); i++ ) {
 
 				// get the employee element
-				Element el = (Element) nl.item(i);
+				Node el = (Node) nl.get(i);
 
 				// get the Employee object
 				Output e = this.readOutput(el);
@@ -102,13 +124,29 @@ public class Reader {
 		}
 	}
 
-	private ExperimentJob readSimulation(final Element e) {
+	
+	private String getAttributeWithoutCase(final Node e, String flag)
+	{
+		NamedNodeMap mp = e.getAttributes();
+		String lflag = flag.toLowerCase();
+		for(int i = 0; i< mp.getLength(); i++)
+		{
+			Node nd = mp.item(i);
+			if(nd.getNodeName().toLowerCase().equals(lflag))
+			{
+				return nd.getTextContent();
+			}
+		}
+		return null;
+	}
+	
+	private ExperimentJob readSimulation(final Node e) {
 
-		String expId = e.getAttribute(XmlTAG.EXPERIMENT_ID_TAG);
+		String expId = getAttributeWithoutCase(e,XmlTAG.EXPERIMENT_ID_TAG);
 		
-		String finalStep = e.getAttribute(XmlTAG.FINAL_STEP_TAG);
+		String finalStep = getAttributeWithoutCase(e,XmlTAG.FINAL_STEP_TAG);
 		int max;
-		if("".equals(finalStep)) {
+		if(finalStep==null||"".equals(finalStep)) {
 			max = -1;
 		} else {
 			max = Integer.valueOf(finalStep);
@@ -116,19 +154,12 @@ public class Reader {
 		if(max < 0){System.out.println("WARNING: the headless simulation has no final step!");}
 		// int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
 		
-		String untilCond = e.getAttribute(XmlTAG.UNTIL_TAG);
+		String untilCond = getAttributeWithoutCase(e,XmlTAG.UNTIL_TAG);
 //		GAML.compileExpression(expression, agent, onlyExpression)
 		
-		String sourcePath = e.getAttribute(XmlTAG.SOURCE_PATH_TAG);
-		String experimentName = e.getAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
-		try {
-			((HeadlessListener) GAMA.getHeadlessGui()).setBufferedWriter(new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/" + Globals.CONSOLE_OUTPUT_FILENAME)));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-
-		String seed = e.getAttribute(XmlTAG.SEED_TAG);
+		String sourcePath = getAttributeWithoutCase(e,XmlTAG.SOURCE_PATH_TAG);
+		String experimentName = getAttributeWithoutCase(e,XmlTAG.EXPERIMENT_NAME_TAG);
+		String seed = getAttributeWithoutCase(e,XmlTAG.SEED_TAG);
 		long selectedSeed = seed == null || seed.length() == 0 ? 0l : Long.valueOf(seed).longValue();
 		if ( sourcePath.charAt(0) != '/' && sourcePath.charAt(0) != '\\' ) {
 			String pr;
@@ -153,16 +184,27 @@ public class Reader {
 	private ArrayList<ExperimentJob> readSimulation(final Document dom) {
 		ArrayList<ExperimentJob> res = new ArrayList<ExperimentJob>();
 //		Element docEle = dom.getDocumentElement();
-		NodeList nl = dom.getElementsByTagName(XmlTAG.SIMULATION_TAG);
-		if ( nl != null && nl.getLength() > 0 ) {
-			for ( int i = 0; i < nl.getLength(); i++ ) {
+		NodeList ee = dom.getChildNodes();
+		
+		for(int i = 0; i<ee.getLength();i++)
+		{
+			
+			
+			List<Node> nl = findElementByNameWithoutCase(ee.item(i),XmlTAG.SIMULATION_TAG);
+			
+			System.out.println("nb simulation");
+			if ( nl != null && nl.size() > 0 ) {
+				for ( int j = 0; j < nl.size(); j++ ) {
 
-				// get the employee element
-				Element el = (Element) nl.item(i);
-
-				// add it to list
-				res.add(readSimulation(el));
+					// get the employee element
+					Node el = (Node) nl.get(j);
+					// add it to list
+					res.add(readSimulation(el));
+				}
 			}
+
+			
+			
 		}
 		return res;
 	}
