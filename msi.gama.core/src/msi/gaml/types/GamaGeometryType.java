@@ -41,6 +41,7 @@ import com.vividsolutions.jts.util.GeometricShapeFactory;
 import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.DynamicLineString;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -411,9 +412,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if (xRadius <= 0) {
 			if (yRadius <= 0) { return new GamaShape(location); }
 		}
-		final GeometricShapeFactory factory = new GeometricShapeFactory();
-		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a
-									// parameter and/or preference ?
+		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
+		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+																						// Maybe add a
+		// parameter and/or preference ?
 		factory.setCentre(location);
 		factory.setWidth(xRadius);
 		factory.setHeight(yRadius);
@@ -429,9 +431,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
 		if (xRadius <= 0) { return new GamaShape(location); }
-		final GeometricShapeFactory factory = new GeometricShapeFactory();
-		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a
-									// parameter and/or preference ?
+		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
+		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+																						// Maybe add a
+		// parameter and/or preference ?
 		factory.setCentre(location);
 		factory.setSize(xRadius);
 		final Geometry g = factory.createSupercircle(power);
@@ -459,9 +462,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildArc(final double xRadius, final double heading, final double amplitude,
 			final boolean filled, final GamaPoint location) {
 		if (amplitude <= 0 || xRadius <= 0) { return new GamaShape(location); }
-		final GeometricShapeFactory factory = new GeometricShapeFactory();
-		factory.setNumPoints(100); // WARNING AD Arbitrary number. Maybe add a
-									// parameter and/or preference ?
+		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
+		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+																						// Maybe add a
+		// parameter and/or preference ?
 		factory.setCentre(location);
 		factory.setSize(xRadius);
 		final double ampl = Maths.checkHeading(amplitude);

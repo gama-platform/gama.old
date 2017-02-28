@@ -705,7 +705,6 @@ public class OpenGL {
 
 	private static Texture buildTexture(final GL gl, final File file) {
 		try {
-			// if (file.getName().endsWith("gif")) { return buildMultiTextures(gl, file); }
 			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file);
 			return buildTexture(gl, im);
 		} catch (final GLException e) {
@@ -713,20 +712,6 @@ public class OpenGL {
 			return null;
 		}
 	}
-
-	// private static Texture[] buildMultiTextures(final GL gl, final File file) {
-	// BufferedImage[] images;
-	// try {
-	// images = ImageUtils.getInstance().getImagesFromFile(file);
-	// } catch (ExecutionException | IOException e) {
-	// return new Texture[0];
-	// }
-	// final Texture[] result = new Texture[images.length];
-	// for (int i = 0; i < images.length; i++) {
-	// result[i] = buildTextures(gl, images[i])[0];
-	// }
-	// return result;
-	// }
 
 	public static Texture buildTexture(final OpenGL gl, final BufferedImage image) {
 		return buildTexture(gl.getGL(), image);

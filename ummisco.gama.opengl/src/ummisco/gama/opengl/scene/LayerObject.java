@@ -27,7 +27,6 @@ import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.GeometryObject.GeometryObjectWithAnimation;
-import ummisco.gama.webgl.SimpleLayer;
 
 /**
  * Class LayerObject.
@@ -54,7 +53,7 @@ public class LayerObject {
 	volatile boolean locked;
 	boolean isAnimated;
 	final Abstract3DRenderer renderer;
-	final LinkedList<List<AbstractObject>> objects = new LinkedList();
+	final LinkedList<List<AbstractObject>> objects;
 	List<AbstractObject> currentList;
 	Integer openGLListIndex;
 	boolean isFading;
@@ -63,7 +62,11 @@ public class LayerObject {
 		this.renderer = renderer;
 		this.layer = layer;
 		currentList = newCurrentList();
-		objects.add(currentList);
+		if (layer != null && layer.getTrace() != null || renderer instanceof ModernRenderer) {
+			objects = new LinkedList();
+			objects.add(currentList);
+		} else
+			objects = null;
 	}
 
 	public boolean isLightInteraction() {
@@ -130,7 +133,7 @@ public class LayerObject {
 
 	private void drawWithoutShader(final OpenGL gl) {
 
-		if (objects.size() == 0) { return; }
+		// if (objects.size() == 0) { return; }
 		if (overlay) {
 			gl.pushIdentity(GL2.GL_PROJECTION);
 			gl.getGL().glOrtho(0, 1, 0, 1, 1, -1);
@@ -166,23 +169,19 @@ public class LayerObject {
 	}
 
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
-		if (getTrace() > 0) {
+		if (objects != null) {
 			double delta = 0;
 			if (isFading) {
 				final int size = objects.size();
 				delta = size == 0 ? 0 : 1d / size;
 			}
-			drawSublists(gl, delta, picking);
+			double alpha = 0d;
+			for (final List<AbstractObject> list : objects) {
+				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
+				drawObjects(gl, list, alpha, picking);
+			}
 		} else
 			drawObjects(gl, currentList, alpha, picking);
-	}
-
-	protected void drawSublists(final OpenGL gl, final double alphaDelta, final boolean picking) {
-		double alpha = 0d;
-		for (final List<AbstractObject> list : objects) {
-			alpha = alphaDelta == 0d ? this.alpha : this.alpha * (alpha + alphaDelta);
-			drawObjects(gl, list, alpha, picking);
-		}
 	}
 
 	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
@@ -283,17 +282,18 @@ public class LayerObject {
 	}
 
 	public void clear(final OpenGL gl) {
-		final int sizeLimit = getTrace();
 
-		isFading = getFading();
-
-		final int size = objects.size();
-		for (int i = 0, n = size - sizeLimit; i < n; i++) {
-			final List<AbstractObject> list = objects.poll();
-		}
-
-		currentList = newCurrentList();
-		objects.offer(currentList);
+		if (objects != null) {
+			final int sizeLimit = getTrace();
+			isFading = getFading();
+			final int size = objects.size();
+			for (int i = 0, n = size - sizeLimit; i < n; i++) {
+				final List<AbstractObject> list = objects.poll();
+			}
+			currentList = newCurrentList();
+			objects.offer(currentList);
+		} else
+			currentList.clear();
 		final Integer index = openGLListIndex;
 		if (index != null) {
 			gl.deleteList(index);
@@ -336,25 +336,29 @@ public class LayerObject {
 		return overlay;
 	}
 
-	public SimpleLayer toSimpleLayer() {
+	// public SimpleLayer toSimpleLayer() {
+	//
+	// final List<DrawingEntity> drawingEntityList = new ArrayList<DrawingEntity>();
+	// // we don't send the "constantRedrawnLayer" (like the rotation helper)
+	// if (!constantRedrawnLayer) {
+	// for (final List<AbstractObject> list : objects) {
+	// for (final AbstractObject object : list) {
+	// final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
+	// .generateDrawingEntities(renderer.getSurface().getScope(), object, false, this, null);
+	// // explicitly passes null for the OpenGL context
+	// if (drawingEntities != null) {
+	// for (final DrawingEntity drawingEntity : drawingEntities) {
+	// drawingEntityList.add(drawingEntity);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// return new SimpleLayer(getOffset(), getScale(), alpha, drawingEntityList);
+	// }
 
-		final List<DrawingEntity> drawingEntityList = new ArrayList<DrawingEntity>();
-		// we don't send the "constantRedrawnLayer" (like the rotation helper)
-		if (!constantRedrawnLayer) {
-			for (final List<AbstractObject> list : objects) {
-				for (final AbstractObject object : list) {
-					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
-							.generateDrawingEntities(renderer.getSurface().getScope(), object, false, this, null);
-					// explicitly passes null for the OpenGL context
-					if (drawingEntities != null) {
-						for (final DrawingEntity drawingEntity : drawingEntities) {
-							drawingEntityList.add(drawingEntity);
-						}
-					}
-				}
-			}
-		}
-		return new SimpleLayer(getOffset(), getScale(), alpha, drawingEntityList);
+	public int numberOfTraces() {
+		return objects == null ? 1 : objects.size();
 	}
 
 }
