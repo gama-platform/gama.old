@@ -26,11 +26,13 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
@@ -437,11 +439,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			else {
 				IList<IShape> pts = GamaListFactory.create(Types.POINT);
 				for (final IShape ent : segments) {
-					pts.add(new GamaPoint(ent.getPoints().get(0)));
+					pts.addAll(ent.getPoints());
 				}
-				IList<IShape> ls = (IList<IShape>) segments.get(segments.size() - 1).getPoints();
-				pts.add(ls.get(ls.size() - 1));
-				shape = GamaGeometryType.buildPolyline(ls);
+				pts = Containers.remove_duplicates(GAMA.getRuntimeScope(), pts);
+				shape = GamaGeometryType.buildPolyline(pts);
 			}
 			
 
