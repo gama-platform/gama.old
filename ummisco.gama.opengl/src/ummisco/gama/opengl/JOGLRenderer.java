@@ -402,6 +402,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
+	public double[] getPixelWidthAndHeightOfWorld() {
+		final GLU glu = GLU.createGLU(gl);
+		final double[] coord = new double[4];
+		glu.gluProject(getEnvWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
+		return coord;
+	}
+
 	/**
 	 * Method beginOverlay()
 	 * 

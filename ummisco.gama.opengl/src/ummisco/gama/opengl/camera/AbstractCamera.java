@@ -323,9 +323,9 @@ public abstract class AbstractCamera implements ICamera {
 
 	}
 
-	protected GamaPoint getNormalizedCoordinates(final MouseEvent e) {
-		final double xCoordNormalized = e.x / getRenderer().getWidth();
-		double yCoordNormalized = e.y / getRenderer().getHeight();
+	protected GamaPoint getNormalizedCoordinates(final int x, final int y) {
+		final double xCoordNormalized = x / getRenderer().getWidth();
+		double yCoordNormalized = y / getRenderer().getHeight();
 		if (!renderer.useShader())
 			yCoordNormalized = 1 - yCoordNormalized;
 		return new GamaPoint(xCoordNormalized, yCoordNormalized);
@@ -334,32 +334,34 @@ public abstract class AbstractCamera implements ICamera {
 	private int clickOnKeystone(final MouseEvent e) {
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone.
-		final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystone().cornerSelected(p);
+		// final GamaPoint p = getNormalizedCoordinates(e);
+		return renderer.getKeystone().cornerSelected(new GamaPoint(e.x, e.y));
 	}
 
 	protected int hoverOnKeystone(final MouseEvent e) {
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone. Return 10 if click on the center.
-		final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystone().cornerHovered(p);
+		// final GamaPoint p = getNormalizedCoordinates(e);
+		return renderer.getKeystone().cornerHovered(new GamaPoint(e.x, e.y));
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
-			if (keystoneMode) {
-				final int cornerSelected = clickOnKeystone(e);
-				if (cornerSelected == getRenderer().getKeystone().getCornerSelected()) {
-					getRenderer().getKeystone().setCornerSelected(-1);
-					return;
-				}
-				if (cornerSelected != -1) {
-					getRenderer().getKeystone().setCornerSelected(cornerSelected);
-				}
-			}
 			firsttimeMouseDown = false;
 		}
+		if (keystoneMode) {
+			// final int cornerSelected = clickOnKeystone(e);
+			if (getRenderer().getKeystone().getCornerSelected() != -1) {
+				getRenderer().getKeystone().setCornerSelected(-1);
+				return;
+			}
+			final int cornerSelected = clickOnKeystone(e);
+			if (cornerSelected != -1) {
+				getRenderer().getKeystone().setCornerSelected(cornerSelected);
+			}
+		}
+
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {

@@ -674,13 +674,20 @@ public class Envelope3D extends Envelope {
 	public Envelope3D yNegated() {
 		return new Envelope3D(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
-	
+
 	public Envelope3D rotate(final AxisAngle rotation) {
 		if (isNull()) { return this; }
 		GamaShape se = new GamaShape(this);
 		se = new GamaShape(se, null, rotation, se.getLocation());
 		init(se.getEnvelope());
 		return this;
+	}
+
+	/**
+	 * Sets all coordinates to zero (as oppposed to setToNull, which sets them for the empty geometry)
+	 */
+	public void setToZero() {
+		this.init(0, 0, 0, 0, 0, 0);
 	}
 
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz

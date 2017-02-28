@@ -33,6 +33,13 @@ public class KeystoneDrawer implements IKeystoneState {
 	private int verticesBufferIndex;
 	private int indexBufferIndex;
 	private KeystoneShaderProgram shader;
+	private boolean worldCorners = false;
+	// private final Envelope3D[] cornersInPixels = new Envelope3D[] { new Envelope3D(0, 0, 0, 0, 0, 0),
+	// new Envelope3D(0, 0, 0, 0, 0, 0), new Envelope3D(0, 0, 0, 0, 0, 0), new Envelope3D(0, 0, 0, 0, 0, 0) };
+	private static final Color[] FILL_COLORS = new Color[] { NamedGamaColor.getNamed("gamared").withAlpha(0.5),
+			NamedGamaColor.getNamed("gamablue").withAlpha(0.5), NamedGamaColor.getNamed("black").withAlpha(0.5) };
+
+	final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(new int[] { 0, 1, 2, 0, 2, 3 });
 
 	public KeystoneDrawer(final JOGLRenderer r) {
 		this.renderer = r;
@@ -54,6 +61,11 @@ public class KeystoneDrawer implements IKeystoneState {
 	}
 
 	@Override
+	public GamaPoint getKeystoneCoordinates(final int corner) {
+		return getCoords()[corner];
+	}
+
+	@Override
 	public boolean drawKeystoneHelper() {
 		return drawKeystoneHelper;
 	}
@@ -69,12 +81,15 @@ public class KeystoneDrawer implements IKeystoneState {
 		drawKeystoneHelper = false;
 	}
 
+	public void switchCorners() {
+		worldCorners = !renderer.data.KEYSTONE_IDENTITY.getEnvelope().covers(renderer.data.getKeystone().getEnvelope());
+	}
+
 	public void dispose() {
 		if (fboScene != null) {
 			fboScene.cleanUp();
 		}
 		gl.glDeleteBuffers(3, new int[] { indexBufferIndex, verticesBufferIndex, uvMappingBufferIndex }, 0);
-		// glu.gluDeleteQuadric(q);
 	}
 
 	public void beginRenderToTexture() {
@@ -88,47 +103,82 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	}
 
-	private void drawSquare(final double[] loc, final double side, final Color fill) {
-		drawRectangle(loc, side, side, fill);
+	private void drawSquare(final double[] center, final double side, final Color fill) {
+		drawRectangle(center, side, side, fill);
 	}
 
-	private void drawRectangle(final double[] loc, final double width, final double height, final Color fill) {
+	private void drawRectangle(final double[] center, final double width, final double height, final Color fill) {
 		openGL.pushMatrix();
-		openGL.translateBy(loc);
+		openGL.translateBy(center);
 		openGL.setCurrentColor(fill);
 		openGL.scaleBy(Scaling3D.of(width, height, 1));
 		openGL.drawCachedGeometry(IShape.Type.SQUARE, null);
 		openGL.popMatrix();
 	}
 
-	private static final Color[] FILL_COLORS =
-			new Color[] { NamedGamaColor.getNamed("gamared"), NamedGamaColor.getNamed("gamablue"), Color.black };
-
 	private void drawKeystoneMarks() {
+
+		//
+		final int displayWidthInPixels = renderer.getViewWidth();
+		final int displayHeightInPixels = renderer.getViewHeight();
+		final double pixelWidthIn01 = 1d / displayWidthInPixels;
+		final double pixelHeightIn01 = 1d / displayHeightInPixels;
+		final double[] worldCoords = renderer.getPixelWidthAndHeightOfWorld();
+		final double worldWidthInPixels = worldCoords[0];
+		final double worldHeightInPixels = worldCoords[1];
+		final double widthRatio = worldWidthInPixels / displayWidthInPixels;
+		final double heightRatio = worldHeightInPixels / displayHeightInPixels;
+		final double xOffsetIn01 = 1 - widthRatio;
+		final double yOffsetIn01 = 1 - heightRatio;
+		final double labelHeightIn01 = pixelHeightIn01 * (18 + 20);
+		ICoordinates vertices;
+		if (!worldCorners) {
+			vertices = LayeredDisplayData.KEYSTONE_IDENTITY;
+			// 0, 0, 0 | 0, 1, 0 | 1, 1, 0 | 1, 0, 0
+		} else {
+			vertices = ICoordinates.ofLength(4);
+			vertices.at(0).setLocation(xOffsetIn01, yOffsetIn01, 0);
+			vertices.at(1).setLocation(xOffsetIn01, 1 - yOffsetIn01, 0);
+			vertices.at(2).setLocation(1 - xOffsetIn01, 1 - yOffsetIn01, 0);
+			vertices.at(3).setLocation(1 - xOffsetIn01, yOffsetIn01, 0);
+		}
+
 		openGL.pushIdentity(GL2.GL_PROJECTION);
 		gl.glOrtho(0, 1, 0, 1, 1, -1);
 		openGL.disableLighting();
-		LayeredDisplayData.KEYSTONE_IDENTITY.visit((id, x, y, z) -> {
-			final double wPxSize = 1d / renderer.getWidth();
-			final double hPxSize = 1d / renderer.getHeight();
-			final String content = "{" + floor4Digit(getCoords()[id].x) + "," + floor4Digit(getCoords()[id].y) + "}";
 
-			final double width = wPxSize * (openGL.getGlut().glutBitmapLength(GLUT.BITMAP_HELVETICA_18, content) + 20);
-			final double height = hPxSize * (18 + 20);
-
+		vertices.visit((id, x, y, z) -> {
+			// cornersInPixels[id].setToNull();
 			openGL.pushIdentity(GL2.GL_MODELVIEW);
+			// Basic computations on text and color
+			final String text = floor4Digit(getCoords()[id].x) + "," + floor4Digit(getCoords()[id].y);
+			final int lengthOfTextInPixels = openGL.getGlut().glutBitmapLength(GLUT.BITMAP_HELVETICA_18, text);
+			final double labelWidthIn01 = pixelWidthIn01 * (lengthOfTextInPixels + 20);
 			final int fill = id == cornerSelected ? 0 : id == cornerHovered ? 1 : 2;
-			drawRectangle(new double[] { x, y, z }, width * 2, height * 2, FILL_COLORS[fill]);
+			// Drawing the background of labels
+			final double xLabelIn01 = x + (id == 0 || id == 1 ? labelWidthIn01 / 2 : -labelWidthIn01 / 2);
+			final double yLabelIn01 = y + (id == 0 || id == 3 ? labelHeightIn01 / 2 : -labelHeightIn01 / 2);
+			drawRectangle(new double[] { xLabelIn01, yLabelIn01, z }, labelWidthIn01, labelHeightIn01,
+					FILL_COLORS[fill]);
+			// Writing back the envelope for user interaction
+			// cornersInPixels[id].setToZero();
+			// cornersInPixels[id].translate(xLabelIn01 * displayWidthInPixels, (1 - yLabelIn01) *
+			// displayHeightInPixels,
+			// 0);
+			// cornersInPixels[id].expandBy(labelWidthIn01 / 2 * displayWidthInPixels,
+			// labelHeightIn01 / 2 * displayHeightInPixels);
+			// Setting back the color to white and restoring the matrix
 			gl.glColor3d(1, 1, 1);
 			openGL.getGL().glLoadIdentity();
-			final double xPos = x == 0 ? 10 * wPxSize : 1 - width + 10 * wPxSize;
-			final double yPos = y == 0 ? 12 * hPxSize : 1 - height + 12 * hPxSize;
-
-			openGL.getGL().glRasterPos2d(xPos, yPos);
-			openGL.getGlut().glutBitmapString(GLUT.BITMAP_HELVETICA_18, content);
+			// Drawing the text itself
+			final double xPosIn01 = id == 0 || id == 1 ? 10 * pixelWidthIn01 + (worldCorners ? xOffsetIn01 : 0)
+					: 1 - labelWidthIn01 + 10 * pixelWidthIn01 - (worldCorners ? xOffsetIn01 : 0);
+			final double yPosIn01 = id == 0 || id == 3 ? 12 * pixelHeightIn01 + (worldCorners ? yOffsetIn01 : 0)
+					: 1 - labelHeightIn01 + 12 * pixelHeightIn01 - (worldCorners ? yOffsetIn01 : 0);
+			openGL.getGL().glRasterPos2d(xPosIn01, yPosIn01);
+			openGL.getGlut().glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);
 			openGL.pop(GL2.GL_MODELVIEW);
 		}, 4, true);
-
 		openGL.pop(GL2.GL_MODELVIEW);
 		openGL.enableLighting();
 		openGL.pop(GL2.GL_PROJECTION);
@@ -222,32 +272,25 @@ public class KeystoneDrawer implements IKeystoneState {
 		// gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
 
-		// INDEX BUFFER
-		final int[] intIdxBuffer = new int[] { 0, 1, 2, 0, 2, 3 };
-		final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
-		final int numBytes = intIdxBuffer.length * 4;
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 24, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
 	}
 
 	private void storeAttributes(final int shaderAttributeType, final int bufferIndex, final int size,
 			final float[] data) {
-		bindBuffer(shaderAttributeType, bufferIndex, size);
-		// compute the total size of the buffer :
-		final int numBytes = data.length * 4;
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, null, GL2.GL_STATIC_DRAW);
-		final FloatBuffer fbData = Buffers.newDirectFloatBuffer(data/* totalData,positionInBuffer */);
-		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0, data.length * 4, fbData);
-		gl.glEnableVertexAttribArray(shaderAttributeType);
-	}
-
-	private void bindBuffer(final int shaderAttributeType, final int bufferIndex, final int size) {
 		// Select the VBO, GPU memory data, to use for data
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIndex);
 		// Associate Vertex attribute with the last bound VBO
 		gl.glVertexAttribPointer(shaderAttributeType, size, GL2.GL_FLOAT, false, 0, 0 /* offset */);
+		// compute the total size of the buffer :
+		final int numBytes = data.length * 4;
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, null, GL2.GL_STATIC_DRAW);
+
+		final FloatBuffer fbData = Buffers.newDirectFloatBuffer(data);
+		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0, numBytes, fbData);
+		gl.glEnableVertexAttribArray(shaderAttributeType);
 	}
 
 	@Override
@@ -267,22 +310,32 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	@Override
 	public int cornerSelected(final GamaPoint mouse) {
-		final ICoordinates coords = renderer.data.getKeystone();
-		for (int cornerId = 0; cornerId < coords.size(); cornerId++) {
-			if (mouse.distance(coords.at(cornerId)) < 0.04)
-				return cornerId;
+		if (mouse.x < renderer.getViewWidth() / 2) {
+			if (mouse.y < renderer.getViewHeight() / 2) {
+				return 1;
+			} else
+				return 0;
+		} else {
+			if (mouse.y < renderer.getViewHeight() / 2) {
+				return 2;
+			} else
+				return 3;
 		}
-		return -1;
 	}
 
 	@Override
 	public int cornerHovered(final GamaPoint mouse) {
-		final ICoordinates coords = renderer.data.getKeystone();
-		for (int cornerId = 0; cornerId < coords.size(); cornerId++) {
-			if (mouse.distance(coords.at(cornerId)) < 0.03)
-				return cornerId;
+		if (mouse.x < renderer.getViewWidth() / 2) {
+			if (mouse.y < renderer.getViewHeight() / 2) {
+				return 1;
+			} else
+				return 0;
+		} else {
+			if (mouse.y < renderer.getViewHeight() / 2) {
+				return 2;
+			} else
+				return 3;
 		}
-		return -1;
 	}
 
 	@Override
@@ -293,6 +346,7 @@ public class KeystoneDrawer implements IKeystoneState {
 	@Override
 	public void setKeystoneCoordinates(final int cornerId, final GamaPoint p) {
 		renderer.data.getKeystone().replaceWith(cornerId, p.x, p.y, p.z);
+		switchCorners();
 		renderer.data.setKeystone(renderer.data.getKeystone());
 	}
 
