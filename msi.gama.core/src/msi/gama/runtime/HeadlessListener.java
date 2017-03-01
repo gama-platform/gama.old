@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
@@ -40,13 +42,12 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
-import java.io.*;
 
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
-	ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<BufferedWriter>();
-	
+	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<BufferedWriter>();
+
 	static {
 
 		if (GAMA.isInHeadLessMode()) {
@@ -64,20 +65,17 @@ public class HeadlessListener implements IGui {
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
 		return null;
 	}
-	
-	public void registerJob(final BufferedWriter w)
-	{
+
+	public void registerJob(final BufferedWriter w) {
 		this.outputWriter.set(w);
 	}
 
-	public BufferedWriter leaveJob()
-	{
-		BufferedWriter res = this.outputWriter.get();
+	public BufferedWriter leaveJob() {
+		final BufferedWriter res = this.outputWriter.get();
 		this.outputWriter.remove();
 		return res;
 	}
 
-	
 	@Override
 	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
@@ -177,14 +175,9 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void cleanAfterExperiment() {
-/*		try {
-			if(outputWriter != null) {
-				outputWriter.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
+		/*
+		 * try { if(outputWriter != null) { outputWriter.close(); } } catch (IOException e) { e.printStackTrace(); }
+		 */
 	}
 
 	@Override
@@ -362,17 +355,17 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-			informConsole(s,root);
+			informConsole(s, root);
 		}
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
 			System.out.println(s);
-			if(outputWriter != null) {
+			if (outputWriter.get() != null) {
 				try {
-					outputWriter.get().write(s+Strings.LN);
-				//	outputWriter.get().flush();
-				} catch (IOException e) {
+					outputWriter.get().write(s + Strings.LN);
+					// outputWriter.get().flush();
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -385,8 +378,7 @@ public class HeadlessListener implements IGui {
 		}
 
 		@Override
-		public void eraseConsole(final boolean setToNull) {
-		}
+		public void eraseConsole(final boolean setToNull) {}
 
 	};
 
