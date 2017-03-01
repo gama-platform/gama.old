@@ -445,8 +445,9 @@ public class MovingSkill extends Skill {
 			// GamaList.with(location, loc));
 			setLocation(agent, loc);
 		}
-		agent.setAttribute(IKeyword.REAL_SPEED, (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
-		
+		if (loc != null)
+			agent.setAttribute(IKeyword.REAL_SPEED, (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
+		else agent.setAttribute(IKeyword.REAL_SPEED, 0.0);
 		// scope.setStatus(loc == null ? ExecutionStatus.failure :
 		// ExecutionStatus.success);
 		return null;
