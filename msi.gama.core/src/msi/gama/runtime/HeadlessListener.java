@@ -63,7 +63,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
-		return null;
+		return initialValues;
 	}
 
 	public void registerJob(final BufferedWriter w) {
