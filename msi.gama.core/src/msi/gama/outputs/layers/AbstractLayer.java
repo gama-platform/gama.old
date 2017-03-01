@@ -71,7 +71,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void reloadOn(final IDisplaySurface surface) {
-		hasBeenDrawnOnce = false;
+		forceRedrawingOnce();
 	}
 
 	@Override
@@ -81,7 +81,14 @@ public abstract class AbstractLayer implements ILayer {
 	public void enableOn(final IDisplaySurface surface) {}
 
 	@Override
-	public void disableOn(final IDisplaySurface surface) {}
+	public void disableOn(final IDisplaySurface surface) {
+		forceRedrawingOnce();
+	}
+
+	@Override
+	public void forceRedrawingOnce() {
+		hasBeenDrawnOnce = false;
+	}
 
 	@Override
 	public void setOrder(final Integer o) {
@@ -301,9 +308,6 @@ public abstract class AbstractLayer implements ILayer {
 			case ILayerStatement.SPECIES: {
 				return new SpeciesLayer(layer);
 			}
-			// case ILayerStatement.TEXT: {
-			// return new TextLayer(layer);
-			// }
 			case ILayerStatement.IMAGE: {
 				return new ImageLayer(scope, layer);
 			}
@@ -313,9 +317,6 @@ public abstract class AbstractLayer implements ILayer {
 			case ILayerStatement.CHART: {
 				return new ChartLayer(layer);
 			}
-			// case ILayerStatement.QUADTREE: {
-			// return new QuadTreeLayer(layer);
-			// }
 			case ILayerStatement.EVENT: {
 				return new EventLayer(layer);
 			}
