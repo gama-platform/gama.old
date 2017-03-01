@@ -230,7 +230,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				catch (IOException e) {
 					e.printStackTrace();
 				}
-			si.play();
+			si.playAndDispose();
 			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
 			runtime.closeSimulation(this); 
 			runtime.releaseModel(si.getSourcePath(),si.getSimulation().getModel());
