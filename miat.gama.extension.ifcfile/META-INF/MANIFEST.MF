@@ -19,3 +19,4 @@ Export-Package: ifc2x3javatoolbox.ifc2x3tc1,
  ifc4javatoolbox.step.parser,
  ifc4javatoolbox.step.parser.util,
  miat.gama.extension.ifcfile
+Bundle-ActivationPolicy: lazy

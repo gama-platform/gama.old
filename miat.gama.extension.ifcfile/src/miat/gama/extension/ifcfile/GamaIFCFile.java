@@ -216,7 +216,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 	}
 
 
-	public IShape createOpening(final IScope scope, final IfcOpeningElement o, final Axe axe) {
+	public IShape createOpening(final IScope scope, final IfcOpeningElement o) {
 		if ( o.getObjectPlacement() == null) return null;
 		Axe newAxe = new Axe();
 		List<IfcAxis2Placement> aps = new ArrayList<>();
@@ -232,10 +232,9 @@ public class GamaIFCFile extends GamaGeometryFile {
 				final Double depth = solid.getDepth().value;
 				if (solid.getSweptArea() instanceof IfcRectangleProfileDef) {
 					final IfcRectangleProfileDef profil = (IfcRectangleProfileDef) solid.getSweptArea();
-					final Double width = profil.getXDim().value;
-					final Double height = profil.getYDim().value;
-
-						IShape box = Spatial.Creation.box(scope, height, depth, width);
+					final Double height = profil.getXDim().value;
+					final Double width = profil.getYDim().value;
+						IShape box = Spatial.Creation.box(scope, height,width, depth);
 						box.setAttribute(IKeyword.NAME, o.getName().getDecodedValue());
 						newAxe.transform(box);
 						addAttribtutes(o, box);
@@ -508,6 +507,12 @@ public class GamaIFCFile extends GamaGeometryFile {
 					geoms.add(g);
 			}
 			
+			final Collection<IfcOpeningElement> opening = ifcModel.getCollection(IfcOpeningElement.class);
+			for (final IfcOpeningElement o : opening) {
+				final IShape g = createOpening(scope, o);
+				if (g != null)
+					geoms.add(g);
+			}
 			
 
 			final Collection<IfcDoor> doors = ifcModel.getCollection(IfcDoor.class);
