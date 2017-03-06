@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IDisplayCreator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IDisplayCreator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.precompiler.GamlProperties;
 
 public interface IDisplayCreator {
@@ -27,15 +27,19 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method create()
+		 * 
 		 * @see msi.gama.common.interfaces.IDisplayCreator#create(java.lang.Object[])
 		 */
 		@Override
-		public IDisplaySurface create(final Object ... args) {
-			return original.create(args);
+		public IDisplaySurface create(final Object... args) {
+			if (original != null)
+				return original.create(args);
+			return new NullDisplaySurface();
 		}
 
 		/**
 		 * Method getName()
+		 * 
 		 * @see msi.gama.common.interfaces.INamed#getName()
 		 */
 		@Override
@@ -45,6 +49,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method setName()
+		 * 
 		 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
 		 */
 		@Override
@@ -52,6 +57,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method serialize()
+		 * 
 		 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 		 */
 		@Override
@@ -61,6 +67,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method getTitle()
+		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
@@ -70,6 +77,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method getDocumentation()
+		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 		 */
 		@Override
@@ -79,6 +87,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method getDefiningPlugin()
+		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()
 		 */
 		@Override
@@ -88,6 +97,7 @@ public interface IDisplayCreator {
 
 		/**
 		 * Method collectPlugins()
+		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
@@ -96,6 +106,6 @@ public interface IDisplayCreator {
 		}
 	}
 
-	IDisplaySurface create(Object ... args);
+	IDisplaySurface create(Object... args);
 
 }

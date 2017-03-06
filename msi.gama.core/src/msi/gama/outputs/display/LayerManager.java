@@ -143,6 +143,9 @@ public class LayerManager implements ILayerManager {
 			} else {
 				disable(layer);
 			}
+			for (final ILayer l : enabledLayers) {
+				l.forceRedrawingOnce();
+			}
 			surface.layersChanged();
 
 		});

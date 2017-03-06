@@ -126,4 +126,6 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	double getAddedElevation();
 
+	void forceRedrawingOnce();
+
 }

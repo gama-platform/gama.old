@@ -181,9 +181,6 @@ public class ModelScene {
 
 	public void endDrawingLayers() {
 		zIncrement = computeVisualZIncrement();
-		// if (!SceneReceiver.getInstance().canReceive())
-		// return;
-		// SceneReceiver.getInstance().receive(this.toSimpleScene());
 	}
 
 	public boolean rendered() {

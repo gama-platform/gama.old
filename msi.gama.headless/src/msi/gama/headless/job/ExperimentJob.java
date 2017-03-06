@@ -1,9 +1,8 @@
 /*********************************************************************************************
  * 
  * 
- * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
@@ -12,9 +11,7 @@
 package msi.gama.headless.job;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,8 +34,6 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.HeadlessListener;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -132,7 +127,7 @@ public class ExperimentJob implements IExperimentJob {
 	public long finalStep;
 	private String untilCond;
 	IExpression endCondition;
-	
+
 	private static long generateID() {
 		return ExperimentJob.GLOBAL_ID_GENERATOR++;
 	}
@@ -178,11 +173,13 @@ public class ExperimentJob implements IExperimentJob {
 
 	}
 
-	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond, final long s) {
+	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond,
+			final long s) {
 		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, untilCond, s);
 	}
 
-	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max, final String untilCond, final long s) {
+	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max,
+			final String untilCond, final long s) {
 		this();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
@@ -198,17 +195,16 @@ public class ExperimentJob implements IExperimentJob {
 	public void loadAndBuild(final RuntimeContext rtx)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 
-
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
 
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter temp = parameters.get(i);
 
-			if("".equals(temp.getName())) {
-				this.simulator.setParameter(temp.getVar(), temp.getValue());				
+			if ("".equals(temp.getName())) {
+				this.simulator.setParameter(temp.getVar(), temp.getValue());
 			} else {
-				this.simulator.setParameter(temp.getName(), temp.getValue());								
+				this.simulator.setParameter(temp.getName(), temp.getValue());
 			}
 		}
 		this.setup();
@@ -220,14 +216,13 @@ public class ExperimentJob implements IExperimentJob {
 		}
 
 		// Initialize the enCondition
-		if(untilCond==null ||"".equals(untilCond)) {
+		if (untilCond == null || "".equals(untilCond)) {
 			endCondition = IExpressionFactory.FALSE_EXPR;
 		} else {
-			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);			
+			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
 		}
-		if(endCondition.getType() != Types.BOOL) {
-			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean", simulator.getSimulation().getScope());
-		}
+		if (endCondition.getType() != Types.BOOL) { throw GamaRuntimeException.error(
+				"The until condition of the experiment should be a boolean", simulator.getSimulation().getScope()); }
 	}
 
 	public void load(final RuntimeContext ctx)
@@ -244,6 +239,15 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
+	public void playAndDispose() {
+		final long startDate = Calendar.getInstance().getTimeInMillis();
+		play();
+		dispose();
+		final long endDate = Calendar.getInstance().getTimeInMillis();
+		System.out.println("\nSimulation duration: " + (endDate - startDate) + "ms");
+	}
+
+	@Override
 	public void play() {
 		if (this.outputFile != null) {
 			this.outputFile.writeSimulationHeader(this);
@@ -251,32 +255,34 @@ public class ExperimentJob implements IExperimentJob {
 		System.out.println("Simulation is running...");
 		final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
-				
+
 		try {
 			int step = 0;
-			while( ! Types.BOOL.cast(simulator.getSimulation().getScope(), endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue() 
-					 && ((finalStep >= 0) ? (step < finalStep) : true)) {
+			while (!Types.BOOL.cast(simulator.getSimulation().getScope(),
+					endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue()
+					&& (finalStep >= 0 ? step < finalStep : true)) {
 				if (step % affDelay == 0) {
 					System.out.print(".");
 				}
 				if (simulator.isInterrupted())
 					break;
-				doStep();			
-				
+				doStep();
+
 				step++;
-			} 
-		} catch(GamaRuntimeException e) {
+			}
+		} catch (final GamaRuntimeException e) {
 			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
 			e.printStackTrace();
 		}
+	}
 
-		final long endDate = Calendar.getInstance().getTimeInMillis();
-		this.simulator.dispose();
+	@Override
+	public void dispose() {
+		if (this.simulator != null)
+			this.simulator.dispose();
 		if (this.outputFile != null) {
 			this.outputFile.close();
 		}
-		System.out.println("\nSimulation duration: " + (endDate - startdate) + "ms");
-		
 	}
 
 	@Override
@@ -296,9 +302,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private void exportVariables() {
 		final int size = this.listenedVariables.length;
-		if (size == 0) {
-			return;
-		}
+		if (size == 0) { return; }
 		for (int i = 0; i < size; i++) {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
@@ -400,10 +404,10 @@ public class ExperimentJob implements IExperimentJob {
 			final Attr ap1 = doc.createAttribute(XmlTAG.NAME_TAG);
 			ap1.setValue(p.getName());
 			aparameter.setAttributeNode(ap1);
-			
+
 			final Attr ap2 = doc.createAttribute(XmlTAG.VAR_TAG);
 			ap2.setValue(p.getVar());
-			aparameter.setAttributeNode(ap2);			
+			aparameter.setAttributeNode(ap2);
 
 			final Attr ap3 = doc.createAttribute(XmlTAG.TYPE_TAG);
 			ap3.setValue(p.getType().toString());
@@ -445,8 +449,8 @@ public class ExperimentJob implements IExperimentJob {
 			mseed = Long.valueOf(seedDescription.getExpression().literalValue()).longValue();
 		}
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
-		final ExperimentJob expJob = new ExperimentJob(path, new Long(ExperimentJob.generateID()).toString(), expName,
-				0, "", mseed);
+		final ExperimentJob expJob =
+				new ExperimentJob(path, new Long(ExperimentJob.generateID()).toString(), expName, 0, "", mseed);
 
 		if (d != null) {
 			final Iterable<IDescription> monitors = d.getChildrenWithKeyword(IKeyword.MONITOR);

@@ -45,7 +45,6 @@ public class SceneBuffer {
 			try {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {
-				// e.printStackTrace();
 				return false;
 			}
 		}
@@ -100,16 +99,6 @@ public class SceneBuffer {
 		frontScene = backScene;
 		// ... and clear the backScene
 		backScene = null;
-		// If we are synchronized with the simulation, we wait until this new
-		// frontScene has been rendered. 02/2016 Now taken in charge by the view
-		// while (renderer.data.isSynchronized() && !frontScene.rendered()) {
-		// try {
-		// Thread.sleep(20);
-		// } catch (InterruptedException e) {
-		// // e.printStackTrace();
-		// return;
-		// }
-		// }
 	}
 
 	/**
@@ -187,8 +176,6 @@ public class SceneBuffer {
 	 * invalidated.
 	 */
 	public void layersChanged() {
-		// System.out.println("Asking the scene buffer to invalidate layers");
-		// FIXME What to do with the textures ?
 		if (staticScene != null) {
 			garbage.add(staticScene);
 			staticScene.invalidateLayers();
@@ -198,6 +185,7 @@ public class SceneBuffer {
 			garbage.add(backScene);
 			backScene = null;
 		}
+
 	}
 
 }
