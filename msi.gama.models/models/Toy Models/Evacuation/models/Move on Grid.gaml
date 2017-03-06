@@ -21,7 +21,7 @@ global {
 	//Number of people agents
 	int nb_people <- 500;
 	//Evacuation point for the people agents
-	point target_point <- {world.location.x, 0};
+	point target_point <- {shape.width, 0};
 	
 	init {
 		//Creation of the building agents using the shapefile
@@ -77,11 +77,11 @@ species people {
 	//Reflex to move the agent
 	reflex move {
 		//List of all the cells possible (which aren't obstacles, without people on it and on which the agent hasn't already passed
-		list<cell> possible_cells <- current_cell neighbors_at 1 where (not (each.is_obstacle) and each.is_free and not (each in memory));
+		list<cell> possible_cells <- current_cell.neighbors where (not (each.is_obstacle) and each.is_free and not (each in memory));
 		//If there is possible cell, the agent move on the closest one to the evacuation point
 		if not empty(possible_cells) {
 			current_cell.is_free <- true;
-			current_cell <- shuffle(possible_cells) with_min_of (each.location distance_to target_cell.location);
+			current_cell <- shuffle(possible_cells) with_min_of (each distance_to target_cell);
 			location <- current_cell.location;
 			current_cell.is_free <- false;
 			//Management of the memory of the agents
@@ -106,10 +106,9 @@ grid cell width: 150 height: 150  neighbors: 8 frequency: 0 {
 
 experiment main type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
+	float minimum_cycle_duration <- 0.04; 
 	output {
-		display map type: opengl camera_pos: {world.location.x,-world.shape.height*1.5,70}
-                        camera_look_pos:{world.location.x,0,0}    {
-			image '../images/soil.jpg';
+		display map type: opengl    {
 			species building refresh: false;
 			species people;
 			graphics "exit" refresh: false {

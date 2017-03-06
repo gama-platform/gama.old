@@ -21,7 +21,7 @@ global {
 	//Number of people agent
 	int nb_people <- 500;
 	//Point to evacuate
-	point target_point <- {world.location.x, 0};
+	point target_point <- {shape.width, 0};
 	init { 
 		
 		free_space <- copy(shape);
@@ -60,7 +60,7 @@ species people skills:[moving]{
 	int heading max: heading + maximal_turn min: heading - maximal_turn;
 	
 	//Size of the agent
-	float size <- people_size;
+	float size <- people_size; 
 	rgb color <- rgb(rnd(255),rnd(255),rnd(255));
 		
 	//Reflex to kill the agent when it has evacuated the area
@@ -85,7 +85,7 @@ species people skills:[moving]{
 		point acc <- {0,0};
 		list<building> nearby_obstacles <- (building at_distance people_size);
 		loop obs over: nearby_obstacles {
-			acc <- acc - (obs.location - location);
+			acc <- acc - (obs.location - location); 
 		}
 		velocity <- velocity + acc; 
 	}
@@ -93,8 +93,8 @@ species people skills:[moving]{
 	reflex move {
 		point old_location <- copy(location);
 		do goto target: location + velocity ;
-		if (not empty(building overlapping self )) {
-			location <- point((location closest_points_with free_space)[1]);
+		if not(self overlaps free_space ) {
+			location <- ((location closest_points_with free_space)[1]);
 		}
 		velocity <- location - old_location;
 	}	
@@ -106,6 +106,7 @@ species people skills:[moving]{
 
 experiment main type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
+	float minimum_cycle_duration <- 0.04; 
 	output {
 		display map type: opengl {
 			species building refresh: false;
