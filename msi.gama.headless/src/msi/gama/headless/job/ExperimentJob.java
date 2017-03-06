@@ -201,7 +201,7 @@ public class ExperimentJob implements IExperimentJob {
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter temp = parameters.get(i);
 
-			if ("".equals(temp.getName())) {
+			if (temp.getName()==null||"".equals(temp.getName())) {
 				this.simulator.setParameter(temp.getVar(), temp.getValue());
 			} else {
 				this.simulator.setParameter(temp.getName(), temp.getValue());
