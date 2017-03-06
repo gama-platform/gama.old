@@ -1190,7 +1190,7 @@ public class MovingSkill extends Skill {
 		return followedPath;
 	}
 
-	private ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
+	protected ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
 			final IShape geom) {
 		final IList pts = GamaListFactory.create(Types.POINT);
 		pts.add(scope.getAgent().getLocation());

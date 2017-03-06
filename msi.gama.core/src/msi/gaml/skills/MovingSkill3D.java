@@ -14,6 +14,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -30,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
 /**
@@ -187,13 +189,40 @@ public class MovingSkill3D extends MovingSkill {
 		final int heading = computeHeadingFromAmplitude(scope, agent);
 		final int pitch = computePitchFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-
-		final ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
+		Integer newHeading = null;
+		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
+			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
+			if (bounds != null) {
+				IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
+
+				if (geom.getGeometries().size() > 1) {
+					for (final IShape g : geom.getGeometries()) {
+						if (g.euclidianDistanceTo(location) < 0.01) {
+							geom = g;
+							break;
+						}
+					}
+				}
+				if (geom != null && geom.getInnerGeometry() != null) {
+					final ILocation loc2 = computeLocationForward(scope, dist, loc, geom);
+					if (!loc2.equals(loc)) {
+						newHeading = heading - 180;
+						loc = loc2;
+					}
+				}
+			}
+			
 			setLocation(agent, loc);
+			
+			//only used for particuler case of bounded wandering
+			if (newHeading != null) {
+				setHeading(agent, newHeading);
+
+			}
 
 			// WARNING Pourquoi refaire un setHeading ici ??? C'est déjà fait dans setLocation(). Et en plus celui-ci
 			// est incorrect.
