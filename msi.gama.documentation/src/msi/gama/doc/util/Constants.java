@@ -17,7 +17,7 @@ public class Constants {
 	
 	// 
 	public static String RELEASE_APPLICATION = "ummisco.gama.product";
-	public static String RELEASE_PRODUCT = "gama.product";
+	public static String RELEASE_PRODUCT = "gama.runtime.product";
 	
 	// Repositories containing used files
 	
@@ -30,9 +30,9 @@ public class Constants {
 			"msi.gama.models" + File.separator + "models" + File.separator + "Tests";
 
 	// Config for JM
-	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "GamaWiki";
+//	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "GamaWiki";
 	// Config for BG
-//	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "gama.wiki";
+	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator + ".." + File.separator + "gama.wiki";
 	
 
 	// Generation folders
