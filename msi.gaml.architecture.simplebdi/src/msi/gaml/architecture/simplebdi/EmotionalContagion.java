@@ -4,6 +4,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -113,7 +114,7 @@ public class EmotionalContagion extends AbstractStatement {
 				}
 			}
 		}
-		GamaList<Emotion> test = SimpleBdiArchitecture.getEmotionBase(scopeMySelf, SimpleBdiArchitecture.EMOTION_BASE);
+		GAMA.releaseScope(scopeMySelf);
 		return null;
 	}
 

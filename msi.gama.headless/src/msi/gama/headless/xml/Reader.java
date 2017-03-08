@@ -191,8 +191,6 @@ public class Reader {
 			
 			
 			List<Node> nl = findElementByNameWithoutCase(ee.item(i),XmlTAG.SIMULATION_TAG);
-			
-			System.out.println("nb simulation");
 			if ( nl != null && nl.size() > 0 ) {
 				for ( int j = 0; j < nl.size(); j++ ) {
 
