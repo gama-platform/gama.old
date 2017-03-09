@@ -114,10 +114,9 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		initializeTestedSolutions();
-		List<Chromosome> population = initPop.initializePop(scope, variables, currentExperiment, populationDim,
-				nbPrelimGenerations, isMaximize());
 		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
+		initializeTestedSolutions();
+		List<Chromosome> population = initPop.initializePop(scope, variables, this);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
 			Set<Chromosome> children = new THashSet<Chromosome>();
@@ -149,18 +148,22 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	private void computePopFitness(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
 		for (final Chromosome chromosome : population) {
-			final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
-			Double fitness = testedSolutions.get(sol);
-			if (fitness == null || fitness == Double.MAX_VALUE) {
-				fitness = currentExperiment.launchSimulationsWithSolution(sol);
-			}
-			testedSolutions.put(sol, fitness);
+			computeChroFitness(scope, chromosome);
+		}
+	}
+	
+	public void computeChroFitness(final IScope scope,Chromosome chromosome){
+		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+		Double fitness = testedSolutions.get(sol);
+		if (fitness == null || fitness == Double.MAX_VALUE) {
+			fitness = currentExperiment.launchSimulationsWithSolution(sol);
+		}
+		testedSolutions.put(sol, fitness);
 
-			chromosome.setFitness(fitness);
-			if (isMaximize() && fitness > getBestFitness() || !isMaximize() && fitness < getBestFitness()) {
-				setBestFitness(fitness);
-				setBestSolution(sol);
-			}
+		chromosome.setFitness(fitness);
+		if (isMaximize() && fitness > getBestFitness() || !isMaximize() && fitness < getBestFitness()) {
+			setBestFitness(fitness);
+			setBestSolution(sol);
 		}
 	}
 
@@ -209,6 +212,26 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 					}
 
 				});
+	}
+
+	public int getPopulationDim() {
+		return populationDim;
+	}
+
+	public double getMutationProb() {
+		return mutationProb;
+	}
+
+	public int getNbPrelimGenerations() {
+		return nbPrelimGenerations;
+	}
+
+	public int getMaxGenerations() {
+		return maxGenerations;
+	}
+
+	public Mutation getMutationOp() {
+		return mutationOp;
 	}
 
 }

@@ -12,13 +12,11 @@ package msi.gama.kernel.batch;
 
 import java.util.List;
 
-import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public interface Initialization {
 
-	public List<Chromosome> initializePop(IScope scope, List<IParameter.Batch> variables, BatchAgent exp,
-			int populationDim, int nbPrelimGenerations, boolean isMaximize) throws GamaRuntimeException;
+	public List<Chromosome> initializePop(IScope scope, List<IParameter.Batch> variables, GeneticAlgorithm algo) throws GamaRuntimeException;
 }
