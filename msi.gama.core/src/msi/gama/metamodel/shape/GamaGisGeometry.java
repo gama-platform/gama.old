@@ -35,7 +35,7 @@ public class GamaGisGeometry extends GamaShape {
 					final String type = p.getDescriptor().getType().getBinding().getSimpleName();
 					if ("String".equals(type)) {
 						String val = (String) p.getValue();
-						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+						if (val != null && ((val.startsWith("'") && val.endsWith("'")) || (val.startsWith("\"") && val.endsWith("\""))))
 							val = val.substring(1, val.length() - 1);
 						setAttribute(p.getName().getLocalPart(), val);
 
