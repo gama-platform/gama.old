@@ -10,6 +10,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -53,6 +54,14 @@ public class Chromosome implements Comparable<Chromosome> {
 		}
 
 		fitness = chromosome.fitness;
+	}
+	
+	public void update(final IScope scope, final ParametersSet solution) {
+		int nb = this.getGenes().length;
+		for (int i = 0; i < nb; i++) {
+			String var =  getPhenotype()[i]; 
+			genes[i] = Cast.asFloat(scope, solution.get(var));
+		}
 	}
 
 	public Chromosome(final IScope scope, final List<IParameter.Batch> variables, final boolean reInitVal) {
@@ -103,5 +112,32 @@ public class Chromosome implements Comparable<Chromosome> {
 	public String[] getPhenotype() {
 		return phenotype;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(genes);
+		result = prime * result + Arrays.hashCode(phenotype);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Chromosome other = (Chromosome) obj;
+		if (!Arrays.equals(genes, other.genes))
+			return false;
+		if (!Arrays.equals(phenotype, other.phenotype))
+			return false;
+		return true;
+	}
+	
+	
 
 }

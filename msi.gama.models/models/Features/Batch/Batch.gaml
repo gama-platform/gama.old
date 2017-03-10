@@ -130,7 +130,7 @@ experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until
 experiment Genetic type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 ,0.2, 0.5 , 0.6,0.8, 1.0 ];
 	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
-	method genetic pop_dim: 3 crossover_prob: 0.7 mutation_prob: 0.1
+	method genetic pop_dim: 3 crossover_prob: 0.7 mutation_prob: 0.1 improve_sol: true stochastic_sel: false
 	nb_prelim_gen: 1 max_gen: 5  minimize: nb_infected  aggregation: "min";
 }
 

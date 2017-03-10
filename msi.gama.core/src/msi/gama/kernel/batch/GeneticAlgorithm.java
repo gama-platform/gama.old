@@ -45,6 +45,8 @@ import msi.gaml.types.IType;
 		@facet(name = GeneticAlgorithm.MUTATION_PROB, type = IType.FLOAT, optional = true, doc = @doc("mutation probability for an individual solution")),
 		@facet(name = GeneticAlgorithm.NB_GEN, type = IType.INT, optional = true, doc = @doc("number of random populations used to build the initial population")),
 		@facet(name = GeneticAlgorithm.MAX_GEN, type = IType.INT, optional = true, doc = @doc("number of generations")),
+		@facet(name = GeneticAlgorithm.IMPROVE_SOL, type = IType.BOOL, optional = true, doc = @doc("if true, use a hill climbing algorithm to improve the solutions at each generation")),
+		@facet(name = GeneticAlgorithm.STOCHASTIC_SEL, type = IType.BOOL, optional = true, doc = @doc("if true, use a stochastic selection algorithm (roulette) rather a determistic one (keep the best solutions)")),
 		@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
 		@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
 		@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN,
@@ -66,13 +68,18 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	private CrossOver crossOverOp;
 	private Mutation mutationOp;
 	private Selection selectionOp;
-
+	private Boolean improveSolution;
+	
 	protected static final String POP_DIM = "pop_dim";
 	protected static final String CROSSOVER_PROB = "crossover_prob";
 	protected static final String MUTATION_PROB = "mutation_prob";
 	protected static final String NB_GEN = "nb_prelim_gen";
 	protected static final String MAX_GEN = "max_gen";
+	protected static final String IMPROVE_SOL = "improve_sol";
+	protected static final String STOCHASTIC_SEL = "stochastic_sel";
 
+	protected Neighborhood neighborhood;
+	
 	public GeneticAlgorithm(final IDescription species) {
 		super(species);
 		initParams();
@@ -81,6 +88,14 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
+		final IExpression impSol = getFacet(IMPROVE_SOL);
+		if (impSol != null) {
+			improveSolution = Cast.asBool(scope, impSol.value(scope));
+		}
+		if (improveSolution != null && improveSolution) {
+			final List<IParameter.Batch> v = agent.getParametersToExplore();
+			neighborhood = new Neighborhood1Var(v);
+		}
 	}
 
 	@Override
@@ -88,7 +103,17 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		initPop = new InitializationUniform();
 		crossOverOp = new CrossOver1Pt();
 		mutationOp = new Mutation1Var();
-		selectionOp = new SelectionRoulette();
+		final IExpression sts = getFacet(STOCHASTIC_SEL);
+		if (sts != null) {
+			Boolean useStoc = Cast.asBool(scope, sts.value(scope));
+			if (useStoc != null && useStoc) 
+				selectionOp = new SelectionRoulette();
+			else selectionOp = new SelectionBest();
+		} else {
+			selectionOp = new SelectionBest();
+		}
+		
+		
 		final IExpression popDim = getFacet(POP_DIM);
 		if (popDim != null) {
 			populationDim = Cast.asInt(scope, popDim.value(scope));
@@ -148,7 +173,21 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	private void computePopFitness(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
 		for (final Chromosome chromosome : population) {
-			computeChroFitness(scope, chromosome);
+			computeChroFitness(scope, chromosome);	
+		}
+		if (this.improveSolution != null && improveSolution) {
+			for (final Chromosome chromosome : population) {
+				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+				sol = improveSolution(scope, sol, chromosome.getFitness());
+				chromosome.update(scope, sol);
+				double fitness = testedSolutions.get(sol);
+				chromosome.setFitness(fitness);
+				if ((isMaximize() && fitness > getBestFitness()) || (!isMaximize() && fitness < getBestFitness())) {
+					setBestFitness(fitness);
+					setBestSolution(sol);
+				}
+				
+			}
 		}
 	}
 	
@@ -159,9 +198,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			fitness = currentExperiment.launchSimulationsWithSolution(sol);
 		}
 		testedSolutions.put(sol, fitness);
-
 		chromosome.setFitness(fitness);
-		if (isMaximize() && fitness > getBestFitness() || !isMaximize() && fitness < getBestFitness()) {
+		if ((isMaximize() && fitness > getBestFitness()) || (!isMaximize() && fitness < getBestFitness())) {
 			setBestFitness(fitness);
 			setBestSolution(sol);
 		}
@@ -212,6 +250,43 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 					}
 
 				});
+	}
+	
+	private ParametersSet improveSolution(IScope scope, ParametersSet solution, double currentFitness) {
+		ParametersSet bestSol = solution;
+		Double bestFitness = currentFitness;
+		while (true) {
+			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, solution);
+			if ( neighbors.isEmpty() ) {
+				break;
+			}
+			ParametersSet bestNeighbor = null;
+
+			for ( final ParametersSet neighborSol : neighbors ) {
+				if ( neighborSol == null ) {
+					continue;
+				}
+				Double neighborFitness = testedSolutions.get(neighborSol);
+				if ( neighborFitness == null ) {
+					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+				}
+				testedSolutions.put(neighborSol, neighborFitness);
+
+				if (( isMaximize() && neighborFitness.doubleValue() > bestFitness) ||
+					(!isMaximize() && neighborFitness.doubleValue() < bestFitness) ) {
+					bestNeighbor = neighborSol;
+					bestFitness = neighborFitness.doubleValue();
+					bestSol = bestNeighbor;
+				}
+			}
+			if ( bestNeighbor != null ) {
+				solution = bestNeighbor;
+			} else {
+				break;
+			}
+		}
+		
+		return bestSol;
 	}
 
 	public int getPopulationDim() {
