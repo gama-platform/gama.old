@@ -152,7 +152,10 @@ public class RuleStatement extends AbstractStatement {
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (newBelief == null && newDesire == null && newEmotion == null && newUncertainty == null
 				&& removeBelief == null && removeDesire == null && removeIntention == null && removeEmotion == null
-				&& removeUncertainty == null)
+				&& removeUncertainty == null&&
+				newBeliefs == null && newDesires == null && newEmotions == null && newUncertainties == null
+				&& removeBeliefs == null && removeDesires == null && removeEmotions == null
+				&& removeUncertainties == null)
 			return null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, (Predicate) belief.value(scope))) {
