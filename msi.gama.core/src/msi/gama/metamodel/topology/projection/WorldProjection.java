@@ -35,6 +35,7 @@ public class WorldProjection extends Projection {
 	public void translate(final Geometry geom) {
 		if (gisToAbsoluteTranslation != null) {
 			geom.apply(gisToAbsoluteTranslation);
+			geom.geometryChanged();
 		}
 	}
 
@@ -42,6 +43,7 @@ public class WorldProjection extends Projection {
 	public void inverseTranslate(final Geometry geom) {
 		if (absoluteToGisTranslation != null) {
 			geom.apply(absoluteToGisTranslation);
+			geom.geometryChanged();
 		}
 	}
 

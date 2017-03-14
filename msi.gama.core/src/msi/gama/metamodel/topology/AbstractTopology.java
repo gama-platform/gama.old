@@ -482,12 +482,12 @@ public abstract class AbstractTopology implements ITopology {
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
-			//final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
+			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			shapes.removeIf(each -> {
 				if (each.dead())
 					return true;
-				//final Geometry geom = each.getInnerGeometry();
-				return !(covered ? source.covers(each) : source.intersects(each));
+				final Geometry geom = each.getInnerGeometry();
+				return !(covered ? pg.covers(geom) : pg.intersects(geom));
 			});
 			return shapes;
 		}

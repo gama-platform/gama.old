@@ -1002,6 +1002,7 @@ public class GeometryUtils {
 			p.y += dy;
 			p.z += dz;
 		});
+		geometry.geometryChanged();
 	}
 
 	public static ICoordinates getYNegatedCoordinates(final Geometry geom) {

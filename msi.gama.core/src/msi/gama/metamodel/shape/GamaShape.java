@@ -136,6 +136,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			final GamaPoint centroid = getLocation();
 			final Rotation3D r = new Rotation3D.CenteredOn(rotation, centroid);
 			geometry.apply(r);
+			geometry.geometryChanged();
 			if (normalZ != null) {
 				final Double normalZ2 = GeometryUtils.getContourCoordinates(geometry).getNormal(true).z;
 				if (normalZ > 0 && normalZ2 < 0) {

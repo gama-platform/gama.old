@@ -318,6 +318,7 @@ public class GamaShapeFile extends GamaGisFile {
 						g = gis.transform(g);
 						if (!with3D) {
 							g.apply(ZERO_Z);
+							g.geometryChanged();
 						}
 						list.add(new GamaGisGeometry(g, feature));
 					} else if (g == null) {
