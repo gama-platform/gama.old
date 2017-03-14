@@ -252,9 +252,10 @@ public class ModelAssembler {
 				"_internal_global_scheduler");
 		sd.finalizeDescription();
 		if (model.hasFacet(SCHEDULES)) {
-			model.warning(
-					"'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
-					IGamlIssue.DEPRECATED, NAME);
+			//remove the warning as GAMA integrates a working workaround to use this facet at the global level
+			//model.warning(
+			//		"'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
+			//		IGamlIssue.DEPRECATED, NAME);
 			sd.setFacet(SCHEDULES, model.getFacet(SCHEDULES));
 			model.removeFacets(SCHEDULES);
 		}
