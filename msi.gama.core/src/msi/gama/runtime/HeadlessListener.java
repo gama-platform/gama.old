@@ -357,7 +357,7 @@ public class HeadlessListener implements IGui {
 			if (outputWriter.get() != null) {
 				try {
 					outputWriter.get().write(s + Strings.LN);
-					// outputWriter.get().flush();
+					outputWriter.get().flush();
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
