@@ -100,7 +100,12 @@ import msi.gaml.types.Types;
 				name = "security_distance_coeff",
 				type = IType.FLOAT,
 				init = "1.0",
-				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance = 1#m + security_distance_coeff `*` real_speed )")),
+				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
+		@var (
+				name = "min_security_distance",
+				type = IType.FLOAT,
+				init = "0.5",
+				doc = @doc ("the minimal distance to another driver")),
 		@var (
 				name = "current_lane",
 				type = IType.INT,
@@ -210,6 +215,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public final static String SPEED_COEFF = "speed_coeff";
 	public final static String MAX_SPEED = "max_speed";
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
+	public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
 
 	@getter (ACCELERATION_MAX)
 	public double getAccelerationMax(final IAgent agent) {
@@ -413,6 +419,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	public double getDistanceToGoal(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
+	
+	@getter (MIN_SECURITY_DISTANCE)
+	public double getMinSecDistance(final IAgent agent) {
+		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
+	}
+	
+	@setter (MIN_SECURITY_DISTANCE)
+	public void setMinSecDistance(final IAgent agent, final double msd) {
+		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
+	}
 
 	@setter (DISTANCE_TO_GOAL)
 	public void setDistanceToGoal(final IAgent agent, final double dg) {
@@ -421,7 +437,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 	public Double primAdvancedFollow(final IScope scope, final IAgent agent, final double s, final double t,
 			final IPath path, final GamaPoint target) throws GamaRuntimeException {
-		final double security_distance = getSecurityDistanceCoeff(agent);
+		final double security_distance_coeff = getSecurityDistanceCoeff(agent);
 		final int currentLane = getCurrentLane(agent);
 		final Double probaChangeLaneUp = getProbaLaneChangeUp(agent);
 		final Double probaChangeLaneDown = getProbaLaneChangeDown(agent);
@@ -436,7 +452,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// if (path != null && !path.getEdgeList().isEmpty()) {
 		double tps = 0;
 		// if ( onLinkedRoad ) {
-		tps = t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, security_distance, currentLane,
+		tps = t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, security_distance_coeff, currentLane,
 				currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown, probaProbaUseLinkedRoad, rightSide);
 		// }
 		// else {
@@ -1197,6 +1213,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// java.lang.System.out.println(agent + " agents: " + agents);
 		final double distanceToGoal = getDistanceToGoal(agent);
 		final boolean nextSegment = distanceToGoal < distance;
+		final double min_security_distance = getMinSecDistance(agent);
 		// final IAgent theRoad = onLinkedRoad ?
 		// RoadSkill.getLinkedRoad(currentRoad) : currentRoad;
 		final int segment =
@@ -1330,15 +1347,15 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		double secDistance = 0.0;
 		if (getOnLinkedRoad(nextAgent) == getOnLinkedRoad(agent)) {
-			secDistance = 0.5 + security_distance * FastMath.min(getRealSpeed(agent), getRealSpeed(nextAgent));
+			secDistance = FastMath.max(min_security_distance, security_distance * FastMath.min(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		} else {
-			secDistance = 0.5 + security_distance * FastMath.max(getRealSpeed(agent), getRealSpeed(nextAgent));
+			secDistance = FastMath.max(min_security_distance, security_distance * FastMath.max(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		}
 		double realDist = FastMath.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
 		// t345+= java.lang.System.currentTimeMillis() - t;
 
 		if (changeLane && realDist < vL) { return 0; }
-		realDist = FastMath.max(0.0, (int) (0.5 + realDist * 1000) / 1000.0);
+		realDist = FastMath.max(0.0, (int) (min_security_distance + realDist * 1000) / 1000.0);
 		// java.lang.System.out.println("realDist" + realDist + " secDistance: "
 		// + secDistance);
 
