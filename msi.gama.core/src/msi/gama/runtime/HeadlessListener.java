@@ -164,7 +164,16 @@ public class HeadlessListener implements IGui {
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment() {}
+	public void cleanAfterExperiment() {
+		// System.out.println("[Headless] Clean after experiment.");
+		try {
+			outputWriter.get().flush();
+			outputWriter.get().close();			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		
+	}
 
 	@Override
 	public void runModel(final Object object, final String exp) {}
@@ -357,7 +366,7 @@ public class HeadlessListener implements IGui {
 			if (outputWriter.get() != null) {
 				try {
 					outputWriter.get().write(s + Strings.LN);
-					outputWriter.get().flush();
+					//outputWriter.get().flush();
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
