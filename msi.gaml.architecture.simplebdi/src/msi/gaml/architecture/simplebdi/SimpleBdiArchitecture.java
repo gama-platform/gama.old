@@ -224,7 +224,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		computeEmotions(scope);
 		updateSocialLinks(scope);
-		return executePlans(scope);
+		Object result = executePlans(scope);
+		if (!agent.dead()) {
+			// Part that manage the lifetime of predicates
+			updateLifeTimePredicates(scope);
+			updateEmotionsIntensity(scope);
+		}
+		return result;
 	}
 
 	protected final Object executePlans(final IScope scope) {
@@ -333,11 +339,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 						}
 					}
-				}
-				if (!agent.dead()) {
-					// Part that manage the lifetime of predicates
-					updateLifeTimePredicates(scope);
-					updateEmotionsIntensity(scope);
 				}
 			}
 		}
@@ -493,7 +494,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return resultStatement;
 	}
 
-	private void updateLifeTimePredicates(final IScope scope) {
+	protected void updateLifeTimePredicates(final IScope scope) {
 		for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
 			pred.isUpdated = false;
 		}
