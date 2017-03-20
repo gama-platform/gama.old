@@ -121,7 +121,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void applyPreset(final String name) {
-
 		final CameraPreset p = PRESETS.get(name);
 		if (p != null) {
 			target.setLocation(renderer.getEnvWidth() / 2, -renderer.getEnvHeight() / 2, 0);

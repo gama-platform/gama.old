@@ -164,20 +164,16 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	@SuppressWarnings ("unused")
 	public GLAutoDrawable createDrawable(final Composite parent) {
-		// final boolean useSharedContext = GamaPreferences.OpenGL.DISPLAY_SHARED_CONTEXT.getValue() && !useShader();
-		final GLProfile profile =
-				/* useSharedContext ? TextureCache.getSharedContext().getGLProfile() : */GLProfile.getDefault();
+		final GLProfile profile = GLProfile.getDefault();
 		final GLCapabilities cap = new GLCapabilities(profile);
-		cap.setStencilBits(8);
+		cap.setDepthBits(24);
+		// cap.setBackgroundOpaque(true);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
 		cap.setSampleBuffers(true);
-		cap.setAlphaBits(4);
-		cap.setNumSamples(4);
+		cap.setAlphaBits(8);
+		cap.setNumSamples(8);
 		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-		// if (useSharedContext) {
-		// canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
-		// }
 		canvas.setAutoSwapBufferMode(true);
 		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		// animator.setIgnoreExceptions(!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue());

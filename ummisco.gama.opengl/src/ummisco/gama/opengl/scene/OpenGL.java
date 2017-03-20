@@ -432,7 +432,9 @@ public class OpenGL {
 	}
 
 	public void drawLine(final ICoordinates yNegatedVertices, final int number) {
+		this.disableLighting();
 		drawVertices(GL.GL_LINE_STRIP, yNegatedVertices, number, true);
+		this.enableLighting();
 	}
 
 	/**

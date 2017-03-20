@@ -99,16 +99,18 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
 		gl.glShadeModel(GLLightingFunc.GL_SMOOTH);
-		// the depth buffer & enable the depth testing
+		// Enabling the depth buffer & the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
+		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
+		// Whether face culling is enabled or not
 		if (GamaPreferences.OpenGL.ONLY_VISIBLE_FACES.getValue()) {
 			gl.glEnable(GL.GL_CULL_FACE);
 			gl.glCullFace(GL.GL_BACK);
 		}
-
+		// Turn on clockwise direction of vertices as an indication of "front" (important)f
 		gl.glFrontFace(GL.GL_CW);
-		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
+
 		lightHelper.initializeLighting(openGL);
 
 		// Perspective correction
@@ -122,8 +124,15 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
+		// Disabling line smoothing to only rely on FSAA
 		gl.glDisable(GL.GL_LINE_SMOOTH);
+		// Enabling forced normalization of normal vectors (important)
 		gl.glEnable(GL2.GL_NORMALIZE);
+		// Enabling multi-sampling (necessary ?)
+		// if (USE_MULTI_SAMPLE) {
+		gl.glEnable(GL2.GL_MULTISAMPLE);
+		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
+		// }
 		openGL.initializeShapeCache();
 		setUpKeystoneCoordinates();
 		// We mark the renderer as inited
@@ -191,6 +200,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (keystone.isKeystoneInAction()) {
 			keystone.finishRenderToTexture();
 		}
+
+		gl.glFlush();
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
 			visible = true;

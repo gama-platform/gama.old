@@ -847,8 +847,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		final IScope scope = getDisplaySurface().getScope();
 		final LayeredDisplayData data = getDisplaySurface().getData();
 
-		final BooleanEditor lock =
-				EditorFactory.create(scope, contents, "Lock camera:", false, (EditorListener<Boolean>) newValue -> {
+		final boolean cameraLocked = getOutput().getData().cameraInteractionDisabled();
+		final BooleanEditor lock = EditorFactory.create(scope, contents, "Lock camera:", cameraLocked,
+				(EditorListener<Boolean>) newValue -> {
 					preset.setActive(!newValue);
 					cameraPos.setActive(!newValue);
 					cameraTarget.setActive(!newValue);
@@ -880,6 +881,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					data.setCameraUpVector((GamaPoint) newValue, true);
 					ds.updateDisplay(true);
 				});
+		preset.setActive(!cameraLocked);
+		cameraPos.setActive(!cameraLocked);
+		cameraTarget.setActive(!cameraLocked);
+		cameraUp.setActive(!cameraLocked);
+		zoom.setActive(!cameraLocked);
 		data.addListener((p, v) -> {
 			switch (p) {
 				case CAMERA_POS:

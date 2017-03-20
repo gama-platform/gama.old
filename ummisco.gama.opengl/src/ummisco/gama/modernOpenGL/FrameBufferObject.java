@@ -18,11 +18,6 @@ public class FrameBufferObject {
 	private int width;
 	private int height;
 
-	// private final int frameBufferID;
-	// private int depthBufferID;
-	// private int depthBufferTextureID;
-	// private int textureID;
-
 	private final int[] frameBufferArray = new int[] { -1 };
 	private final int[] depthBufferArray = new int[] { -1 };
 	private final int[] depthBufferTextureArray = new int[] { -1 };
@@ -42,7 +37,11 @@ public class FrameBufferObject {
 		initialiseFrameBuffer();
 	}
 
-	public void cleanUp() {// call when closing the game
+	public int getFrameBufferId() {
+		return frameBufferArray[0];
+	}
+
+	public void cleanUp() {// call when closing
 		gl.glDeleteFramebuffers(1, frameBufferArray, 0);
 		gl.glDeleteTextures(1, textureArray, 0);
 		gl.glDeleteTextures(1, depthBufferTextureArray, 0);
