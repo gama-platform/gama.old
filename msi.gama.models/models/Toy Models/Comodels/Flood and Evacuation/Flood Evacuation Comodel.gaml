@@ -14,11 +14,12 @@ global
 {
 	//set the bound of environment
 	geometry shape <- envelope(file("../../../Toy Models/Flood Simulation/includes/mnt50.asc"));
+	geometry the_free_shape<-copy(shape);
 	//counting variable of casualty
 	int casualty <- 0;
 	
 	list<point> offset <- [{ 50, 1700 }, { 800, 3400 }, { 2900, 0 }, { 4200, 2900 }, { 5100, 1300 }];
-	list<point> exits <- [{ 50, 1600 }, { 400, 4400 }, { 4100, 1900 }, { 6100, 2900 }, { 5700, 900 }];
+	list<point> exits <- [{250, 1600 }, { 400, 4400 }, { 4100, 1900 }, { 6100, 2900 }, { 5700, 900 }];
 	
 	init
 	{
@@ -32,6 +33,13 @@ global
 			target_point <- myself.exits[int(self)];
 			//transform the environment and the agents to new location (near the river)
 			do transform_environment;
+			loop t over: list(building)
+			{
+				myself.the_free_shape <- myself.the_free_shape - (t.shape+ people_size);
+			}
+			
+			free_space<-copy(myself.the_free_shape);			
+			free_space <- free_space simplification(1.0);
 		}
 
 	}

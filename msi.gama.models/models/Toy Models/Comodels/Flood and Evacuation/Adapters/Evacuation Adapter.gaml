@@ -17,33 +17,20 @@ experiment "Adapter" type: gui
 
 	action transform_environment
 	{
-		
-		people_size<-people_size*10;
-		free_space<-(free_space*10);
-		
-//		free_space <- copy(world.shape);
-		
+		people_size <- people_size * 10;
 		loop t over: list(building)
 		{
-//			t.shape <- t.shape + {10,50};
-			t.shape <- t.shape * 10;
-				t.location <- (t.location * 10) + centroid;
-//							free_space <- free_space - (t.shape + people_size);
-				
+			t.shape <- t.shape * 20;
+			t.location <- (t.location * 10) + centroid;
 		}
-//				free_space <- free_space simplification(1.0);
-		
+
 		loop t over: list(people)
 		{
-				
-				t.speed <- t.speed*10;
-				t.size <- t.size * 10;
-//				t.shape <- t.shape translated_by centroid;
+			t.speed <- t.speed * 10;
+			t.size <- t.size * 10;
 			t.shape <- t.shape * 10;
-
-				t.location <- (t.location * 10) + centroid;
-				t.target_loc <-  target_point;
-			
+			t.location <- (t.location * 10) + centroid;
+			t.target_loc <- target_point;
 		}
 
 	}
