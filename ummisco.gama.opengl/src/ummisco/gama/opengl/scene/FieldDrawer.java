@@ -71,8 +71,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	public void drawLabels(final FieldObject demObj, final double altFactor) {
 		final GamaPoint cellDim = demObj.getCellSize();
-		final double columns = gl.getWorldWidth() / cellDim.x;
-		final double rows = gl.getWorldHeight() / cellDim.y;
+		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
+		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		// Draw gridvalue as text inside each cell
 		gl.setCurrentColor(Color.black);
 		final String[] strings = new String[demObj.values.length];
@@ -94,8 +94,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	public void drawAsTriangles(final FieldObject demObj, final double altFactor, final double maxZ) {
 		final GamaPoint cellDim = demObj.getCellSize();
-		final double columns = gl.getWorldWidth() / cellDim.x;
-		final double rows = gl.getWorldHeight() / cellDim.y;
+		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
+		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		for (int i = 0; i < columns; i++) {
 			final double x1 = i * cellDim.x;
 			final double x2 = x1 + cellDim.x;
@@ -171,8 +171,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	public void drawAsRectangles(final FieldObject demObj, final double altFactor, final double maxZ) {
 		final GamaPoint cellDim = demObj.getCellSize();
-		final double columns = gl.getWorldWidth() / cellDim.x;
-		final double rows = gl.getWorldHeight() / cellDim.y;
+		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
+		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		for (int i = 0; i < columns; i++) {
 			final double x1 = i * cellDim.x, x2 = x1 + cellDim.x;
 			for (int j = 0; j < rows; j++) {
