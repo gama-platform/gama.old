@@ -44,6 +44,7 @@ public class LayeredDisplayData {
 	public static final String OPENGL = "opengl";
 	public static final String WEB = "web";
 	public static final String THREED = "3D";
+	public static final Double INITIAL_ZOOM = 1.0;
 
 	public static interface DisplayDataListener {
 
@@ -84,7 +85,7 @@ public class LayeredDisplayData {
 	private double envHeight = 0d;
 	private boolean isAntialiasing = GamaPreferences.Displays.CORE_ANTIALIAS.getValue();
 	private ILocation imageDimension = new GamaPoint(-1, -1);
-	private Double zoomLevel = null;
+	private Double zoomLevel = INITIAL_ZOOM;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	public static final ICoordinates KEYSTONE_IDENTITY =
 			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);

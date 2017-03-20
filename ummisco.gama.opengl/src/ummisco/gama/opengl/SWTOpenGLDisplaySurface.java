@@ -243,7 +243,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// return;
 		renderer.camera.initialize();
 		output.getData().resetZRotation();
-		output.getData().setZoomLevel(1d, true);
+		output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true);
 		zoomFit = true;
 
 	}
