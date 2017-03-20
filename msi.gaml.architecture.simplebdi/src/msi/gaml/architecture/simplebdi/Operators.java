@@ -390,25 +390,41 @@ public class Operators {
 	@operator(value = "get_intensity", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the intensity value of the given emotion", examples = @example(value = "emotion set_intensity 12", test = false))
 	public static Double getIntensity(final Emotion emotion) {
-		return emotion.intensity;
+		if(emotion!=null){
+			return emotion.intensity;
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_decay", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the decay value of the given emotion", examples = @example(value = "get_decay(emotion)", test = false))
 	public static Double getDecay(final Emotion emotion) {
-		return emotion.decay;
+		if(emotion!=null){
+			return emotion.decay;
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_about", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the about value of the given emotion", examples = @example(value = "get_about(emotion)", test = false))
 	public static Predicate getAbout(final Emotion emotion) {
-		return emotion.about;
+		if(emotion!=null){
+			return emotion.about;
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_agent_cause", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the agent cause value of the given emotion", examples = @example(value = "get_agent_cause(emotion)", test = false))
 	public static IAgent getAgent(final Emotion emotion) {
-		return emotion.getAgentCause();
+		if(emotion!=null){
+			return emotion.getAgentCause();
+		}else{
+			return null;
+		}
 	}	
 	
 	// @operator(value = "new_social_link", can_be_const = true, category = {
@@ -481,31 +497,51 @@ public class Operators {
 	@operator(value = "get_agent", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the agent value of the given social link", examples = @example(value = "get_agent(social_link1)", test = false))
 	public static IAgent getAgent(final SocialLink social) {
-		return social.getAgent();
+		if(social!=null){
+			return social.getAgent();
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_liking", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the liking value of the given social link", examples = @example(value = "get_liking(social_link1)", test = false))
 	public static Double getLikink(final SocialLink social) {
-		return social.getLiking();
+		if(social!=null){
+			return social.getLiking();
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_dominance", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the dominance value of the given social link", examples = @example(value = "get_dominance(social_link1)", test = false))
 	public static Double getDominance(final SocialLink social) {
-		return social.getDominance();
+		if(social!=null){
+			return social.getDominance();
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_solidarity", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the solidarity value of the given social link", examples = @example(value = "get_solidarity(social_link1)", test = false))
 	public static Double getSolidarity(final SocialLink social) {
-		return social.getSolidarity();
+		if(social!=null){
+			return social.getSolidarity();
+		}else{
+			return null;
+		}
 	}
 
 	@operator(value = "get_familiarity", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "get the familiarity value of the given social link", examples = @example(value = "get_familiarity(social_link1)", test = false))
 	public static Double getFamiliarity(final SocialLink social) {
-		return social.getFamiliarity();
+		if(social!=null){
+			return social.getFamiliarity();
+		}else{
+			return null;
+		}
 	}
 
 	// Faire en sorte que l'on puisse utiliser les opérateurs seulement avec le

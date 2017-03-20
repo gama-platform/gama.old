@@ -225,8 +225,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
-		if (!agent.dead()) {
+//		if (!agent.dead()) {
 			// Part that manage the lifetime of predicates
+		if(result!=null){
 			updateLifeTimePredicates(scope);
 			updateEmotionsIntensity(scope);
 		}
@@ -2016,7 +2017,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private List<Emotion> listEmotionsNull(final IScope scope) {
 		final List<Emotion> tempPred = new ArrayList<Emotion>();
 		for (final Emotion pred : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)) {
-			if (pred.getIntensity() == 0) {
+			if ((pred.getIntensity() <= 0) && (pred.getIntensity()!=-1.0)) {
 				tempPred.add(pred);
 			}
 		}
