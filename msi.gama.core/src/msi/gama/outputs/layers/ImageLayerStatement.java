@@ -240,8 +240,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	/**
 	 * @return
 	 */
-	public IExpression getGisExpression() {
-		return gisExpression;
-	}
+	// public IExpression getGisExpression() {
+	// return gisExpression;
+	// }
 
 }

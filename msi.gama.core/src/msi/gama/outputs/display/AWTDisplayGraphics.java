@@ -265,7 +265,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			GeometryUtils.applyToInnerGeometries(geometry, (g) -> result.add(drawShape(g, attributes)));
 			return result;
 		}
-		GamaColor border = attributes.getBorder();
+		final boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
+
+		GamaColor border = isLine ? attributes.getColor() : attributes.getBorder();
 		if (border == null && attributes.isEmpty()) {
 			border = attributes.getColor();
 		}
@@ -274,7 +276,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			if (border != null)
 				border = attributes.getColor();
 		}
-		final boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
 		final Shape s = sw.toShape(geometry);
 		try {
 			final Rectangle2D r = s.getBounds2D();
