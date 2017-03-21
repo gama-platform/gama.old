@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ConsoleDisplayerFactory.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ConsoleDisplayerFactory.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -65,29 +64,23 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		public void eraseConsole(final boolean setToNull) {
 			final IGamaView console = (IGamaView) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
 			if (console != null) {
-				WorkbenchHelper.run(new Runnable() {
-
-					@Override
-					public void run() {
-						console.reset();
-
-					}
-				});
+				WorkbenchHelper.run(() -> console.reset());
 			}
 		}
 
 		@Override
 		public void showConsoleView(final ITopLevelAgent agent) {
-			final IGamaView.Console console = (Console) GAMA.getGui().showView(IGui.CONSOLE_VIEW_ID, null,
-					IWorkbenchPage.VIEW_VISIBLE);
-			if (consoleBuffer.length() > 0 && console != null) {
-				console.append(consoleBuffer.toString(), agent, null);
-				consoleBuffer.setLength(0);
-			}
 			final IGamaView.Console icv = (Console) GAMA.getGui().showView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
 			if (icv != null)
 				icv.append(null, agent, null);
+			final IGamaView.Console console =
+					(Console) GAMA.getGui().showView(IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			if (consoleBuffer.length() > 0 && console != null) {
+				console.append(consoleBuffer.toString(), agent, null);
+				consoleBuffer.setLength(0);
+			}
+
 		}
 	}
 
