@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CleanupHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CleanupHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,8 +22,12 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
@@ -48,10 +51,84 @@ public class CleanupHelper {
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
 		RearrangeMenus.run();
+		ForceMaximizeRestoration.run();
 	}
 
-	static class RemoveUnwantedActionSets
-			extends PerspectiveAdapter /* implements IStartup */ {
+	static class ForceMaximizeRestoration {
+		public static void run() {
+			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			for (int i = 0; i < windows.length; i++) {
+				final IWorkbenchPage page = windows[i].getActivePage();
+				if (page != null) {
+					page.addPartListener(new IPartListener2() {
+
+						@Override
+						public void partVisible(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partOpened(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partInputChanged(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partHidden(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partDeactivated(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partClosed(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partBroughtToTop(final IWorkbenchPartReference partRef) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void partActivated(final IWorkbenchPartReference partRef) {
+							final IViewReference[] refs = page.getViewReferences();
+							final IEditorReference[] eds = page.getEditorReferences();
+							for (final IViewReference ref : refs) {
+								if (!partRef.equals(ref) && page.getPartState(ref) == IWorkbenchPage.STATE_MAXIMIZED) {
+									page.toggleZoom(ref);
+									break;
+								}
+							}
+							for (final IEditorReference ref : eds) {
+								if (!partRef.equals(ref) && page.getPartState(ref) == IWorkbenchPage.STATE_MAXIMIZED) {
+									page.toggleZoom(ref);
+									break;
+								}
+							}
+
+						}
+					});
+				}
+			}
+		}
+	}
+
+	static class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */ {
 
 		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = new String[] { "org.eclipse", "msi.gama.lang.gaml.Gaml" };
 		String[] MENUS_TO_REMOVE = new String[] { "org.eclipse.ui.run", "window", "navigate", "project" };
@@ -88,8 +165,7 @@ public class CleanupHelper {
 							try {
 								if (w.getCoolBarManager2().find(item.getId()) != null)
 									w.getCoolBarManager2().remove(item);
-							} catch (final Exception e) {
-							}
+							} catch (final Exception e) {}
 						}
 					}
 				}
@@ -127,8 +203,8 @@ public class CleanupHelper {
 
 		static void run() {
 			final List<IWizardCategory> cats = new ArrayList<>();
-			AbstractExtensionWizardRegistry r = (AbstractExtensionWizardRegistry) PlatformUI.getWorkbench()
-					.getNewWizardRegistry();
+			AbstractExtensionWizardRegistry r =
+					(AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getNewWizardRegistry();
 			cats.addAll(Arrays.asList(r.getRootCategory().getCategories()));
 			r = (AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getImportWizardRegistry();
 			cats.addAll(Arrays.asList(r.getRootCategory().getCategories()));

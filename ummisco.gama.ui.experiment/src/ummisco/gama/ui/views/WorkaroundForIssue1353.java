@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WorkaroundForIssue1353.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WorkaroundForIssue1353.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -37,8 +36,7 @@ public class WorkaroundForIssue1353 {
 		}
 
 		@Override
-		public void partClosed(final IWorkbenchPartReference partRef) {
-		}
+		public void partClosed(final IWorkbenchPartReference partRef) {}
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
@@ -46,24 +44,19 @@ public class WorkaroundForIssue1353 {
 		}
 
 		@Override
-		public void partOpened(final IWorkbenchPartReference partRef) {
-		}
+		public void partOpened(final IWorkbenchPartReference partRef) {}
 
 		@Override
-		public void partBroughtToTop(final IWorkbenchPartReference part) {
-		}
+		public void partBroughtToTop(final IWorkbenchPartReference part) {}
 
 		@Override
-		public void partHidden(final IWorkbenchPartReference partRef) {
-		}
+		public void partHidden(final IWorkbenchPartReference partRef) {}
 
 		@Override
-		public void partVisible(final IWorkbenchPartReference partRef) {
-		}
+		public void partVisible(final IWorkbenchPartReference partRef) {}
 
 		@Override
-		public void partInputChanged(final IWorkbenchPartReference partRef) {
-		}
+		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	}
 
 	private static Shell shell;
@@ -72,14 +65,10 @@ public class WorkaroundForIssue1353 {
 	public static void showShell() {
 		if (shell != null) // The fix has been installed
 		{
-			WorkbenchHelper.asyncRun(new Runnable() {
+			WorkbenchHelper.asyncRun(() -> {
+				shell.open();
+				shell.setVisible(false);
 
-				@Override
-				public void run() {
-					shell.open();
-					shell.setVisible(false);
-
-				}
 			});
 
 		}
@@ -96,9 +85,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	public static void install() {
-		if (!PlatformHelper.isCocoa()) {
-			return;
-		}
+		if (!PlatformHelper.isCocoa()) { return; }
 		createShell();
 		WorkbenchHelper.getPage().addPartListener(listener);
 
