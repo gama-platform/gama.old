@@ -7,7 +7,30 @@
 	<artifactId>msi.gama.parent</artifactId>
 	<version>1.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
+	
+	<distributionManagement>
+		<repository>
+			<id>p2Repo</id>
+			<name>p2Repo</name>
+			<url>scpexe://51.255.46.42/updates/repo</url>
+		</repository>
+		<snapshotRepository>
+			<id>p2Repo</id>
+			<name>p2RepoSnapshot</name>
+			<url>scpexe://51.255.46.42/updates/snapshots</url>
+		</snapshotRepository>
+		<!--  <snapshotRepository>
+			<id>releases</id>
+			<name>Sonatype Nexus snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>releases</id>
+			<name>Sonatype Nexus release repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository> -->
+	</distributionManagement>
+	
 	<pluginRepositories>
 		<pluginRepository>
 			<id>buchen-maven-repo</id>
@@ -63,7 +86,7 @@
 			<name>sourceforge-repository</name>
 			<url>http://logicaldoc.sourceforge.net/maven/</url>
 		</repository>
-		<repository>
+			<!-- <repository>
 			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
@@ -73,7 +96,7 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-		</repository>
+		</repository>-->
 		<repository>
 			<id>pentaho-releases</id>
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
@@ -233,6 +256,13 @@
 
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.4</version>
+			</extension>
+		</extensions>
 
 
 		<plugins>
@@ -270,12 +300,12 @@
 				</configuration>
 				<dependencies>
 					<!-- dependency containing the annotation processor specified in the 
-						annotationProcessor element -->
+						annotationProcessor element 
 					<dependency>
 						<groupId>msi.gama</groupId>
 						<artifactId>msi.gama.processor</artifactId>
 						<version>1.4.0</version>
-					</dependency>
+					</dependency>-->
 				</dependencies>
 			</plugin>
 			<plugin>
