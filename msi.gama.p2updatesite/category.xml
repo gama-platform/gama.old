@@ -67,7 +67,6 @@
    <bundle id="simtools.gaml.extensions.physics" version="1.7.0.qualifier"/>
    <bundle id="simtools.gaml.extensions.traffic" version="1.7.0.qualifier"/>
    <bundle id="simtools.graphanalysis" version="1.7.0.qualifier"/>
-   <bundle id="miat.gama.extension.ifcfile" version="1.0.0.qualifier"/>
    <bundle id="ummisco.gama.annotations" version="1.7.0.qualifier"/>
    <bundle id="ummisco.gama.java2d" version="1.7.0.qualifier"/>
    <bundle id="ummisco.gama.network" version="1.7.0.qualifier"/>
