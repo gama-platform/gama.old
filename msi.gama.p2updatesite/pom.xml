@@ -11,31 +11,40 @@
 	</parent>
 	<artifactId>msi.gama.p2updatesite</artifactId>
 	<packaging>eclipse-repository</packaging>
-	
+
 	<distributionManagement>
 		<repository>
-			<id>ssh-repository</id>
-			<url>scpexe://51.255.46.42/./var/www/gama_updates/repo</url>
+			<id>p2Repo</id>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
 		</repository>
-	</distributionManagement>	
+		<snapshotRepository>
+			<id>p2Repo</id>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+	
 	<build>
-
-	 <extensions>
-	     <extension>
-	      <groupId>org.apache.maven.wagon</groupId>
-	       <artifactId>wagon-ssh</artifactId>
-	       <version>2.10</version>
-	    </extension>
-	  </extensions>	
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>2.12</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.12</version>
+			</extension>
+		</extensions>
 	</build>
-
-	 <profiles>
-	  <!-- This profile is used to upload the repo -->
-	  <profile>
+	<profiles>
+		<!-- This profile is used to upload the repo -->
+		<profile>
 			<id>p2Repo</id>
 			<properties>
 				<!-- Properties relative to the distant host where to upload the repo -->
-				<ftp.url>sftp://51.255.46.42</ftp.url>
+				<ftp.url>scp://51.255.46.42</ftp.url>
 				<ftp.toDir>./var/www/gama_updates/repo</ftp.toDir>
 				<!-- Relative path to the repo being uploaded -->
 				<repo.path>${project.build.directory}/repository/</repo.path>
@@ -43,6 +52,17 @@
 
 			<build>
 				<plugins>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>2.5</version>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.maven.wagon</groupId>
+								<artifactId>wagon-ssh</artifactId>
+								<version>2.12</version>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<!-- Upload the repo to the server -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -51,7 +71,7 @@
 						<executions>
 							<execution>
 								<id>p2Repo</id>
-								<phase>install</phase>
+								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
 								</goals>
@@ -76,4 +96,5 @@
 			</build>
 		</profile>
 	</profiles>
+	<groupId>msi.gama</groupId>
 </project>

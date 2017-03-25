@@ -1,4 +1,4 @@
 #!/bin/bash
-cd msi.gama.p2updatesite &&
-mvn clean install -P p2Repo --settings ../settings.xml && 
+cd msi.gama.parent &&
+mvn clean deploy --settings ../settings.xml && 
 cd -

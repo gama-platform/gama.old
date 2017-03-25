@@ -1,10 +1,9 @@
 cd ummisco.gama.annotations &&
-mvn clean install &&
+mvn clean deploy -B -DcreateChecksum=true --settings ../settings.xml  && 
 cd - &&
 cd msi.gama.processor &&
-mvn clean install &&
+mvn clean deploy -B -DcreateChecksum=true --settings ../settings.xml  &&
 cd - &&
 cd msi.gama.parent &&
-mvn clean install &&
+mvn -q clean deploy -B -DcreateChecksum=true --settings ../settings.xml &&
 cd -
-

@@ -7,41 +7,102 @@
 	<artifactId>msi.gama.parent</artifactId>
 	<version>1.7.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	
+
 	<distributionManagement>
 		<repository>
+			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
-			<name>p2Repo</name>
-			<url>scpexe://51.255.46.42/updates/repo</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
 		</repository>
 		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
-			<name>p2RepoSnapshot</name>
-			<url>scpexe://51.255.46.42/updates/snapshots</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
 		</snapshotRepository>
-		<!--  <snapshotRepository>
-			<id>releases</id>
-			<name>Sonatype Nexus snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>releases</id>
-			<name>Sonatype Nexus release repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-		</repository> -->
 	</distributionManagement>
-	
+
+
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>buchen-maven-repo</id>
 			<url>http://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
-		<pluginRepository>
-			<id>annot-local-repo</id>
-			<url>${project.baseUri}../msi.gama.processor/processor/plugins</url>
-		</pluginRepository>
+		<!-- <pluginRepository> <id>annot-local-repo</id> <url>${project.baseUri}../msi.gama.processor/processor/plugins</url> 
+			</pluginRepository> -->
 	</pluginRepositories>
+
+
+	<profiles>
+		<!-- This profile is used to upload the repo -->
+		<profile>
+			<id>p2Repo</id>
+			<properties>
+				<!-- Properties relative to the distant host where to upload the repo -->
+				<ftp.url>scp://51.255.46.42</ftp.url>
+				<ftp.toDir>./var/www/gama_updates/repo</ftp.toDir>
+				<!-- Relative path to the repo being uploaded -->
+				<repo.path>${project.build.directory}/repository/</repo.path>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>2.5</version>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.maven.wagon</groupId>
+								<artifactId>wagon-ssh</artifactId>
+								<version>2.12</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<!-- Upload the repo to the server -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<id>p2Repo</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireFilesSize>
+											<maxsize>50000</maxsize>
+											<minsize>90</minsize>											
+										</requireFilesSize>
+									</rules>
+									<removeAll>true</removeAll>
+									<excludes>
+										<exclude>**/msi/gama/ummisco.gama.product/*</exclude>
+									</excludes>
+									<fromDir>${repo.path}</fromDir>
+									<includes>**</includes>
+									<toDir>${ftp.toDir}</toDir>
+									<url>${ftp.url}</url>
+									<serverId>p2Repo</serverId>
+									<!-- Points to your settings.xml where the connection settings are 
+										stored as shown below -->
+									<!-- <server> -->
+									<!-- <id>p2Repo</id> -->
+									<!-- <username>username</username> -->
+									<!-- <password>password</password> -->
+									<!-- </server> -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 
 	<repositories>
 		<repository>
@@ -86,17 +147,13 @@
 			<name>sourceforge-repository</name>
 			<url>http://logicaldoc.sourceforge.net/maven/</url>
 		</repository>
-			<!-- <repository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>-->
+		<!-- <repository> <id>ossrh</id> <name>Sonatype Nexus Snapshots</name> 
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url> 
+			<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> 
+			</snapshots> </repository> <repository> <id>ossrh</id> <name>Sonatype Nexus 
+			Snapshots</name> <url>https://oss.sonatype.org/content/groups/public/</url> 
+			<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> 
+			</snapshots> </repository> -->
 		<repository>
 			<id>pentaho-releases</id>
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
@@ -178,14 +235,11 @@
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
 
-
-
-
-		<module>../msi.gama.p2updatesite</module>
-
-
 		<module>../ummisco.gama.product</module>
 
+		<!-- <module>../msi.gama.p2updatesite</module> -->
+
+		<!-- -->
 	</modules>
 
 	<properties>
@@ -259,11 +313,15 @@
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>2.12</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>2.4</version>
+				<version>2.12</version>
 			</extension>
 		</extensions>
-
 
 		<plugins>
 
@@ -300,12 +358,8 @@
 				</configuration>
 				<dependencies>
 					<!-- dependency containing the annotation processor specified in the 
-						annotationProcessor element 
-					<dependency>
-						<groupId>msi.gama</groupId>
-						<artifactId>msi.gama.processor</artifactId>
-						<version>1.4.0</version>
-					</dependency>-->
+						annotationProcessor element <dependency> <groupId>msi.gama</groupId> <artifactId>msi.gama.processor</artifactId> 
+						<version>1.4.0</version> </dependency> -->
 				</dependencies>
 			</plugin>
 			<plugin>

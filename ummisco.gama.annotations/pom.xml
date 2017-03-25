@@ -3,10 +3,108 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ummisco.gama</groupId>
+	<groupId>msi.gama</groupId>
 	<artifactId>ummisco.gama.annotations</artifactId>
 	<version>1.7.0-SNAPSHOT</version>
+
+	<distributionManagement>
+		<repository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>p2Repo</id>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
+		</repository>
+		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>p2Repo</id>
+			<url>scp://51.255.46.42/./var/www/gama_updates/repo</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+	<profiles>
+		<!-- This profile is used to upload the repo -->
+		<profile>
+			<id>p2Repo</id>
+			<properties>
+				<!-- Properties relative to the distant host where to upload the repo -->
+				<ftp.url>scp://51.255.46.42</ftp.url>
+				<ftp.toDir>./var/www/gama_updates/repo</ftp.toDir>
+				<!-- Relative path to the repo being uploaded -->
+				<repo.path>${project.build.directory}/repository/</repo.path>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>2.5</version>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.maven.wagon</groupId>
+								<artifactId>wagon-ssh</artifactId>
+								<version>2.12</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<!-- Upload the repo to the server -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>wagon-maven-plugin</artifactId>
+						<version>1.0</version>
+						<executions>
+							<execution>
+								<id>p2Repo</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireFilesSize>
+											<maxsize>50000</maxsize>
+											<minsize>90</minsize>
+										</requireFilesSize>
+									</rules>
+									<removeAll>true</removeAll>
+									<excludes>
+										<exclude>**/msi/gama/ummisco.gama.product/*</exclude>
+									</excludes>
+									<fromDir>${repo.path}</fromDir>
+									<includes>**</includes>
+									<toDir>${ftp.toDir}</toDir>
+									<url>${ftp.url}</url>
+									<serverId>p2Repo</serverId>
+									<!-- Points to your settings.xml where the connection settings are 
+										stored as shown below -->
+									<!-- <server> -->
+									<!-- <id>p2Repo</id> -->
+									<!-- <username>username</username> -->
+									<!-- <password>password</password> -->
+									<!-- </server> -->
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>2.12</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.12</version>
+			</extension>
+		</extensions>
+
 		<!-- <plugins combine.self="override"> -->
 		<plugins>
 			<plugin>
