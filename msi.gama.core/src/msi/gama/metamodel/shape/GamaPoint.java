@@ -21,6 +21,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -656,6 +657,13 @@ public class GamaPoint extends Coordinate implements ILocation {
 		final double inverse = 1 / Math.sqrt(x * x + y * y);
 		return new GamaPoint(inverse * y, -inverse * x, 0);
 
+	}
+
+	public GamaPoint withPrecision(final int i) {
+		final double x = Maths.round(this.x, i);
+		final double y = Maths.round(this.y, i);
+		final double z = Maths.round(this.z, i);
+		return new GamaPoint(x, y, z);
 	}
 
 }

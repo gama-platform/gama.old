@@ -358,20 +358,17 @@ public class LayeredDisplayData {
 	 * @param cameraPos
 	 *            the cameraPos to set
 	 */
-	public void setCameraPos(final GamaPoint c) {
-		if (c == null)
+	public void setCameraPos(final GamaPoint point) {
+		if (point == null)
 			return;
-		setCameraPos(c.x, c.y, c.z);
-	}
-
-	public void setCameraPos(final double xPos, final double yPos, final double zPos) {
+		final GamaPoint c = point.withPrecision(3);
 		if (cameraPos != null)
-			if (xPos == cameraPos.x && yPos == cameraPos.y && zPos == cameraPos.z)
+			if (c.equals(cameraPos))
 				return;
 			else
-				cameraPos.setLocation(xPos, yPos, zPos);
+				cameraPos.setLocation(c);
 		else
-			cameraPos = new GamaPoint(xPos, yPos, zPos);
+			cameraPos = new GamaPoint(c);
 
 		notifyListeners(Changes.CAMERA_POS, cameraPos);
 	}
@@ -387,20 +384,17 @@ public class LayeredDisplayData {
 	 * @param cameraLookPos
 	 *            the cameraLookPos to set
 	 */
-	public void setCameraLookPos(final GamaPoint c) {
-		if (c == null)
+	public void setCameraLookPos(final GamaPoint point) {
+		if (point == null)
 			return;
-		setCameraLookPos(c.x, c.y, c.z);
-	}
-
-	public void setCameraLookPos(final double xPos, final double yPos, final double zPos) {
+		final GamaPoint c = point.withPrecision(3);
 		if (cameraLookPos != null)
-			if (xPos == cameraLookPos.x && yPos == cameraLookPos.y && zPos == cameraLookPos.z)
+			if (c.x == cameraLookPos.x && c.y == cameraLookPos.y && c.z == cameraLookPos.z)
 				return;
 			else
-				cameraLookPos.setLocation(xPos, yPos, zPos);
+				cameraLookPos.setLocation(c);
 		else
-			cameraLookPos = new GamaPoint(xPos, yPos, zPos);
+			cameraLookPos = new GamaPoint(c);
 
 		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
 	}
@@ -416,20 +410,17 @@ public class LayeredDisplayData {
 	 * @param cameraUpVector
 	 *            the cameraUpVector to set
 	 */
-	public void setCameraUpVector(final GamaPoint c, final boolean notify) {
-		if (c == null)
+	public void setCameraUpVector(final GamaPoint point, final boolean notify) {
+		if (point == null)
 			return;
-		setCameraUpVector(c.x, c.y, c.z, notify);
-	}
-
-	public void setCameraUpVector(final double xPos, final double yPos, final double zPos, final boolean notify) {
+		final GamaPoint c = point.withPrecision(3);
 		if (cameraUpVector != null)
-			if (xPos == cameraUpVector.x && yPos == cameraUpVector.y && zPos == cameraUpVector.z)
+			if (c.x == cameraUpVector.x && c.y == cameraUpVector.y && c.z == cameraUpVector.z)
 				return;
 			else
-				cameraUpVector.setLocation(xPos, yPos, zPos);
+				cameraUpVector.setLocation(c);
 		else
-			cameraUpVector = new GamaPoint(xPos, yPos, zPos);
+			cameraUpVector = new GamaPoint(c);
 
 		notifyListeners(Changes.CAMERA_UP, cameraUpVector);
 	}

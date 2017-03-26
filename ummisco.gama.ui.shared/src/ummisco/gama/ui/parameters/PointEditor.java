@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PointEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PointEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -113,18 +112,16 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	public void verifyText(final VerifyEvent event) {
-		if (internalModification) {
-			return;
-		}
-		if (!allowVerification) {
-			return;
-		}
+		if (internalModification) { return; }
+		if (!allowVerification) { return; }
 		final char myChar = event.character;
-		if (myChar == '\0') {
-
-		}
 		// Last one is for texts
-		event.doit = Character.isDigit(myChar) || myChar == '\b' || myChar == '.';
+		final Text text = (Text) event.widget;
+		final String old = text.getText();
+		final boolean alreadyPoint = old.contains(".");
+		final boolean atBeginning = event.start == 0;
+		event.doit = Character.isDigit(myChar) || myChar == '\b' || myChar == '.' && !alreadyPoint
+				|| myChar == '-' && atBeginning;
 	}
 
 	@Override
@@ -142,12 +139,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	public void modifyText(final ModifyEvent me) {
-		if (internalModification) {
-			return;
-		}
-		if (!allowVerification) {
-			return;
-		}
+		if (internalModification) { return; }
+		if (!allowVerification) { return; }
 		modifyAndDisplayValue(new GamaPoint(Cast.asFloat(getScope(), ordinates[0].getText()),
 				Cast.asFloat(getScope(), ordinates[1].getText()), Cast.asFloat(getScope(), ordinates[2].getText())));
 
@@ -158,7 +151,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		return pointEditor;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public IType getExpectedType() {
 		return Types.POINT;

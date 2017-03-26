@@ -901,7 +901,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 					cameraUp.forceUpdateValueAsynchronously();
 					break;
 				case CAMERA_PRESET:
-					// Reverting the value back to ""
 					preset.getParam().setValue(scope, "Choose...");
 					preset.forceUpdateValueAsynchronously();
 					break;
