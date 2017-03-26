@@ -549,13 +549,15 @@ public abstract class AbstractCamera implements ICamera {
 						quickDownTurn();
 						break;
 					case 'k':
-						activateKeystoneMode();
+						if (!GamaKeyBindings.ctrl(e))
+							activateKeystoneMode();
 						break;
 					default:
 						return true;
 				}
 			} else if (e.character == 'k') {
-				activateKeystoneMode();
+				if (!GamaKeyBindings.ctrl(e))
+					activateKeystoneMode();
 				return true;
 			}
 			return true;
