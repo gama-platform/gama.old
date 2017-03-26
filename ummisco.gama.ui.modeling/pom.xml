@@ -10,4 +10,5 @@
   </parent>
   <artifactId>ummisco.gama.ui.modeling</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <groupId>msi.gama</groupId>
 </project>
