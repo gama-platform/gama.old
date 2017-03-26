@@ -16,7 +16,9 @@ addons:
     ssh_known_hosts:
       - 51.255.46.42
 script: sh ./build.sh
-after_success: sh ./publish.sh
+after_success: 
+- bash ./github-release.sh "$TRAVIS_COMMIT" 
+- sh ./publish.sh
 branches:
   only:
     - master
