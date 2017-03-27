@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -49,6 +50,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
@@ -507,12 +509,12 @@ public class GamaIFCFile extends GamaGeometryFile {
 					geoms.add(g);
 			}
 			
-			final Collection<IfcOpeningElement> opening = ifcModel.getCollection(IfcOpeningElement.class);
+			/*final Collection<IfcOpeningElement> opening = ifcModel.getCollection(IfcOpeningElement.class);
 			for (final IfcOpeningElement o : opening) {
 				final IShape g = createOpening(scope, o);
 				if (g != null)
 					geoms.add(g);
-			}
+			}*/
 			
 
 			final Collection<IfcDoor> doors = ifcModel.getCollection(IfcDoor.class);
@@ -553,7 +555,6 @@ public class GamaIFCFile extends GamaGeometryFile {
 		if (getBuffer() == null)
 			return null;
 		Envelope3D env = GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
-		
 		if (didFillBuffer) {
 			GamaPoint vect = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 			IList<IShape> newBuffer  = GamaListFactory.create();
@@ -561,7 +562,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 				newBuffer.add(Spatial.Transformations.translated_by(scope, buff,vect));
 			}
 			setBuffer(newBuffer);
-			env = GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
+			env = env.translate(-env.getMinX(), -env.getMinY(), -env.getMinZ());//GeometryUtils.computeEnvelopeFrom(scope, getBuffer());
 		}
 		return env;
 	}
