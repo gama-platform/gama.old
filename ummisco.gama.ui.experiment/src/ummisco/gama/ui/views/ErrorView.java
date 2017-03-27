@@ -39,6 +39,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.PreferencesHelper;
+import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
 
@@ -185,14 +186,20 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
-		result.put("Copy text", () -> {
+		result.put("Copy error to clipboard", () -> {
 			final Clipboard clipboard = new Clipboard(parent.getDisplay());
 			final String data = item.getAllText();
 			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 			clipboard.dispose();
 		});
 		result.put("Show in editor", () -> GAMA.getGui().editModel(item.getEditorContext()));
+		result.put("Report issue on GitHub", () -> this.reportError(item));
 		return result;
+	}
+
+	private void reportError(final GamaRuntimeException item) {
+		final String data = item.getAllText();
+		WebHelper.openPage("https://github.com/gama-platform/gama/issues/new");
 	}
 
 	@Override

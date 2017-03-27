@@ -24,8 +24,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.FileStoreEditorInput;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamaView.Html;
 import msi.gama.common.preferences.GamaPreferences;
 
 public class WebHelper {
@@ -99,6 +102,16 @@ public class WebHelper {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void openPage(final String string) {
+		try {
+			final IGamaView.Html view =
+					(Html) WorkbenchHelper.getPage().openEditor(new NullEditorInput(), "msi.gama.application.browser");
+			view.setUrl(string);
+		} catch (final PartInitException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

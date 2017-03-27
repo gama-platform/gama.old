@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IGamaView.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IGamaView.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -27,9 +26,8 @@ public interface IGamaView {
 		IDisplaySurface getDisplaySurface();
 
 		/**
-		 * For some views (esp. the ones based on Swing), it is necessary to
-		 * wait a while after opening it, in order for the view to be fully
-		 * realized
+		 * For some views (esp. the ones based on Swing), it is necessary to wait a while after opening it, in order for
+		 * the view to be fully realized
 		 */
 		public void waitToBeRealized();
 	}
@@ -38,6 +36,10 @@ public interface IGamaView {
 
 		public void displayErrors();
 
+	}
+
+	public interface Html {
+		public void setUrl(String url);
 	}
 
 	public interface Parameters {

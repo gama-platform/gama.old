@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'HtmlViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'HtmlViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,6 +28,7 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
+import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -41,22 +41,19 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @since 28 avr. 2014
  *
  */
-public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
+public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGamaView.Html {
 
 	Browser browser;
 	// private GamaToolbar2 toolbar;
 	ToolItem back, forward, home;
 
-	public HtmlViewer() {
-	}
+	public HtmlViewer() {}
 
 	@Override
-	public void doSave(final IProgressMonitor monitor) {
-	}
+	public void doSave(final IProgressMonitor monitor) {}
 
 	@Override
-	public void doSaveAs() {
-	}
+	public void doSaveAs() {}
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput in) throws PartInitException {
@@ -103,8 +100,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		browser.addProgressListener(new ProgressListener() {
 
 			@Override
-			public void changed(final ProgressEvent arg0) {
-			}
+			public void changed(final ProgressEvent arg0) {}
 
 			@Override
 			public void completed(final ProgressEvent event) {
@@ -117,6 +113,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		openInput();
 	}
 
+	@Override
 	public void setUrl(final String url) {
 		browser.setUrl(url);
 		this.setPartName(url.substring(url.lastIndexOf('/') + 1));
