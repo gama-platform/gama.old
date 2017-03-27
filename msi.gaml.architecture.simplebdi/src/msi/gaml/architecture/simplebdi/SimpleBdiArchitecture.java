@@ -2377,6 +2377,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final IAgent agentCause = social.getAgent();
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double coefModification = 0.1;
 		Double appreciationModif = social.getLiking();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -2388,7 +2389,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		appreciationModif = appreciationModif * (1 + social.getSolidarity()) + 0.1 * tempPositif - 0.1 * tempNegatif;
+		appreciationModif = appreciationModif * (1 + social.getSolidarity()) + coefModification * tempPositif - coefModification * tempNegatif;
 		if (appreciationModif > 1.0) {
 			appreciationModif = 1.0;
 		}
@@ -2408,6 +2409,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final IAgent currentAgent = scope.getAgent();
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double coefModification = 0.1;
 		Double dominanceModif = social.getDominance();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -2423,7 +2425,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		dominanceModif = dominanceModif + 0.1 * tempPositif - 0.1 * tempNegatif;
+		dominanceModif = dominanceModif + coefModification * tempPositif - coefModification * tempNegatif;
 		if (dominanceModif > 1.0) {
 			dominanceModif = 1.0;
 		}
@@ -2443,6 +2445,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double coefModification = 0.1;
 		Double solidarityModif = social.getSolidarity();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -2482,7 +2485,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		}
 
-		solidarityModif = solidarityModif + 0.1 * tempPositif - 0.1 * tempNegatif;
+		solidarityModif = solidarityModif + coefModification * tempPositif - coefModification * tempNegatif;
 		if (solidarityModif > 1.0) {
 			solidarityModif = 1.0;
 		}
