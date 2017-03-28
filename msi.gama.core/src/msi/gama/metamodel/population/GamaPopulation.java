@@ -479,12 +479,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final int rows =
 				exp == null
 						? species.hasFacet(IKeyword.CELL_WIDTH) ? (int) (env.getWidth()
-								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
+								/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
 						: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null
 				? species.hasFacet(IKeyword.CELL_HEIGHT) ? (int) (env.getHeight()
-						/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope))) : 100
+						/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope))) : 100
 				: Cast.asInt(scope, exp.value(scope));
 
 		final boolean isTorus = host.getTopology().isTorus();
