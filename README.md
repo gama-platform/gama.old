@@ -1,7 +1,7 @@
-# gama
+# GAMA
 
 
-**Core repository of the GAMA Platform**
+**Core repository for the GAMA Platform project**
 
 Please post issues about GAMA here:  
 
@@ -15,5 +15,6 @@ Issues regarding the website (http://gama-platform.org) and the documentation sh
 
 
 
-GAMA is continuously built by Travis-CI : [![Build Status](https://travis-ci.org/gama-platform/gama.svg?branch=master)](https://travis-ci.org/gama-platform/gama)
+[![Build Status](https://travis-ci.org/gama-platform/gama.svg?branch=master)](https://travis-ci.org/gama-platform/gama)
+[![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 
