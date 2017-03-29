@@ -2360,20 +2360,20 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final SocialLink tempLink : listSocialAgentDead(scope)) {
 				removeFromBase(scope, tempLink, SimpleBdiArchitecture.SOCIALLINK_BASE);
 			}
-			for (final SocialLink tempLink : getSocialBase(scope, SOCIALLINK_BASE)) {
-				updateSocialLink(scope, tempLink);
-			}
+//			for (final SocialLink tempLink : getSocialBase(scope, SOCIALLINK_BASE)) {
+//				updateSocialLink(scope, tempLink);
+//			}
 		}
 	}
 
-	private void updateSocialLink(final IScope scope, final SocialLink social) {
+	static public void updateSocialLink(final IScope scope, final SocialLink social) {
 		updateAppreciation(scope, social);
 		updateDominance(scope, social);
 		updateSolidarity(scope, social);
 		updateFamiliarity(scope, social);
 	}
 
-	private void updateAppreciation(final IScope scope, final SocialLink social) {
+	static private void updateAppreciation(final IScope scope, final SocialLink social) {
 		final IAgent agentCause = social.getAgent();
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
@@ -2399,7 +2399,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		social.setLiking(appreciationModif);
 	}
 
-	private void updateDominance(final IScope scope, final SocialLink social) {
+	static private void updateDominance(final IScope scope, final SocialLink social) {
 		final IAgent agentCause = social.getAgent();
 		IScope scopeAgentCause = null;
 		if (agentCause != null) {
@@ -2436,7 +2436,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		GAMA.releaseScope(scopeAgentCause);
 	}
 
-	private void updateSolidarity(final IScope scope, final SocialLink social) {
+	static private void updateSolidarity(final IScope scope, final SocialLink social) {
 		final IAgent agentCause = social.getAgent();
 		IScope scopeAgentCause = null;
 		if (agentCause != null) {
@@ -2496,7 +2496,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		GAMA.releaseScope(scopeAgentCause);
 	}
 
-	private void updateFamiliarity(final IScope scope, final SocialLink social) {
+	static private void updateFamiliarity(final IScope scope, final SocialLink social) {
 		Double familiarityModif = social.getFamiliarity();
 		familiarityModif = familiarityModif * (1 + social.getLiking());
 		if (familiarityModif > 1.0) {

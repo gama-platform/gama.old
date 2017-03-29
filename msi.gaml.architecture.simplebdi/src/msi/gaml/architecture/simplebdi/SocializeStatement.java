@@ -73,23 +73,29 @@ public class SocializeStatement extends AbstractStatement{
 				scopeMySelf.push(mySelfAgent);
 			}
 			if(!scope.getAgent().equals(mySelfAgent)){
-				final SocialLink tempSocial = new SocialLink(scope.getAgent());
-				if (appreciation != null) {
-					tempSocial.setLiking(Cast.asFloat(scopeMySelf, appreciation.value(scopeMySelf)));;
+				SocialLink tempSocial = new SocialLink(scope.getAgent());
+				if(!SimpleBdiArchitecture.hasSocialLink(scopeMySelf, tempSocial)){
+					if (appreciation != null) {
+						tempSocial.setLiking(Cast.asFloat(scopeMySelf, appreciation.value(scopeMySelf)));;
+					}
+					if (dominance != null){
+						tempSocial.setDominance(Cast.asFloat(scopeMySelf, dominance.value(scopeMySelf)));
+					}
+					if (solidarity != null){
+						tempSocial.setSolidarity(Cast.asFloat(scopeMySelf, solidarity.value(scopeMySelf)));
+					}
+					if (familiarity != null){
+						tempSocial.setFamiliarity(Cast.asFloat(scopeMySelf, familiarity.value(scopeMySelf)));
+					}
+					if (agent != null){
+						tempSocial.setAgent((IAgent)agent.value(scopeMySelf));
+					}
+					SimpleBdiArchitecture.addSocialLink(scopeMySelf, tempSocial);
+				} else{
+					/*update le social link.*/
+					tempSocial = SimpleBdiArchitecture.getSocialLink(scopeMySelf, tempSocial);
+					SimpleBdiArchitecture.updateSocialLink(scopeMySelf, tempSocial);
 				}
-				if (dominance != null){
-					tempSocial.setDominance(Cast.asFloat(scopeMySelf, dominance.value(scopeMySelf)));
-				}
-				if (solidarity != null){
-					tempSocial.setSolidarity(Cast.asFloat(scopeMySelf, solidarity.value(scopeMySelf)));
-				}
-				if (familiarity != null){
-					tempSocial.setFamiliarity(Cast.asFloat(scopeMySelf, familiarity.value(scopeMySelf)));
-				}
-				if (agent != null){
-					tempSocial.setAgent((IAgent)agent.value(scopeMySelf));
-				}
-				SimpleBdiArchitecture.addSocialLink(scopeMySelf, tempSocial);
 			}
 			GAMA.releaseScope(scopeMySelf);
 		}
