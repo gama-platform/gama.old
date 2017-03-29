@@ -65,7 +65,7 @@
 						<executions>
 							<execution>
 								<id>p2Repo</id>
-								<phase>install</phase>
+								<phase>deploy</phase>
 								<goals>
 									<goal>upload</goal>
 								</goals>
