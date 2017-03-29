@@ -14,7 +14,7 @@ else
 		sh ./build.sh
 fi
 
-if  [[ ${MESSAGE} == *"ci release"* ]]; then		
+if  [[ ${MESSAGE} == *"ci release"* ]]; then	
+		echo "Upload continuos release to github nothing"		
 		bash ./github-release.sh "$TRAVIS_COMMIT" 
-fi
-echo "do nothing"		
+fi	
