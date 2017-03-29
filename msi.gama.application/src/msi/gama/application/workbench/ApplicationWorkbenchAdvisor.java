@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -170,7 +171,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	@Override
 	public void preStartup() {
-		super.preStartup();
+		// Suspend background jobs while we startup
+		Job.getJobManager().suspend();
+		// super.preStartup();
 		/* Linking the stock models with the workspace if they are not already */
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();
