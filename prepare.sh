@@ -6,7 +6,9 @@ if  [[ ${MESSAGE} == *"ci deploy"* ]]; then
 		if  [[ ${MESSAGE} == *"ci clean"* ]]; then
 				echo "Cleaning p2 update site"		
 				sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
-		fi
+		fi		
+        echo "Build GAMA project"		
+		sh ./build.sh
         echo "Deploy to p2 update site"		
 		sh ./publish.sh
 else
