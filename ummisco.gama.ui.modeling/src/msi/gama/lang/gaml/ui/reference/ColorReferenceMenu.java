@@ -39,7 +39,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 		applyText(c.serialize(true));
 	};
 
-	SelectionListener colorInserter = new SelectionAdapter() {
+	final SelectionListener colorInserter = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -67,6 +67,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 	protected void fillMenu() {
 		if (colorMenu == null) {
 			colorMenu = new GamaColorMenu(mainMenu);
+			colorMenu.setSelectionListener(colorInserter);
 		}
 		colorMenu.fillMenu();
 

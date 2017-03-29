@@ -215,4 +215,9 @@ public class GamaColorMenu extends GamaMenu {
 		reverse = r;
 	}
 
+	public void setSelectionListener(final SelectionListener colorInserter) {
+		this.currentListener = colorInserter;
+
+	}
+
 }
