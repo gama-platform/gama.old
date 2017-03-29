@@ -14,7 +14,6 @@ else
 		sh ./build.sh
 fi
 
-
 if  [[ ${MESSAGE} == *"ci release"* ]]; then		
 		bash ./github-release.sh "$TRAVIS_COMMIT" 
 fi
