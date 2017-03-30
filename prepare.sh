@@ -23,7 +23,19 @@ else
 			echo "Build GAMA project"		
 			sh ./build.sh
 	fi
-
+	if  [[ ${MESSAGE} == *"ci docs"* ]]; then	
+		git config --global user.email "travis@travis-ci.com"
+		git config --global user.name "Travis CI"
+		git config --global push.default simple		
+		git clone --depth=50 --branch=master https://github.com/dphilippon/dphilippon.github.io.git dphilippon/dphilippon.github.io
+		cd dphilippon/dphilippon.github.io
+		git remote add origin https://hqnghi88:$HQN_KEY@github.com/dphilippon/dphilippon.github.io.git
+		echo "Travis build trigger from gama core at $(date)" > log.txt
+		git status
+		git add -A		
+    		git commit -m "Trigger to generate docs - $(date)"
+		git push origin HEAD:master
+	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]]; then	
 			echo "Upload continuos release to github nothing"		
 			bash ./github-release.sh "$TRAVIS_COMMIT" 
