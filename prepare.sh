@@ -29,6 +29,7 @@ else
 		git config --global push.default simple		
 		git clone --depth=50 --branch=master https://github.com/dphilippon/dphilippon.github.io.git dphilippon/dphilippon.github.io
 		cd dphilippon/dphilippon.github.io
+		git remote rm origin
 		git remote add origin https://hqnghi88:$HQN_KEY@github.com/dphilippon/dphilippon.github.io.git
 		echo "Travis build trigger from gama core at $(date)" > log.txt
 		git status
