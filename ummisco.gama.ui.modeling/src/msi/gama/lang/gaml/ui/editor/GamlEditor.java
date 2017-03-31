@@ -46,7 +46,11 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -158,6 +162,28 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Inject private GamlEditTemplateDialogFactory templateDialogFactory;
 
 	@Inject private TemplateStore templateStore;
+
+	// Fix for #2108 -- forces the selection of the "clicked" tab
+	private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
+
+		@Override
+		public void mouseUp(final MouseEvent e) {
+			// System.out.println("MOUSE up IN TAB FOLDER");
+			final CTabFolder folder = (CTabFolder) e.widget;
+			final int x = e.x;
+			final int y = e.y;
+			for (final CTabItem item : folder.getItems()) {
+				final Rectangle r = item.getBounds();
+				if (r.contains(x, y) && !item.equals(folder.getSelection())) {
+					System.out.println("Detected problem in editors tab selection (see #2108). Fixed.");
+					folder.setSelection(item);
+					folder.update();
+					return;
+				}
+			}
+		}
+
+	};
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -291,8 +317,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
 
-		// new EditorToolbar().fill(toolbar.getToolbar(SWT.RIGHT));
-		// toolbar.getToolbar(SWT.RIGHT).sep(10);
 		findControl = new EditorSearchControls(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
 		toolbar.refresh(true);
@@ -313,8 +337,29 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		return super.getPreferenceStore();
 	}
 
+	private void configureTabFolder(final Composite compo) {
+		Composite c = compo;
+		while (c != null) {
+			if (c instanceof CTabFolder)
+				break;
+			c = c.getParent();
+		}
+		if (c != null) {
+			final CTabFolder folder = (CTabFolder) c;
+			folder.setMaximizeVisible(true);
+			folder.setMinimizeVisible(true);
+			folder.setMinimumCharacters(10);
+			folder.setMRUVisible(true);
+			// Makes sure the listener is added only once
+			folder.removeMouseListener(FIX_FOR_ISSUE_2108);
+			folder.addMouseListener(FIX_FOR_ISSUE_2108);
+		}
+
+	}
+
 	@Override
 	public void createPartControl(final Composite compo) {
+		configureTabFolder(compo);
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
 		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
@@ -352,13 +397,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void showOverviewRuler() {
 		getInternalSourceViewer().showAnnotationsOverview(true);
-		// super.showOverviewRuler();
 	}
 
 	@Override
 	public void hideOverviewRuler() {
 		getInternalSourceViewer().showAnnotationsOverview(false);
-		// super.hideOverviewRuler();
 	}
 
 	@Override
@@ -366,15 +409,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		return (GamaSourceViewer) super.getInternalSourceViewer();
 	}
 
-	//
-	@Override
-	public void setFocus() {
-		if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
-				&& !getSourceViewer().getTextWidget().isFocusControl()) {
-			getSourceViewer().getTextWidget().forceFocus();
-		}
-		// EditorMenu.getInstance().editorChanged();
-	}
+	// @Override
+	// public void setFocus() {
+	// if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
+	// && !getSourceViewer().getTextWidget().isFocusControl()) {
+	// getSourceViewer().getTextWidget().setFocus();
+	// }
+	// // EditorMenu.getInstance().editorChanged();
+	// }
 
 	private void installGestures() {
 		final StyledText text = this.getInternalSourceViewer().getTextWidget();
@@ -446,17 +488,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		((FlatButton) t.getControl()).setData("exp", text);
 		toolbar.sep(4, SWT.LEFT);
 	}
-
-	// @Override
-	// public void stopDisplayingTooltips() {
-	// updateToolbar(state, true);
-	// }
-	//
-	// @Override
-	// public void displayTooltip(final String text, final GamaUIColor color) {
-	// if (toolbar == null || toolbar.isDisposed()) { return; }
-	// toolbar.tooltip(text, color, SWT.LEFT);
-	// }
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
@@ -755,11 +786,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 						.setBackground(GamaColors.get(AutoStartup.EDITOR_BACKGROUND_COLOR.getValue()).color());
 				column.redraw();
 			}
-			// this.getVerticalRuler().getControl().redraw();
-			// ((SourceViewer)
-			// this.getInternalSourceViewer()).getControl().setBackground(
-			// GamaColors.get(EDITOR_BACKGROUND_COLOR.getValue()).color());
-
 		}
 	}
 
@@ -770,13 +796,5 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			findControl.getFindControl().setFocus();
 		}
 	}
-
-	/**
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Sizable#getSizableFontControl()
-	 */
-	// @Override
-	// public Control getSizableFontControl() {
-	// return getStyledText();
-	// }
 
 }

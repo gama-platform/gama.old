@@ -44,7 +44,6 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGamaView.Html {
 
 	Browser browser;
-	// private GamaToolbar2 toolbar;
 	ToolItem back, forward, home;
 
 	public HtmlViewer() {}
@@ -104,8 +103,6 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 
 			@Override
 			public void completed(final ProgressEvent event) {
-				// toolbar.status((Image) null, browser.getUrl(),
-				// IGamaColors.NEUTRAL, SWT.LEFT);
 				checkButtons();
 			}
 		});
@@ -145,7 +142,6 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
-		// this.toolbar = tb;
 
 		back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
 
