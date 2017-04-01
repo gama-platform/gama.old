@@ -60,10 +60,6 @@ public abstract class DrawingAttributes {
 
 	public abstract IShape.Type getType();
 
-	public boolean isImage() {
-		return false;
-	}
-
 	public DrawingAttributes(final GamaPoint location, final GamaColor color) {
 		this(null, null, location, color, null);
 	}

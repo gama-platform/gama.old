@@ -376,7 +376,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			if (object != null)
 				openGL.cacheGeometry(object);
 		} else if (file instanceof GamaImageFile) {
-			openGL.cacheTexture(file.getFile(getSurface().getScope()));
+			if (attributes.useCache())
+				openGL.cacheTexture(file.getFile(getSurface().getScope()));
 			sceneBuffer.getSceneToUpdate().addImageFile((GamaImageFile) file, attributes);
 		}
 

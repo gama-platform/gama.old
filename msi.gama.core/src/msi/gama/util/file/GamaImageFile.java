@@ -36,6 +36,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -175,7 +176,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	}
 
-	protected BufferedImage image;
+	// protected BufferedImage image;
 	private boolean isGeoreferenced = false;
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -239,59 +240,72 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
-	protected void loadImage(final IScope scope) {
-		if (image == null) {
-			try {
-				image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope));
-				if (image == null) { throw GamaRuntimeException.error(
-						"This image format (." + getExtension(scope)
-								+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
-						scope); }
-			} catch (final IOException e) {
-				throw GamaRuntimeException.create(e, scope);
-			}
+	protected BufferedImage loadImage(final IScope scope, final boolean useCache) {
+		// if (image == null) {
+		final BufferedImage image;
+		try {
+			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache);
+			if (image == null) { throw GamaRuntimeException.error(
+					"This image format (." + getExtension(scope)
+							+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+					scope); }
+		} catch (final IOException e) {
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), true);
+			return null;
 		}
-	}
-
-	public BufferedImage getImage(final IScope scope) {
-		loadImage(scope);
+		// }
 		return image;
 	}
 
+	public BufferedImage getImage(final IScope scope, final boolean useCache) {
+		return loadImage(scope, useCache);
+		// return image;
+	}
+
 	public int getWidth(final IScope scope) {
-		loadImage(scope);
+		final BufferedImage image = loadImage(scope, true);
+		if (image == null)
+			return 0;
 		return image.getWidth();
 	}
 
 	public int getHeight(final IScope scope) {
-		loadImage(scope);
+		final BufferedImage image = loadImage(scope, true);
+		if (image == null)
+			return 0;
 		return image.getHeight();
 
 	}
 
 	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize)
 			throws GamaRuntimeException {
-		loadImage(scope);
+		final BufferedImage image = loadImage(scope, true);
+		return matrixValueFromImage(scope, image, preferredSize);
+	}
+
+	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final ILocation preferredSize) {
 		int xSize, ySize;
+		BufferedImage resultingImage = image;
 		if (preferredSize == null) {
 			xSize = image.getWidth();
 			ySize = image.getHeight();
 		} else {
 			xSize = (int) preferredSize.getX();
 			ySize = (int) preferredSize.getY();
-			final BufferedImage resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
+			resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
 			final Graphics2D g = resultingImage.createGraphics();
 			g.drawImage(image, 0, 0, xSize, ySize, null);
 			g.dispose();
-			image = resultingImage;
+			// image = resultingImage;
 		}
 		final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
-				matrix.set(scope, i, j, image.getRGB(i, j));
+				matrix.set(scope, i, j, resultingImage.getRGB(i, j));
 			}
 		}
 		return matrix;
+
 	}
 
 	private BufferedImage imageFromMatrix(final IScope scope) {
@@ -455,15 +469,16 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		return isGeoreferenced;
 	}
 
-	@Override
-	public void invalidateContents() {
-		super.invalidateContents();
-		image = null;
-	}
+	// @Override
+	// public void invalidateContents() {
+	// super.invalidateContents();
+	//// image = null;
+	// }
 
 	public void setImage(final IScope scope, final BufferedImage image2) {
 		// AD QUESTION : Shouldnt we also erase the buffer in that case ?
-		image = image2;
+		setBuffer(matrixValueFromImage(scope, image2, null));
+		// image = image2;
 	}
 
 	public boolean isAnimated() {

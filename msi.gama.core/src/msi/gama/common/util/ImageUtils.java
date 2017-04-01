@@ -70,15 +70,18 @@ public class ImageUtils {
 		return cache.getIfPresent(s) != null;
 	}
 
-	public BufferedImage getImageFromFile(final IScope scope, final String fileName) throws IOException {
-		final BufferedImage image = cache.getIfPresent(fileName);
-		if (image != null) { return image; }
-		final GifDecoder gif = gifCache.getIfPresent(fileName);
-		if (gif != null)
-			return gif.getImage();
+	public BufferedImage getImageFromFile(final IScope scope, final String fileName, final boolean useCache)
+			throws IOException {
+		if (useCache) {
+			final BufferedImage image = cache.getIfPresent(fileName);
+			if (image != null) { return image; }
+			final GifDecoder gif = gifCache.getIfPresent(fileName);
+			if (gif != null)
+				return gif.getImage();
+		}
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
-		final BufferedImage result = getImageFromFile(f);
+		final BufferedImage result = getImageFromFile(f, useCache);
 		return result == NO_IMAGE ? null : result;
 	}
 
@@ -97,6 +100,7 @@ public class ImageUtils {
 	}
 
 	private BufferedImage privateReadFromFile(final File file) throws IOException {
+		// System.out.println("READING " + file.getName());
 		BufferedImage result = NO_IMAGE;
 		if (file == null)
 			return result;
@@ -134,7 +138,7 @@ public class ImageUtils {
 		return d;
 	}
 
-	public BufferedImage getImageFromFile(final File file) {
+	public BufferedImage getImageFromFile(final File file, final boolean useCache) {
 		final BufferedImage image;
 		String name, ext = null;
 		try {
@@ -143,11 +147,16 @@ public class ImageUtils {
 				ext = name.substring(file.getName().lastIndexOf("."));
 			}
 			if (gifExt.contains(ext)) {
-				image = gifCache.get(file.getAbsolutePath(), () -> privateReadGifFromFile(file)).getImage();
-			} else
+				if (useCache)
+					image = gifCache.get(file.getAbsolutePath(), () -> privateReadGifFromFile(file)).getImage();
+				else
+					image = privateReadGifFromFile(file).getImage();
+			} else if (useCache)
 				image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
+			else
+				image = privateReadFromFile(file);
 			return image == NO_IMAGE ? null : image;
-		} catch (final ExecutionException e) {
+		} catch (final ExecutionException | IOException e) {
 			e.printStackTrace();
 		}
 		return null;

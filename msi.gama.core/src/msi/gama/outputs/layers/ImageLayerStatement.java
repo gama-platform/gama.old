@@ -27,6 +27,7 @@ import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -79,12 +80,12 @@ import msi.gaml.types.Types;
 						name = IKeyword.COLOR,
 						type = IType.COLOR,
 						optional = true,
-						doc = @doc ("in the case of a shapefile, this the color used to fill in geometries of the shapefile")),
+						doc = @doc ("in the case of a shapefile, this the color used to fill in geometries of the shapefile. In the case of an image, it is used to tint the image")),
 				@facet (
 						name = IKeyword.REFRESH,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("(openGL only) specify whether the image display is refreshed. (true by default, usefull in case of images that is not modified over the simulation)")) },
+						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "`" + IKeyword.IMAGE + "` allows modeler to display an image (e.g. as background of a simulation).",
@@ -144,9 +145,21 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
+
 		imageFileExpression = getFacet(IKeyword.FILE, IKeyword.NAME);
 		gisExpression = getFacet(IKeyword.GIS);
 		colorExpression = getFacet(IKeyword.COLOR);
+	}
+
+	/**
+	 * In this particular case, returns false by default;
+	 */
+	@Override
+	public IExpression getRefreshFacet() {
+		IExpression exp = super.getRefreshFacet();
+		if (exp == null)
+			exp = IExpressionFactory.FALSE_EXPR;
+		return exp;
 	}
 
 	final IExpression imageFileExpression;
@@ -192,7 +205,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
 					currentImage = constantImage;
 					try {
-						ImageUtils.getInstance().getImageFromFile(scope, constantImage);
+						ImageUtils.getInstance().getImageFromFile(scope, constantImage, !getRefresh());
 					} catch (final GamaRuntimeFileException ex) {
 						constantImage = null;
 						throw ex;
@@ -205,12 +218,6 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		}
 		return true;
 	}
-
-	// @Override
-	// public void dispose() {
-	// super.dispose();
-	// // shapes = null;
-	// }
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
@@ -236,12 +243,5 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	public void setImageFileName(final String newValue) {
 		constantImage = newValue;
 	}
-
-	/**
-	 * @return
-	 */
-	// public IExpression getGisExpression() {
-	// return gisExpression;
-	// }
 
 }

@@ -3761,11 +3761,11 @@ public abstract class Spatial {
 			}
 			return results;
 		}
-		
+
 		@operator (
-				value =  "moran",
+				value = "moran",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc (
 				usages = { @usage (
 						value = "return the Moran Index of the given list of interest points (list of floats) and the weight matrix (matrix of float)",
@@ -3773,31 +3773,32 @@ public abstract class Spatial {
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
 								equals = "the Moran index computed",
 								test = false) }) })
-		public static double moranIndex(final IScope scope,final  IList<Double> vals,final IMatrix<Double> mat) {
-			GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
-			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows) throw GamaRuntimeException
-			.error("A squared weight matrix should be given for the moran index computation", scope);
-			int N = vals.size();
+		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
+			final GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
+			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows)
+				throw GamaRuntimeException
+						.error("A squared weight matrix should be given for the moran index computation", scope);
+			final int N = vals.size();
 			Double I = 0.0;
 			Double sumWeights = 0.0;
 			double sumXi = 0;
-			Double mean = (Double) Containers.mean(scope, vals);
+			final Double mean = (Double) Containers.mean(scope, vals);
 			for (int i = 0; i < N; i++) {
-				double xi = vals.get(i);
-				double xiDev = xi - mean;
-				sumXi += Math.pow(xiDev, 2);		
+				final double xi = vals.get(i);
+				final double xiDev = xi - mean;
+				sumXi += Math.pow(xiDev, 2);
 				for (int j = 0; j < N; j++) {
-					Double weight = weightMatrix.get(scope, i, j);
+					final Double weight = weightMatrix.get(scope, i, j);
 					sumWeights += weight;
-					I += weight * (xiDev) * (vals.get(j) - mean);
+					I += weight * xiDev * (vals.get(j) - mean);
 				}
 			}
 			I /= sumXi;
-			I *= N/sumWeights;
+			I *= N / sumWeights;
 			return I;
 		}
 	}
-	
+
 	public static abstract class ThreeD {
 
 		@operator (
@@ -3953,7 +3954,7 @@ public abstract class Spatial {
 
 			if (!graphics.is2D()) {
 				// If we are in the OpenGL world
-				final BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
+				final BufferedImage dem = ((GamaImageFile) demFile).getImage(scope, true);
 				attributes.setCellSize(new GamaPoint(1, 1));
 				attributes.setTextures(Arrays.asList(textureFile, dem));
 				graphics.drawField(null, attributes);
@@ -3983,7 +3984,7 @@ public abstract class Spatial {
 			int rows, cols, x, y;
 
 			try {
-				texture = ImageUtils.getInstance().getImageFromFile(scope, textureFileName.getPath(scope));
+				texture = ImageUtils.getInstance().getImageFromFile(scope, textureFileName.getPath(scope), true);
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

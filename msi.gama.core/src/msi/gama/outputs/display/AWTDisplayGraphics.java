@@ -161,7 +161,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawFile(final GamaFile<?, ?, ?, ?> file, final FileDrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
-		if (file instanceof GamaImageFile) { return drawImage(((GamaImageFile) file).getImage(scope), attributes); }
+		if (file instanceof GamaImageFile) { return drawImage(
+				((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes); }
 		if (!(file instanceof GamaGeometryFile)) { return null; }
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) { return null; }

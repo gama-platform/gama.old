@@ -24,6 +24,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	public final AgentIdentifier agentIdentifier;
 	public double lineWidth;
 	public final boolean isImage;
+	public boolean useCache = true;
 
 	public FileDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
@@ -34,32 +35,25 @@ public class FileDrawingAttributes extends DrawingAttributes {
 		this.isImage = isImage;
 	}
 
-	public void setLineWidth(final Double d) {
-		lineWidth = d;
-	}
-
-	@Override
-	public boolean isImage() {
-		return isImage;
-	}
-
-	@Override
-	public Double getLineWidth() {
-		return lineWidth;
-	}
-
 	public FileDrawingAttributes(final GamaPoint location, final boolean isImage) {
 		super(null, null, location, null, null);
 		agentIdentifier = null;
 		setLineWidth(GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
 		this.isImage = isImage;
 	}
-	//
-	// public FileDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
-	// super(null, null, location, color, border);
-	// agentIdentifier = null;
-	// setLineWidth(GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
-	// }
+
+	public void setLineWidth(final Double d) {
+		lineWidth = d;
+	}
+
+	public boolean useCache() {
+		return useCache;
+	}
+
+	@Override
+	public Double getLineWidth() {
+		return lineWidth;
+	}
 
 	/**
 	 * Method getMaterial()
@@ -68,7 +62,6 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	 */
 	@Override
 	public GamaMaterial getMaterial() {
-		// TODO
 		return null;
 	}
 
@@ -80,6 +73,15 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	@Override
 	public AgentIdentifier getAgentIdentifier() {
 		return agentIdentifier;
+	}
+
+	public void setUseCache(final boolean b) {
+		useCache = b;
+	}
+
+	@Override
+	public boolean isAnimated() {
+		return !useCache || super.isAnimated();
 	}
 
 }

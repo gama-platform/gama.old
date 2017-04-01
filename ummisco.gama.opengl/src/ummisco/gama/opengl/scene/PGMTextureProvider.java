@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PGMTextureProvider.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PGMTextureProvider.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -51,8 +50,8 @@ public class PGMTextureProvider implements TextureProvider, SupportsImageTypes {
 	/**
 	 * Method newTextureData()
 	 * 
-	 * @see com.jogamp.opengl.util.texture.spi.TextureProvider#newTextureData(com.jogamp.opengl.GLProfile,
-	 *      java.io.File, int, int, boolean, java.lang.String)
+	 * @see com.jogamp.opengl.util.texture.spi.TextureProvider#newTextureData(com.jogamp.opengl.GLProfile, java.io.File,
+	 *      int, int, boolean, java.lang.String)
 	 */
 	@Override
 	public TextureData newTextureData(final GLProfile glp, final File file, final int internalFormat,
@@ -60,7 +59,7 @@ public class PGMTextureProvider implements TextureProvider, SupportsImageTypes {
 		final IScope scope = GAMA.getRuntimeScope();
 		final GamaImageFile f = new GamaImageFile(scope, file.getAbsolutePath());
 		if (f.getExtension(scope).equals("pgm")) {
-			final BufferedImage image = f.getImage(scope);
+			final BufferedImage image = f.getImage(scope, true);
 			return AWTTextureIO.newTextureData(glp, image, internalFormat, pixelFormat, mipmap);
 		} else {
 			return null;
@@ -82,8 +81,8 @@ public class PGMTextureProvider implements TextureProvider, SupportsImageTypes {
 	/**
 	 * Method newTextureData()
 	 * 
-	 * @see com.jogamp.opengl.util.texture.spi.TextureProvider#newTextureData(com.jogamp.opengl.GLProfile,
-	 *      java.net.URL, int, int, boolean, java.lang.String)
+	 * @see com.jogamp.opengl.util.texture.spi.TextureProvider#newTextureData(com.jogamp.opengl.GLProfile, java.net.URL,
+	 *      int, int, boolean, java.lang.String)
 	 */
 	@Override
 	public TextureData newTextureData(final GLProfile glp, final URL url, final int internalFormat,

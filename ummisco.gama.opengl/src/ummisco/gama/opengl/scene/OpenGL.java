@@ -656,7 +656,6 @@ public class OpenGL {
 	}
 
 	public void deleteTexture(final Texture texture) {
-		// texture.disable(gl);
 		texture.destroy(gl);
 	}
 
@@ -671,29 +670,23 @@ public class OpenGL {
 
 	public void processUnloadedTextures() {
 		for (final String path : texturesToProcess) {
-			getTexture(new File(path), false);
+			getTexture(new File(path), false, true);
 		}
 	}
 
-	public Texture getTexture(final GamaImageFile file) {
-		return getTexture(file.getFile(null), file.isAnimated());
+	public Texture getTexture(final GamaImageFile file, final boolean useCache) {
+		return getTexture(file.getFile(null), file.isAnimated(), useCache);
 	}
 
 	public Texture getTexture(final BufferedImage img) {
 		return volatileTextures.apply(img);
 	}
 
-	public Texture getTexture(final String name) {
-		if (name == null) { return null; }
-		final Texture texture = staticTextures.getIfPresent(name);
-		return texture;
-	}
-
-	public Texture getTexture(final File file, final boolean isAnimated) {
+	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
 		if (file == null) { return null; }
 		Texture texture = null;
-		if (isAnimated) {
-			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file);
+		if (isAnimated || !useCache) {
+			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache);
 			texture = getTexture(image);
 
 		} else
@@ -707,7 +700,7 @@ public class OpenGL {
 
 	private static Texture buildTexture(final GL gl, final File file) {
 		try {
-			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file);
+			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file, true);
 			return buildTexture(gl, im);
 		} catch (final GLException e) {
 			e.printStackTrace();

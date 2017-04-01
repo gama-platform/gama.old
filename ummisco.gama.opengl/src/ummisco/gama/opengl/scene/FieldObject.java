@@ -47,7 +47,7 @@ public class FieldObject extends AbstractObject {
 		if (textures == null || textures.size() > order + 1) { return null; }
 		final Object t = textures.get(order);
 		if (t instanceof BufferedImage) { return (BufferedImage) t; }
-		if (t instanceof GamaImageFile) { return ((GamaImageFile) t).getImage(null); }
+		if (t instanceof GamaImageFile) { return ((GamaImageFile) t).getImage(null, true); }
 		return null;
 	}
 

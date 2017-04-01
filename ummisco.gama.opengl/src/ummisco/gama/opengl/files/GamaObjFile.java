@@ -364,7 +364,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					if (f.exists()) {
 						// Solves Issue #1951. Asynchronous loading of textures
 						// was not possible when displaying the file
-						texture = gl.getTexture(f, false);
+						texture = gl.getTexture(f, false, true);
 						gl.setCurrentTextures(texture.getTextureObject(), texture.getTextureObject());
 						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);

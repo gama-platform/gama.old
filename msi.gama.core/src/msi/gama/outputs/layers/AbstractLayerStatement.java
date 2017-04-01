@@ -22,6 +22,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -47,9 +48,12 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION), getFacet(IKeyword.SIZE),
-				getFacet(IKeyword.REFRESH), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING),
-				getFacet(IKeyword.SELECTABLE)));
+				getRefreshFacet(), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING), getFacet(IKeyword.SELECTABLE)));
 		setName(desc.getName());
+	}
+
+	public IExpression getRefreshFacet() {
+		return getFacet(IKeyword.REFRESH);
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class ImageLayer extends AbstractLayer {
 		buildImage(scope);
 		if (file == null) { return; }
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
+		attributes.setUseCache(!definition.getRefresh());
 		if (env != null) {
 			final GamaPoint loc = new GamaPoint(env.getMinX(), env.getMinY());
 			attributes.setLocation(loc);

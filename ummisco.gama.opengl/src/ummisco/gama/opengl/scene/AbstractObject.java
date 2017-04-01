@@ -20,6 +20,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
 
 public abstract class AbstractObject {
 
@@ -83,7 +84,8 @@ public abstract class AbstractObject {
 			if (obj instanceof BufferedImage) {
 				textures[order] = gl.getTexture((BufferedImage) obj).getTextureObject();
 			} else if (obj instanceof GamaImageFile) {
-				textures[order] = gl.getTexture((GamaImageFile) obj).getTextureObject();
+				final FileDrawingAttributes fd = (FileDrawingAttributes) attributes;
+				textures[order] = gl.getTexture((GamaImageFile) obj, fd.useCache()).getTextureObject();
 			}
 		}
 		return textures[order];
