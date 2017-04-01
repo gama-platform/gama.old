@@ -171,9 +171,9 @@ public class Cast {
 
 	@operator (
 			value = IKeyword.AS,
-			type = ITypeProvider.SECOND_TYPE,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = ITypeProvider.SECOND_KEY_TYPE,
+			type = ITypeProvider.SECOND_DENOTED_TYPE,
+			// content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			// index_type = ITypeProvider.SECOND_KEY_TYPE,
 			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST })
@@ -184,9 +184,9 @@ public class Cast {
 					value = "3.5 as int",
 					returnType = "int",
 					equals = "int(3.5)"))
-	public static Object as(final IScope scope, final Object val, final IExpression expr) {
+	public static Object as(final IScope scope, final Object val, final IType type) {
 		// WARNING copy is set explicity to false
-		return expr.getType().cast(scope, val, null, false);
+		return type.cast(scope, val, null, false);
 	}
 
 	// @operator(value = IKeyword.AS, type = ITypeProvider.SECOND_CONTENT_TYPE,

@@ -55,7 +55,6 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public static final int CONTAINER = 16;
 	public static final int PATH = 17;
 	public static final int TOPOLOGY = 18;
-
 	public static final int FONT = 19;
 	public static final int IMAGE = 20;
 	public final static int REGRESSION = 21;
@@ -65,6 +64,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public final static int MATERIAL = 25;
 	public final static int ACTION = 26;
 	public final static int ATTRIBUTES = 27;
+	// Represents the meta-type (type of values type)
+	public final static int TYPE = 28;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 

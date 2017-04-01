@@ -153,7 +153,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		compile(context);
 		if (expression == null)
 			return Types.NO_TYPE;
-		if (expression instanceof TypeExpression) { return expression.getType(); }
+		if (expression instanceof TypeExpression) { return ((TypeExpression) expression).getDenotedType(); }
 		if (expression.isConst())
 			return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
 

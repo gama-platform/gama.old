@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TypeExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TypeExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,6 +16,7 @@ import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class TypeExpression.
@@ -27,15 +27,15 @@ import msi.gaml.types.IType;
  */
 public class TypeExpression extends AbstractExpression {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public TypeExpression(final IType type) {
 		this.type = type;
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public IType<?> value(final IScope scope) throws GamaRuntimeException {
 		// Normally never evaluated
-		return getType();
+		return getDenotedType();
 	}
 
 	@Override
@@ -75,6 +75,11 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public IType<?> getType() {
+		return Types.TYPE;
+	}
+
+	@Override
+	public IType<?> getDenotedType() {
 		return type;
 	}
 
@@ -94,7 +99,6 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

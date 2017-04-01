@@ -41,7 +41,7 @@ public class Types {
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	public static IType AGENT, PATH, FONT, SKILL, DATE, MATERIAL, ACTION;
+	public static IType AGENT, PATH, FONT, SKILL, DATE, MATERIAL, ACTION, TYPE;
 	public static GamaIntegerType INT;
 	public static GamaFloatType FLOAT;
 	public static GamaColorType COLOR;
@@ -122,6 +122,9 @@ public class Types {
 			case IType.SKILL:
 				SKILL = instance;
 				break;
+			case IType.TYPE:
+				TYPE = instance;
+				break;
 			case IType.ACTION:
 				ACTION = instance;
 				break;
@@ -176,6 +179,8 @@ public class Types {
 				return MATERIAL;
 			case IType.ACTION:
 				return ACTION;
+			case IType.TYPE:
+				return TYPE;
 		}
 		return builtInTypes.get(String.valueOf(type));
 	}
@@ -328,8 +333,10 @@ public class Types {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression)
 					return ((ListExpression) expr2).isEmpty();
-				if (expr2.isConst())
-					return ((List) expr2.value(null)).isEmpty();
+				if (expr2.isConst()) {
+					final Object o = expr2.value(null);
+					return ((List) o).isEmpty();
+				}
 				break;
 			case IType.MAP:
 				if (expr2.isConst())

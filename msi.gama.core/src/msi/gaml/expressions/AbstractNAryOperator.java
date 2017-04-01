@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractNAryOperator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractNAryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,6 +17,7 @@ import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
 import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.SECOND_CONTENT_TYPE;
 import static msi.gama.precompiler.ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE;
+import static msi.gama.precompiler.ITypeProvider.SECOND_DENOTED_TYPE;
 import static msi.gama.precompiler.ITypeProvider.SECOND_KEY_TYPE;
 import static msi.gama.precompiler.ITypeProvider.SECOND_TYPE;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
@@ -39,7 +39,7 @@ import msi.gaml.types.Types;
  * 
  * @author drogoul 23 august 07
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
 	protected final IExpression[] exprs;
@@ -68,8 +68,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, type, GamaType.TYPE);
 		if (type.isContainer()) {
-			final IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(),
-					GamaType.CONTENT);
+			final IType contentType =
+					computeType(prototype.contentTypeProvider, type.getContentType(), GamaType.CONTENT);
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), GamaType.KEY);
 			type = GamaType.from(type, keyType, contentType);
 		}
@@ -77,56 +77,56 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	protected IType computeType(final int t, final IType def, final int kind) {
 		switch (t) {
-		case WRAPPED:
-			return arg(0).getType().getWrappedType();
-		case NONE:
-			return def;
-		case BOTH:
-			if (exprs == null)
+			case WRAPPED:
+				return arg(0).getType().getWrappedType();
+			case NONE:
 				return def;
-			return GamaType.findCommonType(exprs, kind);
-		case FIRST_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[0].getType();
-		case FIRST_CONTENT_TYPE_OR_TYPE:
-			final IType leftType = exprs[0].getType();
-			final IType t2 = leftType.getContentType();
-			if (t2 == Types.NO_TYPE) {
-				return leftType;
-			}
-			return t2;
-		case SECOND_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[1].getType();
-		case FIRST_CONTENT_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[0].getType().getContentType();
-		case FIRST_KEY_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[0].getType().getKeyType();
-		case SECOND_CONTENT_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[1].getType().getContentType();
-		case SECOND_CONTENT_TYPE_OR_TYPE:
-			if (exprs == null)
-				return def;
-			final IType rightType = exprs[1].getType();
-			final IType t3 = rightType.getContentType();
-			if (t3 == Types.NO_TYPE) {
-				return rightType;
-			}
-			return t3;
-		case SECOND_KEY_TYPE:
-			if (exprs == null)
-				return def;
-			return exprs[1].getType().getKeyType();
-		default:
-			return t >= 0 ? Types.get(t) : def;
+			case BOTH:
+				if (exprs == null)
+					return def;
+				return GamaType.findCommonType(exprs, kind);
+			case FIRST_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[0].getType();
+			case FIRST_CONTENT_TYPE_OR_TYPE:
+				final IType leftType = exprs[0].getType();
+				final IType t2 = leftType.getContentType();
+				if (t2 == Types.NO_TYPE) { return leftType; }
+				return t2;
+			case SECOND_DENOTED_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[1].getDenotedType();
+			case SECOND_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[1].getType();
+			case FIRST_CONTENT_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[0].getType().getContentType();
+			case FIRST_KEY_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[0].getType().getKeyType();
+			case SECOND_CONTENT_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[1].getType().getContentType();
+			case SECOND_CONTENT_TYPE_OR_TYPE:
+				if (exprs == null)
+					return def;
+				final IType rightType = exprs[1].getType();
+				final IType t3 = rightType.getContentType();
+				if (t3 == Types.NO_TYPE) { return rightType; }
+				return t3;
+			case SECOND_KEY_TYPE:
+				if (exprs == null)
+					return def;
+				return exprs[1].getType().getKeyType();
+			default:
+				return t >= 0 ? Types.get(t) : def;
 		}
 	}
 
@@ -144,14 +144,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public boolean isConst() {
-		if (!prototype.canBeConst) {
-			return false;
-		}
+		if (!prototype.canBeConst) { return false; }
 		if (exprs != null)
 			for (int i = 0; i < exprs.length; i++) {
-				if (!exprs[i].isConst()) {
-					return false;
-				}
+				if (!exprs[i].isConst()) { return false; }
 			}
 		return true;
 	}
@@ -195,9 +191,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public IExpression arg(final int i) {
-		if (exprs == null) {
-			return null;
-		}
+		if (exprs == null) { return null; }
 		if (i >= exprs.length)
 			return null;
 		return exprs[i];
