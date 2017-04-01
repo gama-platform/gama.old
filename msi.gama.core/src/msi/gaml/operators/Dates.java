@@ -175,7 +175,7 @@ public class Dates {
 					@example ("	     else {write \"the cycle number is odd\";}") })
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
-		return period > 0 && time >= period && time % period == 0;
+		return period > 0 && (time == 0 || time >= period) && time % period == 0;
 	}
 
 	@operator (
