@@ -24,9 +24,6 @@ build(){
 	sh ./build.sh			
 }
 
-deploy(){
-}
-
 publish(){
 	echo "Deploy to p2 update site"		
 	sh ./publish.sh
