@@ -193,10 +193,25 @@ public class CameraArcBall extends AbstractCamera {
 		flipped = false;
 		initialized = false;
 		if (initialPosition == null) {
-			if (data.isCameraDefined()) {
+			if (data.isCameraPosDefined()) {
 				updatePosition();
-				updateTarget();
-				updateOrientation();
+				if(data.isCameraLookAtDefined())
+				{
+					updateTarget();
+				}
+				else
+				{
+					final double envWidth = data.getEnvWidth();
+					final double envHeight = data.getEnvHeight();
+					radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
+					setTarget(envWidth / 2, -envHeight / 2, 0);
+					phi = 0;
+					theta = -90.00;
+				}
+				if(data.isCameraUpVectorDefined())
+				{
+					updateOrientation();
+				}
 				updateSphericalCoordinatesFromLocations();
 			} else {
 				final double envWidth = data.getEnvWidth();
