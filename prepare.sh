@@ -42,8 +42,8 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
 	echo "Build GAMA project"	
 	build 	
 	echo "Deploy to p2 update site"	
-	deploy > /dev/null
-	release > /dev/null
+	deploy  
+	release  
 	commit_website_files
 else
 	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
@@ -54,7 +54,7 @@ else
 		echo "Build GAMA project"	
 		build 
 		echo "Deploy to p2 update site"		
-		deploy > /dev/null
+		deploy 
 	else
 		compile
 	fi
