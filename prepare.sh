@@ -14,34 +14,50 @@ commit_website_files() {
 	git push origin HEAD:master
 }
 
-MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-echo $MESSAGE
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+clean(){
+	echo "Cleaning p2 update site"		
+	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
+}
 
+build(){
 	echo "Build GAMA project"		
 	sh ./build.sh			
+}
+
+deploy(){
+}
+
+publish(){
 	echo "Deploy to p2 update site"		
 	sh ./publish.sh
+}
+
+release(){
 	echo "Upload continuos release to github nothing"		
 	bash ./github-release.sh "$TRAVIS_COMMIT" 
+}
+
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+echo $MESSAGE
+echo $MSG
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+	build
+	publish
+	release
 	commit_website_files
 else
-	if  [[ ${MESSAGE} == *"ci deploy"* ]]; then		
-		if  [[ ${MESSAGE} == *"ci clean"* ]]; then
-				echo "Cleaning p2 update site"		
-				sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
+	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
+		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
+			clean
 		fi		
-		echo "Deploy to p2 update site"		
-		sh ./publish.sh
+		publish
 	else
-		echo "Build GAMA project"		
-		sh ./build.sh
+		build
 	fi
-	if  [[ ${MESSAGE} == *"ci docs"* ]]; then	
+	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]]; then	
-		echo "Upload continuos release to github nothing"		
-		bash ./github-release.sh "$TRAVIS_COMMIT" 
+	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
+		release 
 	fi	
 fi
