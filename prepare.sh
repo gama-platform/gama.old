@@ -22,13 +22,11 @@ compile (){
 	echo "Compile GAMA project"		
 	sh ./compile.sh	
 }
-build(){
-	echo "Build GAMA project"		
+build(){	
 	sh ./build.sh			
 }
 
-deploy(){
-	echo "Deploy to p2 update site"		
+deploy(){	
 	sh ./deploy.sh
 }
 
@@ -41,7 +39,9 @@ MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 echo $MSG
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
-	build > /dev/null
+	echo "Build GAMA project"	
+	build 	
+	echo "Deploy to p2 update site"	
 	deploy > /dev/null
 	release > /dev/null
 	commit_website_files
@@ -51,8 +51,9 @@ else
 			clean
 		fi	
 		
-		compile
-		build > /dev/null
+		echo "Build GAMA project"	
+		build 
+		echo "Deploy to p2 update site"		
 		deploy > /dev/null
 	else
 		compile
