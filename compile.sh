@@ -1,9 +1,9 @@
 cd ummisco.gama.annotations &&
-mvn clean compile &&
+mvn -T 2C clean compile &&
 cd - &&
 cd msi.gama.processor &&
-mvn clean compile &&
+mvn -T 2C clean compile &&
 cd - &&
 cd msi.gama.parent &&
-mvn clean compile &&
+mvn -T 2C clean compile &&
 cd -
