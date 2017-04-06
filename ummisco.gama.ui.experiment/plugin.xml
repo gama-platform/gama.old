@@ -257,6 +257,13 @@
                   label="Interactive Console"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.window.hideShowEditors"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save.perspective.png"
+                  label="Hide/Show Editors"
+                  style="push"
+                  tooltip="Hide or show the editors">
+            </command>
             <separator
                   name="msi.gama.application.separator3"
                   visible="true">
@@ -417,13 +424,6 @@
                      label="Toggle Toolbar"
                      style="push"
                      tooltip="Toggle the main toolbar on and off">
-               </command>
-               <command
-                     commandId="org.eclipse.ui.window.hideShowEditors"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save.perspective.png"
-                     label="Hide/Show Editors"
-                     style="push"
-                     tooltip="Hide or show the editors">
                </command>
             </menu>
          </menu>
