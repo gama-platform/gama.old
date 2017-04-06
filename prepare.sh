@@ -15,7 +15,7 @@ commit_website_files() {
 }
 
 clean(){
-	echo "Cleaning p2 update site"		
+	echo "Clean p2 update site"		
 	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
 }
 compile (){
@@ -23,15 +23,17 @@ compile (){
 	sh ./compile.sh	
 }
 build(){	
+	echo "Build GAMA project"	
 	sh ./build.sh			
 }
 
 deploy(){	
+	echo "Deploy to p2 update site"	
 	sh ./deploy.sh
 }
 
 release(){
-	echo "Upload continuos release to github nothing"		
+	echo "Upload continuous release to github"		
 	bash ./github-release.sh "$TRAVIS_COMMIT" 
 }
 
@@ -39,9 +41,8 @@ MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 echo $MSG
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
-	echo "Build GAMA project"	
+	clean
 	build 	
-	echo "Deploy to p2 update site"	
 	deploy  
 	release  
 	commit_website_files
@@ -49,11 +50,8 @@ else
 	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
-		fi	
-		
-		echo "Build GAMA project"	
-		build 
-		echo "Deploy to p2 update site"		
+		fi			
+		build  
 		deploy 
 	else
 		compile
