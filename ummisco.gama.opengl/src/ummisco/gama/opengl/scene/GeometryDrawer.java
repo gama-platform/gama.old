@@ -106,7 +106,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * @return true if a translation occured, false otherwise
 	 */
 	protected boolean applyTranslation(final GeometryObject object) {
-		if (object.getFile() != null) {
+		if (object.getFile() != null && object.getLocation() != null) {
 			final GamaPoint loc = object.getLocation();
 			gl.translateBy(loc.x, -loc.y, loc.z);
 			return true;
