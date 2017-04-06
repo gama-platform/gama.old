@@ -343,23 +343,23 @@ public class LayeredDisplayData {
 		this.ambientColor = ambientLightColor;
 	}
 
-	public boolean isCameraPosDefined(){
+	public boolean isCameraPosDefined() {
 		return cameraPos != null;
 	}
 
-	public boolean isCameraLookAtDefined(){
+	public boolean isCameraLookAtDefined() {
 		return cameraLookPos != null;
 	}
 
-	public boolean isCameraUpVectorDefined(){
-		return cameraPos != null;
+	public boolean isCameraUpVectorDefined() {
+		return cameraUpVector != null;
 	}
 
 	/**
 	 * @return the cameraPos
 	 */
 	public GamaPoint getCameraPos() {
-		return cameraUpVector;
+		return cameraPos;
 	}
 
 	/**
