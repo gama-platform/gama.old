@@ -75,9 +75,9 @@ public abstract class Solver {
 			final int n = eq.variables_diff.size();
 			for (i = 0; i < n; i++) {
 				final IAgent a = equationAgents.get(i);
-				if (integrationValues.values().size() < n) {
-					integrationValues.put(a + eq.variables_diff.get(i).toString(),
-							GamaListFactory.create(Double.class));
+				final String eqkeyname = a + eq.variables_diff.get(i).toString();
+				if (integrationValues.get(eqkeyname) == null) {
+					integrationValues.put(eqkeyname, GamaListFactory.create(Double.class));
 				}
 				if (!a.dead()) {
 					final boolean pushed = scope.push(a);
@@ -123,6 +123,9 @@ public abstract class Solver {
 		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.valueAt(i).add(y[i]);
+			}
+			if(integrationValues.valueAt(y.length) == null) {
+				int oo=0;
 			}
 			integrationValues.valueAt(y.length).add(time);
 		}
