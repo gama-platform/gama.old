@@ -124,9 +124,6 @@ public abstract class Solver {
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.valueAt(i).add(y[i]);
 			}
-			if(integrationValues.valueAt(y.length) == null) {
-				int oo=0;
-			}
 			integrationValues.valueAt(y.length).add(time);
 		}
 

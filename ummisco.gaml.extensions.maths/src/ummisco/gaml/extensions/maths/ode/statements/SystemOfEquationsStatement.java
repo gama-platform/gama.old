@@ -42,6 +42,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -360,8 +361,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void removeExternalEquations(final IScope scope) {
+		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgent()
+				.getAttribute("__integrated_values");
 		for (final IAgent remoteAgent : getExternalAgents(scope)) {
 			if (!remoteAgent.dead()) {
+				remoteAgent.setAttribute("__integrated_values", result);
 				removeEquationsOf(remoteAgent);
 			}
 		}
@@ -393,10 +397,16 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				getName());
 		if (ses != null) {
 			final int n = equations.size();
-			for (final Integer s : ses.equations.keySet()) {
-				equations.remove(n - s - 1);
-				variables_diff.remove(n - s - 1);
+			for (final SingleEquationStatement e: ses.equations.values()){
+				equations.values().remove(e);
+				for(final IExpression eV : e.getVars()){					
+					variables_diff.values().remove(eV);
+				}
 			}
+//			for (final Integer s : ses.equations.keySet()) {
+//				equations.remove(n - s - 1);
+//				variables_diff.remove(n - s - 1);
+//			}
 		}
 	}
 
