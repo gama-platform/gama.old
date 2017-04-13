@@ -281,12 +281,17 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public void setLocation(final ILocation l) {
-		final GamaPoint previous = getLocation();
-		final GamaPoint location = l.toGamaPoint();
-		final double dx = location.x - previous.x;
-		final double dy = location.y - previous.y;
-		final double dz = location.z - previous.z;
-		GeometryUtils.translate(geometry, dx, dy, dz);
+		if (isPoint()) {
+			geometry = GeometryUtils.GEOMETRY_FACTORY.createPoint(l.toGamaPoint());
+		}
+		else {
+			final GamaPoint previous = getLocation();
+			final GamaPoint location = l.toGamaPoint();
+			final double dx = location.x - previous.x;
+			final double dy = location.y - previous.y;
+			final double dz = location.z - previous.z;
+			GeometryUtils.translate(geometry, dx, dy, dz);
+		}
 	}
 
 	public GamaShape translatedTo(final IScope scope, final ILocation target) {
