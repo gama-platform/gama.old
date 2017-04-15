@@ -52,7 +52,7 @@ public class GamaColorMenu extends GamaMenu {
 
 	private IColorRunnable currentRunnable;
 
-	IColorRunnable defaultRunnable = (r, g, b) -> currentRunnable.run(r, g, b);
+	// IColorRunnable defaultRunnable = (r, g, b) -> currentRunnable.run(r, g, b);
 
 	SelectionListener defaultListener = new SelectionAdapter() {
 
@@ -155,7 +155,7 @@ public class GamaColorMenu extends GamaMenu {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				openView(defaultRunnable, null);
+				openView(currentRunnable, null);
 			}
 
 		});
@@ -217,6 +217,11 @@ public class GamaColorMenu extends GamaMenu {
 
 	public void setSelectionListener(final SelectionListener colorInserter) {
 		this.currentListener = colorInserter;
+
+	}
+
+	public void setCurrentRunnable(final IColorRunnable runnable) {
+		this.currentRunnable = runnable;
 
 	}
 

@@ -68,6 +68,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 		if (colorMenu == null) {
 			colorMenu = new GamaColorMenu(mainMenu);
 			colorMenu.setSelectionListener(colorInserter);
+			colorMenu.setCurrentRunnable(runnable);
 		}
 		colorMenu.fillMenu();
 
