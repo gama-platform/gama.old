@@ -10,6 +10,7 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -73,6 +74,15 @@ public class GamaMapFactory {
 		final GamaMap<K, V> result = create(key, contents, map.size());
 		for (final Map.Entry<K, V> entry : map.entrySet()) {
 			result.setValueAtIndex(scope, entry.getKey(), entry.getValue());
+		}
+		return result;
+	}
+	
+	public static <K, V> GamaMap<K, V> create(final IScope scope, final IType key, final IType contents,
+			final IList<K> keys, final IList<V> values) {
+		final GamaMap<K, V> result = create(key, contents, keys.length(scope));
+		for (int i=0 ; i<Math.min(keys.length(scope),values.length(scope)); i++) {
+			result.put(keys.get(i), values.get(i));
 		}
 		return result;
 	}
