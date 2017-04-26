@@ -187,13 +187,13 @@ public class GamlResourceServices {
 
 	public synchronized static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
-		Resource r = null;
+		GamlResource r = null;
 		if (existing != null) {
 			final ModelDescription desc = existing.getModelDescription();
 			if (desc != null) {
 				final EObject e = desc.getUnderlyingElement(null);
 				if (e != null) {
-					r = e.eResource();
+					r = (GamlResource) e.eResource();
 					if (r != null)
 						rs = r.getResourceSet();
 				}
@@ -206,8 +206,11 @@ public class GamlResourceServices {
 		final GamlResource result = (GamlResource) rs.createResource(uri);
 		final TOrderedHashMap<URI, String> imports = new TOrderedHashMap();
 		imports.put(uri, null);
-		if (r != null)
+		if (r != null) {
 			imports.put(r.getURI(), null);
+			final Map<URI, String> uris = GamlResourceIndexer.allLabeledImportsOf(r);
+			imports.putAll(uris);
+		}
 		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
 		return result;
 	}
