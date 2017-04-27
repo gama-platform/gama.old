@@ -30,7 +30,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 @symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
 		IConcept.BDI })
@@ -40,6 +39,10 @@ import msi.gaml.types.Types;
 		@facet(name = RuleStatement.DESIRE, type = PredicateType.id, optional = true, doc = @doc("The mandatory desire")),
 		@facet(name = RuleStatement.EMOTION, type = EmotionType.id, optional = true, doc = @doc("The mandatory emotion")),
 		@facet(name = RuleStatement.UNCERTAINTY, type = PredicateType.id, optional = true, doc = @doc("The mandatory uncertainty")),
+		@facet(name = RuleStatement.DESIRES, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The mandatory desires")),
+		@facet(name = RuleStatement.BELIEFS, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The mandatory beliefs")),
+		@facet(name = RuleStatement.EMOTIONS, type = IType.LIST, of=EmotionType.id, optional = true, doc = @doc("The mandatory emotions")),
+		@facet(name = RuleStatement.UNCERTAINTIES, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The mandatory uncertainties")),
 		@facet(name = RuleStatement.NEW_DESIRE, type = PredicateType.id, optional = true, doc = @doc("The desire that will be added")),
 		@facet(name = RuleStatement.NEW_BELIEF, type = PredicateType.id, optional = true, doc = @doc("The belief that will be added")),
 		@facet(name = RuleStatement.NEW_EMOTION, type = EmotionType.id, optional = true, doc = @doc("The emotion that will be added")),
@@ -73,6 +76,11 @@ public class RuleStatement extends AbstractStatement {
 	public static final String DESIRE = "desire";
 	public static final String EMOTION = "emotion";
 	public static final String UNCERTAINTY = "uncertainty";
+	public static final String RULES = "rules";
+	public static final String BELIEFS = "beliefs";
+	public static final String DESIRES = "desires";
+	public static final String EMOTIONS = "emotions";
+	public static final String UNCERTAINTIES = "uncertainties";
 	public static final String NEW_DESIRE = "new_desire";
 	public static final String NEW_BELIEF = "new_belief";
 	public static final String NEW_EMOTION = "new_emotion";
@@ -99,6 +107,10 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression desire;
 	final IExpression emotion;
 	final IExpression uncertainty;
+	final IExpression beliefs;
+	final IExpression desires;
+	final IExpression emotions;
+	final IExpression uncertainties;
 	final IExpression newBelief;
 	final IExpression newDesire;
 	final IExpression newEmotion;
@@ -126,6 +138,10 @@ public class RuleStatement extends AbstractStatement {
 		desire = getFacet(RuleStatement.DESIRE);
 		emotion = getFacet(RuleStatement.EMOTION);
 		uncertainty = getFacet(RuleStatement.UNCERTAINTY);
+		beliefs = getFacet(RuleStatement.BELIEFS);
+		desires = getFacet(RuleStatement.DESIRES);
+		emotions = getFacet(RuleStatement.EMOTIONS);
+		uncertainties = getFacet(RuleStatement.UNCERTAINTIES);
 		newBelief = getFacet(RuleStatement.NEW_BELIEF);
 		newDesire = getFacet(RuleStatement.NEW_DESIRE);
 		newEmotion = getFacet(RuleStatement.NEW_EMOTION);
@@ -164,85 +180,116 @@ public class RuleStatement extends AbstractStatement {
 							|| SimpleBdiArchitecture.hasUncertainty(scope, (Predicate) uncertainty.value(scope))) {
 						if (emotion == null
 								|| SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
-							if (threshold == null || emotion != null && threshold != null
-									&& SimpleBdiArchitecture.getEmotion(scope,
-											(Emotion) emotion.value(scope)).intensity >= (Double) threshold
-													.value(scope)) {
-								if (newDesire != null) {
-									final Predicate newDes = (Predicate) newDesire.value(scope);
-									if (priority != null) {
-										newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
+							if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
+								if (desires == null || hasDesires(scope, (List<Predicate>) desires.value(scope))) {
+									if (uncertainties == null
+											|| hasUncertainties(scope, (List<Predicate>) uncertainties.value(scope))) {
+										if (emotions == null
+												|| hasEmotions(scope, (List<Emotion>) emotions.value(scope))) {
+
+											if (threshold == null || emotion != null && threshold != null
+													&& SimpleBdiArchitecture.getEmotion(scope,
+															(Emotion) emotion
+																	.value(scope)).intensity >= (Double) threshold
+																			.value(scope)) {
+												if (newDesire != null) {
+													final Predicate newDes = (Predicate) newDesire.value(scope);
+													if (priority != null) {
+														newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
+													}
+													SimpleBdiArchitecture.addDesire(scope, null, newDes);
+												}
+												if (newBelief != null) {
+													final Predicate newBel = (Predicate) newBelief.value(scope);
+													SimpleBdiArchitecture.addBelief(scope, newBel);
+												}
+												if (newEmotion != null) {
+													final Emotion newEmo = (Emotion) newEmotion.value(scope);
+													SimpleBdiArchitecture.addEmotion(scope, newEmo);
+												}
+												if (newUncertainty != null) {
+													final Predicate newUncert = (Predicate) newUncertainty.value(scope);
+													SimpleBdiArchitecture.addUncertainty(scope, newUncert);
+												}
+												if (removeBelief != null) {
+													final Predicate removBel = (Predicate) removeBelief.value(scope);
+													SimpleBdiArchitecture.removeBelief(scope, removBel);
+												}
+												if (removeDesire != null) {
+													final Predicate removeDes = (Predicate) removeDesire.value(scope);
+													SimpleBdiArchitecture.removeDesire(scope, removeDes);
+												}
+												if (removeIntention != null) {
+													final Predicate removeInt = (Predicate) removeIntention
+															.value(scope);
+													SimpleBdiArchitecture.removeIntention(scope, removeInt);
+												}
+												if (removeEmotion != null) {
+													final Emotion removeEmo = (Emotion) removeEmotion.value(scope);
+													SimpleBdiArchitecture.removeEmotion(scope, removeEmo);
+												}
+												if (removeUncertainty != null) {
+													final Predicate removUncert = (Predicate) removeUncertainty
+															.value(scope);
+													SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
+												}
+
+												if (newDesires != null) {
+													final List<Predicate> newDess = (List<Predicate>) newDesires
+															.value(scope);
+													if (priority != null) {
+														for (Predicate newDes : newDess)
+															newDes.setPriority(
+																	Cast.asFloat(scope, priority.value(scope)));
+													}
+													for (Predicate newDes : newDess)
+														SimpleBdiArchitecture.addDesire(scope, null, newDes);
+												}
+												if (newBeliefs != null) {
+													final List<Predicate> newBels = (List<Predicate>) newBeliefs
+															.value(scope);
+													for (Predicate newBel : newBels)
+														SimpleBdiArchitecture.addBelief(scope, newBel);
+												}
+												if (newEmotions != null) {
+													final List<Emotion> newEmos = (List<Emotion>) newEmotions
+															.value(scope);
+													for (Emotion newEmo : newEmos)
+														SimpleBdiArchitecture.addEmotion(scope, newEmo);
+												}
+												if (newUncertainties != null) {
+													final List<Predicate> newUncerts = (List<Predicate>) newUncertainties
+															.value(scope);
+													for (Predicate newUncert : newUncerts)
+														SimpleBdiArchitecture.addUncertainty(scope, newUncert);
+												}
+												if (removeBeliefs != null) {
+													final List<Predicate> removBels = (List<Predicate>) removeBeliefs
+															.value(scope);
+													for (Predicate removBel : removBels)
+														SimpleBdiArchitecture.removeBelief(scope, removBel);
+												}
+												if (removeDesires != null) {
+													final List<Predicate> removeDess = (List<Predicate>) removeDesires
+															.value(scope);
+													for (Predicate removeDes : removeDess)
+														SimpleBdiArchitecture.removeDesire(scope, removeDes);
+												}
+												if (removeEmotions != null) {
+													final List<Emotion> removeEmos = (List<Emotion>) removeEmotions
+															.value(scope);
+													for (Emotion removeEmo : removeEmos)
+														SimpleBdiArchitecture.removeEmotion(scope, removeEmo);
+												}
+												if (removeUncertainties != null) {
+													final List<Predicate> removUncerts = (List<Predicate>) removeUncertainties
+															.value(scope);
+													for (Predicate removUncert : removUncerts)
+														SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
+												}
+											}
+										}
 									}
-									SimpleBdiArchitecture.addDesire(scope, null, newDes);
-								}
-								if (newBelief != null) {
-									final Predicate newBel = (Predicate) newBelief.value(scope);
-									SimpleBdiArchitecture.addBelief(scope, newBel);
-								}
-								if (newEmotion != null) {
-									final Emotion newEmo = (Emotion) newEmotion.value(scope);
-									SimpleBdiArchitecture.addEmotion(scope, newEmo);
-								}
-								if (newUncertainty != null) {
-									final Predicate newUncert = (Predicate) newUncertainty.value(scope);
-									SimpleBdiArchitecture.addUncertainty(scope, newUncert);
-								}
-								if (removeBelief != null) {
-									final Predicate removBel = (Predicate) removeBelief.value(scope);
-									SimpleBdiArchitecture.removeBelief(scope, removBel);
-								}
-								if (removeDesire != null) {
-									final Predicate removeDes = (Predicate) removeDesire.value(scope);
-									SimpleBdiArchitecture.removeDesire(scope, removeDes);
-								}
-								if (removeIntention != null) {
-									final Predicate removeInt = (Predicate) removeIntention.value(scope);
-									SimpleBdiArchitecture.removeIntention(scope, removeInt);
-								}
-								if (removeEmotion != null) {
-									final Emotion removeEmo = (Emotion) removeEmotion.value(scope);
-									SimpleBdiArchitecture.removeEmotion(scope, removeEmo);
-								}
-								if (removeUncertainty != null) {
-									final Predicate removUncert = (Predicate) removeUncertainty.value(scope);
-									SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
-								}
-								
-								
-								if (newDesires != null) {
-									final List<Predicate> newDess = (List<Predicate>) newDesires.value(scope);
-									if (priority != null) {
-										for (Predicate newDes : newDess) newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
-									}
-									for (Predicate newDes : newDess) SimpleBdiArchitecture.addDesire(scope, null, newDes);
-								}
-								if (newBeliefs != null) {
-									final List<Predicate> newBels = (List<Predicate>) newBeliefs.value(scope);
-									for (Predicate newBel : newBels) SimpleBdiArchitecture.addBelief(scope, newBel);
-								}
-								if (newEmotions != null) {
-									final List<Emotion> newEmos = (List<Emotion>) newEmotions.value(scope);
-									for (Emotion newEmo : newEmos) SimpleBdiArchitecture.addEmotion(scope, newEmo);
-								}
-								if (newUncertainties != null) {
-									final List<Predicate> newUncerts = (List<Predicate>) newUncertainties.value(scope);
-									for (Predicate newUncert : newUncerts) SimpleBdiArchitecture.addUncertainty(scope, newUncert);
-								}
-								if (removeBeliefs != null) {
-									final List<Predicate> removBels = (List<Predicate>) removeBeliefs.value(scope);
-									for (Predicate removBel : removBels)SimpleBdiArchitecture.removeBelief(scope, removBel);
-								}
-								if (removeDesires != null) {
-									final List<Predicate> removeDess = (List<Predicate>) removeDesires.value(scope);
-									for (Predicate removeDes : removeDess) SimpleBdiArchitecture.removeDesire(scope, removeDes);
-								}
-								if (removeEmotions != null) {
-									final List<Emotion> removeEmos = (List<Emotion>) removeEmotions.value(scope);
-									for (Emotion removeEmo : removeEmos)SimpleBdiArchitecture.removeEmotion(scope, removeEmo);
-								}
-								if (removeUncertainties != null) {
-									final List<Predicate> removUncerts = (List<Predicate>) removeUncertainties.value(scope);
-									for (Predicate removUncert : removUncerts) SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
 								}
 							}
 						}
@@ -251,6 +298,35 @@ public class RuleStatement extends AbstractStatement {
 			}
 		}
 		return null;
+	}
+	
+	private boolean hasBeliefs(IScope scope, List<Predicate> predicates) {
+		for (Predicate p : predicates){
+			if (!SimpleBdiArchitecture.hasBelief(scope, p))
+				return false;
+		}
+		return true;
+	}
+	private boolean hasDesires(IScope scope, List<Predicate> predicates) {
+		for (Predicate p : predicates){
+			if (!SimpleBdiArchitecture.hasDesire(scope, p))
+				return false;
+		}
+		return true;
+	}
+	private boolean hasUncertainties(IScope scope, List<Predicate> predicates) {
+		for (Predicate p : predicates){
+			if (!SimpleBdiArchitecture.hasUncertainty(scope, p))
+				return false;
+		}
+		return true;
+	}
+	private boolean hasEmotions(IScope scope, List<Emotion> emotions) {
+		for (Emotion p : emotions){
+			if (!SimpleBdiArchitecture.hasEmotion(scope, p))
+				return false;
+		}
+		return true;
 	}
 
 	public IExpression getParallel() {
