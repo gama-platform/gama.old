@@ -40,7 +40,7 @@ grid cells_eight_nb height: size width: size neighbors: 8 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".
-	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+	rgb color <- hsb(min([0.6,phero]),1.0,1.0) update: hsb(min([0.6,phero]),1.0,1.0);
 	// Update the "grid_value", which will be used for the elevation of the cell
 	float grid_value update: phero * 100;
 } 
@@ -49,7 +49,7 @@ grid cells_four_nb height: size width: size neighbors: 4 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".
-	rgb color <- hsb(phero,1.0,1.0) update: hsb(phero,1.0,1.0);
+	rgb color <- hsb(min([0.6,phero]),1.0,1.0) update: hsb(min([0.6,phero]),1.0,1.0);
 	// Update the "grid_value", which will be used for the elevation of the cell
 	float grid_value update: phero * 100;
 } 
