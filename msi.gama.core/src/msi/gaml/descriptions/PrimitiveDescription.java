@@ -50,8 +50,12 @@ public class PrimitiveDescription extends ActionDescription {
 		final doc d = getDocAnnotation();
 		if (d == null) {
 			documentation = "";
-		} else
-			documentation = d.value() + Strings.LN;
+		} else {
+			if (d.deprecated().isEmpty())
+				documentation = d.value() + Strings.LN;
+			else
+				documentation = d.deprecated() + Strings.LN;
+		}
 		// Only arguments
 		return documentation + super.getArgDocumentation();
 	}
