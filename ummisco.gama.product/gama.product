@@ -25,6 +25,11 @@ Visit http://gama-platform.org
 --launcher.defaultAction
 openFile
       </programArgs>
+     
+<programArgsLin>
+      --launcher.GTK_version 2
+</programArgsLin>
+     
       <vmArgs>-server
 -noverify
 -Xmn128m
@@ -305,7 +310,7 @@ openFile
       <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
       <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
    </repositories>
-   
+
    <preferencesInfo>
       <targetfile overwrite="false"/>
    </preferencesInfo>

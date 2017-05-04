@@ -25,6 +25,9 @@ Visit http://gama-platform.org
 --launcher.defaultAction
 openFile
       </programArgs>
+            <programArgsLin>
+            --launcher.GTK_version 2
+      </programArgsLin>
       <vmArgs>-server
 -noverify
 -Xmn128m
