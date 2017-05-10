@@ -2,9 +2,8 @@ model SIR_ABM
 
 global{
 	geometry shape<-envelope(square(100));
-	float beta <- 0.5 ; 	 
-	float nu <- 0.001 ;
-	float delta <- 0.01;
+	float beta <- 0.8 ; 	 
+	float alpha <- 0.06;
 	init{
 		create Host number:495 ;
 		create Host number:5{state<-1;}
@@ -30,7 +29,7 @@ species Host skills:[moving]{
     	}
     }
     
-    reflex become_immune when: (state=1 and flip(delta)) {
+    reflex become_immune when: (state=1 and flip(alpha)) {
     	state<-2;
     }
     

@@ -41,7 +41,7 @@ experiment "Adapter" type: gui parent: SIR_ABM_exp
 	}
 
 	action set_num_I (int num)
-	{
+	{		
 		ask (Host where (each.state = 1))
 		{
 			do die;
@@ -55,7 +55,7 @@ experiment "Adapter" type: gui parent: SIR_ABM_exp
 	}
 
 	action set_num_R (int num)
-	{
+	{		
 		ask (Host where (each.state = 2))
 		{
 			do die;
@@ -65,7 +65,6 @@ experiment "Adapter" type: gui parent: SIR_ABM_exp
 		{
 			state <- 2;
 		}
-
 	}
 
 	output

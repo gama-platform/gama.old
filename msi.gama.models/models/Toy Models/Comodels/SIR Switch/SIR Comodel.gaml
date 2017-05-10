@@ -55,7 +55,7 @@ species Switch
 				I <- first(SIR_1."Adapter").get_num_I();
 				R <- first(SIR_1."Adapter").get_num_R();
 		}
-		
+		else
 		//if the size of S population or  I population are smaller  than a threshold, use the ABM
 		if (I < threshold_to_IBM or S < threshold_to_IBM)
 		{
@@ -94,7 +94,7 @@ experiment Simple_exp type: gui
 			{
 				data 'S' value: first(Switch).S color: # green;
 				data 'I' value: first(Switch).I color: # red;
-				data 'R' value: first(Switch).R color: # yellow;
+				data 'R' value: first(Switch).R color: # blue;
 			}
 
 		}
