@@ -222,7 +222,7 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public boolean doStep(final IScope scope) {
 		if (!getSpecies().isStepOverriden()) {
-			_step_(scope);
+			super.doStep(scope);
 			return !scope.interrupted();
 		} else {
 			return scope.execute(getSpecies().getAction(ISpecies.stepActionName), this, null).passed();
@@ -252,7 +252,7 @@ public class MinimalAgent extends AbstractAgent {
 	@action (
 			name = ISpecies.stepActionName)
 	public Object _step_(final IScope scope) {
-		return super.doStep(scope);
+		return super.step(scope);
 	}
 
 	/**
