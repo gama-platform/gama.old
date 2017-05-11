@@ -492,6 +492,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbors_cache");
 		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
+		
+		exp = species.getFacet("optimizer");
+		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));
+		
 		exp = species.getFacet(IKeyword.NEIGHBORS);
 		if (exp == null) {
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
@@ -503,9 +507,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		GridTopology result;
 		if (file == null) {
 			result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
-					useNeighborsCache);
+					useNeighborsCache,optimizer);
 		} else
-			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
+			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
 		// Reverts the modification of the world envelope (see #1953 and #1939)
 		//
 		// final Envelope3D env =

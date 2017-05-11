@@ -68,25 +68,25 @@ public class GridTopology extends AbstractTopology {
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
 			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes,
-			final boolean useNeighborsCache) throws GamaRuntimeException {
+			final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
 		super(scope, environment, null);
 		if (isHexagon) {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
-					useIndividualShapes, useNeighborsCache);
+					useIndividualShapes, useNeighborsCache,optimizer);
 		} else {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes,
-					useNeighborsCache);
+					useNeighborsCache,optimizer);
 		}
 		// FIXME Not sure it needs to be set
 		// root.setTorus(isTorus);
 
-	}
+	} 
 
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
-			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache)
+			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,final String optimizer)
 			throws GamaRuntimeException {
 		super(scope, environment, null);
-		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
+		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
 		// FIXME Not sure it needs to be set
 
 		// root.setTorus(isTorus);
@@ -134,7 +134,8 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(),
-				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache());
+				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache(), 
+				grid.optimizer());
 	}
 
 	@Override

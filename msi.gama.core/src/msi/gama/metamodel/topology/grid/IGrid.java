@@ -104,6 +104,9 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	 * @return
 	 */
 	public abstract boolean usesNeighborsCache();
+	
+
+	public abstract String optimizer();
 
 	/**
 	 * @return

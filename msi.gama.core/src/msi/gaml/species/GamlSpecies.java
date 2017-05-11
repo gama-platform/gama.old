@@ -103,6 +103,12 @@ import one.util.streamex.StreamEx;
 						doc = { @doc (
 								value = "(grid only),(true by default). Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
 				@facet (
+						name = "optimizer",
+						type = IType.STRING,
+						optional = true,
+						doc = { @doc (
+								value = "(grid only),(\"A*\" by default). Allows to specify the algorithm for the shortest path computation (\"BF\", \"Dijkstra\", \"A*\" or \"JPS*\"") }),
+				@facet (
 						name = "use_neighbors_cache",
 						type = IType.BOOL,
 						optional = true,
