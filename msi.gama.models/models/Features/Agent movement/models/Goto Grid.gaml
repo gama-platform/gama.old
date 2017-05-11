@@ -9,6 +9,17 @@
 model Grid
 
 global {
+	/*4 algorithms for the shortest path computation on a grid:
+	*      - A* : default algorithm: Very efficient for both Moore (8) and Von Neumann (4) neighborhoods. An introduction to A*: http://www.redblobgames.com/pathfinding/a-star/introduction.html
+	*      - Dijkstra : Classic Dijkstra algorithm. An introduction to Dijkstra : http://www.redblobgames.com/pathfinding/a-star/introduction.html
+	*      - JPS : Jump Point Search, only usable for Moore (8) neighborhood. Most of time, more efficient than A*. An introduction to JPS: https://harablog.wordpress.com/2011/09/07/jump-point-search/#3
+	*      - BF : Breadth First Search. Should only be used for Von Neumann (4) neighborhood. An introduction to BF: http://www.redblobgames.com/pathfinding/a-star/introduction.html
+	*/
+	
+	string algorithm <- "A*" among: ["A*", "Dijkstra", "JPS", "BF"] parameter: true;
+	int neighborhood_type <- 8 among:[4,8] parameter: true;
+	
+
 	init {    
 		create goal{
 			location <- (one_of (cell where not each.is_obstacle)).location;
@@ -20,7 +31,7 @@ global {
 	} 
 }
 
-grid cell width: 50 height: 50 neighbors: 4 {
+grid cell width: 50 height: 50 neighbors: neighborhood_type optimizer: algorithm {
 	bool is_obstacle <- flip(0.2);
 	rgb color <- is_obstacle ? #black : #white;
 } 
@@ -35,31 +46,23 @@ species goal {
 species people skills: [moving] {
 	goal target;
 	float speed <- float(3);
-	
 	aspect default {
 		draw circle(0.5) color: #green;
+		if (current_path != nil) {
+			draw current_path.shape color: #red;
+		}
 	}
 	
 	reflex move when: location != target{
-		//Neighs contains all the neighbours cells that are reachable by the agent plus the cell where it's located
-		list<cell> neighs <- (cell(location) neighbors_at speed) + cell(location); 
-		
 		//We restrain the movements of the agents only at the grid of cells that are not obstacle using the on facet of the goto operator and we return the path
 		//followed by the agent
 		//the recompute_path is used to precise that we do not need to recompute the shortest path at each movement (gain of computation time): the obtsacles on the grid never change.
-		path followed_path <- self goto (on:(cell where not each.is_obstacle), target:target, speed:speed, return_path:true, recompute_path: false);
+		do goto (on:(cell where not each.is_obstacle), target:target, speed:speed, recompute_path: false);
 		
 		//As a side note, it is also possible to use the path_between operator and follow action with a grid
 		//Add a my_path attribute of type path to the people species
 		//if my_path = nil {my_path <- path_between((cell where not each.is_obstacle), location, target);}
-		//path followed_path <- self follow (path: my_path,  return_path:true);
-		
-		if (followed_path != nil) and not empty(followed_path.segments) {
-			geometry path_geom <- geometry(followed_path.segments);
-			
-			//The cells intersecting the path followed by the agent are colored in magenta
-			ask (neighs where (each.shape intersects path_geom)) { color <- #magenta;}
-		}	
+		//do follow (path: my_path);
 	}
 }
 
