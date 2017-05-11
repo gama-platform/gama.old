@@ -31,6 +31,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -118,9 +119,18 @@ public class ModelAssembler {
 		// be able to look for resources. These working paths come from the
 		// imported models
 
-		final Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null
+		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null
 				: ImmutableSet.copyOf(
 						Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
+		
+
+		if(mm != null) {			
+			for(ModelDescription m1:mm.values()){
+				for(String im:m1.getAlternatePaths()) {
+					absoluteAlternatePathAsStrings=Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
+				}
+			}
+		}
 
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
 				source.getElement(), null, ModelDescription.ROOT, null, globalFacets, collector,
