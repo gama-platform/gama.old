@@ -2579,6 +2579,60 @@ public abstract class Spatial {
 					target, edges);
 		}
 
+
+		@operator (
+				value = "path_between",
+
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
+				concept = { IConcept.GRID })
+		@doc (
+				value = "The shortest path between several objects according to set of cells with corresponding weights",
+				masterDoc = true,
+				examples = { @example (
+						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), [ag1, ag2, ag3])",
+						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost",
+						isExecutable = false) })
+		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells,
+				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
+			if (cells == null || cells.isEmpty()) { return null; }
+
+			if (nodes.isEmpty(scope)) { return null; }
+			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
+			
+			final int n = nodes.length(scope);
+			final IShape source = nodes.firstValue(scope);
+			if (n == 1) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, source, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, source);
+				}
+			}
+			final IShape target = nodes.lastValue(scope);
+			if (n == 2) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, target);
+				}
+			}
+			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
+			IShape previous = null;
+			for (final IShape gg : nodes.iterable(scope)) {
+				if (previous != null) {
+					// TODO Take the case of ILocation
+					if (topo instanceof GridTopology) {
+						edges.addAll(((GridTopology) topo).pathBetween(scope, source, target, cells).getEdgeList());
+					} else {
+						edges.addAll(scope.getTopology().pathBetween(scope, source, target).getEdgeList());
+					}
+				}
+				previous = gg;
+			}
+			return PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source,
+					target, edges);
+		}
+
 		@operator (
 				value = "path_between",
 
@@ -2601,6 +2655,30 @@ public abstract class Spatial {
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 		}
+		
+		@operator (
+				value = "path_between",
+
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
+				concept = { IConcept.GRID })
+		@doc (
+				value = "The shortest path between two objects according to set of cells with corresponding weights",
+				masterDoc = true,
+				examples = { @example (
+						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), ag1, ag2)",
+						equals = "A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost",
+						isExecutable = false) })
+		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells, final IShape source,
+				final IShape target) throws GamaRuntimeException {
+			if (cells == null || cells.isEmpty()) { return null; }
+			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
+			if (topo instanceof GridTopology) {
+				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+			} else {
+				return scope.getTopology().pathBetween(scope, source, target);
+			}
+		}
+
 
 		@operator (
 				value = "distance_to",

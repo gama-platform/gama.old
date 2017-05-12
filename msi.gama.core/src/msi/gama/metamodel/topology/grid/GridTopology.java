@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.grid;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -158,15 +159,19 @@ public class GridTopology extends AbstractTopology {
 			final IList<IAgent> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
+	
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
+			final Map<IAgent, Object> on) throws GamaRuntimeException {
+		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);
+	}
 
-	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
-			throws GamaRuntimeException {
-		return getPlaces().computeShortestPathBetween(scope, source, target, this, null);
+	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
+			final Map<IAgent, Object> on) throws GamaRuntimeException {
+		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);
 	}
 
 	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 			throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, null);
 	}

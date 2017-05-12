@@ -784,17 +784,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	
 		
 	public GamaSpatialPath computeShortestPathBetweenDijkstra(final IScope scope, final IShape source, final IShape target,
-			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
+			final ITopology topo, final IList<IAgent> on, final Map<IAgent, Object> onWithWeight) throws GamaRuntimeException {
 		final int currentplace = getPlaceIndexAt(source.getLocation());
 		final int targetplace = getPlaceIndexAt(target.getLocation());
 		final IAgent startAg = matrix[currentplace].getAgent();
 		final IAgent endAg = matrix[targetplace].getAgent();
+		final boolean weighted = onWithWeight != null;
 		if (startAg == endAg) {
 			return simplePath(scope,source,target, topo, startAg, endAg);
 		}
+		Double maxDim = weighted ? Math.max(this.cellHeight, this.cellWidth) : 0.0;
 		
 		final boolean[] open = new boolean[this.getAgents().size()];
-		initOpen(open,on);
+		initOpen(open,weighted ? onWithWeight.keySet() : on);
 
 		Map<IAgent, IAgent> cameFrom = new Hashtable<>();
 			
@@ -815,7 +817,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			
 			for (IAgent next : neigh) {
 				if (! open[next.getIndex()]) continue;
-				double nextCost =  cost + current.getLocation().euclidianDistanceTo(next.getLocation());
+				double dist = current.getLocation().euclidianDistanceTo(next.getLocation());
+				double nextCost =  cost + (!weighted ? dist : Cast.asFloat(scope, onWithWeight.get(next)) + ((dist > maxDim) ? Double.MIN_VALUE : 0.0));
+				
 				frontier.add(new ArrayList() {{ add(next); add(nextCost);}});
 				open[next.getIndex()] = false;
 				
@@ -830,21 +834,24 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 	
 	public GamaSpatialPath computeShortestPathBetweenAStar(final IScope scope, final IShape source, final IShape target,
-			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
+			final ITopology topo, final IList<IAgent> on, final Map<IAgent, Object> onWithWeight) throws GamaRuntimeException {
 		final int currentplace = getPlaceIndexAt(source.getLocation());
 		final int targetplace = getPlaceIndexAt(target.getLocation());
 		final IAgent startAg = matrix[currentplace].getAgent();
 		final IAgent endAg = matrix[targetplace].getAgent();
+		final boolean weighted = onWithWeight != null;
 		if (startAg == endAg) {
 			return simplePath(scope,source,target, topo, startAg, endAg);
 		}
+		Double maxDim = weighted ? Math.max(this.cellHeight, this.cellWidth) : 0.0;
+				
 		final boolean[] open = new boolean[this.getAgents().size()];
-		initOpen(open,on);
+		initOpen(open,weighted ? onWithWeight.keySet() : on);
 		PriorityQueue frontier = newPriorityQueue(); 
 		Map<IAgent, IAgent> cameFrom = new Hashtable<>();
 		Map<IAgent, Double> costSoFar = new Hashtable<>();
 		
-		frontier.add(new ArrayList() {{ add(startAg); add(0.0);}});
+		frontier.add(new ArrayList() {{ add(startAg); add(weighted ? Cast.asFloat(scope, onWithWeight.get(startAg)): 0.0);}});
 		costSoFar.put(startAg, 0.0);
 		while (! frontier.isEmpty()) {
 			IAgent current = (IAgent) ((List)frontier.remove()).get(0);
@@ -855,7 +862,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			Set<IAgent> neigh = getNeighborhood().getNeighborsIn(scope, current.getIndex(), 1);
 			for (IAgent next : neigh) {
 				if (! open[next.getIndex()]) continue;
-				double nextCost =  cost + current.getLocation().euclidianDistanceTo(next.getLocation());
+				double dist = current.getLocation().euclidianDistanceTo(next.getLocation());
+				double nextCost =  cost + (!weighted ? dist : Cast.asFloat(scope, onWithWeight.get(next)) + ((dist > maxDim) ? Double.MIN_VALUE : 0.0));
 				if (!(costSoFar.containsKey(next))|| (nextCost <  costSoFar.get(next))) {
 					costSoFar.put(next, nextCost);
 					frontier.add(new ArrayList() {{ add(next); add(nextCost + heuristic(next,endAg));}});
@@ -880,7 +888,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return simplePath(scope,source,target, topo, startAg, endAg);
 		}
 		final boolean[] open = new boolean[this.getAgents().size()];
-		initOpen(open,on);
+		initOpen(open, on);
 		PriorityQueue frontier = newPriorityQueue(); 
 		Map<IAgent, IAgent> cameFrom = new Hashtable<>();
 		Map<IAgent, Double> costSoFar = new Hashtable<>();
@@ -1044,16 +1052,24 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
 		if ("Dijkstra".equals(optimizer))
-			return computeShortestPathBetweenDijkstra(scope, source, target, topo, on);
+			return computeShortestPathBetweenDijkstra(scope, source, target, topo, on, null);
 		else if (!neighborhood.isVN() && "JPS".equals(optimizer)) {
 			return computeShortestPathBetweenJPS(scope, source, target, topo, on);
 		}
 		else if ("BF".equals(optimizer)) {
 			return computeShortestPathBetweenBF(scope, source, target, topo, on);
 		}
-		return computeShortestPathBetweenAStar(scope, source, target, topo, on);
+		return computeShortestPathBetweenAStar(scope, source, target, topo, on, null);
 	}
 	
+	@Override
+	public GamaSpatialPath computeShortestPathBetweenWeighted(final IScope scope, final IShape source,
+			final IShape target, final ITopology topo, final Map<IAgent, Object> on)  {
+		if ("A*".equals(optimizer))
+			return computeShortestPathBetweenAStar(scope, source, target, topo, null, on);
+		return computeShortestPathBetweenDijkstra(scope, source, target, topo, null,on);
+	}
+
 	
 	
 	private GamaSpatialPath simplePath(final IScope scope, final IShape source, final IShape target,
@@ -1077,10 +1093,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return PathFactory.newInstance(scope, topo, nodesPt);
 	}
 	
-	private void initOpen(final boolean[] open, final IList<IAgent> on) {
-		Arrays.fill(open, false);
-		for (final IAgent ag : on) {
-			open[ag.getIndex()] = true; 
+	private void initOpen(final boolean[] open, final Collection<IAgent> on) {
+		if (on == null)
+			Arrays.fill(open, true);
+		else {
+			Arrays.fill(open, false);
+			for (final IAgent ag : on) {
+				open[ag.getIndex()] = true; 
+			}
 		}
 	}
 	
