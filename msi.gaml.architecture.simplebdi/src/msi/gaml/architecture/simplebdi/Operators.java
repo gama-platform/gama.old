@@ -252,6 +252,15 @@ public class Operators {
 		}
 	}
 
+	@operator(value = "get_truth", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	public static Boolean getTruth(final Predicate pred) {
+		if (pred != null) {
+			return pred.is_true;
+		} else {
+			return null;
+		}
+	}
+	
 	@operator(value = "get_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	public static int getLifetime(final Predicate pred) {
 		if (pred != null) {

@@ -894,6 +894,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
 				if (predicateDirect.equals(pred)) { return pred; }
+				if (predicateDirect.equalsButNotTruth(pred)){return pred;}
 			}
 
 		}
@@ -964,6 +965,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
 				if (predicateDirect.equals(pred)) {
+					predicates.add(pred);
+				}
+				if (predicateDirect.equalsButNotTruth(pred)){
 					predicates.add(pred);
 				}
 			}
