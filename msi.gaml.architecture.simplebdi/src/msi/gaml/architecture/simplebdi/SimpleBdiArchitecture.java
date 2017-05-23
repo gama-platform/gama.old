@@ -799,9 +799,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
 			}
-			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predicateDirect)) {
-				removeFromBase(scope, predicateDirect, DESIRE_BASE);
-			}
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
 			}
@@ -852,7 +849,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static Boolean hasBelief(final IScope scope, final Predicate predicateDirect) {
-		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
+		boolean result=getBase(scope, BELIEF_BASE).contains(predicateDirect);
+		if(result){
+			return result;
+		}else{
+			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
+				if (predicateDirect.equalsButNotTruth(pred)){return true;}
+			}
+			return false;
+		}
 	}
 
 	public static Boolean hasDesire(final IScope scope, final Predicate predicateDirect) {
@@ -894,6 +899,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
 				if (predicateDirect.equals(pred)) { return pred; }
+				if (predicateDirect.equalsButNotTruth(pred)){return pred;}
 			}
 
 		}
@@ -964,6 +970,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
 				if (predicateDirect.equals(pred)) {
+					predicates.add(pred);
+				}
+				if (predicateDirect.equalsButNotTruth(pred)){
 					predicates.add(pred);
 				}
 			}
@@ -1659,12 +1668,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				joy.setAgentCause(agentTest);
 			}
 			addEmotion(scope, joy);
+		}else{
+			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
+				if (predTest.equalsButNotTruth(pred)){
+					final Emotion sadness = new Emotion("sadness", predTest);
+					final IAgent agentTest = predTest.getAgentCause();
+					if (agentTest != null) {
+						sadness.setAgentCause(agentTest);
+					}
+					addEmotion(scope, sadness);
+				}
+			}
 		}
 	}
 
 	private void createSadness(final IScope scope) {
-		// Lagent possède la croyance A et le désir nonA (et vice versa).
-		// L'émotion est créée sur la croyance.
 		// A améliorer en termes de rapidité de calcul
 		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			for (final Predicate desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
