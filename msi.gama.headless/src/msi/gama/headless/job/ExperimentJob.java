@@ -307,7 +307,7 @@ public class ExperimentJob implements IExperimentJob {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v.getName());
-				if (out.getValue() == null) {
+				if (out == null || out.getValue() == null) {
 					// LOGGER UNE ERREUR
 					// GAMA.reportError(this.
 					// .getCurrentSimulation().getScope(), g,
