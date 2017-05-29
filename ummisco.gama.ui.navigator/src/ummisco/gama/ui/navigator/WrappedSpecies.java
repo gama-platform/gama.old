@@ -79,7 +79,7 @@ public class WrappedSpecies extends WrappedGamlObject {
 
 	@Override
 	public boolean handleDoubleClick() {
-		GAMA.getGui().editModel(getObject().getUnderlyingElement(null));
+		GAMA.getGui().editModel(null, getObject().getUnderlyingElement(null));
 		return true;
 	}
 

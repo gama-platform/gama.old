@@ -40,7 +40,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public Map<String, String> getCurrentState() {
-		final String state = GAMA.getGui().getExperimentState();
+		final String state = GAMA.getGui().getExperimentState("");
 		final IExperimentPlan exp = GAMA.getExperiment();
 		final String type = exp == null ? IGui.NONE
 				: exp.isBatch() ? "BATCH" : exp.isMemorize() ? "MEMORIZE" : "REGULAR";

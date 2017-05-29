@@ -441,12 +441,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public void open() {
 		createAgent();
-		scope.getGui().prepareForExperiment(this);
+		scope.getGui().prepareForExperiment(scope, this);
 		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
-			agent.getScope().getGui().getStatus().informStatus(" Batch ready ");
-			agent.getScope().getGui().updateExperimentState();
+			agent.getScope().getGui().getStatus(agent.getScope()).informStatus(" Batch ready ");
+			agent.getScope().getGui().updateExperimentState(agent.getScope());
 		}
 	}
 
@@ -460,7 +460,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			agent.getScope().getGui().getConsole().eraseConsole(false);
 			agent.init(agent.getScope());
 
-			agent.getScope().getGui().updateParameterView(this);
+			agent.getScope().getGui().updateParameterView(agent.getScope(), this);
 		}
 	}
 
@@ -577,7 +577,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if (hasParameter(name)) {
 				setParameterValue(this, name, v);
-				GAMA.getGui().updateParameterView(ExperimentPlan.this);
+				GAMA.getGui().updateParameterView(getCurrentSimulation().getScope(), ExperimentPlan.this);
 				return;
 			}
 			final SimulationAgent a = getCurrentSimulation();

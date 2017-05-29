@@ -155,10 +155,10 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus()
+		scope.getGui().getStatus(scope)
 				.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
-		GAMA.getGui().updateExperimentState(IGui.NOTREADY);
+		GAMA.getGui().updateExperimentState(scope, IGui.NOTREADY);
 		return true;
 	}
 
@@ -218,7 +218,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 
-				getScope().getGui().getStatus()
+				getScope().getGui().getStatus(getScope())
 						.setStatus("Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
 								+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
 								"small.batch" + i / 5);
@@ -251,7 +251,7 @@ public class BatchAgent extends ExperimentAgent {
 		// simulations if any
 		this.reset();
 		// We update the parameters
-		getScope().getGui().showParameterView(getSpecies());
+		getScope().getGui().showParameterView(getScope(), getSpecies());
 
 		// We then return the combination (average, min or max) of the different
 		// fitness values computed by the

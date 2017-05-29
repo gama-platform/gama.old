@@ -95,7 +95,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 			layout = Cast.asInt(scope, exp.value(scope));
 		}
 		if (super.init(scope)) {
-			scope.getGui().applyLayout(getLayout());
+			scope.getGui().applyLayout(scope, getLayout());
 			if (GamaPreferences.Runtime.CORE_AUTO_RUN.getValue()) {
 				GAMA.startFrontmostExperiment();
 			}

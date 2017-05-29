@@ -69,23 +69,23 @@ public interface IGui {
 	public final static String NONE = "NONE";
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";;
 
-	IStatusDisplayer getStatus();
+	IStatusDisplayer getStatus(IScope scope);
 
 	IConsoleDisplayer getConsole();
 
-	IGamaView showView(String viewId, String name, int code);
+	IGamaView showView(IScope scope, String viewId, String name, int code);
 
 	void tell(String message);
 
 	void error(String error);
 
-	void showParameterView(IExperimentPlan exp);
+	void showParameterView(IScope scope, IExperimentPlan exp);
 
 	void debug(String string);
 
-	void clearErrors();
+	void clearErrors(IScope scope);
 
-	void runtimeError(GamaRuntimeException g);
+	void runtimeError(final IScope scope, GamaRuntimeException g);
 
 	boolean confirmClose(IExperimentPlan experiment);
 
@@ -100,7 +100,7 @@ public interface IGui {
 
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
-	void closeDialogs();
+	void closeDialogs(IScope scope);
 
 	IAgent getHighlightedAgent();
 
@@ -108,29 +108,29 @@ public interface IGui {
 
 	void setSelectedAgent(IAgent a);
 
-	void updateParameterView(IExperimentPlan exp);
+	void updateParameterView(IScope scope, IExperimentPlan exp);
 
-	void prepareForExperiment(IExperimentPlan exp);
+	void prepareForExperiment(IScope scope, IExperimentPlan exp);
 
 	void cleanAfterExperiment();
 
-	void editModel(Object eObject);
+	void editModel(IScope scope, Object eObject);
 
 	void runModel(final Object object, final String exp);
 
-	void updateSpeedDisplay(Double d, boolean notify);
+	void updateSpeedDisplay(IScope scope, Double d, boolean notify);
 
 	IFileMetaDataProvider getMetaDataProvider();
 
-	void closeSimulationViews(boolean andOpenModelingPerspective, boolean immediately);
+	void closeSimulationViews(IScope scope, boolean andOpenModelingPerspective, boolean immediately);
 
 	public DisplayDescription getDisplayDescriptionFor(final String name);
 
-	String getExperimentState();
+	String getExperimentState(String uid);
 
-	void updateExperimentState(String state);
+	void updateExperimentState(IScope scope, String state);
 
-	void updateExperimentState();
+	void updateExperimentState(IScope scope);
 
 	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
 
@@ -138,13 +138,13 @@ public interface IGui {
 
 	void updateDecorator(String string);
 
-	void run(Runnable opener);
+	void run(IScope scope, Runnable opener);
 
 	void setFocusOn(IShape o);
 
-	void applyLayout(int layout);
+	void applyLayout(IScope scope, int layout);
 
-	void displayErrors(List<GamaRuntimeException> newExceptions);
+	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
 
 	ILocation getMouseLocationInModel();
 
@@ -154,6 +154,6 @@ public interface IGui {
 
 	void exit();
 
-	void openInteractiveConsole();
+	void openInteractiveConsole(IScope scope);
 
 }

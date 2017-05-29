@@ -14,6 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class ExperimentController implements Runnable, IExperimentController {
@@ -76,10 +77,11 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	protected void processUserCommand(final int command) {
+		final IScope scope = experiment.getExperimentScope();
 		switch (command) {
 			case IExperimentController._OPEN:
 
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.NOTREADY);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
 					launchCommandThread();
 					// Needs to run in the controller thread
@@ -101,39 +103,39 @@ public class ExperimentController implements Runnable, IExperimentController {
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
-					experiment.getExperimentScope().getGui().updateExperimentState(IGui.RUNNING);
+					experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.RUNNING);
 				}
 				break;
 			case IExperimentController._PAUSE:
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.PAUSED);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.PAUSED);
 				scheduler.pause();
 				break;
 			case IExperimentController._STEP:
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.PAUSED);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.PAUSED);
 				scheduler.stepByStep();
 				break;
 			case IExperimentController._BACK:
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.PAUSED);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.PAUSED);
 				scheduler.stepBack();
 				break;
 			case IExperimentController._RELOAD:
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.NOTREADY);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
 					final boolean wasRunning = !scheduler.paused && !GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
 					scheduler.pause();
-					GAMA.getGui().getStatus().waitStatus("Reloading...");
+					GAMA.getGui().getStatus(scope).waitStatus("Reloading...");
 					experiment.reload();
 					if (wasRunning) {
 						processUserCommand(IExperimentController._START);
 					} else {
-						experiment.getExperimentScope().getGui().getStatus().informStatus("Experiment reloaded");
+						experiment.getExperimentScope().getGui().getStatus(scope).informStatus("Experiment reloaded");
 					}
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} catch (final Throwable e) {
 					closeExperiment(GamaRuntimeException.create(e, experiment.getExperimentScope()));
 				} finally {
-					experiment.getExperimentScope().getGui().updateExperimentState();
+					experiment.getExperimentScope().getGui().updateExperimentState(scope);
 				}
 				break;
 		}
@@ -194,10 +196,11 @@ public class ExperimentController implements Runnable, IExperimentController {
 	public void dispose() {
 		if (experiment != null) {
 			// System.out.println("Contoller.dipose BEGIN");
+			final IScope scope = experiment.getExperimentScope();
 			try {
 				scheduler.pause();
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.NOTREADY);
-				experiment.getExperimentScope().getGui().closeDialogs();
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NOTREADY);
+				experiment.getExperimentScope().getGui().closeDialogs(scope);
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
 				// experiment.dispose();
@@ -205,7 +208,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			} finally {
 				running = false;
 				scheduler.dispose();
-				experiment.getExperimentScope().getGui().updateExperimentState(IGui.NONE);
+				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NONE);
 				if (commandThread != null && commandThread.isAlive()) {
 					commands.offer(-1);
 				}
@@ -234,7 +237,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 		disposing = true;
 		// System.out.println("CloseExperiment : disposing = true");
 		if (e != null) {
-			GAMA.getGui().getStatus().errorStatus(e.getMessage());
+			GAMA.getGui().getStatus(getExperiment().getExperimentScope()).errorStatus(e.getMessage());
 		}
 
 		experiment.dispose(); // will call own dispose() later

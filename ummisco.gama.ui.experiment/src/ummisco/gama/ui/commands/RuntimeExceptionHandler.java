@@ -82,7 +82,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 		if (GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue()) {
 			final GamaRuntimeException firstEx = array.get(0);
-			GAMA.getGui().editModel(firstEx.getEditorContext());
+			GAMA.getGui().editModel(null, firstEx.getEditorContext());
 			firstEx.setReported();
 			if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
 				final List<GamaRuntimeException> newList = new ArrayList<>();
@@ -124,7 +124,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 			cleanExceptions = newExceptions;
 		}
 
-		GAMA.getGui().displayErrors(newExceptions);
+		GAMA.getGui().displayErrors(null, newExceptions);
 	}
 
 	@Override

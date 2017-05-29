@@ -70,12 +70,12 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 
 		@Override
 		public void showConsoleView(final ITopLevelAgent agent) {
-			final IGamaView.Console icv = (Console) GAMA.getGui().showView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
+			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
 			if (icv != null)
 				icv.append(null, agent, null);
 			final IGamaView.Console console =
-					(Console) GAMA.getGui().showView(IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if (consoleBuffer.length() > 0 && console != null) {
 				console.append(consoleBuffer.toString(), agent, null);
 				consoleBuffer.setLength(0);

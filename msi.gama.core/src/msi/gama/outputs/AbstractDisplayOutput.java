@@ -32,7 +32,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	protected IGamaView view;
 
 	final Runnable opener = () -> {
-		view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
+		view = getScope().getGui().showView(getScope(), getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
 		if (view == null) { return; }
 		view.addOutput(AbstractDisplayOutput.this);
 	};
@@ -40,7 +40,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void open() {
 		super.open();
-		GAMA.getGui().run(opener);
+		GAMA.getGui().run(getScope(), opener);
 	}
 
 	@Override

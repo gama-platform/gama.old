@@ -160,7 +160,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 		if (element.isExperiment()) {
 			GAMA.getGui().runModel(getParent(), element.getName());
 		} else
-			GAMA.getGui().editModel(element.getElement());
+			GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
 

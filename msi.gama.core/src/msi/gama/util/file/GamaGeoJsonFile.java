@@ -120,7 +120,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 			while (reader.hasNext()) {
 				index++;
 				if (index % 20 == 0)
-					scope.getGui().getStatus().setSubStatusCompletion(index / size);
+					scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
 				final SimpleFeature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometry();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
