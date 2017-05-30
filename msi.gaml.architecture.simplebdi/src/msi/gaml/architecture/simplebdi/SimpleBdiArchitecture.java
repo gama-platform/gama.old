@@ -69,7 +69,7 @@ import msi.gaml.types.Types;
 		@var (
 				name = SimpleBdiArchitecture.BELIEF_BASE,
 				type = IType.LIST,
-				of = PredicateType.id,
+				of = MentalStateType.id,
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.LAST_THOUGHTS,
@@ -78,7 +78,7 @@ import msi.gaml.types.Types;
 		@var (
 				name = SimpleBdiArchitecture.INTENTION_BASE,
 				type = IType.LIST,
-				of = PredicateType.id,
+				of = MentalStateType.id,
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.EMOTION_BASE,
@@ -88,12 +88,12 @@ import msi.gaml.types.Types;
 		@var (
 				name = SimpleBdiArchitecture.DESIRE_BASE,
 				type = IType.LIST,
-				of = PredicateType.id,
+				of = MentalStateType.id,
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.UNCERTAINTY_BASE,
 				type = IType.LIST,
-				of = PredicateType.id,
+				of = MentalStateType.id,
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.PLAN_BASE,
@@ -241,10 +241,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			while (loop_instantaneous_plans) {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
-				final GamaList<Predicate> desireBase = (GamaList<Predicate>) (scope.hasArg(DESIRE_BASE)
-						? scope.getListArg(DESIRE_BASE) : (GamaList<Predicate>) agent.getAttribute(DESIRE_BASE));
-				final GamaList<Predicate> intentionBase = (GamaList<Predicate>) (scope.hasArg(INTENTION_BASE)
-						? scope.getListArg(INTENTION_BASE) : (GamaList<Predicate>) agent.getAttribute(INTENTION_BASE));
+				final GamaList<MentalState> intentionBase = (GamaList<MentalState>) (scope.hasArg(INTENTION_BASE)
+						? scope.getListArg(INTENTION_BASE) : (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
 				final Double persistenceCoefficientPlans =
 						scope.hasArg(PERSISTENCE_COEFFICIENT_PLANS) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT_PLANS)
 								: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_PLANS);
@@ -259,7 +257,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
 					if (intentionBase.size() > 0) {
 						final int toremove = intentionBase.size() - 1;
-						final Predicate previousint = intentionBase.get(toremove);
+						final Predicate previousint = intentionBase.get(toremove).getPredicate();
 						intentionBase.remove(toremove);
 						final String think = "check what happens if I remove: " + previousint;
 						addThoughts(scope, think);
@@ -269,8 +267,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				// If current intention has no plan or is on hold, choose a new
 				// Desire
-
-				if (testOnHold(scope, currentIntention(scope)) || listExecutablePlans(scope).isEmpty()) {
+				MentalState intentionTemp = new MentalState("Intention",currentIntention(scope));
+				if (testOnHold(scope, intentionTemp) || listExecutablePlans(scope).isEmpty()) {
 					selectDesireWithHighestPriority(scope);
 					_persistentTask = null;
 					agent.setAttribute(CURRENT_PLAN, _persistentTask);
@@ -352,26 +350,30 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
 				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
 		if (is_probabilistic_choice) {
-			final GamaList<Predicate> desireBase = getBase(scope, DESIRE_BASE);
-			final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+			final GamaList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
+			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			if (desireBase.size() > 0) {
-				Predicate newIntention = desireBase.anyValue(scope);
+				Predicate newIntention = desireBase.anyValue(scope).getPredicate();
+				double newIntStrength;
 				final double priority_list[] = new double[desireBase.length(scope)];
 				for (int i = 0; i < desireBase.length(scope); i++) {
-					priority_list[i] = desireBase.get(i).priority;
+					priority_list[i] = desireBase.get(i).getStrength();
 				}
 				final IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
 				final int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
-				newIntention = desireBase.get(index_choice);
+				newIntention = desireBase.get(index_choice).getPredicate();
+				newIntStrength = desireBase.get(index_choice).getStrength();
 				if (desireBase.size() > intentionBase.size()) {
 					while (intentionBase.contains(newIntention)) {
 						final int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
-						newIntention = desireBase.get(index_choice2);
+						newIntention = desireBase.get(index_choice2).getPredicate();
+						newIntStrength = desireBase.get(index_choice2).getStrength();
 					}
 				}
+				final MentalState newIntentionState = new MentalState("Intention", newIntention, newIntStrength);
 				if (newIntention.getSubintentions() == null) {
-					if (!intentionBase.contains(newIntention)) {
-						intentionBase.addValue(scope, newIntention);
+					if (!intentionBase.contains(newIntentionState)) {
+						intentionBase.addValue(scope, newIntentionState);
 						return true;
 					}
 				} else {
@@ -381,32 +383,33 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					if (!intentionBase.contains(newIntention)) {
-						intentionBase.addValue(scope, newIntention);
+					if (!intentionBase.contains(newIntentionState)) {
+						intentionBase.addValue(scope, newIntentionState);
 						return true;
 					}
 				}
 			}
 		} else {
-			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getSimulation().getRandomGenerator()
+			final GamaList<MentalState> desireBase = (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE));
-			final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			double maxpriority = Double.MIN_VALUE;
 			if (desireBase.size() > 0 && intentionBase != null) {
 				Predicate newIntention = null;// desireBase.anyValue(scope);
-				for (final Predicate desire : desireBase) {
+				for (final MentalState desire : desireBase) {
 
-					if (desire.priority > maxpriority) {
+					if (desire.getStrength() > maxpriority) {
 						if (!intentionBase.contains(desire)) {
-							maxpriority = desire.priority;
-							newIntention = desire;
+							maxpriority = desire.getStrength();
+							newIntention = desire.getPredicate();
 						}
 					}
 				}
 				if (newIntention != null) {
+					final MentalState newIntentionState = new MentalState("Intention", newIntention, maxpriority);
 					if (newIntention.getSubintentions() == null) {
-						if (!intentionBase.contains(newIntention)) {
-							intentionBase.addValue(scope, newIntention);
+						if (!intentionBase.contains(newIntentionState)) {
+							intentionBase.addValue(scope, newIntentionState);
 							return true;
 						}
 					} else {
@@ -416,8 +419,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 						}
 						newIntention.setOnHoldUntil(newIntention.getSubintentions());
-						if (!intentionBase.contains(newIntention)) {
-							intentionBase.addValue(scope, newIntention);
+						if (!intentionBase.contains(newIntentionState)) {
+							intentionBase.addValue(scope, newIntentionState);
 							return true;
 						}
 					}
@@ -496,79 +499,79 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	protected void updateLifeTimePredicates(final IScope scope) {
-		for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-			pred.isUpdated = false;
+		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-			pred.isUpdated = false;
+		for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-			pred.isUpdated = false;
+		for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : getBase(scope, UNCERTAINTY_BASE)) {
-			pred.isUpdated = false;
+		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-			pred.updateLifetime();
+		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : listBeliefsLifeTimeNull(scope)) {
-			removeBelief(scope, pred);
+		for (final MentalState mental : listBeliefsLifeTimeNull(scope)) {
+			removeBelief(scope, mental);
 		}
-		for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-			pred.updateLifetime();
+		for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : listDesiresLifeTimeNull(scope)) {
-			removeDesire(scope, pred);
+		for (final MentalState mental : listDesiresLifeTimeNull(scope)) {
+			removeDesire(scope, mental);
 		}
-		for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-			pred.updateLifetime();
+		for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : listIntentionsLifeTimeNull(scope)) {
-			removeIntention(scope, pred);
+		for (final MentalState mental : listIntentionsLifeTimeNull(scope)) {
+			removeIntention(scope, mental);
 		}
-		for (final Predicate pred : getBase(scope, UNCERTAINTY_BASE)) {
-			pred.updateLifetime();
+		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
+			mental.getPredicate().isUpdated = false;
 		}
-		for (final Predicate pred : listUncertaintyLifeTimeNull(scope)) {
-			removeUncertainty(scope, pred);
+		for (final MentalState mental : listUncertaintyLifeTimeNull(scope)) {
+			removeUncertainty(scope, mental);
 		}
 	}
 
-	private List<Predicate> listBeliefsLifeTimeNull(final IScope scope) {
-		final List<Predicate> tempPred = new ArrayList<Predicate>();
-		for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-			if (pred.getLifetime() == 0) {
-				tempPred.add(pred);
+	private List<MentalState> listBeliefsLifeTimeNull(final IScope scope) {
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+			if (mental.getPredicate().getLifetime() == 0) {
+				tempPred.add(mental);
 			}
 		}
 		return tempPred;
 	}
 
-	private List<Predicate> listDesiresLifeTimeNull(final IScope scope) {
-		final List<Predicate> tempPred = new ArrayList<Predicate>();
-		for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-			if (pred.getLifetime() == 0) {
-				tempPred.add(pred);
+	private List<MentalState> listDesiresLifeTimeNull(final IScope scope) {
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+			if (mental.getPredicate().getLifetime() == 0) {
+				tempPred.add(mental);
 			}
 		}
 		return tempPred;
 	}
 
-	private List<Predicate> listIntentionsLifeTimeNull(final IScope scope) {
-		final List<Predicate> tempPred = new ArrayList<Predicate>();
-		for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-			if (pred.getLifetime() == 0) {
-				tempPred.add(pred);
+	private List<MentalState> listIntentionsLifeTimeNull(final IScope scope) {
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+			if (mental.getPredicate().getLifetime() == 0) {
+				tempPred.add(mental);
 			}
 		}
 		return tempPred;
 	}
 
-	private List<Predicate> listUncertaintyLifeTimeNull(final IScope scope) {
-		final List<Predicate> tempPred = new ArrayList<Predicate>();
-		for (final Predicate pred : getBase(scope, UNCERTAINTY_BASE)) {
-			if (pred.getLifetime() == 0) {
-				tempPred.add(pred);
+	private List<MentalState> listUncertaintyLifeTimeNull(final IScope scope) {
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
+			if (mental.getPredicate().getLifetime() == 0) {
+				tempPred.add(mental);
 			}
 		}
 		return tempPred;
@@ -611,12 +614,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return newthoughts;
 	}
 
-	public boolean testOnHold(final IScope scope, final Predicate intention) {
+	public boolean testOnHold(final IScope scope, final MentalState intention) {
 		if (intention == null) { return false; }
-		if (intention.onHoldUntil == null) { return false; }
-		if (intention.getValues() != null) {
-			if (intention.getValues().containsKey("and")) {
-				final Object cond = intention.onHoldUntil;
+		if (intention.getPredicate()==null) {return false;}	
+		if (intention.getPredicate().onHoldUntil == null) { return false; }
+		if (intention.getPredicate().getValues() != null) {
+			if (intention.getPredicate().getValues().containsKey("and")) {
+				final Object cond = intention.getPredicate().onHoldUntil;
 				if (cond instanceof ArrayList) {
 					if (((ArrayList) cond).size() == 0) {
 						final GamaList desbase = getBase(scope, DESIRE_BASE);
@@ -624,13 +628,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						desbase.remove(intention);
 						intentionbase.remove(intention);
 						for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-							final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+							final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 							if (statementSubintention != null) {
 								if (statementSubintention.contains(intention)) {
 									statementSubintention.remove(intention);
 								}
 							}
-							final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+							final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 							if (statementOnHoldUntil != null) {
 								if (statementOnHoldUntil.contains(intention)) {
 									statementOnHoldUntil.remove(intention);
@@ -643,8 +647,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
-			if (intention.getValues().containsKey("or")) {
-				final Object cond = intention.onHoldUntil;
+			if (intention.getPredicate().getValues().containsKey("or")) {
+				final Object cond = intention.getPredicate().onHoldUntil;
 				if (cond instanceof ArrayList) {
 					if (((ArrayList) cond).size() <= 1) {
 						final GamaList desbase = getBase(scope, DESIRE_BASE);
@@ -656,14 +660,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								desbase.remove(((ArrayList) cond).get(0));
 							}
 							for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-								final List<Predicate> statementSubintention =
-										((Predicate) statement).getSubintentions();
+								final List<MentalState> statementSubintention =
+										((MentalState) statement).getPredicate().getSubintentions();
 								if (statementSubintention != null) {
 									if (statementSubintention.contains(intention)) {
 										statementSubintention.remove(intention);
 									}
 								}
-								final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+								final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 								if (statementOnHoldUntil != null) {
 									if (statementOnHoldUntil.contains(intention)) {
 										statementOnHoldUntil.remove(intention);
@@ -678,7 +682,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		final Object cond = intention.onHoldUntil;
+		final Object cond = intention.getPredicate().onHoldUntil;
 		if (cond instanceof ArrayList) {
 			final GamaList desbase = getBase(scope, DESIRE_BASE);
 			if (desbase.isEmpty()) { return false; }
@@ -717,10 +721,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
-	public static GamaList<Predicate> getBase(final IScope scope, final String basename) {
+	public static GamaList<MentalState> getBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
-		return (GamaList<Predicate>) (scope.hasArg(basename) ? scope.getListArg(basename)
-				: (GamaList<Predicate>) agent.getAttribute(basename));
+		return (GamaList<MentalState>) (scope.hasArg(basename) ? scope.getListArg(basename)
+				: (GamaList<MentalState>) agent.getAttribute(basename));
 	}
 
 	public static GamaList<Emotion> getEmotionBase(final IScope scope, final String basename) {
@@ -735,8 +739,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				: (GamaList<SocialLink>) agent.getAttribute(basename));
 	}
 
-	public static boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
-		final GamaList<Predicate> factBase = getBase(scope, factBaseName);
+	public static boolean removeFromBase(final IScope scope, final MentalState predicateItem, final String factBaseName) {
+		final GamaList<MentalState> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
@@ -750,8 +754,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return factBase.remove(socialItem);
 	}
 
-	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
-		return addToBase(scope, predicateItem, getBase(scope, factBaseName));
+	public static boolean addToBase(final IScope scope, final MentalState mentalItem, final String factBaseName) {
+		return addToBase(scope, mentalItem, getBase(scope, factBaseName));
 	}
 
 	public static boolean addToBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
@@ -762,13 +766,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addToBase(scope, socialItem, getSocialBase(scope, factBaseName));
 	}
 
-	public static boolean addToBase(final IScope scope, final Predicate predicateItem,
-			final GamaList<Predicate> factBase) {
+	public static boolean addToBase(final IScope scope, final MentalState mentalItem,
+			final GamaList<MentalState> factBase) {
 
-		factBase.remove(predicateItem);
+		factBase.remove(mentalItem);
 
-		predicateItem.setDate(scope.getClock().getTimeElapsedInSeconds());
-		return factBase.add(predicateItem);
+//		mentalItem.setDate(scope.getClock().getTimeElapsedInSeconds());
+		return factBase.add(mentalItem);
 	}
 
 	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
@@ -782,13 +786,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return factBase.add(socialItem);
 	}
 
-	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect) {
-		final GamaList<Predicate> factBase = getBase(scope, BELIEF_BASE);
-		Predicate predTemp = null;
+	public static Boolean addBelief(final IScope scope, final MentalState predicateDirect) {
+		final GamaList<MentalState> factBase = getBase(scope, BELIEF_BASE);
+		MentalState predTemp = null;
 		if (predicateDirect != null) {
 			createJoyFromPredicate(scope, predicateDirect);
-			for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-				if (predTest.equalsButNotTruth(predicateDirect)) {
+			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+				if (predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
 					predTemp = predTest;
 				}
 			}
@@ -802,8 +806,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
 			}
-			for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-				if (predTest.equalsButNotTruth(predicateDirect)) {
+			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+				if (predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
 					predTemp = predTest;
 				}
 			}
@@ -811,13 +815,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, predTemp, UNCERTAINTY_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+				final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 				if (statementSubintention != null) {
 					if (statementSubintention.contains(predicateDirect)) {
 						statementSubintention.remove(predicateDirect);
 					}
 				}
-				final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 				if (statementOnHoldUntil != null) {
 					if (statementOnHoldUntil.contains(predicateDirect)) {
 						statementOnHoldUntil.remove(predicateDirect);
@@ -835,8 +839,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			args = { @arg (
 					name = PREDICATE,
 					type = PredicateType.id,
+					optional = false,
+					doc = @doc ("predicate to add as a belief")),
+					@arg (
+					name = "strength",
+					type = IType.FLOAT,
 					optional = true,
-					doc = @doc ("predicate to add as a belief")) },
+					doc = @doc ("the stregth of the belief")
+							)},
 			doc = @doc (
 					value = "add the predicate in the belief base.",
 					returns = "true if it is added in the base.",
@@ -844,23 +854,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		return addBelief(scope, predicateDirect);
-
-	}
-
-	public static Boolean hasBelief(final IScope scope, final Predicate predicateDirect) {
-		boolean result=getBase(scope, BELIEF_BASE).contains(predicateDirect);
-		if(result){
-			return result;
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		MentalState tempState;
+		if(stre!=null){
+			tempState = new MentalState("Belief",predicateDirect,stre);
 		}else{
-			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-				if (predicateDirect.equalsButNotTruth(pred)){return true;}
-			}
-			return false;
+			tempState = new MentalState("Belief",predicateDirect);
 		}
+		return addBelief(scope, tempState);
+
 	}
 
-	public static Boolean hasDesire(final IScope scope, final Predicate predicateDirect) {
+	public static Boolean hasBelief(final IScope scope, final MentalState predicateDirect) {
+		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
+		
+	}
+
+	public static Boolean hasDesire(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, DESIRE_BASE).contains(predicateDirect);
 	}
 
@@ -878,7 +889,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primTestBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return hasBelief(scope, predicateDirect); }
+		MentalState tempState = new MentalState("Belief",predicateDirect);
+		if (predicateDirect != null) {
+			return hasBelief(scope, tempState); }
 		return false;
 	}
 
@@ -893,13 +906,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicate in the belief base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
-	public Predicate getBelief(final IScope scope) throws GamaRuntimeException {
+	public MentalState getBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-				if (predicateDirect.equals(pred)) { return pred; }
-				if (predicateDirect.equalsButNotTruth(pred)){return pred;}
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) { return mental; }
+				if (predicateDirect.equalsButNotTruth(mental.getPredicate())){return mental;}
 			}
 
 		}
@@ -918,11 +931,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicates is in the belief base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_belief_with_name(\"has_water\")") }))
-	public Predicate getBeliefName(final IScope scope) throws GamaRuntimeException {
+	public MentalState getBeliefName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-				if (predicateName.equals(pred.getName())) { return pred; }
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) { return mental; }
 			}
 		}
 		return null;
@@ -939,13 +952,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base with the given name.",
 					returns = "the list of predicates.",
 					examples = { @example ("get_belief(\"has_water\")") }))
-	public IList<Predicate> getBeliefsName(final IScope scope) throws GamaRuntimeException {
+	public IList<MentalState> getBeliefsName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
-		final IList<Predicate> predicates = GamaListFactory.create();
+		final IList<MentalState> predicates = GamaListFactory.create();
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-				if (predicateName.equals(pred.getName())) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) {
+					predicates.add(mental);
 				}
 			}
 		}
@@ -963,17 +976,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base",
 					returns = "the list of predicates.",
 					examples = { @example ("get_belief(\"has_water\")") }))
-	public IList<Predicate> getBeliefs(final IScope scope) throws GamaRuntimeException {
+	public IList<MentalState> getBeliefs(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		final IList<Predicate> predicates = GamaListFactory.create();
+		final IList<MentalState> predicates = GamaListFactory.create();
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, BELIEF_BASE)) {
-				if (predicateDirect.equals(pred)) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) {
+					predicates.add(mental);
 				}
-				if (predicateDirect.equalsButNotTruth(pred)){
-					predicates.add(pred);
+				if (predicateDirect.equalsButNotTruth(mental.getPredicate())){
+					predicates.add(mental);
 				}
 			}
 		}
@@ -1008,9 +1021,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "the current intention",
 					examples = { @example ("") }))
 	public Predicate currentIntention(final IScope scope) throws GamaRuntimeException {
-		final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
+		final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 		if (intentionBase == null) { return null; }
-		if (!intentionBase.isEmpty()) { return intentionBase.lastValue(scope); }
+		if (!intentionBase.isEmpty()) {
+			return intentionBase.lastValue(scope).getPredicate(); }
 		return null;
 	}
 
@@ -1029,8 +1043,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primTestDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return getBase(scope, DESIRE_BASE).contains(predicateDirect);
-
+		if (predicateDirect != null) {
+			MentalState temp = new MentalState("Desire",predicateDirect);
+			return getBase(scope, DESIRE_BASE).contains(temp);
 		}
 		return false;
 	}
@@ -1052,7 +1067,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Object until = scope.hasArg("until") ? scope.getArg("until", IType.NONE) : null;
 		if (predicate != null) {
 			if (until == null) {
-				final List<Predicate> subintention = predicate.subintentions;
+				final List<MentalState> subintention = predicate.subintentions;
 				if (subintention != null && !subintention.isEmpty()) {
 					predicate.onHoldUntil = subintention;
 				}
@@ -1063,10 +1078,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (predicate.getSubintentions() == null) {
 					predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 				}
-				((Predicate) until).setSuperIntention(predicate);
-				predicate.onHoldUntil.add((Predicate) until);
-				predicate.getSubintentions().add((Predicate) until);
-				addToBase(scope, (Predicate) until, DESIRE_BASE);
+				MentalState tempState = new MentalState("Intention",predicate);
+				MentalState tempUntil = new MentalState("Desire",(Predicate)until);
+				((Predicate) until).setSuperIntention(tempState);
+				predicate.onHoldUntil.add(tempUntil);
+				predicate.getSubintentions().add(tempUntil);
+				addToBase(scope, tempUntil, DESIRE_BASE);
 			}
 		}
 		return true;
@@ -1106,24 +1123,27 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicate.getSubintentions() == null) {
 			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 		}
-		subpredicate.setSuperIntention(predicate);
-		predicate.getSubintentions().add(subpredicate);
+		MentalState superState = new MentalState("Intention",predicate);
+		MentalState subState = new MentalState("Desire",subpredicate);
+		subpredicate.setSuperIntention(superState);
+		predicate.getSubintentions().add(subState);
 		if (addAsDesire) {
-			addToBase(scope, subpredicate, DESIRE_BASE);
+			addToBase(scope, subState, DESIRE_BASE);
 		}
 		return true;
 	}
 
-	public static Boolean addDesire(final IScope scope, final Predicate superPredicate, final Predicate predicate) {
+	public static Boolean addDesire(final IScope scope, final MentalState superPredicate, final MentalState predicate) {
 		// Faire un test pour ne pas rajouter deux fois le m�me d�sire
-		if (superPredicate != null) {
-			if (superPredicate.getSubintentions() == null) {
-				superPredicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
+		if (superPredicate!=null && superPredicate.getPredicate() != null) {
+			if (superPredicate.getPredicate().getSubintentions() == null) {
+				superPredicate.getPredicate().subintentions = GamaListFactory.create(Types.get(PredicateType.id));
 			}
-			superPredicate.getSubintentions().add(predicate);
+			predicate.getPredicate().setSuperIntention(superPredicate);
+			superPredicate.getPredicate().getSubintentions().add(predicate);
 		}
 		addToBase(scope, predicate, DESIRE_BASE);
-		predicate.setSuperIntention(superPredicate);
+		
 		return false;
 	}
 
@@ -1135,10 +1155,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("predicate to add")),
 					@arg (
-							name = PREDICATE_TODO,
-							type = PredicateType.id,
-							optional = true,
-							doc = @doc ("add the desire as a subintention of this parameter")) },
+					name = "strength",
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc ("the stregth of the belief")),
+					@arg (
+					name = PREDICATE_TODO,
+					type = PredicateType.id,
+					optional = true,
+					doc = @doc ("add the desire as a subintention of this parameter")),},
 			doc = @doc (
 					value = "adds the predicates is in the desire base.",
 					returns = "true if it is in the base.",
@@ -1146,10 +1171,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primAddDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		if (predicateDirect != null) {
 			final Predicate superpredicate =
 					(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
-			return addDesire(scope, superpredicate, predicateDirect);
+			MentalState tempPred = new MentalState("Desire",predicateDirect);
+			MentalState tempSuper = new MentalState("Intention",superpredicate);
+			if(stre!=null){
+				tempPred.setStrength(stre);
+			}
+			return addDesire(scope, tempSuper, tempPred);
 		}
 
 		return false;
@@ -1167,12 +1199,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_desire(new_predicate(\"has_water\", true))") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	public Predicate getDesire(final IScope scope) throws GamaRuntimeException {
+	public MentalState getDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-				if (predicateDirect.equals(pred)) { return pred; }
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
@@ -1189,14 +1221,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base",
 					returns = "the list of predicates.",
 					examples = { @example ("get_desires(\"has_water\")") }))
-	public IList<Predicate> getDesires(final IScope scope) throws GamaRuntimeException {
+	public IList<MentalState> getDesires(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		final IList<Predicate> predicates = GamaListFactory.create();
+		final IList<MentalState> predicates = GamaListFactory.create();
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-				if (predicateDirect.equals(pred)) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) {
+					predicates.add(mental);
 				}
 			}
 		}
@@ -1214,11 +1246,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicates is in the belief base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_desire_with_name(\"has_water\")") }))
-	public Predicate getDesireName(final IScope scope) throws GamaRuntimeException {
+	public MentalState getDesireName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-				if (predicateName.equals(pred.getName())) { return pred; }
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) { return mental; }
 			}
 		}
 		return null;
@@ -1235,20 +1267,20 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base with the given name.",
 					returns = "the list of predicates.",
 					examples = { @example ("get_belief(\"has_water\")") }))
-	public List<Predicate> getDesiresName(final IScope scope) throws GamaRuntimeException {
+	public List<MentalState> getDesiresName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
-		final List<Predicate> predicates = GamaListFactory.create();
+		final List<MentalState> predicates = GamaListFactory.create();
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-				if (predicateName.equals(pred.getName())) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) {
+					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
 
-	public static Boolean removeBelief(final IScope scope, final Predicate pred) {
+	public static Boolean removeBelief(final IScope scope, final MentalState pred) {
 		return getBase(scope, BELIEF_BASE).remove(pred);
 	}
 
@@ -1266,7 +1298,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return removeBelief(scope, predicateDirect); }
+		if (predicateDirect != null) { 
+			MentalState temp = new MentalState("Belief",predicateDirect);
+			return removeBelief(scope, temp); 
+			}
 		return false;
 	}
 
@@ -1298,44 +1333,45 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Predicate newPredicate =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (newPredicate != null) {
+			MentalState temp = new MentalState("Belief",newPredicate);
 			// Predicate current_intention = currentIntention(scope);
 			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(newPredicate)) {
-				removeFromBase(scope, newPredicate, DESIRE_BASE);
-				removeFromBase(scope, newPredicate, INTENTION_BASE);
+				removeFromBase(scope, temp, DESIRE_BASE);
+				removeFromBase(scope, temp, INTENTION_BASE);
 			}
 			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(newPredicate)) {
-				removeFromBase(scope, newPredicate, DESIRE_BASE);
+				removeFromBase(scope, temp, DESIRE_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+				final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 				if (statementSubintention != null) {
-					if (statementSubintention.contains(newPredicate)) {
-						statementSubintention.remove(newPredicate);
+					if (statementSubintention.contains(temp)) {
+						statementSubintention.remove(temp);
 					}
 				}
-				final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 				if (statementOnHoldUntil != null) {
-					if (statementOnHoldUntil.contains(newPredicate)) {
-						statementOnHoldUntil.remove(newPredicate);
+					if (statementOnHoldUntil.contains(temp)) {
+						statementOnHoldUntil.remove(temp);
 					}
 				}
 			}
-			return addToBase(scope, newPredicate, BELIEF_BASE);
+			return addToBase(scope, temp, BELIEF_BASE);
 		}
 		return ok;
 	}
 
-	public static Boolean removeDesire(final IScope scope, final Predicate pred) {
+	public static Boolean removeDesire(final IScope scope, final MentalState pred) {
 		getBase(scope, DESIRE_BASE).remove(pred);
 		getBase(scope, INTENTION_BASE).remove(pred);
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-			final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+			final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 			if (statementSubintention != null) {
 				if (statementSubintention.contains(pred)) {
 					statementSubintention.remove(pred);
 				}
 			}
-			final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+			final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 			if (statementOnHoldUntil != null) {
 				if (statementOnHoldUntil.contains(pred)) {
 					statementOnHoldUntil.remove(pred);
@@ -1351,7 +1387,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = true,
-					doc = @doc ("predicate to add")) },
+					doc = @doc ("predicate to remove from desire base")) },
 			doc = @doc (
 					value = "removes the predicates from the desire base.",
 					returns = "true if it is in the base.",
@@ -1359,7 +1395,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return removeDesire(scope, predicateDirect); }
+		if (predicateDirect != null) { 
+			MentalState temp = new MentalState("Desire",predicateDirect);
+			return removeDesire(scope, temp);
+			}
 		return false;
 	}
 
@@ -1367,9 +1406,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_intention",
 			args = { @arg (
 					name = PREDICATE,
-					type = IType.MAP,
+					type = PredicateType.id,
 					optional = true,
-					doc = @doc ("predicate to check")) },
+					doc = @doc ("predicate to check")),
+					@arg (
+							name = "strength",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("the stregth of the belief")
+									)},
 			doc = @doc (
 					value = "check if the predicates is in the desire base.",
 					returns = "true if it is in the base.",
@@ -1378,7 +1423,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primAddIntention(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		return addToBase(scope, predicateDirect, INTENTION_BASE);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		MentalState temp = new MentalState("Intention",predicateDirect);
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		return addToBase(scope, temp, INTENTION_BASE);
 
 	}
 
@@ -1394,12 +1445,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
 	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
-	public Predicate getIntention(final IScope scope) throws GamaRuntimeException {
+	public MentalState getIntention(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-				if (predicateDirect.equals(pred)) { return pred; }
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
@@ -1416,14 +1467,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base",
 					returns = "the list of predicates.",
 					examples = { @example ("get_belief(\"has_water\")") }))
-	public IList<Predicate> getIntentions(final IScope scope) throws GamaRuntimeException {
+	public IList<MentalState> getIntentions(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		final IList<Predicate> predicates = GamaListFactory.create();
+		final IList<MentalState> predicates = GamaListFactory.create();
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-				if (predicateDirect.equals(pred)) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (predicateDirect.equals(mental.getPredicate())) {
+					predicates.add(mental);
 				}
 			}
 		}
@@ -1441,11 +1492,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicates is in the belief base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_intention_with_name(\"has_water\")") }))
-	public Predicate getIntentionName(final IScope scope) throws GamaRuntimeException {
+	public MentalState getIntentionName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-				if (predicateName.equals(pred.getName())) { return pred; }
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) { return mental; }
 			}
 		}
 		return null;
@@ -1462,29 +1513,29 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the list of predicates is in the belief base with the given name.",
 					returns = "the list of predicates.",
 					examples = { @example ("get_belief(\"has_water\")") }))
-	public List<Predicate> getIntentionsName(final IScope scope) throws GamaRuntimeException {
+	public List<MentalState> getIntentionsName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
-		final List<Predicate> predicates = GamaListFactory.create();
+		final List<MentalState> predicates = GamaListFactory.create();
 		if (predicateName != null) {
-			for (final Predicate pred : getBase(scope, INTENTION_BASE)) {
-				if (predicateName.equals(pred.getName())) {
-					predicates.add(pred);
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (predicateName.equals(mental.getPredicate().getName())) {
+					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
 
-	public static Boolean removeIntention(final IScope scope, final Predicate pred) {
+	public static Boolean removeIntention(final IScope scope, final MentalState pred) {
 		getBase(scope, INTENTION_BASE).remove(pred);
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-			final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+			final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 			if (statementSubintention != null) {
 				if (statementSubintention.contains(pred)) {
 					statementSubintention.remove(pred);
 				}
 			}
-			final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+			final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 			if (statementOnHoldUntil != null) {
 				if (statementOnHoldUntil.contains(pred)) {
 					statementOnHoldUntil.remove(pred);
@@ -1500,7 +1551,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = true,
-					doc = @doc ("predicate to add")),
+					doc = @doc ("intention's predicate to remove")),
 					@arg (
 							name = REMOVE_DESIRE_AND_INTENTION,
 							type = IType.BOOL,
@@ -1508,32 +1559,33 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							doc = @doc ("removes also desire")) },
 			doc = @doc (
 					value = "removes the predicates from the desire base.",
-					returns = "true if it is in the base.",
+					returns = "true if it is removed from the base.",
 					examples = { @example ("") }))
 	public Boolean primRemoveIntention(final IScope scope) throws GamaRuntimeException {
 
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		MentalState temp = new MentalState("Intention",predicateDirect);
 		if (predicateDirect != null) {
 			final Boolean dodesire =
 					scope.hasArg(REMOVE_DESIRE_AND_INTENTION) ? scope.getBoolArg(REMOVE_DESIRE_AND_INTENTION) : false;
-			getBase(scope, INTENTION_BASE).remove(predicateDirect);
+			getBase(scope, INTENTION_BASE).remove(temp);
 			if (dodesire) {
-				getBase(scope, DESIRE_BASE).remove(predicateDirect);
+				getBase(scope, DESIRE_BASE).remove(temp);
 			}
 			if (predicateDirect.equals(currentIntention(scope)))
 				scope.getAgent().setAttribute(CURRENT_PLAN, null);
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
+				final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
 				if (statementSubintention != null) {
-					if (statementSubintention.contains(predicateDirect)) {
-						statementSubintention.remove(predicateDirect);
+					if (statementSubintention.contains(temp)) {
+						statementSubintention.remove(temp);
 					}
 				}
-				final List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				final List<MentalState> statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
 				if (statementOnHoldUntil != null) {
-					if (statementOnHoldUntil.contains(predicateDirect)) {
-						statementOnHoldUntil.remove(predicateDirect);
+					if (statementOnHoldUntil.contains(temp)) {
+						statementOnHoldUntil.remove(temp);
 					}
 				}
 			}
@@ -1593,7 +1645,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
-			getBase(scope, BELIEF_BASE).removeAllOccurrencesOfValue(scope, predicateDirect);
+			MentalState temp = new MentalState("Belief",predicateDirect);
+			getBase(scope, BELIEF_BASE).removeAllOccurrencesOfValue(scope, temp);
 			return true;
 		}
 		return false;
@@ -1648,10 +1701,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private void createJoy(final IScope scope) {
 		// Simplement vérifier si l'agent possède à la fois la même croyance et
 		// le même désir.
-		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
-				final Emotion joy = new Emotion("joy", predTest);
-				final IAgent agentTest = predTest.getAgentCause();
+				final Emotion joy = new Emotion("joy", predTest.getPredicate());
+				final IAgent agentTest = predTest.getPredicate().getAgentCause();
 				if (agentTest != null) {
 					joy.setAgentCause(agentTest);
 				}
@@ -1660,19 +1713,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
-	private static void createJoyFromPredicate(final IScope scope, final Predicate predTest) {
+	private static void createJoyFromPredicate(final IScope scope, final MentalState predTest) {
 		if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
-			final Emotion joy = new Emotion("joy", predTest);
-			final IAgent agentTest = predTest.getAgentCause();
+			final Emotion joy = new Emotion("joy", predTest.getPredicate());
+			final IAgent agentTest = predTest.getPredicate().getAgentCause();
 			if (agentTest != null) {
 				joy.setAgentCause(agentTest);
 			}
 			addEmotion(scope, joy);
 		}else{
-			for (final Predicate pred : getBase(scope, DESIRE_BASE)) {
-				if (predTest.equalsButNotTruth(pred)){
-					final Emotion sadness = new Emotion("sadness", predTest);
-					final IAgent agentTest = predTest.getAgentCause();
+			for (final MentalState pred : getBase(scope, DESIRE_BASE)) {
+				if (predTest.getPredicate().equalsButNotTruth(pred.getPredicate())){
+					final Emotion sadness = new Emotion("sadness", predTest.getPredicate());
+					final IAgent agentTest = predTest.getPredicate().getAgentCause();
 					if (agentTest != null) {
 						sadness.setAgentCause(agentTest);
 					}
@@ -1684,11 +1737,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	private void createSadness(final IScope scope) {
 		// A améliorer en termes de rapidité de calcul
-		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-			for (final Predicate desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
-				if (predTest.equalsButNotTruth(desireTest)) {
-					final Emotion sadness = new Emotion("sadness", predTest);
-					final IAgent agentTest = predTest.getAgentCause();
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			for (final MentalState desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+				if (predTest.getPredicate().equalsButNotTruth(desireTest.getPredicate())) {
+					final Emotion sadness = new Emotion("sadness", predTest.getPredicate());
+					final IAgent agentTest = predTest.getPredicate().getAgentCause();
 					if (agentTest != null) {
 						sadness.setAgentCause(agentTest);
 					}
@@ -1699,11 +1752,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	private void createFear(final IScope scope) {
-		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-			for (final Predicate desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
-				if (predTest.equalsButNotTruth(desireTest)) {
-					final Emotion fear = new Emotion("fear", predTest);
-					final IAgent agentTest = predTest.getAgentCause();
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+			for (final MentalState desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+				if (predTest.getPredicate().equalsButNotTruth(desireTest.getPredicate())) {
+					final Emotion fear = new Emotion("fear", predTest.getPredicate());
+					final IAgent agentTest = predTest.getPredicate().getAgentCause();
 					if (agentTest != null) {
 						fear.setAgentCause(agentTest);
 					}
@@ -1714,10 +1767,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	private void createHope(final IScope scope) {
-		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predTest)) {
-				final Emotion hope = new Emotion("hope", predTest);
-				final IAgent agentTest = predTest.getAgentCause();
+				final Emotion hope = new Emotion("hope", predTest.getPredicate());
+				final IAgent agentTest = predTest.getPredicate().getAgentCause();
 				if (agentTest != null) {
 					hope.setAgentCause(agentTest);
 				}
@@ -1731,35 +1784,37 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
 		for (final Emotion emo : emoTemps) {
 			if (emo.getName().equals("hope")) {
-				if (emo.getAbout() != null
-						&& getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(emo.getAbout())) {
-					Emotion satisfaction = null;
-					Emotion joy = null;
-					final IAgent agentTest = emo.getAgentCause();
-					if (emo.getNoIntensity()) {
-						satisfaction = new Emotion("satisfaction", emo.getAbout());
-						if (agentTest != null) {
-							satisfaction.setAgentCause(agentTest);
+				if (emo.getAbout() != null){
+					MentalState temp = new MentalState("Belief",emo.getAbout());
+						if(getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(temp)) {
+						Emotion satisfaction = null;
+						Emotion joy = null;
+						final IAgent agentTest = emo.getAgentCause();
+						if (emo.getNoIntensity()) {
+							satisfaction = new Emotion("satisfaction", emo.getAbout());
+							if (agentTest != null) {
+								satisfaction.setAgentCause(agentTest);
+							}
+							joy = new Emotion("joy", emo.getAbout());
+							if (agentTest != null) {
+								joy.setAgentCause(agentTest);
+							}
+						} else {
+							// On décide de transmettre l'intensité de l'émotion
+							// précédente.
+							satisfaction = new Emotion("satisfaction", emo.getIntensity(), emo.getAbout());
+							if (agentTest != null) {
+								satisfaction.setAgentCause(agentTest);
+							}
+							joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
+							if (agentTest != null) {
+								joy.setAgentCause(agentTest);
+							}
 						}
-						joy = new Emotion("joy", emo.getAbout());
-						if (agentTest != null) {
-							joy.setAgentCause(agentTest);
-						}
-					} else {
-						// On décide de transmettre l'intensité de l'émotion
-						// précédente.
-						satisfaction = new Emotion("satisfaction", emo.getIntensity(), emo.getAbout());
-						if (agentTest != null) {
-							satisfaction.setAgentCause(agentTest);
-						}
-						joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
-						if (agentTest != null) {
-							joy.setAgentCause(agentTest);
-						}
+						addEmotion(scope, satisfaction);
+						addEmotion(scope, joy);
+						removeEmotion(scope, emo);
 					}
-					addEmotion(scope, satisfaction);
-					addEmotion(scope, joy);
-					removeEmotion(scope, emo);
 				}
 			}
 		}
@@ -1770,35 +1825,37 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
 		for (final Emotion emo : emoTemps) {
 			if (emo.getName().equals("fear")) {
-				if (emo.getAbout() != null
-						&& getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(emo.getAbout())) {
-					Emotion fearConfirmed = null;
-					Emotion sadness = null;
-					final IAgent agentTest = emo.getAgentCause();
-					if (emo.getNoIntensity()) {
-						fearConfirmed = new Emotion("fear_confirmed", emo.getAbout());
-						if (agentTest != null) {
-							fearConfirmed.setAgentCause(agentTest);
+				if (emo.getAbout() != null){
+					MentalState temp = new MentalState("Belief",emo.getAbout());
+						if(getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(temp)) {
+						Emotion fearConfirmed = null;
+						Emotion sadness = null;
+						final IAgent agentTest = emo.getAgentCause();
+						if (emo.getNoIntensity()) {
+							fearConfirmed = new Emotion("fear_confirmed", emo.getAbout());
+							if (agentTest != null) {
+								fearConfirmed.setAgentCause(agentTest);
+							}
+							sadness = new Emotion("sadness", emo.getAbout());
+							if (agentTest != null) {
+								sadness.setAgentCause(agentTest);
+							}
+						} else {
+							// On décide de transmettre l'intensité de l'émotion
+							// précédente.
+							fearConfirmed = new Emotion("fearConfirmed", emo.getIntensity(), emo.getAbout());
+							if (agentTest != null) {
+								fearConfirmed.setAgentCause(agentTest);
+							}
+							sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
+							if (agentTest != null) {
+								sadness.setAgentCause(agentTest);
+							}
 						}
-						sadness = new Emotion("sadness", emo.getAbout());
-						if (agentTest != null) {
-							sadness.setAgentCause(agentTest);
-						}
-					} else {
-						// On décide de transmettre l'intensité de l'émotion
-						// précédente.
-						fearConfirmed = new Emotion("fearConfirmed", emo.getIntensity(), emo.getAbout());
-						if (agentTest != null) {
-							fearConfirmed.setAgentCause(agentTest);
-						}
-						sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
-						if (agentTest != null) {
-							sadness.setAgentCause(agentTest);
-						}
+						addEmotion(scope, fearConfirmed);
+						addEmotion(scope, sadness);
+						removeEmotion(scope, emo);
 					}
-					addEmotion(scope, fearConfirmed);
-					addEmotion(scope, sadness);
-					removeEmotion(scope, emo);
 				}
 			}
 		}
@@ -1810,17 +1867,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final Emotion emo : emoTemps) {
 			if (emo.getName().equals("fear")) {
 				if (emo.getAbout() != null) {
-					for (final Predicate beliefTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-						if (emo.getAbout().equalsButNotTruth(beliefTest)) {
+					for (final MentalState beliefTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+						if (emo.getAbout().equalsButNotTruth(beliefTest.getPredicate())) {
 							Emotion relief = null;
 							Emotion joy = null;
 							final IAgent agentTest = emo.getAgentCause();
 							if (emo.getNoIntensity()) {
-								relief = new Emotion("relief", beliefTest);
+								relief = new Emotion("relief", beliefTest.getPredicate());
 								if (agentTest != null) {
 									relief.setAgentCause(agentTest);
 								}
-								joy = new Emotion("joy", beliefTest);
+								joy = new Emotion("joy", beliefTest.getPredicate());
 								if (agentTest != null) {
 									joy.setAgentCause(agentTest);
 								}
@@ -1852,17 +1909,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final Emotion emo : emoTemps) {
 			if (emo.getName().equals("hope")) {
 				if (emo.getAbout() != null) {
-					for (final Predicate beliefTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-						if (emo.getAbout().equalsButNotTruth(beliefTest)) {
+					for (final MentalState beliefTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+						if (emo.getAbout().equalsButNotTruth(beliefTest.getPredicate())) {
 							Emotion disappointment = null;
 							Emotion sadness = null;
 							final IAgent agentTest = emo.getAgentCause();
 							if (emo.getNoIntensity()) {
-								disappointment = new Emotion("disappointment", beliefTest);
+								disappointment = new Emotion("disappointment", beliefTest.getPredicate());
 								if (agentTest != null) {
 									disappointment.setAgentCause(agentTest);
 								}
-								sadness = new Emotion("sadness", beliefTest);
+								sadness = new Emotion("sadness", beliefTest.getPredicate());
 								if (agentTest != null) {
 									sadness.setAgentCause(agentTest);
 								}
@@ -1939,28 +1996,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	private void createPrideAndShameAndAdmirationAndReproach(final IScope scope) {
-		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-			if (predTest.getAgentCause() != null && predTest.getAgentCause().equals(scope.getAgent())) {
-				if (predTest.getPraiseworthiness() > 0.0) {
-					final Emotion pride = new Emotion("pride", predTest);
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			if (predTest.getPredicate().getAgentCause() != null && predTest.getPredicate().getAgentCause().equals(scope.getAgent())) {
+				if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
+					final Emotion pride = new Emotion("pride", predTest.getPredicate());
 					pride.setAgentCause(scope.getAgent());
 					addEmotion(scope, pride);
 				}
-				if (predTest.getPraiseworthiness() < 0.0) {
-					final Emotion shame = new Emotion("shame", predTest);
+				if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
+					final Emotion shame = new Emotion("shame", predTest.getPredicate());
 					shame.setAgentCause(scope.getAgent());
 					addEmotion(scope, shame);
 				}
 			} else {
-				if (predTest.getAgentCause() != null) {
-					if (predTest.getPraiseworthiness() > 0.0) {
-						final Emotion admiration = new Emotion("admiration", predTest);
-						admiration.setAgentCause(predTest.getAgentCause());
+				if (predTest.getPredicate().getAgentCause() != null) {
+					if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
+						final Emotion admiration = new Emotion("admiration", predTest.getPredicate());
+						admiration.setAgentCause(predTest.getPredicate().getAgentCause());
 						addEmotion(scope, admiration);
 					}
-					if (predTest.getPraiseworthiness() < 0.0) {
-						final Emotion reproach = new Emotion("reproach", predTest);
-						reproach.setAgentCause(predTest.getAgentCause());
+					if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
+						final Emotion reproach = new Emotion("reproach", predTest.getPredicate());
+						reproach.setAgentCause(predTest.getPredicate().getAgentCause());
 						addEmotion(scope, reproach);
 					}
 				}
@@ -2143,7 +2200,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// Peut-être mettre un replace emotion.
 
 	// Réalisation des outils de manipulation des incertitudes
-	public static Boolean addUncertainty(final IScope scope, final Predicate predicate) {
+	public static Boolean addUncertainty(final IScope scope, final MentalState predicate) {
 		if (getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(predicate)) {
 			removeFromBase(scope, predicate, BELIEF_BASE);
 		}
@@ -2164,8 +2221,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primAddUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-
-		return addUncertainty(scope, predicateDirect);
+		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		return addUncertainty(scope, temp);
 
 	}
 
@@ -2180,18 +2237,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicates is in the uncertainty base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_uncertainty(new_predicate(\"has_water\", true))") }))
-	public Predicate getUncertainty(final IScope scope) throws GamaRuntimeException {
+	public MentalState getUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
-			for (final Predicate pred : getBase(scope, UNCERTAINTY_BASE)) {
-				if (predicateDirect.equals(pred)) { return pred; }
+			for (final MentalState pred : getBase(scope, UNCERTAINTY_BASE)) {
+				if (predicateDirect.equals(pred.getPredicate())) { return pred; }
 			}
 		}
 		return null;
 	}
 
-	public static Boolean hasUncertainty(final IScope scope, final Predicate predicateDirect) {
+	public static Boolean hasUncertainty(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
 	}
 
@@ -2209,11 +2266,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primTestUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return hasUncertainty(scope, predicateDirect); }
+		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		if (predicateDirect != null) { return hasUncertainty(scope, temp); }
 		return false;
 	}
 
-	public static Boolean removeUncertainty(final IScope scope, final Predicate pred) {
+	public static Boolean removeUncertainty(final IScope scope, final MentalState pred) {
 		return getBase(scope, UNCERTAINTY_BASE).remove(pred);
 	}
 
@@ -2231,7 +2289,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		if (predicateDirect != null) { return removeUncertainty(scope, predicateDirect); }
+		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		if (predicateDirect != null) { return removeUncertainty(scope, temp); }
 		return false;
 	}
 
@@ -2472,32 +2531,32 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
-				if (predTest1.equals(predTest2)) {
+		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
+				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
 				}
-				if (predTest1.equalsButNotTruth(predTest2)) {
+				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
 				}
 			}
 		}
-		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
-			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
-				if (predTest1.equals(predTest2)) {
+		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
+				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
 				}
-				if (predTest1.equalsButNotTruth(predTest2)) {
+				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
 				}
 			}
 		}
-		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-				if (predTest1.equals(predTest2)) {
+		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
 				}
-				if (predTest1.equalsButNotTruth(predTest2)) {
+				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
 				}
 			}

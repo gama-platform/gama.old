@@ -203,9 +203,11 @@ public class Operators {
 	@doc(value = "create a new predicate from two others by including them as subintentions", examples = @example(value = "predicate1 and predicate2", test = false))
 	public static Predicate and(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_and_" + pred2.getName());
-		final List<Predicate> tempList = new ArrayList<Predicate>();
-		tempList.add(pred1);
-		tempList.add(pred2);
+		final List<MentalState> tempList = new ArrayList<MentalState>();
+		MentalState tempPred1 = new MentalState("Intention",pred1);
+		MentalState tempPred2 = new MentalState("Intention",pred2);
+		tempList.add(tempPred1);
+		tempList.add(tempPred2);
 		tempPred.setSubintentions(tempList);
 		final Map<String, Object> tempMap = new HashMap();
 		tempMap.put("and", true);
@@ -217,9 +219,11 @@ public class Operators {
 	@doc(value = "create a new predicate from two others by including them as subintentions. It's an exclusive \"or\" ", examples = @example(value = "predicate1 or predicate2", test = false))
 	public static Predicate or(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_or_" + pred2.getName());
-		final List<Predicate> tempList = new ArrayList<Predicate>();
-		tempList.add(pred1);
-		tempList.add(pred2);
+		final List<MentalState> tempList = new ArrayList<MentalState>();
+		MentalState tempPred1 = new MentalState("Intention",pred1);
+		MentalState tempPred2 = new MentalState("Intention",pred2);
+		tempList.add(tempPred1);
+		tempList.add(tempPred2);
 		tempPred.setSubintentions(tempList);
 		final Map<String, Object> tempMap = new HashMap();
 		tempMap.put("or", true);
@@ -235,7 +239,7 @@ public class Operators {
 	}
 
 	@operator(value = "get_super_intention", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	public static Predicate getSuperIntention(final Predicate pred1) {
+	public static MentalState getSuperIntention(final Predicate pred1) {
 		if (pred1.getSuperIntention() != null) {
 			return pred1.getSuperIntention();
 		} else {
@@ -555,4 +559,57 @@ public class Operators {
 
 	// Faire en sorte que l'on puisse utiliser les opérateurs seulement avec le
 	// nom de l'agent ?
+	
+	
+	
+	@operator(value = "set_modality", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "change the modality value of the given mental state", examples = @example(value = "mental state set_modality belief", test = false))
+	public static MentalState setModalitity(final MentalState mental, final String modality){
+			mental.setModality(modality);
+		return mental;
+	}
+	
+	@operator(value = "set_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "change the predicate value of the given mental state", examples = @example(value = "mental state set_predicate pred1", test = false))
+	public static MentalState setPredicate(final MentalState mental, final Predicate predicate){
+			mental.setPredicate(predicate);
+		return mental;
+	}
+	
+	@operator(value = "set_strength", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "change the strength value of the given mental state", examples = @example(value = "mental state set_predicate pred1", test = false))
+	public static MentalState setStrength(final MentalState mental, final Double strength){
+			mental.setStrength(strength);
+		return mental;
+	}
+	
+	@operator(value = "get_modality", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the modality value of the given mental state", examples = @example(value = "get_modality(mental_state1)", test = false))
+	public static String getModality(final MentalState mental) {
+		if(mental!=null){
+			return mental.getModality();
+		}else{
+			return null;
+		}
+	}
+
+	@operator(value = "get_predicate", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the predicate value of the given mental state", examples = @example(value = "get_predicate(mental_state1)", test = false))
+	public static Predicate getPredicate(final MentalState mental) {
+		if(mental!=null){
+			return mental.getPredicate();
+		}else{
+			return null;
+		}
+	}
+	
+	@operator(value = "get_strength", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the strength value of the given mental state", examples = @example(value = "get_strength(mental_state1)", test = false))
+	public static Double getStrength(final MentalState mental) {
+		if(mental!=null){
+			return mental.getStrength();
+		}else{
+			return null;
+		}
+	}
 }
