@@ -83,7 +83,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				GAMA.getGui().editModel(exception.getEditorContext());
+				GAMA.getGui().editModel(null, exception.getEditorContext());
 			}
 
 			@Override
@@ -192,7 +192,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 			clipboard.dispose();
 		});
-		result.put("Show in editor", () -> GAMA.getGui().editModel(item.getEditorContext()));
+		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getEditorContext()));
 		result.put("Report issue on GitHub", () -> this.reportError(item));
 		return result;
 	}

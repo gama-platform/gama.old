@@ -37,9 +37,9 @@ public class Predicate implements IValue {
 	Double priority = 1.0;
 	Double date;
 	// Object onHoldUntil;
-	List<Predicate> onHoldUntil;
-	List<Predicate> subintentions;
-	Predicate superIntention;
+	List<MentalState> onHoldUntil;
+	List<MentalState> subintentions;
+	MentalState superIntention;
 	Double praiseworthiness = 0.0;
 	IAgent agentCause;
 	boolean everyPossibleValues = false;
@@ -74,12 +74,12 @@ public class Predicate implements IValue {
 	}
 
 	@getter("subintentions")
-	public List<Predicate> getSubintentions() {
+	public List<MentalState> getSubintentions() {
 		return subintentions;
 	}
 
 	@getter("superIntention")
-	public Predicate getSuperIntention() {
+	public MentalState getSuperIntention() {
 		return superIntention;
 	}
 
@@ -88,7 +88,7 @@ public class Predicate implements IValue {
 		return agentCause;
 	}
 
-	public List<Predicate> getOnHoldUntil() {
+	public List<MentalState> getOnHoldUntil() {
 		return onHoldUntil;
 	}
 
@@ -100,7 +100,7 @@ public class Predicate implements IValue {
 		return praiseworthiness;
 	}
 	
-	public void setSuperIntention(final Predicate superPredicate) {
+	public void setSuperIntention(final MentalState superPredicate) {
 		this.superIntention = superPredicate;
 	}
 
@@ -108,7 +108,7 @@ public class Predicate implements IValue {
 	// this.onHoldUntil = onHoldUntil;
 	// }
 
-	public void setOnHoldUntil(final List<Predicate> onHoldUntil) {
+	public void setOnHoldUntil(final List<MentalState> onHoldUntil) {
 		this.onHoldUntil = onHoldUntil;
 	}
 
@@ -129,7 +129,7 @@ public class Predicate implements IValue {
 		this.date = date;
 	}
 
-	public void setSubintentions(final List<Predicate> subintentions) {
+	public void setSubintentions(final List<MentalState> subintentions) {
 		this.subintentions = subintentions;
 	}
 
@@ -446,7 +446,11 @@ public class Predicate implements IValue {
 			if (other.superIntention != null) {
 				return false;
 			}
-		} else if (!superIntention.partialEquality(other.superIntention)) {
+		} else if (superIntention.getPredicate() == null) {
+			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+				return false;
+			}
+		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
 			return false;
 		}
 		if (is_true != other.is_true) {
@@ -497,7 +501,11 @@ public class Predicate implements IValue {
 			if (other.superIntention != null) {
 				return false;
 			}
-		} else if (!superIntention.equals(other.superIntention)) {
+		} else if (superIntention.getPredicate() == null) {
+			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+				return false;
+			}
+		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
 			return false;
 		}
 		if (is_true != other.is_true) {
@@ -548,8 +556,12 @@ public class Predicate implements IValue {
 				return false;
 			}
 		}
-		if (superIntention != null) {
-			if (!superIntention.equals(other.superIntention)) {
+		if (superIntention == null) {
+			if (other.superIntention!=null && other.superIntention != null) {
+				return false;
+			}
+		} else if (superIntention.getPredicate() != null) {
+			if (!superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
 				return false;
 			}
 		}
@@ -607,7 +619,11 @@ public class Predicate implements IValue {
 			if (other.superIntention != null) {
 				return false;
 			}
-		} else if (!superIntention.partialEquality(other.superIntention)) {
+		} else if (superIntention.getPredicate() == null) {
+			if (other.superIntention != null) {
+				return false;
+			}
+		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
 			return false;
 		}
 		if (is_true != other.is_true) {

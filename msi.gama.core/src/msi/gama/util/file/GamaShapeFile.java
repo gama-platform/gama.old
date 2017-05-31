@@ -295,7 +295,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus().beginSubStatus("Reading file" + getName(scope));
+		scope.getGui().getStatus(scope).beginSubStatus("Reading file" + getName(scope));
 		ShapefileDataStore store = null;
 		final File file = getFile(scope);
 		final IList list = getBuffer();
@@ -311,7 +311,7 @@ public class GamaShapeFile extends GamaGisFile {
 				while (reader.hasNext()) {
 					index++;
 					if (index % 20 == 0)
-						scope.getGui().getStatus().setSubStatusCompletion(index / size);
+						scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
@@ -337,7 +337,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().getStatus().endSubStatus("Reading file " + getName(scope));
+			scope.getGui().getStatus(scope).endSubStatus("Reading file " + getName(scope));
 		}
 		if (size > list.size()) {
 			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "

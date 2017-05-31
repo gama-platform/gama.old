@@ -342,7 +342,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		public void widgetSelected(final SelectionEvent e) {
 			final MenuItem mi = (MenuItem) e.widget;
 			final URI uri = (URI) mi.getData("uri");
-			GAMA.getGui().editModel(uri);
+			GAMA.getGui().editModel(null, uri);
 		}
 	};
 
