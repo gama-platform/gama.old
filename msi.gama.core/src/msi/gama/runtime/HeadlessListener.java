@@ -164,7 +164,7 @@ public class HeadlessListener implements IGui {
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment() {
+	public void cleanAfterExperiment(final IScope scope) {
 		// System.out.println("[Headless] Clean after experiment.");
 		try {
 			outputWriter.get().flush();
@@ -387,7 +387,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole() {
+	public IConsoleDisplayer getConsole(final IScope scope) {
 		return console;
 	}
 

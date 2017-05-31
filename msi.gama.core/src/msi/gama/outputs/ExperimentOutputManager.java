@@ -123,8 +123,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	}
 
 	@Override
-	public synchronized void dispose() {
-		GAMA.getGui().cleanAfterExperiment();
+	public synchronized void dispose(final IScope scope) {
+		GAMA.getGui().cleanAfterExperiment(scope);
 		super.dispose();
 	}
 

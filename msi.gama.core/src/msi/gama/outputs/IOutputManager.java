@@ -13,6 +13,7 @@ package msi.gama.outputs;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IStepable;
+import msi.gama.runtime.IScope;
 
 /**
  * The class IOutputManager.
@@ -44,5 +45,7 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 
 	// end-hqnghi
 	void forceUpdateOutputs();
+
+	void dispose(IScope scope);
 
 }

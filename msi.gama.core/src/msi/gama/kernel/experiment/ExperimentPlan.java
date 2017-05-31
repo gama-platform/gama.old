@@ -336,7 +336,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		agent = pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
+		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
 		addDefaultParameters();
 	}
 
@@ -439,7 +439,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public void open() {
+	public synchronized void open() {
 		createAgent();
 		scope.getGui().prepareForExperiment(scope, this);
 		agent.schedule(agent.getScope());
@@ -457,7 +457,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			open();
 		} else {
 			agent.reset();
-			agent.getScope().getGui().getConsole().eraseConsole(false);
+			agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
 			agent.init(agent.getScope());
 
 			agent.getScope().getGui().updateParameterView(agent.getScope(), this);

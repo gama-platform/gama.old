@@ -71,7 +71,7 @@ public interface IGui {
 
 	IStatusDisplayer getStatus(IScope scope);
 
-	IConsoleDisplayer getConsole();
+	IConsoleDisplayer getConsole(IScope scope);
 
 	IGamaView showView(IScope scope, String viewId, String name, int code);
 
@@ -112,7 +112,7 @@ public interface IGui {
 
 	void prepareForExperiment(IScope scope, IExperimentPlan exp);
 
-	void cleanAfterExperiment();
+	void cleanAfterExperiment(IScope scope);
 
 	void editModel(IScope scope, Object eObject);
 

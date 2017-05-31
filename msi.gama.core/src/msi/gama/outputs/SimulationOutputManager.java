@@ -68,4 +68,10 @@ public class SimulationOutputManager extends AbstractOutputManager {
 
 	}
 
+	@Override
+	public void dispose(IScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

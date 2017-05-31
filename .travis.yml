@@ -22,7 +22,8 @@ addons:
 script: 
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export SSHPASS=$USER_PWD 
-- bash ./prepare.sh
+- ./compile.sh	
+after_success: bash ./prepare.sh
 branches:
   only:
     - master

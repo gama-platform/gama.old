@@ -53,9 +53,6 @@ else
 		fi			
 		build  
 		deploy 
-	else
-		compile
-	fi
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_website_files
 	fi	

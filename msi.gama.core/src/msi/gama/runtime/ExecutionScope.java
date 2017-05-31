@@ -303,7 +303,7 @@ public class ExecutionScope implements IScope {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentSymbol.getTrace(this));
-		this.getGui().getConsole().informConsole(sb.toString(), getRoot());
+		this.getGui().getConsole(this).informConsole(sb.toString(), getRoot());
 	}
 
 	@Override
