@@ -155,7 +155,8 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public IExpression compileExpression(String expression) {
-		return GAML.compileExpression(expression, this.getSimulation(), true);	
+		System.out.println("expression " + expression);
+		return GAML.compileExpression(expression, this.getSimulation(), false);	
 	}
 	public Object evaluateExpression(IExpression exp)
 	{

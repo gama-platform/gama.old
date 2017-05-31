@@ -11,7 +11,8 @@ Require-Bundle: com.ibm.icu,
  msi.gama.ext,
  simtools.gaml.extensions.traffic,
  ummisco.gaml.extensions.maths,
- irit.gaml.extensions.database
+ irit.gaml.extensions.database,
+ femto.st.gama.mpi;bundle-version="1.7.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: 
  msi.gama.headless.classLoader,
