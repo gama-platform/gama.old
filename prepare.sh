@@ -41,7 +41,6 @@ MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 echo $MSG
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
-	clean
 	build 	
 	deploy  
 	release  
