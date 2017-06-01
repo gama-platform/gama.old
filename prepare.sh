@@ -42,6 +42,7 @@ echo $MESSAGE
 echo $MSG
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
 	build 	
+	clean
 	deploy  
 	release  
 	commit_website_files
