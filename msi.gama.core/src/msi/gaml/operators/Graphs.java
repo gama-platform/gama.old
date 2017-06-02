@@ -518,6 +518,45 @@ public class Graphs {
 		}
 		return results;
 	}
+	
+	@operator (
+			value = "connected_components_of",
+			type = IType.LIST,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the connected components of a graph, i.e. the list of all edges (if the boolean is true) or vertices (if the boolean is false) that are in the connected components. ",
+			examples = { @example (
+					value = "graph my_graph <- graph([]);"),
+					@example (
+							value = "connected_components_of (my_graph, true)",
+							equals = "the list of all the components as list",
+							test = false) },
+			see = { "alpha_index", "connectivity_index", "nb_cycles" })
+	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+
+		ConnectivityInspector ci;
+		// there is an error with connectivity inspector of JGrapht....
+		ci = new ConnectivityInspector((DirectedGraph) graph);
+		final IList<IList> results = GamaListFactory.create(Types.LIST);
+		for (final Object obj : ci.connectedSets()) {
+			if (edge) {
+				IList edges = GamaListFactory.create(scope, graph.getType().getContentType());
+				for (Object v : (Set)obj) {
+					edges.addAll(graph.edgesOf(v));
+				}
+				
+				results.add(Containers.remove_duplicates(scope, edges));
+				
+			}
+			else
+				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+		}
+		return results;
+	}
 
 	@operator (
 			value = "main_connected_component",

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.geotools.grid.Lines;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -2303,14 +2304,8 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			Geometry nodedLineStrings = geoms.firstValue(scope).getInnerGeometry();
-
-			for (final Object obj : geoms.iterable(scope)) {
-				final Geometry g = ((IShape) obj).getInnerGeometry();
-				if (g instanceof LineString) {
-					nodedLineStrings = nodedLineStrings.union(g);
-				}
-			}
+			IShape line = Spatial.Operators.union(scope, geoms);
+			Geometry nodedLineStrings = line.getInnerGeometry(); 
 			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
 
 			for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
