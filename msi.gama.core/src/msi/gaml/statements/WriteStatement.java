@@ -76,7 +76,7 @@ public class WriteStatement extends AbstractStatement {
 			if (color != null) {
 				rgb = (GamaColor) color.value(scope);
 			}
-			scope.getGui().getConsole().informConsole(mes, scope.getRoot(), rgb);
+			scope.getGui().getConsole(scope).informConsole(mes, scope.getRoot(), rgb);
 		}
 		return mes;
 	}

@@ -67,7 +67,7 @@ public class StatusStatement extends AbstractStatement {
 		if (agent != null && !agent.dead()) {
 			final Object o = message.value(scope);
 			final String msg = o == null ? null : Cast.asString(scope, o);
-			scope.getGui().getStatus().setStatus(msg, color == null ? null : Cast.asColor(scope, color.value(scope)));
+			scope.getGui().getStatus(scope).setStatus(msg, color == null ? null : Cast.asColor(scope, color.value(scope)));
 		}
 		return mes;
 	}

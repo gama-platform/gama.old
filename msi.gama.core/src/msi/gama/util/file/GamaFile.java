@@ -97,7 +97,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		if (!automaticallyFetchFromURL()) { return null; }
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
 		try {
-			scope.getGui().getStatus().beginSubStatus(status);
+			scope.getGui().getStatus(scope).beginSubStatus(status);
 
 			final URLConnection connection = url.openConnection();
 			final long size = connection.getContentLengthLong();
@@ -112,7 +112,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 					while ((length = r.read(b)) != -1) {
 						if (sizeKnown) {
 							doneSoFar += 2048;
-							scope.getGui().getStatus()
+							scope.getGui().getStatus(scope)
 									.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
 						}
 						fw.write(b, 0, length);
@@ -122,7 +122,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus(status);
+			scope.getGui().getStatus(scope).endSubStatus(status);
 		}
 		return pathName;
 
@@ -293,7 +293,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().getFromIndicesList(scope, indices);
+		return (V) getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override

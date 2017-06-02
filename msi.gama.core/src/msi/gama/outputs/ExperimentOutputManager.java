@@ -95,7 +95,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 			layout = Cast.asInt(scope, exp.value(scope));
 		}
 		if (super.init(scope)) {
-			scope.getGui().applyLayout(getLayout());
+			scope.getGui().applyLayout(scope, getLayout());
 			if (GamaPreferences.Runtime.CORE_AUTO_RUN.getValue()) {
 				GAMA.startFrontmostExperiment();
 			}
@@ -123,8 +123,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	}
 
 	@Override
-	public synchronized void dispose() {
-		GAMA.getGui().cleanAfterExperiment();
+	public synchronized void dispose(final IScope scope) {
+		GAMA.getGui().cleanAfterExperiment(scope);
 		super.dispose();
 	}
 

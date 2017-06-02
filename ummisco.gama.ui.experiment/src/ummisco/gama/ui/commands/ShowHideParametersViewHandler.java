@@ -17,7 +17,7 @@ public class ShowHideParametersViewHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().showParameterView(GAMA.getExperiment());
+		GAMA.getGui().showParameterView(null, GAMA.getExperiment());
 		return null;
 	}
 }

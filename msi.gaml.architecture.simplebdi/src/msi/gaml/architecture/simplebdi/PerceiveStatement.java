@@ -125,6 +125,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	
 		if (_when == null || Cast.asBool(scope, _when.value(scope))) {
 			final Object obj = target.value(scope);
 			Object inArg = null;
@@ -169,11 +170,14 @@ public class PerceiveStatement extends AbstractStatementSequence {
 								: obj instanceof IAgent ? transformAgentToList((IAgent) obj, scope) : null;
 						while (runners.hasNext() && (result = scope.execute(sequence, runners.next(), null)).passed()) {
 						}
-						return result.getValue();
+						if(result!=null){
+							return result.getValue();
+						}
 					}
 				}
 			}
 		}
+		
 		return null;
 
 	}

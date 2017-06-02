@@ -141,7 +141,7 @@ public class GamaGridFile extends GamaGisFile {
 			AbstractGridCoverage2DReader store = null;
 			try {
 				if (fillBuffer) {
-					scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope));
+					scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
 				}
 				// Necessary to compute it here, because it needs to be passed
 				// to the Hints
@@ -200,7 +200,7 @@ public class GamaGridFile extends GamaGisFile {
 				final double cmyP = cellHeightP / 2;
 
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
-					scope.getGui().getStatus().setSubStatusCompletion(i / (double) n);
+					scope.getGui().getStatus(scope).setSubStatusCompletion(i / (double) n);
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
 					p.x = originX + xx * cellWidth + cmx;
@@ -275,7 +275,7 @@ public class GamaGridFile extends GamaGisFile {
 				if (store != null) {
 					store.dispose();
 				}
-				scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope));
+				scope.getGui().getStatus(scope).endSubStatus("Opening file " + getName(scope));
 			}
 		}
 

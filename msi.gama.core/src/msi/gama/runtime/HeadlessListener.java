@@ -87,7 +87,7 @@ public class HeadlessListener implements IGui {
 	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
 	@Override
-	public void closeDialogs() {}
+	public void closeDialogs(final IScope scope) {}
 
 	@Override
 	public IAgent getHighlightedAgent() {
@@ -98,7 +98,7 @@ public class HeadlessListener implements IGui {
 	public void setHighlightedAgent(final IAgent a) {}
 
 	@Override
-	public IGamaView showView(final String viewId, final String name, final int code) {
+	public IGamaView showView(final IScope scope, final String viewId, final String name, final int code) {
 		return null;
 	}
 
@@ -113,7 +113,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperimentPlan exp) {}
+	public void showParameterView(final IScope scope, final IExperimentPlan exp) {}
 
 	@Override
 	public void debug(final String string) {
@@ -121,7 +121,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void runtimeError(final GamaRuntimeException g) {
+	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
 		System.out.println("Runtime error: " + g.getMessage());
 	}
 
@@ -131,7 +131,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentPlan exp) {}
+	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {}
 
 	@Override
 	public boolean openSimulationPerspective(final IModel model, final String id, final boolean immediately) {
@@ -155,16 +155,16 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void editModel(final Object eObject) {}
+	public void editModel(final IScope scope, final Object eObject) {}
 
 	@Override
-	public void updateParameterView(final IExperimentPlan exp) {}
+	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {}
 
 	@Override
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment() {
+	public void cleanAfterExperiment(final IScope scope) {
 		// System.out.println("[Headless] Clean after experiment.");
 		try {
 			outputWriter.get().flush();
@@ -184,7 +184,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
-	public void updateSpeedDisplay(final Double d, final boolean notify) {}
+	public void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {}
 
 	/**
 	 * Method getMetaDataProvider()
@@ -254,7 +254,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
-	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {}
+	public void closeSimulationViews(final IScope scope, final boolean andOpenModelingPerspective, final boolean immediately) {}
 
 	/**
 	 * Method getDisplayDescriptionFor()
@@ -272,7 +272,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#getExperimentState()
 	 */
 	@Override
-	public String getExperimentState() {
+	public String getExperimentState(final String uid) {
 		return RUNNING; // ???
 	}
 
@@ -282,7 +282,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState(java.lang.String)
 	 */
 	@Override
-	public void updateExperimentState(final String state) {}
+	public void updateExperimentState(final IScope scope, final String state) {}
 
 	/**
 	 * Method updateSimulationState()
@@ -290,7 +290,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState()
 	 */
 	@Override
-	public void updateExperimentState() {}
+	public void updateExperimentState(final IScope scope) {}
 
 	@Override
 	public boolean openSimulationPerspective(final boolean immediately) {
@@ -382,20 +382,20 @@ public class HeadlessListener implements IGui {
 	};
 
 	@Override
-	public IStatusDisplayer getStatus() {
+	public IStatusDisplayer getStatus(final IScope scope) {
 		return status;
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole() {
+	public IConsoleDisplayer getConsole(final IScope scope) {
 		return console;
 	}
 
 	@Override
-	public void clearErrors() {}
+	public void clearErrors(final IScope scope) {}
 
 	@Override
-	public void run(final Runnable opener) {
+	public void run(final IScope scope, final Runnable opener) {
 		if (opener != null)
 			opener.run();
 	}
@@ -404,10 +404,10 @@ public class HeadlessListener implements IGui {
 	public void setFocusOn(final IShape o) {}
 
 	@Override
-	public void applyLayout(final int layout) {}
+	public void applyLayout(final IScope scope, final int layout) {}
 
 	@Override
-	public void displayErrors(final List<GamaRuntimeException> list) {}
+	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
 
 	@Override
 	public ILocation getMouseLocationInModel() {
@@ -439,6 +439,6 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void openInteractiveConsole() {}
+	public void openInteractiveConsole(final IScope scope) {}
 
 }

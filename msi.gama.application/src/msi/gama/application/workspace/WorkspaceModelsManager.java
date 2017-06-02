@@ -155,7 +155,7 @@ public class WorkspaceModelsManager {
 				if ( en == null ) {
 					// System.out
 					// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
-					GAMA.getGui().editModel(file);
+					GAMA.getGui().editModel(null, file);
 				} else {
 					// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
 					GAMA.getGui().runModel(file, en);

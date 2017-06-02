@@ -19,7 +19,7 @@ public class ShowInteractiveConsole extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().openInteractiveConsole();
+		GAMA.getGui().openInteractiveConsole(null);
 		return null;
 	}
 

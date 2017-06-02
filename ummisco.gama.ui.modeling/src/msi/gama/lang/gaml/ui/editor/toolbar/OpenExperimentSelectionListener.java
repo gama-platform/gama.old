@@ -68,7 +68,7 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 	void gotoEditor(final GamaRuntimeException exception) {
 		final EObject o = exception.getEditorContext();
 		if (o != null) {
-			WorkbenchHelper.asyncRun(() -> GAMA.getGui().editModel(o));
+			WorkbenchHelper.asyncRun(() -> GAMA.getGui().editModel(null, o));
 		}
 
 	}

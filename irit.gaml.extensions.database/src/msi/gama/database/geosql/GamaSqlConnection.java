@@ -370,7 +370,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			reader = queryInfo.getRecordSet().features();
 			final int i = 0;
 			while (reader.hasNext()) {
-				scope.getGui().getStatus().setSubStatusCompletion(index++ / size);
+				scope.getGui().getStatus(scope).setSubStatusCompletion(index++ / size);
 				final Feature feature = reader.next();
 
 				// System.out.println("Record " + i++ + ": " +
@@ -396,7 +396,7 @@ public class GamaSqlConnection extends GamaGisFile {
 					e.printStackTrace();
 				}
 			}
-			scope.getGui().getStatus().endSubStatus("Reading table " + tableName);
+			scope.getGui().getStatus(scope).endSubStatus("Reading table " + tableName);
 		}
 	}
 

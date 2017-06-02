@@ -64,7 +64,7 @@ import msi.gaml.types.IType;
 		@facet(name = RuleStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("Threshold linked to the emotion.")),
 		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
 				IType.INT }, optional = true, doc = @doc("setting this facet to 'true' will allow 'perceive' to use concurrency with a parallel_bdi architecture; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is true by default.")),
-		@facet(name = RuleStatement.PRIORITY, type = { IType.FLOAT,
+		@facet(name = RuleStatement.STRENGTH, type = { IType.FLOAT,
 				IType.INT }, optional = true, doc = @doc("The priority of the predicate added as a desire")),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("The name of the rule")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.", examples = {
@@ -98,7 +98,7 @@ public class RuleStatement extends AbstractStatement {
 	public static final String REMOVE_DESIRES = "remove_desires";
 	public static final String REMOVE_EMOTIONS = "remove_emotions";
 	public static final String REMOVE_UNCERTAINTIES = "remove_uncertainties";
-	public static final String PRIORITY = "priority";
+	public static final String STRENGTH = "strength";
 	public static final String THRESHOLD = "threshold";
 
 	final IExpression when;
@@ -128,7 +128,7 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression removeDesires;
 	final IExpression removeEmotions;
 	final IExpression removeUncertainties;
-	final IExpression priority;
+	final IExpression strength;
 	final IExpression threshold;
 
 	public RuleStatement(final IDescription desc) {
@@ -159,7 +159,7 @@ public class RuleStatement extends AbstractStatement {
 		removeDesires = getFacet(RuleStatement.REMOVE_DESIRES);
 		removeEmotions = getFacet(RuleStatement.REMOVE_EMOTIONS);
 		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
-		priority = getFacet(RuleStatement.PRIORITY);
+		strength = getFacet(RuleStatement.STRENGTH);
 		threshold = getFacet(RuleStatement.THRESHOLD);
 		parallel = getFacet(IKeyword.PARALLEL);
 	}
@@ -174,10 +174,16 @@ public class RuleStatement extends AbstractStatement {
 				&& removeUncertainties == null)
 			return null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
-			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, (Predicate) belief.value(scope))) {
-				if (desire == null || SimpleBdiArchitecture.hasDesire(scope, (Predicate) desire.value(scope))) {
+			MentalState tempBelief = new MentalState("Belief");
+			if(belief!=null){tempBelief.setPredicate((Predicate) belief.value(scope));}
+			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief)) {
+				MentalState tempDesire = new MentalState("Desire");
+				if(desire!=null){tempDesire.setPredicate((Predicate) desire.value(scope));}
+				if (desire == null || SimpleBdiArchitecture.hasDesire(scope, tempDesire)) {
+					MentalState tempUncertainty = new MentalState("Uncertainty");
+					if(uncertainty!=null){tempUncertainty.setPredicate((Predicate) uncertainty.value(scope));}
 					if (uncertainty == null
-							|| SimpleBdiArchitecture.hasUncertainty(scope, (Predicate) uncertainty.value(scope))) {
+							|| SimpleBdiArchitecture.hasUncertainty(scope, tempUncertainty)) {
 						if (emotion == null
 								|| SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
 							if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
@@ -194,14 +200,19 @@ public class RuleStatement extends AbstractStatement {
 																			.value(scope)) {
 												if (newDesire != null) {
 													final Predicate newDes = (Predicate) newDesire.value(scope);
-													if (priority != null) {
-														newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
+													MentalState tempNewDesire = new MentalState("Desire",newDes);
+													if (strength != null) {
+														tempNewDesire.setStrength(Cast.asFloat(scope, strength.value(scope)));
 													}
-													SimpleBdiArchitecture.addDesire(scope, null, newDes);
+													SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
 												}
 												if (newBelief != null) {
 													final Predicate newBel = (Predicate) newBelief.value(scope);
-													SimpleBdiArchitecture.addBelief(scope, newBel);
+													MentalState tempNewBelief = new MentalState("Belief",newBel);
+													if (strength != null) {
+														tempNewBelief.setStrength(Cast.asFloat(scope, strength.value(scope)));
+													}
+													SimpleBdiArchitecture.addBelief(scope, tempNewBelief);
 												}
 												if (newEmotion != null) {
 													final Emotion newEmo = (Emotion) newEmotion.value(scope);
@@ -209,20 +220,27 @@ public class RuleStatement extends AbstractStatement {
 												}
 												if (newUncertainty != null) {
 													final Predicate newUncert = (Predicate) newUncertainty.value(scope);
-													SimpleBdiArchitecture.addUncertainty(scope, newUncert);
+													MentalState tempNewUncertainty = new MentalState("Uncertainty",newUncert);
+													if (strength != null) {
+														tempNewUncertainty.setStrength(Cast.asFloat(scope, strength.value(scope)));
+													}
+													SimpleBdiArchitecture.addUncertainty(scope, tempNewUncertainty);
 												}
 												if (removeBelief != null) {
 													final Predicate removBel = (Predicate) removeBelief.value(scope);
-													SimpleBdiArchitecture.removeBelief(scope, removBel);
+													MentalState tempRemoveBelief = new MentalState("Belief",removBel);
+													SimpleBdiArchitecture.removeBelief(scope, tempRemoveBelief);
 												}
 												if (removeDesire != null) {
 													final Predicate removeDes = (Predicate) removeDesire.value(scope);
-													SimpleBdiArchitecture.removeDesire(scope, removeDes);
+													MentalState tempRemoveDesire = new MentalState("Desire",removeDes);
+													SimpleBdiArchitecture.removeDesire(scope, tempRemoveDesire);
 												}
 												if (removeIntention != null) {
 													final Predicate removeInt = (Predicate) removeIntention
 															.value(scope);
-													SimpleBdiArchitecture.removeIntention(scope, removeInt);
+													MentalState tempRemoveIntention = new MentalState("Intention",removeInt);
+													SimpleBdiArchitecture.removeIntention(scope, tempRemoveIntention);
 												}
 												if (removeEmotion != null) {
 													final Emotion removeEmo = (Emotion) removeEmotion.value(scope);
@@ -231,25 +249,31 @@ public class RuleStatement extends AbstractStatement {
 												if (removeUncertainty != null) {
 													final Predicate removUncert = (Predicate) removeUncertainty
 															.value(scope);
-													SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
+													MentalState tempRemoveUncertainty = new MentalState("Uncertainty",removUncert);
+													SimpleBdiArchitecture.removeUncertainty(scope, tempRemoveUncertainty);
 												}
 
 												if (newDesires != null) {
 													final List<Predicate> newDess = (List<Predicate>) newDesires
 															.value(scope);
-													if (priority != null) {
-														for (Predicate newDes : newDess)
-															newDes.setPriority(
-																	Cast.asFloat(scope, priority.value(scope)));
+													for (Predicate newDes : newDess){
+														MentalState tempDesires = new MentalState("Desire",newDes);
+														if (strength != null) {
+															tempDesires.setStrength(Cast.asFloat(scope, strength.value(scope)));
+														}
+														SimpleBdiArchitecture.addDesire(scope, null, tempDesires);
 													}
-													for (Predicate newDes : newDess)
-														SimpleBdiArchitecture.addDesire(scope, null, newDes);
 												}
 												if (newBeliefs != null) {
 													final List<Predicate> newBels = (List<Predicate>) newBeliefs
 															.value(scope);
-													for (Predicate newBel : newBels)
-														SimpleBdiArchitecture.addBelief(scope, newBel);
+													for (Predicate newBel : newBels){
+														MentalState tempBeliefs = new MentalState("Belief",newBel);
+														if (strength != null) {
+															tempBeliefs.setStrength(Cast.asFloat(scope, strength.value(scope)));
+														}
+														SimpleBdiArchitecture.addBelief(scope, tempBeliefs);
+													}
 												}
 												if (newEmotions != null) {
 													final List<Emotion> newEmos = (List<Emotion>) newEmotions
@@ -260,20 +284,29 @@ public class RuleStatement extends AbstractStatement {
 												if (newUncertainties != null) {
 													final List<Predicate> newUncerts = (List<Predicate>) newUncertainties
 															.value(scope);
-													for (Predicate newUncert : newUncerts)
-														SimpleBdiArchitecture.addUncertainty(scope, newUncert);
+													for (Predicate newUncert : newUncerts){
+														MentalState tempUncertainties = new MentalState("Uncertainty",newUncert);
+														if (strength != null) {
+															tempUncertainties.setStrength(Cast.asFloat(scope, strength.value(scope)));
+														}
+														SimpleBdiArchitecture.addUncertainty(scope, tempUncertainties);
+													}
 												}
 												if (removeBeliefs != null) {
 													final List<Predicate> removBels = (List<Predicate>) removeBeliefs
 															.value(scope);
-													for (Predicate removBel : removBels)
-														SimpleBdiArchitecture.removeBelief(scope, removBel);
+													for (Predicate removBel : removBels){
+														MentalState tempRemoveBeliefs = new MentalState("Belief",removBel);
+														SimpleBdiArchitecture.removeBelief(scope, tempRemoveBeliefs);
+													}
 												}
 												if (removeDesires != null) {
 													final List<Predicate> removeDess = (List<Predicate>) removeDesires
 															.value(scope);
-													for (Predicate removeDes : removeDess)
-														SimpleBdiArchitecture.removeDesire(scope, removeDes);
+													for (Predicate removeDes : removeDess){
+														MentalState tempRemoveDesires = new MentalState("Desire",removeDes);
+														SimpleBdiArchitecture.removeDesire(scope, tempRemoveDesires);
+													}
 												}
 												if (removeEmotions != null) {
 													final List<Emotion> removeEmos = (List<Emotion>) removeEmotions
@@ -284,8 +317,10 @@ public class RuleStatement extends AbstractStatement {
 												if (removeUncertainties != null) {
 													final List<Predicate> removUncerts = (List<Predicate>) removeUncertainties
 															.value(scope);
-													for (Predicate removUncert : removUncerts)
-														SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
+													for (Predicate removUncert : removUncerts){
+														MentalState tempRemoveUncertainties = new MentalState("Uncertainty",removUncert);
+														SimpleBdiArchitecture.removeUncertainty(scope, tempRemoveUncertainties);
+													}
 												}
 											}
 										}
@@ -302,21 +337,24 @@ public class RuleStatement extends AbstractStatement {
 	
 	private boolean hasBeliefs(IScope scope, List<Predicate> predicates) {
 		for (Predicate p : predicates){
-			if (!SimpleBdiArchitecture.hasBelief(scope, p))
+			MentalState temp = new MentalState("Belief",p);
+			if (!SimpleBdiArchitecture.hasBelief(scope, temp))
 				return false;
 		}
 		return true;
 	}
 	private boolean hasDesires(IScope scope, List<Predicate> predicates) {
 		for (Predicate p : predicates){
-			if (!SimpleBdiArchitecture.hasDesire(scope, p))
+			MentalState temp = new MentalState("Desire",p);
+			if (!SimpleBdiArchitecture.hasDesire(scope, temp))
 				return false;
 		}
 		return true;
 	}
 	private boolean hasUncertainties(IScope scope, List<Predicate> predicates) {
 		for (Predicate p : predicates){
-			if (!SimpleBdiArchitecture.hasUncertainty(scope, p))
+			MentalState temp = new MentalState("Uncertainty",p);
+			if (!SimpleBdiArchitecture.hasUncertainty(scope, temp))
 				return false;
 		}
 		return true;

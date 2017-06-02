@@ -169,7 +169,7 @@ public class GAMA {
 			controller.close();
 		}
 		controllers.clear();
-		getGui().closeSimulationViews(andOpenModelingPerspective, immediately);
+		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class GAMA {
 			return true;
 		}
 		if (scope != null && scope.getGui() != null)
-			scope.getGui().runtimeError(g);
+			scope.getGui().runtimeError(scope, g);
 		g.setReported();
 
 		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();

@@ -209,11 +209,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			scope.getGui().setSelectedAgent(null);
 			scope.getGui().setHighlightedAgent(null);
-			scope.getGui().getStatus().resumeStatus();
+			scope.getGui().getStatus(scope).resumeStatus();
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something
 			// else in the dynamics of closing/opening
-			scope.getGui().closeDialogs();
+			scope.getGui().closeDialogs(scope);
 		}
 		// simulation = null;
 		// populationOfSimulations = null;
@@ -253,8 +253,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) {
 			outputs.init(scope);
 		}
-		scope.getGui().getStatus().informStatus("Experiment ready");
-		scope.getGui().updateExperimentState();
+		scope.getGui().getStatus(scope).informStatus("Experiment ready");
+		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
 
@@ -270,7 +270,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
 		GAMA.closeExperiment(getSpecies());
-		GAMA.getGui().closeSimulationViews(true, false);
+		GAMA.getGui().closeSimulationViews(scope, true, false);
 		return null;
 	}
 
@@ -393,7 +393,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (initialMinimumDuration == null) {
 			initialMinimumDuration = d;
 		}
-		scope.getGui().updateSpeedDisplay(currentMinimumDuration * 1000, false);
+		scope.getGui().updateSpeedDisplay(scope, currentMinimumDuration * 1000, false);
 	}
 
 	/**
@@ -598,7 +598,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public void informStatus() {
 		if (!getSpecies().isBatch() && getSimulation() != null) {
-			getScope().getGui().getStatus().informStatus(null, "status.clock");
+			getScope().getGui().getStatus(getScope()).informStatus(null, "status.clock");
 		}
 	}
 
