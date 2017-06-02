@@ -496,7 +496,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc (
-			value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
+			value = "returns the connected components of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
 			examples = { @example (
 					value = "graph my_graph <- graph([]);"),
 					@example (
@@ -506,7 +506,7 @@ public class Graphs {
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException
-				.error("In the nb_connected_components_of operator, the graph should not be null!", scope); }
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -519,6 +519,42 @@ public class Graphs {
 		return results;
 	}
 
+	@operator (
+			value = "main_connected_component",
+			type = IType.GRAPH,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the sub-graph corresponding to the main connected components of the graph",
+			examples = { 
+					@example (
+							value = "main_connected_components (my_graph)",
+							equals = "the sub-graph corresponding to the main connected components of the graph",
+							test = false) },
+			see = { "connected_components_of"})
+	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+
+		IList<IList> cc = connectedComponentOf(scope, graph);
+		IGraph newGraph = (IGraph) graph.copy(scope);
+		IList mainCC = null;
+		int size = 0;
+		for (IList c : cc) {
+			if (c.size() > size) {
+				size = c.size();
+				mainCC = c;
+			}
+		}
+		Set vs = graph.vertexSet();
+		vs.removeAll(mainCC);
+		for (Object v : vs) {
+			newGraph.removeAllEdges(graph.edgesOf(v));
+			newGraph.removeVertex(v);
+		}
+		return newGraph;
+	}
+	
 	@operator (
 			value = "maximal_cliques_of",
 			type = IType.LIST,
