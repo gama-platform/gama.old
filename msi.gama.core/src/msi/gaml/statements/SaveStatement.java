@@ -580,6 +580,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 					}
 				} else {
+					if (header) {
+						fw.write(item.serialize(true).replace("]", "").replace("[",""));
+						fw.write(Strings.LN);
+					}
 					for (int i = 0; i < values.size() - 1; i++) {
 						String val = Cast.toGaml(values.get(i)).replace(';', ',');
 						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
