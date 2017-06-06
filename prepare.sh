@@ -47,7 +47,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
 	release  
 	commit_website_files
 else
-	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
+	if  [[ ${MESSAGE} == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
 		fi 
@@ -57,7 +57,7 @@ else
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
+	if  [[ ${MESSAGE} == *"ci release"* ]]; then	
 		release 
 	fi	
 fi
