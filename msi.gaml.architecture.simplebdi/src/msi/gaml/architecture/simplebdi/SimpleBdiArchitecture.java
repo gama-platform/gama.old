@@ -241,6 +241,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			while (loop_instantaneous_plans) {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
+				agent.setAttribute(PLAN_BASE, _plans);
 				final GamaList<MentalState> intentionBase = (GamaList<MentalState>) (scope.hasArg(INTENTION_BASE)
 						? scope.getListArg(INTENTION_BASE) : (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
 				final Double persistenceCoefficientPlans =
@@ -719,6 +720,58 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public List<BDIPlan> getPlans(final IScope scope) {
 		if (_plans.size() > 0) { return _plans; }
 		return null;
+	}
+	
+	//faire des actions get_plan("name") et is_current_plan("name")
+	@action(name = "get_plan",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("the name of the planto get"))},
+			doc= @doc(
+					value = "get the first plan with the given name",
+					returns = "a BDIPlan",
+					examples = { @example ("get_plan(name)")}))
+	public BDIPlan getPlan(final IScope scope){
+		final String namePlan =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		for(BDIPlan tempPlan : _plans){
+			if(tempPlan.getPlanStatement().getName().equals(namePlan)){return tempPlan;}
+		}
+		return null;		
+	}
+	
+	@action(name="is_current_plan",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("the name of the plan to test"))},
+			doc= @doc(
+					value = "tell if the current plan has the same name as tested",
+					returns = "true if the current plan has the same name",
+					examples = { @example ("is_current_plan(name)")}))
+	public Boolean isCurrentPlan(IScope scope){
+		final String namePlan =
+				(String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		for(BDIPlan tempPlan : _plans){
+			if(tempPlan.getPlanStatement().getName().equals(namePlan)){return true;}
+		}
+		return false;	
+	}
+	
+	@action (
+			name = "get_current_plan",
+			doc = @doc (
+					value = "get the current plan.",
+					returns = "the current plans.",
+					examples = { @example ("get_current_plan()") }))
+	public BDIPlan getCurrentPlans(final IScope scope) {
+		final IAgent agent = getCurrentAgent(scope);
+		SimpleBdiPlanStatement plan = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
+		BDIPlan result = new BDIPlan(plan);
+		return result;
 	}
 
 	public static GamaList<MentalState> getBase(final IScope scope, final String basename) {

@@ -612,4 +612,17 @@ public class Operators {
 			return null;
 		}
 	}
+	
+	//faire un operateur get_plan_name qui permet de ressortir le nom d'un plan
+	@operator(value = "get_plan_name", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the name of a given plan", examples = @example(value = "get_plan_name(agent.current_plan)", test = false))
+	public static String getPlanName(final BDIPlan plan){
+		if(plan!=null && plan.getPlanStatement()!=null){
+			return plan.getPlanStatement().getName();
+		}else{
+			return null;
+		}
+	}
+
+	
 }
