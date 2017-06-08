@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotools.grid.Lines;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -2387,6 +2386,23 @@ public abstract class Spatial {
 			final Geometry geomSimp = DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(), distanceTolerance);
 			if (geomSimp != null && !geomSimp.isEmpty() && geomSimp.isSimple()) { return new GamaShape(g1, geomSimp); }
 			return g1.copy(scope);
+		}
+		
+		@operator (
+				value = "with_precision",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A geometry corresponding to the rounding of points of the operand considering a given precison.",
+				examples = { @example (
+						value = "self with_precision 2",
+						equals = "the geometry resulting from the rounding of points of the geometry with a precision of 0.1.",
+						test = false) })
+		public static IShape withPrecision(final IScope scope, final IShape g1, final Integer precision) {
+			if (g1 == null || g1.getInnerGeometry() == null) { return g1; }
+			double scale = Math.pow(10, precision);
+			PrecisionModel pm = new PrecisionModel(scale);
+			return new GamaShape(GeometryPrecisionReducer.reduce(g1.getInnerGeometry(), pm));
 		}
 
 	}
