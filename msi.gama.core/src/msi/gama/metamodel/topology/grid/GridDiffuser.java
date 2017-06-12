@@ -263,9 +263,9 @@ public class GridDiffuser {
 		final int kCenterX = kCols / 2;
 		final int kCenterY = kRows / 2;
 
-		for (int i = 0; i < nbRows; ++i) // output rows
+		for (int i = 0; i < nbCols; ++i) // output rows
 		{
-			for (int j = 0; j < nbCols; ++j) // output columns
+			for (int j = 0; j < nbRows; ++j) // output columns
 			{
 				double value_to_redistribute = 0;
 				final ArrayList<int[]> non_masked_cells = new ArrayList<int[]>();
