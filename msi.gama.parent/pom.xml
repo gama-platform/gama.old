@@ -219,7 +219,7 @@
 		<module>../ummisco.gama.serialize</module>
 		<module>../ummisco.gama.network</module>
 		<module>../ummisco.gaml.extensions.maths</module>
-		<module>../ummisco.gaml.extensions.rjava</module>
+		
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
 
