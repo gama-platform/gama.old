@@ -378,10 +378,21 @@ public class Predicate implements IValue {
 	}
 
 	@Override
-	public IValue copy(final IScope scope) throws GamaRuntimeException {
+	public Predicate copy(final IScope scope) throws GamaRuntimeException {
 		return new Predicate(name, priority, new LinkedHashMap<String, Object>(values));
 	}
 
+	//Faire un copy propre
+	public Predicate copy() throws GamaRuntimeException {
+		if(values!=null && agentCause!=null){
+			return new Predicate(name, priority, new LinkedHashMap<String, Object>(values),is_true,agentCause);
+		}
+		if(values!=null){
+			return new Predicate(name, priority, new LinkedHashMap<String, Object>(values),is_true);
+		}
+		return new Predicate(name);
+	}
+	
 	public void updateLifetime() {
 		if (this.lifetime > 0 && !this.isUpdated) {
 			this.lifetime = this.lifetime - 1;

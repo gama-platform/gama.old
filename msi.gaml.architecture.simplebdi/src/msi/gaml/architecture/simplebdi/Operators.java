@@ -160,43 +160,51 @@ public class Operators {
 	@operator(value = "set_agent_cause", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the agentCause value of the given predicate", examples = @example(value = "predicate set_agent_cause agentA", test = false))
 	public static Predicate withAgentCause(final Predicate predicate, final IAgent agent) throws GamaRuntimeException {
-		predicate.agentCause = agent;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.setAgentCause(agent);
+		return temp;
 	}
 
 	@operator(value = "set_truth", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the is_true value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
 	public static Predicate withTruth(final Predicate predicate, final Boolean truth) throws GamaRuntimeException {
-		predicate.is_true = truth;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.is_true = truth;
+		return temp;
 	}
 
 	@operator(value = "with_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the praiseworthiness value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
 	public static Predicate withPraise(final Predicate predicate, final Double praise) throws GamaRuntimeException {
-		predicate.setPraiseworthiness(praise);
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.setPraiseworthiness(praise);
+		return temp;
 	}
 	
 	@operator(value = "with_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the priority of the given predicate", examples = @example(value = "predicate with_priority 2", test = false))
 	public static Predicate withPriority(final Predicate predicate, final Double priority) throws GamaRuntimeException {
-		predicate.priority = priority;
-		return predicate;
+		//Penser à l'enlever car inutile avec la force des états mentaux
+		Predicate temp = predicate.copy();
+		temp.priority = priority;
+		return temp;
 	}
 
 	@operator(value = "with_values", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_values [\"time\"::10]", test = false))
 	public static Predicate withValues(final Predicate predicate, final Map values) throws GamaRuntimeException {
-		predicate.values = values;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.setValues(values);
+		return temp;
 	}
 
 	@operator(value = "with_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_lifetime 10", test = false))
 	public static Predicate withValues(final Predicate predicate, final int lifetime) throws GamaRuntimeException {
-		predicate.lifetime = lifetime;
-		return predicate;
+		//à changer plus tard, à appliquer aux états mentaux
+		Predicate temp = predicate.copy();
+		temp.lifetime = lifetime;
+		return temp;
 	}
 
 	@operator(value = "and", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
