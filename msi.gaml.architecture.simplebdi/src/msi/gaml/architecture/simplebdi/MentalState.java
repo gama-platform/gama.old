@@ -11,12 +11,15 @@ import msi.gaml.types.Types;
 
 @vars({@var(name = "modality", type = IType.STRING),
 	@var(name = "predicate", type = IType.NONE),
-	@var(name = "strength", type = IType.FLOAT)})
+	@var(name = "strength", type = IType.FLOAT),
+	@var(name = "lifetime", type = IType.INT)})
 public class MentalState implements IValue {
 
 	String modality;
 	Predicate predicate;
 	Double strength;
+	int lifetime = -1;
+	boolean isUpdated = false;
 	
 	@getter("modality")
 	public String getModality(){
@@ -33,6 +36,11 @@ public class MentalState implements IValue {
 		return strength;
 	}
 	
+	@getter("lifetime")
+	public int getLifeTime(){
+		return lifetime;
+	}
+	
 	public void setModality(String mod){
 		this.modality=mod;
 	}
@@ -43,6 +51,17 @@ public class MentalState implements IValue {
 	
 	public void setStrength(Double stre){
 		this.strength=stre;
+	}
+	
+	public void setLifeTime(int life){
+		this.lifetime=life;
+	}
+	
+	public void updateLifetime(){
+		if (this.lifetime > 0 && !this.isUpdated) {
+			this.lifetime = this.lifetime - 1;
+			this.isUpdated = true;
+		}
 	}
 	
 	public MentalState(){
@@ -73,6 +92,21 @@ public class MentalState implements IValue {
 		this.strength=stre;
 	}
 	
+	public MentalState(String mod, Predicate pred, int life){
+		super();
+		this.modality=mod;
+		this.predicate=pred;
+		this.lifetime=life;
+	}
+	
+	public MentalState(String mod, Predicate pred, Double stre, int life){
+		super();
+		this.modality=mod;
+		this.predicate=pred;
+		this.strength=stre;
+		this.lifetime=life;
+	}
+	
 	@Override
 	public String toString() {
 		return serialize(true);
@@ -80,7 +114,7 @@ public class MentalState implements IValue {
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		return modality + "(" + predicate +","+strength+")";
+		return modality + "(" + predicate +","+strength+","+lifetime+")";
 	}
 
 	@Override
@@ -90,7 +124,7 @@ public class MentalState implements IValue {
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		return modality + "(" + predicate +","+strength+")";
+		return modality + "(" + predicate +","+strength+","+lifetime+")";
 	}
 
 	@Override

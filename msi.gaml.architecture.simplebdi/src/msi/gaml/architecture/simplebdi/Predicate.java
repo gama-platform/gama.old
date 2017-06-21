@@ -382,7 +382,6 @@ public class Predicate implements IValue {
 		return new Predicate(name, priority, new LinkedHashMap<String, Object>(values));
 	}
 
-	//Faire un copy propre
 	public Predicate copy() throws GamaRuntimeException {
 		if(values!=null && agentCause!=null){
 			return new Predicate(name, priority, new LinkedHashMap<String, Object>(values),is_true,agentCause);

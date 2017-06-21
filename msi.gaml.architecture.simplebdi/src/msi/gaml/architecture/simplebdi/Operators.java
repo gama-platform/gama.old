@@ -201,7 +201,7 @@ public class Operators {
 	@operator(value = "with_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_lifetime 10", test = false))
 	public static Predicate withValues(final Predicate predicate, final int lifetime) throws GamaRuntimeException {
-		//à changer plus tard, à appliquer aux états mentaux
+		//inutile car dans les états mentaux
 		Predicate temp = predicate.copy();
 		temp.lifetime = lifetime;
 		return temp;
@@ -585,9 +585,16 @@ public class Operators {
 	}
 	
 	@operator(value = "set_strength", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "change the strength value of the given mental state", examples = @example(value = "mental state set_predicate pred1", test = false))
+	@doc(value = "change the strength value of the given mental state", examples = @example(value = "mental state set_strength 1.0", test = false))
 	public static MentalState setStrength(final MentalState mental, final Double strength){
 			mental.setStrength(strength);
+		return mental;
+	}
+	
+	@operator(value = "set_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "change the lifetime value of the given mental state", examples = @example(value = "mental state set_lifetime 1", test = false))
+	public static MentalState setLifetime(final MentalState mental, final int life){
+			mental.setLifeTime(life);
 		return mental;
 	}
 	
@@ -621,7 +628,16 @@ public class Operators {
 		}
 	}
 	
-	//faire un operateur get_plan_name qui permet de ressortir le nom d'un plan
+	@operator(value = "get_lifetime", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the lifetime value of the given mental state", examples = @example(value = "get_lifetime(mental_state1)", test = false))
+	public static int getLifetime(final MentalState mental) {
+		if(mental!=null){
+			return mental.getLifeTime();
+		}else{
+			return -1;
+		}
+	}
+	
 	@operator(value = "get_plan_name", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
 	@doc(value = "get the name of a given plan", examples = @example(value = "get_plan_name(agent.current_plan)", test = false))
 	public static String getPlanName(final BDIPlan plan){

@@ -65,7 +65,8 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
 				IType.INT }, optional = true, doc = @doc("setting this facet to 'true' will allow 'perceive' to use concurrency with a parallel_bdi architecture; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is true by default.")),
 		@facet(name = RuleStatement.STRENGTH, type = { IType.FLOAT,
-				IType.INT }, optional = true, doc = @doc("The priority of the predicate added as a desire")),
+				IType.INT }, optional = true, doc = @doc("The stregth of the mental state created")),
+		@facet(name = "lifetime", type = IType.INT, optional = true, doc = @doc("the lifetime value of the mental state created")),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("The name of the rule")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.", examples = {
 		@example("rule belief: new_predicate(\"test\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
@@ -130,6 +131,7 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression removeUncertainties;
 	final IExpression strength;
 	final IExpression threshold;
+	final IExpression lifetime;
 
 	public RuleStatement(final IDescription desc) {
 		super(desc);
@@ -161,6 +163,7 @@ public class RuleStatement extends AbstractStatement {
 		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
 		strength = getFacet(RuleStatement.STRENGTH);
 		threshold = getFacet(RuleStatement.THRESHOLD);
+		lifetime = getFacet("lifetime");
 		parallel = getFacet(IKeyword.PARALLEL);
 	}
 
@@ -204,6 +207,9 @@ public class RuleStatement extends AbstractStatement {
 													if (strength != null) {
 														tempNewDesire.setStrength(Cast.asFloat(scope, strength.value(scope)));
 													}
+													if (lifetime != null){
+														tempNewDesire.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+													}
 													SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
 												}
 												if (newBelief != null) {
@@ -211,6 +217,9 @@ public class RuleStatement extends AbstractStatement {
 													MentalState tempNewBelief = new MentalState("Belief",newBel);
 													if (strength != null) {
 														tempNewBelief.setStrength(Cast.asFloat(scope, strength.value(scope)));
+													}
+													if (lifetime != null){
+														tempNewBelief.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 													}
 													SimpleBdiArchitecture.addBelief(scope, tempNewBelief);
 												}
@@ -223,6 +232,9 @@ public class RuleStatement extends AbstractStatement {
 													MentalState tempNewUncertainty = new MentalState("Uncertainty",newUncert);
 													if (strength != null) {
 														tempNewUncertainty.setStrength(Cast.asFloat(scope, strength.value(scope)));
+													}
+													if (lifetime != null){
+														tempNewUncertainty.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 													}
 													SimpleBdiArchitecture.addUncertainty(scope, tempNewUncertainty);
 												}
@@ -261,6 +273,9 @@ public class RuleStatement extends AbstractStatement {
 														if (strength != null) {
 															tempDesires.setStrength(Cast.asFloat(scope, strength.value(scope)));
 														}
+														if (lifetime != null){
+															tempDesires.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+														}
 														SimpleBdiArchitecture.addDesire(scope, null, tempDesires);
 													}
 												}
@@ -271,6 +286,9 @@ public class RuleStatement extends AbstractStatement {
 														MentalState tempBeliefs = new MentalState("Belief",newBel);
 														if (strength != null) {
 															tempBeliefs.setStrength(Cast.asFloat(scope, strength.value(scope)));
+														}
+														if (lifetime != null){
+															tempBeliefs.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 														}
 														SimpleBdiArchitecture.addBelief(scope, tempBeliefs);
 													}
@@ -288,6 +306,9 @@ public class RuleStatement extends AbstractStatement {
 														MentalState tempUncertainties = new MentalState("Uncertainty",newUncert);
 														if (strength != null) {
 															tempUncertainties.setStrength(Cast.asFloat(scope, strength.value(scope)));
+														}
+														if (lifetime != null){
+															tempUncertainties.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 														}
 														SimpleBdiArchitecture.addUncertainty(scope, tempUncertainties);
 													}
