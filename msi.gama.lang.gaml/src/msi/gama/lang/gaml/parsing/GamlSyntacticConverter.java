@@ -67,6 +67,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -193,13 +194,9 @@ public class GamlSyntacticConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	// private void addWarning(final String message, final EObject object, final
-	// Set<Diagnostic> errors) {
-	// if (!GamaPreferences.Runtime.WARNINGS_ENABLED.getValue()) {
-	// return;
-	// }
-	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
-	// message, object, null, 0, null);
+	// private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
+	// if (!GamaPreferences.Runtime.CORE_WARNINGS.getValue()) { return; }
+	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
 	// if (errors != null)
 	// errors.add(d);
 	// }
@@ -357,11 +354,12 @@ public class GamlSyntacticConverter {
 
 	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
-		// if (e.hasFacet(key)) {
-		// addWarning("Double definition of facet " + key + ". Only the last one
-		// will be considered", e.getElement(),
-		// errors);
-		// }
+		if (e.hasFacet(key)) {
+			e.setFacet(IGamlIssue.DOUBLED_CODE + key, expr);
+			// addWarning("Double definition of facet " + key + ". Only the last one will be considered",
+			// e.getElement(),
+			// errors);
+		} else
 		e.setFacet(key, expr);
 	}
 

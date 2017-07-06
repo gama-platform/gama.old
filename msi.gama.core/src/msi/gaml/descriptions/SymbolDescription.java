@@ -649,8 +649,15 @@ public abstract class SymbolDescription implements IDescription {
 			@Override
 			public boolean visit(final String facet, final IExpressionDescription expr) {
 				final FacetProto fp = proto.getFacet(facet);
+
 				if (fp == null) {
-					if (!isDo) {
+					if (facet.contains(IGamlIssue.DOUBLED_CODE)) {
+						final String correct = facet.replace(IGamlIssue.DOUBLED_CODE, "");
+						final String error = "Facet " + correct + " is declared twice. Please correct.";
+						error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, "1");
+						error(error, IGamlIssue.DUPLICATE_DEFINITION, correct, "2");
+						return false;
+					} else if (!isDo) {
 						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
 						return false;
 					}
