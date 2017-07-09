@@ -119,8 +119,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final Menu m = new Menu(b);
-				AgentsMenu.createMenuForAgent(m, agent, agent instanceof ITopLevelAgent, false,
-						AgentsMenu.HIGHLIGHT_ACTION);
+				AgentsMenu.createMenuForAgent(m, agent, agent instanceof ITopLevelAgent, false);
 				m.setVisible(true);
 			}
 
