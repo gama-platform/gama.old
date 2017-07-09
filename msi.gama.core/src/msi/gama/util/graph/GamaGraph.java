@@ -29,6 +29,7 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.WeightedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.HamiltonianCycle;
 import org.jgrapht.alg.KShortestPaths;
@@ -79,7 +80,7 @@ import one.util.streamex.StreamEx;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGraph<V, E> implements IGraph<V, E> {
-
+ 
 	protected final Map<V, _Vertex<V, E>> vertexMap;
 	protected final Map<E, _Edge<V, E>> edgeMap;
 	protected boolean directed;
@@ -1059,6 +1060,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 		return c.isGraphConnected();
 	}
+	
+	@Override
+	public Boolean hasCycle() {
+		CycleDetector<V, E> c;
+		if (directed) {
+			c = new CycleDetector((DirectedGraph) this);
+		} else {
+			return true;
+		}
+		return c.detectCycles();
+	}
+
 
 	@Override
 	public boolean isDirected() {

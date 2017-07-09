@@ -86,7 +86,10 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 
 	@getter("connected")
 	public abstract Boolean getConnected();
-
+	
+	@getter("has_cycle")
+	public abstract Boolean hasCycle();
+	
 	public abstract boolean isDirected();
 
 	public abstract void setDirected(final boolean b);

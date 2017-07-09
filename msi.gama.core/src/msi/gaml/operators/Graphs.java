@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
@@ -1766,6 +1768,50 @@ public class Graphs {
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
 	}
+	
+
+	@operator (
+			value = "strahler",
+					content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+					category = { IOperatorCategory.GRAPH, IConcept.EDGE })
+	@doc (
+			value = "retur for each edge, its strahler number")
+	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
+		GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
+		if (graph == null || graph.isEmpty(scope)) return results;
+		if (!graph.getConnected() || graph.hasCycle()) {
+			throw GamaRuntimeException
+				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope); 
+		}
+		
+		List currentEdges = (List) graph.getEdges().stream().filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0).collect(Collectors.toList());
+		while(!currentEdges.isEmpty()) {
+			List newList = new ArrayList<>();
+			for (Object e : currentEdges) {
+				List previousEdges = inEdgesOf(scope, graph, graph.getEdgeSource(e));
+				List nextEdges = outEdgesOf(scope, graph, graph.getEdgeTarget(e));
+				if (nextEdges.isEmpty()) {
+					results.put(e, 1);
+					newList.addAll(previousEdges);	
+				} else {
+					boolean notCompleted = nextEdges.stream().anyMatch(a -> !results.containsKey(a));
+					if (notCompleted) {
+						newList.add(e);
+					} else {
+						List<Integer> vals = (List<Integer>) nextEdges.stream().map(a-> results.get(a)).collect(Collectors.toList());
+						Integer maxVal = Collections.max(vals);
+						int nbIt = Collections.frequency(vals, maxVal);
+						if (nbIt > 1)results.put(e, maxVal+1);
+						else results.put(e, maxVal);
+						newList.addAll(previousEdges);	
+					}
+				}
+			}
+			currentEdges = newList;
+		}
+		return results;
+	}
+	
 
 	// TODO "complete" (pour créer un graphe complet)
 
