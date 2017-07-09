@@ -309,8 +309,22 @@
                   visible="true">
             </separator>
             <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
+                  label="Manage outputs...">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+               <dynamic
+                     class="ummisco.gama.ui.menus.OutputsMenu"
+                     id="ummisco.gama.ui.experiment.outputs.menu">
+               </dynamic>
+            </menu>
+            <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
-                  label="Arrange Display Views...">
+                  label="Arrange outputs...">
                <command
                      commandId="msi.gama.application.layoutDisplays"
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"

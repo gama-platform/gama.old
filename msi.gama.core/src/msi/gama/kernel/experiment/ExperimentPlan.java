@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
-
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.BatchOutput;
@@ -46,7 +44,6 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ContainerHelper;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -336,7 +333,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
+		agent = pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
 		addDefaultParameters();
 	}
 
@@ -642,6 +639,41 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 	}
 
+	@Override
+	public void pauseAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.pause();
+		}
+	}
+
+	@Override
+	public void resumeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.resume();
+		}
+	}
+
+	@Override
+	public void synchronizeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.synchronize();
+		}
+	}
+
+	@Override
+	public void unSynchronizeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.unSynchronize();
+		}
+	}
+
+	@Override
+	public void closeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.close();
+		}
+	}
+
 	/**
 	 * Same as the previous one, but forces the outputs to do one step of computation (if some values have changed)
 	 */
@@ -677,10 +709,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public Iterable<IOutputManager> getActiveOutputManagers() {
 		if (agent == null)
 			return Collections.EMPTY_LIST;
-
-		return Iterables.filter(
-				Iterables.concat(getAgent().getAllSimulationOutputs(), Collections.singleton(experimentOutputs)),
-				ContainerHelper.NOT_NULL);
+		return agent.getAllSimulationOutputs();
 
 	}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IOutputManager.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -47,5 +46,17 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	void forceUpdateOutputs();
 
 	void dispose(IScope scope);
+
+	public Iterable<IDisplayOutput> getDisplayOutputs();
+
+	void pause();
+
+	void resume();
+
+	void synchronize();
+
+	void unSynchronize();
+
+	void close();
 
 }

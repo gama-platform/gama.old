@@ -40,8 +40,7 @@ release(){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 echo $MSG
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
-	build 	
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then 	
 	clean
 	deploy  
 	release  
@@ -51,7 +50,6 @@ else
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
 		fi 
-		build  
 		deploy 
 	fi
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	

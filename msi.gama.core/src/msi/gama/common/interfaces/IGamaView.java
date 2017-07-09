@@ -76,4 +76,6 @@ public interface IGamaView {
 
 	public void setName(String name);
 
+	public void updateToolbarState();
+
 }
