@@ -725,10 +725,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
-		return Iterables.concat(
-				Iterables.filter(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
-						ContainerHelper.NOT_NULL),
-				Collections.singletonList(getOutputManager()));
+		return Iterables.filter(
+				Iterables.concat(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
+						Collections.singletonList(getOutputManager())),
+				ContainerHelper.NOT_NULL);
 	}
 
 	/**

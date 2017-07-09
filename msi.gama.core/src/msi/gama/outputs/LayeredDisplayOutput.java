@@ -813,8 +813,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setSynchronized(final boolean sync) {
-		super.setSynchronized(sync);
 		data.setSynchronized(sync);
+		super.setSynchronized(sync);
+
 	}
 
 	@Override

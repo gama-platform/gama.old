@@ -28,6 +28,12 @@ public interface IToolbarDecoratedView {
 
 	public void createToolItems(GamaToolbar2 tb);
 
+	default void addStateListener(final StateListener listener) {};
+
+	public static interface StateListener {
+		public void updateToReflectState();
+	}
+
 	public static interface Pausable extends IToolbarDecoratedView {
 
 		public void pauseChanged();
