@@ -83,6 +83,10 @@ public class SwtGui implements IGui {
 		PreferencesHelper.initialize();
 	}
 
+	public SwtGui() {
+		updateExperimentState(null, NONE);
+	}
+
 	@Override
 	public void debug(final String msg) {
 		System.err.println(msg);
@@ -452,7 +456,8 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective, final boolean immediately) {
+	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective,
+			final boolean immediately) {
 		WorkbenchHelper.run(() -> {
 			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			final IViewReference[] views = page.getViewReferences();

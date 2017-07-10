@@ -158,7 +158,7 @@ public class BatchAgent extends ExperimentAgent {
 		scope.getGui().getStatus(scope)
 				.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
-		GAMA.getGui().updateExperimentState(scope, IGui.NOTREADY);
+		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
 	}
 

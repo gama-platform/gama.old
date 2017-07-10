@@ -206,25 +206,6 @@
                   </not>
                </visibleWhen>
             </command>
-            <command
-                  commandId="msi.gama.application.goto.simulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
-                  label="Simulation perspective"
-                  style="push"
-                  tooltip="Open simulation perspective">
-               <visibleWhen
-                     checkEnabled="false">
-                  <not>
-                     <reference
-                           definitionId="isInSimulationPerspective">
-                     </reference>
-                  </not>
-               </visibleWhen>
-            </command>
-            <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator2876">
-            </control>
          </toolbar>
       </menuContribution>
       <menuContribution

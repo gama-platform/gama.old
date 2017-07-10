@@ -63,6 +63,7 @@ public interface IGui {
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
 	public final static String PAUSED = "STOPPED";
+	public final static String FINISHED = "FINISHED";
 	public final static String RUNNING = "RUNNING";
 	public final static String NOTREADY = "NOTREADY";
 	public final static String ONUSERHOLD = "ONUSERHOLD";
