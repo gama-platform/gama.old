@@ -1,8 +1,8 @@
 /**
 * Name: Multicriteria
 * Author: Patrick Taillandier
-* Description: This model show how to use different methods of multicriteria analysis to look for the best house. Four methods are used : 
-* the Weighted_Means method , the Electre method , the Promethee method  an the Evidence Theory method. Each method uses 
+* Description: This model show how to use different methods of multicriteria analysis to look for the best house. Five methods are used : 
+* the Weighted_Means method , the Electre method , the Promethee method, the Fuzzy Choquet Integral  anc the Evidence Theory method. Each method uses 
 * different criteria with different weights according to the methods used. 
 * Tags: multi_criteria
 */
@@ -56,11 +56,16 @@ global {
 	float v2c_area <- 0.0;
 	
 	//Lists that will store the different criteria to use for each method linked with their weights
+	list<string> criteria <- ["standing", "price", "distance", "area"];
 	list criteria_WM <- [["name"::"standing", "weight" :: weight_standing],["name"::"price", "weight" :: weight_price],["name"::"distance", "weight" ::weight_distance],["name"::"area", "weight" :: weight_area]]; 
 	list criteria_Electre <- [["name"::"standing", "weight" :: weight_standing, "p"::p_standing, "q"::q_standing, "v"::v_standing, "maximize" :: true],["name"::"price", "weight" :: weight_price, "p"::p_price, "q"::q_price, "v"::v_price,  "maximize" :: true],["name"::"distance", "weight" ::weight_distance, "p"::p_distance, "q"::q_distance, "v"::v_distance,  "maximize" :: true],["name"::"area", "weight" :: weight_area,  "p"::p_area, "q"::q_area, "v"::v_area,  "maximize" :: true]]; 
 	list criteria_Promethee <- [["name"::"standing", "weight" :: weight_standing, "p"::p_standing, "q"::q_standing, "s"::s_standing, "maximize" :: true],["name"::"price", "weight" :: weight_price, "p"::p_price, "q"::q_price, "s"::s_price,  "maximize" :: true],["name"::"distance", "weight" ::weight_distance, "p"::p_distance, "q"::q_distance, "s"::s_distance,  "maximize" :: true],["name"::"area", "weight" :: weight_area,  "p"::p_area, "q"::q_area, "s"::s_area,  "maximize" :: true]];  
 	list criteria_ET <- [["name"::"standing", "s1"::s1_standing, "s2"::s2_standing, "v1p"::v1p_standing, "v2p"::v2p_standing, "v1c"::v1c_standing, "v2c"::v2c_standing,"maximize" :: true],["name"::"price", "s1"::s1_price, "s2"::s2_price, "v1p"::v1p_price, "v2p"::v2p_price, "v1c"::v1c_price, "v2c"::v2c_price,  "maximize" :: true],["name"::"distance", "s1"::s1_distance, "s2"::s2_distance, "v1p"::v1p_distance, "v2p"::v2p_distance, "v1c"::v1c_distance, "v2c"::v2c_distance,  "maximize" :: true],["name"::"area", "s1"::s1_area, "s2"::s2_area, "v1p"::v1p_area, "v2p"::v2p_area, "v1c"::v1c_area, "v2c"::v2c_area, "maximize" :: true]];
-	
+	map<list<string>,float> criteria_FC <- map<list<string>, float>([ 
+		[["standing"]::weight_standing, ["price"]::weight_price, ["distance"]:: weight_distance, ["area"]::weight_area,
+		["standing","price"]::(weight_standing+weight_price) * 2/3,["area","price"]::(weight_standing+weight_price) * 2/3 , 
+		["standing","price","area"]::(weight_standing+weight_price + weight_area) * 2/3]
+	]); 
 	
 	init {
 		create people;
@@ -78,11 +83,16 @@ global {
 			is_selected_electre <- false;
 			is_selected_promethee <- false;
 			is_selected_ET <- false;
+			is_selected_choquet <- false;
 		}
 		criteria_WM <- [["name"::"standing", "weight" :: weight_standing],["name"::"price", "weight" :: weight_price],["name"::"distance", "weight" ::weight_distance],["name"::"area", "weight" :: weight_area]]; 
 		criteria_Electre <- [["name"::"standing", "weight" :: weight_standing, "p"::p_standing, "q"::q_standing, "v"::v_standing, "maximize" :: true],["name"::"price", "weight" :: weight_price, "p"::p_price, "q"::q_price, "v"::v_price,  "maximize" :: true],["name"::"distance", "weight" ::weight_distance, "p"::p_distance, "q"::q_distance, "v"::v_distance,  "maximize" :: true],["name"::"area", "weight" :: weight_area,  "p"::p_area, "q"::q_area, "v"::v_area,  "maximize" :: true]]; 
 		criteria_Promethee <- [["name"::"standing", "weight" :: weight_standing, "p"::p_standing, "q"::q_standing, "s"::s_standing, "maximize" :: true],["name"::"price", "weight" :: weight_price, "p"::p_price, "q"::q_price, "s"::s_price,  "maximize" :: true],["name"::"distance", "weight" ::weight_distance, "p"::p_distance, "q"::q_distance, "s"::s_distance,  "maximize" :: true],["name"::"area", "weight" :: weight_area,  "p"::p_area, "q"::q_area, "s"::s_area,  "maximize" :: true]]; 
 		criteria_ET <- [["name"::"standing", "s1"::s1_standing, "s2"::s2_standing, "v1p"::v1p_standing, "v2p"::v2p_standing, "v1c"::v1c_standing, "v2c"::v2c_standing,"maximize" :: true],["name"::"price", "s1"::s1_price, "s2"::s2_price, "v1p"::v1p_price, "v2p"::v2p_price, "v1c"::v1c_price, "v2c"::v2c_price,  "maximize" :: true],["name"::"distance", "s1"::s1_distance, "s2"::s2_distance, "v1p"::v1p_distance, "v2p"::v2p_distance, "v1c"::v1c_distance, "v2c"::v2c_distance,  "maximize" :: true],["name"::"area", "s1"::s1_area, "s2"::s2_area, "v1p"::v1p_area, "v2p"::v2p_area, "v1c"::v1c_area, "v2c"::v2c_area, "maximize" :: true]];
+		criteria_FC <- map<list<string>, float>([ 
+		[["standing"]::weight_standing, ["price"]::weight_price, ["distance"]:: weight_distance, ["area"]::weight_area,
+		["standing","price"]::(weight_standing+weight_price) * 2/3,["area","price"]::(weight_standing+weight_price) * 2/3 , 
+		["standing","price","area"]::(weight_standing+weight_price + weight_area) * 2/3]]);
 	}
 	
 }
@@ -90,7 +100,7 @@ global {
 
 species people  {
 	aspect default {
-		draw sphere(2) color: °red;
+		draw sphere(2) color: #red;
 	}
 	
 	reflex choose_house_weighted_means {
@@ -98,6 +108,14 @@ species people  {
 		int choice <- weighted_means_DM(cands, criteria_WM);
 		if (choice >= 0) {
 			ask (house at choice) {is_selected_WM <- true;}
+		}
+	}
+	
+	reflex choose_house_fuzzy_choquet {
+		list<list> cands <- houses_eval();
+		int choice <- fuzzy_choquet_DM(cands, criteria, criteria_FC);
+		if (choice >= 0) {
+			ask (house at choice) {is_selected_choquet <- true;}
 		}
 	}
 	
@@ -143,32 +161,39 @@ species house {
 	bool is_selected_electre <- false;
 	bool is_selected_promethee <- false;
 	bool is_selected_ET <- false;
+	bool is_selected_choquet <- false;
 	geometry shape <- square(5 + rnd(10));
 	float price <- 100000.0 + rnd (400000);
 	int standing <- rnd(5);
 	rgb color <- rgb(255 * (1 - standing/5.0),255 * (1 - standing/5.0),255);
 	float height <- price / 50000;
-	aspect weighted_means {
+	aspect weighted_means_aspect {
 		if (is_selected_WM) {
-			draw shape + 2.0 color: °red;
+			draw shape + 2.0 color: #red;
 		}
 		draw shape color: color depth: height;
 	}
-	aspect electre_means {
+	aspect electre_aspect {
 		if (is_selected_electre) {
-			draw shape + 2.0 color: °red;
+			draw shape + 2.0 color: #red;
 		}
 		draw shape color: color depth: height;
 	}
-	aspect promethee_means {
+	aspect promethee_aspect {
 		if (is_selected_promethee) {
-			draw shape + 2.0 color: °red;
+			draw shape + 2.0 color: #red;
 		}
 		draw shape color: color depth: height;
 	}
-	aspect evidence_theory_means {
+	aspect evidence_theory_aspect {
 		if (is_selected_ET) {
-			draw shape + 2.0 color: °red;
+			draw shape + 2.0 color: #red;
+		}
+		draw shape color: color depth: height;
+	}
+	aspect choquet_aspect {
+		if (is_selected_choquet) {
+			draw shape + 2.0 color: #red;
 		}
 		draw shape color: color depth: height;
 	}
@@ -222,19 +247,23 @@ experiment multicriteria type: gui {
 	parameter "max rejection of the area criterion" var:v2c_area category: "Evidence Theory";
 	output {
 		display Map_Weighted_Means type: opengl{
-			species house aspect: weighted_means;
+			species house aspect: weighted_means_aspect;
 			species people;
 		}
 		display Map_Electre type: opengl{
-			species house aspect: electre_means;
+			species house aspect: electre_aspect;
 			species people;
 		}
 		display Map_Promethee type: opengl{
-			species house aspect: promethee_means;
+			species house aspect: promethee_aspect;
 			species people;
 		}
 		display Map_Evidence_theory type: opengl{
-			species house aspect: evidence_theory_means;
+			species house aspect: evidence_theory_aspect;
+			species people;
+		}
+		display Map_Choquet type: opengl{
+			species house aspect: choquet_aspect;
 			species people;
 		}
 	}
