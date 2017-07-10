@@ -144,11 +144,6 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness;
 				}
-				if ( isMaximize() && currentFitness > getBestFitness() ||
-					!isMaximize() && currentFitness < getBestFitness() ) {
-					setBestSolution(new ParametersSet(bestSolutionAlgo));
-					setBestFitness(currentFitness);
-				}
 				iter++;
 			}
 			temperature *= tempDimCoeff;

@@ -27,7 +27,6 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = {
@@ -51,7 +50,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
-		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
+		setBestFitness(null);
 		testSolutions(scope, new ParametersSet(), 0);
 		return getBestSolution();
 	}
@@ -61,9 +60,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
 		final ParametersSet solution = new ParametersSet(sol);
 		if (variables.isEmpty()) {
-			final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-			setBestFitness(fitness);
-			setBestSolution(solution);
+			currentExperiment.launchSimulationsWithSolution(solution);
 			return;
 		}
 		final IParameter.Batch var = variables.get(index);
@@ -71,11 +68,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 			for (final Object val : var.getAmongValue(scope)) {
 				solution.put(var.getName(), val);
 				if (solution.size() == variables.size()) {
-					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if (isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness()) {
-						setBestFitness(fitness);
-						setBestSolution(solution);
-					}
+					currentExperiment.launchSimulationsWithSolution(solution);
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}
@@ -91,11 +84,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 					continue;
 				}
 				if (solution.size() == variables.size()) {
-					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if (isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness()) {
-						setBestFitness(fitness);
-						setBestSolution(solution);
-					}
+					currentExperiment.launchSimulationsWithSolution(solution);
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}

@@ -120,12 +120,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness;
 				}
-				boolean curFitnessGreaterThanBest = currentFitness > getBestFitness();
-
-				if ( isMaximize() && curFitnessGreaterThanBest || !isMaximize() && !curFitnessGreaterThanBest ) {
-					setBestSolution(new ParametersSet(bestSolutionAlgo));
-					setBestFitness(currentFitness);
-				}
+				
 				if ( nbIt > iterMax ) {
 					break;
 				}

@@ -49,6 +49,8 @@ public class BatchAgent extends ExperimentAgent {
 	final IExpression stopCondition;
 	private int runNumber;
 	ParametersSet currentSolution;
+	ParametersSet lastSolution;
+	private Double lastFitness;
 	private Double[] seeds;
 	final List<Double> fitnessValues = new ArrayList<>();
 
@@ -182,6 +184,10 @@ public class BatchAgent extends ExperimentAgent {
 				p.setValue(getScope(), entry.getValue());
 			}
 		}
+		
+		// We update the parameters (parameter to explore)
+		getScope().getGui().showParameterView(getScope(), getSpecies());
+
 		// We then create a number of simulations with the same solution
 
 		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
@@ -250,16 +256,23 @@ public class BatchAgent extends ExperimentAgent {
 		// We reset the experiment agent to erase traces of the current
 		// simulations if any
 		this.reset();
-		// We update the parameters
-		getScope().getGui().showParameterView(getScope(), getSpecies());
-
+		
 		// We then return the combination (average, min or max) of the different
 		// fitness values computed by the
 		// different simulation.
 		final short fitnessCombination = getSpecies().getExplorationAlgorithm().getCombination();
-		return fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
+		lastSolution = currentSolution;
+		lastFitness = fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
 				: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues)
 						: Statistics.calculateMean(fitnessValues);
+		
+		//we update the best solution found so far
+		getSpecies().getExplorationAlgorithm().updateBestFitness(lastSolution,lastFitness );
+		
+		// At last, we update the parameters (last fitness and best fitness)
+		getScope().getGui().showParameterView(getScope(), getSpecies());
+
+		return lastFitness;
 
 	}
 
@@ -317,14 +330,14 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String getUnitLabel(final IScope scope) {
-				if (currentSolution == null) { return ""; }
-				return "with " + currentSolution.toString();
+				if (lastSolution == null) { return ""; }
+				return "with " + lastSolution.toString();
 			}
 
 			@Override
 			public String value() {
-				if (fitnessValues.isEmpty()) { return "-"; }
-				return fitnessValues.get(fitnessValues.size() - 1).toString();
+				if (lastFitness == null) { return "-"; }
+				return lastFitness.toString();
 			}
 
 		});

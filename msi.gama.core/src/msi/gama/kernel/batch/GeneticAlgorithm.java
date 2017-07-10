@@ -139,7 +139,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
+		setBestFitness(null);
 		initializeTestedSolutions();
 		List<Chromosome> population = initPop.initializePop(scope, variables, this);
 		int nbGen = 1;
@@ -182,11 +182,6 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				chromosome.update(scope, sol);
 				double fitness = testedSolutions.get(sol);
 				chromosome.setFitness(fitness);
-				if ((isMaximize() && fitness > getBestFitness()) || (!isMaximize() && fitness < getBestFitness())) {
-					setBestFitness(fitness);
-					setBestSolution(sol);
-				}
-				
 			}
 		}
 	}
@@ -194,15 +189,11 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	public void computeChroFitness(final IScope scope,Chromosome chromosome){
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
-		if (fitness == null || fitness == Double.MAX_VALUE) {
+		if (fitness == null) {
 			fitness = currentExperiment.launchSimulationsWithSolution(sol);
 		}
 		testedSolutions.put(sol, fitness);
 		chromosome.setFitness(fitness);
-		if ((isMaximize() && fitness > getBestFitness()) || (!isMaximize() && fitness < getBestFitness())) {
-			setBestFitness(fitness);
-			setBestSolution(sol);
-		}
 	}
 
 	@Override
