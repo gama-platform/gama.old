@@ -1,7 +1,6 @@
 package idees.gama.operators;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;

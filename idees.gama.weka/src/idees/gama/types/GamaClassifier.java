@@ -1,6 +1,5 @@
 package idees.gama.types;
 
-import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IValue;
