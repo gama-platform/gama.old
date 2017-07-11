@@ -1,5 +1,6 @@
 package idees.gama.operators;
 
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -17,32 +18,11 @@ import weka.core.Instance;
 
 public class Clustering {
 
-	private static Instances convertToInstances(final IScope scope, final IList<String> attributes,
-		final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents) throws GamaRuntimeException {
-		FastVector attribs = new FastVector();
-		for ( String att : attributes ) {
-			attribs.addElement(new Attribute(att));
-		}
-		Instances dataset = new Instances(scope.getAgent().getName(), attribs, agents.length(scope));
-		for ( IAgent ag : agents.iterable(scope) ) {
-
-			int nb = attributes.size();
-			double vals[] = new double[nb];
-			for ( int i = 0; i < nb; i++ ) {
-				String attrib = attributes.get(i);
-				Double var = Cast.asFloat(scope, ag.getDirectVarValue(scope, attrib));
-				vals[i] = var;
-			}
-			Instance instance = new Instance(1, vals);
-			dataset.add(instance);
-		}
-		return dataset;
-	}
-
+	
 	private static IList<IList<IAgent>> clusteringUsingWeka(final IScope scope, final Clusterer clusterer,
 		final IList<String> attributes, final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents)
 		throws GamaRuntimeException {
-		Instances dataset = convertToInstances(scope, attributes, agents);
+		Instances dataset = InstanceManagement.convertToInstances(scope,null, attributes, null, agents.listValue(scope, Types.AGENT, false));
 		try {
 			clusterer.buildClusterer(dataset);
 
