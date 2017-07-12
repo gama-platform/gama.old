@@ -108,16 +108,16 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		return layout;
 	}
 
-	// We dont allow permanent outputs to do their first step (to fix Issue
-	// #1273)
+	// We dont allow permanent outputs for batch experiments to do their first step (to fix Issue
+	// #1273) -- Conflicts with Issue #2204
 	@Override
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		return true;
+		if (scope.getExperiment().getSpecies().isBatch()) return true;
+		 return super.initialStep(scope, output);
 	}
 
 	@Override
 	public void add(final IOutput output) {
-		if (!(output instanceof AbstractOutput)) { return; }
 		((AbstractOutput) output).setPermanent();
 		super.add(output);
 	}

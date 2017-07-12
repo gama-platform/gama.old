@@ -399,8 +399,7 @@ public abstract class ChartOutput {
 
 	}
 
-	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final Object o,
-			final int type_val) {
+	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
 		// TODO Auto-generated method stub
 
 	}

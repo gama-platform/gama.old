@@ -527,8 +527,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		chartoutput.initChart(scope, getName());
-
-		chartdataset = new ChartDataSet(memorize);
+		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
+		final boolean isPermanent = getDisplayOutput().isPermanent();
+		final boolean isBatchAndPermanent = isBatch && isPermanent;
+		chartdataset = new ChartDataSet(memorize, isBatchAndPermanent);
 		chartoutput.setChartdataset(chartdataset);
 		chartoutput.initdataset();
 

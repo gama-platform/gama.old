@@ -23,7 +23,10 @@ import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.ListExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ChartDataSource {
@@ -260,6 +263,162 @@ public class ChartDataSource {
 		return Cast.asFloat(scope, o);
 	}
 
+	// public int computeTypeOfData(final IScope scope, final IExpression expr) {
+	// final IType type = expr.getType();
+	// if (type == Types.NO_TYPE)
+	// return DATA_TYPE_NULL;
+	// if (Types.POINT.isAssignableFrom(type))
+	// return DATA_TYPE_POINT;
+	// if (Types.MATRIX.isAssignableFrom(type)) {
+	// final IType ct = type.getContentType();
+	// if (ct == Types.INT || ct == Types.FLOAT)
+	// return DATA_TYPE_MATRIX_DOUBLE;
+	// if (Types.POINT.isAssignableFrom(ct))
+	// return DATA_TYPE_MATRIX_POINT;
+	// if (Types.LIST.isAssignableFrom(ct))
+	// return DATA_TYPE_MATRIX_LIST_DOUBLE;
+	// return DATA_TYPE_MATRIX_DOUBLE;
+	// }
+	// if (Types.LIST.isAssignableFrom(type)) {
+	// final IType contents = type.getContentType();
+	// if (contents == Types.NO_TYPE || contents == Types.INT || contents == Types.FLOAT) {
+	// if (expr instanceof ListExpression) {
+	// final IExpression[] exprs = ((ListExpression) expr).getElements();
+	// switch (exprs.length) {
+	// case 0:
+	// return this.DATA_TYPE_LIST_DOUBLE_N;
+	// case 1:
+	// return this.DATA_TYPE_LIST_DOUBLE_12;
+	// case 2:
+	// return this.DATA_TYPE_LIST_DOUBLE_12;
+	// case 3:
+	// return this.DATA_TYPE_LIST_DOUBLE_3;
+	// default:
+	// return this.DATA_TYPE_LIST_DOUBLE_N;
+	// }
+	// }
+	// } else if (contents == Types.POINT) {
+	// return this.DATA_TYPE_LIST_POINT;
+	// } else if (Types.LIST.isAssignableFrom(contents)) {
+	// final IType subContents = contents.getContentType();
+	// if (Types.LIST.isAssignableFrom(subContents)) {
+	// final IType subSubContents = subContents.getContentType();
+	// if (Types.POINT == subSubContents)
+	// return DATA_TYPE_LIST_LIST_POINT;
+	// else if (Types.LIST.isAssignableFrom(subSubContents))
+	// return DATA_TYPE_LIST_LIST_LIST_DOUBLE;
+	// else if (expr instanceof ListExpression) {
+	// final IExpression[] exprs = ((ListExpression) expr).getElements();
+	// if (exprs.length > 0) {
+	// final IExpression contentExpr = exprs[0];
+	// if (contentExpr instanceof ListExpression) {
+	// final IExpression[] contentExprs = ((ListExpression) contentExpr).getElements();
+	// if (contentExprs.length > 0) {
+	// final IExpression subcontentExpr = contentExprs[0];
+	// if (subcontentExpr instanceof ListExpression) {
+	// final IExpression[] subcontentExprs =
+	// ((ListExpression) subcontentExpr).getElements();
+	// switch (subcontentExprs.length) {
+	// case 0:
+	// return this.DATA_TYPE_LIST_LIST_DOUBLE_N;
+	// case 1:
+	// case 2:
+	// return DATA_TYPE_LIST_LIST_DOUBLE_12;
+	// case 3:
+	// return DATA_TYPE_LIST_LIST_DOUBLE_3;
+	// default:
+	// return DATA_TYPE_LIST_LIST_DOUBLE_N;
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// }
+	// }
+	// return this.DATA_TYPE_DOUBLE;
+	// }
+
+	public int computeTypeOfData(final IScope scope, final IExpression expr) {
+		final IType type = expr.getType();
+		if (type == Types.NO_TYPE)
+			return DATA_TYPE_NULL;
+		if (Types.POINT.isAssignableFrom(type))
+			return DATA_TYPE_POINT;
+		if (Types.MATRIX.isAssignableFrom(type)) {
+			final IType ct = type.getContentType();
+			if (ct == Types.INT || ct == Types.FLOAT)
+				return DATA_TYPE_MATRIX_DOUBLE;
+			if (Types.POINT.isAssignableFrom(ct))
+				return DATA_TYPE_MATRIX_POINT;
+			if (Types.LIST.isAssignableFrom(ct))
+				return DATA_TYPE_MATRIX_LIST_DOUBLE;
+			return DATA_TYPE_MATRIX_DOUBLE;
+		}
+		if (Types.LIST.isAssignableFrom(type)) {
+			final IType contents = type.getContentType();
+			if (contents == Types.NO_TYPE || contents == Types.INT || contents == Types.FLOAT) {
+				if (expr instanceof ListExpression) {
+					final IExpression[] exprs = ((ListExpression) expr).getElements();
+					switch (exprs.length) {
+						case 0:
+							return this.DATA_TYPE_LIST_DOUBLE_N;
+						case 1:
+							return this.DATA_TYPE_LIST_DOUBLE_12;
+						case 2:
+							return this.DATA_TYPE_LIST_DOUBLE_12;
+						case 3:
+							return this.DATA_TYPE_LIST_DOUBLE_3;
+						default:
+							return this.DATA_TYPE_LIST_DOUBLE_N;
+					}
+				}
+			} else if (contents == Types.POINT) {
+				return this.DATA_TYPE_LIST_POINT;
+			} else if (Types.LIST.isAssignableFrom(contents)) {
+				final IType subContents = contents.getContentType();
+				if (Types.LIST.isAssignableFrom(subContents)) {
+					final IType subSubContents = subContents.getContentType();
+					if (Types.POINT == subSubContents)
+						return DATA_TYPE_LIST_LIST_POINT;
+					else if (Types.LIST.isAssignableFrom(subSubContents))
+						return DATA_TYPE_LIST_LIST_LIST_DOUBLE;
+					else if (expr instanceof ListExpression) {
+						final IExpression[] exprs = ((ListExpression) expr).getElements();
+						if (exprs.length > 0) {
+							final IExpression contentExpr = exprs[0];
+							if (contentExpr instanceof ListExpression) {
+								final IExpression[] contentExprs = ((ListExpression) contentExpr).getElements();
+								if (contentExprs.length > 0) {
+									final IExpression subcontentExpr = contentExprs[0];
+									if (subcontentExpr instanceof ListExpression) {
+										final IExpression[] subcontentExprs =
+												((ListExpression) subcontentExpr).getElements();
+										switch (subcontentExprs.length) {
+											case 0:
+												return this.DATA_TYPE_LIST_LIST_DOUBLE_N;
+											case 1:
+											case 2:
+												return DATA_TYPE_LIST_LIST_DOUBLE_12;
+											case 3:
+												return DATA_TYPE_LIST_LIST_DOUBLE_3;
+											default:
+												return DATA_TYPE_LIST_LIST_DOUBLE_N;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+			}
+		}
+		return this.DATA_TYPE_DOUBLE;
+	}
+
 	public int get_data_type(final IScope scope, final Object o) {
 		// final int type = this.DATA_TYPE_NULL;
 		if (o == null)
@@ -316,10 +475,13 @@ public class ChartDataSource {
 		return this.DATA_TYPE_DOUBLE;
 	}
 
+	// void updateseriewithvalue(final IScope scope, final ChartDataSeries myserie, final IExpression expr,
+	// final int chartCycle, final HashMap barvalues, final int listvalue) {
+	// final int type_val = this.computeTypeOfData(scope, expr);
+	// final Object o = expr.value(scope);
 	void updateseriewithvalue(final IScope scope, final ChartDataSeries myserie, final Object o, final int chartCycle,
 			final HashMap barvalues, final int listvalue) {
 		final int type_val = this.get_data_type(scope, o);
-
 		// could move into outputs object... would be (a little) less complex.
 		// But less factorisation...
 

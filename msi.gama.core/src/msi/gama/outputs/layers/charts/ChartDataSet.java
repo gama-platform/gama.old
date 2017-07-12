@@ -159,8 +159,11 @@ public class ChartDataSet {
 		return serieRemovalDate;
 	}
 
-	public ChartDataSet(final boolean keepHistory) {
+	final boolean isBatchAndPermanent;
+
+	public ChartDataSet(final boolean keepHistory, final boolean isBatchAndPermanent) {
 		this.keepHistory = keepHistory;
+		this.isBatchAndPermanent = isBatchAndPermanent;
 		history = keepHistory ? new ChartHistory() : null;
 	}
 
@@ -348,7 +351,7 @@ public class ChartDataSet {
 						Ycategories = new ArrayList<String>();
 						for (int i = 0; i < xv2.size(); i++) {
 							if (i >= YSeriesValues.size()) {
-								YSeriesValues.add(new Double(getYCycleOrPlusOneForBatch(scope, chartCycle)));
+								YSeriesValues.add(getYCycleOrPlusOneForBatch(scope, chartCycle));
 							}
 							Ycategories.add(Cast.asString(scope, xl2.get(i)));
 						}
@@ -389,15 +392,17 @@ public class ChartDataSet {
 
 	}
 
-	public int getYCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
-		if (this.YSeriesValues.contains((double) chartcycle))
-			return (int) YSeriesValues.get(YSeriesValues.size() - 1).doubleValue() + 1;
-		return chartcycle;
+	public Double getYCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
+		if (isBatchAndPermanent && YSeriesValues.isEmpty())
+			return 1d;
+		// if (this.YSeriesValues.contains((double) chartcycle))
+		// return (int) YSeriesValues.get(YSeriesValues.size() - 1).doubleValue() + 1;
+		return Double.valueOf(chartcycle);
 	}
 
-	private void addCommonYValue(final IScope scope, final int chartCycle) {
+	private void addCommonYValue(final IScope scope, final Double chartCycle) {
 		// TODO Auto-generated method stub
-		YSeriesValues.add(new Double(chartCycle));
+		YSeriesValues.add(chartCycle);
 		Ycategories.add("" + chartCycle);
 
 	}
@@ -466,7 +471,7 @@ public class ChartDataSet {
 				if (targetNb == -1 && !this.forceNoXAccumulate)
 					targetNb = XSeriesValues.size() + 1;
 				while (XSeriesValues.size() < targetNb) {
-					XSeriesValues.add(new Double(getXCycleOrPlusOneForBatch(scope, chartCycle)));
+					XSeriesValues.add(getXCycleOrPlusOneForBatch(scope, chartCycle));
 					Xcategories.add(Cast.asString(scope, xlab));
 				}
 			}
@@ -489,15 +494,17 @@ public class ChartDataSet {
 
 	}
 
-	public int getXCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
-		if (this.XSeriesValues.contains((double) chartcycle))
-			return (int) XSeriesValues.get(XSeriesValues.size() - 1).doubleValue() + 1;
-		return chartcycle;
+	public Double getXCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
+		if (isBatchAndPermanent && XSeriesValues.isEmpty())
+			return 1d;
+		// if (this.XSeriesValues.contains(Double.valueOf(chartcycle)))
+		// return (int) XSeriesValues.get(XSeriesValues.size() - 1).doubleValue() + 1;
+		return Double.valueOf(chartcycle);
 	}
 
-	private void addCommonXValue(final IScope scope, final int chartCycle) {
+	private void addCommonXValue(final IScope scope, final Double chartCycle) {
 		// TODO Auto-generated method stub
-		XSeriesValues.add(new Double(chartCycle));
+		XSeriesValues.add(chartCycle);
 		Xcategories.add("" + chartCycle);
 
 	}
