@@ -594,7 +594,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final IScope scope = this.getDisplayOutput().getScope().copy("Save");
 		if (scope == null) { return; }
 		try {
-			this.getDataSet().saveHistory(scope, this.getName());
+			this.getDataSet().saveHistory(scope, this.getName() + "_cycle_" + scope.getClock().getCycle());
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return;

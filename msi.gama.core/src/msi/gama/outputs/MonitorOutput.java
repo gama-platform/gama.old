@@ -9,11 +9,14 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.List;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -29,10 +32,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.file.CsvWriter;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -85,7 +90,7 @@ import msi.gaml.types.Types;
 						value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
 						isExecutable = false)) })
 public class MonitorOutput extends AbstractDisplayOutput {
-
+	private static String monitorFolder = "monitors";
 	protected String expressionText = "";
 	protected IExpression value;
 	protected IExpression colorExpression = null;
@@ -222,6 +227,37 @@ public class MonitorOutput extends AbstractDisplayOutput {
 				history = GamaListFactory.create(t);
 			}
 		}
+	}
+
+	public void saveHistory() {
+		if (getScope() == null) { return; }
+		if (history == null || history.isEmpty())
+			return;
+		Files.newFolder(getScope(), monitorFolder);
+		String file =
+				monitorFolder + "/" + "monitor_" + getName() + "_cycle_" + getScope().getClock().getCycle() + ".csv";
+		file = FileUtils.constructAbsoluteFilePath(getScope(), file, false);
+		try (final BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+			final CsvWriter w = new CsvWriter(bw, CsvWriter.Letters.COMMA);
+			for (final Object o : history) {
+				String[] strings = null;
+				if (o instanceof Number)
+					strings = new String[] { o.toString() };
+				else if (o instanceof List) {
+					final List l = (List) o;
+					strings = new String[l.size()];
+					for (int i = 0; i < strings.length; i++) {
+						strings[i] = l.get(i).toString();
+					}
+				}
+				w.writeRecord(strings);
+			}
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
 	}
 
 }

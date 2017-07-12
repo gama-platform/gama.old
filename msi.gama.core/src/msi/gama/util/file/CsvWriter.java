@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'CsvWriter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'CsvWriter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -23,7 +22,7 @@ import java.util.Map;
 /**
  * A stream based writer for writing delimited text data to a file or a stream.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class CsvWriter {
 
 	private Writer outputStream = null;
@@ -46,37 +45,29 @@ public class CsvWriter {
 	private final String systemRecordDelimiter = System.getProperty("line.separator");
 
 	/**
-	 * Double up the text qualifier to represent an occurrence of the text
-	 * qualifier.
+	 * Double up the text qualifier to represent an occurrence of the text qualifier.
 	 */
 	public static final int ESCAPE_MODE_DOUBLED = 1;
 
 	/**
-	 * Use a backslash character before the text qualifier to represent an
-	 * occurrence of the text qualifier.
+	 * Use a backslash character before the text qualifier to represent an occurrence of the text qualifier.
 	 */
 	public static final int ESCAPE_MODE_BACKSLASH = 2;
 
 	/**
-	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a file
-	 * as the data destination.
+	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a file as the data destination.
 	 *
 	 * @param fileName
 	 *            The path to the file to output the data.
 	 * @param delimiter
 	 *            The character to use as the column delimiter.
 	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while
-	 *            writing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while writing the data.
 	 */
 	public CsvWriter(final String fileName, final char delimiter, final Charset charset) {
-		if (fileName == null) {
-			throw new IllegalArgumentException("Parameter fileName can not be null.");
-		}
+		if (fileName == null) { throw new IllegalArgumentException("Parameter fileName can not be null."); }
 
-		if (charset == null) {
-			throw new IllegalArgumentException("Parameter charset can not be null.");
-		}
+		if (charset == null) { throw new IllegalArgumentException("Parameter charset can not be null."); }
 
 		this.fileName = fileName;
 		userSettings.Delimiter = delimiter;
@@ -84,9 +75,8 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a file
-	 * as the data destination.&nbsp;Uses a comma as the column delimiter and
-	 * ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a file as the data destination.&nbsp;Uses a
+	 * comma as the column delimiter and ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
 	 *            The path to the file to output the data.
@@ -96,8 +86,7 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a Writer
-	 * to write data to.
+	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using a Writer to write data to.
 	 *
 	 * @param outputStream
 	 *            The stream to write the column delimited data to.
@@ -105,9 +94,7 @@ public class CsvWriter {
 	 *            The character to use as the column delimiter.
 	 */
 	public CsvWriter(final Writer outputStream, final char delimiter) {
-		if (outputStream == null) {
-			throw new IllegalArgumentException("Parameter outputStream can not be null.");
-		}
+		if (outputStream == null) { throw new IllegalArgumentException("Parameter outputStream can not be null."); }
 
 		this.outputStream = outputStream;
 		userSettings.Delimiter = delimiter;
@@ -115,16 +102,14 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using an
-	 * OutputStream to write data to.
+	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using an OutputStream to write data to.
 	 *
 	 * @param outputStream
 	 *            The stream to write the column delimited data to.
 	 * @param delimiter
 	 *            The character to use as the column delimiter.
 	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while
-	 *            writing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while writing the data.
 	 */
 	public CsvWriter(final OutputStream outputStream, final char delimiter, final Charset charset) {
 		this(new OutputStreamWriter(outputStream, charset), delimiter);
@@ -157,9 +142,8 @@ public class CsvWriter {
 	 * Sets the character to use as the record delimiter.
 	 *
 	 * @param recordDelimiter
-	 *            The character to use as the record delimiter. Default is
-	 *            combination of standard end of line characters for Windows,
-	 *            Unix, or Mac.
+	 *            The character to use as the record delimiter. Default is combination of standard end of line
+	 *            characters for Windows, Unix, or Mac.
 	 */
 	public void setRecordDelimiter(final char recordDelimiter) {
 		useCustomRecordDelimiter = true;
@@ -221,8 +205,8 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Whether fields will be surrounded by the text qualifier even if the
-	 * qualifier is not necessarily needed to escape this field.
+	 * Whether fields will be surrounded by the text qualifier even if the qualifier is not necessarily needed to escape
+	 * this field.
 	 *
 	 * @return Whether fields will be forced to be qualified or not.
 	 */
@@ -231,9 +215,8 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Use this to force all fields to be surrounded by the text qualifier even
-	 * if the qualifier is not necessarily needed to escape this field. Default
-	 * is false.
+	 * Use this to force all fields to be surrounded by the text qualifier even if the qualifier is not necessarily
+	 * needed to escape this field. Default is false.
 	 *
 	 * @param forceQualifier
 	 *            Whether to force the fields to be qualified or not.
@@ -260,11 +243,9 @@ public class CsvWriter {
 	 * @param content
 	 *            The data for the new column.
 	 * @param changeDelimiter
-	 *            Whether to change the delimiter to another character if it
-	 *            happens to be in the string
+	 *            Whether to change the delimiter to another character if it happens to be in the string
 	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the
-	 *                destination stream.
+	 *                Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void write(String content, final boolean changeDelimiter) throws IOException {
 		checkClosed();
@@ -298,8 +279,7 @@ public class CsvWriter {
 			textQualify = true;
 		}
 
-		if (userSettings.UseTextQualifier && !textQualify
-				&& content.length() > 0 /* && preserveSpaces */ ) {
+		if (userSettings.UseTextQualifier && !textQualify && content.length() > 0 /* && preserveSpaces */ ) {
 			final char firstLetter = content.charAt(0);
 
 			if (firstLetter == Letters.SPACE || firstLetter == Letters.TAB) {
@@ -357,14 +337,13 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Writes another column of data to this record.&nbsp;Does not preserve
-	 * leading and trailing whitespace in this column of data.
+	 * Writes another column of data to this record.&nbsp;Does not preserve leading and trailing whitespace in this
+	 * column of data.
 	 *
 	 * @param content
 	 *            The data for the new column.
 	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the
-	 *                destination stream.
+	 *                Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void write(final String content) throws IOException {
 		write(content, false);
@@ -395,12 +374,10 @@ public class CsvWriter {
 	 *            Values to be written.
 	 *
 	 * @param changeDelimiter
-	 *            whether or not to change the delimiter with another character
-	 *            if it happens to be in the strings
+	 *            whether or not to change the delimiter with another character if it happens to be in the strings
 	 *
 	 * @throws IOException
-	 *             Thrown if an error occurs while writing data to the
-	 *             destination stream.
+	 *             Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void writeRecord(final String[] values, final boolean changeDelimiter) throws IOException {
 		if (values != null && values.length > 0) {
@@ -419,8 +396,7 @@ public class CsvWriter {
 	 *            Values to be written.
 	 *
 	 * @throws IOException
-	 *             Thrown if an error occurs while writing data to the
-	 *             destination stream.
+	 *             Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void writeRecord(final String[] values) throws IOException {
 		writeRecord(values, false);
@@ -430,8 +406,7 @@ public class CsvWriter {
 	 * Ends the current record by sending the record delimiter.
 	 *
 	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the
-	 *                destination stream.
+	 *                Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void endRecord() throws IOException {
 		checkClosed();
@@ -461,12 +436,10 @@ public class CsvWriter {
 	}
 
 	/**
-	 * Clears all buffers for the current writer and causes any buffered data to
-	 * be written to the underlying device.
+	 * Clears all buffers for the current writer and causes any buffered data to be written to the underlying device.
 	 * 
 	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the
-	 *                destination stream.
+	 *                Thrown if an error occurs while writing data to the destination stream.
 	 */
 	public void flush() throws IOException {
 		outputStream.flush();
@@ -510,9 +483,7 @@ public class CsvWriter {
 	 *
 	 */
 	private void checkClosed() throws IOException {
-		if (closed) {
-			throw new IOException("This instance of the CsvWriter class has already been closed.");
-		}
+		if (closed) { throw new IOException("This instance of the CsvWriter class has already been closed."); }
 	}
 
 	/**
@@ -523,7 +494,7 @@ public class CsvWriter {
 		close(false);
 	}
 
-	private class Letters {
+	public static class Letters {
 
 		public static final char LF = '\n';
 
