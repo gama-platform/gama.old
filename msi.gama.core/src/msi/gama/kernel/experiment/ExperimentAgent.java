@@ -571,7 +571,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
 		if (species == getModel()) { return getSimulationPopulation(); }
-		return this.getSimulation().getPopulationFor(species.getName());
+		final SimulationAgent sim = getSimulation();
+		if (sim == null)
+			return IPopulation.createEmpty(species);
+		return sim.getPopulationFor(species.getName());
 
 	}
 
