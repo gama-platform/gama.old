@@ -79,7 +79,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if (microPopulations == null) {
 			microPopulations = Iterables.toArray(
 					Iterables.transform(Iterables.filter(getAttributes().keySet(), input -> isPopulation(input)),
-							input -> (IPopulation) getAttributes().get(input)),
+							input -> (IPopulation<?>) getAttributes().get(input)),
 					IPopulation.class);
 			if (microPopulations.length == 0)
 				microPopulations = NO_POP;

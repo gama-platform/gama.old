@@ -125,7 +125,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// Disabling line smoothing to only rely on FSAA
-		gl.glDisable(GL.GL_LINE_SMOOTH);
+		// gl.glDisable(GL.GL_LINE_SMOOTH);
 		// Enabling forced normalization of normal vectors (important)
 		gl.glEnable(GL2.GL_NORMALIZE);
 		// Enabling multi-sampling (necessary ?)

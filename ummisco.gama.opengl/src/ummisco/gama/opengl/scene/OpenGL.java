@@ -841,8 +841,9 @@ public class OpenGL {
 	 */
 	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z) {
 		final TextRenderer r = textRendererCache.get(font);
-		r.setUseVertexArrays(false);
 		if (r == null) { return; }
+		r.setUseVertexArrays(false);
+
 		if (getCurrentColor() != null)
 			r.setColor(getCurrentColor());
 		final float scale = 1f / (float) (viewHeight / getWorldHeight());

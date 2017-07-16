@@ -308,6 +308,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * Building the simulation agent and its population
 	 */
 
+	@SuppressWarnings ("unchecked")
 	protected void createSimulationPopulation() {
 		final IModel model = getModel();
 		SimulationPopulation pop = (SimulationPopulation) this.getMicroPopulation(model);

@@ -71,7 +71,7 @@ public interface IPopulation<T extends IAgent>
 	}
 
 	public static IPopulation<? extends IAgent> createEmpty(final ISpecies species) {
-		return new GamaPopulation(null, species);
+		return new GamaPopulation<IAgent>(null, species);
 	}
 
 	public abstract void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;
