@@ -127,6 +127,8 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_LoopAccess().getGroup(), "rule__S_Loop__Group__0");
 					put(grammarAccess.getS_IfAccess().getGroup(), "rule__S_If__Group__0");
 					put(grammarAccess.getS_IfAccess().getGroup_4(), "rule__S_If__Group_4__0");
+					put(grammarAccess.getS_TryAccess().getGroup(), "rule__S_Try__Group__0");
+					put(grammarAccess.getS_TryAccess().getGroup_2(), "rule__S_Try__Group_2__0");
 					put(grammarAccess.getS_OtherAccess().getGroup(), "rule__S_Other__Group__0");
 					put(grammarAccess.getS_ReturnAccess().getGroup(), "rule__S_Return__Group__0");
 					put(grammarAccess.getS_ReflexAccess().getGroup(), "rule__S_Reflex__Group__0");
@@ -298,6 +300,9 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_IfAccess().getExprAssignment_2(), "rule__S_If__ExprAssignment_2");
 					put(grammarAccess.getS_IfAccess().getBlockAssignment_3(), "rule__S_If__BlockAssignment_3");
 					put(grammarAccess.getS_IfAccess().getElseAssignment_4_1(), "rule__S_If__ElseAssignment_4_1");
+					put(grammarAccess.getS_TryAccess().getKeyAssignment_0(), "rule__S_Try__KeyAssignment_0");
+					put(grammarAccess.getS_TryAccess().getBlockAssignment_1(), "rule__S_Try__BlockAssignment_1");
+					put(grammarAccess.getS_TryAccess().getCatchAssignment_2_1(), "rule__S_Try__CatchAssignment_2_1");
 					put(grammarAccess.getS_OtherAccess().getKeyAssignment_0(), "rule__S_Other__KeyAssignment_0");
 					put(grammarAccess.getS_OtherAccess().getFacetsAssignment_1(), "rule__S_Other__FacetsAssignment_1");
 					put(grammarAccess.getS_OtherAccess().getBlockAssignment_2_0(), "rule__S_Other__BlockAssignment_2_0");
