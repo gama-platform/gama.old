@@ -725,4 +725,23 @@ class TemporaryScope implements IScope, IExecutionContext {
 		return this;
 	}
 
+	@Override
+	public boolean isInTryMode() {
+		return false;
+	}
+
+	@Override
+	public void enableTryMode() {}
+
+	@Override
+	public void disableTryMode() {}
+
+	@Override
+	public void setCurrentError(final GamaRuntimeException g) {}
+
+	@Override
+	public GamaRuntimeException getCurrentError() {
+		return null;
+	}
+
 }

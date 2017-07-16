@@ -61,7 +61,7 @@ S_Experiment :
  */
 Statement:
 	(=> S_Declaration |
-	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations))) | S_Display ;
+	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try | S_Equations))) | S_Display ;
 
 S_1Expr_Facets_BlockOrEnd returns Statement:
 	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? (=>expr=Expression | expr=TypeRef) (facets+=Facet)* (block=Block | ";");
@@ -74,6 +74,10 @@ S_Loop:
 
 S_If:
 	key='if' (firstFacet="condition:")? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
+	
+S_Try:
+	key='try' block=Block (=> 'catch' catch=Block) ?
+;
 
 S_Other:
 	key=ID (facets+=Facet)* (block=Block | ';');

@@ -64,6 +64,7 @@ public interface IKeyword {
 	public static final String CAMERA_LENS = "camera_lens";
 	public static final String CAMERA_INTERACTION = "camera_interaction";
 	public static final String CAPTURE = "capture";
+	public static final String CATCH = "catch";
 	public static final String CATEGORY = "category";
 	public static final String CELL_WIDTH = "cell_width";
 	public static final String CELL_HEIGHT = "cell_height";
@@ -412,6 +413,7 @@ public interface IKeyword {
 	public static final String TRANSPARENCY = "transparency";
 	public static final String TRIANGULATION = "triangulation";
 	public static final String TRUE = "true";
+	public static final String TRY = "try";
 	public static final String TYPE = "type";
 	public static final String UNIT = "unit";
 	public static final String UNTIL = "until";

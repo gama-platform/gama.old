@@ -94,6 +94,7 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
+import msi.gama.lang.gaml.gaml.S_Try;
 import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
@@ -296,6 +297,8 @@ public class GamlSyntacticConverter {
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
 			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
+		} else if (stm instanceof S_Try) {
+			convCatch((S_Try) stm, elt, errors);
 		}
 
 		// We apply some conversions to the facets expressed in the statement
@@ -360,7 +363,7 @@ public class GamlSyntacticConverter {
 			// e.getElement(),
 			// errors);
 		} else
-		e.setFacet(key, expr);
+			e.setFacet(key, expr);
 	}
 
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
@@ -373,6 +376,16 @@ public class GamlSyntacticConverter {
 				convStatements(elseElt, EGaml.getStatementsOf((Block) elseBlock), errors);
 			}
 			elt.addChild(elseElt);
+		}
+	}
+
+	private void convCatch(final S_Try stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
+		final EObject catchBlock = stm.getCatch();
+		if (catchBlock != null) {
+			final ISyntacticElement catchElt =
+					SyntacticFactory.create(IKeyword.CATCH, catchBlock, EGaml.hasChildren(catchBlock));
+			convStatements(catchElt, EGaml.getStatementsOf((Block) catchBlock), errors);
+			elt.addChild(catchElt);
 		}
 	}
 

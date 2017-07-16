@@ -58,6 +58,9 @@
     <genClasses ecoreClass="Gaml.ecore#//S_If">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_If/else"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//S_Try">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Try/catch"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Other"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Return"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Declaration"/>
