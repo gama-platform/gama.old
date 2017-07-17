@@ -59,6 +59,7 @@ import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 						doc = @doc ("")) })
 @validator (StartSoundValidator.class)
 @SuppressWarnings ({ "rawtypes" })
+@doc ("Allows to start the sound output")
 public class StartSoundStatement extends AbstractStatementSequence {
 
 	public static class StartSoundValidator implements IDescriptionValidator {

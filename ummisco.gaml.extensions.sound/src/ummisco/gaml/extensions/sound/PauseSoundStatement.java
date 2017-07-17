@@ -11,6 +11,7 @@ package ummisco.gaml.extensions.sound;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -29,6 +30,7 @@ import ummisco.gaml.extensions.sound.PauseSoundStatement.PauseSoundValidator;
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
 		concept = { IConcept.SOUND })
+@doc ("Allows to pause the sound output")
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator (PauseSoundValidator.class)

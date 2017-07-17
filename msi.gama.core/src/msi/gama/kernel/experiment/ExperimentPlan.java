@@ -72,8 +72,8 @@ import msi.gaml.variables.IVariable;
 		name = { IKeyword.EXPERIMENT },
 		kind = ISymbolKind.EXPERIMENT,
 		with_sequence = true,
-		concept = { IConcept.EXPERIMENT },
-		doc = @doc ("Declaration of a particular type of agent that can manage simulations"))
+		concept = { IConcept.EXPERIMENT })
+@doc ("Declaration of a particular type of agent that can manage simulations")
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,

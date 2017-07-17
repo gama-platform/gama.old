@@ -11,6 +11,7 @@ package ummisco.gaml.extensions.sound;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
@@ -32,6 +33,7 @@ import ummisco.gaml.extensions.sound.ResumeSoundStatement.ResumeSoundValidator;
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator (ResumeSoundValidator.class)
+@doc ("Allows to resume the sound output")
 public class ResumeSoundStatement extends AbstractStatementSequence {
 
 	public static class ResumeSoundValidator implements IDescriptionValidator<IDescription> {
