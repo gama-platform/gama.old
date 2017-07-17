@@ -835,7 +835,8 @@ public class Maths {
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_TYPE,
 			category = { IOperatorCategory.ARITHMETIC },
-			concept = {})
+			concept = { IConcept.MATRIX },
+			doc = @doc ("Multiply all the elements in the matrix operand by the first operand"))
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}

@@ -73,7 +73,8 @@ import msi.gaml.types.IType;
  *
  */
 @species (
-		name = IKeyword.MODEL)
+		name = IKeyword.MODEL,
+		internal = true)
 @vars ({ @var (
 		name = IKeyword.COLOR,
 		type = IType.COLOR,

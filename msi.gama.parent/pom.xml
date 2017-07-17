@@ -196,8 +196,6 @@
 		<module>../simtools.gaml.extensions.physics</module>
 
 
-		<module>../idees.gama.features.weka</module>
-		<module>../idees.gama.weka</module>
 		<module>../irit.gaml.extensions.database</module>
 		<module>../irit.gaml.extensions.test</module>
 

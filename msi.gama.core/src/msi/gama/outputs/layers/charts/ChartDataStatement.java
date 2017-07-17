@@ -39,7 +39,8 @@ import msi.gaml.types.IType;
 		value = { @facet (
 				name = IKeyword.VALUE,
 				type = { IType.FLOAT, IType.POINT, IType.LIST },
-				optional = false),
+				optional = false,
+				doc = @doc ("The value to output on the chart")),
 				// @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 				@facet (
 						name = IKeyword.LEGEND,

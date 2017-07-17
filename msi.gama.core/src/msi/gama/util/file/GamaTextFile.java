@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -34,7 +35,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.STRING,
 		buffer_index = IType.INT,
-		concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML })
+		concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML },
+		doc = @doc ("Represents an arbitrary text file. The internal contents is a list of strings (lines)"))
 public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {

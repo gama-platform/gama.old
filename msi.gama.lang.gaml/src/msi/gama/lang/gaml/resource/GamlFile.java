@@ -16,6 +16,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.outputs.IOutput;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -44,7 +45,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.SPECIES,
 		buffer_index = IType.INT,
-		concept = { IConcept.FILE })
+		concept = { IConcept.FILE },
+		doc = @doc ("Represents GAML model files"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 

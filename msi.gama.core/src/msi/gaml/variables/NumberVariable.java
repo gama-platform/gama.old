@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NumberVariable.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NumberVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -28,31 +27,88 @@ import msi.gaml.types.IType;
 /**
  * The Class IntVariable.
  */
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false, doc = @doc("The name of the attribute")),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("The type of the attribute, either 'int' or 'float'")),
-		@facet(name = IKeyword.INIT,
-				// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
-				type = { IType.INT, IType.FLOAT }, optional = true, doc = @doc("The initial value of the attribute")),
-		@facet(name = IKeyword.VALUE, type = { IType.INT,
-				IType.FLOAT }, optional = true, doc = @doc(value = "", deprecated = "Use 'update' instead")),
-		@facet(name = IKeyword.UPDATE, type = { IType.INT,
-				IType.FLOAT }, optional = true, doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
-		@facet(name = IKeyword.FUNCTION, type = { IType.INT,
-				IType.FLOAT }, optional = true, doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
-		@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true, doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
-		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-		@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
-		@facet(name = IKeyword.ON_CHANGE, type = IType.NONE, optional = true, doc = @doc("Provides a block of statements that will be executed whenever the value of the attribute changes")),
-		@facet(name = IKeyword.MIN, type = { IType.INT,
-				IType.FLOAT }, optional = true, doc = @doc("The minimum value this attribute can take")),
-		@facet(name = IKeyword.MAX, type = { IType.INT,
-				IType.FLOAT }, optional = true, doc = @doc("The maximum value this attribute can take. ")),
-		@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
-		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("A list of constant values among which the attribute can take its value")) }, omissible = IKeyword.NAME)
-@symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false, concept = {})
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc("Allows to declare an attribute of a species or experiment")
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.NEW_VAR_ID,
+				optional = false,
+				doc = @doc ("The name of the attribute")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("The type of the attribute, either 'int' or 'float'")),
+				@facet (
+						name = IKeyword.INIT,
+						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc ("The initial value of the attribute")),
+				@facet (
+						name = IKeyword.VALUE,
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc (
+								value = "",
+								deprecated = "Use 'update' instead")),
+				@facet (
+						name = IKeyword.UPDATE,
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc ("An expression that will be evaluated each cycle to compute a new value for the attribute")),
+				@facet (
+						name = IKeyword.FUNCTION,
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+				@facet (
+						name = IKeyword.CONST,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Indicates whether this attribute can be subsequently modified or not")),
+				@facet (
+						name = IKeyword.CATEGORY,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("Soon to be deprecated. Declare the parameter in an experiment instead")),
+				@facet (
+						name = IKeyword.PARAMETER,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("Soon to be deprecated. Declare the parameter in an experiment instead")),
+				@facet (
+						name = IKeyword.ON_CHANGE,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("Provides a block of statements that will be executed whenever the value of the attribute changes")),
+				@facet (
+						name = IKeyword.MIN,
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc ("The minimum value this attribute can take")),
+				@facet (
+						name = IKeyword.MAX,
+						type = { IType.INT, IType.FLOAT },
+						optional = true,
+						doc = @doc ("The maximum value this attribute can take. ")),
+				@facet (
+						name = IKeyword.STEP,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("A discrete step (used in conjunction with min and max) that constrains the values this variable can take")),
+				@facet (
+						name = IKeyword.AMONG,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc ("A list of constant values among which the attribute can take its value")) },
+		omissible = IKeyword.NAME)
+@symbol (
+		kind = ISymbolKind.Variable.NUMBER,
+		with_sequence = false,
+		concept = {})
+@inside (
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@doc ("Allows to declare an attribute of a species or experiment")
 public class NumberVariable extends Variable {
 
 	/** The max. */
@@ -109,36 +165,28 @@ public class NumberVariable extends Variable {
 
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
 		if (min != null) {
-			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent).getValue())
-					: (Integer) minVal;
-			if (f < m) {
-				return m;
-			}
+			final Integer m =
+					minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent).getValue()) : (Integer) minVal;
+			if (f < m) { return m; }
 		}
 		if (max != null) {
-			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent).getValue())
-					: (Integer) maxVal;
-			if (f > m) {
-				return m;
-			}
+			final Integer m =
+					maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent).getValue()) : (Integer) maxVal;
+			if (f > m) { return m; }
 		}
 		return f;
 	}
 
 	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
 		if (min != null) {
-			final Double fmin = minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent).getValue())
-					: (Double) minVal;
-			if (f < fmin) {
-				return fmin;
-			}
+			final Double fmin =
+					minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent).getValue()) : (Double) minVal;
+			if (f < fmin) { return fmin; }
 		}
 		if (max != null) {
-			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent).getValue())
-					: (Double) maxVal;
-			if (f > fmax) {
-				return fmax;
-			}
+			final Double fmax =
+					maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent).getValue()) : (Double) maxVal;
+			if (f > fmax) { return fmax; }
 		}
 		return f;
 	}
