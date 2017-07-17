@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
@@ -41,42 +42,50 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.MODEL,
 		with_sequence = true,
 		internal = true,
-		concept = {})
+		concept = { IConcept.MODEL })
 @facets (
 		value = { @facet (
 				name = IKeyword.VERSION,
 				type = IType.ID,
-				optional = true),
+				optional = true,
+				doc = @doc ("The version of this model")),
 				@facet (
 						name = IKeyword.AUTHOR,
 						type = IType.ID,
-						optional = true),
+						optional = true,
+						doc = @doc ("The author of the model")),
 				@facet (
 						name = IKeyword.PRAGMA,
 						type = IType.LIST,
 						of = IType.STRING,
 						optional = true,
-						internal = true),
+						internal = true,
+						doc = @doc ("For internal use only")),
 				@facet (
 						name = IKeyword.TORUS,
 						type = IType.BOOL,
-						optional = true),
+						optional = true,
+						doc = @doc ("Whether the model will be based on a toroidal environment or not")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.ID,
-						optional = false),
+						optional = false,
+						doc = @doc ("The name of the model")),
 				@facet (
 						name = IKeyword.PARENT,
 						type = IType.ID,
-						optional = true),
+						optional = true,
+						doc = @doc ("Whether this model inherits from another one or not (must be in the same project and folder)")),
 				@facet (
 						name = IKeyword.SKILLS,
 						type = IType.LIST,
-						optional = true),
+						optional = true,
+						doc = @doc ("The list of skills attached to this model")),
 				@facet (
 						name = IKeyword.CONTROL,
 						type = IType.SKILL,
-						optional = true),
+						optional = true,
+						doc = @doc ("The control architecture attached to this model")),
 				@facet (
 						name = IKeyword.FREQUENCY,
 						type = IType.INT,

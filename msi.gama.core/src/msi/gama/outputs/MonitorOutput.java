@@ -244,7 +244,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 				if (o instanceof Number)
 					strings = new String[] { o.toString() };
 				else if (o instanceof List) {
-					final List l = (List) o;
+					final List<?> l = (List<?>) o;
 					strings = new String[l.size()];
 					for (int i = 0; i < strings.length; i++) {
 						strings[i] = l.get(i).toString();
