@@ -73,6 +73,7 @@ import msi.gaml.types.IType;
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @validator (LetValidator.class)
 @serializer (LetSerializer.class)
+@doc ("Allows to declare a temporary variable of the specified type and to initialize it with a value")
 public class LetStatement extends SetStatement {
 
 	public static class LetSerializer extends AssignmentSerializer {
