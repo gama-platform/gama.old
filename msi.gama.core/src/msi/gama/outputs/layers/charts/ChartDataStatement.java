@@ -44,7 +44,8 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.LEGEND,
 						type = IType.STRING,
-						optional = false),
+						optional = false,
+						doc = @doc ("The legend of the chart")),
 				@facet (
 						name = ChartDataStatement.YERR_VALUES,
 						type = { IType.FLOAT, IType.LIST },
@@ -79,7 +80,7 @@ import msi.gaml.types.IType;
 						name = ChartDataStatement.LINE_VISIBLE,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Line visible or not")),
+						doc = @doc ("Whether lines are visible or not")),
 				@facet (
 						name = ChartDataStatement.MARKER,
 						type = IType.BOOL,

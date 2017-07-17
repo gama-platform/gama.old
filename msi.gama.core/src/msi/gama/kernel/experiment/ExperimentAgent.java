@@ -85,7 +85,8 @@ import msi.gaml.types.Types;
 		// @var(name = GAMA._FATAL, type = IType.BOOL),
 		@var (
 				name = GAMA._WARNINGS,
-				type = IType.BOOL),
+				type = IType.BOOL,
+				doc = @doc ("The value of the preference 'Consider warnings as errors'")),
 		@var (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,

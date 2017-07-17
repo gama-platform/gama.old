@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -37,7 +38,8 @@ import msi.gaml.operators.Cast;
 		id = IType.MATRIX,
 		wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class, GamaObjectMatrix.class },
 		kind = ISymbolKind.Variable.CONTAINER,
-		concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MATRIX })
+		concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MATRIX },
+		doc = @doc ("Matrices are 2-dimensional containers that can contain any type of date (not only floats or integers). They can be accessed with a point index or by rows / columns"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 

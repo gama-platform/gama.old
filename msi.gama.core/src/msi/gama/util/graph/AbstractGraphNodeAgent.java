@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,6 +16,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -77,9 +77,11 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 	}
 
 	@action (
+			doc = @doc ("This operator should never be called"),
 			name = "related_to",
 			virtual = true,
 			args = { @arg (
+					doc = @doc ("The other agent"),
 					name = "other",
 					optional = false,
 					type = IType.AGENT) })
