@@ -62,6 +62,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -85,7 +86,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.OSM, IConcept.FILE })
+		concept = { IConcept.OSM, IConcept.FILE },
+		doc = @doc ("Represents files that contain OSM GIS information. The internal representation is a list of geometries"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaOsmFile extends GamaGisFile {
 
