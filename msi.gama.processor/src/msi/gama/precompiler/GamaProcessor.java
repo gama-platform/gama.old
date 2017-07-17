@@ -262,10 +262,11 @@ public class GamaProcessor extends AbstractProcessor {
 					&& !processingEnv.getTypeUtils().isAssignable(clazz, getIAgent());
 
 			final vars vars = e.getAnnotation(vars.class);
+			final Set<String> undocumented = new HashSet();
 			for (final var s : vars.value()) {
 				final doc[] docs = s.doc();
 				if (docs.length == 0 && !s.internal()) {
-					emitWarning("GAML: var '" + s.name() + "' is not documented", e);
+					undocumented.add(s.name());
 				}
 				final StringBuilder sb = new StringBuilder();
 				final int type = s.type();
@@ -375,6 +376,9 @@ public class GamaProcessor extends AbstractProcessor {
 					d = docs[0].value();
 				}
 				gp.put(sb.toString(), d);
+			}
+			if (!undocumented.isEmpty()) {
+				emitWarning("GAML: vars '" + undocumented + "' are not documented", e);
 			}
 		}
 	}
@@ -588,17 +592,20 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private String facetsToString(final facets facets, final Element e) {
 		final StringBuilder sb = new StringBuilder();
+		final Set<String> undocumented = new HashSet();
 		if (facets.value() != null) {
 			for (final facet f : facets.value()) {
 				final doc[] docs = f.doc();
 				if (docs.length == 0 && !f.internal()) {
-					emitWarning("GAML: facet '" + f.name() + "' is not documented", e);
+					undocumented.add(f.name());
 				}
 				sb.append(facetToString(f)).append(SEP);
 			}
 			if (facets.value().length > 0) {
 				sb.setLength(sb.length() - 1);
 			}
+			if (!undocumented.isEmpty())
+				emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
 		}
 		return sb.toString();
 	}

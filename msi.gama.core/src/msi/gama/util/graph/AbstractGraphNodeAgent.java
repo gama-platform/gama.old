@@ -34,10 +34,12 @@ import msi.gaml.types.IType;
 // FIXME: Add all the necessary variables (degree, neighbors, edges)
 @species (
 		name = "graph_node",
-		concept = { IConcept.GRAPH, IConcept.NODE })
+		concept = { IConcept.GRAPH, IConcept.NODE },
+		doc = @doc ("A base species to use as a parent for species representing agents that are nodes of a graph"))
 @vars ({ @var (
 		name = IKeyword.MYGRAPH,
-		type = IType.GRAPH) })
+		type = IType.GRAPH,
+		doc = @doc ("A reference to the graph containing the agent")) })
 public class AbstractGraphNodeAgent extends GamlAgent {
 
 	final static Arguments args = new Arguments();
