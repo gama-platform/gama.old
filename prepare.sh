@@ -1,12 +1,12 @@
 #!/bin/bash
 commit_website_files() {
-	git config --global user.email "travis@travis-ci.com"
+	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
 	git config --global push.default simple		
-	git clone --depth=50 --branch=master https://github.com/dphilippon/dphilippon.github.io.git dphilippon/dphilippon.github.io
-	cd dphilippon/dphilippon.github.io
+	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git gama-platform/gama-platform.github.io
+	cd gama-platform/gama-platform.github.io
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/dphilippon/dphilippon.github.io.git
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama-platform.github.io.git
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
 	git add -A		
