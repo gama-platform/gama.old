@@ -36,6 +36,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -53,7 +54,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
+		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE },
+		doc = @doc ("Represents .asc or .tif files that contain grid descriptions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGridFile extends GamaGisFile {
 

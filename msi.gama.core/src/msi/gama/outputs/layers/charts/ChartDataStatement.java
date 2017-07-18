@@ -32,6 +32,7 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		with_sequence = false,
 		concept = { IConcept.CHART })
+@doc ("This statement allows to describe the values that will be displayed on the chart.")
 @inside (
 		symbols = IKeyword.CHART,
 		kinds = ISymbolKind.SEQUENCE_STATEMENT)

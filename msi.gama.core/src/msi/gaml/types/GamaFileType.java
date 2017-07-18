@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -42,7 +43,8 @@ import msi.gaml.expressions.IExpression;
 		id = IType.FILE,
 		wraps = { IGamaFile.class },
 		kind = ISymbolKind.Variable.CONTAINER,
-		concept = { IConcept.TYPE, IConcept.FILE })
+		concept = { IConcept.TYPE, IConcept.FILE },
+		doc = @doc ("Generic super-type of all file types"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
@@ -55,7 +57,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 * Adds a new file type definition.
 	 *
 	 * @param string
-	 *            a string representin the type of the file in GAML
+	 *            a string representing the type of the file in GAML
 	 * @param clazz
 	 *            the class that supports this file type
 	 * @param s

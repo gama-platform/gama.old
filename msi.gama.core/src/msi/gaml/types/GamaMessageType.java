@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaMessageType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaMessageType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,15 +19,18 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-@SuppressWarnings("unchecked")
-@type(name = GamaMessageType.MESSAGE_STR, id = IType.MESSAGE, wraps = {
-		GamaMessage.class }, kind = ISymbolKind.Variable.REGULAR)
+@SuppressWarnings ("unchecked")
+@type (
+		name = GamaMessageType.MESSAGE_STR,
+		id = IType.MESSAGE,
+		wraps = { GamaMessage.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		doc = @doc ("Represents the messages exchanged between agents"))
 public class GamaMessageType extends GamaType<GamaMessage> {
 
 	public static final String MESSAGE_STR = "message";
 
-	public GamaMessageType() {
-	}
+	public GamaMessageType() {}
 
 	@Override
 	public GamaMessage getDefault() {
@@ -40,18 +42,23 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 		return true;
 	}
 
-	@operator(value = GamaMessageType.MESSAGE_STR, can_be_const = true, category = {
-			IOperatorCategory.FIPA }, concept = { IConcept.FIPA })
-	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = {})
+	@operator (
+			value = GamaMessageType.MESSAGE_STR,
+			can_be_const = true,
+			category = { IOperatorCategory.FIPA },
+			concept = { IConcept.FIPA })
+	@doc (
+			value = "to be added",
+			comment = "",
+			special_cases = { "" },
+			examples = {})
 	public static GamaMessage asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaMessageType.staticCast(scope, val, null);
 	}
 
 	private static GamaMessage staticCast(final IScope scope, final Object val, final Object object) {
 
-		if (val instanceof GamaMessage) {
-			return (GamaMessage) val;
-		}
+		if (val instanceof GamaMessage) { return (GamaMessage) val; }
 		// ??? ??? Demander au skill la classe de message à produire !
 		return new GamaMessage(scope, scope.getAgent(), null, val);
 	}

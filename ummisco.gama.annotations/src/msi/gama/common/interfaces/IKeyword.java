@@ -160,7 +160,7 @@ public interface IKeyword {
 	public static final String EXPERIMENT = "experiment";
 	// public static final String EXPERIMENTATOR = "experimentator";
 	public static final String EXPLODED = "exploded";
-	public static final String EXPORT = "export";
+	// public static final String EXPORT = "export";
 	public static final String EXTENSION = "extension";
 	public static final String FADING = "fading";
 	public static final String FALSE = "false";

@@ -47,6 +47,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -74,7 +75,8 @@ import msi.gaml.species.ISpecies;
 		id = IType.GEOMETRY,
 		wraps = { IShape.class, GamaShape.class },
 		kind = ISymbolKind.Variable.REGULAR,
-		concept = { IConcept.TYPE, IConcept.GEOMETRY })
+		concept = { IConcept.TYPE, IConcept.GEOMETRY },
+		doc = @doc ("Represents geometries, i.e. the support for the shapes of agents and all the spatial operations in GAMA."))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGeometryType extends GamaType<IShape> {
 

@@ -148,7 +148,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			name = "pgm",
 			extensions = { "pgm" },
 			buffer_type = IType.MATRIX,
-			buffer_content = IType.INT)
+			buffer_content = IType.INT,
+			doc = @doc ("PGM files are special image files in 256 gray levels"))
 	public static class GamaPgmFile extends GamaImageFile {
 
 		/**
