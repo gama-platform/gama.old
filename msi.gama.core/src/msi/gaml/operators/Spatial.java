@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.precision.EnhancedPrecisionOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
@@ -1283,12 +1284,31 @@ public abstract class Spatial {
 				return g1.difference(g2);
 			} catch (AssertionFailedException | TopologyException e) {
 				try {
+					java.lang.System.out.println("Topology exception: trying single floating point precision");
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					return GeometryPrecisionReducer.reducePointwise(g1, pm)
 							.difference(GeometryPrecisionReducer.reducePointwise(g2, pm));
-				} catch (final Exception e1) {
-					return g1.buffer(0, 0, BufferParameters.CAP_FLAT)
-							.difference(g2.buffer(0, 0, BufferParameters.CAP_FLAT));
+				} catch (final RuntimeException e1) {
+					try {
+						java.lang.System.out.println("Topology exception: trying to buffer geometries");
+						return g1.buffer(0, 10, BufferParameters.CAP_FLAT)
+								.difference(g2.buffer(0, 10, BufferParameters.CAP_FLAT));
+					} catch (final TopologyException e2) {
+						try {
+							java.lang.System.out.println("Topology exception: trying fixed precision operation");
+							final PrecisionModel pm = new PrecisionModel(100000d);
+							return GeometryPrecisionReducer.reduce(g1, pm)
+									.difference(GeometryPrecisionReducer.reduce(g2, pm));
+						} catch (final RuntimeException e3) {
+							java.lang.System.out.println("Topology exception: trying enhanced precision operation");
+							try {
+								return EnhancedPrecisionOp.difference(g1, g2);
+							} catch (final RuntimeException last) {
+								java.lang.System.out.println("Unable to compute difference: returning null instead");
+								return null; // return g1; ??
+							}
+						}
+					}
 				}
 			}
 		}
@@ -2303,8 +2323,8 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			IShape line = Spatial.Operators.union(scope, geoms);
-			Geometry nodedLineStrings = line.getInnerGeometry(); 
+			final IShape line = Spatial.Operators.union(scope, geoms);
+			final Geometry nodedLineStrings = line.getInnerGeometry();
 			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
 
 			for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
@@ -2387,7 +2407,7 @@ public abstract class Spatial {
 			if (geomSimp != null && !geomSimp.isEmpty() && geomSimp.isSimple()) { return new GamaShape(g1, geomSimp); }
 			return g1.copy(scope);
 		}
-		
+
 		@operator (
 				value = "with_precision",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
@@ -2400,8 +2420,8 @@ public abstract class Spatial {
 						test = false) })
 		public static IShape withPrecision(final IScope scope, final IShape g1, final Integer precision) {
 			if (g1 == null || g1.getInnerGeometry() == null) { return g1; }
-			double scale = Math.pow(10, precision);
-			PrecisionModel pm = new PrecisionModel(scale);
+			final double scale = Math.pow(10, precision);
+			final PrecisionModel pm = new PrecisionModel(scale);
 			return new GamaShape(GeometryPrecisionReducer.reduce(g1.getInnerGeometry(), pm));
 		}
 
@@ -2590,7 +2610,6 @@ public abstract class Spatial {
 					target, edges);
 		}
 
-
 		@operator (
 				value = "path_between",
 
@@ -2608,8 +2627,8 @@ public abstract class Spatial {
 			if (cells == null || cells.isEmpty()) { return null; }
 
 			if (nodes.isEmpty(scope)) { return null; }
-			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
-			
+			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
+
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) {
@@ -2666,7 +2685,7 @@ public abstract class Spatial {
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 		}
-		
+
 		@operator (
 				value = "path_between",
 
@@ -2682,14 +2701,13 @@ public abstract class Spatial {
 		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
-			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
+			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
 			if (topo instanceof GridTopology) {
 				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
 			} else {
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 		}
-
 
 		@operator (
 				value = "distance_to",
