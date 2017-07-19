@@ -168,11 +168,11 @@ public class HeadlessListener implements IGui {
 		// System.out.println("[Headless] Clean after experiment.");
 		try {
 			outputWriter.get().flush();
-			outputWriter.get().close();			
-		} catch (IOException e) {
+			outputWriter.get().close();
+		} catch (final IOException e) {
 			e.printStackTrace();
-		} 
-		
+		}
+
 	}
 
 	@Override
@@ -210,6 +210,11 @@ public class HeadlessListener implements IGui {
 			public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
 					final boolean immediately) {
 				return new IGamaFileMetaData() {
+
+					@Override
+					public boolean hasFailed() {
+						return false;
+					}
 
 					@Override
 					public String toPropertyString() {
@@ -254,7 +259,8 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
-	public void closeSimulationViews(final IScope scope, final boolean andOpenModelingPerspective, final boolean immediately) {}
+	public void closeSimulationViews(final IScope scope, final boolean andOpenModelingPerspective,
+			final boolean immediately) {}
 
 	/**
 	 * Method getDisplayDescriptionFor()
@@ -366,7 +372,7 @@ public class HeadlessListener implements IGui {
 			if (outputWriter.get() != null) {
 				try {
 					outputWriter.get().write(s + Strings.LN);
-					//outputWriter.get().flush();
+					// outputWriter.get().flush();
 				} catch (final IOException e) {
 					e.printStackTrace();
 				}
