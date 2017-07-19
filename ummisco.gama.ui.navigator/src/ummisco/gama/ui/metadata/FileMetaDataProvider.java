@@ -369,6 +369,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				// System.out.println("Canceled: Resources are locked");
 				return;
 			}
+
 			if (data != null) {
 				data.setModificationStamp(file.getModificationStamp());
 			}
