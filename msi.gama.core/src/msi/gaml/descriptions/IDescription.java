@@ -228,4 +228,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
 
+	public void replaceChildrenWith(Iterable<IDescription> array);
+
 }

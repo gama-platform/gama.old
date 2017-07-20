@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -61,6 +62,7 @@ import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -82,9 +84,9 @@ import msi.gaml.types.Types;
 				doc = @doc ("Declaring a display as virtual makes it invisible on screen, and only usable for display inheritance")),
 				@facet (
 						name = IKeyword.PARENT,
-						type = IType.STRING,
+						type = IType.ID,
 						optional = true,
-						doc = @doc ("Declares that this display inherits its layers and attributes from the parent display named as the argument")),
+						doc = @doc ("Declares that this display inherits its layers and attributes from the parent display named as the argument. Expects the identifier of the parent display or a string if the name of the parent contains spaces")),
 				@facet (
 						name = IKeyword.BACKGROUND,
 						type = IType.COLOR,
@@ -300,6 +302,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		@Override
 		public void validate(final IDescription d) {
 
+			final IExpressionDescription parent = d.getFacet(PARENT);
+			if (parent != null) {
+				handleInheritance(d, parent.toString());
+			}
+
 			final IExpressionDescription auto = d.getFacet(AUTOSAVE);
 			if (auto != null && auto.getExpression().isConst() && auto.getExpression().literalValue().equals(TRUE)) {
 				d.info("With autosave enabled, GAMA must remain the frontmost window and the display must not be covered or obscured by other windows",
@@ -345,6 +352,28 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				});
 
 			}
+		}
+
+		private void handleInheritance(final IDescription d, final String string) {
+			final IDescription output = d.getEnclosingDescription();
+			for (final IDescription display : output.getChildrenWithKeyword(DISPLAY)) {
+				if (display.getName().equals(string)) {
+					handleInheritance(d, display);
+					return;
+				}
+			}
+			d.error("No parent display named '" + string + "' found");
+		}
+
+		private void handleInheritance(final IDescription child, final IDescription parent) {
+			final Facets childFacets = child.getFacets();
+			final boolean hasVirtual = childFacets.contains(VIRTUAL);
+			final Facets parentFacets = parent.getFacets();
+			childFacets.complementWith(parentFacets);
+			if (!hasVirtual)
+				childFacets.remove(VIRTUAL);
+			child.replaceChildrenWith(Iterables.concat(parent.getOwnChildren(), child.getOwnChildren()));
+
 		}
 
 	}

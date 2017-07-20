@@ -339,6 +339,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
+		// System.out.println("Disposing " + getKeyword() + " " + getName());
 		if (isBuiltIn()) { return; }
 		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets())
@@ -827,5 +828,24 @@ public abstract class SymbolDescription implements IDescription {
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp) {
 
 	}
+
+	public IDescription getSimilarChild(final IDescription container, final IDescription desc) {
+		final IDescription[] found = new IDescription[1];
+		container.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public boolean visit(final IDescription d) {
+				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
+					found[0] = d;
+					return false;
+				}
+				return true;
+			}
+		});
+		return found[0];
+	}
+
+	@Override
+	public void replaceChildrenWith(final Iterable<IDescription> array) {}
 
 }
