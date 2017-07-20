@@ -293,6 +293,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
 				"Keep the data displayed in charts in memory (to save them later as CSV)", true, IType.BOOL).in(NAME,
 						CHARTS);
+		public static final Pref<Boolean> CHART_GRIDLINES = create("pref_chart_display_gridlines",
+				"Display grid lines on charts by default (true if x_tick_unit or y_tick_unit is defined)", true,
+				IType.BOOL).in(NAME, CHARTS);
 		/**
 		 * Drawing methods and defaults
 		 */

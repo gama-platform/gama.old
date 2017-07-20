@@ -55,6 +55,7 @@ import org.jfree.ui.RectangleInsets;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 
@@ -573,8 +574,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		pp.setDomainCrosshairPaint(axesColor);
 		pp.setRangeCrosshairPaint(axesColor);
 		pp.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-		pp.setDomainCrosshairVisible(true);
-		pp.setRangeCrosshairVisible(true);
+		pp.setDomainCrosshairVisible(false);
+		pp.setRangeCrosshairVisible(false);
 
 		pp.getDomainAxis().setAxisLinePaint(axesColor);
 		pp.getDomainAxis().setTickLabelFont(getTickFont());
@@ -585,7 +586,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (xtickunit > 0) {
 			((NumberAxis) pp.getDomainAxis()).setTickUnit(new NumberTickUnit(xtickunit));
-		}
+			pp.setDomainGridlinesVisible(true);
+		} else
+			pp.setDomainGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
 
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
@@ -596,7 +599,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (ytickunit > 0) {
 			((NumberAxis) pp.getRangeAxis()).setTickUnit(new NumberTickUnit(ytickunit));
-		}
+			pp.setRangeGridlinesVisible(true);
+		} else
+			pp.setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
 
 		// resetAutorange(scope);
 
