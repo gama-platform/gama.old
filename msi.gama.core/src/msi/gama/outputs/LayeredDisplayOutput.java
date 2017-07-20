@@ -76,10 +76,20 @@ import msi.gaml.types.Types;
 		concept = { IConcept.DISPLAY })
 @facets (
 		value = { @facet (
-				name = IKeyword.BACKGROUND,
-				type = IType.COLOR,
+				name = IKeyword.VIRTUAL,
+				type = IType.BOOL,
 				optional = true,
-				doc = @doc ("Allows to fill the background of the display with a specific color")),
+				doc = @doc ("Declaring a display as virtual makes it invisible on screen, and only usable for display inheritance")),
+				@facet (
+						name = IKeyword.PARENT,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Declares that this display inherits its layers and attributes from the parent display named as the argument")),
+				@facet (
+						name = IKeyword.BACKGROUND,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Allows to fill the background of the display with a specific color")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,

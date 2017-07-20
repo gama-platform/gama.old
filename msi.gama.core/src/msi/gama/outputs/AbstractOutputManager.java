@@ -33,6 +33,7 @@ import msi.gaml.descriptions.IDescription;
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
 	protected final Map<String, IOutput> outputs = new TOrderedHashMap<String, IOutput>();
+	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<String, IOutput>();
 	protected String name;
 
 	public AbstractOutputManager(final IDescription desc) {
@@ -71,7 +72,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void add(final IOutput output) {
-		outputs.put(output.getId(), output);
+		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual())
+			virtualOutputs.put(output.getId(), output);
+		else
+			outputs.put(output.getId(), output);
 	}
 
 	// hqnghi add output with alias name from micro-model

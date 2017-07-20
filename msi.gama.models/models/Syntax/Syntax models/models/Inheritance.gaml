@@ -31,7 +31,7 @@ species parent {
 		return a + b;
 	}
 	
-	action do_nothing virtual: true; // do_nothing is abstract and cannot be called. In addition it makes parent an abstrat species
+	action do_nothing virtual: true; // do_nothing is abstract and cannot be called. In addition it makes parent an abstract species
 }
 
 species child parent: parent {
