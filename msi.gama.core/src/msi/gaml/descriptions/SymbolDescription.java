@@ -422,7 +422,7 @@ public abstract class SymbolDescription implements IDescription {
 		return false;
 	}
 
-	protected boolean hasAction(final String name) {
+	protected boolean hasAction(final String name, final boolean superInvocation) {
 		return false;
 	}
 
@@ -432,8 +432,8 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringAction(final String name) {
-		return hasAction(name) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name);
+	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+		return enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name, superInvocation);
 	}
 
 	@Override
@@ -636,7 +636,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	private final boolean validateFacets() {
 		// Special case for "do", which can accept (at parsing time) any facet
-		final boolean isDo = DO.equals(getKeyword());
+		final boolean isDo = DO.equals(getKeyword()) || INVOKE.equals(getKeyword());
 		final boolean isBuiltIn = isBuiltIn();
 		final SymbolProto proto = getMeta();
 		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);

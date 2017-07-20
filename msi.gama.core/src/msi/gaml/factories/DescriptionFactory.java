@@ -14,6 +14,7 @@ import static msi.gama.common.interfaces.IKeyword.AGENT;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -202,10 +203,16 @@ public class DescriptionFactory {
 		return (ModelFactory) getFactory(ISymbolKind.MODEL);
 	}
 
-	public static Set<String> getAllowedFacetsFor(final String key) {
-		if (key == null) { return Collections.EMPTY_SET; }
-		final SymbolProto md = getProto(key, null);
-		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
+	public static Set<String> getAllowedFacetsFor(final String... keys) {
+		if (keys == null || keys.length == 0) { return Collections.EMPTY_SET; }
+		final Set<String> result = new HashSet();
+		for (final String key : keys) {
+			final SymbolProto md = getProto(key, null);
+			if (md != null)
+				result.addAll(md.getPossibleFacets().keySet());
+		}
+
+		return result;
 	}
 
 	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,

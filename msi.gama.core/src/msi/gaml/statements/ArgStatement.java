@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ArgStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ArgStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -70,7 +69,7 @@ import msi.gaml.types.IType;
 		internal = true,
 		concept = { IConcept.ACTION })
 @inside (
-		symbols = { IKeyword.ACTION, IKeyword.DO })
+		symbols = { IKeyword.ACTION, IKeyword.DO, IKeyword.INVOKE })
 @validator (ValidNameValidator.class)
 @doc (
 		value = "Argument ",

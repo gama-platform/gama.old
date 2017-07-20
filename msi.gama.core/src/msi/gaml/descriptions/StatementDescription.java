@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StatementDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StatementDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -77,7 +76,7 @@ public class StatementDescription extends SymbolDescription {
 		if (!hasFacets())
 			return null;
 		if (!hasFacet(WITH)) {
-			if (!getKeyword().equals(DO))
+			if (!isInvocation())
 				return null;
 			if (hasFacetsNotIn(DoStatement.DO_FACETS)) {
 				final Arguments args = new Arguments();
@@ -104,10 +103,19 @@ public class StatementDescription extends SymbolDescription {
 
 	}
 
+	public boolean isSuperInvocation() {
+		return IKeyword.INVOKE.equals(keyword);
+	}
+
+	private boolean isInvocation() {
+		return IKeyword.DO.equals(keyword) || isSuperInvocation();
+	}
+
 	private ActionDescription getAction() {
 		final String actionName = getLitteral(IKeyword.ACTION);
 		if (actionName == null) { return null; }
-		final TypeDescription declPlace = (TypeDescription) getDescriptionDeclaringAction(actionName);
+		final TypeDescription declPlace =
+				(TypeDescription) getDescriptionDeclaringAction(actionName, isSuperInvocation());
 		ActionDescription executer = null;
 		if (declPlace != null) {
 			executer = declPlace.getAction(actionName);
@@ -243,7 +251,7 @@ public class StatementDescription extends SymbolDescription {
 				return true;
 			}
 		});
-		if (keyword.equals(IKeyword.DO)) {
+		if (isInvocation()) {
 			verifyArgs(passedArgs);
 		} else if (keyword.equals(IKeyword.CREATE)) {
 			verifyInits(passedArgs);

@@ -2049,14 +2049,22 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml._DoKey");
-		private final Keyword cDoKeyword = (Keyword)rule.eContents().get(1);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cDoKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cInvokeKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//_DoKey:
-		//	"do";
+		//	"do" | "invoke";
 		@Override public ParserRule getRule() { return rule; }
 
+		//"do" | "invoke"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
 		//"do"
-		public Keyword getDoKeyword() { return cDoKeyword; }
+		public Keyword getDoKeyword_0() { return cDoKeyword_0; }
+
+		//"invoke"
+		public Keyword getInvokeKeyword_1() { return cInvokeKeyword_1; }
 	}
 
 	public class _VarOrConstKeyElements extends AbstractParserRuleElementFinder {
@@ -5558,7 +5566,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//_DoKey:
-	//	"do";
+	//	"do" | "invoke";
 	public _DoKeyElements get_DoKeyAccess() {
 		return p_DoKey;
 	}
@@ -6227,7 +6235,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//terminal KEYWORD:
-	//	'each' | 'self' | 'myself' | 'nil';
+	//	'each' | 'self' | 'myself' | 'nil' | 'super';
 	public TerminalRule getKEYWORDRule() {
 		return tKEYWORD;
 	} 

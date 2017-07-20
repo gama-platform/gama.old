@@ -400,7 +400,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			return false;
 		if (parent == null || parent == this)
 			return false;
-		return parent.hasAction(name);
+		return parent.hasAction(name, false);
 	}
 
 	@Override
@@ -437,9 +437,24 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public boolean hasAction(final String a) {
+	public boolean hasAction(final String a, final boolean superInvocation) {
+		if (superInvocation) {
+			if (parent == null || parent == this)
+				return false;
+			return parent.hasAction(a, false);
+		}
 		return actions != null && actions.containsKey(a)
-				|| parent != null && parent != this && getParent().hasAction(a);
+				|| parent != null && parent != this && getParent().hasAction(a, superInvocation);
+	}
+
+	@Override
+	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+		if (superInvocation) {
+			if (parent == null)
+				return null;
+			return parent.getDescriptionDeclaringAction(name, false);
+		}
+		return hasAction(name, false) ? this : null;
 	}
 
 	public boolean isAbstract() {

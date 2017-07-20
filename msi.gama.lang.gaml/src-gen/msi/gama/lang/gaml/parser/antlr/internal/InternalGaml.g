@@ -3768,13 +3768,20 @@ rule_DoKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-
+(
 	kw='do' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_DoKeyAccess().getDoKeyword()); 
+        newLeafNode(kw, grammarAccess.get_DoKeyAccess().getDoKeyword_0()); 
     }
 
+    |
+	kw='invoke' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_DoKeyAccess().getInvokeKeyword_1()); 
+    }
+)
     ;
 
 
@@ -7948,7 +7955,7 @@ ruleTerminalExpression returns [EObject current=null]
 
 
 
-RULE_KEYWORD : ('each'|'self'|'myself'|'nil');
+RULE_KEYWORD : ('each'|'self'|'myself'|'nil'|'super');
 
 RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 

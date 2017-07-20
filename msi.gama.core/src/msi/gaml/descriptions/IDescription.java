@@ -137,7 +137,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract IVarDescriptionProvider getDescriptionDeclaringVar(final String name);
 
-	public abstract IDescription getDescriptionDeclaringAction(final String name);
+	public abstract IDescription getDescriptionDeclaringAction(final String name, boolean superInvocation);
 
 	public abstract Iterable<IDescription> getChildrenWithKeyword(String keyword);
 

@@ -365,6 +365,7 @@ public interface IKeyword {
 	public static final String SEGMENTS = "segments";
 	public static final String SELECTABLE = "selectable";
 	public static final String SELF = "self";
+	public static final String SUPER = "super";
 	public static final String SERIES = "series";
 	public static final String SET = "set";
 	public static final String SHAPE = "shape";
@@ -500,4 +501,5 @@ public interface IKeyword {
 	public static final String GENSTAR_ENTITY = "genstar_entity";
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 	public static final String PLATFORM = "platform";
+	public static final String INVOKE = "invoke";
 }

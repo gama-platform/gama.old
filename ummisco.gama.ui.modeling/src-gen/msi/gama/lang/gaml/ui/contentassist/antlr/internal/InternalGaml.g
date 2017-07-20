@@ -1256,11 +1256,9 @@ rule_DoKey
     }
 	:
 (
-{ before(grammarAccess.get_DoKeyAccess().getDoKeyword()); }
-
-	'do' 
-
-{ after(grammarAccess.get_DoKeyAccess().getDoKeyword()); }
+{ before(grammarAccess.get_DoKeyAccess().getAlternatives()); }
+(rule___DoKey__Alternatives)
+{ after(grammarAccess.get_DoKeyAccess().getAlternatives()); }
 )
 
 ;
@@ -4070,6 +4068,32 @@ rule___LayerKey__Alternatives
 	'datalist' 
 
 { after(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule___DoKey__Alternatives
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.get_DoKeyAccess().getDoKeyword_0()); }
+
+	'do' 
+
+{ after(grammarAccess.get_DoKeyAccess().getDoKeyword_0()); }
+)
+
+    |(
+{ before(grammarAccess.get_DoKeyAccess().getInvokeKeyword_1()); }
+
+	'invoke' 
+
+{ after(grammarAccess.get_DoKeyAccess().getInvokeKeyword_1()); }
 )
 
 ;
@@ -20566,7 +20590,7 @@ finally {
 }
 
 
-RULE_KEYWORD : ('each'|'self'|'myself'|'nil');
+RULE_KEYWORD : ('each'|'self'|'myself'|'nil'|'super');
 
 RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 

@@ -68,6 +68,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.get_SpeciesKeyAccess().getAlternatives(), "rule___SpeciesKey__Alternatives");
 					put(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getAlternatives(), "rule___1Expr_Facets_BlockOrEnd_Key__Alternatives");
 					put(grammarAccess.get_LayerKeyAccess().getAlternatives(), "rule___LayerKey__Alternatives");
+					put(grammarAccess.get_DoKeyAccess().getAlternatives(), "rule___DoKey__Alternatives");
 					put(grammarAccess.get_VarOrConstKeyAccess().getAlternatives(), "rule___VarOrConstKey__Alternatives");
 					put(grammarAccess.get_ReflexKeyAccess().getAlternatives(), "rule___ReflexKey__Alternatives");
 					put(grammarAccess.get_AssignmentKeyAccess().getAlternatives(), "rule___AssignmentKey__Alternatives");

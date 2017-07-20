@@ -197,7 +197,7 @@ _LayerKey:
 	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
 ;
 _DoKey:
-	"do";
+	"do" | "invoke";
 
 _VarOrConstKey:
 	"var" | "const" | "let" | "arg" ;
@@ -461,7 +461,7 @@ TerminalExpression:
 	{ReservedLiteral} op=KEYWORD;
 
 terminal KEYWORD:
-	'each' | 'self' | 'myself' | 'nil'  ;
+	'each' | 'self' | 'myself' | 'nil' | 'super' ;
 
 //terminal INTEGER : ('0'..'9')+;
 

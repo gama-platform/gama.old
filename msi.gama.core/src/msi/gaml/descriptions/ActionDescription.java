@@ -69,7 +69,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 		if (Iterables.isEmpty(formalArgs) && names.isEmpty()) { return true; }
 		final List<String> allArgs = getArgNames();
-		if (caller.getKeyword().equals(DO)) {
+		if (caller.getKeyword().equals(DO) || caller.getKeyword().equals(INVOKE)) {
 			// If the names were not known at the time of the creation of the
 			// caller, only the order
 			if (names.containsKey("0")) {

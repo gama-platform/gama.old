@@ -110,10 +110,10 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringAction(final String name) {
-		IDescription result = super.getDescriptionDeclaringAction(name);
+	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+		IDescription result = super.getDescriptionDeclaringAction(name, superInvocation);
 		if (result == null && previousDescription != null) {
-			result = previousDescription.getDescriptionDeclaringAction(name);
+			result = previousDescription.getDescriptionDeclaringAction(name, superInvocation);
 		}
 		return result;
 	}
