@@ -13,10 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.displays.LayeredDisplayView;
+import ummisco.gama.ui.views.displays.SWTDisplayView;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 /**
@@ -26,7 +24,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  * @since 25 mars 2015
  *
  */
-public class SWTLayeredDisplayView extends LayeredDisplayView {
+public class OpenGLDisplayView extends SWTDisplayView {
 
 	boolean isOverlayTemporaryVisible;
 
@@ -43,34 +41,6 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		surfaceComposite = surface.renderer.getCanvas();
 		surface.outputReloaded();
 		return surfaceComposite;
-	}
-
-	@Override
-	public Control[] getZoomableControls() {
-		return new Control[] { surfaceComposite };
-	}
-
-	@Override
-	public void setFocus() {
-		if (surfaceComposite != null && !surfaceComposite.isDisposed() && !surfaceComposite.isFocusControl()) {
-			surfaceComposite.forceFocus();
-		}
-	}
-
-	@Override
-	public void close() {
-
-		WorkbenchHelper.asyncRun(() -> {
-			try {
-				if (getDisplaySurface() != null) {
-					getDisplaySurface().dispose();
-				}
-				getSite().getPage().hideView(SWTLayeredDisplayView.this);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		});
-
 	}
 
 	@Override
@@ -96,20 +66,6 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		new OpenGLToolbarMenu().createItem(tb, this);
-	}
-
-	/**
-	 * Wait for the OpenGL environment to be initialized, preventing a wait when two or more views are open at the same
-	 * time. Should be called in the SWT thread. On MacOS X, for example, it seems necessary to show the view, even
-	 * briefly, to make the JOGL Canvas "realized"
-	 * 
-	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
-	 */
-
-	@Override
-	public void waitToBeRealized() {
-
-		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTLayeredDisplayView.this));
 	}
 
 	@Override
