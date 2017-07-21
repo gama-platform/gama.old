@@ -240,14 +240,13 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public Arguments validatePassedArgs() {
-		if (passedArgs == null)
-			return null;
 		final IDescription superDesc = getEnclosingDescription();
 		passedArgs.forEachEntry(new FacetVisitor() {
 
 			@Override
 			public boolean visit(final String name, final IExpressionDescription exp) {
-				exp.compile(superDesc);
+				if (exp != null)
+					exp.compile(superDesc);
 				return true;
 			}
 		});

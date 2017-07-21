@@ -23,6 +23,7 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -460,7 +461,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected IType<?> computeType() {
 
 		// Adapter ca pour prendre ne ocmpte les ITypeProvider
-		IType<?> tt = getTypeDenotedByFacet(TYPE, SPECIES, AS, TARGET, ON);
+		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON);
 		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
 		IType<?> ct = getTypeDenotedByFacet(OF, tt.getContentType());
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
@@ -679,6 +680,11 @@ public abstract class SymbolDescription implements IDescription {
 					if (fp.isNewTemp) {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
+
+					} else if (fp.name.equals(IKeyword.ATTRIBUTES) && keyword.equals(IKeyword.SAVE)) {
+						// Special case for the 'save' statement
+						final SpeciesDescription species = getType().getDenotedSpecies();
+						exp = expr.compile(species);
 					} else if (!fp.isLabel()) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {

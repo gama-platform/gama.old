@@ -17,11 +17,11 @@ global {
 			location <- any_location_in (free_space - 5.0);
 			free_space <- free_space - shape;
 		}
-		//save building geometry into the shapefile: add the attribute TYPE which value is set by the type variable of the building agent
-		save building to:"../results/buildings.shp" type:"shp" with:[type::"TYPE"];
+		//save building geometry into the shapefile: add the attribute TYPE which value is set by the type variable of the building agent and the attribute ID 
+		save building to:"../results/buildings.shp" type:"shp" attributes: ["ID":: int(self), "TYPE"::type];
 	}
 }
-
+  
 //species that represent the building agents that will be saved
 species building {
 	string type <- flip(0.8) ? "residential" : "industrial";
