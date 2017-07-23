@@ -426,3 +426,4 @@ Bundle-ClassPath: .,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: msi.gama.doc.MainGenerateWiki
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: ummisco.gama.annotations;bundle-version="1.7.0"

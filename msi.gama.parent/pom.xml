@@ -172,6 +172,7 @@
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
+		<module>../msi.gama.documentation</module>
 		<module>../ummisco.gama.ui.modeling</module>
 		<module>../ummisco.gama.ui.shared</module>
 		<module>../ummisco.gama.ui.navigator</module>
