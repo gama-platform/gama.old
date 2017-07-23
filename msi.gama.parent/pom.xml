@@ -220,6 +220,7 @@
 		
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		<module>../msi.gama.documentation</module>
 
 		<module>../ummisco.gama.product</module>
 
