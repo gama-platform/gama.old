@@ -1,5 +1,4 @@
 #!/bin/bash
-target\classes\ummisco\gama\web2d
 
 commit_website_files() {
 	git config --global user.email "travis@travis-ci.org"

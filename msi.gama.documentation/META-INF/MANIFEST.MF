@@ -7,5 +7,24 @@ Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.7.0"
 Export-Package: msi.gama.doc
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ libs/avalon-framework-4.2.0.jar,
+ libs/batik-all-1.7.jar,
+ libs/commons-io-1.3.1.jar,
+ libs/commons-logging-1.0.4.jar,
+ libs/commons-logging-api-1.1.1.jar,
+ libs/fop.jar,
+ libs/jdom-2.0.1.jar,
+ libs/jericho-html-3.2.jar,
+ libs/jython-standalone-2.5.3.jar,
+ libs/log4j-1.2.16.jar,
+ libs/serializer-2.7.0.jar,
+ libs/servlet-2.2.jar,
+ libs/slf4j-api-1.6.1.jar,
+ libs/svnkit.jar,
+ libs/xalan-2.7.0.jar,
+ libs/xercesImpl-2.7.1.jar,
+ libs/xml-apis-1.3.04.jar,
+ libs/xml-apis-ext-1.3.04.jar,
+ libs/xmlgraphics-commons-1.4.jar
 Bundle-ActivationPolicy: lazy
