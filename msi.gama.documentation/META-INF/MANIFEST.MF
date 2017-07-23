@@ -6,7 +6,22 @@ Bundle-SymbolicName: msi.gama.documentation;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
  msi.gama.ext;bundle-version="1.7.0"
-Export-Package: msi.gama.doc
+Export-Package: msi.gama.doc,
+ org.jdom2,
+ org.jdom2.adapters,
+ org.jdom2.filter,
+ org.jdom2.input,
+ org.jdom2.input.sax,
+ org.jdom2.input.stax,
+ org.jdom2.internal,
+ org.jdom2.located,
+ org.jdom2.output,
+ org.jdom2.output.support,
+ org.jdom2.transform,
+ org.jdom2.util,
+ org.jdom2.xpath,
+ org.jdom2.xpath.jaxen,
+ org.jdom2.xpath.util
 Bundle-ClassPath: .,
  libs/avalon-framework-4.2.0.jar,
  libs/batik-all-1.7.jar,
@@ -28,3 +43,5 @@ Bundle-ClassPath: .,
  libs/xml-apis-ext-1.3.04.jar,
  libs/xmlgraphics-commons-1.4.jar
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: msi.gama.doc.MainGenerateWiki
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

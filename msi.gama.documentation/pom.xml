@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>msi.gama.documentation</groupId>
   <artifactId>msi.gama.documentation</artifactId>
-  <packaging>eclipse-plugin</packaging>
  <parent>
   	<groupId>msi.gama</groupId>
   	<artifactId>msi.gama.parent</artifactId>
@@ -10,4 +9,23 @@
   	<relativePath>../msi.gama.parent/</relativePath>
   </parent>
   <version>1.7.0-SNAPSHOT</version>
+  <build>
+  <plugins>
+    <plugin>
+      <!-- Build an executable JAR -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>3.0.2</version>
+      <configuration>
+        <archive>
+          <manifest>
+            <addClasspath>true</addClasspath>
+            <classpathPrefix>lib/</classpathPrefix>
+            <mainClass>msi.gama.doc.MainGenerateWiki</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 </project>
