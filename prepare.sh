@@ -5,10 +5,7 @@ commit_website_files() {
 	git config --global user.name "Travis CI"
 	git config --global push.default simple		
 	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git gama-platform/gama.wiki
-	cd gama-platform/gama.wiki
-	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
-	cd ../gama-platform/gama
+	
 	java -classpath libs -cp target/classes msi.gama.doc.MainGenerateWiki
 	
 }
@@ -16,6 +13,11 @@ commit_website_files() {
 commit_website_files_tmp() {
 
 
+	cd gama-platform/gama.wiki
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
+	
+	
 	cd ../gama.wiki
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
