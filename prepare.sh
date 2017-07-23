@@ -8,8 +8,8 @@ commit_website_files() {
 	cd gama-platform/gama.wiki
 	git remote rm origin
 	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
-	
-	java -jar .\gama\msi.gama.documentation\target\msi.gama.documentation-1.7.0-SNAPSHOT.jar
+	cd ../gama-platform/gama
+	java -classpath libs -cp target/classes msi.gama.doc.MainGenerateWiki
 	
 }
 
