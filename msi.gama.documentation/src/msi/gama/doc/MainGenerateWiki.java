@@ -11,6 +11,9 @@
  **********************************************************************************************/
 package msi.gama.doc;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import msi.gama.doc.transform.XmlToWiki;
 import msi.gama.doc.util.CheckConcepts;
 import msi.gama.doc.util.Constants;
@@ -22,7 +25,17 @@ public class MainGenerateWiki {
 
 	public static void main(final String[] args) {
 		try {
-
+			//Get the System Classloader
+	        ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+	 
+	        //Get the URLs
+	        URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
+	 
+	        for(int i=0; i< urls.length; i++)
+	        {
+	            System.out.println(urls[i].getFile());
+	        }       
+	        
 			// build the file keywords.xml
 			GenerateCategoryXML.GenerateKeywordsXML();
 

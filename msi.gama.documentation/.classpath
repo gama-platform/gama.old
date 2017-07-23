@@ -19,8 +19,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/xml-apis-1.3.04.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/xml-apis-ext-1.3.04.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/xmlgraphics-commons-1.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/msi.gama.ext"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ummisco.gama.annotations"/>
 	<classpathentry exported="true" kind="lib" path="libs/jdom-2.0.1.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ummisco.gama.annotations"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
