@@ -6,8 +6,9 @@ commit_website_files() {
 	git config --global push.default simple		
 	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git ../gama-platform/gama.wiki
 	ls /home/travis/build/gama-platform/gama/msi.gama.documentation/target/classes &&
-	cd /home/travis/build/gama-platform/gama/msi.gama.documentation &&
-	java -classpath "libs/jdom-2.0.1.jar;target/classes;../ummisco.gama.annotations/target/classes" msi.gama.doc.MainGenerateWiki	
+	cd /home/travis/build/gama-platform/gama/msi.gama.documentation/target/classes &&
+	ls &&
+	java -classpath "../../libs/jdom-2.0.1.jar;target/classes;../../../ummisco.gama.annotations/target/classes" msi.gama.doc.MainGenerateWiki	
 }
 
 commit_website_files_tmp() {
