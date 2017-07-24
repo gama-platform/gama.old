@@ -5,7 +5,8 @@ commit_website_files() {
 	git config --global user.name "Travis CI"
 	git config --global push.default simple		
 	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git ../gama-platform/gama.wiki
-	ls /home/travis/build/gama-platform/gama/
+	ls /home/travis/build/gama-platform/gama/msi.gama.documentation &&
+	cd /home/travis/build/gama-platform/gama/msi.gama.documentation &&
 	java -classpath "/home/travis/build/gama-platform/gama/msi.gama.documentation/libs/jdom-2.0.1.jar;/home/travis/build/gama-platform/gama/msi.gama.documentation/target/classes;/home/travis/build/gama-platform/gama/ummisco.gama.annotations/target/classes" msi.gama.doc.MainGenerateWiki	
 }
 
