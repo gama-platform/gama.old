@@ -595,16 +595,40 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						fw.write(item.serialize(true).replace("]", "").replace("[", ""));
 						fw.write(Strings.LN);
 					}
-					for (int i = 0; i < values.size() - 1; i++) {
-						String val = Cast.toGaml(values.get(i)).replace(';', ',');
+					if(itemType.id()==IType.MATRIX)
+					{
+						String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
+						for (int i = 0; i < tmpValue.length - 1; i++) {
+							String val = Cast.toGaml(tmpValue[i]);
+							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+								val = val.substring(1, val.length() - 1);
+							if(tmpValue[i].contains(";"))
+							{
+								String[] valueSplitted = val.split(";");
+								fw.write(valueSplitted[0]);
+								val = valueSplitted[1];
+								fw.write(Strings.LN);
+							}
+							fw.write(val + ",");
+						}
+						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
 						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
 							val = val.substring(1, val.length() - 1);
-						fw.write(val + ",");
+						fw.write(val + Strings.LN);
 					}
-					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-					if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
-						val = val.substring(1, val.length() - 1);
-					fw.write(val + Strings.LN);
+					else
+					{
+						for (int i = 0; i < values.size() - 1; i++) {
+							String val = Cast.toGaml(values.get(i)).replace(';', ',');
+							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+								val = val.substring(1, val.length() - 1);
+							fw.write(val + ",");
+						}
+						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							val = val.substring(1, val.length() - 1);
+						fw.write(val + Strings.LN);
+					}
 				}
 
 			}
