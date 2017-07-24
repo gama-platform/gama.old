@@ -1,31 +1,28 @@
 #!/bin/bash
 
-commit_website_files() {
+commit_wiki_files() {
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
 	git config --global push.default simple		
 	cd ..
 	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git  gama.wiki	
 	cd /home/travis/build/gama-platform/gama/msi.gama.documentation/
-	ls target/classes/msi/gama/doc
 	java -cp ".:libs/jdom-2.0.1.jar:target/classes:../ummisco.gama.annotations/target/classes"  msi.gama.doc.MainGenerateWiki	
+	
+	
+
+	cd /home/travis/build/gama-platform/gama.wiki
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
+	git status
+	git add -A		
+	git commit -m "Regenerate operators artifacts on wiki  - $(date)"
+	git push origin HEAD:master
+
+
 }
 
 commit_website_files_tmp() {
-
-
-	cd gama-platform/gama.wiki
-	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
-	
-	
-	cd ../gama.wiki
-	echo "Travis build trigger from gama core at $(date)" > log.txt
-	git status
-	git add -A		
-	git commit -m "Regenerate docs - $(date)"
-	git push origin HEAD:master
-
 
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
@@ -80,7 +77,7 @@ else
 		deploy 
 	fi
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
-		commit_website_files
+		commit_wiki_files
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]]; then	
 		release 
