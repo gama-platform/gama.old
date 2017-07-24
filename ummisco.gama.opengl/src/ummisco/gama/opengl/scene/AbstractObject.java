@@ -99,7 +99,7 @@ public abstract class AbstractObject {
 		return textures != null && textures.length > 0;
 	}
 
-	public void draw(final OpenGL gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
+	public final void draw(final OpenGL gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
 		if (isPicking)
 			gl.registerForSelection(attributes.getIndex());
 		drawer.draw(this);

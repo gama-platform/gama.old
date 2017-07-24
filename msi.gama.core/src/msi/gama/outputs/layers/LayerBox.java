@@ -73,6 +73,9 @@ public class LayerBox implements IDisplayLayerBox {
 		if (b) {
 			constantPosition = currentPosition;
 			constantSize = currentSize;
+		} else {
+			constantPosition = null;
+			constantSize = null;
 		}
 	}
 

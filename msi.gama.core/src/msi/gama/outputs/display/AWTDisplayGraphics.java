@@ -357,21 +357,21 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void beginOverlay(final OverlayLayer layer) {
 		currentRenderer = overlayRenderer;
 		currentRenderer.setColor(layer.getBackground());
+		final int x = (int) getXOffsetInPixels();
+		final int y = (int) getYOffsetInPixels();
+		final int w = getLayerWidth();
+		final int h = getLayerHeight();
 		if (layer.isRounded()) {
-			currentRenderer.fillRoundRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-					getLayerHeight(), 10, 10);
+			currentRenderer.fillRoundRect(x, y, w, h, 10, 10);
 		} else {
-			currentRenderer.fillRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-					getLayerHeight());
+			currentRenderer.fillRect(x, y, w, h);
 		}
 		if (layer.getBorder() != null) {
 			currentRenderer.setColor(layer.getBorder());
 			if (layer.isRounded()) {
-				currentRenderer.drawRoundRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-						getLayerHeight(), 10, 10);
+				currentRenderer.drawRoundRect(x, y, w, h, 10, 10);
 			} else {
-				currentRenderer.drawRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-						getLayerHeight());
+				currentRenderer.drawRect(x, y, w, h);
 			}
 		}
 	}

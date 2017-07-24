@@ -260,17 +260,4 @@ public class ModelScene {
 
 	}
 
-	// private SimpleScene toSimpleScene() {
-	// final List<SimpleLayer> simpleLayers = new ArrayList<>();
-	// for (final LayerObject layer : this.layers.values()) {
-	// simpleLayers.add(layer.toSimpleLayer());
-	// }
-	// final int[] rgbBackgroundColor = new int[3];
-	// rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
-	// rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
-	// rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
-	// return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
-	// this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
-	// }
-
 }

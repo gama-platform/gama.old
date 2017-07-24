@@ -128,4 +128,12 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	void forceRedrawingOnce();
 
+	default boolean isOverlay() {
+		return false;
+	}
+
+	default void recomputeBounds(final IGraphics g) {
+
+	}
+
 }

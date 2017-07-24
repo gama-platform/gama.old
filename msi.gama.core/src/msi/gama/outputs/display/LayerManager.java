@@ -69,6 +69,16 @@ public class LayerManager implements ILayerManager {
 	}
 
 	@Override
+	public void recomputeBounds(final IGraphics g) {
+		for (final ILayer d : enabledLayers) {
+			d.recomputeBounds(g);
+		}
+		for (final ILayer d : disabledLayers) {
+			d.recomputeBounds(g);
+		}
+	}
+
+	@Override
 	public ILayer addLayer(final ILayer d) {
 		if (addItem(d)) { return d; }
 		return null;
