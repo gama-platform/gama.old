@@ -18,17 +18,17 @@ commit_wiki_files() {
 	git add -A		
 	git commit -m "Regenerate operators artifacts on wiki  - $(date)"
 	git push origin HEAD:master
-
+	
 
 }
 
-commit_website_files_tmp() {
+commit_io_website_files() {
 
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
 	git config --global push.default simple		
-	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git gama-platform/gama-platform.github.io
-	cd gama-platform/gama-platform.github.io
+	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
+	cd /home/travis/build/gama-platform/gama-platform.github.io
 	git remote rm origin
 	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama-platform.github.io.git
 	echo "Travis build trigger from gama core at $(date)" > log.txt
@@ -68,7 +68,8 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
 	clean
 	deploy  
 	release  
-	commit_website_files
+	commit_wiki_files
+	commit_io_website_files
 else
 	if  [[ ${MESSAGE} == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then

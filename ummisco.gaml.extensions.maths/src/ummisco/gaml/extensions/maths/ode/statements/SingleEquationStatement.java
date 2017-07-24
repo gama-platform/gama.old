@@ -234,13 +234,15 @@ public class SingleEquationStatement extends AbstractStatement {
 	// whenever they are called.
 
 	@operator(value = DIFF, concept = { IConcept.EQUATION,
-			IConcept.MATH }, doc = @doc("A placeholder function for expressing equations"))
+			IConcept.MATH })
+	@doc(value = "A placeholder function for expressing equations")
 	public static Double diff(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
 
 	@operator(value = DIF2, concept = { IConcept.EQUATION,
-			IConcept.MATH }, doc = @doc("A placeholder function for expressing equations"))
+			IConcept.MATH })
+	@doc(value = "A placeholder function for expressing equations")
 	public static Double diff2(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
@@ -255,7 +257,8 @@ public class SingleEquationStatement extends AbstractStatement {
 	 * @return
 	 */
 	@operator(value = ZERO, concept = { IConcept.EQUATION,
-			IConcept.MATH }, doc = @doc("An internal placeholder function"))
+			IConcept.MATH })
+	@doc(value = "An internal placeholder function")
 	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
 	}
