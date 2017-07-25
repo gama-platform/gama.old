@@ -77,9 +77,10 @@ public class OverlayLayer extends GraphicLayer {
 	}
 
 	@Override
-	public void recomputeBounds(final IGraphics g) {
+	public void recomputeBounds(final IGraphics g, final IScope scope) {
 		computed = false;
 		definition.getBox().setConstantBoundingBox(false);
+		definition.getBox().compute(scope);
 		setPositionAndSize(definition.getBox(), g);
 	}
 
@@ -113,7 +114,6 @@ public class OverlayLayer extends GraphicLayer {
 		final double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : yRatioBetweenPixelsAndModelUnits * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		positionInPixels.setLocation(absolute_x, absolute_y);
-		//System.out.println("Overlay position: " + positionInPixels + " size: " + sizeInPixels);
 		definition.getBox().setConstantBoundingBox(true);
 		computed = true;
 	}
