@@ -102,7 +102,7 @@ public class ModelScene {
 				layers.put(ROTATION_HELPER_KEY, rotLayer);
 			}
 		}
-
+		gl.pushMatrix();
 		gl.setZIncrement(zIncrement);
 
 		for (final LayerObject layer : layers.values()) {
@@ -118,6 +118,7 @@ public class ModelScene {
 		}
 		gl.setZIncrement(0);
 		rendered = true;
+		gl.popMatrix();
 	}
 
 	private double computeVisualZIncrement() {

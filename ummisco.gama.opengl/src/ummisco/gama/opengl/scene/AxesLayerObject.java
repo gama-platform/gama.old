@@ -42,6 +42,14 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	}
 
 	@Override
+	public void setScale(final GamaPoint s) {
+		if (s == null)
+			scale = DEFAULT_SCALE;
+		else
+			super.setScale(s);
+	}
+
+	@Override
 	void fillWithObjects(final List<AbstractObject> list) {
 		final double size = renderer.getMaxEnvDim();
 		if (renderer.useShader())

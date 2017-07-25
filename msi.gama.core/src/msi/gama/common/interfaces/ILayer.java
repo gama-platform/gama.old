@@ -132,7 +132,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 		return false;
 	}
 
-	default void recomputeBounds(final IGraphics g) {
+	default void recomputeBounds(final IGraphics g, final IScope scope) {
 
 	}
 

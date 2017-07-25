@@ -70,11 +70,14 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void recomputeBounds(final IGraphics g) {
+		final IScope scope = this.surface.getScope();
+		if (overlay != null)
+			overlay.recomputeBounds(g, scope);
 		for (final ILayer d : enabledLayers) {
-			d.recomputeBounds(g);
+			d.recomputeBounds(g, scope);
 		}
 		for (final ILayer d : disabledLayers) {
-			d.recomputeBounds(g);
+			d.recomputeBounds(g, scope);
 		}
 	}
 
