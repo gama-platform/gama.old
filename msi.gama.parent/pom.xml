@@ -99,7 +99,7 @@
 		</repository>
 		<repository>
 			<id>eclipse-mars</id>
-			<url>http://download.eclipse.org/releases/mars</url>
+			<url>http://download.eclipse.org/releases/neon</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
