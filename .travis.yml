@@ -1,4 +1,5 @@
 language: java
+dist: precise
 jdk:
   - oraclejdk8
 before_install:
@@ -8,8 +9,8 @@ notifications:
   email:
     recipients:
     - my.gama.bot@gmail.com
-    on_success: change
-    on_failure: always
+    on_success: never
+    on_failure: never
 cache:
   directories:
   - "$HOME/.m2"
