@@ -78,6 +78,7 @@ public class LayeredDisplayData {
 	 * Properties
 	 */
 	private boolean isAutosaving = false;
+	private boolean isToolbarVisible = GamaPreferences.Displays.CORE_DISPLAY_TOOLBAR.getValue();
 	private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
 	private String displayType =
 			GamaPreferences.Displays.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
@@ -667,6 +668,14 @@ public class LayeredDisplayData {
 
 	public String getPresetCamera() {
 		return presetCamera;
+	}
+
+	public boolean isToolbarVisible() {
+		return this.isToolbarVisible;
+	}
+
+	public void setToolbarVisible(final boolean b) {
+		isToolbarVisible = b;
 	}
 
 }

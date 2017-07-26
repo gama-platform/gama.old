@@ -83,4 +83,8 @@ public interface IToolbarDecoratedView {
 
 	}
 
+	public default boolean toolbarVisible() {
+		return true;
+	}
+
 }

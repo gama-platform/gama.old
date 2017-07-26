@@ -502,4 +502,5 @@ public interface IKeyword {
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 	public static final String PLATFORM = "platform";
 	public static final String INVOKE = "invoke";
+	public static final String TOOLBAR = "toolbar";
 }

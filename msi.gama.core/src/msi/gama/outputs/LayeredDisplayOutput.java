@@ -127,6 +127,11 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("Indicates the condition under which this output should be refreshed (default is true)")),
 				@facet (
+						name = IKeyword.TOOLBAR,
+						type = { IType.BOOL },
+						optional = true,
+						doc = @doc ("Indicates whether the top toolbar of the display view should be initially visible or not")),
+				@facet (
 						name = IKeyword.FULLSCREEN,
 						type = { IType.BOOL, IType.INT },
 						optional = true,
@@ -422,6 +427,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				data.setAutosave(Cast.asBool(getScope(), auto.value(getScope())));
 			}
 		}
+		final IExpression toolbar = getFacet(IKeyword.TOOLBAR);
+		if (toolbar != null) {
+			data.setToolbarVisible(Cast.asBool(getScope(), toolbar.value(getScope())));
+		}
+
 		for (final ILayerStatement layer : getLayers()) {
 			// try {
 			layer.setDisplayOutput(this);

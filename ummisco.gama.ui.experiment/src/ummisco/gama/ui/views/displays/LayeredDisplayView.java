@@ -540,6 +540,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	@Override
+	public boolean toolbarVisible() {
+		return getOutput().getData().isToolbarVisible();
+	}
+
+	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		// { LAYER_CONTROLS, INSPECT_AGENTS, OPENGL, SEP, SNAPSHOT };
