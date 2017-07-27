@@ -413,4 +413,14 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		return GamaPoint.NULL_POINT;
 	}
 
+	@Override
+	public int getWidthForOverlay() {
+		return getDisplayWidth();
+	}
+
+	@Override
+	public int getHeightForOverlay() {
+		return getDisplayHeight();
+	}
+
 }

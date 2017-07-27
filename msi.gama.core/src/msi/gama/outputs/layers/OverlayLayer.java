@@ -88,12 +88,14 @@ public class OverlayLayer extends GraphicLayer {
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		if (computed) { return; }
 		// Voir comment conserver cette information
-		final int pixelWidth = g.getDisplayWidth();
-		final int pixelHeight = g.getDisplayHeight();
+		final int pixelWidth = g.getWidthForOverlay();
+		final int pixelHeight = g.getHeightForOverlay();
 		final double envWidth = g.getSurface().getData().getEnvWidth();
 		final double envHeight = g.getSurface().getData().getEnvHeight();
 		final double xRatioBetweenPixelsAndModelUnits = pixelWidth / envWidth;
 		final double yRatioBetweenPixelsAndModelUnits = pixelHeight / envHeight;
+
+		// L'appel via reshape provoque un recalcul qui utilise une valeur de pixel incorrecte s'il y a eu un zoom...
 
 		ILocation point = box.getPosition();
 		// Computation of x

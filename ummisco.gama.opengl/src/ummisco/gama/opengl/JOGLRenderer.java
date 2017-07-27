@@ -215,6 +215,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		if (width <= 0 || height <= 0) { return; }
+		// System.out.println("Reshaping to " + width + "x" + height);
 		gl = drawable.getContext().getGL().getGL2();
 		gl.glViewport(0, 0, width, height);
 		openGL.setViewWidth(width);
@@ -226,12 +227,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 		keystone.reshape(width, height);
+		// shouldRecomputeLayerBounds = true;
 	}
 
 	@Override
 	protected final void updatePerspective() {
-		final int height = getDrawable().getSurfaceHeight();
-		final double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
+		final int height = openGL.getViewHeight();
+		final double aspect = (double) openGL.getViewWidth() / (double) (height == 0 ? 1 : height);
 		final double maxDim = getMaxEnvDim();
 		if (!data.isOrtho()) {
 			try {

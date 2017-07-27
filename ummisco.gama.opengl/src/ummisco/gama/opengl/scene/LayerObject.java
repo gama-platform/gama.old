@@ -19,6 +19,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
@@ -44,8 +46,8 @@ public class LayerObject {
 	private boolean sceneIsInitialized = false;
 	protected boolean constantRedrawnLayer = false;
 
-	GamaPoint offset = NULL_OFFSET;
-	GamaPoint scale = null;
+	GamaPoint offset = new GamaPoint(NULL_OFFSET);
+	GamaPoint scale = new GamaPoint(NULL_SCALE);
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
@@ -61,6 +63,7 @@ public class LayerObject {
 	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
 		this.layer = layer;
+		this.overlay = layer != null && layer.isOverlay();
 		currentList = newCurrentList();
 		if (layer != null && layer.getTrace() != null || renderer instanceof ModernRenderer) {
 			objects = new LinkedList();
@@ -132,24 +135,84 @@ public class LayerObject {
 	}
 
 	private void drawWithoutShader(final OpenGL gl) {
+		final GamaPoint scale = getScale();
 
-		// if (objects.size() == 0) { return; }
+		final double oldZIncrement = gl.getZIncrement();
 		if (overlay) {
+			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
+		} else {
+			gl.getGL().glEnable(GL2.GL_DEPTH_TEST);
+		}
+		if (overlay) {
+			gl.setZIncrement(0);
+			//
+			final double viewHeight = gl.getViewHeight();
+			final double viewWidth = gl.getViewWidth();
+			final double viewRatio = viewWidth / (viewHeight == 0 ? 1 : viewHeight);
+			final double worldHeight = gl.getWorldHeight();
+			final double worldWidth = gl.getWorldWidth();
+			final double maxDim = worldHeight > worldWidth ? worldHeight : worldWidth;
+			//
+			// final double worldRatio = worldWidth / worldHeight;
+			// final double widthRatio = viewWidth / worldWidth;
+			// final double heightRatio = viewHeight / worldHeight;
+			//
+			// final double x, y;
+			// double x_scale = 1, y_scale = 1;
+			// if (viewRatio >= 1) {
+			// if (worldRatio >= 1) {
+			// x_scale = worldRatio / viewRatio;
+			// y_scale = viewRatio / worldRatio;
+			// } else {
+			// x_scale = viewRatio / worldRatio;
+			// y_scale = worldRatio / viewRatio;
+			// ;
+			// }
+			// } else {
+			// if (worldRatio >= 1) {
+			// x_scale = worldRatio / viewRatio;
+			//
+			// y_scale = viewRatio / worldRatio;
+			// } else {
+			// x_scale = viewRatio / worldRatio;
+			// y_scale = worldRatio / viewRatio;
+			//
+			// }
+			//
+			// }
+
 			gl.pushIdentity(GL2.GL_PROJECTION);
-			gl.getGL().glOrtho(0, 1, 0, 1, 1, -1);
+			// gl.getGL().glOrtho(0, worldWidth, -worldHeight, 0, -1, 1);
+			if (viewRatio >= 1.0) {
+				gl.getGL().glOrtho(0, maxDim * viewRatio, -maxDim, 0, -1, 1);
+			} else {
+				gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
+			}
+			// System.out.println("View ratio " + viewRatio + " World ratio " + worldRatio + " / X Scale " + x_scale
+			// + " Y Scale " + y_scale);
+			// y_scale = 1;
+			// scale.setLocation(x_scale, y_scale, 1);
+
 			gl.pushIdentity(GL2.GL_MODELVIEW);
 		}
 		try {
 			gl.pushMatrix();
 			final GamaPoint offset = getOffset();
-			gl.translateBy(offset.x, -offset.y, offset.z);
-			final GamaPoint scale = getScale();
+			// if (overlay)
+			// System.out.println("OFFSET: " + offset);
+			gl.translateBy(offset.x, -offset.y, overlay ? 0 : offset.z);
+			// scale.setLocation(0.5, 0.5, 1);
+			// if (overlay)
+			// gl.scaleBy(0.5, 0.5, 1);
+			// else
 			gl.scaleBy(scale.x, scale.y, scale.z);
+
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
 			if (picking) {
-				gl.runWithNames(() -> drawAllObjects(gl, true));
+				if (!overlay)
+					gl.runWithNames(() -> drawAllObjects(gl, true));
 			} else {
-				if (isAnimated) {
+				if (isAnimated || overlay) {
 					drawAllObjects(gl, false);
 				} else {
 					if (openGLListIndex == null) {
@@ -160,6 +223,7 @@ public class LayerObject {
 			}
 		} finally {
 			gl.popMatrix();
+			gl.setZIncrement(oldZIncrement);
 			if (overlay) {
 				gl.pop(GL2.GL_MODELVIEW);
 				gl.pop(GL2.GL_PROJECTION);
@@ -168,7 +232,27 @@ public class LayerObject {
 
 	}
 
+	private void addFrame(final OpenGL gl) {
+		final double width = layer.getDefinition().getBox().getSize().getX();
+		final double height = layer.getDefinition().getBox().getSize().getY();
+
+		gl.pushMatrix();
+		gl.translateBy(offset.x, -offset.y - height, 0);
+		gl.scaleBy(width, height, 1);
+		gl.setCurrentColor(((OverlayLayer) layer).getBackground());
+		gl.setCurrentObjectAlpha(((OverlayLayer) layer).getDefinition().getTransparency());
+		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
+		gl.popMatrix();
+		gl.translateBy(offset.x, -offset.y, 0);
+		// gl.scaleBy(0.5, 0.5, 1);
+		// gl.setLayerScalingFactor(overlay ? 2f : 1f);
+
+	}
+
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
+		if (overlay) {
+			addFrame(gl);
+		}
 		if (objects != null) {
 			double delta = 0;
 			if (isFading) {
@@ -218,7 +302,8 @@ public class LayerObject {
 	}
 
 	public void setScale(final GamaPoint scale) {
-		this.scale = scale;
+		this.scale.setLocation(scale);
+		;
 	}
 
 	public StringObject addString(final String string, final DrawingAttributes attributes) {

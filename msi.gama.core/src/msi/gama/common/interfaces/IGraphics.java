@@ -108,4 +108,8 @@ public interface IGraphics {
 
 	public abstract boolean isNotReadyToUpdate();
 
+	public int getWidthForOverlay();
+
+	public int getHeightForOverlay();
+
 }
