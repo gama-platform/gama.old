@@ -2,16 +2,27 @@
 
 compile (){
 	echo "Compile GAMA project"		
-	cd ummisco.gama.annotations &&
-	mvn -q clean install -Dmaven.test.skip=true &&
-	cd - &&
-	cd msi.gama.processor &&
-	mvn -q clean install -Dmaven.test.skip=true &&
-	cd - &&
-	cd msi.gama.parent &&
-	mvn -q clean compile -Dmaven.test.skip=true && 
-	cd -
-	
+	if  [[ $MSG == *"ci debug"* ]]; then		
+		cd ummisco.gama.annotations &&
+		mvn -X clean install -Dmaven.test.skip=true &&
+		cd - &&
+		cd msi.gama.processor &&
+		mvn -X clean install -Dmaven.test.skip=true &&
+		cd - &&
+		cd msi.gama.parent &&
+		mvn -X clean compile -Dmaven.test.skip=true && 
+		cd -
+	else
+		cd ummisco.gama.annotations &&
+		mvn -q clean install -Dmaven.test.skip=true &&
+		cd - &&
+		cd msi.gama.processor &&
+		mvn -q clean install -Dmaven.test.skip=true &&
+		cd - &&
+		cd msi.gama.parent &&
+		mvn -q clean compile -Dmaven.test.skip=true && 
+		cd -
+	fi
 }
 
 clean(){
