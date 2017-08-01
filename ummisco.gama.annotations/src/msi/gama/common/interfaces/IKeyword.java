@@ -165,6 +165,7 @@ public interface IKeyword {
 	public static final String FADING = "fading";
 	public static final String FALSE = "false";
 	public static final String FILE = "file";
+	public static final String FILES = "files";
 	public static final String OUTPUT_FILE = "output_file";
 	public static final String FILL_WITH = "fill_with";
 	public static final String FOCUS = "focus";
