@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -63,7 +64,7 @@ public class GamaGridFile extends GamaGisFile {
 	private GamaGridReader reader;
 	private GridCoverage2D coverage;
 	public int nbBands;
-
+	
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
@@ -137,7 +138,8 @@ public class GamaGridFile extends GamaGisFile {
 
 		int numRows, numCols;
 		IShape geom;
-
+		Number noData = -9999;
+		
 		GamaGridReader(final IScope scope, final InputStream fis, final boolean fillBuffer)
 				throws GamaRuntimeException {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
@@ -156,6 +158,7 @@ public class GamaGridFile extends GamaGisFile {
 						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true,
 								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
+					noData = ((GeoTiffReader) store).getMetadata().getNoData();
 				} else {
 					if (crs == null) {
 						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true));
@@ -426,8 +429,14 @@ public class GamaGridFile extends GamaGisFile {
 		if (getBuffer() == null) {
 			fillBuffer(scope);
 		}
-		final Object vals = coverage.evaluate(
+		
+		Object vals = null;
+		try {
+			vals = coverage.evaluate(
 				new DirectPosition2D(loc.getX(), loc.getY()));
+		} catch (Exception e) {
+			vals = reader.noData.doubleValue();
+		}
 		boolean doubleValues = vals instanceof double[];
 		boolean	intValues = vals instanceof int[];
 		boolean	byteValues = vals instanceof byte[];
