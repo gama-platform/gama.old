@@ -502,14 +502,21 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		}
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-		exp = species.getFacet(IKeyword.FILE);
-		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+		exp = species.getFacet(IKeyword.FILES);
+		final IList<GamaGridFile> files = (IList<GamaGridFile>) (exp != null ? exp.value(scope) : null);
 		GridTopology result;
-		if (file == null) {
-			result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
-					useNeighborsCache,optimizer);
-		} else
-			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+		if (files != null && ! files.isEmpty()) {
+			result = new GridTopology(scope, host, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+		} else {
+			exp = species.getFacet(IKeyword.FILE);
+			final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+			if (file == null) {
+				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
+						useNeighborsCache,optimizer);
+			} else
+				result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+			
+		}	
 		// Reverts the modification of the world envelope (see #1953 and #1939)
 		//
 		// final Envelope3D env =

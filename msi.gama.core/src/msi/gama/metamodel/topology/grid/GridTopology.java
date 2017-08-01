@@ -92,6 +92,16 @@ public class GridTopology extends AbstractTopology {
 
 		// root.setTorus(isTorus);
 	}
+	
+	public GridTopology(final IScope scope, final IShape environment, final IList<GamaGridFile> files, final boolean isTorus,
+			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,final String optimizer)
+			throws GamaRuntimeException {
+		super(scope, environment, null);
+		places = new GamaSpatialMatrix(scope, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+		// FIXME Not sure it needs to be set
+
+		// root.setTorus(isTorus);
+	}
 
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {

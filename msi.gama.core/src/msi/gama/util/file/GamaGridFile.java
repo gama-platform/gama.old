@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -412,5 +413,52 @@ public class GamaGridFile extends GamaGisFile {
 		}
 		coverage = null;
 	}
+
+	public GridCoverage2D getCoverage() {
+		return coverage;
+	}
+	
+	
+	
+	
+	
+	public Double valueOf(IScope scope, ILocation loc) {
+		if (getBuffer() == null) {
+			fillBuffer(scope);
+		}
+		final Object vals = coverage.evaluate(
+				new DirectPosition2D(loc.getX(), loc.getY()));
+		boolean doubleValues = vals instanceof double[];
+		boolean	intValues = vals instanceof int[];
+		boolean	byteValues = vals instanceof byte[];
+		boolean	longValues = vals instanceof long[];
+		boolean	floatValues = vals instanceof float[];
+		Double val = null;
+		if (doubleValues) {
+			final double[] vd = (double[]) vals;
+			val = vd[0];
+		} else if (intValues) {
+			final int[] vi = (int[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (longValues) {
+			final long[] vi = (long[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (floatValues) {
+			final float[] vi = (float[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (byteValues) {
+			final byte[] bv = (byte[]) vals;
+			if (bv.length == 3) {
+				final int red = bv[0] < 0 ? 256 + bv[0] : bv[0];
+				final int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
+				final int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
+				val = (red + green + blue) / 3.0;
+			} else {
+				val = Double.valueOf(((byte[]) vals)[0]);
+			}
+		}
+		return val;
+	}
+	
 
 }

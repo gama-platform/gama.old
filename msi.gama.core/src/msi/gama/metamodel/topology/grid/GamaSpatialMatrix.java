@@ -207,6 +207,54 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		lastCell = -1;
 		createCells(scope, false);
 	}
+	
+	public GamaSpatialMatrix(final IScope scope, final IList<GamaGridFile> gfiles, final boolean isTorus, final boolean usesVN,
+			final boolean indiv, final boolean useNeighborsCache,  final String optimizer) throws GamaRuntimeException {
+		super(100, 100, Types.GEOMETRY);
+		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create
+		// new");
+		GamaGridFile gfile = gfiles.firstValue(scope);
+		numRows = gfile.getNbRows(scope);
+		numCols = gfile.getNbCols(scope);
+		environmentFrame = gfile.getGeometry(scope);
+		bounds = environmentFrame.getEnvelope();
+		cellWidth = bounds.getWidth() / numCols;
+		cellHeight = bounds.getHeight() / numRows;
+		precision = bounds.getWidth() / 1000;
+		final int size = gfile.length(scope);
+		createMatrix(size);
+		supportImagePixels = new int[size];
+		referenceShape = GamaGeometryType.buildRectangle(cellWidth, cellHeight, new GamaPoint(0, 0));
+		this.isTorus = isTorus;
+		this.usesVN = usesVN;
+		useIndividualShapes = indiv;
+		this.isHexagon = false;
+		this.useNeighborsCache = useNeighborsCache;
+		this.optimizer = optimizer;
+		this.nbBands = gfiles.size();
+		bands = new ArrayList<IList<Double>>();
+		for (int i = 0; i < size; i++) {
+			final IShape g = gfile.get(scope, i);
+			final Double val = (Double) g.getAttribute("grid_value");
+			if (val != null)
+				gridValue[i] = val;
+			IList vals = GamaListFactory.create(Types.FLOAT);
+			for (int j = 0; j < gfiles.size();j++) {
+				final Double v = gfiles.get(j).valueOf(scope, g.getLocation());
+				vals.add(v);
+			}
+			bands.add(vals);
+			
+			// WARNING A bit overkill as we only use the GamaGisGeometry for its
+			// attribute...
+			// matrix[i] = g;
+		}
+
+		actualNumberOfCells = 0;
+		firstCell = -1;
+		lastCell = -1;
+		createCells(scope, false);
+	}
 
 	// constructor used to build hexagonal grid (-> useVN = false)
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
