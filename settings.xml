@@ -10,7 +10,10 @@
 			<password>${env.USER_PWD}</password>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
-		</server>
+			
+		</server><configuration>
+    <timeout>6000000</timeout> <!-- 5 seconds -->
+  </configuration>
 	</servers>
 
 </settings>
