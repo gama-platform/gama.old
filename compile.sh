@@ -13,7 +13,7 @@ compile (){
 	if  [[ $MSG == *"ci debug"* ]]; then		
 		mvn -X clean compile 
 	else
-		mvn clean compile 
+		mvn clean compile -DskipTests -T 8C
 	fi
 		
 	cd -
@@ -31,9 +31,9 @@ install (){
 	cd msi.gama.parent &&
 	
 	if  [[ $MSG == *"ci debug"* ]]; then		
-		mvn -X clean install 
+		mvn -X clean install -DskipTests -T 8C
 	else
-		mvn clean install 
+		mvn clean install -DskipTests -T 8C
 	fi
 		
 	cd -
