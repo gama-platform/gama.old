@@ -9,11 +9,15 @@
 			<username>${env.USER_ID}</username>
 			<password>${env.USER_PWD}</password>
 			<filePermissions>666</filePermissions>
-			<directoryPermissions>777</directoryPermissions>
-			
+			<directoryPermissions>777</directoryPermissions>			
 			<configuration>
-				<timeout>60000000</timeout> 
-			</configuration>
+				<httpConfiguration>
+				  <put>
+					<connectionTimeout>120000000</connectionTimeout> 
+					<readTimeout>120000000</readTimeout>
+				  </put>
+				</httpConfiguration>
+		  </configuration>
 		</server>
 	</servers>
 
