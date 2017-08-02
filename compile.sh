@@ -33,7 +33,7 @@ install (){
 	if  [[ $MSG == *"ci debug"* ]]; then		
 		mvn -X clean install 
 	else
-		mvn -q clean install 
+		mvn clean install 
 	fi
 		
 	cd -
@@ -44,7 +44,7 @@ install (){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
-	install
+	compile
 else		
 	compile
 fi
