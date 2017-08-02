@@ -12,10 +12,10 @@
 			<directoryPermissions>777</directoryPermissions>			
 			<configuration>
 				<httpConfiguration>
-				  <put>
-					<connectionTimeout>120000000</connectionTimeout> 
-					<readTimeout>120000000</readTimeout>
-				  </put>
+				  <all>
+					<connectionTimeout>1200000</connectionTimeout>
+					<readTimeout>1200000</readTimeout>
+				  </all>
 				</httpConfiguration>
 		  </configuration>
 		</server>
