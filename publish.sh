@@ -69,7 +69,7 @@ else
 			clean
 		fi 
 		deploy 
-	else
+	fi
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_wiki_files
 		commit_io_website_files
