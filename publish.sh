@@ -38,6 +38,17 @@ commit_io_website_files() {
 	git push origin HEAD:master
 }
 
+
+clean(){
+	echo "Clean p2 update site"		
+	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
+}
+
+deploy(){	
+	echo "Deploy to p2 update site"	
+	sh ./deploy.sh
+}
+
 release(){
 	echo "Upload continuous release to github"		
 	bash ./github-release.sh "$TRAVIS_COMMIT" 
@@ -46,11 +57,19 @@ release(){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 echo $MSG
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then 	
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
+	clean
+	deploy
 	release  
 	commit_wiki_files
 	commit_io_website_files
 else
+	if  [[ ${MESSAGE} == *"ci deploy"* ]]; then		
+		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
+			clean
+		fi 
+		deploy 
+	else
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_wiki_files
 		commit_io_website_files
