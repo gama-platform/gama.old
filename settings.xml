@@ -11,9 +11,10 @@
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
-		<configuration>
-    <timeout>6000000</timeout> <!-- 5 seconds -->
-  </configuration></server>
+			<configuration>
+				<timeout>60000000</timeout> 
+			</configuration>
+		</server>
 	</servers>
 
 </settings>

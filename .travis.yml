@@ -8,8 +8,8 @@ notifications:
   email:
     recipients:
     - my.gama.bot@gmail.com
-    on_success: change
-    on_failure: always
+    on_success: never
+    on_failure: never
 cache:
   directories:
   - "$HOME/.m2"
@@ -20,7 +20,7 @@ addons:
     ssh_known_hosts:
       - 51.255.46.42
 script: 
-- bash ./compile.sh	
+- bash ./publish.sh	
 after_success:
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export SSHPASS=$USER_PWD 
