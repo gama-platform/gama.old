@@ -6,7 +6,7 @@ cd msi.gama.processor &&
 mvn -q clean deploy -P p2Repo --settings ../settings.xml && 
 cd -
 cd msi.gama.parent &&
-mvn -X clean deploy -P p2Repo --settings ../settings.xml && 
+mvn deploy -P p2Repo --settings ../settings.xml && 
 cd -
 
 
