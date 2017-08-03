@@ -3,15 +3,15 @@
 compile (){
 	echo "Compile GAMA project"			
 	cd ummisco.gama.annotations &&
-	mvn clean install &&
+	mvn clean install -DskipTests -T 8C &&
 	cd - &&
 	cd msi.gama.processor &&
-	mvn clean install &&
+	mvn clean install -DskipTests -T 8C &&
 	cd - &&
 	cd msi.gama.parent &&
 	
 	if  [[ $MSG == *"ci debug"* ]]; then		
-		mvn -X clean compile 
+		mvn -X clean compile -DskipTests -T 8C
 	else
 		mvn clean compile -DskipTests -T 8C
 	fi
@@ -23,10 +23,10 @@ compile (){
 install (){
 	echo "Install GAMA project"			
 	cd ummisco.gama.annotations &&
-	mvn clean install &&
+	mvn clean install -DskipTests -T 8C &&
 	cd - &&
 	cd msi.gama.processor &&
-	mvn clean install &&
+	mvn clean install -DskipTests -T 8C &&
 	cd - &&
 	cd msi.gama.parent &&
 	
