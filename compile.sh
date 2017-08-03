@@ -13,7 +13,7 @@ compile (){
 	if  [[ $MSG == *"ci debug"* ]]; then		
 		mvn -e clean compile -DskipTests
 	else
-		mvn clean compile -DskipTests
+		mvn clean compile -offline -DskipTests
 	fi
 		
 	cd -
