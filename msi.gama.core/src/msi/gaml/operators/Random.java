@@ -27,9 +27,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.operators.noisegeneration.ImprovedNoise;
+import msi.gaml.operators.noisegeneration.OpenSimplexNoise;
+import msi.gaml.operators.noisegeneration.SimplexNoise;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-
 /**
  * Written by drogoul Modified on 10 dec. 2010
  *
@@ -364,5 +366,30 @@ public class Random {
 		}
 		return result;
 	}
+	
+	@operator(value = "simplex_generator", category = { IOperatorCategory.RANDOM }, concept = {})
+	@doc(value = "take a x, y and a bias parameters and gives a value", examples = {
+			@example(value = "simplex_generator(2,3,253)", equals = "10.2", test = false) })
+	public static Double simplex_generator(final IScope scope, final double x, final double y, final double biais)  
+	{
+		return SimplexNoise.noise(x,y,biais);
+	}
+	
+	@operator(value = "improved_generator", category = { IOperatorCategory.RANDOM }, concept = {})
+	@doc(value = "take a x, y, z and a bias parameters and gives a value", examples = {
+			@example(value = "improved_generator(2,3,4,253)", equals = "10.2", test = false) })
+	public static Double improved_generator(final IScope scope, final double x, final double y, final double z, final double biais)  
+	{
+		return ImprovedNoise.noise(x,y,z,biais);
+	}
+
+	@operator(value = "open_simplex_generator", category = { IOperatorCategory.RANDOM }, concept = {})
+	@doc(value = "take a x, y and a bias parameters and gives a value", examples = {
+			@example(value = "open_simplex_generator(2,3,253)", equals = "10.2", test = false) })
+	public static Double open_simplex_generator(final IScope scope, final double x, final double y, final double biais)  
+	{
+		return OpenSimplexNoise.noise(x,y,biais);
+	}
+	
 
 }
