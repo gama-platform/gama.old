@@ -14,6 +14,7 @@ import java.awt.Point;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
+import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.glu.GLU;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -223,6 +224,12 @@ public abstract class AbstractCamera implements ICamera {
 
 	}
 
+	protected void invokeOnGLThread(final GLRunnable runnable) {
+		// Fixing issue #2224
+		runnable.run(renderer.getDrawable());
+		// renderer.getDrawable().invoke(false, runnable);
+	}
+
 	/**
 	 * Method mouseScrolled()
 	 * 
@@ -230,7 +237,7 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public final void mouseScrolled(final MouseEvent e) {
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction) {
 				internalMouseScrolled(e);
 			}
@@ -251,7 +258,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction) {
 				internalMouseMove(e);
 			}
@@ -313,7 +320,7 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	@Override
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction) {
 				internalMouseDown(e);
 			}
@@ -395,7 +402,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
 
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction) {
 				internalMouseUp(e);
 			}
@@ -500,7 +507,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
 
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction && !keystoneMode) {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
@@ -592,7 +599,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
 
-		renderer.getDrawable().invoke(false, drawable -> {
+		invokeOnGLThread(drawable -> {
 			if (cameraInteraction && !keystoneMode) {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT: // turns left (scene rotates right)
