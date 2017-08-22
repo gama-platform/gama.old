@@ -618,7 +618,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 			currentOffset = new GamaPoint(getXOffsetInPixels() * (worldDimensions.x / openGL.getViewWidth()),
 					getYOffsetInPixels() * (worldDimensions.y / openGL.getViewHeight()), 0);
 			// System.out.println("XOffsetinPixels: " + getXOffsetInPixels() + " Y " + getYOffsetInPixels());
-			currentScale = new GamaPoint(1, 1, 1);
+
+			//fix 2227 set scale for axes
+			final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
+					+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
+					+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
+			final double size = distance / 10; // the size of the displayed axis
+			
+			currentScale = new GamaPoint(size, size, size);
 		}
 		final ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if (scene != null) {
