@@ -398,10 +398,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return data.getCurrentRotationAboutZ();
 	}
 
-	public boolean isDrawRotationHelper() {
-		return drawRotationHelper;
-	}
-
 	public GamaPoint getRotationHelperPosition() {
 		return rotationHelperPosition;
 	}
@@ -618,6 +614,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 			currentOffset = new GamaPoint(getXOffsetInPixels() * (worldDimensions.x / openGL.getViewWidth()),
 					getYOffsetInPixels() * (worldDimensions.y / openGL.getViewHeight()), 0);
 			// System.out.println("XOffsetinPixels: " + getXOffsetInPixels() + " Y " + getYOffsetInPixels());
+
 			currentScale = new GamaPoint(1, 1, 1);
 		}
 		final ModelScene scene = sceneBuffer.getSceneToUpdate();

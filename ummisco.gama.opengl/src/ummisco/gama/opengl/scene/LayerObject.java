@@ -51,7 +51,7 @@ public class LayerObject {
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
-	volatile boolean overlay;
+	final boolean overlay;
 	volatile boolean locked;
 	boolean isAnimated;
 	final Abstract3DRenderer renderer;
@@ -63,13 +63,17 @@ public class LayerObject {
 	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
 		this.layer = layer;
-		this.overlay = layer != null && layer.isOverlay();
+		this.overlay = computeOverlay();
 		currentList = newCurrentList();
 		if (layer != null && layer.getTrace() != null || renderer instanceof ModernRenderer) {
 			objects = new LinkedList();
 			objects.add(currentList);
 		} else
 			objects = null;
+	}
+
+	protected boolean computeOverlay() {
+		return layer != null && layer.isOverlay();
 	}
 
 	public boolean isLightInteraction() {
@@ -137,14 +141,10 @@ public class LayerObject {
 	private void drawWithoutShader(final OpenGL gl) {
 		final GamaPoint scale = getScale();
 
-		final double oldZIncrement = gl.getZIncrement();
 		if (overlay) {
 			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
-		} else {
-			gl.getGL().glEnable(GL2.GL_DEPTH_TEST);
-		}
-		if (overlay) {
-			gl.setZIncrement(0);
+			// Addition to fix #2228 and #2222
+			gl.suspendZTranslation();
 			//
 			final double viewHeight = gl.getViewHeight();
 			final double viewWidth = gl.getViewWidth();
@@ -152,59 +152,22 @@ public class LayerObject {
 			final double worldHeight = gl.getWorldHeight();
 			final double worldWidth = gl.getWorldWidth();
 			final double maxDim = worldHeight > worldWidth ? worldHeight : worldWidth;
-			//
-			// final double worldRatio = worldWidth / worldHeight;
-			// final double widthRatio = viewWidth / worldWidth;
-			// final double heightRatio = viewHeight / worldHeight;
-			//
-			// final double x, y;
-			// double x_scale = 1, y_scale = 1;
-			// if (viewRatio >= 1) {
-			// if (worldRatio >= 1) {
-			// x_scale = worldRatio / viewRatio;
-			// y_scale = viewRatio / worldRatio;
-			// } else {
-			// x_scale = viewRatio / worldRatio;
-			// y_scale = worldRatio / viewRatio;
-			// ;
-			// }
-			// } else {
-			// if (worldRatio >= 1) {
-			// x_scale = worldRatio / viewRatio;
-			//
-			// y_scale = viewRatio / worldRatio;
-			// } else {
-			// x_scale = viewRatio / worldRatio;
-			// y_scale = worldRatio / viewRatio;
-			//
-			// }
-			//
-			// }
 
 			gl.pushIdentity(GL2.GL_PROJECTION);
-			// gl.getGL().glOrtho(0, worldWidth, -worldHeight, 0, -1, 1);
 			if (viewRatio >= 1.0) {
 				gl.getGL().glOrtho(0, maxDim * viewRatio, -maxDim, 0, -1, 1);
 			} else {
 				gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
 			}
-			// System.out.println("View ratio " + viewRatio + " World ratio " + worldRatio + " / X Scale " + x_scale
-			// + " Y Scale " + y_scale);
-			// y_scale = 1;
-			// scale.setLocation(x_scale, y_scale, 1);
 
 			gl.pushIdentity(GL2.GL_MODELVIEW);
+		} else {
+			gl.getGL().glEnable(GL2.GL_DEPTH_TEST);
 		}
 		try {
 			gl.pushMatrix();
 			final GamaPoint offset = getOffset();
-			// if (overlay)
-			// System.out.println("OFFSET: " + offset);
 			gl.translateBy(offset.x, -offset.y, overlay ? 0 : offset.z);
-			// scale.setLocation(0.5, 0.5, 1);
-			// if (overlay)
-			// gl.scaleBy(0.5, 0.5, 1);
-			// else
 			gl.scaleBy(scale.x, scale.y, scale.z);
 
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
@@ -223,8 +186,9 @@ public class LayerObject {
 			}
 		} finally {
 			gl.popMatrix();
-			gl.setZIncrement(oldZIncrement);
 			if (overlay) {
+				// Addition to fix #2228 and #2222
+				gl.resumeZTranslation();
 				gl.pop(GL2.GL_MODELVIEW);
 				gl.pop(GL2.GL_PROJECTION);
 			}
@@ -244,9 +208,6 @@ public class LayerObject {
 		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
 		gl.popMatrix();
 		gl.translateBy(offset.x, -offset.y, 0);
-		// gl.scaleBy(0.5, 0.5, 1);
-		// gl.setLayerScalingFactor(overlay ? 2f : 1f);
-
 	}
 
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
@@ -303,7 +264,6 @@ public class LayerObject {
 
 	public void setScale(final GamaPoint scale) {
 		this.scale.setLocation(scale);
-		;
 	}
 
 	public StringObject addString(final String string, final DrawingAttributes attributes) {
@@ -399,10 +359,6 @@ public class LayerObject {
 
 	public boolean hasTrace() {
 		return getTrace() > 0;
-	}
-
-	public void setOverlay(final boolean b) {
-		overlay = b;
 	}
 
 	public boolean isLocked() {
