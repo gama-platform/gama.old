@@ -63,7 +63,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 	commit_wiki_files
 	commit_io_website_files
 else
-	if  [[ ${MESSAGE} == *"ci deploy"* ]]; then		
+	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
 		fi 
