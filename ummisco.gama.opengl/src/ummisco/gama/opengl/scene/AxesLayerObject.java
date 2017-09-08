@@ -38,7 +38,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	@Override
 	public GamaPoint getScale() {
-		return scale == null ? DEFAULT_SCALE : super.getScale();
+		return scale.equals(NULL_SCALE) ? DEFAULT_SCALE : super.getScale();
 	}
 
 	@Override
