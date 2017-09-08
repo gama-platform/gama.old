@@ -570,6 +570,8 @@ public class Operators {
 	
 	
 	
+	// Faire des opérateurs pour créer des états mentaux (en précisant ou non l'agent propriétaire)
+	
 	@operator(value = "set_modality", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the modality value of the given mental state", examples = @example(value = "mental state set_modality belief", test = false))
 	public static MentalState setModalitity(final MentalState mental, final String modality){

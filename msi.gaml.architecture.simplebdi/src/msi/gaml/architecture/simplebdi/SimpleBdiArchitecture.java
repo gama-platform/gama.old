@@ -96,6 +96,11 @@ import msi.gaml.types.Types;
 				of = MentalStateType.id,
 				init = "[]"),
 		@var (
+				name = SimpleBdiArchitecture.IDEAL_BASE,
+				type = IType.LIST,
+				of = MentalStateType.id,
+				init = "[]"),
+		@var (
 				name = SimpleBdiArchitecture.PLAN_BASE,
 				type = IType.LIST,
 				of = BDIPlanType.id,
@@ -146,6 +151,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PREDICATE_SUBINTENTIONS = "subintentions";
 	public static final String PREDICATE_DATE = "date";
 	public static final String BELIEF_BASE = "belief_base";
+	public static final String IDEAL_BASE = "ideal_base";
 	public static final String REMOVE_DESIRE_AND_INTENTION = "desire_also";
 	public static final String DESIRE_BASE = "desire_base";
 	public static final String INTENTION_BASE = "intention_base";
@@ -892,7 +898,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			args = { @arg (
 					name = PREDICATE,
 					type = PredicateType.id,
-					optional = false,
+					optional = true,
 					doc = @doc ("predicate to add as a belief")),
 					@arg (
 					name = "strength",
@@ -915,19 +921,66 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
 		MentalState tempState;
+		if(predicateDirect!=null){
+			tempState = new MentalState("Belief",predicateDirect);
+		} else {
+			tempState = new MentalState("Belief");
+		}
 		if(stre!=null){
+			tempState.setStrength(stre);
 			if(life>0){
-				tempState = new MentalState("Belief",predicateDirect,stre,life);
-			}else
-			{
-				tempState = new MentalState("Belief",predicateDirect,stre);
+				tempState.setLifeTime(life);
 			}
 		}else{
 			if(life>0){
-				tempState = new MentalState("Belief",predicateDirect,life);
-			}else
-			{
-				tempState = new MentalState("Belief",predicateDirect);
+				tempState.setLifeTime(life);
+			}
+		}
+		return addBelief(scope, tempState);
+
+	}
+	
+	@action (
+			name = "add_belief_mental_state",
+			args = {@arg (
+						name = "mental_state",
+						type = MentalStateType.id,
+						optional = true,
+						doc = @doc ("predicate to add as a belief")),
+					@arg (
+					name = "strength",
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc ("the stregth of the belief")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the belief"))},
+			doc = @doc (
+					value = "add the predicate in the belief base.",
+					returns = "true if it is added in the base.",
+					examples = { @example ("") }))
+	public Boolean primAddBeliefMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState stateDirect = 
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState tempState;
+		if(stateDirect != null){
+			tempState = new MentalState("Belief",stateDirect);
+		} else {
+			tempState = new MentalState("Belief");
+		}
+		if(stre!=null){
+			tempState.setStrength(stre);
+			if(life>0){
+				tempState.setLifeTime(life);
+			}
+		}else{
+			if(life>0){
+				tempState.setLifeTime(life);
 			}
 		}
 		return addBelief(scope, tempState);
@@ -1220,8 +1273,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			args = { @arg (
 					name = PREDICATE,
 					type = PredicateType.id,
-					optional = false,
-					doc = @doc ("predicate to add")),
+					optional = true,
+					doc = @doc ("predicate to add as a desire")),
 					@arg (
 					name = "strength",
 					type = IType.FLOAT,
@@ -1244,6 +1297,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primAddDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+//		final MentalState stateDirect = 
+//				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
 		final Double stre =
 				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
@@ -1259,11 +1314,86 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				tempPred.setLifeTime(life);
 			}
 			return addDesire(scope, tempSuper, tempPred);
-		}
+		} /*else if(stateDirect!=null){
+			final Predicate superpredicate =
+					(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
+			MentalState tempPred = new MentalState("Desire",stateDirect);
+			MentalState tempSuper = new MentalState("Intention",superpredicate);
+			if(stre!=null){
+				tempPred.setStrength(stre);
+			}
+			if(life>0){
+				tempPred.setLifeTime(life);
+			}
+			return addDesire(scope, tempSuper, tempPred);
+		}*/
 
 		return false;
 	}
 
+	@action (
+			name = "add_desire_mental_state",
+			args = {@arg (
+						name = "mental_state",
+						type = MentalStateType.id,
+						optional = true,
+						doc = @doc ("mental_state to add as a desire")),
+					@arg (
+					name = "strength",
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc ("the stregth of the belief")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the belief")),
+					@arg (
+					name = PREDICATE_TODO,
+					type = PredicateType.id,
+					optional = true,
+					doc = @doc ("add the desire as a subintention of this parameter")),},
+			doc = @doc (
+					value = "adds the predicates is in the desire base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primAddDesireMentalState(final IScope scope) throws GamaRuntimeException {
+//		final Predicate predicateDirect =
+//				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		final MentalState stateDirect = 
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		/*if (predicateDirect != null) {
+			final Predicate superpredicate =
+					(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
+			MentalState tempPred = new MentalState("Desire",predicateDirect);
+			MentalState tempSuper = new MentalState("Intention",superpredicate);
+			if(stre!=null){
+				tempPred.setStrength(stre);
+			}
+			if(life>0){
+				tempPred.setLifeTime(life);
+			}
+			return addDesire(scope, tempSuper, tempPred);
+		} else*/ if(stateDirect!=null){
+			final Predicate superpredicate =
+					(Predicate) (scope.hasArg(PREDICATE_TODO) ? scope.getArg(PREDICATE_TODO, PredicateType.id) : null);
+			MentalState tempPred = new MentalState("Desire",stateDirect);
+			MentalState tempSuper = new MentalState("Intention",superpredicate);
+			if(stre!=null){
+				tempPred.setStrength(stre);
+			}
+			if(life>0){
+				tempPred.setLifeTime(life);
+			}
+			return addDesire(scope, tempSuper, tempPred);
+		}
+
+		return false;
+	}
+	
 	@action (
 			name = "get_desire",
 			args = { @arg (
@@ -1508,7 +1638,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Double stre =
 				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
-		MentalState temp = new MentalState("Intention",predicateDirect);
+		MentalState temp;
+		if(predicateDirect!=null){
+			temp = new MentalState("Intention",predicateDirect);
+		} else {
+			temp = new MentalState("Intention");
+		}
 		if(stre!=null){
 			temp.setStrength(stre);
 		}
@@ -1519,6 +1654,51 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	@action (
+			name = "add_intention_mental_state",
+			args = {@arg (
+							name = "mental_state",
+							type = MentalStateType.id,
+							optional = true,
+							doc = @doc ("predicate to add as an intention")),
+					@arg (
+							name = "strength",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("the stregth of the belief")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the belief"))
+					},
+			doc = @doc (
+					value = "check if the predicates is in the desire base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
+	public Boolean primAddIntentionMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState stateDirect = 
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState temp;
+		if(stateDirect != null){
+			temp = new MentalState("Intention",stateDirect);
+		} else {
+			temp = new MentalState("Intention");
+		}
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		if(life>0){
+			temp.setLifeTime(life);
+		}
+		return addToBase(scope, temp, INTENTION_BASE);
+
+	}
+	
 	@action (
 			name = "get_intention",
 			args = { @arg (
@@ -2299,8 +2479,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = true,
-					doc = @doc ("predicate to check")) ,
-			@arg (
+					doc = @doc ("predicate to add")) ,
+					@arg (
 					name = "strength",
 					type = IType.FLOAT,
 					optional = true,
@@ -2320,7 +2500,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Double stre =
 				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
-		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		MentalState temp;
+		if(predicateDirect!=null){
+			temp = new MentalState("Uncertainty",predicateDirect);
+		} else {
+			temp = new MentalState("Uncertainty");
+		}
 		if(stre!=null){
 			temp.setStrength(stre);
 		}
@@ -2332,12 +2517,55 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action (
+			name = "add_uncertainty_mental_state",
+			args = {@arg (
+							name = "mental_state",
+							type = MentalStateType.id,
+							optional = true,
+							doc = @doc ("mental state to add as an uncertainty")),
+			@arg (
+					name = "strength",
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc ("the stregth of the belief")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the belief"))},
+			doc = @doc (
+					value = "add a predicate in the uncertainty base.",
+					returns = "true it works.",
+					examples = { @example ("") }))
+	public Boolean primAddUncertaintyMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState stateDirect = 
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState temp;
+		if(stateDirect != null){
+			temp = new MentalState("Uncertainty",stateDirect);
+		} else {
+			temp = new MentalState("Uncertainty");
+		}
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		if(life>0){
+			temp.setLifeTime(life);
+		}
+		return addUncertainty(scope, temp);
+
+	}
+	
+	@action (
 			name = "get_uncertainty",
 			args = { @arg (
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = false,
-					doc = @doc ("predicate to check")) },
+					doc = @doc ("predicate to return")) },
 			doc = @doc (
 					value = "get the predicates is in the uncertainty base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
@@ -2386,7 +2614,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = true,
-					doc = @doc ("predicate to add")) },
+					doc = @doc ("predicate to remove")) },
 			doc = @doc (
 					value = "removes the predicates from the desire base.",
 					returns = "true if it is in the base.",
@@ -2399,7 +2627,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	// Peut-être mettre après un replace Uncertainty
+	// Peut-être mettre plus tard un replace Uncertainty
 	
 	@action (
 			name = "clear_uncertainties",
@@ -2412,6 +2640,95 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	//ajout des idéaux
+	public static Boolean addIdeal(final IScope scope, final MentalState predicate) {
+		return addToBase(scope, predicate, IDEAL_BASE);
+	}
+
+	@action (
+			name = "add_ideal",
+			args = { @arg (
+						name = PREDICATE,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("predicate to add as an ideal")) ,
+					@arg (
+						name = "praiseworthyness",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the praiseworthyness value of the ideal")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the ideal"))},
+			doc = @doc (
+					value = "add a predicate in the ideal base.",
+					returns = "true it works.",
+					examples = { @example ("") }))
+	public Boolean primAddIdeal(final IScope scope) throws GamaRuntimeException {
+		final Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState temp;
+		if(predicateDirect!=null){
+			temp = new MentalState("Ideal",predicateDirect);
+		} else {
+			temp = new MentalState();
+		}
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		if(life>0){
+			temp.setLifeTime(life);
+		}
+		return addIdeal(scope, temp);
+	}
+	
+	@action (
+			name = "add_ideal_mental_state",
+			args = {@arg (
+						name = "mental_state",
+						type = MentalStateType.id,
+						optional = true,
+						doc = @doc ("mental state to add as an ideal")),
+					@arg (
+						name = "praiseworthyness",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the praiseworthyness value of the ideal")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the ideal"))},
+			doc = @doc (
+					value = "add a predicate in the ideal base.",
+					returns = "true it works.",
+					examples = { @example ("") }))
+	public Boolean primAddIdealMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState stateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState temp;
+		if(stateDirect != null){
+			temp = new MentalState("Ideal",stateDirect);
+		} else {
+			temp = new MentalState();
+		}
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		if(life>0){
+			temp.setLifeTime(life);
+		}
+		return addIdeal(scope, temp);
+	}
+	
 	@action (
 			name = "add_social_link",
 			args = { @arg (
