@@ -148,7 +148,8 @@ public class OpenGL {
 	final GamaPoint currentNormal = new GamaPoint();
 	final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
-	private double currentZIncrement, currentZTranslation, maxZ;
+	private double currentZIncrement, currentZTranslation, maxZ, savedZTranslation;
+	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.OpenGL.OPENGL_TRIANGULATOR.getValue();
 	private final Rotation3D tempRotation = Rotation3D.identity();
 	private GLUquadricImpl quadric;
@@ -269,7 +270,19 @@ public class OpenGL {
 	 * translations are cumulative
 	 */
 	public void translateByZIncrement() {
-		currentZTranslation += currentZIncrement;
+		if (!ZTranslationSuspended)
+			currentZTranslation += currentZIncrement;
+	}
+
+	public void suspendZTranslation() {
+		ZTranslationSuspended = true;
+		savedZTranslation = currentZTranslation;
+		currentZTranslation = 0;
+	}
+
+	public void resumeZTranslation() {
+		ZTranslationSuspended = false;
+		currentZTranslation = savedZTranslation;
 	}
 
 	/**
@@ -1210,10 +1223,6 @@ public class OpenGL {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		gl.glClearDepth(1.0f);
 
-	}
-
-	public double getZIncrement() {
-		return currentZIncrement;
 	}
 
 }

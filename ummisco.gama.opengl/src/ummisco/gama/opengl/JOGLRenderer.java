@@ -36,7 +36,6 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
 import ummisco.gama.opengl.scene.GeometryDrawer;
-import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringDrawer;
@@ -430,10 +429,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 */
 	@Override
 	public void beginOverlay(final OverlayLayer layer) {
-		final ModelScene scene = sceneBuffer.getSceneToUpdate();
-		if (scene != null) {
-			scene.beginOverlay();
-		}
+		// final ModelScene scene = sceneBuffer.getSceneToUpdate();
+		// if (scene != null) {
+		// scene.beginOverlay();
+		// }
 
 	}
 

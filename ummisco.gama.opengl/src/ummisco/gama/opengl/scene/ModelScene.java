@@ -216,7 +216,7 @@ public class ModelScene {
 	}
 
 	public void beginOverlay() {
-		currentLayer.setOverlay(true);
+		// currentLayer.setOverlay(true);
 	}
 
 	/**

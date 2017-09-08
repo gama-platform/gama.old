@@ -34,12 +34,15 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	public AxesLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer);
+		// Addition to fix #2227
+		scale.setLocation(DEFAULT_SCALE);
 	}
 
-	@Override
-	public GamaPoint getScale() {
-		return scale.equals(NULL_SCALE) ? DEFAULT_SCALE : super.getScale();
-	}
+	// Removal of the override to fix #2227
+	// @Override
+	// public GamaPoint getScale() {
+	// return scale == null ? DEFAULT_SCALE : super.getScale();
+	// }
 
 	@Override
 	public void setScale(final GamaPoint s) {
