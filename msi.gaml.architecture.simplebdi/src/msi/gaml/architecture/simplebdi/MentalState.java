@@ -300,11 +300,18 @@ public class MentalState implements IValue {
 		}
 		final MentalState other = (MentalState)obj;
 //		if(other.getModality()!=this.modality){return false;}
+		if(this.predicate==null && other.getPredicate()!=null){return false;}
+		if(this.predicate!=null && other.getPredicate()==null){return false;}
 		if(this.predicate!=null && other.getPredicate()!=null){
 			if(!other.getPredicate().equals(this.predicate)){return false;}
 		}
+		if(this.mental==null && other.getMentalState()!=null){return false;}
+		if(this.mental!=null && other.getMentalState()==null){return false;}
 		if(this.mental!=null && other.getMentalState()!=null){
 			if(!other.getMentalState().equals(this.mental)){return false;}
+		}
+		if(this.owner!=null && other.getOwner()!=null){
+			if(!other.getOwner().equals(this.owner)){return false;}
 		}
 //		if(other.getStrength()!=this.strength){return false;}
 		return true;
