@@ -232,9 +232,9 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	@Override
-	public void close() {
+	public void close(final IScope scope) {
 		reset();
-		super.close();
+		super.close(scope);
 	}
 
 	@Override

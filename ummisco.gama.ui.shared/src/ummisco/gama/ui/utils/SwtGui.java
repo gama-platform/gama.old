@@ -465,7 +465,7 @@ public class SwtGui implements IGui {
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
 				if (part instanceof IGamaView) {
-					((IGamaView) part).close();
+					((IGamaView) part).close(scope);
 
 				}
 			}
@@ -496,6 +496,11 @@ public class SwtGui implements IGui {
 		if (stateProvider != null) {
 			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
 		}
+
+
+		WorkbenchHelper.run(() ->{
+				WorkbenchHelper.getWindow().getShell().forceActive();			
+		});
 	}
 
 	@Override

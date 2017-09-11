@@ -34,6 +34,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -151,7 +152,7 @@ public abstract class GamaViewPart extends ViewPart
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
 				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> close());
+				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> close(GAMA.getRuntimeScope()));
 
 			}
 		}
@@ -266,7 +267,7 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
-	public void close() {
+	public void close(final IScope scope) {
 
 		WorkbenchHelper.asyncRun(() -> {
 			try {
@@ -282,7 +283,7 @@ public abstract class GamaViewPart extends ViewPart
 	public void removeOutput(final IDisplayOutput output) {
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			close();
+			close(output.getScope());
 		}
 	}
 

@@ -11,6 +11,7 @@ package ummisco.gama.ui.views.displays;
 
 import org.eclipse.swt.widgets.Control;
 
+import msi.gama.runtime.IScope;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -39,7 +40,7 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
-	public void close() {
+	public void close(final IScope scope) {
 
 		WorkbenchHelper.asyncRun(() -> {
 			try {

@@ -1106,7 +1106,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			close();
+			close(GAMA.getRuntimeScope());
 		}
 	}
 

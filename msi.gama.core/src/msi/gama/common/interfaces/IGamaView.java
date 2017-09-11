@@ -64,7 +64,7 @@ public interface IGamaView {
 
 	IDisplayOutput getOutput();
 
-	public void close();
+	public void close(IScope scope);
 
 	public void removeOutput(IDisplayOutput putput);
 
