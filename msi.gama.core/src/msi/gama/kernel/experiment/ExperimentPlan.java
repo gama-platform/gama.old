@@ -147,7 +147,12 @@ import msi.gaml.variables.IVariable;
 						values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
 								IKeyword.HEADLESS_UI },
 						optional = false,
-						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")) },
+						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")) },
 		omissible = IKeyword.NAME)
 @inside (
 		kinds = { ISymbolKind.MODEL })

@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -538,8 +537,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	@Override
-	public void validationEnded(final Collection<? extends IDescription> newExperiments,
-			final ValidationContext status) {
+	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
 		if (newExperiments == null && state != null)
 			updateToolbar(state, true);
 		else {

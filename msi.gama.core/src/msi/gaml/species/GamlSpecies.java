@@ -185,7 +185,12 @@ import one.util.streamex.StreamEx;
 						name = IKeyword.TOPOLOGY,
 						type = IType.TOPOLOGY,
 						optional = true,
-						doc = @doc ("The topology of the population of agents defined by this species. In case of nested species, it can for example be the shape of the macro-agent. In case of grid or graph species, the topology is automatically computed and cannot be redefined")) },
+						doc = @doc ("The topology of the population of agents defined by this species. In case of nested species, it can for example be the shape of the macro-agent. In case of grid or graph species, the topology is automatically computed and cannot be redefined")),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether the species is virtual (cannot be instantiated, but only used as a parent) (false by default)")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "The species statement allows modelers to define new species in the model. `" + IKeyword.GLOBAL
@@ -266,13 +271,14 @@ public class GamlSpecies extends AbstractSpecies {
 
 			final IExpression file = desc.getFacetExpr(FILE);
 			final IExpression files = desc.getFacetExpr(FILES);
-			if ((file != null) && (files != null)) {
+			if (file != null && files != null) {
 				sd.error(
 						"The use of the 'files' facet prohibits the use of the 'files' facet: if several files have to be loaded in the grid, use the 'files' facet, otherwise use the 'file' facet",
 						IGamlIssue.CONFLICTING_FACETS, FILE);
 			}
-			if ((file != null || files != null) && (height != null || width != null || cellWidth != null || cellHeight != null)) {
-				
+			if ((file != null || files != null)
+					&& (height != null || width != null || cellWidth != null || cellHeight != null)) {
+
 				sd.error(
 						"The use of the 'file' and 'files' facets prohibit the use of dimension facets ('width', 'height', 'cell_width', 'cell_height')",
 						IGamlIssue.CONFLICTING_FACETS, FILE);

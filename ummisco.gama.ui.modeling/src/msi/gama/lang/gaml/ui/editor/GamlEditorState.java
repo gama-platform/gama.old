@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlEditorState.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlEditorState.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,12 +10,13 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+
+import com.google.common.collect.Iterables;
 
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
@@ -35,7 +35,7 @@ public class GamlEditorState {
 	final List<Boolean> types;
 	final Map<String, URI> importedErrors;
 
-	public GamlEditorState(final ValidationContext status, final Collection<? extends IDescription> descriptions) {
+	public GamlEditorState(final ValidationContext status, final Iterable<? extends IDescription> descriptions) {
 
 		if (status != null) {
 			hasImportedErrors = status.hasImportedErrors();
@@ -46,7 +46,7 @@ public class GamlEditorState {
 			hasNullStatus = true;
 			importedErrors = Collections.EMPTY_MAP;
 		}
-		final int n = descriptions.size();
+		final int n = Iterables.size(descriptions);
 		if (n > 0) {
 			hasExperiments = true;
 			experiments = new ArrayList<>(n);
@@ -67,9 +67,7 @@ public class GamlEditorState {
 
 	@Override
 	public boolean equals(final Object old) {
-		if (!(old instanceof GamlEditorState)) {
-			return false;
-		}
+		if (!(old instanceof GamlEditorState)) { return false; }
 		final GamlEditorState state = (GamlEditorState) old;
 		return state.hasNullStatus == hasNullStatus && state.hasImportedErrors == hasImportedErrors
 				&& state.hasInternalErrors == hasInternalErrors && state.experiments.equals(experiments)
@@ -77,15 +75,9 @@ public class GamlEditorState {
 	}
 
 	public GamaUIColor getColor() {
-		if (hasImportedErrors) {
-			return IGamaColors.ERROR;
-		}
-		if (hasInternalErrors) {
-			return IGamaColors.ERROR;
-		}
-		if (!hasExperiments) {
-			return IGamaColors.WARNING;
-		}
+		if (hasImportedErrors) { return IGamaColors.ERROR; }
+		if (hasInternalErrors) { return IGamaColors.ERROR; }
+		if (!hasExperiments) { return IGamaColors.WARNING; }
 		return IGamaColors.OK;
 	}
 
