@@ -204,7 +204,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	};
 
 	protected void updateOverlay() {
-		if (overlay.isVisible())
+		if (overlay != null && overlay.isVisible())
 			overlay.update();
 	}
 
@@ -234,7 +234,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public boolean isOpenGL() {
 		if (outputs.isEmpty()) { return false; }
-		return getOutput().isOpenGL();
+		return getOutput().getData().isOpenGL();
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -427,7 +427,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void widgetDisposed(final DisposeEvent e) {
 		if (disposed) { return; }
 		if (getOutput() != null) {
-			getOutput().getData().removeListener(this);
+			getOutput().getData().listeners.clear();
+			final IDisplaySurface s = getDisplaySurface();
+			if (isOpenGL() && s != null) {
+				s.dispose();
+			}
 		}
 		if (keyAndMouseListener != null) {
 			keyAndMouseListener.dispose();
@@ -440,8 +444,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			}
 		}
-		// final IDisplaySurface s = getDisplaySurface();
-		// if ( s != null ) {
 		releaseLock();
 		// }
 		if (updateThread != null) {
@@ -823,7 +825,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		layerViewer.setSpacing(5);
 		// Fill the 2 viewers
 		fillGeneralParameters(propertiesViewer);
-		if (getOutput().isOpenGL()) {
+		if (isOpenGL()) {
 			fillCameraParameters(propertiesViewer);
 			fillKeystoneParameters(propertiesViewer);
 		}

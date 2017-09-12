@@ -15,12 +15,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.vividsolutions.jts.geom.Envelope;
+
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
+import msi.gaml.types.Types;
 
 /**
  */
@@ -51,7 +65,7 @@ public class LayeredDisplayData {
 		void changed(Changes property, Object value);
 	}
 
-	final Set<DisplayDataListener> listeners = new HashSet<>();
+	public final Set<DisplayDataListener> listeners = new HashSet<>();
 
 	public void addListener(final DisplayDataListener listener) {
 		listeners.add(listener);
@@ -94,6 +108,7 @@ public class LayeredDisplayData {
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
 	private double zRotationAngle = 0;
 	private double currentRotationAboutZ = 0;
+	private boolean isOpenGL;
 
 	/**
 	 * OpenGL
@@ -114,8 +129,11 @@ public class LayeredDisplayData {
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
-	// private volatile boolean isCameraLock = true;
-
+	private boolean useShader = false;
+	private boolean constantBackground = true;
+	private boolean constantAmbientLight = true;
+	private boolean constantCamera = true;
+	private boolean constantCameraLook = true;
 	/**
 	 * Overlay
 	 */
@@ -163,6 +181,10 @@ public class LayeredDisplayData {
 	public void setBackgroundColor(final GamaColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
 		notifyListeners(Changes.BACKGROUND, backgroundColor);
+	}
+
+	public boolean useShader() {
+		return useShader;
 	}
 
 	/**
@@ -464,6 +486,8 @@ public class LayeredDisplayData {
 	 */
 	public void setDisplayType(final String displayType) {
 		this.displayType = displayType;
+		isOpenGL = displayType.equals(LayeredDisplayData.OPENGL) || displayType.equals(LayeredDisplayData.THREED);
+
 	}
 
 	/**
@@ -590,21 +614,6 @@ public class LayeredDisplayData {
 		notifyListeners(Changes.SPLIT_LAYER, s);
 	}
 
-	/**
-	 * @return
-	 */
-	// public boolean isCameraLock() {
-	// return isCameraLock;
-	// }
-	//
-	// public void setCameraLock(final boolean s) {
-	// isCameraLock = s;
-	// }
-
-	// public static ILocation getNoChange() {
-	// return noChange;
-	// }
-
 	public boolean isSynchronized() {
 		return isSynchronized;
 	}
@@ -676,6 +685,266 @@ public class LayeredDisplayData {
 
 	public void setToolbarVisible(final boolean b) {
 		isToolbarVisible = b;
+	}
+
+	public void initWith(final IScope scope, final IDescription desc) {
+		final Facets facets = desc.getFacets();
+		// Initializing the size of the environment
+		SimulationAgent sim = scope.getSimulation();
+		// hqnghi if layer come from micro-model
+		final ModelDescription micro = desc.getModelDescription();
+		final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+		if (fromMicroModel) {
+			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
+					.getExternMicroPopulationFor(micro.getAlias() + "." + desc.getOriginName()).getAgent(0);
+			sim = exp.getSimulation();
+		}
+		// end-hqnghi
+		Envelope env = null;
+		if (sim != null) {
+			env = sim.getEnvelope();
+		} else {
+			env = new Envelope3D(0, 100, 0, 100, 0, 0);
+		}
+		setEnvWidth(env.getWidth());
+		setEnvHeight(env.getHeight());
+
+		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
+		if (auto != null) {
+			if (auto.getType().equals(Types.POINT)) {
+				setAutosave(true);
+				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+			} else {
+				setAutosave(Cast.asBool(scope, auto.value(scope)));
+			}
+		}
+		final IExpression toolbar = facets.getExpr(IKeyword.TOOLBAR);
+		if (toolbar != null) {
+			setToolbarVisible(Cast.asBool(scope, toolbar.value(scope)));
+		}
+		final IExpression scale = facets.getExpr(IKeyword.SCALE);
+		if (scale != null) {
+			if (scale.getType().equals(Types.BOOL)) {
+				setDisplayScale(Cast.asBool(scope, scale.value(scope)));
+			} else {
+				setDisplayScale(true);
+			}
+		}
+		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
+		if (fps != null) {
+			setShowfps(Cast.asBool(scope, fps.value(scope)));
+		}
+		final IExpression denv = facets.getExpr(IKeyword.DRAWENV);
+		if (denv != null) {
+			setDrawEnv(Cast.asBool(scope, denv.value(scope)));
+		}
+
+		final IExpression ortho = facets.getExpr(IKeyword.ORTHOGRAPHIC_PROJECTION);
+		if (ortho != null) {
+			setOrtho(Cast.asBool(scope, ortho.value(scope)));
+		}
+
+		final IExpression fixed_cam = facets.getExpr(IKeyword.CAMERA_INTERACTION);
+		if (fixed_cam != null) {
+			disableCameraInteractions(!Cast.asBool(scope, fixed_cam.value(scope)));
+		}
+
+		final IExpression keystone_exp = facets.getExpr(IKeyword.KEYSTONE);
+		if (keystone_exp != null) {
+			@SuppressWarnings ("unchecked") final List<GamaPoint> val =
+					GamaListFactory.create(scope, Types.POINT, Cast.asList(scope, keystone_exp.value(scope)));
+			if (val.size() >= 4) {
+				setKeystone(val);
+			}
+		}
+
+		final IExpression rotate_exp = facets.getExpr(IKeyword.ROTATE);
+		if (rotate_exp != null) {
+			final double val = Cast.asFloat(scope, rotate_exp.value(scope));
+			setZRotationAngle(val);
+		}
+
+		final IExpression lightOn = facets.getExpr(IKeyword.IS_LIGHT_ON);
+		if (lightOn != null) {
+			setLightOn(Cast.asBool(scope, lightOn.value(scope)));
+		}
+
+		final IExpression light2 = facets.getExpr(IKeyword.DIFFUSE_LIGHT);
+		// this facet is deprecated...
+		if (light2 != null) {
+			setLightActive(1, true);
+			if (light2.getType().equals(Types.COLOR)) {
+				setDiffuseLightColor(1, Cast.asColor(scope, light2.value(scope)));
+			} else {
+				final int meanValue = Cast.asInt(scope, light2.value(scope));
+				setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
+			}
+		}
+
+		final IExpression light3 = facets.getExpr(IKeyword.DIFFUSE_LIGHT_POS);
+		// this facet is deprecated...
+		if (light3 != null) {
+			setLightActive(1, true);
+			setLightDirection(1, (GamaPoint) Cast.asPoint(scope, light3.value(scope)));
+		}
+
+		final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
+		if (drawLights != null) {
+			if (Cast.asBool(scope, drawLights.value(scope)) == true) {
+				// set the drawLight attribute to true for all the already
+				// existing light
+				for (int i = 0; i < 8; i++) {
+					boolean lightAlreadyCreated = false;
+					for (final LightPropertiesStructure lightProp : getDiffuseLights()) {
+						if (lightProp.id == i) {
+							lightProp.drawLight = true;
+							lightAlreadyCreated = true;
+						}
+					}
+					// if the light does not exist yet, create it by using the
+					// method "setLightActive", and set the drawLight attr to
+					// true.
+					if (!lightAlreadyCreated) {
+						if (i < 2) {
+							setLightActive(i, true);
+						} else {
+							setLightActive(i, false);
+						}
+						setDrawLight(i, true);
+					}
+					lightAlreadyCreated = false;
+				}
+			}
+		}
+
+		// Set the up vector of the opengl Camera (see gluPerspective)
+		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_UP_VECTOR);
+		if (cameraUp != null) {
+			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraUp.value(scope));
+			location.setY(-location.getY()); // y component need to be reverted
+			setCameraUpVector(location, true);
+		}
+
+		// Set the up vector of the opengl Camera (see gluPerspective)
+		final IExpression cameraLens = facets.getExpr(IKeyword.CAMERA_LENS);
+		if (cameraLens != null) {
+			final int lens = Cast.asInt(scope, cameraLens.value(scope));
+			setCameraLens(lens);
+		}
+
+		final IExpression fs = facets.getExpr(IKeyword.FULLSCREEN);
+		if (fs != null) {
+			int monitor;
+			if (fs.getType() == Types.BOOL) {
+				monitor = Cast.asBool(scope, fs.value(scope)) ? 0 : -1;
+			} else
+				monitor = Cast.asInt(scope, fs.value(scope));
+			setFullScreen(monitor);
+		}
+
+		final IExpression use_shader = facets.getExpr("use_shader");
+		if (use_shader != null) {
+			this.useShader = Cast.asBool(scope, use_shader.value(scope));
+		}
+
+		final IExpression color = facets.getExpr(IKeyword.BACKGROUND);
+		if (color != null) {
+			setBackgroundColor(Cast.asColor(scope, color.value(scope)));
+			constantBackground = color.isConst();
+		}
+
+		final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
+		if (light != null) {
+			if (light.getType().equals(Types.COLOR)) {
+				setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
+			} else {
+				final int meanValue = Cast.asInt(scope, light.value(scope));
+				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+			}
+			constantAmbientLight = light.isConst();
+		}
+
+		final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
+		if (camera != null) {
+			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+			location.y = -location.y; // y component need to be reverted
+			setCameraPos(location);
+			constantCamera = camera.isConst();
+			// cameraFix = true;
+		}
+
+		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
+		if (cameraLook != null) {
+			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+			location.setY(-location.getY()); // y component need to be reverted
+			setCameraLookPos(location);
+			constantCameraLook = cameraLook.isConst();
+		}
+
+	}
+
+	public void update(final IScope scope, final Facets facets) {
+		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
+		if (auto != null) {
+			if (auto.getType().equals(Types.POINT)) {
+				setAutosave(true);
+				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+			} else {
+				setAutosave(Cast.asBool(scope, auto.value(scope)));
+			}
+		}
+		// /////////////// dynamic Lighting ///////////////////
+
+		if (!constantBackground) {
+
+			final IExpression color = facets.getExpr(IKeyword.BACKGROUND);
+			if (color != null) {
+				setBackgroundColor(Cast.asColor(scope, color.value(scope)));
+			}
+
+		}
+
+		if (!constantAmbientLight) {
+			final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
+			if (light != null) {
+				if (light.getType().equals(Types.COLOR)) {
+					setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
+				} else {
+					final int meanValue = Cast.asInt(scope, light.value(scope));
+					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+				}
+			}
+		}
+
+		// /////////////////// dynamic camera ///////////////////
+		if (!constantCamera) {
+			final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
+			if (camera != null) {
+				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+				if (location != null)
+					location.y = -location.y; // y component need to be
+												// reverted
+				setCameraPos(location);
+			}
+			// graphics.setCameraPosition(getCameraPos());
+		}
+
+		if (!constantCameraLook) {
+			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
+			if (cameraLook != null) {
+				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+				if (location != null)
+					location.setY(-location.getY()); // y component need to be
+														// reverted
+				setCameraLookPos(location);
+			}
+		}
+
+	}
+
+	public boolean isOpenGL() {
+		return isOpenGL;
 	}
 
 }

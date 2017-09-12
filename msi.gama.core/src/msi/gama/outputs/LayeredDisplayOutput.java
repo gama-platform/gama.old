@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
-import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
@@ -26,9 +24,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.AbstractLayerStatement;
@@ -50,21 +45,17 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * The Class LayerDisplayOutput.
@@ -271,6 +262,13 @@ import msi.gaml.types.Types;
 										isExecutable = false) }) })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
+	private final List<AbstractLayerStatement> layers;
+	protected IDisplaySurface surface;
+
+	final LayeredDisplayData data = new LayeredDisplayData();
+	// Specific to overlays
+	OverlayStatement overlayInfo;
+
 	public static class DisplaySerializer extends SymbolSerializer<SymbolDescription> {
 
 		/**
@@ -383,18 +381,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	}
 
-	private final List<AbstractLayerStatement> layers;
-	protected IDisplaySurface surface;
-	private boolean useShader = false;
-	private boolean constantBackground = true;
-	private boolean constantAmbientLight = true;
-	private boolean constantCamera = true;
-	private boolean constantCameraLook = true;
-	// public volatile boolean cameraFix = false;
-	final LayeredDisplayData data = new LayeredDisplayData();
-	// Specific to overlays
-	OverlayStatement overlayInfo;
-
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
@@ -412,48 +398,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		final boolean result = super.init(scope);
 		if (!result) { return false; }
-		final IExpression color = getFacet(IKeyword.BACKGROUND);
-		if (color != null) {
-			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
-			constantBackground = color.isConst();
-		}
-
-		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
-		if (auto != null) {
-			if (auto.getType().equals(Types.POINT)) {
-				data.setAutosave(true);
-				data.setImageDimension(Cast.asPoint(getScope(), auto.value(getScope())));
-			} else {
-				data.setAutosave(Cast.asBool(getScope(), auto.value(getScope())));
-			}
-		}
-		final IExpression toolbar = getFacet(IKeyword.TOOLBAR);
-		if (toolbar != null) {
-			data.setToolbarVisible(Cast.asBool(getScope(), toolbar.value(getScope())));
-		}
+		data.initWith(getScope(), description);
 
 		for (final ILayerStatement layer : getLayers()) {
-			// try {
 			layer.setDisplayOutput(this);
 			if (!getScope().init(layer).passed()) { return false; }
-			// } catch (final GamaRuntimeException e) {
-			// GAMA.reportError(e, true);
-			// return false;
-			// }
-		}
-
-		final IExpression scale = getFacet(IKeyword.SCALE);
-		if (scale != null) {
-			if (scale.getType().equals(Types.BOOL)) {
-				data.setDisplayScale(Cast.asBool(getScope(), scale.value(getScope())));
-			} else {
-				data.setDisplayScale(true);
-			}
-		}
-
-		final IExpression fps = getFacet(IKeyword.SHOWFPS);
-		if (fps != null) {
-			this.data.setShowfps(Cast.asBool(getScope(), fps.value(getScope())));
 		}
 
 		final IExpression sync = getFacet("synchronized");
@@ -461,175 +410,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			setSynchronized(Cast.asBool(getScope(), sync.value(getScope())));
 		}
 
-		// computeTrace(getScope());
-
-		final IExpression denv = getFacet(IKeyword.DRAWENV);
-		if (denv != null) {
-			this.data.setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
-		}
-
-		final IExpression ortho = getFacet(IKeyword.ORTHOGRAPHIC_PROJECTION);
-		if (ortho != null) {
-			this.data.setOrtho(Cast.asBool(getScope(), ortho.value(getScope())));
-		}
-
-		final IExpression fixed_cam = getFacet(IKeyword.CAMERA_INTERACTION);
-		if (fixed_cam != null) {
-			this.data.disableCameraInteractions(!Cast.asBool(getScope(), fixed_cam.value(getScope())));
-		}
-
-		final IExpression use_shader = getFacet("use_shader");
-		if (use_shader != null) {
-			this.useShader = Cast.asBool(getScope(), use_shader.value(getScope()));
-		}
-
-		final IExpression keystone_exp = getFacet(IKeyword.KEYSTONE);
-		if (keystone_exp != null) {
-			@SuppressWarnings ("unchecked") final List<GamaPoint> val =
-					GamaListFactory.create(scope, Types.POINT, Cast.asList(getScope(), keystone_exp.value(getScope())));
-			if (val.size() >= 4) {
-				data.setKeystone(val);
-			}
-		}
-
-		final IExpression rotate_exp = getFacet(IKeyword.ROTATE);
-		if (rotate_exp != null) {
-			final double val = Cast.asFloat(getScope(), rotate_exp.value(getScope()));
-			data.setZRotationAngle(val);
-		}
-
-		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
-		if (lightOn != null) {
-			this.data.setLightOn(Cast.asBool(getScope(), lightOn.value(getScope())));
-		}
-
-		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
-		if (light != null) {
-			if (light.getType().equals(Types.COLOR)) {
-				this.data.setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
-			} else {
-				final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-				this.data.setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-			}
-			constantAmbientLight = light.isConst();
-		}
-
-		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
-		// this facet is deprecated...
-		if (light2 != null) {
-			this.data.setLightActive(1, true);
-			if (light2.getType().equals(Types.COLOR)) {
-				this.data.setDiffuseLightColor(1, Cast.asColor(getScope(), light2.value(getScope())));
-			} else {
-				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-				this.data.setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
-			}
-		}
-
-		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
-		// this facet is deprecated...
-		if (light3 != null) {
-			this.data.setLightActive(1, true);
-			this.data.setLightDirection(1, (GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
-		}
-
-		final IExpression drawLights = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
-		if (drawLights != null) {
-			if (Cast.asBool(getScope(), drawLights.value(getScope())) == true) {
-				// set the drawLight attribute to true for all the already
-				// existing light
-				for (int i = 0; i < 8; i++) {
-					boolean lightAlreadyCreated = false;
-					for (final LightPropertiesStructure lightProp : this.data.getDiffuseLights()) {
-						if (lightProp.id == i) {
-							lightProp.drawLight = true;
-							lightAlreadyCreated = true;
-						}
-					}
-					// if the light does not exist yet, create it by using the
-					// method "setLightActive", and set the drawLight attr to
-					// true.
-					if (!lightAlreadyCreated) {
-						if (i < 2) {
-							this.data.setLightActive(i, true);
-						} else {
-							this.data.setLightActive(i, false);
-						}
-						this.data.setDrawLight(i, true);
-					}
-					lightAlreadyCreated = false;
-				}
-			}
-		}
-
-		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
-		if (camera != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), camera.value(getScope()));
-			location.y = -location.y; // y component need to be reverted
-			this.data.setCameraPos(location);
-			constantCamera = camera.isConst();
-			// cameraFix = true;
-		}
-
-		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
-		if (cameraLook != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraLook.value(getScope()));
-			location.setY(-location.getY()); // y component need to be reverted
-			this.data.setCameraLookPos(location);
-			constantCameraLook = cameraLook.isConst();
-			// cameraFix = true;
-		}
-		// Set the up vector of the opengl Camera (see gluPerspective)
-		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
-		if (cameraUp != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraUp.value(getScope()));
-			location.setY(-location.getY()); // y component need to be reverted
-			this.data.setCameraUpVector(location, true);
-			// cameraFix = true;
-		}
-
-		// Set the up vector of the opengl Camera (see gluPerspective)
-		final IExpression cameraLens = getFacet(IKeyword.CAMERA_LENS);
-		if (cameraLens != null) {
-			final int lens = Cast.asInt(getScope(), cameraLens.value(getScope()));
-			this.data.setCameraLens(lens);
-		}
-
-		final IExpression fs = getFacet(IKeyword.FULLSCREEN);
-		if (fs != null) {
-			int monitor;
-			if (fs.getType() == Types.BOOL) {
-				monitor = Cast.asBool(scope, fs.value(scope)) ? 0 : -1;
-			} else
-				monitor = Cast.asInt(scope, fs.value(scope));
-			this.data.setFullScreen(monitor);
-		}
-
-		SimulationAgent sim = getScope().getSimulation();
-		// hqnghi if layer come from micro-model
-		final ModelDescription micro = this.getDescription().getModelDescription();
-		final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
-		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
-		if (fromMicroModel) {
-			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
-					.getExternMicroPopulationFor(micro.getAlias() + "." + this.getDescription().getOriginName())
-					.getAgent(0);
-			sim = exp.getSimulation();
-		}
-		// end-hqnghi
-		Envelope env = null;
-		if (sim != null) {
-			env = sim.getEnvelope();
-		} else {
-			env = new Envelope3D(0, 100, 0, 100, 0, 0);
-		}
-		this.data.setEnvWidth(env.getWidth());
-		this.data.setEnvHeight(env.getHeight());
-		// We reinit the surface if it is present, but we dont create it anymore
-		// in the first init.
-		if (surface != null) {
-			surface.outputReloaded();
-		}
 		createSurface(getScope());
 		return true;
 	}
@@ -647,11 +427,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
-		// final IGraphics g = scope.getGraphics();
-		// if (g == null)
-		// return true;
-		// if (g.isNotReadyToUpdate())
-		// return true;
 		for (final ILayerStatement layer : getLayers()) {
 			getScope().setCurrentSymbol(layer);
 			getScope().step(layer);
@@ -662,81 +437,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void update() throws GamaRuntimeException {
 		if (surface == null) { return; }
-
-		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
-		if (auto != null) {
-			if (auto.getType().equals(Types.POINT)) {
-				data.setAutosave(true);
-				data.setImageDimension(Cast.asPoint(getScope(), auto.value(getScope())));
-			} else {
-				data.setAutosave(Cast.asBool(getScope(), auto.value(getScope())));
-			}
-		}
-		// /////////////// dynamic Lighting ///////////////////
-
-		if (!constantBackground) {
-
-			final IExpression color = getFacet(IKeyword.BACKGROUND);
-			if (color != null) {
-				setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
-			}
-
-		}
-
-		if (!constantAmbientLight) {
-			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
-			if (light != null) {
-				if (light.getType().equals(Types.COLOR)) {
-					this.data.setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
-				} else {
-					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
-					this.data.setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-				}
-			}
-		}
-
-		// /////////////////// dynamic camera ///////////////////
-		if (!constantCamera) {
-			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
-			if (camera != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), camera.value(getScope()));
-				if (location != null)
-					location.y = -location.y; // y component need to be
-												// reverted
-				this.data.setCameraPos(location);
-			}
-			// graphics.setCameraPosition(getCameraPos());
-		}
-
-		if (!constantCameraLook) {
-			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
-			if (cameraLook != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(getScope(), cameraLook.value(getScope()));
-				if (location != null)
-					location.setY(-location.getY()); // y component need to be
-														// reverted
-				this.data.setCameraLookPos(location);
-			}
-		}
+		data.update(getScope(), description.getFacets());
 
 		if (overlayInfo != null) {
 			getScope().step(overlayInfo);
 		}
 
-		// if ( isSynchronized() ) {
-		// surface.updateDisplay(false);
-		// } else {
 		super.update();
-		// }
 
-	}
-
-	public boolean shouldDisplayScale() {
-		return data.isDisplayScale();
-	}
-
-	public void toogleScaleDisplay() {
-		data.setDisplayScale(!data.isDisplayScale());
 	}
 
 	@Override
@@ -759,7 +467,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		if (GAMA.isInHeadLessMode())
 			data.setDisplayType(IKeyword.IMAGE);
-		else if (isOpenGL()) {
+		else if (data.isOpenGL()) {
 			// If in headless mode, we need to get the 'image' surface
 			return;
 		}
@@ -768,7 +476,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		if (isOpenGL()) { return IGui.GL_LAYER_VIEW_ID; }
+		if (data.isOpenGL()) { return IGui.GL_LAYER_VIEW_ID; }
 		return IGui.LAYER_VIEW_ID;
 	}
 
@@ -792,16 +500,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 		setLayers(list);
-		//
-		// final List<LightStatement> lightList = new ArrayList<>();
-		// for (final ISymbol s : commands) {
-		// if (s instanceof OverlayStatement && ((OverlayStatement)
-		// s).hasInfo()) {
-		// overlayInfo = (OverlayStatement) s;
-		// }
-		// lightList.add((LightStatement) s);
-		//
-		// }
+
 	}
 
 	public void setSurface(final IDisplaySurface surface) {
@@ -814,10 +513,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public BufferedImage getImage(final int w, final int h) {
 		return surface == null ? null : surface.getImage(w, h);
-	}
-
-	private void setBackgroundColor(final GamaColor background) {
-		data.setBackgroundColor(background);
 	}
 
 	public void setLayers(final List<AbstractLayerStatement> layers) {
@@ -834,7 +529,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final boolean wasPaused = isPaused();
 		super.setPaused(paused);
 		if (surface == null) { return; }
-		if (isOpenGL()) {
+		if (data.isOpenGL()) {
 			((IDisplaySurface.OpenGL) surface).setPaused(paused);
 		}
 		if (wasPaused && !paused) {
@@ -842,18 +537,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	public boolean isOpenGL() {
-		return data.getDisplayType().equals(LayeredDisplayData.OPENGL)
-				|| data.getDisplayType().equals(LayeredDisplayData.THREED);
-	}
-
 	public LayeredDisplayData getData() {
 		return data;
-	}
-
-	public boolean useShader() {
-		// if (data.getKeystone() != null) { return true; }
-		return useShader;
 	}
 
 	// Keeping in sync the two implementations of synchronized, so that OpenGL
@@ -870,6 +555,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean isSynchronized() {
 		return super.isSynchronized() && data.isSynchronized();
+	}
+
+	public void releaseView() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

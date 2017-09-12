@@ -54,7 +54,7 @@ public class OutputPartsManager {
 			if (part instanceof IGamaView) {
 				final IDisplayOutput output = ((IGamaView) part).getOutput();
 				if (output != null) {
-					output.open();
+					if (!output.isOpen()) output.open();
 					output.setPaused(false);
 				}
 			}

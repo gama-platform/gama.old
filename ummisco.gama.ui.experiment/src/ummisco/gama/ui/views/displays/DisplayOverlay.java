@@ -183,7 +183,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		zoom = label(top, SWT.CENTER);
 		// scalebar overlay info
 		scalebar = new Canvas(top, SWT.None);
-		scalebar.setVisible(getView().getOutput().shouldDisplayScale());
+		scalebar.setVisible(getView().getOutput().getData().isDisplayScale());
 		final GridData scaleData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
 		scaleData.minimumWidth = 140;
 		scaleData.widthHint = 140;
@@ -268,7 +268,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
 			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part) && !referenceComposite.isVisible()) {
+			if (view.equals(part) && !referenceComposite.isDisposed() && !referenceComposite.isVisible()) {
 				WorkbenchHelper.run(doHide);
 			}
 		}

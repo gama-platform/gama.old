@@ -103,7 +103,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
-		if (getOutput().useShader()) {
+		if (getOutput().getData().useShader()) {
 			renderer = new ModernRenderer();
 
 		} else {
