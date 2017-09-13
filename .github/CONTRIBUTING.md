@@ -22,7 +22,7 @@
 
 * Ask any question about how to use GAMA in the [gama-platform mailing list](https://groups.google.com/forum/#!forum/gama-platform).
 
-* Consult the documentation on the [website] (http://gama-platform.org) or, alternatively, on the [wiki] (https://github.com/gama-platform/gama/wiki).
+* Consult the documentation on the [website](http://gama-platform.org) or, alternatively, on the [wiki](https://github.com/gama-platform/gama/wiki).
 </br>
 
 
