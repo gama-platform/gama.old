@@ -19,6 +19,7 @@ import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
@@ -491,24 +492,27 @@ public abstract class AbstractTopology implements ITopology {
 			});
 			return shapes;
 		}
-		final Geometry sourceTo = returnToroidalGeom(source);
-		final PreparedGeometry pg = pgFact.create(sourceTo);
-		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, f);
 		final Set<IAgent> result = new THashSet<>();
-		for (final Geometry sh : agentsMap.keySet()) {
-			final IAgent ag = agentsMap.get(sh);
-			if (ag != null && !ag.dead()) {
-				if (source.getAgent() != null && ag == source.getAgent()) {
-					continue;
-				}
-				final Geometry geom = ag.getInnerGeometry();
-				if (covered ? pg.covers(geom) : pg.intersects(geom)) {
-					result.add(ag);
+		
+		for (IShape sourceSub : source.getGeometries()) {
+			final Geometry sourceTo = returnToroidalGeom(sourceSub);
+			final PreparedGeometry pg = pgFact.create(sourceTo);
+			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, f);
+				for (final Geometry sh : agentsMap.keySet()) {
+				final IAgent ag = agentsMap.get(sh);
+				if (ag != null && !ag.dead()) {
+					if (source.getAgent() != null && ag == source.getAgent()) {
+						continue;
+					}
+					final Geometry geom = ag.getInnerGeometry();
+					
+					if (covered ? pg.covers(geom) : pg.intersects(geom)) {
+						result.add(ag);
+					}
 				}
 			}
 		}
 		return result;
-
 	}
 
 	@Override
