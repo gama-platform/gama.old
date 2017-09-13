@@ -1,16 +1,10 @@
 ## How to contribute to GAMA
 
-#### **Did you find a bug?**
+#### **Did you write a patch that fixes a bug or adds a new feature?**
 
-* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/gama-platform/gama/issues).
+* Open a new GitHub pull request with the patch if you think your addition is worth being included in the release.
 
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/gama-platform/gama/issues/new). Be sure to include a **title and clear description**, as much relevant information as possible, and a **code sample** or a **test case** demonstrating the expected behavior that is not occurring.
-
-#### **Did you write a patch that fixes a bug?**
-
-* Open a new GitHub pull request with the patch.
-
-* Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
+* Ensure the PR description clearly describes the problem and solution or the new addition. Include the relevant issue number if applicable.
 
 #### **Do you intend to add a new feature or change an existing one?**
 
@@ -18,12 +12,7 @@
 
 * Do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
 
-#### **Do you have questions about your models?**
-
-* Ask any question about how to use GAMA in the [gama-platform mailing list](https://groups.google.com/forum/#!forum/gama-platform).
-
-* Consult the documentation on the [website](http://gama-platform.org) or, alternatively, on the [wiki](https://github.com/gama-platform/gama/wiki).
-</br>
+<br/>
 
 
 Thanks!
