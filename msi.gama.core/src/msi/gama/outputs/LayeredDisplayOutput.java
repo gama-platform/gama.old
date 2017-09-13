@@ -505,6 +505,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public void setSurface(final IDisplaySurface surface) {
 		this.surface = surface;
+		if (surface == null) {
+			view = null;
+		}
 	}
 
 	public BufferedImage getImage() {

@@ -186,22 +186,28 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
 		for (final IOutput output : ImmutableList.copyOf(this)) {
-
-			if (scope.init(output).passed()) {
-				output.setPaused(false);
-				if (initialStep(scope, output)) {
-					try {
-						output.open();
-						output.update();
-					} catch (final RuntimeException e) {
-						e.printStackTrace();
-						return false;
-					}
-				}
-			}
-
+			if (!open(scope, output))
+				return false;
 		}
 		return true;
+	}
+
+	public boolean open(final IScope scope, final IOutput output) {
+
+		if (scope.init(output).passed()) {
+			output.setPaused(false);
+			if (initialStep(scope, output)) {
+				try {
+					output.open();
+					output.update();
+				} catch (final RuntimeException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
+		return true;
+
 	}
 
 	protected boolean initialStep(final IScope scope, final IOutput output) {

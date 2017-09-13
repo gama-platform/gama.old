@@ -13,7 +13,6 @@ import java.io.PrintStream;
 
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLException;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
@@ -211,7 +210,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 			if (drawable.isRealized()) {
 				drawable.display();
 			}
-		} catch (final GLException ex) {
+		} catch (final RuntimeException ex) {
 			System.out.println("Exception in OpenGL:" + ex.getMessage());
 		} finally {
 			this.animating = false;

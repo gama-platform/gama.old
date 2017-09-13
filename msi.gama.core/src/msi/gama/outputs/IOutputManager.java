@@ -59,4 +59,6 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 
 	void close();
 
+	boolean open(IScope scope, IOutput output);
+
 }

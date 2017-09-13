@@ -10,9 +10,13 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import com.google.common.collect.Iterables;
 
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 
 public class OutputsMenu extends ContributionItem {
 
@@ -32,8 +36,12 @@ public class OutputsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu main, final int index) {
-		for (final IOutputManager manager : GAMA.getExperiment().getActiveOutputManagers()) {
-			managementSubMenu(main, manager);
+		IExperimentPlan exp = GAMA.getExperiment();
+		if (exp == null) return;
+		ExperimentAgent agent = exp.getAgent();
+		if (agent == null) return;
+		for (final SimulationAgent sim : agent.getSimulationPopulation()) {
+			managementSubMenu(main, sim.getScope(), sim.getOutputManager());
 		}
 		GamaMenu.separate(main);
 		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), null, "Pause all");
@@ -43,7 +51,7 @@ public class OutputsMenu extends ContributionItem {
 		menuItem(main, e -> GAMA.getExperiment().unSynchronizeAllOutputs(), null, "Unsynchronize all");
 	}
 
-	public void managementSubMenu(final Menu main, final IOutputManager manager) {
+	public void managementSubMenu(final Menu main, final IScope scope, final IOutputManager manager) {
 		if (Iterables.isEmpty(manager.getDisplayOutputs()))
 			return;
 		final MenuItem item = new MenuItem(main, SWT.CASCADE);
@@ -51,11 +59,12 @@ public class OutputsMenu extends ContributionItem {
 		final Menu sub = new Menu(item);
 		item.setMenu(sub);
 		for (final IDisplayOutput output : manager.getDisplayOutputs()) {
-			outputSubMenu(sub, output);
+			outputSubMenu(sub, scope, manager, output);
 		}
 	}
 
-	public void outputSubMenu(final Menu main, final IDisplayOutput output) {
+	public void outputSubMenu(final Menu main, final IScope scope, final IOutputManager manager,
+			final IDisplayOutput output) {
 		final MenuItem item = new MenuItem(main, SWT.CASCADE);
 		item.setText(output.getOriginalName());
 		final Menu sub = new Menu(item);
@@ -72,7 +81,7 @@ public class OutputsMenu extends ContributionItem {
 			else
 				menuItem(sub, e -> output.setSynchronized(true), null, "Synchronize");
 		} else
-			menuItem(sub, e -> output.open(), null, "Reopen");
+			menuItem(sub, e -> manager.open(scope, output), null, "Reopen");
 
 	}
 

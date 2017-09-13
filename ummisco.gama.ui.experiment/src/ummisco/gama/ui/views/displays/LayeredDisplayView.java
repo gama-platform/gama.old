@@ -426,11 +426,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void widgetDisposed(final DisposeEvent e) {
 		if (disposed) { return; }
-		if (getOutput() != null) {
-			getOutput().getData().listeners.clear();
-			final IDisplaySurface s = getDisplaySurface();
+		final LayeredDisplayOutput output = getOutput();
+		if (output != null) {
+			output.getData().listeners.clear();
+			final IDisplaySurface s = output.getSurface();
 			if (isOpenGL() && s != null) {
 				s.dispose();
+				output.setSurface(null);
 			}
 		}
 		if (keyAndMouseListener != null) {
