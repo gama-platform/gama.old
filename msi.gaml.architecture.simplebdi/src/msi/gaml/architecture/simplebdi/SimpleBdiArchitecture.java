@@ -274,7 +274,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				// If current intention has no plan or is on hold, choose a new
 				// Desire
-				MentalState intentionTemp = new MentalState("Intention",currentIntention(scope));
+				MentalState intentionTemp;
+				if(currentIntention(scope)!=null){
+					intentionTemp= new MentalState("Intention",currentIntention(scope).getPredicate());
+				}else{
+					intentionTemp= new MentalState("Intention",currentIntention(scope));
+				}
 				if (testOnHold(scope, intentionTemp) || listExecutablePlans(scope).isEmpty()) {
 					selectDesireWithHighestPriority(scope);
 					_persistentTask = null;
@@ -305,9 +310,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 
 				// choose a plan for the current intention
-				if (_persistentTask == null && currentIntention(scope) == null) {
+				if (_persistentTask == null && currentIntention(scope)!=null && currentIntention(scope).getPredicate() == null) {
 					selectDesireWithHighestPriority(scope);
-					if (currentIntention(scope) == null) {
+					if (currentIntention(scope)!=null && currentIntention(scope).getPredicate() == null) {
 						addThoughts(scope, "I want nothing...");
 						// update the lifetime of beliefs
 						updateLifeTimePredicates(scope);
@@ -317,11 +322,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 					_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 					agent.setAttribute(CURRENT_PLAN, _persistentTask);
-					if (_persistentTask != null)
-						addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan "
+					if (currentIntention(scope)!=null && _persistentTask != null)
+						addThoughts(scope, "ok, new intention: " + currentIntention(scope).getPredicate() + " with plan "
 								+ _persistentTask.getName());
 				}
-				if (_persistentTask == null && currentIntention(scope) != null) {
+				if (currentIntention(scope)!=null && _persistentTask == null && currentIntention(scope).getPredicate() != null) {
 					_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 					agent.setAttribute(CURRENT_PLAN, _persistentTask);
 					if (_persistentTask != null) {
@@ -470,7 +475,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
 			final boolean isIntentionConditionSatisfied = statement.getIntentionExpression() == null
 					|| ((Predicate) statement.getIntentionExpression().value(scope))
-							.equalsIntentionPlan(currentIntention(scope));
+							.equalsIntentionPlan(currentIntention(scope).getPredicate());
 			final boolean isEmotionConditionSatisfied = statement.getEmotionExpression() == null
 					|| getEmotionBase(scope, EMOTION_BASE).contains(statement.getEmotionExpression().value(scope));
 			final boolean thresholdSatisfied = statement.getThreshold() == null
@@ -610,10 +615,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {
 				continue;
 			}
-			if (statement.getIntentionExpression() == null
-					|| ((Predicate) statement.getIntentionExpression().value(scope))
-							.equalsIntentionPlan(currentIntention(scope))) {
-				plans.add(statement);
+			if(currentIntention(scope)!=null){
+				if (statement.getIntentionExpression() == null
+						|| ((Predicate) statement.getIntentionExpression().value(scope))
+								.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
+					plans.add(statement);
+				}
 			}
 		}
 		return plans;
@@ -1041,6 +1048,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action (
+			name = "has_belief_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "check if the mental state is in the belief base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestBeliefMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		MentalState tempState = new MentalState("Belief",predicateDirect);
+		if (predicateDirect != null) {
+			return hasBelief(scope, tempState); }
+		return false;
+	}
+	
+	@action (
 			name = "get_belief",
 			args = { @arg (
 					name = PREDICATE,
@@ -1048,8 +1075,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("predicate to get")) },
 			doc = @doc (
-					value = "get the predicate in the belief base (if several, returns the first one).",
-					returns = "the predicate if it is in the base.",
+					value = "return the belief about the predicate in the belief base (if several, returns the first one).",
+					returns = "the belief about the predicate if it is in the base.",
 					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
 	public MentalState getBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
@@ -1059,6 +1086,32 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if(mental.getPredicate()!=null){
 					if (predicateDirect.equals(mental.getPredicate())) { return mental; }
 					if (predicateDirect.equalsButNotTruth(mental.getPredicate())){return mental;}
+				}
+			}
+
+		}
+		return null;
+
+	}
+	
+	@action (
+			name = "get_belief_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to get")) },
+			doc = @doc (
+					value = "return the belief about the mental state in the belief base (if several, returns the first one).",
+					returns = "the belief about the mental state if it is in the base.",
+					examples = { @example ("get_belief(new_mental_state(\"Desire\", predicate1))") }))
+	public MentalState getBeliefMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if(mental.getMentalState()!=null){
+					if (predicateDirect.equals(mental.getMentalState())) { return mental; }
 				}
 			}
 
@@ -1118,11 +1171,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					name = PREDICATE,
 					type = PredicateType.id,
 					optional = false,
-					doc = @doc ("name of the predicates to check")) },
+					doc = @doc ("predicate to check")) },
 			doc = @doc (
-					value = "get the list of predicates is in the belief base",
-					returns = "the list of predicates.",
-					examples = { @example ("get_belief(\"has_water\")") }))
+					value = "get the list of predicates in the belief base",
+					returns = "the list of beliefs.",
+					examples = { @example ("get_beliefs(\"has_water\")") }))
 	public IList<MentalState> getBeliefs(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1134,6 +1187,33 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						predicates.add(mental);
 					}
 					if (predicateDirect.equalsButNotTruth(mental.getPredicate())){
+						predicates.add(mental);
+					}
+				}
+			}
+		}
+		return predicates;
+	}
+	
+	@action (
+			name = "get_beliefs_metal_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "get the list of bliefs in the belief base containing the mental state",
+					returns = "the list of beliefs.",
+					examples = { @example ("get_beliefs_mental_state(\"has_water\")") }))
+	public IList<MentalState> getBeliefsMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final IList<MentalState> predicates = GamaListFactory.create();
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
+				if(mental.getMentalState()!=null){
+					if (predicateDirect.equals(mental.getMentalState())) {
 						predicates.add(mental);
 					}
 				}
@@ -1156,7 +1236,33 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean iscurrentIntention(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
-		final Predicate currentIntention = currentIntention(scope);
+		final Predicate currentIntention;
+		if(currentIntention(scope)!=null){
+			currentIntention= currentIntention(scope).getPredicate();
+		}else{
+			currentIntention = null;
+		}
+
+		if (predicateDirect != null && currentIntention != null) { return predicateDirect.equals(currentIntention); }
+
+		return false;
+	}
+	
+	@action (
+			name = "is_current_intention_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "check if the mental state is the current intention (last entry of intention base).",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean iscurrentIntentionMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final MentalState currentIntention = currentIntention(scope).getMentalState();
 
 		if (predicateDirect != null && currentIntention != null) { return predicateDirect.equals(currentIntention); }
 
@@ -1169,11 +1275,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "returns the current intention (last entry of intention base).",
 					returns = "the current intention",
 					examples = { @example ("") }))
-	public Predicate currentIntention(final IScope scope) throws GamaRuntimeException {
+	public MentalState currentIntention(final IScope scope) throws GamaRuntimeException {
 		final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 		if (intentionBase == null) { return null; }
 		if (!intentionBase.isEmpty()) {
-			return intentionBase.lastValue(scope).getPredicate(); }
+			return intentionBase.lastValue(scope); }
 		return null;
 	}
 
@@ -1188,10 +1294,30 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "check if the predicates is in the desire base.",
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
 	public Boolean primTestDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		if (predicateDirect != null) {
+			MentalState temp = new MentalState("Desire",predicateDirect);
+			return getBase(scope, DESIRE_BASE).contains(temp);
+		}
+		return false;
+	}
+	
+	@action (
+			name = "has_desire_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "check if the mental state is in the desire base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestDesireMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
 		if (predicateDirect != null) {
 			MentalState temp = new MentalState("Desire",predicateDirect);
 			return getBase(scope, DESIRE_BASE).contains(temp);
@@ -1212,7 +1338,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primOnHoldIntention(final IScope scope) throws GamaRuntimeException {
-		final Predicate predicate = currentIntention(scope);
+		final Predicate predicate = currentIntention(scope).getPredicate();
 		final Object until = scope.hasArg("until") ? scope.getArg("until", IType.NONE) : null;
 		if (predicate != null) {
 			if (until == null) {
@@ -1407,7 +1533,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "get the predicates is in the desire base (if several, returns the first one).",
 					returns = "the predicate if it is in the base.",
 					examples = { @example ("get_desire(new_predicate(\"has_water\", true))") }))
-	// @args(names = { PREDICATE_NAME, PREDICATE_PARAMETERS })
 	public MentalState getDesire(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1420,6 +1545,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action (
+			name = "get_desire_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "get the mental state is in the desire base (if several, returns the first one).",
+					returns = "the predicate if it is in the base.",
+					examples = { @example ("get_desire(new_predicate(\"has_water\", true))") }))
+	public MentalState getDesireMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {				
+				if (mental.getMentalState()!= null && predicateDirect.equals(mental.getMentalState())) { return mental; }
+			}
+		}
+		return null;
+	}
+	
+	@action (
 			name = "get_desires",
 			args = { @arg (
 					name = PREDICATE,
@@ -1427,8 +1574,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("name of the predicates to check")) },
 			doc = @doc (
-					value = "get the list of predicates is in the belief base",
-					returns = "the list of predicates.",
+					value = "get the list of predicates is in the desire base",
+					returns = "the list of deires.",
 					examples = { @example ("get_desires(\"has_water\")") }))
 	public IList<MentalState> getDesires(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
@@ -1444,6 +1591,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	@action (
+			name = "get_desires_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("name of the mental states to check")) },
+			doc = @doc (
+					value = "get the list of mental states is in the desire base",
+					returns = "the list of mental states.",
+					examples = { @example ("get_desires_mental_state(\"Belief\",predicte1)") }))
+	public IList<MentalState> getDesiresMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final IList<MentalState> predicates = GamaListFactory.create();
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
+				if (mental.getMentalState()!=null && predicateDirect.equals(mental.getMentalState())) {
+					predicates.add(mental);
+				}
+			}
+		}
+		return predicates;
+	}
+	
 	@action (
 			name = "get_desire_with_name",
 			args = { @arg (
@@ -1507,6 +1679,27 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public Boolean primRemoveBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		if (predicateDirect != null) { 
+			MentalState temp = new MentalState("Belief",predicateDirect);
+			return removeBelief(scope, temp); 
+			}
+		return false;
+	}
+	
+	@action (
+			name = "remove_belief_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to remove")) },
+			doc = @doc (
+					value = "removes the mental state from the belief base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveBeliefMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
 		if (predicateDirect != null) { 
 			MentalState temp = new MentalState("Belief",predicateDirect);
 			return removeBelief(scope, temp); 
@@ -1616,6 +1809,27 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action (
+			name = "remove_desire_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to remove from desire base")) },
+			doc = @doc (
+					value = "removes the mental state from the desire base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveDesireMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) { 
+			MentalState temp = new MentalState("Desire",predicateDirect);
+			return removeDesire(scope, temp);
+			}
+		return false;
+	}
+	
+	@action (
 			name = "add_intention",
 			args = { @arg (
 					name = PREDICATE,
@@ -1713,15 +1927,37 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("predicate to check")) },
 			doc = @doc (
-					value = "get the predicates is in the belief base (if several, returns the first one).",
-					returns = "the predicate if it is in the base.",
-					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
+					value = "get the predicates in the intention base (if several, returns the first one).",
+					returns = "the mental state if it is in the base.",
+					examples = { @example ("get_intention(new_predicate(\"has_water\", true))") }))
 	public MentalState getIntention(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
 		if (predicateDirect != null) {
 			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
 				if (mental.getPredicate()!=null && predicateDirect.equals(mental.getPredicate())) { return mental; }
+			}
+		}
+		return null;
+	}
+	
+	@action (
+			name = "get_intention_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "get the mental state is in the intention base (if several, returns the first one).",
+					returns = "the mental state if it is in the base.",
+					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
+	public MentalState getIntentionMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (mental.getMentalState()!=null && predicateDirect.equals(mental.getMentalState())) { return mental; }
 			}
 		}
 		return null;
@@ -1735,9 +1971,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("name of the predicates to check")) },
 			doc = @doc (
-					value = "get the list of predicates is in the belief base",
-					returns = "the list of predicates.",
-					examples = { @example ("get_belief(\"has_water\")") }))
+					value = "get the list of predicates is in the intention base",
+					returns = "the list of intentions.",
+					examples = { @example ("get_intentions(\"has_water\")") }))
 	public IList<MentalState> getIntentions(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1745,6 +1981,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
 				if (mental.getPredicate()!=null && predicateDirect.equals(mental.getPredicate())) {
+					predicates.add(mental);
+				}
+			}
+		}
+		return predicates;
+	}
+	
+	@action (
+			name = "get_intentions_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "get the list of mental state is in the intention base",
+					returns = "the list of intentions.",
+					examples = { @example ("get_intentions_mental_state(\"Desire\",predicate1)") }))
+	public IList<MentalState> getIntentionsMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		final IList<MentalState> predicates = GamaListFactory.create();
+		if (predicateDirect != null) {
+			for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
+				if (mental.getMentalState()!=null && predicateDirect.equals(mental.getMentalState())) {
 					predicates.add(mental);
 				}
 			}
@@ -1831,7 +2092,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							optional = false,
 							doc = @doc ("removes also desire")) },
 			doc = @doc (
-					value = "removes the predicates from the desire base.",
+					value = "removes the predicates from the intention base.",
 					returns = "true if it is removed from the base.",
 					examples = { @example ("") }))
 	public Boolean primRemoveIntention(final IScope scope) throws GamaRuntimeException {
@@ -1871,6 +2132,41 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action (
+			name = "remove_intention_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("intention's mental state to remove")),
+					@arg (
+							name = REMOVE_DESIRE_AND_INTENTION,
+							type = IType.BOOL,
+							optional = false,
+							doc = @doc ("removes also desire")) },
+			doc = @doc (
+					value = "removes the mental state from the intention base.",
+					returns = "true if it is removed from the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveIntentionMentalState(final IScope scope) throws GamaRuntimeException {
+
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		MentalState temp = new MentalState("Intention",predicateDirect);
+		if (predicateDirect != null) {
+			final Boolean dodesire =
+					scope.hasArg(REMOVE_DESIRE_AND_INTENTION) ? scope.getBoolArg(REMOVE_DESIRE_AND_INTENTION) : false;
+			getBase(scope, INTENTION_BASE).remove(temp);
+			if (dodesire) {
+				getBase(scope, DESIRE_BASE).remove(temp);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+	
 	@action (
 			name = "clear_beliefs",
 			doc = @doc (
@@ -2600,6 +2896,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	@action (
+			name = "get_uncertainty_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to return")) },
+			doc = @doc (
+					value = "get the mental state is in the uncertainty base (if several, returns the first one).",
+					returns = "the mental state if it is in the base.",
+					examples = { @example ("get_uncertainty(new_predicate(\"has_water\", true))") }))
+	public MentalState getUncertaintyMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState pred : getBase(scope, UNCERTAINTY_BASE)) {
+				if (pred.getMentalState() != null && predicateDirect.equals(pred.getMentalState())) { return pred; }
+			}
+		}
+		return null;
+	}
+	
 	public static Boolean hasUncertainty(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
 	}
@@ -2623,6 +2941,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action (
+			name = "has_uncertainty_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "check if the mental state is in the uncertainty base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestUncertaintyMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		if (predicateDirect != null) { return hasUncertainty(scope, temp); }
+		return false;
+	}
+	
 	public static Boolean removeUncertainty(final IScope scope, final MentalState pred) {
 		return getBase(scope, UNCERTAINTY_BASE).remove(pred);
 	}
@@ -2635,12 +2972,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = true,
 					doc = @doc ("predicate to remove")) },
 			doc = @doc (
-					value = "removes the predicates from the desire base.",
+					value = "removes the predicates from the uncertainty base.",
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primRemoveUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
 				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		MentalState temp = new MentalState("Uncertainty",predicateDirect);
+		if (predicateDirect != null) { return removeUncertainty(scope, temp); }
+		return false;
+	}
+	
+	@action (
+			name = "remove_uncertainty_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to remove")) },
+			doc = @doc (
+					value = "removes the mental state from the uncertainty base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveUncertaintyMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
 		MentalState temp = new MentalState("Uncertainty",predicateDirect);
 		if (predicateDirect != null) { return removeUncertainty(scope, temp); }
 		return false;
@@ -2758,7 +3114,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("predicate to return")) },
 			doc = @doc (
 					value = "get the predicates in the ideal base (if several, returns the first one).",
-					returns = "the predicate if it is in the base.",
+					returns = "the ideal if it is in the base.",
 					examples = { @example ("get_ideal(new_predicate(\"has_water\", true))") }))
 	public MentalState getIdeal(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
@@ -2766,6 +3122,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			for (final MentalState pred : getBase(scope, IDEAL_BASE)) {
 				if (pred.getPredicate() != null && predicateDirect.equals(pred.getPredicate())) { return pred; }
+			}
+		}
+		return null;
+	}
+	
+	@action (
+			name = "get_ideal_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = false,
+					doc = @doc ("mental state to return")) },
+			doc = @doc (
+					value = "get the mental state in the ideal base (if several, returns the first one).",
+					returns = "the ideal if it is in the base.",
+					examples = { @example ("get_ideal(new_predicate(\"has_water\", true))") }))
+	public MentalState getIdealMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState pred : getBase(scope, IDEAL_BASE)) {
+				if (pred.getMentalState() != null && predicateDirect.equals(pred.getMentalState())) { return pred; }
 			}
 		}
 		return null;
@@ -2793,6 +3171,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) { return hasIdeal(scope, temp); }
 		return false;
 	}
+	
+	@action (
+			name = "has_ideal_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("mental state to check")) },
+			doc = @doc (
+					value = "check if the mental state is in the ideal base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestIdealMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		MentalState temp = new MentalState("Ideal",predicateDirect);
+		if (predicateDirect != null) { return hasIdeal(scope, temp); }
+		return false;
+	}
 
 	public static Boolean removeIdeal(final IScope scope, final MentalState pred) {
 		return getBase(scope, IDEAL_BASE).remove(pred);
@@ -2816,8 +3213,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) { return removeIdeal(scope, temp); }
 		return false;
 	}
-
-	// Peut-être mettre plus tard un replace Uncertainty
+	
+	@action (
+			name = "remove_ideal_mental_state",
+			args = { @arg (
+					name = "mental_state",
+					type = MentalStateType.id,
+					optional = true,
+					doc = @doc ("metal state to remove")) },
+			doc = @doc (
+					value = "removes the mental state from the ideal base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveIdealMentalState(final IScope scope) throws GamaRuntimeException {
+		final MentalState predicateDirect =
+				(MentalState) (scope.hasArg("mental_state") ? scope.getArg("mental_state", MentalStateType.id) : null);
+		MentalState temp = new MentalState("Ideal",predicateDirect);
+		if (predicateDirect != null) { return removeIdeal(scope, temp); }
+		return false;
+	}
 	
 	@action (
 			name = "clear_ideals",
