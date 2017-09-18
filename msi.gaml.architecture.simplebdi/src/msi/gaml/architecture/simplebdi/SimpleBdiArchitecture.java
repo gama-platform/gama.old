@@ -2270,8 +2270,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	private void createJoy(final IScope scope) {
-		// Simplement vérifier si l'agent possède à la fois la même croyance et
-		// le même désir.
 		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
 				if(predTest.getPredicate()!=null){
@@ -2280,6 +2278,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (agentTest != null) {
 						joy.setAgentCause(agentTest);
 					}
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					joy.setIntensity(intensity);
+					joy.setDecay(decay);
 					addEmotion(scope, joy);
 				}
 			}
@@ -2294,6 +2297,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agentTest != null) {
 					joy.setAgentCause(agentTest);
 				}
+				//ajout de l'intensité
+				Double intensity = 1.0;
+				Double decay = 0.0;
+				joy.setIntensity(intensity);
+				joy.setDecay(decay);
 				addEmotion(scope, joy);
 				
 			}else{
@@ -2305,6 +2313,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							if (agentTest != null) {
 								sadness.setAgentCause(agentTest);
 							}
+							//ajout de l'intensité
+							Double intensity = 1.0;
+							Double decay = 0.0;
+							sadness.setIntensity(intensity);
+							sadness.setDecay(decay);
 							addEmotion(scope, sadness);
 						}
 					}
@@ -2323,6 +2336,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (agentTest != null) {
 						sadness.setAgentCause(agentTest);
 					}
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					sadness.setIntensity(intensity);
+					sadness.setDecay(decay);
 					addEmotion(scope, sadness);
 				}
 			}
@@ -2338,6 +2356,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (agentTest != null) {
 						fear.setAgentCause(agentTest);
 					}
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					fear.setIntensity(intensity);
+					fear.setDecay(decay);
 					addEmotion(scope, fear);
 				}
 			}
@@ -2353,6 +2376,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (agentTest != null) {
 						hope.setAgentCause(agentTest);
 					}
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					hope.setIntensity(intensity);
 					addEmotion(scope, hope);
 				}
 			}
@@ -2391,6 +2418,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								joy.setAgentCause(agentTest);
 							}
 						}
+						Double decay = 0.0;
+						satisfaction.setDecay(decay);
+						joy.setDecay(decay);
 						addEmotion(scope, satisfaction);
 						addEmotion(scope, joy);
 						removeEmotion(scope, emo);
@@ -2423,7 +2453,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						} else {
 							// On décide de transmettre l'intensité de l'émotion
 							// précédente.
-							fearConfirmed = new Emotion("fearConfirmed", emo.getIntensity(), emo.getAbout());
+							fearConfirmed = new Emotion("fear_confirmed", emo.getIntensity(), emo.getAbout());
 							if (agentTest != null) {
 								fearConfirmed.setAgentCause(agentTest);
 							}
@@ -2432,6 +2462,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								sadness.setAgentCause(agentTest);
 							}
 						}
+						Double decay = 0.0;
+						fearConfirmed.setDecay(decay);
+						sadness.setDecay(decay);
 						addEmotion(scope, fearConfirmed);
 						addEmotion(scope, sadness);
 						removeEmotion(scope, emo);
@@ -2473,6 +2506,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									joy.setAgentCause(agentTest);
 								}
 							}
+							Double decay = 0.0;
+							relief.setDecay(decay);
+							joy.setDecay(decay);
 							addEmotion(scope, relief);
 							addEmotion(scope, joy);
 							removeEmotion(scope, emo);
@@ -2515,6 +2551,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									sadness.setAgentCause(agentTest);
 								}
 							}
+							Double decay = 0.0;
+							disappointment.setDecay(decay);
+							sadness.setDecay(decay);
 							addEmotion(scope, disappointment);
 							addEmotion(scope, sadness);
 							removeEmotion(scope, emo);
@@ -2538,13 +2577,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 					for (final Emotion emo : getEmotionBase(scopeAgentTemp, EMOTION_BASE)) {
 						if (emo.getName().equals("joy")) {
-							final Emotion happyFor = new Emotion("happy_for", emo.getIntensity() * temp.getLiking(),
+							final Emotion happyFor = new Emotion("happy_for", /*formule à changer*/emo.getIntensity() * temp.getLiking(),
 									emo.getAbout(), agentTemp);
+							Double decay = 0.0;
+							happyFor.setDecay(decay);
 							addEmotion(scope, happyFor);
 						}
 						if (emo.getName().equals("sadness")) {
-							final Emotion sorryFor = new Emotion("sorry_for", emo.getIntensity() * temp.getLiking(),
+							final Emotion sorryFor = new Emotion("sorry_for", /*formule à changer*/emo.getIntensity() * temp.getLiking(),
 									emo.getAbout(), agentTemp);
+							Double decay = 0.0;
+							sorryFor.setDecay(decay);
 							addEmotion(scope, sorryFor);
 						}
 					}
@@ -2559,13 +2602,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 					for (final Emotion emo : getEmotionBase(scopeAgentTemp, EMOTION_BASE)) {
 						if (emo.getName().equals("joy")) {
-							final Emotion resentment = new Emotion("resentment", emo.getIntensity() * -temp.getLiking(),
+							final Emotion resentment = new Emotion("resentment", /*formule à changer*/emo.getIntensity() * -temp.getLiking(),
 									emo.getAbout(), agentTemp);
+							Double decay = 0.0;
+							resentment.setDecay(decay);
 							addEmotion(scope, resentment);
 						}
 						if (emo.getName().equals("sadness")) {
-							final Emotion gloating = new Emotion("gloating", emo.getIntensity() * -temp.getLiking(),
+							final Emotion gloating = new Emotion("gloating", /*formule à changer*/emo.getIntensity() * -temp.getLiking(),
 									emo.getAbout(), agentTemp);
+							Double decay = 0.0;
+							gloating.setDecay(decay);
 							addEmotion(scope, gloating);
 						}
 					}
@@ -2581,11 +2628,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
 					final Emotion pride = new Emotion("pride", predTest.getPredicate());
 					pride.setAgentCause(scope.getAgent());
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					pride.setIntensity(intensity);
+					pride.setDecay(decay);
 					addEmotion(scope, pride);
 				}
 				if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
 					final Emotion shame = new Emotion("shame", predTest.getPredicate());
 					shame.setAgentCause(scope.getAgent());
+					//ajout de l'intensité
+					Double intensity = 1.0;
+					Double decay = 0.0;
+					shame.setIntensity(intensity);
+					shame.setDecay(decay);
 					addEmotion(scope, shame);
 				}
 			} else {
@@ -2593,11 +2650,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
 						final Emotion admiration = new Emotion("admiration", predTest.getPredicate());
 						admiration.setAgentCause(predTest.getPredicate().getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						admiration.setIntensity(intensity);
+						admiration.setDecay(decay);
 						addEmotion(scope, admiration);
 					}
 					if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
 						final Emotion reproach = new Emotion("reproach", predTest.getPredicate());
 						reproach.setAgentCause(predTest.getPredicate().getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						reproach.setIntensity(intensity);
+						reproach.setDecay(decay);
 						addEmotion(scope, reproach);
 					}
 				}
@@ -2614,6 +2681,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (emoTemp.getName().equals("joy") && emo.getAbout().equals(emoTemp.getAbout())) {
 						final Emotion gratification = new Emotion("gratification", emoTemp.getAbout());
 						gratification.setAgentCause(emo.getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						gratification.setIntensity(intensity);
+						gratification.setDecay(decay);
 						addEmotion(scope, gratification);
 					}
 				}
@@ -2630,6 +2702,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (emoTemp.getName().equals("sadness") && emo.getAbout().equals(emoTemp.getAbout())) {
 						final Emotion remorse = new Emotion("remorse", emoTemp.getAbout());
 						remorse.setAgentCause(emo.getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						remorse.setIntensity(intensity);
+						remorse.setDecay(decay);
 						addEmotion(scope, remorse);
 					}
 				}
@@ -2646,6 +2723,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (emoTemp.getName().equals("joy") && emo.getAbout().equals(emoTemp.getAbout())) {
 						final Emotion gratitude = new Emotion("gratitude", emoTemp.getAbout());
 						gratitude.setAgentCause(emo.getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						gratitude.setIntensity(intensity);
+						gratitude.setDecay(decay);
 						addEmotion(scope, gratitude);
 					}
 				}
@@ -2662,6 +2744,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (emoTemp.getName().equals("sadness") && emo.getAbout().equals(emoTemp.getAbout())) {
 						final Emotion anger = new Emotion("anger", emoTemp.getAbout());
 						anger.setAgentCause(emo.getAgentCause());
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						anger.setIntensity(intensity);
+						anger.setDecay(decay);
 						addEmotion(scope, anger);
 					}
 				}
@@ -3390,20 +3477,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	static private void updateAppreciation(final IScope scope, final SocialLink social) {
 		final IAgent agentCause = social.getAgent();
 		Double tempPositif = 0.0;
+		Double moyPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
 		Double appreciationModif = social.getLiking();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
 				if (emo.getName().equals("joy") || emo.getName().equals("hope")) {
 					tempPositif = tempPositif + 1.0;
+					moyPositif = moyPositif + emo.getIntensity();
 				}
 				if (emo.getName().equals("sadness") || emo.getName().equals("fear")) {
 					tempNegatif = tempNegatif + 1.0;
+					moyNegatif = moyNegatif + emo.getIntensity();
 				}
 			}
 		}
-		appreciationModif = appreciationModif * (1 + social.getSolidarity()) + coefModification * tempPositif - coefModification * tempNegatif;
+		moyPositif = moyPositif/tempPositif;
+		moyNegatif = moyNegatif/tempNegatif;
+		appreciationModif = appreciationModif * (1 + social.getSolidarity()) + coefModification * moyPositif - coefModification * moyNegatif;
 		if (appreciationModif > 1.0) {
 			appreciationModif = 1.0;
 		}
@@ -3422,13 +3515,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		final IAgent currentAgent = scope.getAgent();
 		Double tempPositif = 0.0;
+		Double moyPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
 		Double dominanceModif = social.getDominance();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
 				if (emo.getName().equals("sadness") || emo.getName().equals("fear")) {
 					tempNegatif = tempNegatif + 1.0;
+					moyNegatif = moyNegatif + emo.getIntensity();
 				}
 			}
 		}
@@ -3436,10 +3532,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(currentAgent)) {
 				if (emo.getName().equals("sadness") || emo.getName().equals("fear")) {
 					tempPositif = tempPositif + 1.0;
+					moyPositif = moyPositif + emo.getIntensity();
 				}
 			}
 		}
-		dominanceModif = dominanceModif + coefModification * tempPositif - coefModification * tempNegatif;
+		moyPositif = moyPositif/tempPositif;
+		moyNegatif = moyNegatif/tempNegatif;
+		dominanceModif = dominanceModif + coefModification * moyPositif - coefModification * moyNegatif;
 		if (dominanceModif > 1.0) {
 			dominanceModif = 1.0;
 		}
@@ -3459,12 +3558,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
+		Double tempEmoNeg = 0.0;
+		Double moyEmoNeg = 0.0;
 		Double coefModification = 0.1;
+		Double coefModifEmo = 0.0;
 		Double solidarityModif = social.getSolidarity();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
 				if (emo.getName().equals("sadness") || emo.getName().equals("fear")) {
-					tempNegatif = tempNegatif + 1.0;
+					tempEmoNeg = tempEmoNeg + 1.0;
+					moyEmoNeg = moyEmoNeg + emo.getIntensity();
 				}
 			}
 		}
@@ -3498,7 +3601,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-
+		moyEmoNeg = moyEmoNeg/tempEmoNeg;
 		solidarityModif = solidarityModif + coefModification * tempPositif - coefModification * tempNegatif;
 		if (solidarityModif > 1.0) {
 			solidarityModif = 1.0;
