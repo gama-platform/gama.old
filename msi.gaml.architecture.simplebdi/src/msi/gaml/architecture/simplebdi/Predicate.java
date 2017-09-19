@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
 		@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 		@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
 		@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE),
-		@var(name = "praiseworthiness", type = IType.FLOAT),@var(name = "agentCause", type = IType.AGENT) })
+		/*@var(name = "praiseworthiness", type = IType.FLOAT),*/@var(name = "agentCause", type = IType.AGENT) })
 public class Predicate implements IValue {
 
 	String name;
@@ -40,7 +40,7 @@ public class Predicate implements IValue {
 	List<MentalState> onHoldUntil;
 	List<MentalState> subintentions;
 	MentalState superIntention;
-	Double praiseworthiness = 0.0;
+	//Double praiseworthiness = 0.0;
 	IAgent agentCause;
 	boolean everyPossibleValues = false;
 	boolean is_true = true;
@@ -96,9 +96,9 @@ public class Predicate implements IValue {
 		return lifetime;
 	}
 
-	public Double getPraiseworthiness(){
+	/*public Double getPraiseworthiness(){
 		return praiseworthiness;
-	}
+	}*/
 	
 	public void setSuperIntention(final MentalState superPredicate) {
 		this.superIntention = superPredicate;
@@ -137,9 +137,9 @@ public class Predicate implements IValue {
 		this.lifetime = lifetime;
 	}
 
-	public void setPraiseworthiness(final Double praise){
+	/*public void setPraiseworthiness(final Double praise){
 		this.praiseworthiness = praise;
-	}
+	}*/
 	
 	public void setAgentCause(final IAgent ag) {
 		this.agentCause = ag;

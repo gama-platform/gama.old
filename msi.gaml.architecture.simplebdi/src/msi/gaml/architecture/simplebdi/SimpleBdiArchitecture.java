@@ -2623,49 +2623,62 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	private void createPrideAndShameAndAdmirationAndReproach(final IScope scope) {
+		//inverser les boucles pour gagner du temps (la base des idéaux est censée être moins fournie que la base des croyances)
 		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			if (predTest.getPredicate() != null && predTest.getPredicate().getAgentCause() != null && predTest.getPredicate().getAgentCause().equals(scope.getAgent())) {
-				if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
-					final Emotion pride = new Emotion("pride", predTest.getPredicate());
-					pride.setAgentCause(scope.getAgent());
-					//ajout de l'intensité
-					Double intensity = 1.0;
-					Double decay = 0.0;
-					pride.setIntensity(intensity);
-					pride.setDecay(decay);
-					addEmotion(scope, pride);
-				}
-				if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
-					final Emotion shame = new Emotion("shame", predTest.getPredicate());
-					shame.setAgentCause(scope.getAgent());
-					//ajout de l'intensité
-					Double intensity = 1.0;
-					Double decay = 0.0;
-					shame.setIntensity(intensity);
-					shame.setDecay(decay);
-					addEmotion(scope, shame);
+				if(getBase(scope, SimpleBdiArchitecture.IDEAL_BASE).contains(predTest)){
+					for(MentalState temp : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)){
+						if(temp.equals(predTest)){
+							if(temp.getStrength()>0.0){
+								final Emotion pride = new Emotion("pride", predTest.getPredicate());
+								pride.setAgentCause(scope.getAgent());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								pride.setIntensity(intensity);
+								pride.setDecay(decay);
+								addEmotion(scope, pride);
+							}
+							if(temp.getStrength()<0.0){
+								final Emotion shame = new Emotion("shame", predTest.getPredicate());
+								shame.setAgentCause(scope.getAgent());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								shame.setIntensity(intensity);
+								shame.setDecay(decay);
+								addEmotion(scope, shame);
+							}
+						}
+					}				
 				}
 			} else {
 				if (predTest.getPredicate()!=null && predTest.getPredicate().getAgentCause() != null) {
-					if (predTest.getPredicate().getPraiseworthiness() > 0.0) {
-						final Emotion admiration = new Emotion("admiration", predTest.getPredicate());
-						admiration.setAgentCause(predTest.getPredicate().getAgentCause());
-						//ajout de l'intensité
-						Double intensity = 1.0;
-						Double decay = 0.0;
-						admiration.setIntensity(intensity);
-						admiration.setDecay(decay);
-						addEmotion(scope, admiration);
-					}
-					if (predTest.getPredicate().getPraiseworthiness() < 0.0) {
-						final Emotion reproach = new Emotion("reproach", predTest.getPredicate());
-						reproach.setAgentCause(predTest.getPredicate().getAgentCause());
-						//ajout de l'intensité
-						Double intensity = 1.0;
-						Double decay = 0.0;
-						reproach.setIntensity(intensity);
-						reproach.setDecay(decay);
-						addEmotion(scope, reproach);
+					if(getBase(scope, SimpleBdiArchitecture.IDEAL_BASE).contains(predTest)){
+						for(MentalState temp : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)){
+							if(temp.equals(predTest)){
+								if(temp.getStrength()>0.0){
+									final Emotion pride = new Emotion("pride", predTest.getPredicate());
+									pride.setAgentCause(scope.getAgent());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									pride.setIntensity(intensity);
+									pride.setDecay(decay);
+									addEmotion(scope, pride);
+								}
+								if(temp.getStrength()<0.0){
+									final Emotion shame = new Emotion("shame", predTest.getPredicate());
+									shame.setAgentCause(scope.getAgent());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									shame.setIntensity(intensity);
+									shame.setDecay(decay);
+									addEmotion(scope, shame);
+								}
+							}
+						}				
 					}
 				}
 			}
