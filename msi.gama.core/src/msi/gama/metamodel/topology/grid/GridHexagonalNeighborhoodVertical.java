@@ -13,14 +13,14 @@ package msi.gama.metamodel.topology.grid;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.hash.TIntHashSet;
 
-public class GridHexagonalNeighborhood extends GridNeighborhood {
+public class GridHexagonalNeighborhoodVertical extends GridNeighborhood {
 
 
 
 	/**
 	 * @param gamaSpatialMatrix
 	 */
-	GridHexagonalNeighborhood(final GamaSpatialMatrix matrix) {
+	GridHexagonalNeighborhoodVertical(final GamaSpatialMatrix matrix) {
 		super(matrix);
 	}
 

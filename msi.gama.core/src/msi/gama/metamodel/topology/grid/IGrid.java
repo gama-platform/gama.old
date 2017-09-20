@@ -23,7 +23,6 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
@@ -45,6 +44,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract List<IAgent> getAgents();
 
 	public abstract Boolean isHexagon();
+	
+	public abstract Boolean isHorizontalOrientation();
 
 	public abstract void setCellSpecies(final IPopulation<? extends IAgent> pop);
 

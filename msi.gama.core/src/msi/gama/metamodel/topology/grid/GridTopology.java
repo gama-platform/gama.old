@@ -68,13 +68,13 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
-			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes,
+			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation, final boolean useIndividualShapes,
 			final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
 		super(scope, environment, null);
 		if (isHexagon) {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
-					useIndividualShapes, useNeighborsCache,optimizer);
-		} else {
+					horizontalOrientation, useIndividualShapes, useNeighborsCache,optimizer);
+		} else { 
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes,
 					useNeighborsCache,optimizer);
 		}
@@ -145,10 +145,10 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(),
-				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache(), 
+				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.isHorizontalOrientation(), grid.usesIndiviualShapes(), grid.usesNeighborsCache(), 
 				grid.optimizer());
 	}
-
+ 
 	@Override
 	public IGrid getPlaces() {
 		return (IGrid) super.getPlaces();

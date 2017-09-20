@@ -102,6 +102,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Boolean usesVN = null;
 	protected Boolean isTorus = null;
 	protected Boolean isHexagon = null;
+
+	protected Boolean isHorizontalOrientation = null;
 	protected GridDiffuser_deprecated diffuser_deprecated;
 	protected GridDiffuser diffuser;
 	public INeighborhood neighborhood;
@@ -258,11 +260,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	// constructor used to build hexagonal grid (-> useVN = false)
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
-			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
+			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation,final boolean indiv,
 			final boolean useNeighborsCache,  final String optimizer) {
 		super(cols, rows, Types.GEOMETRY);
 		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create
 		// new");
+		isHorizontalOrientation = horizontalOrientation;
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -284,7 +287,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		this.optimizer = optimizer;
 		this.useNeighborsCache = useNeighborsCache;
-		createHexagons(false);
+		if (isHorizontalOrientation != null && isHorizontalOrientation)	
+			createHexagonsHorizontal(scope,false);
+		else 
+			createHexagonsVertical(scope,false);
 	}
 
 	private void createMatrix(final int size) {
@@ -292,7 +298,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		gridValue = new double[size];
 	}
 
-	private void createHexagons(final boolean partialCells) {
+	private void createHexagonsVertical(final IScope scope,final boolean partialCells) {
 		final double widthEnv = environmentFrame.getEnvelope().getWidth();
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
@@ -311,7 +317,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				i = c + numCols * l;
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + l * cellHeight));
-				// if (gbg.covers(poly)) {
+					// if (gbg.covers(poly)) {
 				if (firstCell == -1) {
 					firstCell = i;
 				}
@@ -329,6 +335,60 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + (l + 0.5) * cellHeight));
+
+				
+				// if (gbg.covers(poly)) {
+				if (firstCell == -1) {
+					firstCell = i;
+				}
+				matrix[i] = poly;
+				hexAgentToLoc.put(poly, new GamaPoint(c, l));
+				actualNumberOfCells++;
+				lastCell = CmnFastMath.max(lastCell, i);
+				// }
+			}
+		}
+	}
+
+	private void createHexagonsHorizontal(final IScope scope,final boolean partialCells) {
+		final double widthEnv = environmentFrame.getEnvelope().getWidth();
+		final double heightEnv = environmentFrame.getEnvelope().getHeight();
+		double xmin = environmentFrame.getEnvelope().getMinX();
+		double ymin = environmentFrame.getEnvelope().getMinY();
+		// final GamaShape gbg = new
+		// GamaShape(environmentFrame.getInnerGeometry().buffer(0.1, 2));
+		cellWidth = widthEnv / (numCols + 0.5);
+		cellHeight = heightEnv / (numRows * 0.75 + 0.25);
+		xmin += cellWidth / 2.0;
+		ymin += cellHeight / 2.0;
+		// numCols = (int) (width / cellWidth);
+		hexAgentToLoc = new TOrderedHashMap();
+		int i = 0;
+		for (int l = 0; l < numRows; l =  l + 2) {
+			for (int c = 0; c < numCols; c ++) {
+				i = c + numCols * l;
+				final IShape poly = Spatial.Transformations.rotated_by(scope, (GamaShape) GamaGeometryType.buildHexagon(cellHeight,cellWidth,
+						new GamaPoint(xmin + c * cellWidth , ymin + l * cellHeight* 0.75)), 90.0);
+
+				// if (gbg.covers(poly)) {
+				if (firstCell == -1) {
+					firstCell = i;
+				}
+				matrix[i] = poly;
+				hexAgentToLoc.put(poly, new GamaPoint(c, l));
+				actualNumberOfCells++;
+				lastCell = CmnFastMath.max(lastCell, i);
+				// }
+			}
+		}
+
+		for (int l = 1; l < numRows; l = l + 2) {
+			for (int c = 0; c < numCols; c++) {
+				i = c + numCols * l;
+
+				
+				final IShape poly = Spatial.Transformations.rotated_by(scope, (GamaShape) GamaGeometryType.buildHexagon(cellHeight,cellWidth,
+						new GamaPoint(xmin *2 + c * cellWidth ,  ymin + l * cellHeight* 0.75)), 90.0);
 
 				// if (gbg.covers(poly)) {
 				if (firstCell == -1) {
@@ -391,9 +451,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public INeighborhood getNeighborhood() {
 		if (neighborhood == null) {
 			if (useNeighborsCache) {
-				neighborhood = isHexagon ? new GridHexagonalNeighborhood(this)
+				neighborhood = isHexagon ? ((isHorizontalOrientation != null &&  isHorizontalOrientation)? new GridHexagonalNeighborhoodHorizontal(this) : new GridHexagonalNeighborhoodVertical(this))
 						: usesVN ? new GridVonNeumannNeighborhood(this) : new GridMooreNeighborhood(this);
-			} else {
+			} else { 
 				neighborhood = new NoCacheNeighborhood(this);
 			}
 		}
@@ -453,7 +513,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (matrix[i] == null) { return -1; }
 			if (matrix[i].getLocation() == p) { return i; }
 			final TIntHashSet toObserve =
-					((GridHexagonalNeighborhood) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
+					((GridHexagonalNeighborhoodVertical) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;
@@ -1204,6 +1264,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public Boolean isHexagon() {
 		return isHexagon;
+	}
+	
+	public Boolean isHorizontalOrientation() {
+		return isHorizontalOrientation;
 	}
 
 	@Override

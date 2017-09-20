@@ -89,6 +89,12 @@ import one.util.streamex.StreamEx;
 						optional = true,
 						doc = @doc ("(grid only), the chosen neighborhood (4, 6 or 8)")),
 				@facet (
+						name = "horizontal_orientation",
+						type = IType.BOOL,
+						optional = true,
+						doc = { @doc (
+								value = "(hexagonal grid only),(false by default). Allows use a hexagonal grid with a horizontal orientation. ") }),
+				@facet (
 						name = "use_individual_shapes",
 						type = IType.BOOL,
 						optional = true,

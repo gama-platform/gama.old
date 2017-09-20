@@ -492,6 +492,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbors_cache");
 		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
+		exp = species.getFacet("horizontal_orientation");
+		final boolean horizontalOrientation = exp != null && Cast.asBool(scope, exp.value(scope));
 		
 		exp = species.getFacet("optimizer");
 		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));
@@ -511,8 +513,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			exp = species.getFacet(IKeyword.FILE);
 			final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
 			if (file == null) {
-				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
-						useNeighborsCache,optimizer);
+				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, horizontalOrientation,useIndividualShapes,
+						useNeighborsCache,optimizer); 
 			} else
 				result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
 			
