@@ -173,13 +173,13 @@ public class Operators {
 		return temp;
 	}
 
-	@operator(value = "with_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "change the praiseworthiness value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
-	public static Predicate withPraise(final Predicate predicate, final Double praise) throws GamaRuntimeException {
-		Predicate temp = predicate.copy();
-		temp.setPraiseworthiness(praise);
-		return temp;
-	}
+//	@operator(value = "with_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "change the praiseworthiness value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
+//	public static Predicate withPraise(final Predicate predicate, final Double praise) throws GamaRuntimeException {
+//		Predicate temp = predicate.copy();
+//		temp.setPraiseworthiness(praise);
+//		return temp;
+//	}
 	
 	@operator(value = "with_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the priority of the given predicate", examples = @example(value = "predicate with_priority 2", test = false))
@@ -291,14 +291,14 @@ public class Operators {
 		}
 	}
 	
-	@operator(value = "get_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	public static double getPraise(final Predicate pred) {
-		if (pred != null) {
-			return pred.getPraiseworthiness();
-		} else {
-			return 0.0;
-		}
-	}
+//	@operator(value = "get_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	public static double getPraise(final Predicate pred) {
+//		if (pred != null) {
+//			return pred.getPraiseworthiness();
+//		} else {
+//			return 0.0;
+//		}
+//	}
 	
 	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new emotion with the given properties (name)", examples = @example(value = "emotion(\"joy\")", test = false))
