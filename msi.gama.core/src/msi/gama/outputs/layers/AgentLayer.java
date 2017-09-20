@@ -87,11 +87,12 @@ public class AgentLayer extends AbstractLayer {
 				}
 			}
 		} else if (definition instanceof GridLayerStatement) {
-
+			final GridLayerStatement gls = (GridLayerStatement) definition;
+			final IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
+			AspectStatement.borderColor = gls.getLineColor();
+			
 			for (final IAgent a : getAgentsToDisplay()) {
 				if (a != null/* && !scope.interrupted() */ ) {
-					final IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
-
 					final ExecutionResult result = scope.execute(aspect, a, null);
 					final Rectangle2D r = (Rectangle2D) result.getValue();
 					// final Rectangle2D r = aspect.draw(scope, a);
