@@ -708,7 +708,7 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 				concept = { IConcept.THREED })
 		@doc (
-				value = "A hexagon geometry which the given with and height",
+				value = "A hexagon geometry which the given width and height",
 				usages = { @usage ("returns nil if the operand is nil.") },
 				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
@@ -724,6 +724,28 @@ public abstract class Spatial {
 			final Double width = size.x;
 			final Double height = size.y;
 			if (width <= 0 || height <= 0) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(width, height, location);
+		}
+		
+		@operator (
+				value = "hexagon",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+				concept = { IConcept.THREED })
+		@doc (
+				value = "A hexagon geometry which the given width and height",
+				usages = { @usage ("returns nil if the operand is nil.") },
+				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "hexagon(10,5)",
+						equals = "a geometry as a hexagon of width of 10 and height of 5.",
+						test = false) },
+				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+						"triangle" })
+		public static IShape hexagon(final IScope scope, final Double width, Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgent();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if (width == null || height == null || width <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(width, height, location);
 		}
 
