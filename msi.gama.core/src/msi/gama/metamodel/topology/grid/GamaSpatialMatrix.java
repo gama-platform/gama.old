@@ -273,7 +273,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// TODO False
 		referenceShape = GamaGeometryType.buildRectangle(cellWidth, cellHeight, new GamaPoint(0, 0));
 		precision = bounds.getWidth() / 1000;
-		final int size = 2 * numRows * numCols;
+		final int size = numRows * numCols;
 		createMatrix(size);
 		// image = ImageUtils.createCompatibleImage(cols, rows);
 		supportImagePixels = new int[size];
