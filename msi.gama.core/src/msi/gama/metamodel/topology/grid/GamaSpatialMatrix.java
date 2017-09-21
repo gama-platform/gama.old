@@ -287,10 +287,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		this.optimizer = optimizer;
 		this.useNeighborsCache = useNeighborsCache;
-		if (isHorizontalOrientation != null && isHorizontalOrientation)	
-			createHexagonsHorizontal(scope,false);
-		else 
+		if (isHorizontalOrientation != null &&  !isHorizontalOrientation)	
 			createHexagonsVertical(scope,false);
+		else 
+			createHexagonsHorizontal(scope,false);
 	}
 
 	private void createMatrix(final int size) {
@@ -298,7 +298,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		gridValue = new double[size];
 	}
 
-	private void createHexagonsVertical(final IScope scope,final boolean partialCells) {
+	private void createHexagonsHorizontal(final IScope scope,final boolean partialCells) {
 		final double widthEnv = environmentFrame.getEnvelope().getWidth();
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
@@ -350,7 +350,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 	}
 
-	private void createHexagonsHorizontal(final IScope scope,final boolean partialCells) {
+	private void createHexagonsVertical(final IScope scope,final boolean partialCells) {
 		final double widthEnv = environmentFrame.getEnvelope().getWidth();
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
@@ -451,7 +451,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public INeighborhood getNeighborhood() {
 		if (neighborhood == null) {
 			if (useNeighborsCache) {
-				neighborhood = isHexagon ? ((isHorizontalOrientation != null &&  isHorizontalOrientation)? new GridHexagonalNeighborhoodHorizontal(this) : new GridHexagonalNeighborhoodVertical(this))
+				neighborhood = isHexagon ? ((isHorizontalOrientation != null &&  !isHorizontalOrientation)? new GridHexagonalNeighborhoodVertical(this) : new GridHexagonalNeighborhoodHorizontal(this))
 						: usesVN ? new GridVonNeumannNeighborhood(this) : new GridMooreNeighborhood(this);
 			} else { 
 				neighborhood = new NoCacheNeighborhood(this);
@@ -513,7 +513,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (matrix[i] == null) { return -1; }
 			if (matrix[i].getLocation() == p) { return i; }
 			final TIntHashSet toObserve =
-					((GridHexagonalNeighborhoodVertical) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
+					((GridHexagonalNeighborhoodHorizontal) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;

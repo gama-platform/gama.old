@@ -81,17 +81,17 @@ public class GridHexagonalNeighborhoodVertical extends GridNeighborhood {
 		if ( id != -1 ) {
 			neigh.add(id);
 		}
-		if ( x % 2 == 0 ) {
+		if ( y % 2 == 1 ) {
 			id = getIndexAt(x + 1, y - 1, xSize, ySize, isTorus);
 			if ( id != -1 ) {
 				neigh.add(id);
 			}
-			id = getIndexAt(x - 1, y - 1, xSize, ySize, isTorus);
+			id = getIndexAt(x + 1, y + 1, xSize, ySize, isTorus);
 			if ( id != -1 ) {
 				neigh.add(id);
 			}
 		} else {
-			id = getIndexAt(x + 1, y + 1, xSize, ySize, isTorus);
+			id = getIndexAt(x - 1, y - 1, xSize, ySize, isTorus);
 			if ( id != -1 ) {
 				neigh.add(id);
 			}

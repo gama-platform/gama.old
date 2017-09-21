@@ -493,7 +493,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		exp = species.getFacet("use_neighbors_cache");
 		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("horizontal_orientation");
-		final boolean horizontalOrientation = exp != null && Cast.asBool(scope, exp.value(scope));
+		final boolean horizontalOrientation = exp == null || Cast.asBool(scope, exp.value(scope));
 		
 		exp = species.getFacet("optimizer");
 		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));

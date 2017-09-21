@@ -93,7 +93,7 @@ import one.util.streamex.StreamEx;
 						type = IType.BOOL,
 						optional = true,
 						doc = { @doc (
-								value = "(hexagonal grid only),(false by default). Allows use a hexagonal grid with a horizontal orientation. ") }),
+								value = "(hexagonal grid only),(true by default). Allows use a hexagonal grid with a horizontal or vertical orientation. ") }),
 				@facet (
 						name = "use_individual_shapes",
 						type = IType.BOOL,
