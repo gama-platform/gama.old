@@ -31,19 +31,18 @@ public class SubModel {
 	@operator(value = IKeywords.STEPSUBMODEL, can_be_const = true, category = IOperatorCategory.FILE, concept = {
 			IConcept.HEADLESS })
 	@doc(value = "Load a submodel", comment = "loaded submodel")
-	public static Integer stepSubModel(final IScope scope, final String expName) {
-		Experiment exp = (Experiment) scope.getVarValue(expName);
+	public static Integer stepSubModel(final IScope scope, final IExperimentAgent expName) {
+		Experiment exp = (Experiment) scope.getVarValue(expName.toString());
 		return new Integer((int)exp.step());
 	}
 	
 	@operator(value = IKeywords.EVALUATESUBMODEL, can_be_const = true, category = IOperatorCategory.FILE, concept = {
 			IConcept.HEADLESS })
 	@doc(value = "Load a submodel", comment = "loaded submodel")
-	public static Object evaluateSubModel(final IScope scope, final String expName, final String expression) {
-		Experiment exp = (Experiment) scope.getVarValue(expName);
+	public static Object evaluateSubModel(final IScope scope, final IExperimentAgent expName, final String expression) {
+		Experiment exp = (Experiment) scope.getVarValue(expName.toString());
 		return exp.evaluateExpression(expression);
 	}
-	
 	
 	@operator(value = IKeywords.LOADSUBMODEL, can_be_const = true, category = IOperatorCategory.FILE, concept = {
 			IConcept.HEADLESS })
