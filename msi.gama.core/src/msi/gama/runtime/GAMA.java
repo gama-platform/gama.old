@@ -125,7 +125,7 @@ public class GAMA {
 				.error("Experiment " + expName + " cannot be created", getRuntimeScope()); }
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
-			
+
 			final IParameter.Batch v = currentExperiment.getParameterByTitle(entry.getKey());
 			if (v != null) {
 				currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
@@ -134,7 +134,6 @@ public class GAMA {
 				currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 						entry.getValue());
 			}
-			
 
 		}
 		currentExperiment.open();
@@ -240,15 +239,21 @@ public class GAMA {
 				g.addAgent(name);
 			}
 		}
-		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
-		if (shouldStop) {
-			if(isInHeadLessMode()) {
+		if (scope != null) {
+			scope.setCurrentError(g);
+		}
+		final boolean isInTryMode = scope != null && scope.isInTryMode();
+		if (isInTryMode) {
+			throw g;
+		} else {
+			final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
+			if (shouldStop) {
+				if (isInHeadLessMode()) { throw g; }
+				final IExperimentController controller = getFrontmostController();
+				if (controller == null || controller.isDisposing()) { return; }
+				controller.userPause();
 				throw g;
 			}
-			final IExperimentController controller = getFrontmostController();
-			if (controller == null || controller.isDisposing()) { return; }
-			controller.userPause();
-			throw g;
 		}
 	}
 

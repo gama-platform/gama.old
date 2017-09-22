@@ -167,6 +167,15 @@ public interface GamlFactory extends EFactory
   S_If createS_If();
 
   /**
+   * Returns a new object of class '<em>STry</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>STry</em>'.
+   * @generated
+   */
+  S_Try createS_Try();
+
+  /**
    * Returns a new object of class '<em>SOther</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaDateInterval.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaDateInterval.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -332,6 +331,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 		return Iterators.toArray(iterator(), GamaDate.class);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		return (T[]) Iterators.toArray(iterator(), Object.class);

@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'LetStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'LetStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -18,10 +17,12 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.statements.LetStatement.LetSerializer;
 import msi.gaml.statements.LetStatement.LetValidator;
 import msi.gaml.types.IType;
@@ -33,19 +34,46 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true), */
-@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = false),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = /* AD change false */true),
-	@facet(name = IKeyword.OF, type = { IType.TYPE_ID }, optional = true),
-	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.LET },
-	kind = ISymbolKind.SINGLE_STATEMENT, concept = { IConcept.SYSTEM },
-	with_sequence = false,
-	doc = @doc("Allows to declare a temporary variable of the specified type and to initialize it with a value"))
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@validator(LetValidator.class)
-@serializer(LetSerializer.class)
+@facets (
+		value = { /* @facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true), */
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.NEW_TEMP_ID,
+						optional = false,
+						doc = @doc ("The name of the variable declared ")),
+				@facet (
+						name = IKeyword.VALUE,
+						type = { IType.NONE },
+						optional = /* AD change false */true,
+						doc = @doc ("The value assigned to this variable")),
+
+				@facet (
+						name = IKeyword.OF,
+						type = { IType.TYPE_ID },
+						optional = true,
+						doc = @doc ("The type of the contents if this declaration concerns a container")),
+				@facet (
+						name = IKeyword.INDEX,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("The type of the index if this declaration concerns a container")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = { IType.TYPE_ID },
+						optional = true,
+						doc = @doc ("The type of the variable")) },
+		omissible = IKeyword.NAME)
+@symbol (
+		name = { IKeyword.LET },
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		concept = { IConcept.SYSTEM },
+		with_sequence = false,
+		doc = @doc ("Allows to declare a temporary variable of the specified type and to initialize it with a value"))
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@validator (LetValidator.class)
+@serializer (LetSerializer.class)
+@doc ("Allows to declare a temporary variable of the specified type and to initialize it with a value")
 public class LetStatement extends SetStatement {
 
 	public static class LetSerializer extends AssignmentSerializer {
@@ -63,11 +91,12 @@ public class LetStatement extends SetStatement {
 
 		/**
 		 * Method validate()
+		 * 
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final IDescription cd) {
-			if ( Assert.nameIsValid(cd) ) {
+			if (Assert.nameIsValid(cd)) {
 				super.validate(cd);
 			}
 		}

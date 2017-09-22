@@ -23,6 +23,7 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -339,6 +340,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
+		// System.out.println("Disposing " + getKeyword() + " " + getName());
 		if (isBuiltIn()) { return; }
 		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets())
@@ -422,7 +424,7 @@ public abstract class SymbolDescription implements IDescription {
 		return false;
 	}
 
-	protected boolean hasAction(final String name) {
+	protected boolean hasAction(final String name, final boolean superInvocation) {
 		return false;
 	}
 
@@ -432,8 +434,8 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringAction(final String name) {
-		return hasAction(name) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name);
+	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+		return enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name, superInvocation);
 	}
 
 	@Override
@@ -459,7 +461,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected IType<?> computeType() {
 
 		// Adapter ca pour prendre ne ocmpte les ITypeProvider
-		IType<?> tt = getTypeDenotedByFacet(TYPE, SPECIES, AS, TARGET, ON);
+		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON);
 		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
 		IType<?> ct = getTypeDenotedByFacet(OF, tt.getContentType());
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
@@ -636,7 +638,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	private final boolean validateFacets() {
 		// Special case for "do", which can accept (at parsing time) any facet
-		final boolean isDo = DO.equals(getKeyword());
+		final boolean isDo = DO.equals(getKeyword()) || INVOKE.equals(getKeyword());
 		final boolean isBuiltIn = isBuiltIn();
 		final SymbolProto proto = getMeta();
 		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
@@ -649,8 +651,15 @@ public abstract class SymbolDescription implements IDescription {
 			@Override
 			public boolean visit(final String facet, final IExpressionDescription expr) {
 				final FacetProto fp = proto.getFacet(facet);
+
 				if (fp == null) {
-					if (!isDo) {
+					if (facet.contains(IGamlIssue.DOUBLED_CODE)) {
+						final String correct = facet.replace(IGamlIssue.DOUBLED_CODE, "");
+						final String error = "Facet " + correct + " is declared twice. Please correct.";
+						error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, "1");
+						error(error, IGamlIssue.DUPLICATE_DEFINITION, correct, "2");
+						return false;
+					} else if (!isDo) {
 						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
 						return false;
 					}
@@ -671,6 +680,11 @@ public abstract class SymbolDescription implements IDescription {
 					if (fp.isNewTemp) {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
+
+					} else if (fp.name.equals(IKeyword.ATTRIBUTES) && keyword.equals(IKeyword.SAVE)) {
+						// Special case for the 'save' statement
+						final SpeciesDescription species = getType().getDenotedSpecies();
+						exp = expr.compile(species);
 					} else if (!fp.isLabel()) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
@@ -820,5 +834,24 @@ public abstract class SymbolDescription implements IDescription {
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp) {
 
 	}
+
+	public IDescription getSimilarChild(final IDescription container, final IDescription desc) {
+		final IDescription[] found = new IDescription[1];
+		container.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public boolean visit(final IDescription d) {
+				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
+					found[0] = d;
+					return false;
+				}
+				return true;
+			}
+		});
+		return found[0];
+	}
+
+	@Override
+	public void replaceChildrenWith(final Iterable<IDescription> array) {}
 
 }

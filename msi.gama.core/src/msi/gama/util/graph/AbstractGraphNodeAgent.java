@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,6 +16,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -34,10 +34,12 @@ import msi.gaml.types.IType;
 // FIXME: Add all the necessary variables (degree, neighbors, edges)
 @species (
 		name = "graph_node",
-		concept = { IConcept.GRAPH, IConcept.NODE })
+		concept = { IConcept.GRAPH, IConcept.NODE },
+		doc = @doc ("A base species to use as a parent for species representing agents that are nodes of a graph"))
 @vars ({ @var (
 		name = IKeyword.MYGRAPH,
-		type = IType.GRAPH) })
+		type = IType.GRAPH,
+		doc = @doc ("A reference to the graph containing the agent")) })
 public class AbstractGraphNodeAgent extends GamlAgent {
 
 	final static Arguments args = new Arguments();
@@ -77,9 +79,11 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 	}
 
 	@action (
+			doc = @doc ("This operator should never be called"),
 			name = "related_to",
 			virtual = true,
 			args = { @arg (
+					doc = @doc ("The other agent"),
 					name = "other",
 					optional = false,
 					type = IType.AGENT) })

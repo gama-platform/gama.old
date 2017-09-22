@@ -17,6 +17,7 @@ import java.util.List;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -40,7 +41,8 @@ import rcaller.RCode;
 		buffer_type = IType.MAP,
 		buffer_content = IType.LIST,
 		buffer_index = IType.STRING,
-		concept = { IConcept.FILE, IConcept.R })
+		concept = { IConcept.FILE, IConcept.R },
+		doc = @doc ("Represents an R file. The internal representation is a map of lists (the result of the evaluation)"))
 @SuppressWarnings ({ "rawtypes" })
 public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
 

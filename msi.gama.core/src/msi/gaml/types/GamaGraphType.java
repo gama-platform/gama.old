@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaGraphType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaGraphType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -28,9 +28,14 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
-@type(name = IKeyword.GRAPH, id = IType.GRAPH, wraps = {
-		IGraph.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.GRAPH })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@type (
+		name = IKeyword.GRAPH,
+		id = IType.GRAPH,
+		wraps = { IGraph.class },
+		kind = ISymbolKind.Variable.CONTAINER,
+		concept = { IConcept.TYPE, IConcept.GRAPH },
+		doc = @doc ("Special type of container composed of edges and vertices"))
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
@@ -42,17 +47,11 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	public static IGraph staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		// param = true : spatial.
 
-		if (obj == null) {
-			return null;
-		}
-		if (obj instanceof IGraph) {
-			return (IGraph) obj;
-		}
+		if (obj == null) { return null; }
+		if (obj instanceof IGraph) { return (IGraph) obj; }
 		final boolean spatial = param != null && Cast.asBool(scope, param);
 
-		if (obj instanceof IList) {
-			return from(scope, (IList) obj, spatial);
-		}
+		if (obj instanceof IList) { return from(scope, (IList) obj, spatial); }
 		// List of agents, geometries...
 
 		if (obj instanceof VariableExpression) { // this may be a variable ?
@@ -60,9 +59,7 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 			return (IGraph) ((VariableExpression) obj).value(scope);
 		}
 
-		if (obj instanceof GamaMap) {
-			return from(scope, (GamaMap) obj, spatial);
-		}
+		if (obj instanceof GamaMap) { return from(scope, (GamaMap) obj, spatial); }
 		// TODO Matrix, Pair ?
 
 		return null;

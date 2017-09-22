@@ -122,7 +122,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 				// emit a warning (see Issue #1595)
 				if (enclosing instanceof ExperimentDescription) {
 					final ModelDescription model = enclosing.getModelDescription();
-					if (model.hasAction(action)) {
+					if (model.hasAction(action, false)) {
 						description.warning(
 								"Action " + action
 										+ " should be defined in the experiment, not in global. To maintain the compatibility with GAMA 1.6.1, the command will execute it on all the simulations managed by this experiment",

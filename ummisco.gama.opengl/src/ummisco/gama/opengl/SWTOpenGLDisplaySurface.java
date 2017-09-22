@@ -103,7 +103,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
-		if (getOutput().useShader()) {
+		if (getOutput().getData().useShader()) {
 			renderer = new ModernRenderer();
 
 		} else {
@@ -543,7 +543,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			}
 		if (withHighlight)
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
-					cleanup, AgentsMenu.HIGHLIGHT_ACTION);
+					cleanup, AgentsMenu.getHighlightActionFor(ag));
 		else
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
 					cleanup);

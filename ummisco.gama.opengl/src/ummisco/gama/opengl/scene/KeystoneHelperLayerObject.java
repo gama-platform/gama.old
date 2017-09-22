@@ -28,12 +28,16 @@ public class KeystoneHelperLayerObject extends LayerObject {
 	public KeystoneHelperLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
-		overlay = true;
 	}
 
 	@Override
 	public boolean isLightInteraction() {
 		return false;
+	}
+
+	@Override
+	protected boolean computeOverlay() {
+		return true;
 	}
 
 	@Override

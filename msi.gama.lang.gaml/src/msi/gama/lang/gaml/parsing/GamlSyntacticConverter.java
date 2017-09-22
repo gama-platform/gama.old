@@ -67,6 +67,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -93,6 +94,7 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
+import msi.gama.lang.gaml.gaml.S_Try;
 import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
@@ -193,13 +195,9 @@ public class GamlSyntacticConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	// private void addWarning(final String message, final EObject object, final
-	// Set<Diagnostic> errors) {
-	// if (!GamaPreferences.Runtime.WARNINGS_ENABLED.getValue()) {
-	// return;
-	// }
-	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
-	// message, object, null, 0, null);
+	// private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
+	// if (!GamaPreferences.Runtime.CORE_WARNINGS.getValue()) { return; }
+	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
 	// if (errors != null)
 	// errors.add(d);
 	// }
@@ -299,6 +297,8 @@ public class GamlSyntacticConverter {
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
 			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
+		} else if (stm instanceof S_Try) {
+			convCatch((S_Try) stm, elt, errors);
 		}
 
 		// We apply some conversions to the facets expressed in the statement
@@ -357,12 +357,13 @@ public class GamlSyntacticConverter {
 
 	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
-		// if (e.hasFacet(key)) {
-		// addWarning("Double definition of facet " + key + ". Only the last one
-		// will be considered", e.getElement(),
-		// errors);
-		// }
-		e.setFacet(key, expr);
+		if (e.hasFacet(key)) {
+			e.setFacet(IGamlIssue.DOUBLED_CODE + key, expr);
+			// addWarning("Double definition of facet " + key + ". Only the last one will be considered",
+			// e.getElement(),
+			// errors);
+		} else
+			e.setFacet(key, expr);
 	}
 
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
@@ -375,6 +376,16 @@ public class GamlSyntacticConverter {
 				convStatements(elseElt, EGaml.getStatementsOf((Block) elseBlock), errors);
 			}
 			elt.addChild(elseElt);
+		}
+	}
+
+	private void convCatch(final S_Try stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
+		final EObject catchBlock = stm.getCatch();
+		if (catchBlock != null) {
+			final ISyntacticElement catchElt =
+					SyntacticFactory.create(IKeyword.CATCH, catchBlock, EGaml.hasChildren(catchBlock));
+			convStatements(catchElt, EGaml.getStatementsOf((Block) catchBlock), errors);
+			elt.addChild(catchElt);
 		}
 	}
 

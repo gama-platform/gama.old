@@ -97,7 +97,7 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jgridshift-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/json-simple-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsqlparser-0.3.14.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsr-275-1.0-beta-2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsr-275-1.0-beta-2.jar" sourcepath="/home/pataillandie/.m2/repository/net/java/dev/jsr-275/jsr-275/1.0-beta-2/jsr-275-1.0-beta-2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-contour-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-rangelookup-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-utils-1.4.0.jar"/>

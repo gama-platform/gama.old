@@ -273,8 +273,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 				"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
 				false, IType.BOOL).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> CORE_OVERLAY =
-				create("pref_display_show_overlay", "Automatically show the display overlay", false, IType.BOOL)
+		public static final Pref<Boolean> CORE_DISPLAY_TOOLBAR = create("pref_display_show_toolbar",
+				"Whether the display top toolbar is initially visible or not", true, IType.BOOL).in(NAME, PRESENTATION);
+		public static final Pref<Boolean> CORE_OVERLAY = create("pref_display_show_overlay",
+				"Whether the display bottom overlay is initially visible or not", false, IType.BOOL)
 						.in(NAME, PRESENTATION).activates("pref_display_show_scale", "pref_display_show_fps");
 		public static final Pref<Boolean> CORE_SCALE =
 				create("pref_display_show_scale", "Show scale bar in overlay", false, IType.BOOL).in(NAME,
@@ -293,6 +295,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
 				"Keep the data displayed in charts in memory (to save them later as CSV)", true, IType.BOOL).in(NAME,
 						CHARTS);
+		public static final Pref<Boolean> CHART_GRIDLINES = create("pref_chart_display_gridlines",
+				"Display grid lines on charts by default (true if x_tick_unit or y_tick_unit is defined)", true,
+				IType.BOOL).in(NAME, CHARTS);
 		/**
 		 * Drawing methods and defaults
 		 */

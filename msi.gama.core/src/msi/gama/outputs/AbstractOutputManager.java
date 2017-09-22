@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractOutputManager.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -34,6 +33,8 @@ import msi.gaml.descriptions.IDescription;
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
 	protected final Map<String, IOutput> outputs = new TOrderedHashMap<String, IOutput>();
+	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<String, IOutput>();
+	protected String name;
 
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
@@ -71,7 +72,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void add(final IOutput output) {
-		outputs.put(output.getId(), output);
+		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual())
+			virtualOutputs.put(output.getId(), output);
+		else
+			outputs.put(output.getId(), output);
 	}
 
 	// hqnghi add output with alias name from micro-model
@@ -106,9 +110,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void remove(final IOutput o) {
-		if (!(o instanceof AbstractOutput)) {
-			return;
-		}
+		if (!(o instanceof AbstractOutput)) { return; }
 		if (((AbstractOutput) o).isUserCreated()) {
 			o.dispose();
 			outputs.values().remove(o);
@@ -135,29 +137,77 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		}
 	}
 
-	private Iterable<IDisplayOutput> getDisplayOutputs() {
+	@Override
+	public void pause() {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
+			o.setPaused(true);
+		}
+	}
+
+	@Override
+	public void resume() {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
+			o.setPaused(false);
+		}
+	}
+
+	@Override
+	public void synchronize() {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
+			o.setSynchronized(true);
+		}
+	}
+
+	@Override
+	public void unSynchronize() {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
+			o.setSynchronized(false);
+		}
+	}
+
+	@Override
+	public void close() {
+		for (final IDisplayOutput o : getDisplayOutputs()) {
+			o.close();
+		}
+	}
+
+	@Override
+	public Iterable<IDisplayOutput> getDisplayOutputs() {
 		return Iterables.filter(outputs.values(), IDisplayOutput.class);
 	}
 
 	@Override
+	public String toString() {
+		return name;
+	}
+
+	@Override
 	public boolean init(final IScope scope) {
+		name = scope.getRoot().getName();
 		for (final IOutput output : ImmutableList.copyOf(this)) {
-
-			if (scope.init(output).passed()) {
-				output.setPaused(false);
-				if (initialStep(scope, output)) {
-					try {
-						output.open();
-						output.update();
-					} catch (final RuntimeException e) {
-						e.printStackTrace();
-						return false;
-					}
-				}
-			}
-
+			if (!open(scope, output))
+				return false;
 		}
 		return true;
+	}
+
+	public boolean open(final IScope scope, final IOutput output) {
+
+		if (scope.init(output).passed()) {
+			output.setPaused(false);
+			if (initialStep(scope, output)) {
+				try {
+					output.open();
+					output.update();
+				} catch (final RuntimeException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
+		return true;
+
 	}
 
 	protected boolean initialStep(final IScope scope, final IOutput output) {

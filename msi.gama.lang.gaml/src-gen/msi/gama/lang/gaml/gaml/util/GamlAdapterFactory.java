@@ -155,6 +155,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_IfAdapter();
       }
       @Override
+      public Adapter caseS_Try(S_Try object)
+      {
+        return createS_TryAdapter();
+      }
+      @Override
       public Adapter caseS_Other(S_Other object)
       {
         return createS_OtherAdapter();
@@ -697,6 +702,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createS_IfAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Try <em>STry</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Try
+   * @generated
+   */
+  public Adapter createS_TryAdapter()
   {
     return null;
   }

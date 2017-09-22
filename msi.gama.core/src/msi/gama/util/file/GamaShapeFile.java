@@ -39,6 +39,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -63,7 +64,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.SHAPEFILE, IConcept.FILE })
+		concept = { IConcept.SHAPEFILE, IConcept.FILE },
+		doc = @doc ("Represents a shape file as defined by the ESRI standard"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
 

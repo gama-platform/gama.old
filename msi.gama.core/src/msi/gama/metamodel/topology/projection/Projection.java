@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
+import javax.measure.converter.UnitConverter;
+
 import org.geotools.geometry.jts.DefaultCoordinateSequenceTransformer;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotools.geometry.jts.JTS;
@@ -84,6 +86,7 @@ public class Projection implements IProjection {
 			}
 		}
 		translate(geom);
+		convertUnit(geom);
 		return geom;
 	}
 
@@ -96,8 +99,10 @@ public class Projection implements IProjection {
 				e.printStackTrace();
 			}
 		}
-		if (translate)
+		if (translate) {
 			translate(geom);
+			convertUnit(geom);
+		}
 		return geom;
 	}
 
@@ -114,6 +119,7 @@ public class Projection implements IProjection {
 	@Override
 	public Geometry inverseTransform(final Geometry g) {
 		Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
+		inverseConvertUnit(geom);
 		inverseTranslate(geom);
 		if (inverseTransformer != null) {
 			try {
@@ -180,6 +186,22 @@ public class Projection implements IProjection {
 		if (referenceProjection != null) {
 			referenceProjection.inverseTranslate(geom);
 		}
+	}
+
+	@Override
+	public void convertUnit(Geometry geom) {
+		if (referenceProjection != null) {
+			referenceProjection.convertUnit(geom);
+		}
+		
+	}
+
+	@Override
+	public void inverseConvertUnit(Geometry geom) {
+		if (referenceProjection != null) {
+			referenceProjection.inverseConvertUnit(geom);
+		}
+		
 	}
 
 }

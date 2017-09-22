@@ -309,8 +309,22 @@
                   visible="true">
             </separator>
             <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
+                  label="Manage outputs...">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+               <dynamic
+                     class="ummisco.gama.ui.menus.OutputsMenu"
+                     id="ummisco.gama.ui.experiment.outputs.menu">
+               </dynamic>
+            </menu>
+            <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
-                  label="Arrange Display Views...">
+                  label="Arrange outputs...">
                <command
                      commandId="msi.gama.application.layoutDisplays"
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
@@ -433,6 +447,25 @@
          <toolbar
                id="msi.gama.application.experiment.toolbar"
                label="Experiment">
+            <command
+                  commandId="msi.gama.application.goto.simulation"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
+                  label="Simulation perspective"
+                  style="push"
+                  tooltip="Open simulation perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInModelingPerspective">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </command>
+            <control
+                  class="ummisco.gama.ui.controls.Separator"
+                  id="separator2876">
+            </control>
             <control
                   class="ummisco.gama.ui.controls.StatusControlContribution"
                   id="msi.gama.application.status">
@@ -683,9 +716,14 @@
             class="ummisco.gama.ui.commands.SwitchToModeling"
             commandId="msi.gama.application.goto.modeling">
          <activeWhen>
-            <reference
-                  definitionId="isSimulationReady">
-            </reference>
+            <or>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+               <reference
+                     definitionId="isSimulationFinished">
+               </reference>
+            </or>
          </activeWhen>
       </handler>
       <handler
@@ -860,6 +898,20 @@
                   value="Simulation">
             </test>
          </with>
+      </definition>
+      <definition
+            id="isSimulationFinished">
+         <and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+            <with
+                  variable="ummisco.gama.ui.experiment.SimulationRunningState">
+               <equals
+                     value="FINISHED">
+               </equals>
+            </with>
+         </and>
       </definition>
    </extension>
    <extension

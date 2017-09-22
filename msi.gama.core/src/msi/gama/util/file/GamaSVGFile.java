@@ -26,6 +26,7 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -49,7 +50,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.SVG })
+		concept = { IConcept.SVG },
+		doc = @doc ("Represents 2D geometries described in a SVG file. The internal representation is a list of geometries"))
 public class GamaSVGFile extends GamaGeometryFile {
 
 	Scaling3D size;

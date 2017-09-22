@@ -1,8 +1,8 @@
 /**
 * Name: 3D visualization
-* Author:
+* Author: GAMA team
 * Description: 5th part of the tutorial : Incremental Model
-* Tags: 3d, light
+* Tags: Tutorial, Chart, Graphe, 3d, Light
 */
 
 model model5 
@@ -17,7 +17,7 @@ global {
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
-	int current_hour update: (cycle / 60) mod 24;
+	int current_hour update: current_date.hour;
 	float staying_coeff update: 10.0 ^ (1 + min([abs(current_hour - 9), abs(current_hour - 12), abs(current_hour - 18)]));
 	int nb_people_infected <- nb_infected_init update: people count (each.is_infected);
 	int nb_people_not_infected <- nb_people - nb_infected_init update: nb_people - nb_people_infected;
@@ -30,8 +30,7 @@ global {
 		create building from: buildings_shapefile;
 		create people number:nb_people {
 			speed <- 5.0 #km/#h;
-			building bd <- one_of(building);
-			location <- any_location_in(bd);
+			location <- any_location_in(one_of(building));
 		}
 		ask nb_infected_init among people {
 			is_infected <- true;
@@ -67,7 +66,7 @@ species people skills:[moving]{
 			}
 		}
 	}
-	aspect circle{
+	aspect default{
 		draw circle(5) color:is_infected ? #red : #green;
 	}
 	aspect sphere3D{
@@ -77,14 +76,14 @@ species people skills:[moving]{
 
 species road {
 	geometry display_shape <- shape + 2.0;
-	aspect geom {
+	aspect default {
 		draw display_shape color: #black depth: 3.0;
 	}
 }
 
 species building {
 	float height <- 10#m + rnd(10) #m;
-	aspect geom {
+	aspect default {
 		draw shape color: #gray depth: height;
 	}
 }
@@ -99,14 +98,14 @@ experiment main_experiment type:gui{
 		display map_3D type: opengl {
 			light 1 color:(is_night ? 50 : 255);
 			image "../includes/soil.jpg";
-			species road aspect:geom;
+			species road ;
 			species people aspect:sphere3D;			
-			species building aspect:geom transparency: 0.5;
+			species building  transparency: 0.5;
 		}
 		display chart refresh: every(10#cycles) {
-			chart "Disease spreading" type: series {
-				data "susceptible" value: nb_people_not_infected color: #green;
-				data "infected" value: nb_people_infected color: #red;
+			chart "Disease spreading" type: series style: spline {
+				data "susceptible" value: nb_people_not_infected color: #green marker: false;
+				data "infected" value: nb_people_infected color: #red marker: false;
 			}
 		}
 	}

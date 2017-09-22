@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -207,22 +206,6 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 	}
 
-	private IDescription getSimilarChild(final IDescription container, final IDescription desc) {
-		final IDescription[] found = new IDescription[1];
-		container.visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription d) {
-				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
-					found[0] = d;
-					return false;
-				}
-				return true;
-			}
-		});
-		return found[0];
-	}
-
 	private void mergeOutputs(final StatementDescription inherited, final StatementDescription defined) {
 
 		inherited.visitChildren(new DescriptionVisitor<IDescription>() {
@@ -260,9 +243,7 @@ public class ExperimentDescription extends SpeciesDescription {
 			return true;
 		final ModelDescription host = (ModelDescription) getMacroSpecies();
 		if (host != null) {
-			if (host.getExperiment(parent.getName()) != null) {
-				return true;
-			}
+			if (host.getExperiment(parent.getName()) != null) { return true; }
 		}
 		return false;
 	}

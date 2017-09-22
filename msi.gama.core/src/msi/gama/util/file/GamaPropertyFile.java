@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -34,7 +35,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.MAP,
 		buffer_content = IType.STRING,
 		buffer_index = IType.STRING,
-		concept = { IConcept.FILE })
+		concept = { IConcept.FILE },
+		doc = @doc ("Represents property files"))
 public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {

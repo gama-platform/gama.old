@@ -20,6 +20,7 @@ import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.POINT;
 import static msi.gama.common.interfaces.IKeyword.SELF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
+import static msi.gama.common.interfaces.IKeyword.SUPER;
 import static msi.gama.common.interfaces.IKeyword.TRUE;
 import static msi.gama.common.interfaces.IKeyword.UNKNOWN;
 import static msi.gama.common.interfaces.IKeyword._DOT;
@@ -911,7 +912,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseFunction(final Function object) {
 		final String op = EGaml.getKeyOf(object);
 
-		final SpeciesDescription sd = getContext().getSpeciesContext();
+		SpeciesDescription sd = getContext().getSpeciesContext();
+		final boolean isSuperInvocation = sd != null && getContext() instanceof StatementDescription
+				&& ((StatementDescription) getContext()).isSuperInvocation();
+		if (isSuperInvocation) {
+			sd = sd.getParent();
+		}
 		if (sd != null) {
 			final ActionDescription action = sd.getAction(op);
 			if (action != null) {
@@ -919,7 +925,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				if (params == null) {
 					params = object.getArgs();
 				}
-				final IExpression call = action(op, caseVar(SELF, object), params, action);
+				final IExpression call = action(op, caseVar(isSuperInvocation ? SUPER : SELF, object), params, action);
 				if (call != null) { return call; }
 			}
 		}
@@ -1047,6 +1053,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				}
 				final IType tt = temp_sd.getType();
 				return getFactory().createVar(SELF, tt, true, IVarExpression.SELF, null);
+			case SUPER:
+				SpeciesDescription sd = getContext().getSpeciesContext();
+				if (sd != null)
+					sd = sd.getParent();
+				if (sd == null) {
+					getContext().error("Unable to determine the species of super", IGamlIssue.GENERAL, object);
+					return null;
+				}
+				final IType t = sd.getType();
+				return getFactory().createVar(SUPER, t, true, IVarExpression.SUPER, null);
+
 			// case WORLD_AGENT_NAME:
 			// return getWorldExpr();
 		}
@@ -1098,7 +1115,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// an action (used like a variable, see Issue 853) or also any
 			// behavior or aspect
 			final SpeciesDescription sd = getContext().getSpeciesContext();
-			if (sd.hasAction(varName)) { return new DenotedActionExpression(sd.getAction(varName)); }
+			if (sd.hasAction(varName, false)) { return new DenotedActionExpression(sd.getAction(varName)); }
 			if (sd.hasBehavior(varName)) { return new DenotedActionExpression(sd.getBehavior(varName)); }
 			if (sd.hasAspect(varName)) { return new DenotedActionExpression(sd.getAspect(varName)); }
 

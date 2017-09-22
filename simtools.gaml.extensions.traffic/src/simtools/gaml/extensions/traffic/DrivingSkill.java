@@ -83,7 +83,8 @@ import msi.gaml.types.Types;
 				doc = @doc ("the speed of the agent (in meter/second)")) })
 @skill (
 		name = "driving",
-		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT })
+		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT },
+		doc = @doc ("A basic skill for providing agents with some 'driving' capabilities"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrivingSkill extends MovingSkill {
 

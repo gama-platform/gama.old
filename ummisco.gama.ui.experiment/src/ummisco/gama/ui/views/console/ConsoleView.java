@@ -30,6 +30,7 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.ui.resources.GamaColors;
@@ -167,9 +168,9 @@ public class ConsoleView extends GamaViewPart
 	}
 
 	@Override
-	public void close() {
+	public void close(final IScope scope) {
 		reset();
-		super.close();
+		super.close(scope);
 	}
 
 	@Override

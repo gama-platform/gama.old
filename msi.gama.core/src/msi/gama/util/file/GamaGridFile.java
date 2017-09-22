@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -35,7 +36,9 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -53,14 +56,15 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
+		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE },
+		doc = @doc ("Represents .asc or .tif files that contain grid descriptions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;
 	private GridCoverage2D coverage;
 	public int nbBands;
-
+	
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
@@ -134,7 +138,8 @@ public class GamaGridFile extends GamaGisFile {
 
 		int numRows, numCols;
 		IShape geom;
-
+		Number noData = -9999;
+		
 		GamaGridReader(final IScope scope, final InputStream fis, final boolean fillBuffer)
 				throws GamaRuntimeException {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
@@ -153,6 +158,7 @@ public class GamaGridFile extends GamaGisFile {
 						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true,
 								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
+					noData = ((GeoTiffReader) store).getMetadata().getNoData();
 				} else {
 					if (crs == null) {
 						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true));
@@ -410,5 +416,58 @@ public class GamaGridFile extends GamaGisFile {
 		}
 		coverage = null;
 	}
+
+	public GridCoverage2D getCoverage() {
+		return coverage;
+	}
+	
+	
+	
+	
+	
+	public Double valueOf(IScope scope, ILocation loc) {
+		if (getBuffer() == null) {
+			fillBuffer(scope);
+		}
+		
+		Object vals = null;
+		try {
+			vals = coverage.evaluate(
+				new DirectPosition2D(loc.getX(), loc.getY()));
+		} catch (Exception e) {
+			vals = reader.noData.doubleValue();
+		}
+		boolean doubleValues = vals instanceof double[];
+		boolean	intValues = vals instanceof int[];
+		boolean	byteValues = vals instanceof byte[];
+		boolean	longValues = vals instanceof long[];
+		boolean	floatValues = vals instanceof float[];
+		Double val = null;
+		if (doubleValues) {
+			final double[] vd = (double[]) vals;
+			val = vd[0];
+		} else if (intValues) {
+			final int[] vi = (int[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (longValues) {
+			final long[] vi = (long[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (floatValues) {
+			final float[] vi = (float[]) vals;
+			val = Double.valueOf(vi[0]);
+		} else if (byteValues) {
+			final byte[] bv = (byte[]) vals;
+			if (bv.length == 3) {
+				final int red = bv[0] < 0 ? 256 + bv[0] : bv[0];
+				final int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
+				final int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
+				val = (red + green + blue) / 3.0;
+			} else {
+				val = Double.valueOf(((byte[]) vals)[0]);
+			}
+		}
+		return val;
+	}
+	
 
 }

@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -24,6 +25,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -573,6 +575,8 @@ public class Distribution {
 		}
 		Arrays.sort(doublelist);
 
+		int scale = BigDecimal.valueOf(deuxpuissancek).scale();
+		
 		double preval = newminInt;
 		double postval = 0;
 		int nba = 0;
@@ -585,10 +589,12 @@ public class Distribution {
 			while (nba < len && doublelist[nba] < postval) {
 				nba++;
 			}
+		
 
 			distribInts[i] = nba - nbaprec;
 			nbaprec = nba;
-			distribLegend[i] = "[" + preval + ":" + postval + "]";
+			distribLegend[i] = "[" + Maths.round(preval, scale+8)+ ":" + Maths.round(postval, scale+8) + "]";
+			 
 		}
 
 		distribParams[0] = 0;

@@ -97,6 +97,8 @@ Export-Package: com.kitfox.svg;
  it.geosolutions.imageioimpl.plugins.tiff,
  it.geosolutions.io,
  it.geosolutions.io.input,
+ javax.measure.converter,
+ javax.measure.unit,
  javax.media.jai,
  javax.vecmath,
  net.sf.jsqlparser,
@@ -926,4 +928,4 @@ Bundle-ClassPath: .,
  geotools 14.5/jt-zonal-1.0.9.jar,
  geotools 14.5/core-0.26.jar,
  streamex 0.6.2/streamex-0.6.4.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

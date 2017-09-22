@@ -136,6 +136,7 @@ public class Dates {
 
 	@operator (
 			value = APPROXIMATE_TEMPORAL_QUERY,
+			doc = @doc ("For internal use only"),
 			internal = true)
 	public static double approximalQuery(final IScope scope, final IExpression left, final IExpression right) {
 		final Double arg = Cast.asFloat(scope, left.value(scope));
@@ -272,6 +273,7 @@ public class Dates {
 	@operator (
 			value = { "since", "from" },
 			category = { IOperatorCategory.DATE },
+			doc = @doc ("Returns true if the first operand is true and the current date is equal to or after the second operand"),
 			concept = { IConcept.DATE })
 	public static boolean since(final IScope scope, final IExpression expression, final GamaDate date) {
 		return since(scope, date) && Cast.asBool(scope, expression.value(scope));
@@ -279,6 +281,7 @@ public class Dates {
 
 	@operator (
 			value = { "after" },
+			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly after the second operand"),
 			category = { IOperatorCategory.DATE },
 			concept = { IConcept.DATE })
 	public static boolean after(final IScope scope, final IExpression expression, final GamaDate date) {
@@ -288,6 +291,7 @@ public class Dates {
 	@operator (
 			value = { "before" },
 			category = { IOperatorCategory.DATE },
+			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly before the second operand"),
 			concept = { IConcept.DATE })
 	public static boolean before(final IScope scope, final IExpression expression, final GamaDate date) {
 		return before(scope, date) && Cast.asBool(scope, expression.value(scope));
@@ -295,6 +299,7 @@ public class Dates {
 
 	@operator (
 			value = { "until", "to" },
+			doc = @doc ("Returns true if the first operand is true and the current date is equal to or situated before the second operand"),
 			category = { IOperatorCategory.DATE },
 			concept = { IConcept.DATE })
 	public static boolean until(final IScope scope, final IExpression expression, final GamaDate date) {
@@ -304,6 +309,7 @@ public class Dates {
 	@operator (
 			value = { "between" },
 			category = { IOperatorCategory.DATE },
+			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly after the second operand and before the third one"),
 			concept = { IConcept.DATE })
 	public static boolean between(final IScope scope, final IExpression expression, final GamaDate start,
 			final GamaDate stop) {

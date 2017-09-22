@@ -12,11 +12,14 @@ package msi.gaml.extensions.multi_criteria;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -57,7 +60,7 @@ public class MulticriteriaAnalyzeOperator {
 			}
 		}
 		int cpt = 0;
-		double utilityMax = -1;
+		double utilityMax = -Double.MAX_VALUE;
 		int indexCand = -1;
 		boolean first = true;
 		for (final List cand : cands) {
@@ -67,6 +70,93 @@ public class MulticriteriaAnalyzeOperator {
 				utility += weight.get(crit) * Cast.asFloat(scope, cand.get(i));
 				i++;
 			}
+			if (first || utilityMax < utility) {
+				utilityMax = utility;
+				indexCand = cpt;
+				first = false;
+			}
+			cpt++;
+		}
+		return indexCand;
+
+	}
+	
+	public static void buildCombination(List<String> criteria, Set<String> currentSol, Set<Set<String>> combinations,
+           int start, int end, int index){
+		if (index == criteria.size())
+        {
+			combinations.add(new HashSet<>(criteria));
+			return;
+        }
+ 
+        for (int i=start; i<=end ; i++)
+        {
+        	Set<String> comb = new HashSet<>(currentSol);
+        	comb.add(criteria.get(i));
+        	combinations.add(comb);
+        	buildCombination(criteria, comb,combinations, i+1, end, index+1);
+        }
+	}
+	
+	@operator(value = "fuzzy_choquet_DM", category = { MULTICRITERIA }, concept = { IConcept.MULTI_CRITERIA })
+	@doc(value = "The index of the candidate that maximizes the Fuzzy Choquet Integral value. The first operand is the list of candidates (a candidate is a list of criterion values); the second operand the list of criterion (list of string); the third operand the weights of each sub-set of criteria (map with list for key and float for value)", special_cases = {
+			"returns -1 is the list of candidates is nil or empty" }, examples = {
+					@example(value = "fuzzy_choquet_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [\"utility\", \"price\", \"size\"],[[\"utility\"]::0.5,[\"size\"]::0.1,[\"price\"]::0.4,[\"utility\", \"price\"]::0.55])", equals = "0") }, see = {
+							"promethee_DM", "electre_DM", "evidence_theory_DM" })
+	public static Integer FuzzyChoquetDecisionMaking(final IScope scope, final List<List> cands,
+			final List<String> criteria, final Map criteriaWeights) throws GamaRuntimeException {
+		if (cands == null || cands.isEmpty()) {
+			return -1;
+		}
+		final Map<String,Double> critWeight = new HashMap<>();
+		final Map<Set<String>, Double> weight = new HashMap<Set<String>, Double>();
+		for (Object o : criteriaWeights.keySet()) {
+			Set<String> key = new HashSet<>((List)o);
+			Double val = Cast.asFloat(scope, criteriaWeights.get(o));
+			if (key.size() == 1) {
+				critWeight.put(new ArrayList<>(key).get(0), val);
+			}
+			weight.put(key, val );
+		}
+		for (String crit: criteria) {
+			if (!critWeight.containsKey(crit))
+				critWeight.put(crit, 1.0);
+		}
+		final Set<Set<String>> combinations = new HashSet<>();
+		buildCombination(criteria, new HashSet<>(),combinations, 0, criteria.size() - 1, 0);
+		for (Set<String> comb: combinations) {
+			if (!weight.containsKey(comb)) {
+				Double tot = 0.0;
+				for (String c:comb) tot += Cast.asFloat(scope, critWeight.get(c)) ;
+				weight.put(comb, tot);
+			}
+		}
+		int cpt = 0;
+		double utilityMax = -Double.MAX_VALUE;
+		int indexCand = -1;
+		boolean first = true;
+		for (final List cand : cands) {
+			List orderedList = new ArrayList<>(cand);
+			List<Integer> listOfOrder = new ArrayList<>();
+			Collections.sort(orderedList);
+			for (Object val : cand) {
+				int index = orderedList.indexOf(val);
+				if (listOfOrder.contains(index)) 
+					index ++;
+				listOfOrder.add(index);
+			}
+			double prev =  Cast.asFloat(scope, orderedList.get(0));
+			double utility = prev; 
+			for (int i = 1; i < orderedList.size();i++) {
+				double val = Cast.asFloat(scope, orderedList.get(i));
+				Set<String> comb = new HashSet<>();
+				for (int j = i; j < listOfOrder.size(); j++) {
+					comb.add(criteria.get(listOfOrder.indexOf(j)));
+				}
+				utility += (val - prev)* weight.get(comb) ;
+				prev = val;
+			}
+			
 			if (first || utilityMax < utility) {
 				utilityMax = utility;
 				indexCand = cpt;

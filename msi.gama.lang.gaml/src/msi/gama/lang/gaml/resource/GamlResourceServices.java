@@ -11,7 +11,6 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,6 +27,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
@@ -89,7 +89,8 @@ public class GamlResourceServices {
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
 		if (listener == null)
 			return;
-		final Collection exps = model == null ? newState ? Collections.EMPTY_SET : null : model.getExperiments();
+		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
+				: Iterables.filter(model.getExperiments(), each -> !each.isAbstract());
 		listener.validationEnded(exps, status);
 	}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Strings.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Strings.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,133 +32,226 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class Strings {
 
 	public static final String LN = java.lang.System.getProperty("line.separator");
 	public static final String TAB = "\t";
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
+	@operator (
+			value = IKeyword.PLUS,
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING },
+			doc = @doc ("Concatenates the two string operands"))
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string)", examples = @example(value = "\"hello \" + 12", equals = "\"hello 12\"")))
+	@operator (
+			value = IKeyword.PLUS,
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string)",
+					examples = @example (
+							value = "\"hello \" + 12",
+							equals = "\"hello 12\"")))
 	public static String opPlus(final IScope scope, final String a, final Object b) throws GamaRuntimeException {
 		return a + Cast.asString(scope, b);
 	}
 
-	@operator(value = "in", can_be_const = true, category = { IOperatorCategory.STRING }, concept = { IConcept.STRING })
-	@doc(usages = @usage(value = "if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;"), examples = @example(value = " 'bc' in 'abcded'", equals = "true"))
+	@operator (
+			value = "in",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if both operands are strings, returns true if the left-hand operand patterns is included in to the right-hand string;"),
+			examples = @example (
+					value = " 'bc' in 'abcded'",
+					equals = "true"))
 	public static Boolean opIn(final String pattern, final String target) {
 		return target.contains(pattern);
 	}
 
-	@operator(value = "contains", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;"), examples = @example(value = "'abcded' contains 'bc'", equals = "true"))
+	@operator (
+			value = "contains",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if both operands are strings, returns true if the right-hand operand contains the right-hand pattern;"),
+			examples = @example (
+					value = "'abcded' contains 'bc'",
+					equals = "true"))
 	public static Boolean opContains(final String target, final String pattern) {
 		return opIn(pattern, target);
 	}
 
-	@operator(value = "contains_any", can_be_const = true, expected_content_type = { IType.STRING }, concept = {
-			IConcept.STRING })
-	@doc(examples = @example(value = "\"abcabcabc\" contains_any [\"ca\",\"xy\"]", equals = "true"))
+	@operator (
+			value = "contains_any",
+			can_be_const = true,
+			expected_content_type = { IType.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			examples = @example (
+					value = "\"abcabcabc\" contains_any [\"ca\",\"xy\"]",
+					equals = "true"))
 	public static Boolean opContainsAny(final String target, final List l) {
 		for (final Object o : l) {
-			if (o instanceof String && opContains(target, (String) o)) {
-				return true;
-			}
+			if (o instanceof String && opContains(target, (String) o)) { return true; }
 		}
 		return false;
 	}
 
-	@operator(value = "contains_all", can_be_const = true, expected_content_type = { IType.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if the left-operand is a string, test whether the string contains all the element of the list;", examples = @example(value = "\"abcabcabc\" contains_all [\"ca\",\"xy\"]", equals = "false")))
+	@operator (
+			value = "contains_all",
+			can_be_const = true,
+			expected_content_type = { IType.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if the left-operand is a string, test whether the string contains all the element of the list;",
+					examples = @example (
+							value = "\"abcabcabc\" contains_all [\"ca\",\"xy\"]",
+							equals = "false")))
 	public static Boolean opContainsAll(final String target, final List l) {
 		for (final Object o : l) {
-			if (!(o instanceof String && opContains(target, (String) o))) {
-				return false;
-			}
+			if (!(o instanceof String && opContains(target, (String) o))) { return false; }
 		}
 		return true;
 	}
 
-	@operator(value = "index_of", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string", examples = @example(value = " \"abcabcabc\" index_of \"ca\"", equals = "2")))
+	@operator (
+			value = "index_of",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string",
+					examples = @example (
+							value = " \"abcabcabc\" index_of \"ca\"",
+							equals = "2")))
 	public static Integer opIndexOf(final String target, final String pattern) {
 		return target.indexOf(pattern);
 	}
 
-	@operator(value = "last_index_of", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string", examples = @example(value = "\"abcabcabc\" last_index_of \"ca\"", equals = "5")))
+	@operator (
+			value = "last_index_of",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if both operands are strings, returns the index within the left-hand string of the rightmost occurrence of the given right-hand string",
+					examples = @example (
+							value = "\"abcabcabc\" last_index_of \"ca\"",
+							equals = "5")))
 	public static Integer opLastIndexOf(final String target, final String pattern) {
 		return target.lastIndexOf(pattern);
 	}
 
-	@operator(value = { "copy_between" /* , "copy" */ }, can_be_const = true, category = {
-			IOperatorCategory.STRING }, concept = { IConcept.STRING })
-	@doc(examples = @example(value = "copy_between(\"abcabcabc\", 2,6)", equals = "\"cabc\""))
+	@operator (
+			value = { "copy_between" /* , "copy" */ },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			examples = @example (
+					value = "copy_between(\"abcabcabc\", 2,6)",
+					equals = "\"cabc\""))
 	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
 		final int bIndex = beginIndex < 0 ? 0 : beginIndex;
 		final int eIndex = endIndex > target.length() ? target.length() : endIndex;
-		if (bIndex >= eIndex) {
-			return "";
-		}
+		if (bIndex >= eIndex) { return ""; }
 		return target.substring(bIndex, eIndex);
 	}
 
-	@operator(value = { "split_with", "tokenize" }, content_type = IType.STRING, can_be_const = true, category = {
-			IOperatorCategory.STRING }, concept = { IConcept.STRING })
-	@doc(value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.", comment = "Delimiters themselves are excluded from the resulting list.", examples = @example(value = "'to be or not to be,that is the question' split_with ' ,'", equals = "['to','be','or','not','to','be','that','is','the','question']"))
+	@operator (
+			value = { "split_with", "tokenize" },
+			content_type = IType.STRING,
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.",
+			comment = "Delimiters themselves are excluded from the resulting list.",
+			examples = @example (
+					value = "'to be or not to be,that is the question' split_with ' ,'",
+					equals = "['to','be','or','not','to','be','that','is','the','question']"))
 	public static IList opTokenize(final IScope scope, final String target, final String pattern) {
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return GamaListFactory.create(scope, Types.STRING, st);
 	}
 
-	@operator(value = { "replace" }, can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the second operand by the third operand", examples = @example(value = "replace('to be or not to be,that is the question','to', 'do')", equals = "'do be or not do be,that is the question'"), see = {
-			"replace_regex" })
+	@operator (
+			value = { "replace" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the second operand by the third operand",
+			examples = @example (
+					value = "replace('to be or not to be,that is the question','to', 'do')",
+					equals = "'do be or not do be,that is the question'"),
+			see = { "replace_regex" })
 	public static String opReplace(final String target, final String pattern, final String replacement) {
 		return target.replace(pattern, replacement);
 	}
 
-	@operator(value = { "replace_regex" }, can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding to the regular expression given in the second operand by the third operand", examples = @example(value = "replace_regex(\"colour, color\", \"colou?r\", \"col\")", equals = "'col, col'"), see = {
-			"replace" })
+	@operator (
+			value = { "replace_regex" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding to the regular expression given in the second operand by the third operand",
+			examples = @example (
+					value = "replace_regex(\"colour, color\", \"colou?r\", \"col\")",
+					equals = "'col, col'"),
+			see = { "replace" })
 	public static String opReplaceRegex(final String target, final String pattern, final String replacement) {
 		return target.replaceAll(pattern, replacement);
 	}
 
-	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(value = "tests whether the operand represents a numerical value", comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
-			+ "Symbols e and E are also accepted. A hexadecimal value should begin with #.", examples = {
-					@example(value = "is_number(\"test\")", equals = "false"),
-					@example(value = "is_number(\"123.56\")", equals = "true"),
-					@example(value = "is_number(\"-1.2e5\")", equals = "true"),
-					@example(value = "is_number(\"1,2\")", equals = "false"),
-					@example(value = "is_number(\"#12FA\")", equals = "true") })
+	@operator (
+			value = "is_number",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "tests whether the operand represents a numerical value",
+			comment = "Note that the symbol . should be used for a float value (a string with , will not be considered as a numeric value). "
+					+ "Symbols e and E are also accepted. A hexadecimal value should begin with #.",
+			examples = { @example (
+					value = "is_number(\"test\")",
+					equals = "false"),
+					@example (
+							value = "is_number(\"123.56\")",
+							equals = "true"),
+					@example (
+							value = "is_number(\"-1.2e5\")",
+							equals = "true"),
+					@example (
+							value = "is_number(\"1,2\")",
+							equals = "false"),
+					@example (
+							value = "is_number(\"#12FA\")",
+							equals = "true") })
 	public static Boolean isGamaNumber(final String s) {
 		// copright notice:
 		// original code taken from
 		// org.apache.commons.lang.NumberUtils.isNumber(String)
 
-		if (s == null) {
-			return false;
-		}
+		if (s == null) { return false; }
 		final int length = s.length();
-		if (length == 0) {
-			return false;
-		}
+		if (length == 0) { return false; }
 		int sz = length;
 		boolean hasExp = false;
 		boolean hasDecPoint = false;
@@ -171,15 +263,12 @@ public class Strings {
 		if (sz > start + 1) {
 			if (s.charAt(start) == '#') {
 				int i = start + 1;
-				if (i == sz) {
-					return false; // str == "#"
+				if (i == sz) { return false; // str == "#"
 				}
 				// Checking hex (it can't be anything else)
 				for (; i < length; i++) {
 					final char c = s.charAt(i);
-					if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) {
-						return false;
-					}
+					if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) { return false; }
 				}
 
 				return true;
@@ -235,8 +324,7 @@ public class Strings {
 			final char c = s.charAt(i);
 			if (c >= '0' && c <= '9') {
 				return true; // No type qualifier, OK
-			} else if (c == 'e' || c == 'E') {
-				return false; // can't have an E at the last byte
+			} else if (c == 'e' || c == 'E') { return false; // can't have an E at the last byte
 			}
 		}
 
@@ -246,76 +334,123 @@ public class Strings {
 		return !allowSigns && foundDigit;
 	}
 
-	@operator(value = "reverse", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, reverse returns a new string with characters in the reversed order", examples = @example(value = "reverse ('abcd')", equals = "'dcba'")))
+	@operator (
+			value = "reverse",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if it is a string, reverse returns a new string with characters in the reversed order",
+					examples = @example (
+							value = "reverse ('abcd')",
+							equals = "'dcba'")))
 	static public String reverse(final String s) {
 		final StringBuilder buf = new StringBuilder(s);
 		buf.reverse();
 		return buf.toString();
 	}
 
-	@operator(value = "empty", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, empty returns true if the string does not contain any character, and false otherwise", examples = @example(value = "empty ('abced')", equals = "false")))
+	@operator (
+			value = "empty",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if it is a string, empty returns true if the string does not contain any character, and false otherwise",
+					examples = @example (
+							value = "empty ('abced')",
+							equals = "false")))
 	static public Boolean isEmpty(final String s) {
 		return s != null && s.isEmpty();
 	}
 
-	@operator(value = "first", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, first returns a string composed of its first character", examples = @example(value = "first ('abce')", equals = "'a'")))
+	@operator (
+			value = "first",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if it is a string, first returns a string composed of its first character",
+					examples = @example (
+							value = "first ('abce')",
+							equals = "'a'")))
 	static public String first(final String s) {
-		if (s == null || s.isEmpty()) {
-			return "";
-		}
+		if (s == null || s.isEmpty()) { return ""; }
 		return String.valueOf(s.charAt(0));
 	}
 
-	@operator(value = "last", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty", examples = @example(value = "last ('abce')", equals = "'e'")))
+	@operator (
+			value = "last",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if it is a string, last returns a string composed of its last character, or an empty string if the operand is empty",
+					examples = @example (
+							value = "last ('abce')",
+							equals = "'e'")))
 	static public String last(final String s) {
-		if (s == null || s.isEmpty()) {
-			return "";
-		}
+		if (s == null || s.isEmpty()) { return ""; }
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
-	@operator(value = "length", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "if it is a string, length returns the number of characters", examples = @example(value = "length ('I am an agent')", equals = "13")))
+	@operator (
+			value = "length",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "if it is a string, length returns the number of characters",
+					examples = @example (
+							value = "length ('I am an agent')",
+							equals = "13")))
 	static public Integer length(final String s) {
-		if (s == null) {
-			return 0;
-		}
+		if (s == null) { return 0; }
 		return s.length();
 	}
 
-	@operator(value = { IKeyword.AT, "@" }, can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(examples = @example(value = "'abcdef' at 0", equals = "'a'"))
+	@operator (
+			value = { IKeyword.AT, "@" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			examples = @example (
+					value = "'abcdef' at 0",
+					equals = "'a'"))
 	public static String get(final String lv, final int rv) {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
 
-	@operator(value = "char", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(usages = @usage(value = "converts ACSII integer value to character", examples = @example(value = "char (34)", equals = "'\"'")))
+	@operator (
+			value = "char",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			usages = @usage (
+					value = "converts ACSII integer value to character",
+					examples = @example (
+							value = "char (34)",
+							equals = "'\"'")))
 	static public String asChar(final Integer s) {
-		if (s == null) {
-			return "";
-		}
+		if (s == null) { return ""; }
 		return Character.toString((char) s.intValue());
 	}
 
-	@operator(value = "indented_by", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc("Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right")
+	@operator (
+			value = "indented_by",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc ("Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right")
 	static public String indent(final String s, final int nb) {
-		if (nb <= 0) {
-			return s;
-		}
+		if (nb <= 0) { return s; }
 		final StringBuilder sb = new StringBuilder(nb);
 		for (int i = 0; i < nb; i++) {
 			sb.append(TAB);
@@ -325,25 +460,35 @@ public class Strings {
 		return indented;
 	}
 
-	@operator(value = "lower_case", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(value = "Converts all of the characters in the string operand to lower case", examples = @example(value = "lower_case(\"Abc\")", equals = "'abc'"), see = {
-			"upper_case" })
+	@operator (
+			value = "lower_case",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Converts all of the characters in the string operand to lower case",
+			examples = @example (
+					value = "lower_case(\"Abc\")",
+					equals = "'abc'"),
+			see = { "upper_case" })
 	static public String toLowerCase(final String s) {
-		if (s == null) {
-			return s;
-		}
+		if (s == null) { return s; }
 		return s.toLowerCase();
 	}
 
-	@operator(value = "upper_case", can_be_const = true, category = { IOperatorCategory.STRING }, concept = {
-			IConcept.STRING })
-	@doc(value = "Converts all of the characters in the string operand to upper case", examples = @example(value = "upper_case(\"Abc\")", equals = "'ABC'"), see = {
-			"lower_case" })
+	@operator (
+			value = "upper_case",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Converts all of the characters in the string operand to upper case",
+			examples = @example (
+					value = "upper_case(\"Abc\")",
+					equals = "'ABC'"),
+			see = { "lower_case" })
 	static public String toUpperCase(final String s) {
-		if (s == null) {
-			return s;
-		}
+		if (s == null) { return s; }
 		return s.toUpperCase();
 	}
 

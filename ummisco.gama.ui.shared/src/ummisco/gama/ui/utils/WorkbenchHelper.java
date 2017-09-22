@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -30,6 +33,9 @@ public class WorkbenchHelper {
 	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE;
 	public final static String PLUGIN_NATURE = WorkspaceModelsManager.PLUGIN_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
+
+	public final static Clipboard clipboard = new Clipboard(Display.getCurrent());
+	public final static Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
 
 	public static void asyncRun(final Runnable r) {
 		final Display d = getDisplay();
@@ -156,6 +162,10 @@ public class WorkbenchHelper {
 		// return (T) result[0];
 		final T result = getWorkbench().getService(class1);
 		return result;
+	}
+
+	public static void copy(final String o) {
+		clipboard.setContents(new String[] { o }, transfers);
 	}
 
 }

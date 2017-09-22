@@ -262,10 +262,11 @@ public class GamaProcessor extends AbstractProcessor {
 					&& !processingEnv.getTypeUtils().isAssignable(clazz, getIAgent());
 
 			final vars vars = e.getAnnotation(vars.class);
+			final Set<String> undocumented = new HashSet();
 			for (final var s : vars.value()) {
 				final doc[] docs = s.doc();
-				if (docs.length == 0) {
-					emitWarning("GAML: var '" + s.name() + "' is not documented", e);
+				if (docs.length == 0 && !s.internal()) {
+					undocumented.add(s.name());
 				}
 				final StringBuilder sb = new StringBuilder();
 				final int type = s.type();
@@ -375,6 +376,9 @@ public class GamaProcessor extends AbstractProcessor {
 					d = docs[0].value();
 				}
 				gp.put(sb.toString(), d);
+			}
+			if (!undocumented.isEmpty()) {
+				emitWarning("GAML: vars '" + undocumented + "' are not documented", e);
 			}
 		}
 	}
@@ -558,7 +562,7 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.setLength(sb.length() - 1);
 			final doc doc = e.getAnnotation(doc.class);
 
-			if (doc == null) {
+			if (doc == null && !symbol.internal()) {
 				emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
 			}
 			gp.put(sb.toString(), "" /* docToString(doc) */); /* doc */
@@ -588,17 +592,20 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private String facetsToString(final facets facets, final Element e) {
 		final StringBuilder sb = new StringBuilder();
+		final Set<String> undocumented = new HashSet();
 		if (facets.value() != null) {
 			for (final facet f : facets.value()) {
 				final doc[] docs = f.doc();
-				if (docs.length == 0) {
-					emitWarning("GAML: facet '" + f.name() + "' is not documented", e);
+				if (docs.length == 0 && !f.internal()) {
+					undocumented.add(f.name());
 				}
 				sb.append(facetToString(f)).append(SEP);
 			}
 			if (facets.value().length > 0) {
 				sb.setLength(sb.length() - 1);
 			}
+			if (!undocumented.isEmpty())
+				emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
 		}
 		return sb.toString();
 	}
@@ -711,7 +718,7 @@ public class GamaProcessor extends AbstractProcessor {
 			} else {
 				doc = docs[0];
 			}
-			if (doc == null) {
+			if (doc == null && !spec.internal()) {
 				emitWarning("GAML: species '" + spec.name() + "' is not documented", e);
 			}
 
@@ -780,7 +787,7 @@ public class GamaProcessor extends AbstractProcessor {
 			} else {
 				doc = docs[0];
 			}
-			if (doc == null) {
+			if (doc == null && !skill.internal()) {
 				emitWarning("GAML: skill '" + skill.name() + "' is not documented", e);
 			}
 
@@ -831,7 +838,7 @@ public class GamaProcessor extends AbstractProcessor {
 			} else {
 				doc = docs[0];
 			}
-			if (doc == null) {
+			if (doc == null && !t.internal()) {
 				emitWarning("GAML: type '" + t.name() + "' is not documented", e);
 			}
 
@@ -863,7 +870,7 @@ public class GamaProcessor extends AbstractProcessor {
 					documentation = operator.doc()[0];
 			}
 
-			if (documentation == null) {
+			if (documentation == null && !operator.internal()) {
 				emitWarning("GAML: operator '" + name + "' is not documented", e);
 			}
 			final Set<Modifier> modifiers = method.getModifiers();
@@ -1041,8 +1048,8 @@ public class GamaProcessor extends AbstractProcessor {
 					final String argName = arg.name();
 					if (RESERVED_FACETS.contains(argName)) {
 						emitWarning(
-								"Argument " + argName
-										+ " will prevent this primitive to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+								"The argument called '" + argName
+										+ "' will prevent this primitive to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
 								e);
 					}
 					sb.append(argName).append(SEP);

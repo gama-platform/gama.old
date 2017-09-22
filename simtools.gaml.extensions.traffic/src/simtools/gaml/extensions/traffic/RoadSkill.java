@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'RoadSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'RoadSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -37,15 +36,41 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = "agents_on", type = IType.LIST, of = IType.LIST, doc = @doc("for each lane of the road, the list of agents for each segment")),
-		@var(name = "all_agents", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of agents on the road")),
-		@var(name = "source_node", type = IType.AGENT, doc = @doc("the source node of the road")),
-		@var(name = "target_node", type = IType.AGENT, doc = @doc("the target node of the road")),
-		@var(name = "lanes", type = IType.INT, doc = @doc("the number of lanes")),
-		@var(name = "linked_road", type = ITypeProvider.OWNER_TYPE, doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")),
-		@var(name = "maxspeed", type = IType.FLOAT, doc = @doc("the maximal speed on the road")) })
-@skill(name = "skill_road", concept = { IConcept.TRANSPORT, IConcept.SKILL })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@vars ({ @var (
+		name = "agents_on",
+		type = IType.LIST,
+		of = IType.LIST,
+		doc = @doc ("for each lane of the road, the list of agents for each segment")),
+		@var (
+				name = "all_agents",
+				type = IType.LIST,
+				of = IType.AGENT,
+				doc = @doc ("the list of agents on the road")),
+		@var (
+				name = "source_node",
+				type = IType.AGENT,
+				doc = @doc ("the source node of the road")),
+		@var (
+				name = "target_node",
+				type = IType.AGENT,
+				doc = @doc ("the target node of the road")),
+		@var (
+				name = "lanes",
+				type = IType.INT,
+				doc = @doc ("the number of lanes")),
+		@var (
+				name = "linked_road",
+				type = ITypeProvider.OWNER_TYPE,
+				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
+		@var (
+				name = "maxspeed",
+				type = IType.FLOAT,
+				doc = @doc ("the maximal speed on the road")) })
+@skill (
+		name = "skill_road",
+		concept = { IConcept.TRANSPORT, IConcept.SKILL },
+		doc = @doc ("A skill for agents representing roads in traffic simulations"))
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
 
 	public final static String AGENTS = "all_agents";
@@ -57,70 +82,70 @@ public class RoadSkill extends Skill {
 	public final static String MAXSPEED = "maxspeed";
 	public final static String LINKED_ROAD = "linked_road";
 
-	@getter(AGENTS_ON)
+	@getter (AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
 
-	@getter(AGENTS)
+	@getter (AGENTS)
 	public static List getAgents(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS);
 	}
 
-	@getter(SOURCE_NODE)
+	@getter (SOURCE_NODE)
 	public static IAgent getSourceNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(SOURCE_NODE);
 	}
 
-	@getter(TARGET_NODE)
+	@getter (TARGET_NODE)
 	public static IAgent getTargetNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(TARGET_NODE);
 	}
 
-	@getter(LANES)
+	@getter (LANES)
 	public static Integer getLanes(final IAgent agent) {
 		return (Integer) agent.getAttribute(LANES);
 	}
 
-	@getter(MAXSPEED)
+	@getter (MAXSPEED)
 	public static Double getMaxSpeed(final IAgent agent) {
 		return (Double) agent.getAttribute(MAXSPEED);
 	}
 
-	@setter(LANES)
+	@setter (LANES)
 	public static void setLanes(final IAgent agent, final int ln) {
 		agent.setAttribute(LANES, ln);
 	}
 
-	@setter(MAXSPEED)
+	@setter (MAXSPEED)
 	public static void setMaxSpeed(final IAgent agent, final Double sp) {
 		agent.setAttribute(MAXSPEED, sp);
 	}
 
-	@setter(SOURCE_NODE)
+	@setter (SOURCE_NODE)
 	public static void setSourceNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(SOURCE_NODE, nd);
 	}
 
-	@setter(TARGET_NODE)
+	@setter (TARGET_NODE)
 	public void setTargetNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(TARGET_NODE, nd);
 	}
 
-	@getter(LINKED_ROAD)
+	@getter (LINKED_ROAD)
 	public static IAgent getLinkedRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(LINKED_ROAD);
 	}
 
-	@setter(LINKED_ROAD)
+	@setter (LINKED_ROAD)
 	public static void setLinkedRoad(final IAgent agent, final IAgent rd) {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 
 	public static void register(final IAgent road, final IAgent driver, int lane) throws GamaRuntimeException {
 		final IAgent linkedRoad = (IAgent) road.getAttribute(LINKED_ROAD);
-		final boolean agentOnLinkedRoad = driver == null ? false
-				: (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
+		final boolean agentOnLinkedRoad =
+				driver == null ? false : (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
 		final int nbLanes = (Integer) road.getAttribute(LANES);
 
 		if (driver != null) {
@@ -178,15 +203,11 @@ public class RoadSkill extends Skill {
 
 	public static int getSegmentIndex(final IAgent road, final IAgent driver) {
 		final Coordinate[] coords = road.getInnerGeometry().getCoordinates();
-		if (coords.length == 2) {
-			return 0;
-		}
+		if (coords.length == 2) { return 0; }
 
 		final ILocation loc = driver.getLocation();
 		for (int i = 0; i < coords.length - 1; i++) {
-			if (coords[i].equals(loc)) {
-				return i;
-			}
+			if (coords[i].equals(loc)) { return i; }
 		}
 		double distanceS = Double.MAX_VALUE;
 		int indexSegment = 0;
@@ -207,16 +228,27 @@ public class RoadSkill extends Skill {
 
 	}
 
-	@action(name = "register", args = {
-			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to register on the road.")),
-			@arg(name = "lane", type = IType.INT, optional = false, doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) }, doc = @doc(value = "register the agent on the road at the given lane", examples = {
-					@example("do register agent: the_driver lane: 0") }))
+	@action (
+			name = "register",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = false,
+					doc = @doc ("the agent to register on the road.")),
+					@arg (
+							name = "lane",
+							type = IType.INT,
+							optional = false,
+							doc = @doc ("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) },
+			doc = @doc (
+					value = "register the agent on the road at the given lane",
+					examples = { @example ("do register agent: the_driver lane: 0") }))
 	public void primRegister(final IScope scope) throws GamaRuntimeException {
 		final IAgent road = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
 		final IAgent linkedRoad = getLinkedRoad(road);
-		final boolean agentOnLinkedRoad = driver == null ? false
-				: (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
+		final boolean agentOnLinkedRoad =
+				driver == null ? false : (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);
 		final int nbLanes = getLanes(road);
 		int lane = scope.getIntArg("lane");
 
@@ -286,9 +318,16 @@ public class RoadSkill extends Skill {
 		}
 	}
 
-	@action(name = "unregister", args = {
-			@arg(name = "agent", type = IType.AGENT, optional = false, doc = @doc("the agent to unregister on the road.")) }, doc = @doc(value = "unregister the agent on the road", examples = {
-					@example("do unregister agent: the_driver") }))
+	@action (
+			name = "unregister",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = false,
+					doc = @doc ("the agent to unregister on the road.")) },
+			doc = @doc (
+					value = "unregister the agent on the road",
+					examples = { @example ("do unregister agent: the_driver") }))
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
 		// final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);

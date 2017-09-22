@@ -64,7 +64,7 @@ public interface IGamaView {
 
 	IDisplayOutput getOutput();
 
-	public void close();
+	public void close(IScope scope);
 
 	public void removeOutput(IDisplayOutput putput);
 
@@ -75,5 +75,7 @@ public interface IGamaView {
 	public String getPartName();
 
 	public void setName(String name);
+
+	public void updateToolbarState();
 
 }

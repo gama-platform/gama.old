@@ -172,6 +172,7 @@
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
+		<module>../msi.gama.documentation</module>
 		<module>../ummisco.gama.ui.modeling</module>
 		<module>../ummisco.gama.ui.shared</module>
 		<module>../ummisco.gama.ui.navigator</module>
@@ -196,8 +197,6 @@
 		<module>../simtools.gaml.extensions.physics</module>
 
 
-		<module>../idees.gama.features.weka</module>
-		<module>../idees.gama.weka</module>
 		<module>../irit.gaml.extensions.database</module>
 		<module>../irit.gaml.extensions.test</module>
 
@@ -219,7 +218,7 @@
 		<module>../ummisco.gama.serialize</module>
 		<module>../ummisco.gama.network</module>
 		<module>../ummisco.gaml.extensions.maths</module>
-		<module>../ummisco.gaml.extensions.rjava</module>
+		
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
 

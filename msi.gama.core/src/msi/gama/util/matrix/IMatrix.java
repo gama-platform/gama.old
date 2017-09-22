@@ -143,7 +143,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = { IConcept.MATRIX })
+			concept = { IConcept.MATRIX },
+			doc = @doc ("Multiplies the two matrices operands"))
 	public abstract IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -151,7 +152,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = IType.FLOAT,
 			category = { IOperatorCategory.MATRIX },
-			concept = { IConcept.MATRIX })
+			concept = { IConcept.MATRIX },
+			doc = @doc ("Divides the two matrices operands"))
 	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -173,7 +175,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Performs a subtraction between the two matrix operands"))
 	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -181,7 +184,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Performs a multiplication between the matrix operand and the float operand"))
 	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -189,7 +193,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = { IConcept.MATRIX },
+			doc = @doc ("Performs a multiplication between the two matrix operands"))
 	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -197,7 +202,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Divides all the elements of the matrix operand by the float operand"))
 	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -205,7 +211,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Divides all the elements of the matrix operand by the integer operand"))
 	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -213,7 +220,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Adds the float operand to all the elements in the matrix"))
 	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -221,7 +229,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Adds the int operand to all the elements in the matrix"))
 	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -229,7 +238,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Subtracts the float operand from all the elements in the matrix"))
 	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -237,7 +247,8 @@ public interface IMatrix<T>
 			can_be_const = true,
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
-			concept = {})
+			concept = {},
+			doc = @doc ("Subtracts the int operand from all the elements in the matrix"))
 	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
 
 	public abstract T get(IScope scope, final int col, final int row);

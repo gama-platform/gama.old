@@ -204,7 +204,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	};
 
 	protected void updateOverlay() {
-		if (overlay.isVisible())
+		if (overlay != null && overlay.isVisible())
 			overlay.update();
 	}
 
@@ -234,7 +234,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public boolean isOpenGL() {
 		if (outputs.isEmpty()) { return false; }
-		return getOutput().isOpenGL();
+		return getOutput().getData().isOpenGL();
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -426,8 +426,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void widgetDisposed(final DisposeEvent e) {
 		if (disposed) { return; }
-		if (getOutput() != null) {
-			getOutput().getData().removeListener(this);
+		final LayeredDisplayOutput output = getOutput();
+		if (output != null) {
+			output.getData().listeners.clear();
+			final IDisplaySurface s = output.getSurface();
+			if (isOpenGL() && s != null) {
+				s.dispose();
+				output.setSurface(null);
+			}
 		}
 		if (keyAndMouseListener != null) {
 			keyAndMouseListener.dispose();
@@ -440,8 +446,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			}
 		}
-		// final IDisplaySurface s = getDisplaySurface();
-		// if ( s != null ) {
 		releaseLock();
 		// }
 		if (updateThread != null) {
@@ -537,6 +541,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				sb.append("]");
 			}
 		}
+	}
+
+	@Override
+	public boolean toolbarVisible() {
+		return getOutput().getData().isToolbarVisible();
 	}
 
 	@Override
@@ -818,7 +827,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		layerViewer.setSpacing(5);
 		// Fill the 2 viewers
 		fillGeneralParameters(propertiesViewer);
-		if (getOutput().isOpenGL()) {
+		if (isOpenGL()) {
 			fillCameraParameters(propertiesViewer);
 			fillKeystoneParameters(propertiesViewer);
 		}
@@ -1101,7 +1110,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			close();
+			close(GAMA.getRuntimeScope());
 		}
 	}
 

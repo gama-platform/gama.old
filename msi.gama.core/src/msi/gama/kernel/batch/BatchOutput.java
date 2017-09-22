@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'BatchOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'BatchOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -22,12 +21,31 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.SAVE_BATCH, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = {
-		IConcept.BATCH })
-@inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.TO, type = IType.LABEL, optional = false),
-		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
-		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true) }, omissible = IKeyword.DATA)
+@symbol (
+		name = IKeyword.SAVE_BATCH,
+		kind = ISymbolKind.BATCH_METHOD,
+		with_sequence = false,
+		concept = { IConcept.BATCH },
+		internal = true)
+@inside (
+		kinds = { ISymbolKind.EXPERIMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.TO,
+				type = IType.LABEL,
+				optional = false,
+				internal = true),
+				@facet (
+						name = IKeyword.REWRITE,
+						type = IType.BOOL,
+						optional = true,
+						internal = true),
+				@facet (
+						name = IKeyword.DATA,
+						type = IType.NONE,
+						optional = true,
+						internal = true) },
+		omissible = IKeyword.DATA)
 public class BatchOutput extends Symbol {
 
 	// A placeholder for a file output
@@ -39,7 +57,6 @@ public class BatchOutput extends Symbol {
 	}
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> commands) {
-	}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
 }

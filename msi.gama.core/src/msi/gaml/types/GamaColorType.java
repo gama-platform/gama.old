@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -33,7 +34,8 @@ import msi.gaml.operators.Cast;
 		id = IType.COLOR,
 		wraps = { GamaColor.class, Color.class },
 		kind = ISymbolKind.Variable.REGULAR,
-		concept = { IConcept.TYPE, IConcept.COLOR })
+		concept = { IConcept.TYPE, IConcept.COLOR },
+		doc = @doc ("The type rgb represents colors in GAML, with their three red, green, blue components and, optionally, a fourth alpha component "))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaColorType extends GamaType<GamaColor> {
 

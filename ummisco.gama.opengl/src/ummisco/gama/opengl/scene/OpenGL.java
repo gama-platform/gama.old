@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.DoubleBuffer;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,6 +34,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2GL3;
@@ -106,11 +108,8 @@ public class OpenGL {
 	private GL2 gl;
 	private final GLUT glut;
 	private int viewWidth, viewHeight;
+	private float layerScalingFactor = 1f;
 	private final PickingState pickingState;
-
-	// The stacks of transformations in model view
-	// private final Deque<Matrix3D> transformations = new ArrayDeque<>();
-	private boolean isModelView;
 
 	// Textures
 	private final LoadingCache<BufferedImage, Texture> volatileTextures;
@@ -149,13 +148,15 @@ public class OpenGL {
 	final GamaPoint currentNormal = new GamaPoint();
 	final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
-	private double currentZIncrement, currentZTranslation, maxZ;
+	private double currentZIncrement, currentZTranslation, maxZ, savedZTranslation;
+	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.OpenGL.OPENGL_TRIANGULATOR.getValue();
 	private final Rotation3D tempRotation = Rotation3D.identity();
 	private GLUquadricImpl quadric;
+	private int originalViewHeight;
+	private int originalViewWidth;
 
 	public OpenGL(final Abstract3DRenderer renderer) {
-		// transformations.add(new Matrix3D());
 		glut = new GLUT();
 
 		worldX = renderer.getEnvWidth();
@@ -213,7 +214,6 @@ public class OpenGL {
 		staticTextures.cleanUp();
 		gl = null;
 
-		// transformations.clear();
 	}
 
 	public GL2 getGL() {
@@ -230,18 +230,30 @@ public class OpenGL {
 
 	public void setViewWidth(final int width) {
 		viewWidth = width;
+		if (originalViewWidth == 0)
+			originalViewWidth = width;
 	}
 
 	public int getViewWidth() {
 		return viewWidth;
 	}
 
+	public int getInitialViewWidth() {
+		return originalViewWidth;
+	}
+
 	public void setViewHeight(final int width) {
 		viewHeight = width;
+		if (originalViewHeight == 0)
+			originalViewHeight = width;
 	}
 
 	public int getViewHeight() {
 		return viewHeight;
+	}
+
+	public int getInitialViewHeight() {
+		return originalViewHeight;
 	}
 
 	public void setZIncrement(final double z) {
@@ -249,12 +261,28 @@ public class OpenGL {
 		currentZIncrement = z;
 	}
 
+	public void setLayerScalingFactor(final float s) {
+		layerScalingFactor = s;
+	}
+
 	/**
 	 * Computes the translation in Z to enable z-fighting, using the current z increment, computed by ModelScene. The
 	 * translations are cumulative
 	 */
 	public void translateByZIncrement() {
-		currentZTranslation += currentZIncrement;
+		if (!ZTranslationSuspended)
+			currentZTranslation += currentZIncrement;
+	}
+
+	public void suspendZTranslation() {
+		ZTranslationSuspended = true;
+		savedZTranslation = currentZTranslation;
+		currentZTranslation = 0;
+	}
+
+	public void resumeZTranslation() {
+		ZTranslationSuspended = false;
+		currentZTranslation = savedZTranslation;
 	}
 
 	/**
@@ -276,18 +304,13 @@ public class OpenGL {
 
 	public void matrixMode(final int mode) {
 		gl.glMatrixMode(mode);
-		isModelView = mode == GL2.GL_MODELVIEW;
 	}
 
 	public void pushMatrix() {
-		// if (isModelView)
-		// transformations.push(new Matrix3D());
 		gl.glPushMatrix();
 	}
 
 	public void popMatrix() {
-		// if (isModelView)
-		// transformations.pop();
 		gl.glPopMatrix();
 	}
 
@@ -316,8 +339,6 @@ public class OpenGL {
 	}
 
 	public void translateBy(final double x, final double y, final double z) {
-		// if (isModelView)
-		// transformations.peek().add(new Translation3D(x, y, z));
 		gl.glTranslated(x, y, z);
 	}
 
@@ -341,8 +362,6 @@ public class OpenGL {
 	}
 
 	public void rotateBy(final double angle, final double x, final double y, final double z) {
-		// if (isModelView)
-		// transformations.peek().add(new Rotation3D(new GamaPoint(x, y, z), angle * Maths.toRad));
 		gl.glRotated(angle, x, y, z);
 	}
 
@@ -353,8 +372,6 @@ public class OpenGL {
 	}
 
 	public void scaleBy(final double x, final double y, final double z) {
-		// if (isModelView)
-		// transformations.peek().add(Scaling3D.of(x, y, z));
 		currentScale.setLocation(x, y, z);
 		gl.glScaled(x, y, z);
 	}
@@ -449,9 +466,6 @@ public class OpenGL {
 		if (maxZ < realZ)
 			maxZ = realZ;
 		gl.glVertex3d(x, y, z + currentZTranslation);
-		// workingPoint.setLocation(x, y, z + currentZTranslation);
-		// transformations.forEach((m) -> m.applyTo(workingPoint));
-		// gl.glVertex3d(workingPoint.x, workingPoint.y, workingPoint.z);
 	}
 
 	private void outputTexCoord(final double u, final double v) {
@@ -840,9 +854,11 @@ public class OpenGL {
 	 *            the scale to apply
 	 */
 	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z) {
-		final TextRenderer r = textRendererCache.get(font);
-		r.setUseVertexArrays(false);
+		final TextRenderer r =
+				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
 		if (r == null) { return; }
+		r.setUseVertexArrays(false);
+
 		if (getCurrentColor() != null)
 			r.setColor(getCurrentColor());
 		final float scale = 1f / (float) (viewHeight / getWorldHeight());
@@ -854,7 +870,8 @@ public class OpenGL {
 
 	public void perspectiveOrthoText(final String string, final Font font, final double x, final double y,
 			final double z) {
-		final TextRenderer r = textRendererCache.get(font);
+		final TextRenderer r =
+				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
 		if (r == null) { return; }
 		r.setUseVertexArrays(false);
 		if (getCurrentColor() != null)
@@ -1019,6 +1036,10 @@ public class OpenGL {
 		geometryCache.put(POINT, BuiltInGeometry.assemble().faces(compileAsList(() -> {
 			drawSphere(1.0, 5, 5);
 		})));
+
+		geometryCache.put(IShape.Type.ROUNDED, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
+			drawRoundedRectangle();
+		})));
 		geometryCache.put(SQUARE, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
 			drawSimpleShape(baseVertices, 4, true, true, true, null);
 		})));
@@ -1049,6 +1070,23 @@ public class OpenGL {
 	// COMPLEX SHAPES
 
 	private static final double PI_2 = 2f * Math.PI;
+
+	static double roundRect[] = { .92, 0, .933892, .001215, .947362, .004825, .96, .010718, .971423, .018716, .981284,
+			.028577, .989282, .04, .995175, .052638, .998785, .066108, 1, .08, 1, .92, .998785, .933892, .995175,
+			.947362, .989282, .96, .981284, .971423, .971423, .981284, .96, .989282, .947362, .995175, .933892, .998785,
+			.92, 1, .08, 1, .066108, .998785, .052638, .995175, .04, .989282, .028577, .981284, .018716, .971423,
+			.010718, .96, .004825, .947362, .001215, .933892, 0, .92, 0, .08, .001215, .066108, .004825, .052638,
+			.010718, .04, .018716, .028577, .028577, .018716, .04, .010718, .052638, .004825, .066108, .001215, .08,
+			0 };
+
+	static DoubleBuffer db = (DoubleBuffer) Buffers.newDirectDoubleBuffer(roundRect.length).put(roundRect).rewind();
+
+	public void drawRoundedRectangle() {
+		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+		gl.glVertexPointer(2, GL2.GL_DOUBLE, 0, db);
+		gl.glDrawArrays(GL2.GL_TRIANGLE_FAN, 0, 40);
+		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+	}
 
 	public void drawDisk(final double inner, final double outer, final int slices, final int loops) {
 		double da, dr;

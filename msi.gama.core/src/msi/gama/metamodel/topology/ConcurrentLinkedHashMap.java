@@ -1790,7 +1790,7 @@ public class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V> implements 
 		public boolean equals(final Object o) {
 			if (!(o instanceof Entry))
 				return false;
-			final Entry e = (Entry) o;
+			final Entry<?, ?> e = (Entry<?, ?>) o;
 			return eq(key, e.getKey()) && eq(value, e.getValue());
 		}
 

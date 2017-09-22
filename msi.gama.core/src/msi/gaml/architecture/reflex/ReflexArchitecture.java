@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -30,7 +31,8 @@ import msi.gaml.statements.IStatement;
  */
 @skill (
 		name = IKeyword.REFLEX,
-		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
+		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
+		doc = @doc ("Represents the default behavioral architecture attached to species of agents if none is specified"))
 public class ReflexArchitecture extends AbstractArchitecture {
 
 	protected List<IStatement> _inits;

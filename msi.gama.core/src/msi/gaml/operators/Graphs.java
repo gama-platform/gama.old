@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
@@ -496,7 +498,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc (
-			value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
+			value = "returns the connected components of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
 			examples = { @example (
 					value = "graph my_graph <- graph([]);"),
 					@example (
@@ -506,7 +508,7 @@ public class Graphs {
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException
-				.error("In the nb_connected_components_of operator, the graph should not be null!", scope); }
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -518,7 +520,82 @@ public class Graphs {
 		}
 		return results;
 	}
+	
+	@operator (
+			value = "connected_components_of",
+			type = IType.LIST,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the connected components of a graph, i.e. the list of all edges (if the boolean is true) or vertices (if the boolean is false) that are in the connected components. ",
+			examples = { @example (
+					value = "graph my_graph <- graph([]);"),
+					@example (
+							value = "connected_components_of (my_graph, true)",
+							equals = "the list of all the components as list",
+							test = false) },
+			see = { "alpha_index", "connectivity_index", "nb_cycles" })
+	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
 
+		ConnectivityInspector ci;
+		// there is an error with connectivity inspector of JGrapht....
+		ci = new ConnectivityInspector((DirectedGraph) graph);
+		final IList<IList> results = GamaListFactory.create(Types.LIST);
+		for (final Object obj : ci.connectedSets()) {
+			if (edge) {
+				IList edges = GamaListFactory.create(scope, graph.getType().getContentType());
+				for (Object v : (Set)obj) {
+					edges.addAll(graph.edgesOf(v));
+				}
+				
+				results.add(Containers.remove_duplicates(scope, edges));
+				
+			}
+			else
+				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+		}
+		return results;
+	}
+
+	@operator (
+			value = "main_connected_component",
+			type = IType.GRAPH,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the sub-graph corresponding to the main connected components of the graph",
+			examples = { 
+					@example (
+							value = "main_connected_components (my_graph)",
+							equals = "the sub-graph corresponding to the main connected components of the graph",
+							test = false) },
+			see = { "connected_components_of"})
+	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+
+		IList<IList> cc = connectedComponentOf(scope, graph);
+		IGraph newGraph = (IGraph) graph.copy(scope);
+		IList mainCC = null;
+		int size = 0;
+		for (IList c : cc) {
+			if (c.size() > size) {
+				size = c.size();
+				mainCC = c;
+			}
+		}
+		Set vs = graph.vertexSet();
+		vs.removeAll(mainCC);
+		for (Object v : vs) {
+			newGraph.removeAllEdges(graph.edgesOf(v));
+			newGraph.removeVertex(v);
+		}
+		return newGraph;
+	}
+	
 	@operator (
 			value = "maximal_cliques_of",
 			type = IType.LIST,
@@ -1691,6 +1768,50 @@ public class Graphs {
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
 	}
+	
+
+	@operator (
+			value = "strahler",
+					content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+					category = { IOperatorCategory.GRAPH, IConcept.EDGE })
+	@doc (
+			value = "retur for each edge, its strahler number")
+	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
+		GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
+		if (graph == null || graph.isEmpty(scope)) return results;
+		if (!graph.getConnected() || graph.hasCycle()) {
+			throw GamaRuntimeException
+				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope); 
+		}
+		
+		List currentEdges = (List) graph.getEdges().stream().filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0).collect(Collectors.toList());
+		while(!currentEdges.isEmpty()) {
+			List newList = new ArrayList<>();
+			for (Object e : currentEdges) {
+				List previousEdges = inEdgesOf(scope, graph, graph.getEdgeSource(e));
+				List nextEdges = outEdgesOf(scope, graph, graph.getEdgeTarget(e));
+				if (nextEdges.isEmpty()) {
+					results.put(e, 1);
+					newList.addAll(previousEdges);	
+				} else {
+					boolean notCompleted = nextEdges.stream().anyMatch(a -> !results.containsKey(a));
+					if (notCompleted) {
+						newList.add(e);
+					} else {
+						List<Integer> vals = (List<Integer>) nextEdges.stream().map(a-> results.get(a)).collect(Collectors.toList());
+						Integer maxVal = Collections.max(vals);
+						int nbIt = Collections.frequency(vals, maxVal);
+						if (nbIt > 1)results.put(e, maxVal+1);
+						else results.put(e, maxVal);
+						newList.addAll(previousEdges);	
+					}
+				}
+			}
+			currentEdges = newList;
+		}
+		return results;
+	}
+	
 
 	// TODO "complete" (pour créer un graphe complet)
 

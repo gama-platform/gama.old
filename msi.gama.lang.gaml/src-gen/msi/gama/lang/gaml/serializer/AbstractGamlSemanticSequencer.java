@@ -53,6 +53,7 @@ import msi.gama.lang.gaml.gaml.S_Return;
 import msi.gama.lang.gaml.gaml.S_Set;
 import msi.gama.lang.gaml.gaml.S_Solve;
 import msi.gama.lang.gaml.gaml.S_Species;
+import msi.gama.lang.gaml.gaml.S_Try;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
@@ -419,6 +420,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				return; 
 			case GamlPackage.SSPECIES:
 				sequence_S_Species(context, (S_Species) semanticObject); 
+				return; 
+			case GamlPackage.STRY:
+				sequence_S_Try(context, (S_Try) semanticObject); 
 				return; 
 			case GamlPackage.SVAR:
 				sequence_S_Var(context, (S_Var) semanticObject); 
@@ -1644,6 +1648,19 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (key=_SpeciesKey firstFacet='name:'? name=ID facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_Species(ISerializationContext context, S_Species semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Statement returns S_Try
+	 *     S_Try returns S_Try
+	 *
+	 * Constraint:
+	 *     (key='try' block=Block catch=Block?)
+	 */
+	protected void sequence_S_Try(ISerializationContext context, S_Try semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

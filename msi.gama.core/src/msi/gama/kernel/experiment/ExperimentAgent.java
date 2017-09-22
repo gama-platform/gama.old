@@ -85,7 +85,8 @@ import msi.gaml.types.Types;
 		// @var(name = GAMA._FATAL, type = IType.BOOL),
 		@var (
 				name = GAMA._WARNINGS,
-				type = IType.BOOL),
+				type = IType.BOOL,
+				doc = @doc ("The value of the preference 'Consider warnings as errors'")),
 		@var (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
@@ -308,6 +309,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * Building the simulation agent and its population
 	 */
 
+	@SuppressWarnings ("unchecked")
 	protected void createSimulationPopulation() {
 		final IModel model = getModel();
 		SimulationPopulation pop = (SimulationPopulation) this.getMicroPopulation(model);
@@ -571,7 +573,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
 		if (species == getModel()) { return getSimulationPopulation(); }
-		return this.getSimulation().getPopulationFor(species.getName());
+		final SimulationAgent sim = getSimulation();
+		if (sim == null)
+			return IPopulation.createEmpty(species);
+		return sim.getPopulationFor(species.getName());
 
 	}
 
@@ -725,10 +730,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
-		return Iterables.concat(
-				Iterables.filter(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
-						ContainerHelper.NOT_NULL),
-				Collections.singletonList(getOutputManager()));
+		return Iterables.filter(
+				Iterables.concat(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
+						Collections.singletonList(getOutputManager())),
+				ContainerHelper.NOT_NULL);
 	}
 
 	/**

@@ -44,21 +44,26 @@ import msi.gaml.variables.IVariable;
 @vars ({ @var (
 		name = IKeyword.ATTRIBUTES,
 		type = IType.LIST,
-		of = IType.STRING),
+		of = IType.STRING,
+		doc = @doc ("A list of the names of the attributes of this species")),
 		@var (
 				name = IKeyword.PARENT,
-				type = IType.SPECIES),
+				type = IType.SPECIES,
+				doc = @doc ("The parent (if any) of this species")),
 		@var (
 				name = IKeyword.NAME,
-				type = IType.STRING),
+				type = IType.STRING,
+				doc = @doc ("The name of the species")),
 		@var (
 				name = ISpecies.SUBSPECIES,
 				type = IType.LIST,
-				of = IType.SPECIES),
+				of = IType.SPECIES,
+				doc = @doc ("A list of the species declared inside this species")),
 		@var (
 				name = ISpecies.POPULATION,
 				type = IType.LIST,
-				of = ITypeProvider.FIRST_CONTENT_TYPE) })
+				of = ITypeProvider.FIRST_CONTENT_TYPE,
+				doc = @doc ("The population that corresponds to this species in an instance of its host")) })
 public interface ISpecies
 		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {
 

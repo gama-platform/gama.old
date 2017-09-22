@@ -38,7 +38,8 @@ public class GamaAttributesType extends GamaMapType {
 				return (SavedAgent) obj;
 		}
 		if (obj instanceof Map) {
-			final GamaMap<String, Object> map = GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE, (Map) obj);
+			final GamaMap<String, Object> map =
+					GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE, (Map<String, Object>) obj);
 			return new SavedAgent(map);
 		}
 		return null;

@@ -62,21 +62,21 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
 	perceive target:fireArea in: 15{
-		focus var:location priority:11;
+		focus var:location strength:11;
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		}
 	}
 	
 	//The rules are used to create a desire from a belief. We can specify the priority of the desire with a statement priority.
-	rule belief: new_predicate("location_fireArea") new_desire: get_belief_with_name("location_fireArea");
+	rule belief: new_predicate("location_fireArea") new_desire: get_belief_with_name("location_fireArea").predicate;
 	rule belief: no_water_predicate new_desire: water_predicate;
 	
 	//The plan to do when the intention is to patrol.
 	plan patrolling intention:patrol_desire finished_when: has_belief(new_predicate("location_fireArea")) or has_belief(no_water_predicate){
 		do wander amplitude: 30 speed: 2.0;
 	}
-	
+	 
 	//The plan that is executed when the agent got the intention of extinguish a fire.
 	plan stopFire intention: new_predicate("location_fireArea") priority:5{
 		point target_fire <- point(get_current_intention().values["location_value"] );

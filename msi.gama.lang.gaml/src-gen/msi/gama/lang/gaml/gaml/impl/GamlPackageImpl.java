@@ -57,6 +57,7 @@ import msi.gama.lang.gaml.gaml.S_Return;
 import msi.gama.lang.gaml.gaml.S_Set;
 import msi.gama.lang.gaml.gaml.S_Solve;
 import msi.gama.lang.gaml.gaml.S_Species;
+import msi.gama.lang.gaml.gaml.S_Try;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
@@ -204,6 +205,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass s_IfEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass s_TryEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1055,6 +1063,26 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EReference getS_If_Else()
   {
     return (EReference)s_IfEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getS_Try()
+  {
+    return s_TryEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getS_Try_Catch()
+  {
+    return (EReference)s_TryEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2072,6 +2100,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_IfEClass = createEClass(SIF);
     createEReference(s_IfEClass, SIF__ELSE);
 
+    s_TryEClass = createEClass(STRY);
+    createEReference(s_TryEClass, STRY__CATCH);
+
     s_OtherEClass = createEClass(SOTHER);
 
     s_ReturnEClass = createEClass(SRETURN);
@@ -2267,6 +2298,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_DoEClass.getESuperTypes().add(this.getStatement());
     s_LoopEClass.getESuperTypes().add(this.getS_Declaration());
     s_IfEClass.getESuperTypes().add(this.getStatement());
+    s_TryEClass.getESuperTypes().add(this.getStatement());
     s_OtherEClass.getESuperTypes().add(this.getStatement());
     s_ReturnEClass.getESuperTypes().add(this.getStatement());
     s_DeclarationEClass.getESuperTypes().add(this.getStatement());
@@ -2380,6 +2412,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(s_IfEClass, S_If.class, "S_If", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getS_If_Else(), ecorePackage.getEObject(), null, "else", null, 0, 1, S_If.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(s_TryEClass, S_Try.class, "S_Try", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getS_Try_Catch(), this.getBlock(), null, "catch", null, 0, 1, S_Try.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_OtherEClass, S_Other.class, "S_Other", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

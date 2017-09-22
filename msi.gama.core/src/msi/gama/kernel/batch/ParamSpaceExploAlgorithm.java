@@ -54,12 +54,13 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
 	// protected IScope scope;
-	private ParametersSet bestSolution;
-	private Double bestFitness;
+	private ParametersSet bestSolution = null;
+	private Double bestFitness = null;
 	protected short combination;
 
 	protected abstract ParametersSet findBestSolution(IScope scope) throws GamaRuntimeException;
 
+	
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		currentExperiment = agent;
@@ -178,5 +179,12 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestFitness : " +
 		// bestFitness);
 		this.bestFitness = bestFitness;
+	}
+	
+	public void updateBestFitness(ParametersSet solution, Double fitness){
+		if ((bestSolution == null) ||(isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness())) {
+			setBestFitness(fitness);
+			setBestSolution(solution);
+		}
 	}
 }

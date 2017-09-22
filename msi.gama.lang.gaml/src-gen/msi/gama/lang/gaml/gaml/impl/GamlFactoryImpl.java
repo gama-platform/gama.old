@@ -80,6 +80,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SDO: return createS_Do();
       case GamlPackage.SLOOP: return createS_Loop();
       case GamlPackage.SIF: return createS_If();
+      case GamlPackage.STRY: return createS_Try();
       case GamlPackage.SOTHER: return createS_Other();
       case GamlPackage.SRETURN: return createS_Return();
       case GamlPackage.SDECLARATION: return createS_Declaration();
@@ -316,6 +317,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_IfImpl s_If = new S_IfImpl();
     return s_If;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Try createS_Try()
+  {
+    S_TryImpl s_Try = new S_TryImpl();
+    return s_Try;
   }
 
   /**

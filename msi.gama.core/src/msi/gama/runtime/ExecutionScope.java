@@ -58,7 +58,8 @@ public class ExecutionScope implements IScope {
 	protected IExecutionContext executionContext;
 	protected AgentExecutionContext agentContext;
 	protected final SpecialContext additionalContext = new SpecialContext();
-	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace, _interrupted, _errors_disabled;
+	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace, _in_try_mode, _interrupted,
+			_errors_disabled;
 	private ISymbol currentSymbol;
 
 	class SpecialContext {
@@ -68,6 +69,7 @@ public class ExecutionScope implements IScope {
 		private ITopLevelAgent rootAgent;
 		private IGui gui;
 		private ITypesManager types;
+		private GamaRuntimeException currentError;
 
 		void clear() {
 			each = null;
@@ -76,6 +78,7 @@ public class ExecutionScope implements IScope {
 			rootAgent = null;
 			gui = null;
 			types = null;
+			currentError = null;
 		}
 
 		public void copyFrom(final SpecialContext specialContext) {
@@ -87,6 +90,7 @@ public class ExecutionScope implements IScope {
 			rootAgent = specialContext.rootAgent;
 			gui = specialContext.gui;
 			types = specialContext.types;
+			currentError = specialContext.currentError;
 		}
 
 	}
@@ -172,6 +176,24 @@ public class ExecutionScope implements IScope {
 	@Override
 	public boolean reportErrors() {
 		return !_errors_disabled;
+	}
+
+	/**
+	 * In 'try' mode, the errors are thrown even if _errors_disabled is true
+	 */
+	@Override
+	public void enableTryMode() {
+		_in_try_mode = true;
+	}
+
+	@Override
+	public void disableTryMode() {
+		_in_try_mode = false;
+	}
+
+	@Override
+	public boolean isInTryMode() {
+		return _in_try_mode;
 	}
 
 	@Override
@@ -869,6 +891,15 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IExecutionContext getExecutionContext() {
 		return executionContext;
+	}
+
+	@Override
+	public void setCurrentError(final GamaRuntimeException g) {
+		additionalContext.currentError = g;
+	}
+
+	public GamaRuntimeException getCurrentError() {
+		return additionalContext.currentError;
 	}
 
 }

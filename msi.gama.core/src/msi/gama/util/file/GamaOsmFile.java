@@ -62,6 +62,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -85,7 +86,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.OSM, IConcept.FILE })
+		concept = { IConcept.OSM, IConcept.FILE },
+		doc = @doc ("Represents files that contain OSM GIS information. The internal representation is a list of geometries"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaOsmFile extends GamaGisFile {
 
@@ -121,6 +123,7 @@ public class GamaOsmFile extends GamaGisFile {
 				crs = osmfile.getOwnCRS(null);
 			} catch (final Exception e) {
 				System.out.println("Error in reading metadata of " + url);
+				hasFailed = true;
 
 			} finally {
 
@@ -139,22 +142,29 @@ public class GamaOsmFile extends GamaGisFile {
 
 		public OSMInfo(final String propertiesString) throws NoSuchAuthorityCodeException, FactoryException {
 			super(propertiesString);
-			final String[] segments = split(propertiesString);
-			itemNumber = Integer.valueOf(segments[1]);
-			final String crsString = segments[2];
-			if ("null".equals(crsString)) {
-				crs = null;
-			} else {
-				crs = CRS.parseWKT(crsString);
-			}
-			width = Double.valueOf(segments[3]);
-			height = Double.valueOf(segments[4]);
-			if (segments.length > 5) {
-				final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
-				final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
-				for (int i = 0; i < names.length; i++) {
-					attributes.put(names[i], types[i]);
+			if (!hasFailed) {
+				final String[] segments = split(propertiesString);
+				itemNumber = Integer.valueOf(segments[1]);
+				final String crsString = segments[2];
+				if ("null".equals(crsString)) {
+					crs = null;
+				} else {
+					crs = CRS.parseWKT(crsString);
 				}
+				width = Double.valueOf(segments[3]);
+				height = Double.valueOf(segments[4]);
+				if (segments.length > 5) {
+					final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
+					final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
+					for (int i = 0; i < names.length; i++) {
+						attributes.put(names[i], types[i]);
+					}
+				}
+			} else {
+				itemNumber = 0;
+				width = 0.0;
+				height = 0.0;
+				crs = null;
 			}
 		}
 
@@ -165,22 +175,28 @@ public class GamaOsmFile extends GamaGisFile {
 		 */
 		@Override
 		public String getSuffix() {
-			return "" + itemNumber + " objects | " + FastMath.round(width) + "m x " + FastMath.round(height) + "m";
+			return hasFailed ? "error: decompress the file to a .osm file"
+					: "" + itemNumber + " objects | " + Math.round(width) + "m x " + Math.round(height) + "m";
 		}
 
 		@Override
 		public String getDocumentation() {
 			final StringBuilder sb = new StringBuilder();
-			sb.append("OSM file").append(Strings.LN);
-			sb.append(itemNumber).append(" objects").append(Strings.LN);
-			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
-					.append(Strings.LN);
-			sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
-					.append(Strings.LN);
-			if (!attributes.isEmpty()) {
-				sb.append("Attributes: ").append(Strings.LN);
-				for (final Map.Entry<String, String> entry : attributes.entrySet()) {
-					sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
+			if (hasFailed)
+				sb.append("Unreadable OSM file").append(Strings.LN)
+						.append("Decompress the file to an .osm file and retry");
+			else {
+				sb.append("OSM file").append(Strings.LN);
+				sb.append(itemNumber).append(" objects").append(Strings.LN);
+				sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
+						.append(Strings.LN);
+				sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
+						.append(Strings.LN);
+				if (!attributes.isEmpty()) {
+					sb.append("Attributes: ").append(Strings.LN);
+					for (final Map.Entry<String, String> entry : attributes.entrySet()) {
+						sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
+					}
 				}
 			}
 			return sb.toString();

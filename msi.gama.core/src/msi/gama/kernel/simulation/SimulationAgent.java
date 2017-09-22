@@ -73,7 +73,8 @@ import msi.gaml.types.IType;
  *
  */
 @species (
-		name = IKeyword.MODEL)
+		name = IKeyword.MODEL,
+		internal = true)
 @vars ({ @var (
 		name = IKeyword.COLOR,
 		type = IType.COLOR,
@@ -355,9 +356,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
+			((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
 		}
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
+		if (getProjectionFactory().getUnitConverter() != null) {
+			((WorldProjection) getProjectionFactory().getWorld()).convertUnit(geometry.getInnerGeometry());
+			
+		}
 		setTopology(getScope(), geometry);
 
 	}

@@ -160,43 +160,51 @@ public class Operators {
 	@operator(value = "set_agent_cause", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the agentCause value of the given predicate", examples = @example(value = "predicate set_agent_cause agentA", test = false))
 	public static Predicate withAgentCause(final Predicate predicate, final IAgent agent) throws GamaRuntimeException {
-		predicate.agentCause = agent;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.setAgentCause(agent);
+		return temp;
 	}
 
 	@operator(value = "set_truth", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the is_true value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
 	public static Predicate withTruth(final Predicate predicate, final Boolean truth) throws GamaRuntimeException {
-		predicate.is_true = truth;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.is_true = truth;
+		return temp;
 	}
 
-	@operator(value = "with_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "change the praiseworthiness value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
-	public static Predicate withPraise(final Predicate predicate, final Double praise) throws GamaRuntimeException {
-		predicate.setPraiseworthiness(praise);
-		return predicate;
-	}
+//	@operator(value = "with_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "change the praiseworthiness value of the given predicate", examples = @example(value = "predicate set_truth false", test = false))
+//	public static Predicate withPraise(final Predicate predicate, final Double praise) throws GamaRuntimeException {
+//		Predicate temp = predicate.copy();
+//		temp.setPraiseworthiness(praise);
+//		return temp;
+//	}
 	
 	@operator(value = "with_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the priority of the given predicate", examples = @example(value = "predicate with_priority 2", test = false))
 	public static Predicate withPriority(final Predicate predicate, final Double priority) throws GamaRuntimeException {
-		predicate.priority = priority;
-		return predicate;
+		//Penser à l'enlever car inutile avec la force des états mentaux
+		Predicate temp = predicate.copy();
+		temp.priority = priority;
+		return temp;
 	}
 
 	@operator(value = "with_values", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_values [\"time\"::10]", test = false))
 	public static Predicate withValues(final Predicate predicate, final Map values) throws GamaRuntimeException {
-		predicate.values = values;
-		return predicate;
+		Predicate temp = predicate.copy();
+		temp.setValues(values);
+		return temp;
 	}
 
 	@operator(value = "with_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_lifetime 10", test = false))
 	public static Predicate withValues(final Predicate predicate, final int lifetime) throws GamaRuntimeException {
-		predicate.lifetime = lifetime;
-		return predicate;
+		//inutile car dans les états mentaux
+		Predicate temp = predicate.copy();
+		temp.lifetime = lifetime;
+		return temp;
 	}
 
 	@operator(value = "and", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
@@ -283,14 +291,14 @@ public class Operators {
 		}
 	}
 	
-	@operator(value = "get_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	public static double getPraise(final Predicate pred) {
-		if (pred != null) {
-			return pred.getPraiseworthiness();
-		} else {
-			return 0.0;
-		}
-	}
+//	@operator(value = "get_praiseworthiness", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	public static double getPraise(final Predicate pred) {
+//		if (pred != null) {
+//			return pred.getPraiseworthiness();
+//		} else {
+//			return 0.0;
+//		}
+//	}
 	
 	@operator(value = "new_emotion", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new emotion with the given properties (name)", examples = @example(value = "emotion(\"joy\")", test = false))
@@ -562,6 +570,109 @@ public class Operators {
 	
 	
 	
+	// Faire des opérateurs pour créer des états mentaux (en précisant ou non l'agent propriétaire)
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality) throws GamaRuntimeException {
+		return new MentalState(modality);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred) throws GamaRuntimeException {
+		return new MentalState(modality,pred);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final Integer life,final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred) throws GamaRuntimeException {
+		return new MentalState(modality,pred);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final Integer life,final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life,ag);
+	}
+	
 	@operator(value = "set_modality", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the modality value of the given mental state", examples = @example(value = "mental state set_modality belief", test = false))
 	public static MentalState setModalitity(final MentalState mental, final String modality){
@@ -577,9 +688,16 @@ public class Operators {
 	}
 	
 	@operator(value = "set_strength", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "change the strength value of the given mental state", examples = @example(value = "mental state set_predicate pred1", test = false))
+	@doc(value = "change the strength value of the given mental state", examples = @example(value = "mental state set_strength 1.0", test = false))
 	public static MentalState setStrength(final MentalState mental, final Double strength){
 			mental.setStrength(strength);
+		return mental;
+	}
+	
+	@operator(value = "set_lifetime", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "change the lifetime value of the given mental state", examples = @example(value = "mental state set_lifetime 1", test = false))
+	public static MentalState setLifetime(final MentalState mental, final int life){
+			mental.setLifeTime(life);
 		return mental;
 	}
 	
@@ -612,4 +730,26 @@ public class Operators {
 			return null;
 		}
 	}
+	
+	@operator(value = "get_lifetime", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the lifetime value of the given mental state", examples = @example(value = "get_lifetime(mental_state1)", test = false))
+	public static int getLifetime(final MentalState mental) {
+		if(mental!=null){
+			return mental.getLifeTime();
+		}else{
+			return -1;
+		}
+	}
+	
+	@operator(value = "get_plan_name", can_be_const = true, category = {"BDI"}, concept = { IConcept.BDI })
+	@doc(value = "get the name of a given plan", examples = @example(value = "get_plan_name(agent.current_plan)", test = false))
+	public static String getPlanName(final BDIPlan plan){
+		if(plan!=null && plan.getPlanStatement()!=null){
+			return plan.getPlanStatement().getName();
+		}else{
+			return null;
+		}
+	}
+
+	
 }

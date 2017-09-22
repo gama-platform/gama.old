@@ -11,12 +11,6 @@
  **********************************************************************************************/
 package msi.gama.doc;
 
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.jdom2.JDOMException;
-import org.tmatesoft.svn.core.SVNException;
-import org.xml.sax.SAXException;
 import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
@@ -27,23 +21,14 @@ public class MainGeneratePDF {
 
 	public static boolean generateGamaStyle = false;
 	
-	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws JDOMException 
-	 * @throws TransformerException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 * @throws SVNException 
-	 */
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-		System.out.println("GENERATION OF THE PDF DOCUMENTATION");
+	public static void main(String[] args) {
+		try {
+			System.out.println("GENERATION OF THE PDF DOCUMENTATION");
 		
 		if (generateGamaStyle) {
 			GamaStyleGeneration.generateGamaStyle();
 		}
 
-		try {
 			System.out.print("Preparation of the folders.......................");
 			PrepareEnv.prepareDocumentation(Constants.ONLINE);
 			System.out.println("DONE");

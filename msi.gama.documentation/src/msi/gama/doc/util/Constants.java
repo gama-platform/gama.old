@@ -60,7 +60,7 @@ public class Constants {
 	public static String PANDOC_FOLDER = INPUT_FOLDER + File.separator + "pandocPDF";
 	
 		
-	public static String DOCGAMA_FILE = "gaml"+ File.separator + "docGAMA.xml";
+	public static String DOCGAMA_FILE = "target"+ File.separator + "generated-sources"+ File.separator + "annotations"+ File.separator + "docGAMA.xml";
 	public static String DOCGAMA_GLOBAL_FILE = JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
 		
 	public static String TEST_OPERATORS_FOLDER = "operatorsTest";

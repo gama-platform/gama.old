@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.precision.EnhancedPrecisionOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
@@ -707,7 +708,7 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 				concept = { IConcept.THREED })
 		@doc (
-				value = "A hexagon geometry which the given with and height",
+				value = "A hexagon geometry which the given width and height",
 				usages = { @usage ("returns nil if the operand is nil.") },
 				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
@@ -723,6 +724,28 @@ public abstract class Spatial {
 			final Double width = size.x;
 			final Double height = size.y;
 			if (width <= 0 || height <= 0) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(width, height, location);
+		}
+		
+		@operator (
+				value = "hexagon",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+				concept = { IConcept.THREED })
+		@doc (
+				value = "A hexagon geometry which the given width and height",
+				usages = { @usage ("returns nil if the operand is nil.") },
+				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "hexagon(10,5)",
+						equals = "a geometry as a hexagon of width of 10 and height of 5.",
+						test = false) },
+				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+						"triangle" })
+		public static IShape hexagon(final IScope scope, final Double width, Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgent();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if (width == null || height == null || width <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(width, height, location);
 		}
 
@@ -1283,12 +1306,31 @@ public abstract class Spatial {
 				return g1.difference(g2);
 			} catch (AssertionFailedException | TopologyException e) {
 				try {
+					java.lang.System.out.println("Topology exception: trying single floating point precision");
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					return GeometryPrecisionReducer.reducePointwise(g1, pm)
 							.difference(GeometryPrecisionReducer.reducePointwise(g2, pm));
-				} catch (final Exception e1) {
-					return g1.buffer(0, 0, BufferParameters.CAP_FLAT)
-							.difference(g2.buffer(0, 0, BufferParameters.CAP_FLAT));
+				} catch (final RuntimeException e1) {
+					try {
+						java.lang.System.out.println("Topology exception: trying to buffer geometries");
+						return g1.buffer(0, 10, BufferParameters.CAP_FLAT)
+								.difference(g2.buffer(0, 10, BufferParameters.CAP_FLAT));
+					} catch (final TopologyException e2) {
+						try {
+							java.lang.System.out.println("Topology exception: trying fixed precision operation");
+							final PrecisionModel pm = new PrecisionModel(100000d);
+							return GeometryPrecisionReducer.reduce(g1, pm)
+									.difference(GeometryPrecisionReducer.reduce(g2, pm));
+						} catch (final RuntimeException e3) {
+							java.lang.System.out.println("Topology exception: trying enhanced precision operation");
+							try {
+								return EnhancedPrecisionOp.difference(g1, g2);
+							} catch (final RuntimeException last) {
+								java.lang.System.out.println("Unable to compute difference: returning null instead");
+								return null; // return g1; ??
+							}
+						}
+					}
 				}
 			}
 		}
@@ -2303,14 +2345,8 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			Geometry nodedLineStrings = geoms.firstValue(scope).getInnerGeometry();
-
-			for (final Object obj : geoms.iterable(scope)) {
-				final Geometry g = ((IShape) obj).getInnerGeometry();
-				if (g instanceof LineString) {
-					nodedLineStrings = nodedLineStrings.union(g);
-				}
-			}
+			final IShape line = Spatial.Operators.union(scope, geoms);
+			final Geometry nodedLineStrings = line.getInnerGeometry();
 			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
 
 			for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
@@ -2392,6 +2428,23 @@ public abstract class Spatial {
 			final Geometry geomSimp = DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(), distanceTolerance);
 			if (geomSimp != null && !geomSimp.isEmpty() && geomSimp.isSimple()) { return new GamaShape(g1, geomSimp); }
 			return g1.copy(scope);
+		}
+
+		@operator (
+				value = "with_precision",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A geometry corresponding to the rounding of points of the operand considering a given precison.",
+				examples = { @example (
+						value = "self with_precision 2",
+						equals = "the geometry resulting from the rounding of points of the geometry with a precision of 0.1.",
+						test = false) })
+		public static IShape withPrecision(final IScope scope, final IShape g1, final Integer precision) {
+			if (g1 == null || g1.getInnerGeometry() == null) { return g1; }
+			final double scale = Math.pow(10, precision);
+			final PrecisionModel pm = new PrecisionModel(scale);
+			return new GamaShape(GeometryPrecisionReducer.reduce(g1.getInnerGeometry(), pm));
 		}
 
 	}
@@ -2579,7 +2632,6 @@ public abstract class Spatial {
 					target, edges);
 		}
 
-
 		@operator (
 				value = "path_between",
 
@@ -2597,8 +2649,8 @@ public abstract class Spatial {
 			if (cells == null || cells.isEmpty()) { return null; }
 
 			if (nodes.isEmpty(scope)) { return null; }
-			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
-			
+			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
+
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) {
@@ -2655,7 +2707,7 @@ public abstract class Spatial {
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 		}
-		
+
 		@operator (
 				value = "path_between",
 
@@ -2671,14 +2723,13 @@ public abstract class Spatial {
 		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
-			final ITopology topo = ((IAgent)((GamaMap) cells).getKeys().get(0)).getTopology();
+			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
 			if (topo instanceof GridTopology) {
 				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
 			} else {
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 		}
-
 
 		@operator (
 				value = "distance_to",

@@ -41,6 +41,9 @@ public interface IExploration extends ISymbol {// , Runnable {
 	public abstract ParametersSet getBestSolution();
 
 	public abstract short getCombination();
+	
+	public abstract void updateBestFitness(ParametersSet solution, Double fitness);
+		
 
 	/**
 	 * @param scope

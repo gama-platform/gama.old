@@ -549,28 +549,29 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cS_ReturnParserRuleCall_0_1_4 = (RuleCall)cAlternatives_0_1.eContents().get(4);
 		private final RuleCall cS_SolveParserRuleCall_0_1_5 = (RuleCall)cAlternatives_0_1.eContents().get(5);
 		private final RuleCall cS_IfParserRuleCall_0_1_6 = (RuleCall)cAlternatives_0_1.eContents().get(6);
-		private final RuleCall cS_EquationsParserRuleCall_0_1_7 = (RuleCall)cAlternatives_0_1.eContents().get(7);
+		private final RuleCall cS_TryParserRuleCall_0_1_7 = (RuleCall)cAlternatives_0_1.eContents().get(7);
+		private final RuleCall cS_EquationsParserRuleCall_0_1_8 = (RuleCall)cAlternatives_0_1.eContents().get(8);
 		private final RuleCall cS_DisplayParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		/// **
 		// * Statements
 		// * / Statement:
-		//	(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If |
-		//	S_Equations)) | S_Display;
+		//	(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try
+		//	| S_Equations)) | S_Display;
 		@Override public ParserRule getRule() { return rule; }
 
-		//(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If |
+		//(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try |
 		//S_Equations)) | S_Display
 		public Alternatives getAlternatives() { return cAlternatives; }
 
-		//(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If |
+		//(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try |
 		//S_Equations))
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 
 		//=> S_Declaration
 		public RuleCall getS_DeclarationParserRuleCall_0_0() { return cS_DeclarationParserRuleCall_0_0; }
 
-		//(=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)
+		//(=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try | S_Equations)
 		public Alternatives getAlternatives_0_1() { return cAlternatives_0_1; }
 
 		//=> S_Assignment
@@ -594,8 +595,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//S_If
 		public RuleCall getS_IfParserRuleCall_0_1_6() { return cS_IfParserRuleCall_0_1_6; }
 
+		//S_Try
+		public RuleCall getS_TryParserRuleCall_0_1_7() { return cS_TryParserRuleCall_0_1_7; }
+
 		//S_Equations
-		public RuleCall getS_EquationsParserRuleCall_0_1_7() { return cS_EquationsParserRuleCall_0_1_7; }
+		public RuleCall getS_EquationsParserRuleCall_0_1_8() { return cS_EquationsParserRuleCall_0_1_8; }
 
 		//S_Display
 		public RuleCall getS_DisplayParserRuleCall_1() { return cS_DisplayParserRuleCall_1; }
@@ -845,6 +849,50 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//Block
 		public RuleCall getElseBlockParserRuleCall_4_1_0_1() { return cElseBlockParserRuleCall_4_1_0_1; }
+	}
+
+	public class S_TryElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.S_Try");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final Keyword cKeyTryKeyword_0_0 = (Keyword)cKeyAssignment_0.eContents().get(0);
+		private final Assignment cBlockAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cBlockBlockParserRuleCall_1_0 = (RuleCall)cBlockAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cCatchKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cCatchAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cCatchBlockParserRuleCall_2_1_0 = (RuleCall)cCatchAssignment_2_1.eContents().get(0);
+		
+		//S_Try:
+		//	key='try' block=Block (=> 'catch' catch=Block)?;
+		@Override public ParserRule getRule() { return rule; }
+
+		//key='try' block=Block (=> 'catch' catch=Block)?
+		public Group getGroup() { return cGroup; }
+
+		//key='try'
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+
+		//'try'
+		public Keyword getKeyTryKeyword_0_0() { return cKeyTryKeyword_0_0; }
+
+		//block=Block
+		public Assignment getBlockAssignment_1() { return cBlockAssignment_1; }
+
+		//Block
+		public RuleCall getBlockBlockParserRuleCall_1_0() { return cBlockBlockParserRuleCall_1_0; }
+
+		//(=> 'catch' catch=Block)?
+		public Group getGroup_2() { return cGroup_2; }
+
+		//=> 'catch'
+		public Keyword getCatchKeyword_2_0() { return cCatchKeyword_2_0; }
+
+		//catch=Block
+		public Assignment getCatchAssignment_2_1() { return cCatchAssignment_2_1; }
+
+		//Block
+		public RuleCall getCatchBlockParserRuleCall_2_1_0() { return cCatchBlockParserRuleCall_2_1_0; }
 	}
 
 	public class S_OtherElements extends AbstractParserRuleElementFinder {
@@ -2001,14 +2049,22 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml._DoKey");
-		private final Keyword cDoKeyword = (Keyword)rule.eContents().get(1);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cDoKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cInvokeKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//_DoKey:
-		//	"do";
+		//	"do" | "invoke";
 		@Override public ParserRule getRule() { return rule; }
 
+		//"do" | "invoke"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
 		//"do"
-		public Keyword getDoKeyword() { return cDoKeyword; }
+		public Keyword getDoKeyword_0() { return cDoKeyword_0; }
+
+		//"invoke"
+		public Keyword getInvokeKeyword_1() { return cInvokeKeyword_1; }
 	}
 
 	public class _VarOrConstKeyElements extends AbstractParserRuleElementFinder {
@@ -4797,6 +4853,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private final S_DoElements pS_Do;
 	private final S_LoopElements pS_Loop;
 	private final S_IfElements pS_If;
+	private final S_TryElements pS_Try;
 	private final S_OtherElements pS_Other;
 	private final S_ReturnElements pS_Return;
 	private final S_DeclarationElements pS_Declaration;
@@ -4919,6 +4976,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pS_Do = new S_DoElements();
 		this.pS_Loop = new S_LoopElements();
 		this.pS_If = new S_IfElements();
+		this.pS_Try = new S_TryElements();
 		this.pS_Other = new S_OtherElements();
 		this.pS_Return = new S_ReturnElements();
 		this.pS_Declaration = new S_DeclarationElements();
@@ -5181,8 +5239,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	/// **
 	// * Statements
 	// * / Statement:
-	//	(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If |
-	//	S_Equations)) | S_Display;
+	//	(=> S_Declaration | (=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try
+	//	| S_Equations)) | S_Display;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -5230,6 +5288,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getS_IfRule() {
 		return getS_IfAccess().getRule();
+	}
+
+	//S_Try:
+	//	key='try' block=Block (=> 'catch' catch=Block)?;
+	public S_TryElements getS_TryAccess() {
+		return pS_Try;
+	}
+	
+	public ParserRule getS_TryRule() {
+		return getS_TryAccess().getRule();
 	}
 
 	//S_Other:
@@ -5498,7 +5566,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//_DoKey:
-	//	"do";
+	//	"do" | "invoke";
 	public _DoKeyElements get_DoKeyAccess() {
 		return p_DoKey;
 	}
@@ -6167,7 +6235,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//terminal KEYWORD:
-	//	'each' | 'self' | 'myself' | 'nil';
+	//	'each' | 'self' | 'myself' | 'nil' | 'super';
 	public TerminalRule getKEYWORDRule() {
 		return tKEYWORD;
 	} 

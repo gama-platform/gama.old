@@ -16,7 +16,6 @@ import static msi.gama.util.ContainerHelper.withPredicate;
 import static msi.gama.util.GAML.notNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -63,7 +62,6 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaListType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -1002,6 +1000,7 @@ public class Containers {
 			value = "sum",
 			can_be_const = true,
 			type = IType.GRAPH,
+			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	public static double sum(final IScope scope, final IGraph g) {
@@ -1549,6 +1548,7 @@ public class Containers {
 		return (GamaMap) stream(scope, original).collect(Collectors.toMap(function(scope, key), function(scope, value),
 				(a, b) -> a, asMapOf(key.getType(), value.getType())));
 	}
+
 	@operator (
 			value = { "create_map" },
 			iterator = true,
@@ -1557,39 +1557,34 @@ public class Containers {
 			category = IOperatorCategory.MAP,
 			expected_content_type = ITypeProvider.BOTH,
 			concept = { IConcept.CONTAINER, IConcept.MAP })
-	@doc (value = "returns a new map using the left operand as keys for the right operand",
+	@doc (
+			value = "returns a new map using the left operand as keys for the right operand",
 			usages = { @usage ("if the left operand contains duplicates, create_map throws an error."),
-					   @usage ("if both operands have different lengths, choose the minimum length between the two operands"
-					   		+ "for the size of the map")
-			},
+					@usage ("if both operands have different lengths, choose the minimum length between the two operands"
+							+ "for the size of the map") },
 			examples = { @example (
-							value = "create_map([0,1,2],['a','b','c'])",
-							returnType = "map<int,string>",
-							equals = "[0::'a',1::'b',2;;'c']"
-							),
-						 @example (
+					value = "create_map([0,1,2],['a','b','c'])",
+					returnType = "map<int,string>",
+					equals = "[0::'a',1::'b',2;;'c']"),
+					@example (
 							value = "create_map([0,1],[0.1,0.2,0.3])",
 							returnType = "map<int,float>",
-							equals = "[0::0.1,1::0.2]"
-							),
-						 @example (
+							equals = "[0::0.1,1::0.2]"),
+					@example (
 							value = "create_map(['a','b','c','d'],[1.0,2.0,3.0])",
 							returnType = "map<string,float>",
-							equals = "['a'::1.0,'b'::2.0,'c'::3.0]"
-							) },
+							equals = "['a'::1.0,'b'::2.0,'c'::3.0]") },
 			see = {})
 	public static GamaMap create_map(final IScope scope, final IList keys, final IList values) {
-		if(keys.length(scope)!=values.length(scope))
-		{
+		if (keys.length(scope) != values.length(scope)) {
 			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
 		}
-		HashSet newSet = new HashSet(keys);
-		if(newSet.size()<keys.length(scope))
-		{
-			throw GamaRuntimeException.error("'create_map' expects unique values in the keys list", scope);
-		}
+		final HashSet newSet = new HashSet(keys);
+		if (newSet.size() < keys.length(scope)) { throw GamaRuntimeException
+				.error("'create_map' expects unique values in the keys list", scope); }
 		return GamaMapFactory.create(scope, keys.getType(), values.getType(), keys, values);
 	}
+
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,

@@ -769,8 +769,18 @@ public interface IScope extends Closeable {
 
 	public abstract IExecutionContext getExecutionContext();
 
+	public abstract boolean isInTryMode();
+
+	public void enableTryMode();
+
+	public void disableTryMode();
+
 	/**
 	 * @return the current statement or null if none
 	 */
+
+	public abstract void setCurrentError(GamaRuntimeException g);
+
+	public GamaRuntimeException getCurrentError();
 
 }

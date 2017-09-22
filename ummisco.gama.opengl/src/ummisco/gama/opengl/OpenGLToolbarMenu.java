@@ -35,7 +35,7 @@ public class OpenGLToolbarMenu {
 	private Menu menu;
 
 	@SuppressWarnings ("unused")
-	public void fillMenu(final Menu menu, final SWTLayeredDisplayView view) {
+	public void fillMenu(final Menu menu, final OpenGLDisplayView view) {
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
@@ -109,7 +109,7 @@ public class OpenGLToolbarMenu {
 	 * @param tb
 	 * @param view
 	 */
-	public void createItem(final GamaToolbar2 tb, final SWTLayeredDisplayView view) {
+	public void createItem(final GamaToolbar2 tb, final OpenGLDisplayView view) {
 
 		tb.menu("display.presentation2", "Presentation", "OpenGL options", new SelectionAdapter() {
 

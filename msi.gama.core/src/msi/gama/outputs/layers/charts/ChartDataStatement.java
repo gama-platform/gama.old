@@ -32,6 +32,7 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		with_sequence = false,
 		concept = { IConcept.CHART })
+@doc ("This statement allows to describe the values that will be displayed on the chart.")
 @inside (
 		symbols = IKeyword.CHART,
 		kinds = ISymbolKind.SEQUENCE_STATEMENT)
@@ -39,12 +40,14 @@ import msi.gaml.types.IType;
 		value = { @facet (
 				name = IKeyword.VALUE,
 				type = { IType.FLOAT, IType.POINT, IType.LIST },
-				optional = false),
+				optional = false,
+				doc = @doc ("The value to output on the chart")),
 				// @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 				@facet (
 						name = IKeyword.LEGEND,
 						type = IType.STRING,
-						optional = false),
+						optional = false,
+						doc = @doc ("The legend of the chart")),
 				@facet (
 						name = ChartDataStatement.YERR_VALUES,
 						type = { IType.FLOAT, IType.LIST },
@@ -79,7 +82,7 @@ import msi.gaml.types.IType;
 						name = ChartDataStatement.LINE_VISIBLE,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Line visible or not")),
+						doc = @doc ("Whether lines are visible or not")),
 				@facet (
 						name = ChartDataStatement.MARKER,
 						type = IType.BOOL,

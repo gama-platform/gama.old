@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractSyntacticElement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractSyntacticElement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -46,7 +45,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	@Override
 	public void addChild(final ISyntacticElement e) {
-		throw new RuntimeException("No children allowed");
+		throw new RuntimeException("No children allowed for " + getKeyword());
 	}
 
 	@Override
@@ -162,20 +161,16 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public void visitChildren(final SyntacticVisitor visitor) {
-	}
+	public void visitChildren(final SyntacticVisitor visitor) {}
 
 	@Override
-	public void visitSpecies(final SyntacticVisitor visitor) {
-	}
+	public void visitSpecies(final SyntacticVisitor visitor) {}
 
 	@Override
-	public void visitExperiments(final SyntacticVisitor visitor) {
-	}
+	public void visitExperiments(final SyntacticVisitor visitor) {}
 
 	@Override
-	public void visitGrids(final SyntacticVisitor visitor) {
-	}
+	public void visitGrids(final SyntacticVisitor visitor) {}
 
 	@Override
 	public void visitAllChildren(final SyntacticVisitor visitor) {

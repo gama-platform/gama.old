@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,6 +40,16 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract IOutputManager getOriginalSimulationOutputs();
 
 	public abstract void refreshAllOutputs();
+
+	public abstract void pauseAllOutputs();
+
+	public abstract void resumeAllOutputs();
+
+	public abstract void synchronizeAllOutputs();
+
+	public abstract void unSynchronizeAllOutputs();
+
+	public abstract void closeAllOutputs();
 
 	public abstract IOutputManager getExperimentOutputs();
 

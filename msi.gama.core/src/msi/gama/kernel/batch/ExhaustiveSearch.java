@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExhaustiveSearch.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExhaustiveSearch.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,22 +26,51 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = {
-		IConcept.BATCH, IConcept.ALGORITHM })
-@inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
-		@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to maximize")),
-		@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true, doc = @doc("the value the algorithm tries to minimize")),
-		@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN,
-				IKeyword.MAX }, doc = @doc("the agregation method")) }, omissible = IKeyword.NAME)
-@doc(value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [batch161 the batch dedicated page].", usages = {
-		@usage(value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ", examples = {
-				@example(value = "method exhaustive [facet: value];", isExecutable = false) }),
-		@usage(value = "For example: ", examples = {
-				@example(value = "method exhaustive maximize: food_gathered;", isExecutable = false) }) })
+@symbol (
+		name = { IKeyword.EXHAUSTIVE },
+		kind = ISymbolKind.BATCH_METHOD,
+		with_sequence = false,
+		concept = { IConcept.BATCH, IConcept.ALGORITHM })
+@inside (
+		kinds = { ISymbolKind.EXPERIMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.ID,
+				optional = false,
+				internal = true,
+				doc = @doc ("The name of the method. For internal use only")),
+				@facet (
+						name = IKeyword.MAXIMIZE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the value the algorithm tries to maximize")),
+				@facet (
+						name = IKeyword.MINIMIZE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the value the algorithm tries to minimize")),
+				@facet (
+						name = IKeyword.AGGREGATION,
+						type = IType.LABEL,
+						optional = true,
+						values = { IKeyword.MIN, IKeyword.MAX },
+						doc = @doc ("The aggregation method to use (either min or max)")) },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [batch161 the batch dedicated page].",
+		usages = { @usage (
+				value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
+				examples = { @example (
+						value = "method exhaustive [facet: value];",
+						isExecutable = false) }),
+				@usage (
+						value = "For example: ",
+						examples = { @example (
+								value = "method exhaustive maximize: food_gathered;",
+								isExecutable = false) }) })
 public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	public ExhaustiveSearch(final IDescription desc) {
@@ -51,7 +79,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
-		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
+		setBestFitness(null);
 		testSolutions(scope, new ParametersSet(), 0);
 		return getBestSolution();
 	}
@@ -61,9 +89,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
 		final ParametersSet solution = new ParametersSet(sol);
 		if (variables.isEmpty()) {
-			final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-			setBestFitness(fitness);
-			setBestSolution(solution);
+			currentExperiment.launchSimulationsWithSolution(solution);
 			return;
 		}
 		final IParameter.Batch var = variables.get(index);
@@ -71,11 +97,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 			for (final Object val : var.getAmongValue(scope)) {
 				solution.put(var.getName(), val);
 				if (solution.size() == variables.size()) {
-					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if (isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness()) {
-						setBestFitness(fitness);
-						setBestSolution(solution);
-					}
+					currentExperiment.launchSimulationsWithSolution(solution);
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}
@@ -91,11 +113,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 					continue;
 				}
 				if (solution.size() == variables.size()) {
-					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if (isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness()) {
-						setBestFitness(fitness);
-						setBestSolution(solution);
-					}
+					currentExperiment.launchSimulationsWithSolution(solution);
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}
