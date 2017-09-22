@@ -190,7 +190,23 @@ Note that due to the fact that actions are written by modelers, the general func
   	<xsl:if test="@alternativeNameOf">
   		<xsl:variable name="nameOpAlt" select="@alternativeNameOf"/>  	
 <xsl:text>
-Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $ac"><xsl:value-of select="$fileAC"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $dm"><xsl:value-of select="$fileDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileNZ"/></xsl:otherwise></xsl:choose>#<xsl:value-of select="@alternativeNameOf"/><xsl:text>)</xsl:text>
+Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xsl:text>](</xsl:text><xsl:choose>
+<xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $ac">
+<xsl:value-of select="$fileAB"/>
+</xsl:when>
+<xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $dm">
+<xsl:value-of select="$fileCH"/>
+</xsl:when>
+<xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $dm">
+<xsl:value-of select="$fileIN"/>
+</xsl:when>
+<xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $dm">
+<xsl:value-of select="$fileOS"/>
+</xsl:when>
+<xsl:otherwise>
+<xsl:value-of select="$fileTZ"/>
+</xsl:otherwise>
+</xsl:choose>#<xsl:value-of select="@alternativeNameOf"/><xsl:text>)</xsl:text>
   	</xsl:if>
   	
   	<xsl:if test="combinaisonIO[node()]">
@@ -243,7 +259,12 @@ Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xs
 #### See also: 
 <xsl:for-each select="documentation/seeAlso/see">
   	<xsl:variable name="idOpSee" select="@id"/>
-  <xsl:text>[</xsl:text><xsl:value-of select="@id"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ac"><xsl:value-of select="$fileAC"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $dm"><xsl:value-of select="$fileDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileNZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> </xsl:for-each>
+  <xsl:text>[</xsl:text><xsl:value-of select="@id"/><xsl:text>](</xsl:text><xsl:choose>
+  <xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ac"><xsl:value-of select="$fileAB"/></xsl:when>
+  <xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ch"><xsl:value-of select="$fileCH"/></xsl:when>
+  <xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ch"><xsl:value-of select="$fileIN"/></xsl:when>
+  <xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ch"><xsl:value-of select="$fileOS"/></xsl:when>  
+  <xsl:otherwise><xsl:value-of select="$fileTZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> </xsl:for-each>
   </xsl:if>
   
   <xsl:if test="documentation/examples[node()]">
