@@ -240,7 +240,9 @@ Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xs
   
   <xsl:if test="documentation/seeAlso[node()]">    
 
+```
 #### See also: 
+```
 <xsl:for-each select="documentation/seeAlso/see">
   	<xsl:variable name="idOpSee" select="@id"/>
   <xsl:text>[</xsl:text><xsl:value-of select="@id"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ab"><xsl:value-of select="$fileAB"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ch"><xsl:value-of select="$fileCH"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $in"><xsl:value-of select="$fileIN"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $os"><xsl:value-of select="$fileOS"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileTZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> </xsl:for-each>
