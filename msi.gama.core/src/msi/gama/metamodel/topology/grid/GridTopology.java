@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GridTopology.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GridTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -47,8 +46,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {
-	}
+	public void updateAgent(final Envelope previous, final IAgent agent) {}
 
 	@Override
 	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
@@ -68,36 +66,38 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
-			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation, final boolean useIndividualShapes,
-			final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
+			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation,
+			final boolean useIndividualShapes, final boolean useNeighborsCache, final String optimizer)
+			throws GamaRuntimeException {
 		super(scope, environment, null);
 		if (isHexagon) {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
-					horizontalOrientation, useIndividualShapes, useNeighborsCache,optimizer);
-		} else { 
+					horizontalOrientation, useIndividualShapes, useNeighborsCache, optimizer);
+		} else {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes,
-					useNeighborsCache,optimizer);
+					useNeighborsCache, optimizer);
 		}
 		// FIXME Not sure it needs to be set
 		// root.setTorus(isTorus);
 
-	} 
+	}
 
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
-			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,final String optimizer)
-			throws GamaRuntimeException {
+			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,
+			final String optimizer) throws GamaRuntimeException {
 		super(scope, environment, null);
-		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache, optimizer);
 		// FIXME Not sure it needs to be set
 
 		// root.setTorus(isTorus);
 	}
-	
-	public GridTopology(final IScope scope, final IShape environment, final IList<GamaGridFile> files, final boolean isTorus,
-			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,final String optimizer)
-			throws GamaRuntimeException {
+
+	public GridTopology(final IScope scope, final IShape environment, final IList<GamaGridFile> files,
+			final boolean isTorus, final boolean usesVN, final boolean useIndividualShapes,
+			final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
 		super(scope, environment, null);
-		places = new GamaSpatialMatrix(scope, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,optimizer);
+		places = new GamaSpatialMatrix(scope, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
+				optimizer);
 		// FIXME Not sure it needs to be set
 
 		// root.setTorus(isTorus);
@@ -145,10 +145,10 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(),
-				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.isHorizontalOrientation(), grid.usesIndiviualShapes(), grid.usesNeighborsCache(), 
-				grid.optimizer());
+				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.isHorizontalOrientation(),
+				grid.usesIndiviualShapes(), grid.usesNeighborsCache(), grid.optimizer());
 	}
- 
+
 	@Override
 	public IGrid getPlaces() {
 		return (IGrid) super.getPlaces();
@@ -156,8 +156,7 @@ public class GridTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
@@ -169,7 +168,7 @@ public class GridTopology extends AbstractTopology {
 			final IList<IAgent> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
-	
+
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
 			final Map<IAgent, Object> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);
@@ -204,23 +203,19 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry,
+	 *      java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
-		if (!isValidGeometry(scope, source) || !isValidGeometry(scope, target)) {
-			return Double.MAX_VALUE;
-		}
+		if (!isValidGeometry(scope, source) || !isValidGeometry(scope, target)) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
 	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
-		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) {
-			return Double.MAX_VALUE;
-		}
+		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
@@ -240,24 +235,24 @@ public class GridTopology extends AbstractTopology {
 			final IAgentFilter filter) throws GamaRuntimeException {
 		// We compute the neighboring cells of the "source" shape
 
-		final Set<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope, source, distance,
-				getPlaces().getCellSpecies());
+		final Set<IAgent> placesConcerned =
+				getPlaces().getNeighborsOf(scope, source, distance, getPlaces().getCellSpecies());
 		// If we only accept cells from this topology, no need to look for other
 		// agents
 		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
-			//case where the filter is the complete population set
+			// case where the filter is the complete population set
 			if (filter instanceof IPopulationSet)
 				return placesConcerned;
 			else {
-				//otherwise, we return only the accepted cells
-				Set<IAgent> agents = new HashSet<IAgent>();
-				for (IAgent ag: placesConcerned) {
+				// otherwise, we return only the accepted cells
+				final Set<IAgent> agents = new HashSet<IAgent>();
+				for (final IAgent ag : placesConcerned) {
 					if (filter.accept(scope, null, ag))
 						agents.add(ag);
 				}
 				return agents;
 			}
-				
+
 		}
 		// Otherwise, we return all the agents that intersect the geometry
 		// formed by the shapes of the cells (incl. the
@@ -265,7 +260,7 @@ public class GridTopology extends AbstractTopology {
 		final boolean normalFilter = filter.getSpecies() != null || !(filter instanceof Different);
 		final IAgentFilter fDL = normalFilter ? filter
 				: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
-		final Collection<IAgent> agents = (Collection<IAgent>) getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope,
+		final Collection<IAgent> agents = getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope,
 				GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), fDL, false);
 		if (!normalFilter) {
 			agents.addAll(placesConcerned);

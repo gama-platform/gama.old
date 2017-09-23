@@ -84,6 +84,7 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 public class AWTDisplayGraphics extends AbstractDisplayGraphics implements PointTransformation {
 
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
+	private Rectangle2D temporaryEnvelope = null;
 	private final ShapeWriter sw = new ShapeWriter(this);
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
@@ -290,6 +291,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 				}
 				currentRenderer.draw(s);
 			}
+			System.out.println("AWTGraphics2D returns " + r);
 			return r;
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -421,6 +423,21 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public int getHeightForOverlay() {
 		return getDisplayHeight();
+	}
+
+	@Override
+	public void accumulateTemporaryEnvelope(final Rectangle2D env) {
+		if (temporaryEnvelope == null)
+			temporaryEnvelope = env;
+		else
+			temporaryEnvelope.add(env);
+	}
+
+	@Override
+	public Rectangle2D getAndWipeTemporaryEnvelope() {
+		final Rectangle2D result = temporaryEnvelope;
+		temporaryEnvelope = null;
+		return result;
 	}
 
 }

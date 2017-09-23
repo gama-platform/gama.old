@@ -112,4 +112,15 @@ public interface IGraphics {
 
 	public int getHeightForOverlay();
 
+	/**
+	 * Ask the IGraphics instance to accumulate temporary envelopes
+	 * 
+	 * @param env
+	 */
+	public default void accumulateTemporaryEnvelope(final Rectangle2D env) {}
+
+	public default Rectangle2D getAndWipeTemporaryEnvelope() {
+		return null;
+	}
+
 }
