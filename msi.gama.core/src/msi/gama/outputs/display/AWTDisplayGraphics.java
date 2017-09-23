@@ -291,7 +291,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 				}
 				currentRenderer.draw(s);
 			}
-			System.out.println("AWTGraphics2D returns " + r);
 			return r;
 		} catch (final Exception e) {
 			e.printStackTrace();

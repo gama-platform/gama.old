@@ -109,18 +109,6 @@ public class GridTopology extends AbstractTopology {
 
 	}
 
-	// @Override
-	// public IAgent getAgentClosestTo(final IScope scope, final ILocation
-	// source, final IAgentFilter filter) {
-	// // We first grab the cell at the location closest to the centroid of the
-	// source
-	// final IAgent place = getPlaces().getAgentAt(source);
-	// // If the filter accepts it, we return it
-	// if ( filter.accept(scope, source, place) ) { return place; }
-	// // Otherwise we get the "normal" closest agent (in the spatial index)
-	// return super.getAgentClosestTo(scope, source, filter);
-	// }
-
 	/**
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
@@ -269,27 +257,8 @@ public class GridTopology extends AbstractTopology {
 
 	}
 
-	// @Override
-	// public Iterator<IAgent> getNeighborsOf(final ILocation source, final
-	// Double distance, final IAgentFilter filter)
-	// throws GamaRuntimeException {
-	// // We compute the neighboring cells of the "source" location
-	// Iterator<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope,
-	// source, distance, filter);
-	// // If we only accept cells from this topology, no need to look for other
-	// agents
-	// if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return
-	// placesConcerned; }
-	// // Otherwise, we return all the agents that intersect the geometry formed
-	// by the shapes of the cells (incl. the
-	// // cells themselves) and that are accepted by the filter
-	// return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new
-	// GamaList(placesConcerned)), filter, false);
-	// }
-
 	@Override
 	public void dispose() {
-		// scope.getGui().debug("GridTopology.dispose");
 		super.dispose();
 		getPlaces().dispose();
 	}
