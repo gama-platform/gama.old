@@ -4,9 +4,11 @@
 	<xsl:import href="docGama-utils-xml2md.xsl" />
 
 
-	<xsl:variable name="fileOperatorsAC" select="'OperatorsAC'" />
-	<xsl:variable name="fileOperatorsDM" select="'OperatorsDM'" />
-	<xsl:variable name="fileOperatorsNZ" select="'OperatorsNZ'" />
+	<xsl:variable name="fileOperatorsAB" select="'OperatorsAB'" />
+	<xsl:variable name="fileOperatorsCH" select="'OperatorsCH'" />
+	<xsl:variable name="fileOperatorsIN" select="'OperatorsIN'" />
+	<xsl:variable name="fileOperatorsOS" select="'OperatorsOS'" />
+	<xsl:variable name="fileOperatorsTZ" select="'OperatorsTZ'" />
 	<xsl:variable name="fileStatements" select="'Statements'" />
 	<xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'" />
 	<xsl:variable name="fileControl" select="'BuiltInControlArchitectures'" />
