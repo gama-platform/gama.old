@@ -70,7 +70,7 @@ public class GamlDocProcessor {
 
 	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
 
-	public static final Character[] cuttingLettersOperatorDoc = { 'd', 'n' };
+	public static final Character[] cuttingLettersOperatorDoc = { 'c', 'i', 'o', 't' };
 
 	ProcessingEnvironment processingEnv;
 	Messager mes;
