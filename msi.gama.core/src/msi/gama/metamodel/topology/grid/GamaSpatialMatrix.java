@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -1467,6 +1468,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public GridPopulation(final ITopology t, final IMacroAgent host, final ISpecies species) {
 			super(host, species);
 			topology = t;
+		}
+
+		@Override
+		public Stream<G> stream() {
+			return (Stream<G>) StreamEx.of(matrix);
 		}
 
 		@Override
