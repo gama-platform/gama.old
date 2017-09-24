@@ -230,4 +230,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public void replaceChildrenWith(Iterable<IDescription> array);
 
+	public boolean isDocumenting();
+
 }

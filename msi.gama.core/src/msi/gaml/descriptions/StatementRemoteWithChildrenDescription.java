@@ -30,6 +30,11 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	}
 
 	@Override
+	public boolean isDocumenting() {
+		return super.isDocumenting() || previousDescription != null && previousDescription.isDocumenting();
+	}
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		previousDescription = null;

@@ -303,7 +303,6 @@ public interface IKeyword {
 	public static final String OUTPUT = "output";
 	public static final String OVER = "over";
 	public static final String OVERWRITE = "overwrite";
-	public static final String PARAM = "param";
 	public static final String PARAMETER = "parameter";
 	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";

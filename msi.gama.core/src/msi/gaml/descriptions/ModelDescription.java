@@ -110,7 +110,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	protected boolean isDocumenting() {
+	public boolean isDocumenting() {
 		return document;
 	}
 

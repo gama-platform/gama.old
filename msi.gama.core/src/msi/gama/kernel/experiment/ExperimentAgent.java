@@ -679,8 +679,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (ExperimentAgent.this.hasAttribute(name)
 					|| getSpecies().hasVar(name)) { return super.getGlobalVarValue(name); }
 			// Second case: the simulation is not null, so it should handle it
-			if (getSimulation() != null
-					&& !getSimulation().dead()) { return getSimulation().getScope().getGlobalVarValue(name); }
+			final SimulationAgent sim = getSimulation();
+			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(name); }
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible
 			if (this.getModel().getSpecies()
@@ -692,12 +692,27 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
+		public boolean hasAccessToGlobalVar(final String name) {
+			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name))
+				return true;
+			if (this.getModel().getSpecies().hasVar(name))
+				return true;
+			if (getSpecies().hasParameter(name))
+				return true;
+			if (extraParametersMap.containsKey(name))
+				return true;
+			return false;
+		}
+
+		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
 			if (getSpecies().hasVar(name)) {
 				super.setGlobalVarValue(name, v);
-			} else if (getSimulation() != null && !getSimulation().dead()
-					&& getSimulation().getSpecies().hasVar(name)) {
-				getSimulation().getScope().setGlobalVarValue(name, v);
+				return;
+			}
+			final SimulationAgent sim = getSimulation();
+			if (sim != null && !sim.dead() && sim.getSpecies().hasVar(name)) {
+				sim.getScope().setGlobalVarValue(name, v);
 			} else {
 				extraParametersMap.put(name, v);
 			}

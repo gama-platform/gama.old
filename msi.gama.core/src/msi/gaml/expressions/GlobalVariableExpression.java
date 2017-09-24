@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GlobalVariableExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GlobalVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -53,31 +52,46 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		// return scope.getGlobalVarValue(getName());
-		final IAgent sc = scope.getAgent();
-		if (sc != null) {
-			final IScope agentScope = sc.getScope();
-			if (agentScope != null) {
-				final ITopLevelAgent root = agentScope.getRoot();
-				if (root != null) {
-					final IScope globalScope = root.getScope();
-					if (globalScope != null)
-						return globalScope.getGlobalVarValue(getName());
+		final String name = getName();
+		// We first try in the 'normal' scope (so that regular global vars are still accessed by agents of micro-models,
+		// see #2238)
+		if (scope.hasAccessToGlobalVar(name)) {
+			return scope.getGlobalVarValue(name);
+		} else {
+			final IAgent microAgent = scope.getAgent();
+			if (microAgent != null) {
+				final IScope agentScope = microAgent.getScope();
+				if (agentScope != null) {
+					final ITopLevelAgent root = agentScope.getRoot();
+					if (root != null) {
+						final IScope globalScope = root.getScope();
+						if (globalScope != null)
+							return globalScope.getGlobalVarValue(getName());
+					}
 				}
 			}
 		}
+
 		return null;
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if (isNotModifiable) { return; }
-		final IAgent sc = scope.getAgent();
-		sc.getScope().getRoot().getScope().setGlobalVarValue(getName(), v);
+		if (scope.hasAccessToGlobalVar(name)) {
+			scope.setGlobalVarValue(name, v);
+		} else {
+			final IAgent sc = scope.getAgent();
+			if (sc != null)
+				sc.getScope().getRoot().getScope().setGlobalVarValue(name, v);
+		}
 	}
 
 	@Override
 	public String getTitle() {
+		if (name.equals("plantGrow_simu")) {
+			System.out.println("plantGrow_simu in GlobalVariableExpression.getTitle()");
+		}
 		final IDescription desc = getDefinitionDescription();
 		final boolean isParameter =
 				desc == null ? false : desc.getSpeciesContext().getAttribute(getName()).isParameter();

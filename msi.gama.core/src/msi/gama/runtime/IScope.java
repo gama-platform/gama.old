@@ -569,6 +569,14 @@ public interface IScope extends Closeable {
 	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 
 	/**
+	 * Verifies that this scope has access to the global var value named 'name'
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public abstract boolean hasAccessToGlobalVar(String name);
+
+	/**
 	 * Sets the global var value.
 	 *
 	 * @param name

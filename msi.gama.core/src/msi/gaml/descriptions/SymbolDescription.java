@@ -197,11 +197,14 @@ public abstract class SymbolDescription implements IDescription {
 		getSerializer().collectMetaInformation(this, meta);
 	}
 
-	protected boolean isDocumenting() {
-		final ModelDescription md = getModelDescription();
-		if (md == null)
-			return false;
-		return md.isDocumenting();
+	@Override
+	public boolean isDocumenting() {
+		return enclosing != null && enclosing.isDocumenting();
+		//
+		// final ModelDescription md = getModelDescription();
+		// if (md == null)
+		// return false;
+		// return md.isDocumenting();
 	}
 
 	@Override

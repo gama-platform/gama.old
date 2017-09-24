@@ -651,10 +651,19 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
+
 		final ITopLevelAgent root = getRoot();
 		if (root == null)
 			return null;
 		return root.getDirectVarValue(this, name);
+	}
+
+	@Override
+	public boolean hasAccessToGlobalVar(final String name) {
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return false;
+		return root.hasAttribute(name);
 	}
 
 	/**
@@ -898,6 +907,7 @@ public class ExecutionScope implements IScope {
 		additionalContext.currentError = g;
 	}
 
+	@Override
 	public GamaRuntimeException getCurrentError() {
 		return additionalContext.currentError;
 	}

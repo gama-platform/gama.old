@@ -744,4 +744,9 @@ class TemporaryScope implements IScope, IExecutionContext {
 		return null;
 	}
 
+	@Override
+	public boolean hasAccessToGlobalVar(final String name) {
+		return vars.containsKey(name);
+	}
+
 }
