@@ -78,6 +78,11 @@ public interface IPopulation<T extends IAgent>
 
 	public abstract boolean hasVar(final String n);
 
+	@Override
+	public default IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+		return this;
+	}
+
 	/**
 	 * Create agents as members of this population.
 	 *

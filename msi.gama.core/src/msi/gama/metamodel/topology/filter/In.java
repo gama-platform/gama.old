@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'In.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'In.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,6 +16,7 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
@@ -28,17 +28,14 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public abstract class In implements IAgentFilter {
 
 	public static IAgentFilter list(final IScope scope, final IContainer<?, ? extends IShape> targets) {
-		if (targets.isEmpty(scope)) {
-			return null;
-		}
-		if (targets instanceof IPopulationSet) {
-			return (IPopulationSet) targets;
-		}
-		ISpecies species = targets.getType().getContentType().isAgentType() ? Cast.asSpecies(scope, targets.getType().getContentType().getSpeciesName()) : null;
+		if (targets.isEmpty(scope)) { return null; }
+		if (targets instanceof IPopulationSet) { return (IPopulationSet) targets; }
+		final ISpecies species = targets.getType().getContentType().isAgentType()
+				? Cast.asSpecies(scope, targets.getType().getContentType().getSpeciesName()) : null;
 		return new InList(targets.listValue(scope, Types.NO_TYPE, false), species);
 	}
 
@@ -54,14 +51,14 @@ public abstract class In implements IAgentFilter {
 		final Set<IShape> agents;
 		ISpecies species;
 
-		InList(final IList<? extends IShape> list, ISpecies species) {
+		InList(final IList<? extends IShape> list, final ISpecies species) {
 			agents = new LinkedHashSet<IShape>(list);
 			this.species = species;
 		}
 
 		@Override
 		public boolean accept(final IScope scope, final IShape source, final IShape a) {
-			return ((source == null) || (a.getGeometry() != source.getGeometry())) && agents.contains(a);
+			return (source == null || a.getGeometry() != source.getGeometry()) && agents.contains(a);
 		}
 
 		@Override
@@ -72,6 +69,13 @@ public abstract class In implements IAgentFilter {
 		@Override
 		public ISpecies getSpecies() {
 			return species;
+		}
+
+		@Override
+		public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+			if (species == null)
+				return null;
+			return scope.getSimulation().getPopulationFor(species);
 		}
 
 		@Override

@@ -346,6 +346,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		return null; // See if we can identify the species of edges / vertices
 	}
 
+	@Override
+	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+		return null;// See if we can identify the populations of edges / vertices
+	}
+
 	/**
 	 * Method getAgents()
 	 * 

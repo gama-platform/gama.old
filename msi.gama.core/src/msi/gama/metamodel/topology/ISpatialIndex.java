@@ -14,10 +14,10 @@ import java.util.Collection;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
-import msi.gaml.species.ISpecies;
 
 /**
  * Written by drogoul Modified on 23 f�vr. 2011
@@ -42,7 +42,9 @@ public interface ISpatialIndex {
 
 	public interface Compound extends ISpatialIndex {
 
-		public abstract void add(ISpatialIndex index, ISpecies species);
+		public abstract void add(ISpatialIndex index, IPopulation<? extends IAgent> pop);
+
+		public void remove(final IPopulation<? extends IAgent> species);
 
 		public abstract void updateQuadtree(Envelope envelope);
 

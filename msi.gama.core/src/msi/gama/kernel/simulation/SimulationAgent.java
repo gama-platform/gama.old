@@ -332,9 +332,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			outputs = null;
 		}
 		if (topology != null) {
-			if (isMicroSimulation()) {
+			if (!isMicroSimulation()) {
 				topology.dispose();
 				topology = null;
+			} else {
+				for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
+					topology.remove(pop);
+				}
 			}
 		}
 

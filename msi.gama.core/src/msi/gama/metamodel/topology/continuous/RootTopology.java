@@ -11,6 +11,8 @@ package msi.gama.metamodel.topology.continuous;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.CompoundSpatialIndex;
 import msi.gama.metamodel.topology.ISpatialIndex;
@@ -56,6 +58,12 @@ public class RootTopology extends ContinuousTopology {
 		if (spatialIndex != null) {
 			spatialIndex.dispose();
 		}
+	}
+
+	public void remove(final IPopulation<? extends IAgent> pop) {
+		if (spatialIndex != null)
+			spatialIndex.remove(pop);
+
 	}
 
 }
