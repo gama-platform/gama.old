@@ -466,6 +466,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			for (final IAgent a : population) {
 				((ExperimentAgent) a)._init_(scope);
 				final SimulationAgent sim = ((ExperimentAgent) a).getSimulation();
+				sim.adoptTopologyOf(scope.getSimulation());
+
 				if (!sim.getScheduled()) {
 					// ((ExperimentAgent)
 					// a).getActionExecuter().init(sim.getScope());

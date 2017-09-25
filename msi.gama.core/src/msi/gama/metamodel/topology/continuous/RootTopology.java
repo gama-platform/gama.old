@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'RootTopology.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'RootTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -45,7 +44,10 @@ public class RootTopology extends ContinuousTopology {
 	}
 
 	@Override
-	protected void setRoot(final IScope scope, final RootTopology root) {
+	public void setRoot(final IScope scope, final RootTopology root) {}
+
+	public void mergeWith(final RootTopology other) {
+		spatialIndex.mergeWith(other.spatialIndex);
 	}
 
 	@Override

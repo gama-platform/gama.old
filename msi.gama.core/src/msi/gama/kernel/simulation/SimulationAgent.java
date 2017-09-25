@@ -32,7 +32,6 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.metamodel.topology.projection.WorldProjection;
@@ -215,6 +214,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return this;
 	}
 
+	public void setTopology(final RootTopology topology2) {
+		if (topology != null)
+			topology.dispose();
+		topology = topology2;
+
+	}
+
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index
@@ -223,7 +229,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr == null ? false : Cast.asBool(scope, expr.value(scope));
-			topology = new RootTopology(scope, shape, torus);
+			setTopology(new RootTopology(scope, shape, torus));
 		}
 	}
 
@@ -251,7 +257,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public ITopology getTopology() {
+	public RootTopology getTopology() {
 		return topology;
 	}
 
@@ -326,14 +332,20 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			outputs = null;
 		}
 		if (topology != null) {
-			topology.dispose();
-			topology = null;
+			if (isMicroSimulation()) {
+				topology.dispose();
+				topology = null;
+			}
 		}
 
 		GAMA.releaseScope(getScope());
 		// scope = null;
 		super.dispose();
 
+	}
+
+	private boolean isMicroSimulation() {
+		return getSpecies().getDescription().belongsToAMicroModel();
 	}
 
 	@Override
@@ -362,7 +374,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
 		if (getProjectionFactory().getUnitConverter() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).convertUnit(geometry.getInnerGeometry());
-			
+
 		}
 		setTopology(getScope(), geometry);
 
@@ -773,6 +785,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			}
 		}
 
+	}
+
+	public void adoptTopologyOf(final SimulationAgent root) {
+		final RootTopology rt = root.getTopology();
+		rt.mergeWith(topology);
+		setTopology(rt);
+		for (final IPopulation p : getMicroPopulations()) {
+			p.getTopology().setRoot(root.getScope(), rt);
+		}
 	}
 
 }

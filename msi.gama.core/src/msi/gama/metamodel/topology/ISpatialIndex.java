@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ISpatialIndex.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ISpatialIndex.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -46,6 +45,8 @@ public interface ISpatialIndex {
 		public abstract void add(ISpatialIndex index, ISpecies species);
 
 		public abstract void updateQuadtree(Envelope envelope);
+
+		public abstract void mergeWith(Compound spatialIndex);
 
 	}
 
