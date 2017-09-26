@@ -14,7 +14,6 @@ Require-Bundle: com.ibm.icu,
  irit.gaml.extensions.database
 Bundle-ActivationPolicy: lazy
 Export-Package: 
- msi.gama.headless.classLoader,
  msi.gama.headless.common;uses:="msi.gama.headless.job",
  msi.gama.headless.core;
   uses:="msi.gama.headless.job,

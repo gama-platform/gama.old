@@ -20,7 +20,6 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.webgl.SimpleGeometryObject;
 
 public class GeometryObject extends AbstractObject {
 
@@ -64,11 +63,11 @@ public class GeometryObject extends AbstractObject {
 		return super.isFilled() && getType() != IShape.Type.GRIDLINE;
 	}
 
-	public SimpleGeometryObject toSimpleGeometryObject() {
-		return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getHeight(),
-				attributes.getAngle(), attributes.getAxis(), getLocation(), attributes.getSize(), getType(),
-				!isFilled(), attributes.getTextures());
-	}
+	// public SimpleGeometryObject toSimpleGeometryObject() {
+	// return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getHeight(),
+	// attributes.getAngle(), attributes.getAxis(), getLocation(), attributes.getSize(), getType(),
+	// !isFilled(), attributes.getTextures());
+	// }
 
 	public Geometry getGeometry() {
 		return geometry;
