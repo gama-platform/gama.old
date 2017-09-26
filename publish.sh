@@ -56,7 +56,7 @@ release(){
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
-if  [[ ${MESSAGE} == *"ci release"* ]]; then			
+if  [[ ${MESSAGE} == *"ci ext"* ]]; then			
 	MSG+=" ci ext " 
 fi	
 
