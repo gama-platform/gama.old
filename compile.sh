@@ -13,7 +13,7 @@ compile (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
-		mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+		mvn clean compile -offline -DskipTests
 		cd -
 	fi
 	
@@ -32,13 +32,26 @@ compile (){
 
 install (){
 	echo "Install GAMA project"			
-	cd ummisco.gama.annotations &&
-	mvn clean install -DskipTests -T 8C &&
-	cd - &&
-	cd msi.gama.processor &&
-	mvn clean install -DskipTests -T 8C &&
-	cd - &&
-	cd msi.gama.parent &&
+	cd ummisco.gama.annotations
+	mvn clean install -DskipTests -T 8C
+	cd -
+	cd msi.gama.processor
+	mvn clean install -DskipTests -T 8C
+	cd -
+	
+	
+	
+	change=$(git log --pretty=format: --name-only --since="1 hour ago")
+	
+	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
+		cd msi.gama.ext 
+		mvn clean install -DskipTests -T 8C
+		cd -
+	fi
+	
+	
+	
+	cd msi.gama.parent
 	
 	if  [[ $MSG == *"ci debug"* ]]; then		
 		mvn -e clean install -DskipTests -T 8C

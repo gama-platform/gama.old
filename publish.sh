@@ -56,6 +56,10 @@ release(){
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
+if  [[ ${MESSAGE} == *"ci release"* ]]; then			
+	MSG+=" ci ext " 
+fi	
+
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	
 	change=$(git log --pretty=format: --name-only --since="1 day ago")
