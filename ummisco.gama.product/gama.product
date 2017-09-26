@@ -25,11 +25,8 @@ Visit http://gama-platform.org
 --launcher.defaultAction
 openFile
       </programArgs>
-     
-<programArgsLin>
-      --launcher.GTK_version 2
-</programArgsLin>
-     
+      <programArgsLin>--launcher.GTK_version 2
+      </programArgsLin>
       <vmArgs>-server
 -noverify
 -Xmn128m
@@ -284,7 +281,7 @@ openFile
       <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
