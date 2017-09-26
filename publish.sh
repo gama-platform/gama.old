@@ -46,7 +46,7 @@ clean(){
 
 deploy(){	
 	echo "Deploy to p2 update site"	
-	sh ./deploy.sh
+	bash ./deploy.sh
 }
 
 release(){
