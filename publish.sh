@@ -58,6 +58,10 @@ MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	
+	change=$(git log --pretty=format: --name-only --since="1 day ago")
+	if [[ ${change} == *"msi.gama.ext"* ]]; then
+			MSG+=" ci ext "
+	fi
 	deploy
 	release 
 	commit_wiki_files
