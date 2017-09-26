@@ -66,6 +66,7 @@ else
 	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
+			MSG+=" ci ext "
 		fi 
 		deploy 
 	fi
