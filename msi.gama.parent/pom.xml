@@ -169,7 +169,7 @@
 
 		<!-- <module>../gama.target.platform</module> -->
 
-		<module>../msi.gama.ext</module>
+		
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
 		<module>../msi.gama.documentation</module>
