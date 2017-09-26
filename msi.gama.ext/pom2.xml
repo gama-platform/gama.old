@@ -21,7 +21,7 @@
     <dependencies>
 	  <dependency>
 		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-math3</artifactId>
+		<artifactId>commons-math3</artifactId> 
 		<version>${math3.version}</version>
 	  </dependency>
 	  
