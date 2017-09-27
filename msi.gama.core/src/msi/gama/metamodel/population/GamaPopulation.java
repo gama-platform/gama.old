@@ -182,6 +182,18 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	}
 
 	@Override
+	public IList<T> listValue(final IScope scope, final IType contentsType, final boolean copy) {
+		if (copy)
+			return GamaListFactory.create(scope, contentsType, this);
+		return this;
+	}
+
+	@Override
+	public IList<T> copy(final IScope scope) {
+		return listValue(scope, getType().getContentType(), true);
+	}
+
+	@Override
 	public void updateVariables(final IScope scope, final IAgent a) {
 		for (final IVariable v : updatableVars) {
 			scope.setCurrentSymbol(v);
@@ -578,11 +590,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object index, final T value) {
-		addValue(scope, value);
-	}
-
-	public void addAll(final IScope scope, final T value) {
-		addValue(scope, value);
+		fireAgentAdded(scope, value);
+		super.addValueAtIndex(scope, index, value);
 	}
 
 	@Override
