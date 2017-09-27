@@ -89,9 +89,6 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public String getTitle() {
-		if (name.equals("plantGrow_simu")) {
-			System.out.println("plantGrow_simu in GlobalVariableExpression.getTitle()");
-		}
 		final IDescription desc = getDefinitionDescription();
 		final boolean isParameter =
 				desc == null ? false : desc.getSpeciesContext().getAttribute(getName()).isParameter();

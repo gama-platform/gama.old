@@ -156,11 +156,6 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	private class QuadNode {
 
-		private class Data {
-			IAgent agent;
-			Envelope3D envelope;
-		}
-
 		private final Envelope bounds;
 		private final double halfx, halfy;
 		private volatile QuadNode[] nodes = null;
@@ -188,12 +183,21 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
-		public IShape remove(final Coordinate p, final IShape a) {
-			final Envelope e = objects.remove(a);
-			if (e != null)
-				return a;
-			if (nodes != null) { return nodes[quadrant(p)].remove(p, a); }
-			return null;
+		public void remove(final Coordinate p, final IShape a) {
+			if (nodes == null)
+				objects.remove(a);
+			else
+				nodes[quadrant(p)].remove(p, a);
+		}
+
+		public void remove(final Envelope env, final IShape a) {
+			if (nodes == null) {
+				objects.remove(a);
+			} else
+				for (final QuadNode node : nodes)
+					if (node.bounds.intersects(env)) {
+						node.remove(env, a);
+					}
 		}
 
 		public boolean shouldSplit() {
@@ -210,22 +214,6 @@ public class GamaQuadTree implements ISpatialIndex {
 				nodes[quadrant(p)].add(p, a);
 		}
 
-		int quadrant(final Coordinate p) {
-			final boolean north = p.y >= bounds.getMinY() && p.y < halfy;
-			final boolean west = p.x >= bounds.getMinX() && p.x < halfx;
-			return north ? west ? NW : NE : west ? SW : SE;
-		}
-
-		public void remove(final Envelope bounds, final IShape a) {
-			if (nodes == null) {
-				objects.remove(a);
-			} else
-				for (final QuadNode node : nodes)
-					if (node.bounds.intersects(bounds)) {
-						node.remove(bounds, a);
-					}
-		}
-
 		public void add(final Envelope env, final IAgent a) {
 			if (shouldSplit()) {
 				split();
@@ -237,6 +225,12 @@ public class GamaQuadTree implements ISpatialIndex {
 					if (node.bounds.intersects(env)) {
 						node.add(env, a);
 					}
+		}
+
+		int quadrant(final Coordinate p) {
+			final boolean north = p.y >= bounds.getMinY() && p.y < halfy;
+			final boolean west = p.x >= bounds.getMinX() && p.x < halfx;
+			return north ? west ? NW : NE : west ? SW : SE;
 		}
 
 		public void split() {
