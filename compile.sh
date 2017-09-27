@@ -13,10 +13,10 @@ compile (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
-		mvn clean compile
+		mvn clean install
 		cd -			
 		cd ummisco.gama.feature.dependencies 
-		mvn clean compile
+		mvn clean install
 		cd -
 	fi
 	
