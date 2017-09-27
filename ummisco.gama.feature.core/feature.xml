@@ -29,13 +29,6 @@
          unpack="false"/>
 
    <plugin
-         id="msi.gama.ext"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="msi.gama.headless"
          download-size="0"
          install-size="0"
