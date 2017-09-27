@@ -181,6 +181,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return super.stream(scope);
 	}
 
+	/**
+	 * Take copy into account and always creates a list (necessary for #2254)
+	 */
 	@Override
 	public IList<T> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (copy)
@@ -188,6 +191,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return this;
 	}
 
+	/**
+	 * Explicity copy (necessary for #2254)
+	 */
 	@Override
 	public IList<T> copy(final IScope scope) {
 		return listValue(scope, getType().getContentType(), true);
