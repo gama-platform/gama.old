@@ -10,6 +10,9 @@ change=$(git log --pretty=format: --name-only --since="1 hour ago")
 if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 	cd msi.gama.ext 
 	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+	cd -	
+	cd ummisco.gama.feature.dependencies 
+	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
 	cd -
 fi
 cd msi.gama.parent
