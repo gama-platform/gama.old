@@ -3,20 +3,20 @@
 compile (){
 	echo "Compile GAMA project"			
 	cd ummisco.gama.annotations
-	mvn clean install -DskipTests
+	mvn clean install
 	cd -
 	cd msi.gama.processor
-	mvn clean install -DskipTests
+	mvn clean install
 	cd - 
 	
 	change=$(git log --pretty=format: --name-only --since="1 hour ago")
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
-		mvn clean compile -offline -DskipTests
+		mvn clean compile
 		cd -			
 		cd ummisco.gama.feature.dependencies 
-		mvn clean compile -offline -DskipTests
+		mvn clean compile
 		cd -
 	fi
 	
@@ -24,9 +24,9 @@ compile (){
 	cd msi.gama.parent
 	
 	if  [[ $MSG == *"ci debug"* ]]; then		
-		mvn -e clean compile -DskipTests
+		mvn -e clean compile
 	else
-		mvn clean compile -offline -DskipTests
+		mvn clean compile
 	fi
 		
 	cd -
@@ -36,10 +36,10 @@ compile (){
 install (){
 	echo "Install GAMA project"			
 	cd ummisco.gama.annotations
-	mvn clean install -DskipTests -T 8C
+	mvn clean install -T 8C
 	cd -
 	cd msi.gama.processor
-	mvn clean install -DskipTests -T 8C
+	mvn clean install -T 8C
 	cd -
 	
 	
@@ -48,10 +48,10 @@ install (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
-		mvn clean install -DskipTests -T 8C
+		mvn clean install -T 8C
 		cd -
 		cd ummisco.gama.feature.dependencies 
-		mvn clean install -DskipTests -T 8C
+		mvn clean install -T 8C
 		cd -
 	fi
 	
@@ -73,7 +73,6 @@ install (){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
-	clean
 	MSG+=" ci ext "
 fi 
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
