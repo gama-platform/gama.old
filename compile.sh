@@ -14,6 +14,9 @@ compile (){
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
 		mvn clean compile -offline -DskipTests
+		cd -			
+		cd ummisco.gama.feature.dependencies 
+		mvn clean compile -offline -DskipTests
 		cd -
 	fi
 	
@@ -45,6 +48,9 @@ install (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		cd msi.gama.ext 
+		mvn clean install -DskipTests -T 8C
+		cd -
+		cd ummisco.gama.feature.dependencies 
 		mvn clean install -DskipTests -T 8C
 		cd -
 	fi
