@@ -188,7 +188,7 @@ public class SolveStatement extends AbstractStatement {
 		final double step = Cast.asFloat(scope, stepExp.value(scope));
 		// step = cycleLength > 1.0 ? step / cycleLength : step;
 
-		//scope.getGui().tell("aa");
+		scope.getGui().tell("aa");
 		final Solver solver = createSolver(scope, step);
 		if (solver == null)
 			return null;
