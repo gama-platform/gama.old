@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -201,7 +200,7 @@ public class SolveStatement extends AbstractStatement {
 		// timeInit /= cycleLength;
 		// timeFinal /= cycleLength;
 		// }
-		GAMA.getGui().tell("s");
+
 		solver.solve(scope, systemOfEquations, timeInit, timeFinal, getIntegratedValues(scope));
 
 		// if (integrationTimesExp != null) {
