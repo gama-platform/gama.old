@@ -75,6 +75,7 @@ else
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 			clean
 			MSG+=" ci ext "
+			echo $MSG
 		fi 
 		deploy 
 	fi
