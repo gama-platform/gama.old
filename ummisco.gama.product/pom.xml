@@ -49,7 +49,10 @@
 							<target>
 								<copy file="../ummisco.gama.product/extraresources/Model.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
-
+								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
+								<copy file="../ummisco.gama.product/extraresources/Info.plist"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/" />	
 								<copy
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
@@ -121,7 +124,7 @@
 			</plugin>
 			<!-- inject information into the PList file for cocoa, only way to do 
 				that actually, see project fix-info-plist and https://github.com/buchen/fix-info-plist-maven-plugin/issues/1 -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>name.abuchen</groupId>
 				<artifactId>fix-info-plist-maven-plugin</artifactId>
 				<version>1.0</version>
@@ -139,20 +142,19 @@
 					<appName>Gama.app</appName>
 					<properties>
 						<property>
-
-							<name>CFBundleDocumentTypes</name>
-							<value>Gama</value>
-						</property>
-
-						<property>
 							<name>CFBundleExecutable</name>
 							<value>Gama</value>
 						</property>
+     					<property>
+        					<name>Eclipse</name>
+       				    	<value />
+      					</property>
+
 
 						<property>
 							<name>CFBundleGetInfoString</name>
 							<value>Gama 1.7.0, Copyright UMMISCO IRD/UPMC and partners
-								2006-2016 http://gama-platform.org</value>
+								2006-2017 http://gama-platform.org</value>
 						</property>
 
 						<property>
@@ -199,11 +201,18 @@
 							<name>CFBundleDevelopmentRegion</name>
 							<value>English</value>
 						</property>
+						<property>
+							<name>CFBundleLocalizations</name>
+							<value>[en]</value>
+						</property>
 
 						<property>
 							<name>CFBundleDocumentTypes</name>
 							<value>
+							<array>
 								<dict>
+									<key>LSHandlerRank</key>
+									<string>Owner</string>
 									<key>CFBundleTypeExtensions</key>
 									<array>
 										<string>gaml</string>
@@ -219,6 +228,25 @@
 										<string>TEXT</string>
 									</array>
 								</dict>
+								<dict>
+									<key>LSHandlerRank</key>
+									<string>Owner</string>
+									<key>CFBundleTypeExtensions</key>
+									<array>
+										<string>experiment</string>
+									</array>
+									<key>CFBundleTypeIconFile</key>
+									<string>Model.icns</string>
+									<key>CFBundleTypeName</key>
+									<string>Gama Experiment</string>
+									<key>CFBundleTypeRole</key>
+									<string>Editor</string>
+									<key>CFBundleTypeOSTypes</key>
+									<array>
+										<string>TEXT</string>
+									</array>
+								</dict>
+							</array>
 							</value>
 						</property>
 
@@ -228,7 +256,7 @@
 						</property>
 					</properties>
 				</configuration>
-			</plugin>
+			</plugin>-->
 
 
 
