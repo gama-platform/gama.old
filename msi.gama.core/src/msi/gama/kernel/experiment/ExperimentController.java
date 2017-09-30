@@ -12,7 +12,6 @@ package msi.gama.kernel.experiment;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -121,7 +120,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			case IExperimentController._RELOAD:
 				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
-					final boolean wasRunning = !scheduler.paused && !GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
+					final boolean wasRunning = !scheduler.paused && !experiment.isAutorun();
 					scheduler.pause();
 					GAMA.getGui().getStatus(scope).waitStatus("Reloading...");
 					experiment.reload();

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.ExhaustiveSearch;
 import msi.gama.kernel.batch.IExploration;
@@ -152,7 +153,12 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.VIRTUAL,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")) },
+						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")),
+				@facet (
+						name = IKeyword.AUTORUN,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether this experiment should be run automatically when launched (false by default)")) },
 		omissible = IKeyword.NAME)
 @inside (
 		kinds = { ISymbolKind.MODEL })
@@ -200,6 +206,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private final boolean keepSeed;
 	private final boolean keepSimulations;
 	private final String experimentType;
+	private final boolean autorun;
 
 	public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
 
@@ -293,7 +300,17 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			keepSimulations = Cast.asBool(scope, ksExpr.value(scope));
 		else
 			keepSimulations = true;
+		final IExpression ar = getFacet(IKeyword.AUTORUN);
+		if (ar == null) {
+			autorun = GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
+		} else {
+			autorun = Cast.asBool(scope, ar.value(scope));
+		}
 
+	}
+
+	public boolean isAutorun() {
+		return autorun;
 	}
 
 	@Override

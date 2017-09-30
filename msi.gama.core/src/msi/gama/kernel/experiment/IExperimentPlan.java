@@ -102,6 +102,8 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract Iterable<IOutputManager> getActiveOutputManagers();
 
+	public abstract boolean isAutorun();
+
 	// public abstract void setController(ExperimentController controller);
 
 }
