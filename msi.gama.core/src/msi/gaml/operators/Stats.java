@@ -22,6 +22,8 @@ import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
+import com.google.common.collect.Ordering;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -140,7 +142,7 @@ public class Stats {
 		public void addValue(final double value) {
 			if (dataSetSize == dataSet.length) {
 				// Increase the capacity of the array.
-				final int newLength = (int) (GROWTH_RATE * dataSetSize);
+				final int newLength = (int) Math.round(GROWTH_RATE * dataSetSize);
 				final double[] newDataSet = new double[newLength];
 				java.lang.System.arraycopy(dataSet, 0, newDataSet, 0, dataSetSize);
 				dataSet = newDataSet;
@@ -247,7 +249,7 @@ public class Stats {
 		 *             If the data set is empty.
 		 */
 		public final double getGeometricMean() {
-			return FastMath.pow(product, 1.0d / dataSetSize);
+			return Math.pow(product, 1.0d / dataSetSize);
 		}
 
 		/**
@@ -281,7 +283,7 @@ public class Stats {
 			final double mean = getArithmeticMean();
 			double diffs = 0;
 			for (int i = 0; i < dataSetSize; i++) {
-				diffs += FastMath.abs(mean - dataSet[i]);
+				diffs += Math.abs(mean - dataSet[i]);
 			}
 			return diffs / dataSetSize;
 		}
@@ -331,7 +333,16 @@ public class Stats {
 		 *             If the data set is empty.
 		 */
 		public final double getStandardDeviation() {
-			return FastMath.sqrt(getVariance());
+			return Math.sqrt(getVariance());
+		}
+
+		public double[] getStops(final int nb) {
+			final double interval = (maximum - minimum) / nb;
+			final double[] result = new double[nb - 1];
+			for (int i = 1; i < nb; i++) {
+				result[i - 1] = minimum + i * interval;
+			}
+			return result;
 		}
 
 		/**
@@ -377,6 +388,113 @@ public class Stats {
 	}
 
 	@operator (
+			value = "split",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split_in", "split_using" },
+			value = "Splits a list of numbers into n=(1+3.3*log10(elements)) bins. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split(final IScope scope, final IList<T> list) {
+		final int nb = (int) (1 + 3.3 * Math.log10(list.size()));
+		return split_in(scope, list, nb);
+	}
+
+	@operator (
+			value = "split_in",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_using" },
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb) {
+		return split_in(scope, list, nb, true);
+	}
+
+	@operator (
+			value = "split_in",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_using" },
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb,
+			final boolean strict) {
+		if (nb <= 1) {
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			result.add(list);
+			return result;
+		}
+		final DataSet d = from(scope, list);
+		final IList<Double> stops = GamaListFactory.create(scope, Types.FLOAT, d.getStops(nb));
+		return split_using(scope, list, stops);
+	}
+
+	@operator (
+			value = "split_using",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_in" },
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
+			final IList<? extends Comparable> stops) {
+		return split_using(scope, list, stops, true);
+	}
+
+	@operator (
+			value = "split_using",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_in" },
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
+			final IList<? extends Comparable> stops, final boolean strict) {
+		if (stops.size() == 0) {
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			result.add(list);
+			return result;
+		}
+		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops))
+			throw GamaRuntimeException.error(
+					"The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
+		final DataSet d = from(scope, stops);
+		d.addValue(Double.MAX_VALUE);
+		final IType numberType = list.getType().getContentType();
+		final IList<IList<T>> result = GamaListFactory.createWithoutCasting(Types.LIST.of(numberType));
+		for (int i = 0; i < d.dataSetSize; i++) {
+			result.add(GamaListFactory.createWithoutCasting(numberType));
+		}
+		for (final T o : list) {
+			for (int i = 0; i < d.dataSetSize; i++) {
+				if (strict ? o.doubleValue() < d.dataSet[i] : o.doubleValue() <= d.dataSet[i]) {
+					result.get(i).add((T) numberType.cast(scope, o, null, false));
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	@operator (
 			value = "max",
 			can_be_const = true,
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
@@ -387,11 +505,13 @@ public class Stats {
 			value = "the maximum element found in the operand",
 			masterDoc = true,
 			comment = "the max operator behavior depends on the nature of the operand",
-			usages = { @usage (
-					value = "if it is a list of int of float, max returns the maximum of all the elements",
-					examples = { @example (
-							value = "max ([100, 23.2, 34.5])",
-							equals = "100.0") }),
+			usages = {
+
+					@usage (
+							value = "if it is a list of int of float, max returns the maximum of all the elements",
+							examples = { @example (
+									value = "max ([100, 23.2, 34.5])",
+									equals = "100.0") }),
 					@usage (
 							value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
 							examples = { @example (
@@ -1024,29 +1144,29 @@ public class Stats {
 	}
 
 	@operator (
-				value =  "gini",
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
-		@doc (
-				usages = { @usage (
-						value = "return the Gini Index of the given list of values (list of floats)",
-						examples = { @example (
-								value = "gini([1.0, 0.5, 2.0])",
-								equals = "the gini index computed",
-								test = false) }) })
-	public static double giniIndex(final IScope scope,final  IList<Double> vals) {
-		int N = vals.size();
+			value = "gini",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+	@doc (
+			usages = { @usage (
+					value = "return the Gini Index of the given list of values (list of floats)",
+					examples = { @example (
+							value = "gini([1.0, 0.5, 2.0])",
+							equals = "the gini index computed",
+							test = false) }) })
+	public static double giniIndex(final IScope scope, final IList<Double> vals) {
+		final int N = vals.size();
 		Double G = 0.0;
 		double sumXi = 0.0;
 		for (int i = 0; i < N; i++) {
-			double xi = vals.get(i);
-			sumXi += xi;		
+			final double xi = vals.get(i);
+			sumXi += xi;
 			for (int j = 0; j < N; j++) {
-				double yi = vals.get(j);
+				final double yi = vals.get(j);
 				G += FastMath.abs(xi - yi);
 			}
 		}
-		G /= (2 * N * sumXi);
+		G /= 2 * N * sumXi;
 		return G;
 	}
 
