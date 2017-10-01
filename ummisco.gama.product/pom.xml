@@ -41,7 +41,7 @@
 				<executions>
 					<execution>
 						<id>create-zip-files</id>
-						<phase>verify</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
