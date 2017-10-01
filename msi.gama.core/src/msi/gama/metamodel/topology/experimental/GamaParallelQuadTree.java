@@ -9,7 +9,7 @@
  *
  **********************************************************************************************/
 
-package msi.gama.metamodel.topology;
+package msi.gama.metamodel.topology.experimental;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
