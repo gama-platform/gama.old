@@ -1,5 +1,7 @@
 package ummisco.gama.ui.parameters;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -49,12 +51,24 @@ public class CommandEditor extends AbstractEditor<Object> {
 	}
 
 	@Override
+	protected GridData getParameterGridData() {
+		final GridData d = new GridData(SWT.FILL, SWT.TOP, false, false);
+
+		d.minimumWidth = 70;
+		// d.widthHint = 100; // SWT.DEFAULT
+		return d;
+	}
+
+	@Override
+	protected void addToolbarHiders(final Control... c) {}
+
+	@Override
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 		GamaUIColor color = GamaColors.get(command.getColor(getScope()));
 		if (color == null)
 			color = IGamaColors.NEUTRAL;
 		textBox = FlatButton.button(composite, color, "").light().small();
-		textBox.setText(command.getName());
+		textBox.setText(command.getName() + "  ");
 		textBox.addSelectionListener(getListener());
 		return textBox;
 
