@@ -52,7 +52,7 @@
 								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
 								<copy file="../ummisco.gama.product/extraresources/Info.plist"
-									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/" />	
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/" overwrite="true"/>	
 								<copy
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
@@ -276,11 +276,6 @@
 								<resource>
 									<directory>${project.build.directory}/../</directory>
 									<filtering>false</filtering>
-									<!-- in case you have a defined config.ini -->
-									<!-- <includes> <include>config.ini</include> </includes> -->
-									<!-- <excludes> <exclude>src</exclude> <exclude>gaml</exclude> <exclude>target</exclude> 
-										<exclude>META-INF</exclude> <exclude>bin</exclude> <exclude>products</exclude> 
-										</excludes> -->
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/configuration</outputDirectory>
