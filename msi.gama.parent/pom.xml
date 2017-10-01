@@ -546,12 +546,6 @@
 			</plugin>
 
 			<plugin>
-				<groupId>name.abuchen</groupId>
-				<artifactId>fix-info-plist-maven-plugin</artifactId>
-				<version>1.0</version>
-			</plugin>
-
-			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.0.0</version>
 				<configuration>
