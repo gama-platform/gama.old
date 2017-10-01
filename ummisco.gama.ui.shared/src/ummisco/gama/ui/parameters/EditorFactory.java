@@ -21,8 +21,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaDate;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class EditorFactory {
@@ -144,7 +146,9 @@ public class EditorFactory {
 		return ed;
 	}
 
-	public AbstractEditor create(final IScope scope, final IAgent agent, final IParameter var, final EditorListener l) {
+	public AbstractEditor create(final IScope scope, final IAgent agent, final IParameter disp,
+			final EditorListener l) {
+		final IParameter var = disp;
 		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
 		final IType t = var.getType();
 		final int type = t.getType().id();
@@ -182,5 +186,10 @@ public class EditorFactory {
 			default:
 				return new GenericEditor(scope, agent, var, l);
 		}
+	}
+
+	public IParameterEditor create(final IScope scope, final UserCommandStatement command,
+			final EditorListener.Command selectionAdapter) {
+		return new CommandEditor(scope, command, selectionAdapter);
 	}
 }

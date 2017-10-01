@@ -175,11 +175,17 @@ public abstract class AbstractEditor<T>
 		this.scope = scope;
 		param = variable;
 		agent = a;
-		isCombo = param.getAmongValue(getScope()) != null;
-		isEditable = param.isEditable();
-		name = param.getTitle();
-		minValue = param.getMinValue(getScope());
-		maxValue = param.getMaxValue(getScope());
+		if (param != null) {
+			isCombo = param.getAmongValue(getScope()) != null;
+			isEditable = param.isEditable();
+			name = param.getTitle();
+			minValue = param.getMinValue(getScope());
+			maxValue = param.getMaxValue(getScope());
+		} else {
+			isCombo = false;
+			isEditable = true;
+			name = "";
+		}
 		listener = l;
 	}
 
@@ -209,6 +215,7 @@ public abstract class AbstractEditor<T>
 		} else {
 			checkButtons();
 		}
+
 		this.getEditor().setEnabled(active);
 	}
 
@@ -487,6 +494,10 @@ public abstract class AbstractEditor<T>
 				.toJavaString(GamaStringType.staticCast(scope, result, false)); }
 		return (T) getExpectedType().cast(scope, result, null, false);
 
+	}
+
+	protected EditorListener<?> getListener() {
+		return listener;
 	}
 
 	protected void setParameterValue(final T val) {

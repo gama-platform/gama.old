@@ -232,4 +232,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public boolean isDocumenting();
 
+	public int getOrder();
+
 }

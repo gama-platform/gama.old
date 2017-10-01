@@ -18,6 +18,7 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -50,13 +51,14 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	}
 
 	@Override
-	public void add(final Collection<? extends IParameter> params, final IAgent agent) {
+	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		if (addItem(agent)) {
 			if (!agent.dead()) {
 				final IScope scope = agent.getScope().copy(" for " + agent.getName());
-				for (final IParameter var : params) {
-					if (!HIDDEN.contains(var.getName())) {
-						final IParameterEditor<?> gp = EditorFactory.getInstance().create(scope, agent, var, null);
+				for (final IExperimentDisplayable var : params) {
+					if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
+						final IParameterEditor<?> gp =
+								EditorFactory.getInstance().create(scope, agent, (IParameter) var, null);
 						categories.get(agent).put(gp.getParam().getName(), gp);
 					}
 				}

@@ -133,8 +133,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
 	private Object value = UNDEFINED;
-	// int order;
-	static int INDEX = 0;
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
 	String varName, title, category, unitLabel;
@@ -164,7 +162,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		slider = getFacet("slider");
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
-		// order = desc.getDefinitionOrder();
 		isEditable = true;
 	}
 

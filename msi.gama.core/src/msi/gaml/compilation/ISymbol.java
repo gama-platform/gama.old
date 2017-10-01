@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ISymbol.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ISymbol.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,6 +23,10 @@ import msi.gaml.expressions.IExpression;
 public interface ISymbol extends INamed {
 
 	public abstract void dispose();
+
+	public abstract int getOrder();
+
+	public abstract void setOrder(int o);
 
 	public abstract IDescription getDescription();
 

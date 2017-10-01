@@ -630,4 +630,5 @@ public class Variable extends Symbol implements IVariable {
 			return false;
 		return desc.isSyntheticSpeciesContainer();
 	}
+
 }

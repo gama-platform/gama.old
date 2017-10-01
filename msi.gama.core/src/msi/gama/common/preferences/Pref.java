@@ -17,6 +17,10 @@ import msi.gaml.types.Types;
 
 public class Pref<T> implements IParameter {
 
+	static int ORDER = 0;
+
+	private final int order = ORDER++;
+
 	String key, title, tab, group;
 	T value, initial;
 	final int type;
@@ -52,6 +56,11 @@ public class Pref<T> implements IParameter {
 			}
 		});
 		return this;
+	}
+
+	@Override
+	public int getOrder() {
+		return order;
 	}
 
 	public Pref<T> noSlider() {
@@ -250,4 +259,5 @@ public class Pref<T> implements IParameter {
 	public boolean acceptsSlider(final IScope scope) {
 		return slider;
 	}
+
 }

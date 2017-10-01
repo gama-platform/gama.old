@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.interfaces;
 
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -20,5 +23,19 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 public interface EditorListener<T> {
 
 	void valueModified(T val) throws GamaRuntimeException;
+
+	public static interface Command extends EditorListener<Object>, SelectionListener {
+
+		@Override
+		public default void valueModified(final Object o) {
+			this.widgetSelected(null);
+		}
+
+		@Override
+		public default void widgetDefaultSelected(final SelectionEvent o) {
+			this.widgetSelected(null);
+		}
+
+	}
 
 }
