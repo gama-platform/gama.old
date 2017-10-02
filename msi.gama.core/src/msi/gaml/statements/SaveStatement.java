@@ -759,6 +759,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (gis != null) {
 				writePRJ(scope, path, gis);
 			}
+		} catch (final ClassCastException e){
+			throw GamaRuntimeException.error("Cannot save agents/geometries with different types of geometries (point, line, polygon) in a same shapefile", scope);
 		} finally {
 			store.dispose();
 		}
