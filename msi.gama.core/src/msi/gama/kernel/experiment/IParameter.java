@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IParameter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IParameter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -23,17 +22,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public interface IParameter {
-
-	public abstract String getName();
-
-	public abstract String getTitle();
-
-	public abstract String getCategory();
-
-	public abstract String getUnitLabel(IScope scope);
-
-	public void setUnitLabel(String label);
+public interface IParameter extends IExperimentDisplayable {
 
 	// public abstract Integer getDefinitionOrder();
 
@@ -41,7 +30,7 @@ public interface IParameter {
 
 	public abstract Object value(IScope scope) throws GamaRuntimeException;
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public abstract IType getType();
 
 	public String serialize(boolean includingBuiltIn);
@@ -52,7 +41,7 @@ public interface IParameter {
 
 	public abstract Number getMaxValue(IScope scope);
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public abstract List getAmongValue(IScope scope);
 
 	public abstract boolean isEditable();

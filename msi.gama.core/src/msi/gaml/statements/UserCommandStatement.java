@@ -17,6 +17,7 @@ import com.google.common.collect.FluentIterable;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -71,6 +72,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The color of the button to display")),
 				@facet (
+						name = IKeyword.CATEGORY,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("a category label, used to group parameters in the interface")),
+				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
 						optional = true,
@@ -101,7 +107,8 @@ import msi.gaml.types.IType;
 		see = { IKeyword.USER_INIT, IKeyword.USER_PANEL, IKeyword.USER_INPUT })
 @validator (UserCommandValidator.class)
 
-public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
+public class UserCommandStatement extends AbstractStatementSequence
+		implements IStatement.WithArgs, IExperimentDisplayable {
 
 	public static class UserCommandValidator implements IDescriptionValidator<IDescription> {
 
@@ -143,6 +150,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	Arguments args;
 	Arguments runtimeArgs;
 	final String actionName;
+	final String category;
 	final IExpression when;
 	List<UserInputStatement> inputs = new ArrayList<>();
 
@@ -150,6 +158,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 		super(desc);
 		setName(desc.getName());
 		actionName = getLiteral(IKeyword.ACTION);
+		category = desc.getLitteral(IKeyword.CATEGORY);
 		when = getFacet(IKeyword.WHEN);
 	}
 
@@ -241,5 +250,23 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 			return false;
 		return Cast.asBool(scope, exp.value(scope));
 	}
+
+	@Override
+	public String getCategory() {
+		return category;
+	}
+
+	@Override
+	public String getTitle() {
+		return getName();
+	}
+
+	@Override
+	public String getUnitLabel(final IScope scope) {
+		return "";
+	}
+
+	@Override
+	public void setUnitLabel(final String label) {}
 
 }

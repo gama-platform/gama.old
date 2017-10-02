@@ -42,6 +42,7 @@ public interface IKeyword {
 	public static final String ATTRIBUTES = "attributes";
 	public static final String AUTHOR = "author";
 	public static final String AUTOSAVE = "autosave";
+	public static final String AUTORUN = "autorun";
 	public static final String AVOID_MASK = "avoid_mask";
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";

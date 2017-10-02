@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'EditorsList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EditorsList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 
@@ -34,7 +33,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	@Override
 	public abstract String getItemDisplayName(final T obj, final String previousName);
 
-	public abstract void add(final Collection<? extends IParameter> params, final IAgent agent);
+	public abstract void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent);
 
 	public Map<T, Map<String, IParameterEditor<?>>> getCategories() {
 		return categories;
@@ -54,26 +53,21 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	}
 
 	@Override
-	public void pauseItem(final T name) {
-	}
+	public void pauseItem(final T name) {}
 
 	@Override
 	public abstract void updateItemValues();
 
 	@Override
-	public void resumeItem(final T obj) {
-	}
+	public void resumeItem(final T obj) {}
 
 	@Override
-	public void focusItem(final T obj) {
-	}
+	public void focusItem(final T obj) {}
 
 	@Override
-	public void makeItemVisible(final T obj, final boolean b) {
-	}
+	public void makeItemVisible(final T obj, final boolean b) {}
 
 	@Override
-	public void makeItemSelectable(final T obj, final boolean b) {
-	}
+	public void makeItemSelectable(final T obj, final boolean b) {}
 
 }

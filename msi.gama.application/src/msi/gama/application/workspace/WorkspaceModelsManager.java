@@ -127,6 +127,11 @@ public class WorkspaceModelsManager {
 			filePath = segments[0];
 			expName = segments[1];
 		}
+		if ( filePath.endsWith(".experiment") && expName == null) {
+			expName = "0";
+			// Verify that it works even if the included model defines experiments itself...
+			
+		}
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
 			final String fp = filePath;

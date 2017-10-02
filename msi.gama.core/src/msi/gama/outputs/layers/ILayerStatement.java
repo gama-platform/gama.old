@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ILayerStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ILayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,8 +14,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gaml.compilation.ISymbol;
 
 /**
- * The class ILayerStatement. Supports the GAML definition of layers in a
- * display
+ * The class ILayerStatement. Supports the GAML definition of layers in a display
  *
  * @author drogoul
  * @since 14 d�c. 2011
@@ -40,10 +38,6 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 	public abstract short getType();
 
 	public abstract Double getTransparency();
-
-	void setOrder(Integer i);
-
-	Integer getOrder();
 
 	public abstract Boolean getRefresh();
 

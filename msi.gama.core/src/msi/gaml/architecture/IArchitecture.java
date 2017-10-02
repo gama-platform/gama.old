@@ -32,4 +32,12 @@ public interface IArchitecture extends ISkill, IStatement {
 	public abstract void verifyBehaviors(ISpecies context);
 
 	public abstract void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation);
+
+	@Override
+	public default int getOrder() {
+		return 0;
+	}
+
+	@Override
+	public default void setOrder(final int o) {}
 }

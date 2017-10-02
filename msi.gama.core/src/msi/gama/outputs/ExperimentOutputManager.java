@@ -96,7 +96,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		}
 		if (super.init(scope)) {
 			scope.getGui().applyLayout(scope, getLayout());
-			if (GamaPreferences.Runtime.CORE_AUTO_RUN.getValue()) {
+			if (scope.getExperiment().getSpecies().isAutorun()) {
 				GAMA.startFrontmostExperiment();
 			}
 			return true;
@@ -112,8 +112,9 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	// #1273) -- Conflicts with Issue #2204
 	@Override
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		if (scope.getExperiment().getSpecies().isBatch()) return true;
-		 return super.initialStep(scope, output);
+		if (scope.getExperiment().getSpecies().isBatch())
+			return true;
+		return super.initialStep(scope, output);
 	}
 
 	@Override

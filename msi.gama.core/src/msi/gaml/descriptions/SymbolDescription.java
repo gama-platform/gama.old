@@ -48,6 +48,9 @@ public abstract class SymbolDescription implements IDescription {
 	protected static Set<String> typeProviderFacets = ImmutableSet
 			.copyOf(Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT));
 
+	public static int ORDER = 0;
+	private final int order = ORDER++;
+
 	private Facets facets;
 	protected final EObject element;
 	protected IDescription enclosing;
@@ -58,7 +61,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected boolean validated;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final EObject source,
-			/* final Iterable<? extends IDescription> children, */ final Facets facets) {
+			final Facets facets) {
 		this.keyword = keyword;
 		this.facets = facets;
 		element = source;
@@ -66,7 +69,11 @@ public abstract class SymbolDescription implements IDescription {
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
-		// addChildren(children);
+	}
+
+	@Override
+	public int getOrder() {
+		return order;
 	}
 
 	protected boolean hasFacets() {
