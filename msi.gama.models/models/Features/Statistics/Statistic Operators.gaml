@@ -25,6 +25,11 @@ global {
 		write "skewness: " + skewness(data);
 		write "gamma_rnd: " + gamma_rnd(0.1,1); 
 		write "gini index: " + gini([10.0, 1.0, 2.0, 0.0]);
+		
+		list<float> l1 <- [10.0,5.0,1.0, 3.0, 4.0, 7.5, 1.0,10.0,5.0,1.0];
+		list<float> l2 <- [1.0,1.0,15.0,1.0,1.0, 3.0, 4.0, 7.5];
+		write "Dynamic Time Warping: " + dtw(l1,l2);
+		write "Dynamic Time Warping with a radius of 2: " + dtw(l1,l2,2);	
 	}
 }
 

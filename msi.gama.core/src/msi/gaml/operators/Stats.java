@@ -1024,6 +1024,106 @@ public class Stats {
 	}
 
 	@operator (
+			value = "dtw",
+			can_be_const = false,
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC})
+	@doc (
+			value = "returns the dynamic time warping between the two series of value with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
+			examples = { @example ("dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)") })
+	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2,
+			final int radius) throws GamaRuntimeException {
+		int n1 = vals1.size();
+		int n2 = vals2.size();
+		double[][] table = new double[2][n2 + 1];
+
+		table[0][0] = 0;
+
+		for (int i = 1; i <= n2; i++) {
+			table[0][i] = Double.POSITIVE_INFINITY;
+		}
+
+		for (int i = 1; i <= n1; i++) {
+			int start = Math.max(1, i - radius);
+			int end = Math.min(n2, i + radius);
+
+			table[1][start - 1] = Double.POSITIVE_INFINITY;
+			if (end < n2)
+				table[1][end + 1] = Double.POSITIVE_INFINITY;
+
+			for (int j = start; j <= end; j++) {
+				double cost = Math.abs(Cast.asFloat(scope, vals1.get(i - 1)) - Cast.asFloat(scope, vals2.get(j - 1)));
+
+				double min = table[0][j - 1];
+
+				if (min > table[0][j]) {
+					min = table[0][j];
+				}
+
+				if (min > table[1][j - 1]) {
+					min = table[1][j - 1];
+				}
+
+				table[1][j] = cost + min;
+			}
+
+			double[] swap = table[0];
+			table[0] = table[1];
+			table[1] = swap;
+		}
+
+		return table[0][n2];
+
+	}
+
+	@operator (
+			value = "dtw",
+			can_be_const = false,
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC})
+	@doc (
+			value = "returns the dynamic time warping between the two series of value",
+			examples = { @example ("dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])") })
+	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2) throws GamaRuntimeException {
+		int n1 = vals1.size();
+		int n2 = vals2.size();
+		 double[][] table = new double[2][n2 + 1];
+
+	        table[0][0] = 0;
+
+	        for (int i = 1; i <= n2; i++) {
+	            table[0][i] = Double.POSITIVE_INFINITY;
+	        }
+
+	        for (int i = 1; i <= n1; i++) {
+	            table[1][0] = Double.POSITIVE_INFINITY;
+
+	            for (int j = 1; j <= n2; j++) {
+	            	double cost = Math.abs(Cast.asFloat(scope, vals1.get(i - 1)) - Cast.asFloat(scope, vals2.get(j - 1)));
+	            	
+	                double min = table[0][j - 1];
+
+	                if (min > table[0][j]) {
+	                    min = table[0][j];
+	                }
+
+	                if (min > table[1][j - 1]) {
+	                    min = table[1][j - 1];
+	                }
+
+	                table[1][j] = cost + min;
+	            }
+
+	            double[] swap = table[0];
+	            table[0] = table[1];
+	            table[1] = swap;
+	        }
+
+	        return table[0][n2];
+	    }
+	@operator (
 			value = "gamma_rnd",
 			can_be_const = false,
 			type = IType.LIST,
