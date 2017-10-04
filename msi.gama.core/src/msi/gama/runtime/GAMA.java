@@ -141,7 +141,9 @@ public class GAMA {
 			currentExperiment.getAgent().setSeed(seed);
 		}
 
-		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
+		// Test added to fix #2229
+		if (!currentExperiment.isBatch())
+			currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 
 		controllers.add(currentExperiment.getController());
 		return currentExperiment;
