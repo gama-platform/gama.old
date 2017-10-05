@@ -12,7 +12,7 @@ import msi.gaml.types.Types;
 
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "intensity", type = IType.FLOAT),
 		@var(name = "about", type = IType.NONE), @var(name = "decay", type = IType.FLOAT),
-		@var(name = "agentCause", type = IType.AGENT) })
+		@var(name = "agentCause", type = IType.AGENT), @var(name = "owner", type = IType.AGENT)})
 public class Emotion implements IValue {
 
 	String name;
@@ -20,6 +20,7 @@ public class Emotion implements IValue {
 	Predicate about;
 	Double decay = 0.0;
 	IAgent agentCause;
+	IAgent owner;
 	private boolean noAgentCause = true;
 	private boolean noIntensity = true;
 	private boolean noAbout = true;
@@ -49,6 +50,11 @@ public class Emotion implements IValue {
 		return agentCause;
 	}
 
+	@getter("owner")
+	public IAgent getOwner(){
+		return owner;
+	}
+	
 	public boolean getNoIntensity() {
 		return this.noIntensity;
 	}
@@ -76,16 +82,22 @@ public class Emotion implements IValue {
 		this.noAgentCause = false;
 	}
 
+	public void setOwner(final IAgent own){
+		this.owner = own;
+	}
+	
 	public Emotion() {
 		this.name = "";
 		this.about = null;
 		this.agentCause = null;
+		this.owner = null;
 	}
 
 	public Emotion(final String name) {
 		this.name = name;
 		this.about = null;
 		this.agentCause = null;
+		this.owner = null;
 	}
 
 	public Emotion(final String name, final Double intensity2) {
@@ -93,6 +105,7 @@ public class Emotion implements IValue {
 		this.intensity = intensity2;
 		this.about = null;
 		this.agentCause = null;
+		this.owner = null;
 		this.noIntensity = false;
 	}
 
@@ -100,6 +113,7 @@ public class Emotion implements IValue {
 		this.name = name;
 		this.about = ab;
 		this.agentCause = null;
+		this.owner = null;
 		this.noAbout = false;
 	}
 
@@ -107,6 +121,7 @@ public class Emotion implements IValue {
 		this.name = name;
 		this.about = null;
 		this.agentCause = ag;
+		this.owner = null;
 		this.noAgentCause = ag == null;
 	}
 
@@ -115,6 +130,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = null;
 		this.agentCause = null;
+		this.owner = null;
 		this.decay = de;
 		this.noIntensity = false;
 		this.noAbout = false;
@@ -125,6 +141,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = ab;
 		this.agentCause = null;
+		this.owner = null;
 		this.noIntensity = false;
 		this.noAbout = false;
 	}
@@ -133,6 +150,7 @@ public class Emotion implements IValue {
 		this.name = name;
 		this.about = ab;
 		this.agentCause = ag;
+		this.owner = null;
 		this.noAbout = false;
 		this.noAgentCause = ag == null;
 	}
@@ -142,6 +160,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = null;
 		this.agentCause = ag;
+		this.owner = null;
 		this.noIntensity = false;
 		this.noAgentCause = ag == null;
 	}
@@ -151,6 +170,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = ab;
 		this.agentCause = null;
+		this.owner = null;
 		this.decay = de;
 		this.noIntensity = false;
 		this.noAbout = false;
@@ -161,6 +181,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = null;
 		this.agentCause = ag;
+		this.owner = null;
 		this.decay = de;
 		this.noIntensity = false;
 		this.noAgentCause = ag == null;
@@ -171,6 +192,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = ab;
 		this.agentCause = ag;
+		this.owner = null;
 		this.noIntensity = false;
 		this.noAgentCause = ag == null;
 		this.noAbout = false;
@@ -181,6 +203,7 @@ public class Emotion implements IValue {
 		this.intensity = intens;
 		this.about = ab;
 		this.agentCause = ag;
+		this.owner = null;
 		this.decay = de;
 		this.noIntensity = false;
 		this.noAbout = false;
@@ -199,9 +222,9 @@ public class Emotion implements IValue {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		if (intensity > 0) {
-			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + ")";
+			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + "," + owner + ")";
 		}
-		return "emotion(" + name + "," + about + "," + decay + "," + agentCause + ")";
+		return "emotion(" + name + "," + about + "," + decay + "," + agentCause + "," + owner + ")";
 	}
 
 	@Override
@@ -246,6 +269,9 @@ public class Emotion implements IValue {
 		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
 			return false;
 		}
+		 if(owner!=null && other.owner!=null && !owner.equals(other.owner)){
+			 return false;
+		 }
 		return true;
 	}
 

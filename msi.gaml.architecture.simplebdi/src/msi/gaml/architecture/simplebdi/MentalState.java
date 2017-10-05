@@ -13,6 +13,7 @@ import msi.gaml.types.Types;
 @vars({@var(name = "modality", type = IType.STRING),
 	@var(name = "predicate", type = IType.NONE),
 	@var(name = "mental_state", type = IType.NONE),
+	@var(name = "emotion", type=IType.NONE),
 	@var(name = "owner", type = IType.AGENT),
 	@var(name = "strength", type = IType.FLOAT),
 	@var(name = "lifetime", type = IType.INT)})
@@ -24,6 +25,7 @@ public class MentalState implements IValue {
 	int lifetime = -1;
 	boolean isUpdated = false;
 	MentalState mental;
+	Emotion emo;
 	IAgent owner;
 	
 	@getter("modality")
@@ -39,6 +41,11 @@ public class MentalState implements IValue {
 	@getter("mental_state")
 	public MentalState getMentalState(){
 		return mental;
+	}
+	
+	@getter("emotion")
+	public Emotion getEmotion(){
+		return emo;
 	}
 	
 	@getter("strength")
@@ -68,6 +75,10 @@ public class MentalState implements IValue {
 		this.mental=ment;
 	}
 	
+	public void setEmotion(Emotion em){
+		this.emo=em;
+	}
+	
 	public void setStrength(Double stre){
 		this.strength=stre;
 	}
@@ -94,6 +105,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=1.0;
 		this.owner = null;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod){
@@ -103,6 +115,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=1.0;
 		this.owner = null;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, Predicate pred){
@@ -112,6 +125,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=1.0;
 		this.owner = null;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment){
@@ -121,6 +135,17 @@ public class MentalState implements IValue {
 		this.mental=ment;
 		this.strength=1.0;
 		this.owner = null;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=1.0;
+		this.owner = null;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, IAgent ag){
@@ -130,6 +155,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=1.0;
 		this.owner = ag;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, IAgent ag){
@@ -139,6 +165,17 @@ public class MentalState implements IValue {
 		this.mental=ment;
 		this.strength=1.0;
 		this.owner = ag;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, IAgent ag){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=1.0;
+		this.owner = ag;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, Double stre){
@@ -147,6 +184,7 @@ public class MentalState implements IValue {
 		this.predicate=pred;
 		this.mental=null;
 		this.strength=stre;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, Double stre){
@@ -155,6 +193,16 @@ public class MentalState implements IValue {
 		this.predicate=null;
 		this.mental=ment;
 		this.strength=stre;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, Double stre){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=stre;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, int life){
@@ -164,6 +212,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.lifetime=life;
 		this.strength=1.0;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, int life){
@@ -173,6 +222,17 @@ public class MentalState implements IValue {
 		this.mental=ment;
 		this.lifetime=life;
 		this.strength=1.0;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, int life){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.lifetime=life;
+		this.strength=1.0;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, Double stre, int life){
@@ -182,6 +242,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=stre;
 		this.lifetime=life;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, Double stre, int life){
@@ -191,6 +252,17 @@ public class MentalState implements IValue {
 		this.mental=ment;
 		this.strength=stre;
 		this.lifetime=life;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, Double stre, int life){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=stre;
+		this.lifetime=life;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, Double stre, IAgent ag){
@@ -200,6 +272,7 @@ public class MentalState implements IValue {
 		this.mental=null;
 		this.strength=stre;
 		this.owner = ag;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, Double stre, IAgent ag){
@@ -209,6 +282,17 @@ public class MentalState implements IValue {
 		this.mental=ment;
 		this.strength=stre;
 		this.owner = ag;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, Double stre, IAgent ag){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=stre;
+		this.owner = ag;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, int life, IAgent ag){
@@ -219,6 +303,7 @@ public class MentalState implements IValue {
 		this.strength=1.0;
 		this.lifetime=life;
 		this.owner = ag;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, int life, IAgent ag){
@@ -229,6 +314,18 @@ public class MentalState implements IValue {
 		this.strength=1.0;
 		this.lifetime=life;
 		this.owner = ag;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, int life, IAgent ag){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=1.0;
+		this.lifetime=life;
+		this.owner = ag;
+		this.emo = em;
 	}
 	
 	public MentalState(String mod, Predicate pred, Double stre, int life, IAgent ag){
@@ -239,6 +336,7 @@ public class MentalState implements IValue {
 		this.strength=stre;
 		this.lifetime=life;
 		this.owner = ag;
+		this.emo = null;
 	}
 	
 	public MentalState(String mod, MentalState ment, Double stre, int life, IAgent ag){
@@ -249,6 +347,18 @@ public class MentalState implements IValue {
 		this.strength=stre;
 		this.lifetime=life;
 		this.owner = ag;
+		this.emo = null;
+	}
+	
+	public MentalState(String mod, Emotion em, Double stre, int life, IAgent ag){
+		super();
+		this.modality=mod;
+		this.predicate=null;
+		this.mental=null;
+		this.strength=stre;
+		this.lifetime=life;
+		this.owner = ag;
+		this.emo = em;
 	}
 	
 	@Override
@@ -309,6 +419,11 @@ public class MentalState implements IValue {
 		if(this.mental!=null && other.getMentalState()==null){return false;}
 		if(this.mental!=null && other.getMentalState()!=null){
 			if(!other.getMentalState().equals(this.mental)){return false;}
+		}
+		if(this.emo==null && other.getEmotion()!=null){return false;}
+		if(this.emo!=null && other.getEmotion()==null){return false;}
+		if(this.emo!=null && other.getEmotion()!=null){
+			if(!other.getEmotion().equals(this.emo)){return false;}
 		}
 		if(this.owner!=null && other.getOwner()!=null){
 			if(!other.getOwner().equals(this.owner)){return false;}

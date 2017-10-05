@@ -572,104 +572,153 @@ public class Operators {
 	
 	// Faire des opérateurs pour créer des états mentaux (en précisant ou non l'agent propriétaire)
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality) throws GamaRuntimeException {
 		return new MentalState(modality);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred) throws GamaRuntimeException {
 		return new MentalState(modality,pred);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality,pred,life);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,life);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,life,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength, final Integer life,final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,life,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred) throws GamaRuntimeException {
 		return new MentalState(modality,pred);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality,pred,life);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,life);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,life,ag);
 	}
 	
 	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new mental state", examples = @example(value = "new_social_link(agentA)", test = false))
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength, final Integer life,final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life,ag);
+	}
+	
+	//Remplacer avec les émotions
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred) throws GamaRuntimeException {
+		return new MentalState(modality,pred);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength, final Integer life) throws GamaRuntimeException {
+		return new MentalState(modality,pred,strength,life);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life, final IAgent ag) throws GamaRuntimeException {
+		return new MentalState(modality,pred,life,ag);
+	}
+	
+	@operator(value = "new_mental_state", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+	@doc(value = "a new mental state", examples = @example(value = "new_mental-state(belief)", test = false))
+	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength, final Integer life,final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality,pred,strength,life,ag);
 	}
 	
