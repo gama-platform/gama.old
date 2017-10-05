@@ -155,7 +155,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		setCurrentExpressionDescription(s);
 		final EObject o = s.getTarget();
 		if (o == null && s instanceof StringBasedExpressionDescription) { return compile(s.toString(), parsingContext,
-				null); }
+				GAMA.getRuntimeScope().getExecutionContext()); }
 		final IDescription previous = setContext(parsingContext);
 		try {
 			final IExpression result = compile(o);
