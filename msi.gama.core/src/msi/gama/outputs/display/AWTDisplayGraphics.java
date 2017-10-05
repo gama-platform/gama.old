@@ -154,13 +154,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final List<?> textures = attributes.getTextures();
 		if (textures == null) { return null; }
 		final Object image = textures.get(0);
-		if (image instanceof GamaFile) { return drawFile((GamaFile<?, ?, ?, ?>) image, attributes); }
+		if (image instanceof GamaFile) { return drawFile((GamaFile<?, ?>) image, attributes); }
 		if (image instanceof BufferedImage) { return drawImage((BufferedImage) image, attributes); }
 		return null;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile<?, ?, ?, ?> file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile<?, ?> file, final FileDrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
 		if (file instanceof GamaImageFile) { return drawImage(
 				((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes); }

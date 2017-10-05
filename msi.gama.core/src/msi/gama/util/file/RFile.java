@@ -44,8 +44,9 @@ import rcaller.RCode;
 		concept = { IConcept.FILE, IConcept.R },
 		doc = @doc ("Represents an R file. The internal representation is a map of lists (the result of the evaluation)"))
 @SuppressWarnings ({ "rawtypes" })
-public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
+public class RFile extends GamaFile<GamaMap, Object> {
 
+	// GamaMap<String, IList>, IList, String, IList
 	private final boolean DEBUG = false; // Change DEBUG = false for release
 											// version
 	private final IContainer parameters;
@@ -64,7 +65,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		final StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
-		for (final IList s : getBuffer().iterable(scope)) {
+		for (final Object s : getBuffer().iterable(scope)) {
 			sb.append(s).append(Strings.LN); // TODO Factorize the different
 												// calls to
 			// "new line" ...

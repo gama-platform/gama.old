@@ -43,15 +43,15 @@ import one.util.streamex.StreamEx;
  *
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
-		implements IGamaFile<C, ValueToAdd, K, V> {
+public abstract class GamaFile<Container extends IAddressableContainer & IModifiableContainer, Contents>
+		implements IGamaFile<Container, Contents> {
 
 	private File file;
 	protected String path;
 	protected final String originalPath;
 	protected URL url;
 	protected boolean writable = false;
-	private C buffer;
+	private Container buffer;
 
 	public GamaFile(final IScope scope, final String pn) throws GamaRuntimeException {
 		originalPath = pn;
@@ -128,7 +128,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	}
 
-	public GamaFile(final IScope scope, final String pathName, final C container) {
+	public GamaFile(final IScope scope, final String pathName, final Container container) {
 		this(scope, pathName);
 		setWritable(scope, true);
 		setContents(container);
@@ -157,7 +157,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public final void setContents(final C cont) throws GamaRuntimeException {
+	public final void setContents(final Container cont) throws GamaRuntimeException {
 		if (writable) {
 			setBuffer(cont);
 		}
@@ -171,7 +171,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// Three methods for add and put operations:
 	// The simple method, that simply contains the object to add
 	@Override
-	public void addValue(final IScope scope, final ValueToAdd value) {
+	public void addValue(final IScope scope, final Object value) {
 		fillBuffer(scope);
 		getBuffer().addValue(scope, value);
 	}
@@ -179,14 +179,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// The same but with an index (this index represents the old notion of
 	// parameter where it is needed.
 	@Override
-	public void addValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
+	public void addValueAtIndex(final IScope scope, final Object index, final Object value) {
 		fillBuffer(scope);
 		getBuffer().addValueAtIndex(scope, index, value);
 	}
 
 	// Put, that takes a mandatory index (also replaces the parameter)
 	@Override
-	public void setValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
+	public void setValueAtIndex(final IScope scope, final Object index, final Object value) {
 		fillBuffer(scope);
 		getBuffer().setValueAtIndex(scope, index, value);
 	}
@@ -202,7 +202,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// Adds this value to all slots (if this operation is available), otherwise
 	// replaces the values with this one
 	@Override
-	public void setAllValues(final IScope scope, final ValueToAdd value) {
+	public void setAllValues(final IScope scope, final Object value) {
 		fillBuffer(scope);
 		getBuffer().setAllValues(scope, value);
 	}
@@ -232,7 +232,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, ?> indexes) {
+	public void removeIndexes(final IScope scope, final IContainer indexes) {
 		fillBuffer(scope);
 		getBuffer().removeIndexes(scope, indexes);
 	}
@@ -276,24 +276,24 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public V firstValue(final IScope scope) throws GamaRuntimeException {
+	public Contents firstValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().firstValue(scope);
+		return (Contents) getBuffer().firstValue(scope);
 	}
 
 	/*
 	 * @see msi.gama.interfaces.IGamaContainer#get(java.lang.Object)
 	 */
 	@Override
-	public V get(final IScope scope, final K index) throws GamaRuntimeException {
+	public Contents get(final IScope scope, final Object index) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().get(scope, index);
+		return (Contents) getBuffer().get(scope, index);
 	}
 
 	@Override
-	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+	public Contents getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().getFromIndicesList(scope, indices);
+		return (Contents) getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -324,7 +324,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public C getContents(final IScope scope) throws GamaRuntimeException {
+	public Container getContents(final IScope scope) throws GamaRuntimeException {
 		if (buffer == null && !exists(scope)) { throw GamaRuntimeException
 				.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope); }
 		fillBuffer(scope);
@@ -353,14 +353,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public java.lang.Iterable<? extends V> iterable(final IScope scope) {
+	public java.lang.Iterable<? extends Contents> iterable(final IScope scope) {
 		return getContents(scope).iterable(scope);
 	}
 
 	@Override
-	public V lastValue(final IScope scope) throws GamaRuntimeException {
+	public Contents lastValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().lastValue(scope);
+		return (Contents) getBuffer().lastValue(scope);
 	}
 
 	@Override
@@ -370,14 +370,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IList<Contents> listValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().listValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public StreamEx<V> stream(final IScope scope) {
+	public StreamEx<Contents> stream(final IScope scope) {
 		getContents(scope);
 		return getBuffer().stream(scope);
 	}
@@ -425,9 +425,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public V anyValue(final IScope scope) {
+	public Contents anyValue(final IScope scope) {
 		getContents(scope);
-		return getBuffer().anyValue(scope);
+		return (Contents) getBuffer().anyValue(scope);
 	}
 
 	public File getFile(final IScope scope) {
@@ -438,11 +438,11 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public C getBuffer() {
+	public Container getBuffer() {
 		return buffer;
 	}
 
-	protected void setBuffer(final C buffer) {
+	protected void setBuffer(final Container buffer) {
 		this.buffer = buffer;
 	}
 

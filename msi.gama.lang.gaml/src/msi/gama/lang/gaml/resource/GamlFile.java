@@ -48,7 +48,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.FILE },
 		doc = @doc ("Represents GAML model files"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
+public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 
 	private final IModel mymodel;
 	/**

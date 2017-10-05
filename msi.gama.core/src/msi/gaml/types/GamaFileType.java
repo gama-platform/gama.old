@@ -64,7 +64,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 *            an array of allowed extensions for files of this type
 	 */
 	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
-			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> builder,
+			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?>> builder,
 			final String[] extensions) {
 		// Added to ensure that extensions do not begin with a "." or contain
 		// blank characters

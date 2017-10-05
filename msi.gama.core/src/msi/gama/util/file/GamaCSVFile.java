@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
@@ -53,7 +52,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.CSV, IConcept.FILE },
 		doc = @doc ("A type of text file that contains comma-separated values"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
+public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 
 	public static class CSVInfo extends GamaFileMetaData {
 

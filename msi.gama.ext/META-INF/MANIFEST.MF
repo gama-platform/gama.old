@@ -585,6 +585,10 @@ Export-Package: com.kitfox.svg;
    org.jgrapht.event,
    org.jgrapht.graph,
    org.jgrapht",
+ org.jgrapht.alg.interfaces,
+ org.jgrapht.alg.shortestpath,
+ org.jgrapht.alg.spanning,
+ org.jgrapht.alg.util,
  org.jgrapht.graph;
   uses:="org.jgrapht.event,
    org.jgrapht.graph.builder,
@@ -592,7 +596,7 @@ Export-Package: com.kitfox.svg;
    org.jgrapht",
  org.jgrapht.traverse,
  org.jgrapht.util,
- org.json.simple,
+ org.json.simple, 
  org.json.simple.parser,
  org.kabeja.dxf;
   uses:="org.xml.sax,
@@ -774,7 +778,6 @@ Bundle-ClassPath: .,
  svgsalamander 1.0/jars/svg-salamander-1.0.jar,
  trove 3.0.3/jars/trove-3.0.3.jar,
  vecmath 1.5.2/jars/vecmath-1.5.2.jar,
- jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar,
  kabeja 0.4/jars/kabeja-0.4.jar,
  graphstream 1.3/jars/gs-algo-1.3.jar,
  graphstream 1.3/jars/gs-core-1.3.jar,
@@ -927,5 +930,7 @@ Bundle-ClassPath: .,
  geotools 14.5/jt-vectorbin-1.0.9.jar,
  geotools 14.5/jt-zonal-1.0.9.jar,
  geotools 14.5/core-0.26.jar,
- streamex 0.6.2/streamex-0.6.4.jar
+ streamex 0.6.2/streamex-0.6.4.jar,
+ jgrapht 1.0.1/jgrapht-core-1.0.1.jar,
+ jgrapht 1.0.1/jgrapht-ext-1.0.1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

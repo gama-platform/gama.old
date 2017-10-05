@@ -62,7 +62,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.IMAGE, IConcept.FILE },
 		doc = @doc ("Image files can be of 6 different formats: tiff, jpeg, png, pict or bmp. Their internal representation is a matrix of colors"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
+public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {
 

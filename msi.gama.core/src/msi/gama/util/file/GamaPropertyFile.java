@@ -37,7 +37,7 @@ import msi.gaml.types.Types;
 		buffer_index = IType.STRING,
 		concept = { IConcept.FILE },
 		doc = @doc ("Represents property files"))
-public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
+public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);

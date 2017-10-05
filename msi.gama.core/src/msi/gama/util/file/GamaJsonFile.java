@@ -46,8 +46,9 @@ import msi.gaml.types.Types;
 		concept = { IConcept.FILE })
 @doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, String, Object> {
+public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 
+	// GamaMap<String, Object>, Object, String, Object
 	public GamaJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}

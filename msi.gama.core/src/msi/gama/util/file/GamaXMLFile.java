@@ -49,7 +49,7 @@ import msi.gaml.types.Types;
 		buffer_type = IType.MAP,
 		concept = { IConcept.FILE, IConcept.XML },
 		doc = @doc ("Represents XML files. The internal representation is a list of strings"))
-public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, String, String> {
+public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 
 	/**
 	 * @param scope

@@ -148,7 +148,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> helper,
+	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?>> helper,
 			final int innerType, final int keyType, final int contentType, final String[] s) {
 		helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),

@@ -37,7 +37,7 @@ import msi.gaml.types.Types;
 		buffer_index = IType.INT,
 		concept = { IConcept.FILE, IConcept.TEXT, IConcept.CSV, IConcept.XML },
 		doc = @doc ("Represents an arbitrary text file. The internal contents is a list of strings (lines)"))
-public class GamaTextFile extends GamaFile<IList<String>, String, Integer, String> {
+public class GamaTextFile extends GamaFile<IList<String>, String> {
 
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
