@@ -34,6 +34,8 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -41,6 +43,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 
 public class ExperimentJob implements IExperimentJob {
@@ -201,7 +204,7 @@ public class ExperimentJob implements IExperimentJob {
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter temp = parameters.get(i);
 
-			if (temp.getName()==null||"".equals(temp.getName())) {
+			if (temp.getName() == null || "".equals(temp.getName())) {
 				this.simulator.setParameter(temp.getVar(), temp.getValue());
 			} else {
 				this.simulator.setParameter(temp.getName(), temp.getValue());
@@ -258,16 +261,16 @@ public class ExperimentJob implements IExperimentJob {
 
 		try {
 			int step = 0;
-			while (!Types.BOOL.cast(simulator.getSimulation().getScope(),
-					endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue()
-					&& (finalStep >= 0 ? step < finalStep : true)) {
+			// Added because the simulation may be null in case we deal with a batch experiment
+			IScope scope = GAMA.getRuntimeScope();
+			while (!Cast.asBool(scope, endCondition.value(scope)) && (finalStep >= 0 ? step < finalStep : true)) {
 				if (step % affDelay == 0) {
 					System.out.print(".");
 				}
 				if (simulator.isInterrupted())
 					break;
 				doStep();
-
+				scope = GAMA.getRuntimeScope();
 				step++;
 			}
 		} catch (final GamaRuntimeException e) {
