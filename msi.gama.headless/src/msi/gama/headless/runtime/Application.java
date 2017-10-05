@@ -41,6 +41,7 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
+import msi.ummisco.modelLibraryGenerator.ModelLibraryValidator;
 import msi.ummisco.modelLibraryGenerator.modelLibraryGenerator;
 
 public class Application implements IApplication {
@@ -52,6 +53,7 @@ public class Application implements IApplication {
 	final public static String HELP_PARAMERTER = "-help";
 	final public static String BUILD_XML_PARAMERTER = "-xml";
 	final public static String CHECK_MODEL_PARAMERTER = "-check";
+	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -87,6 +89,10 @@ public class Application implements IApplication {
 
 	private static boolean containCheckModelsCommandParameter(final String[] args) {
 		return containParameter(args, CHECK_MODEL_PARAMERTER);
+	}
+
+	private static boolean containValidateLibraryCommandParameter(final String[] args) {
+		return containParameter(args, VALIDATE_LIBRARY_PARAMETER);
 	}
 
 	private static boolean containHelpParameter(final String[] args) {
@@ -183,6 +189,8 @@ public class Application implements IApplication {
 		final String[] args = mm.get("application.args");
 		if (containHelpParameter(args)) {
 			System.out.println(showHelp());
+		} else if (containValidateLibraryCommandParameter(args)) {
+			ModelLibraryValidator.start(args[args.length - 1]);
 		} else if (containCheckModelsCommandParameter(args)) {
 			modelLibraryGenerator.start(this, args);
 

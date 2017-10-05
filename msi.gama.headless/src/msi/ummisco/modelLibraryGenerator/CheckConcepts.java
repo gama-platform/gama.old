@@ -20,7 +20,7 @@ public class CheckConcepts {
 	private static void executeForAWebsitePart(final String path, final String websitePart) {
 		final ArrayList<File> listFiles = new ArrayList<File>();
 		Utils.getFilesFromFolder(path, listFiles);
-		final ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles, "md");
+		final ArrayList<File> gamlFiles = Utils.filterFilesByExtensions(listFiles, "md");
 
 		ArrayList<String> listConcept = new ArrayList<String>();
 

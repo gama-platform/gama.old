@@ -33,8 +33,8 @@ public class modelLibraryGenerator {
 	static String wikiFolder = "F:/Gama/GamaWiki/";
 	static String sourceFolder = "F:/Gama/GamaSource/";
 	static String wikiFolderOnOVH = "http://vps226121.ovh.net/gm_wiki/";
-	static String[] inputPathToModelLibrary = { sourceFolder + "msi.gama.models/models/",
-			sourceFolder + "ummisco.gaml.extensions.maths/models",
+	static String[] inputPathToModelLibrary =
+			{ sourceFolder + "msi.gama.models/models/", sourceFolder + "ummisco.gaml.extensions.maths/models",
 			/* sourceFolder+"msi.gaml.extensions.fipa/models", */ // commented
 																	// because
 																	// unable to
@@ -145,7 +145,7 @@ public class modelLibraryGenerator {
 				listFiles.add(f);
 			}
 		}
-		final ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles, "gaml");
+		final ArrayList<File> gamlFiles = Utils.filterFilesByExtensions(listFiles, "gaml");
 
 		// read modelScreenshot.xml
 		System.out.println("----- Start to load the file " + inputModelScreenshot + " -----");
@@ -245,24 +245,16 @@ public class modelLibraryGenerator {
 
 		File[] flist = null;
 
-		if (file == null) {
-			return false;
-		}
+		if (file == null) { return false; }
 
-		if (file.isFile()) {
-			return file.delete();
-		}
+		if (file.isFile()) { return file.delete(); }
 
-		if (!file.isDirectory()) {
-			return false;
-		}
+		if (!file.isDirectory()) { return false; }
 
 		flist = file.listFiles();
 		if (flist != null && flist.length > 0) {
 			for (final File f : flist) {
-				if (!deleteDirectoryAndItsContent(f)) {
-					return false;
-				}
+				if (!deleteDirectoryAndItsContent(f)) { return false; }
 			}
 		}
 
@@ -411,8 +403,8 @@ public class modelLibraryGenerator {
 					final String id = eElement.getAttribute("id");
 					final ScreenshotStructure screenshot = new ScreenshotStructure(id);
 					for (int i = 0; i < eElement.getElementsByTagName("display").getLength(); i++) {
-						final String displayName = ((Element) eElement.getElementsByTagName("display").item(i))
-								.getAttribute("name");
+						final String displayName =
+								((Element) eElement.getElementsByTagName("display").item(i)).getAttribute("name");
 						int cycleNumber = Integer.valueOf(((Element) eElement.getElementsByTagName("display").item(i))
 								.getAttribute("cycle_number"));
 						if (cycleNumber == 0)
@@ -616,8 +608,8 @@ public class modelLibraryGenerator {
 				if (!fileName.contains("include") && !modelName.startsWith("_")) {
 					final String newSubSectionName = fileName.split("/")[1];
 					String newSectionName = fileName.split("/")[0];
-					final String modelFileName = newSubSectionName + " "
-							+ fileName.split("/")[fileName.split("/").length - 1];
+					final String modelFileName =
+							newSubSectionName + " " + fileName.split("/")[fileName.split("/").length - 1];
 					if (isAdditionnalPlugin) {
 						newSectionName = "Additionnal Plugins";
 					}
@@ -716,8 +708,8 @@ public class modelLibraryGenerator {
 		outputFile.createNewFile();
 		final FileOutputStream fileOut = new FileOutputStream(outputFile);
 
-		final String sectionName = pathToSectionFile.split("/")[pathToSectionFile.split("/").length - 1].replace(".md",
-				"");
+		final String sectionName =
+				pathToSectionFile.split("/")[pathToSectionFile.split("/").length - 1].replace(".md", "");
 		fileOut.write(new String("# " + sectionName + "\n\nThis section is composed of the following sub-section :\n\n")
 				.getBytes());
 		fileOut.close();
@@ -729,8 +721,8 @@ public class modelLibraryGenerator {
 		outputFile.createNewFile();
 		final FileOutputStream fileOut = new FileOutputStream(outputFile);
 
-		final String sectionName = pathToSubSectionFile.split("/")[pathToSubSectionFile.split("/").length - 1]
-				.replace(".md", "");
+		final String sectionName =
+				pathToSubSectionFile.split("/")[pathToSubSectionFile.split("/").length - 1].replace(".md", "");
 		fileOut.write(new String("# " + sectionName + "\n\nThis sub-section is composed of the following models :\n\n")
 				.getBytes());
 		fileOut.close();
