@@ -31,6 +31,7 @@ public class ModelLibraryValidator {
 		final int[] code = { 0 };
 		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> {
 			final List<GamlCompilationError> errors = new ArrayList<>();
+			System.out.println("Compiling " + p.getFileName());
 			compile(createFileURI(p.toString()), errors);
 			count[0]++;
 			errors.stream().filter(e -> e.isError()).forEach(e -> {
@@ -38,7 +39,8 @@ public class ModelLibraryValidator {
 				code[0]++;
 			});
 		});
-		log("" + count[0] + " GAMA models validated in built-in library and plugins.");
+		log("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
+				+ " compilation errors found");
 		return code[0];
 	}
 }

@@ -398,6 +398,7 @@ public interface IKeyword {
 	public static final String TARGET = "target";
 	public static final String TARGETS = "scheduling_targets";
 	public static final String TESSELATION = "tesselation";
+	public static final String TEST = "test";
 	public static final String TEXT = "text";
 	public static final String TEXTURE = "texture";
 	public static final String THE = "the";

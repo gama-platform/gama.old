@@ -9,35 +9,30 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.limit;
-
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
+import one.util.streamex.StreamEx;
 
 public class ValidationContext extends Collector.Ordered<GamlCompilationError> implements IDocManager {
 
 	final static int MAX_SIZE = 1000;
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
-	boolean hasSyntaxErrors;
 	final URI resourceURI;
 	final ICollector<GamlCompilationError> importedErrors = new Collector.Ordered<>();
-	private boolean noWarning, noInfo;
+	private boolean noWarning, noInfo, hasSyntaxErrors;
 	private final IDocManager docDelegate;
 
 	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
@@ -64,9 +59,9 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 		return false;
 	}
 
-	static Predicate<GamlCompilationError> IS_INFO = input -> input.isInfo();
-	static Predicate<GamlCompilationError> IS_WARNING = input -> input.isWarning();
-	static Predicate<GamlCompilationError> IS_ERROR = input -> input.isError();
+	public static Predicate<GamlCompilationError> IS_INFO = input -> input.isInfo();
+	public static Predicate<GamlCompilationError> IS_WARNING = input -> input.isWarning();
+	public static Predicate<GamlCompilationError> IS_ERROR = input -> input.isError();
 
 	public boolean hasInternalSyntaxErrors() {
 		return hasSyntaxErrors;
@@ -81,15 +76,15 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	}
 
 	public boolean hasInternalErrors() {
-		return !isEmpty() && Iterables.size(getInternalErrors()) > 0;
+		return !isEmpty() && StreamEx.of(items()).filter(IS_ERROR).count() > 0;
 	}
 
 	public boolean hasImportedErrors() {
 		return !importedErrors.isEmpty();
 	}
 
-	public Iterable<GamlCompilationError> getInternalErrors() {
-		return Iterables.filter(items(), IS_ERROR);
+	public List<GamlCompilationError> getInternalErrors() {
+		return StreamEx.of(items()).filter(IS_ERROR).toList();
 	}
 
 	public Collection<GamlCompilationError> getImportedErrors() {
@@ -97,11 +92,11 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	}
 
 	public Iterable<GamlCompilationError> getWarnings() {
-		return Iterables.filter(items(), IS_WARNING);
+		return StreamEx.of(items()).filter(IS_WARNING).toList();
 	}
 
 	public Iterable<GamlCompilationError> getInfos() {
-		return Iterables.filter(items(), IS_INFO);
+		return StreamEx.of(items()).filter(IS_INFO).toList();
 	}
 
 	@Override
@@ -118,17 +113,12 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	 */
 	@Override
 	public Iterator<GamlCompilationError> iterator() {
-		return limit(concat(items(), getImportedErrors()), MAX_SIZE).iterator();
+		return StreamEx.of(items()).append(getImportedErrors()).limit(MAX_SIZE).toList().iterator();
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		final Map<String, URI> result = new TOrderedHashMap<String, URI>();
-		for (final GamlCompilationError error : importedErrors) {
-			final URI uri = error.getURI();
-			final String resource = URI.decode(uri.lastSegment());
-			result.put(error.toString() + " (" + resource + ")", uri);
-		}
-		return result;
+		return StreamEx.of(importedErrors).toMap(e -> e.toString() + " (" + URI.decode(e.getURI().lastSegment()) + ")",
+				e -> e.getURI());
 	}
 
 	public void setNoWarning() {

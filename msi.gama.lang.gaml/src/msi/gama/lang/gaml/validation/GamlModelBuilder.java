@@ -64,6 +64,8 @@ public class GamlModelBuilder {
 			} else {
 				// We build the description
 				final ModelDescription model = r.buildCompleteDescription();
+				if (model != null)
+					model.validate();
 				if (errors != null)
 					Iterables.addAll(errors, r.getValidationContext());
 				return model;
