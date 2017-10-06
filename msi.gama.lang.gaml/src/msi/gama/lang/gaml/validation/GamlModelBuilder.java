@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlModelBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlModelBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
@@ -40,12 +40,16 @@ public class GamlModelBuilder {
 		// And compile it before returning it, unless it is null.
 		return model == null ? null : (IModel) model.compile();
 	}
-	
+
 	public static IModel compile(final URI uri, final List<GamlCompilationError> errors) {
 		// We build the description and fill the errors list
 		final ModelDescription model = buildModelDescription(uri, errors);
 		// And compile it before returning it, unless it is null.
 		return model == null ? null : (IModel) model.compile();
+	}
+
+	public static IModel compile(final Path path, final List<GamlCompilationError> errors) {
+		return compile(URI.createFileURI(path.toString()), errors);
 	}
 
 	private static ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
@@ -74,10 +78,11 @@ public class GamlModelBuilder {
 			}
 		}
 	}
-	
-	private static ModelDescription buildModelDescription(final GamlResource r, final List<GamlCompilationError> errors) {
+
+	private static ModelDescription buildModelDescription(final GamlResource r,
+			final List<GamlCompilationError> errors) {
 		try {
-			
+
 			// Syntactic errors detected, we cannot build the resource
 			if (r.hasErrors()) {
 				if (errors != null)

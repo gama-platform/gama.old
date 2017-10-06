@@ -15,7 +15,6 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gaml.compilation.GamlCompilationError;
 
 public class ModelLibraryValidator {
-	final static int[] RETURN_CODE = { 0 };
 
 	static final Predicate<Path> isModel = p -> {
 		final String s = p.getFileName().toString();
@@ -28,12 +27,18 @@ public class ModelLibraryValidator {
 
 	static public int start(final String pluginsFolder) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> compile(createFileURI(p.toString()), errors));
-		errors.stream().filter(e -> e.isError()).forEach(e -> {
-			log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
-			RETURN_CODE[0] = 1;
+		final int[] count = { 0 };
+		final int[] code = { 0 };
+		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> {
+			final List<GamlCompilationError> errors = new ArrayList<>();
+			compile(createFileURI(p.toString()), errors);
+			count[0]++;
+			errors.stream().filter(e -> e.isError()).forEach(e -> {
+				log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
+				code[0]++;
+			});
 		});
-		return RETURN_CODE[0];
+		log("" + count[0] + " GAMA models validated in built-in library and plugins.");
+		return code[0];
 	}
 }
