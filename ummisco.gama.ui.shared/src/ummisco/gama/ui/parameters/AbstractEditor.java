@@ -427,6 +427,8 @@ public abstract class AbstractEditor<T>
 			unitItem.setText(unitText);
 			unitItem.setEnabled(false);
 		}
+		if (!isEditable)
+			return t;
 		final int[] codes = this.getToolItems();
 		for (final int i : codes) {
 			ToolItem item = null;
