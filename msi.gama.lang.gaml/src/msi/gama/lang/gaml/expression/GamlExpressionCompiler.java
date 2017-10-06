@@ -98,6 +98,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
@@ -479,7 +480,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) { return null; }
 		final IType type = owner.getType();
-		TypeDescription species = type.getSpecies();
+		final TypeDescription species = type.getSpecies();
 		// hqnghi 28-05-14 search input variable from model, not experiment
 		if (type instanceof ParametricType && type.getType().id() == IType.SPECIES) {
 			if (type.getContentType().getSpecies() instanceof ModelDescription) {
@@ -501,8 +502,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (type.id() == IType.MATRIX && proto == null) { return binary(".", owner, fieldExpr); }
 
 			if (proto == null) {
-				species = type.getSpecies();
-				getContext().error("Field " + var + " unknown for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr,
+				getContext().error("Unknown field '" + var + "' for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr,
 						var, type.toString());
 				return null;
 			}
@@ -521,8 +521,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				if (species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var)) {
 					final IType t = Types.get(IKeyword.SPECIES);
 					expr = getFactory().createTypeExpression(GamaType.from(t, Types.INT, species.getTypeNamed(var)));
+				} else if (species.getName().equals(IKeyword.PLATFORM) && GAMA.isInHeadLessMode()) {
+					// Special case (see #2259 for headless validation of GUI preferences)
+					return ((PlatformSpeciesDescription) species).getFakePrefExpression(var);
 				} else {
-					getContext().error("Unknown variable: '" + var + "' in " + species.getName(),
+					getContext().error("Unknown variable '" + var + "' for species " + species.getName(),
 							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
 					return null;
 				}
