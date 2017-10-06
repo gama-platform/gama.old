@@ -22,7 +22,7 @@ public class ModelLibraryValidator {
 	};
 
 	static void log(final String s) {
-		System.out.println(s);
+		System.out.println(s); // Use a logger ?
 	}
 
 	static public int start(final String pluginsFolder) throws IOException {
