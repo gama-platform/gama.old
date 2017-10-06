@@ -10,24 +10,29 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gaml.compilation.GamlCompilationError;
 
 public class ModelLibraryValidator {
 
-	static final Predicate<Path> isModel = p -> p.endsWith(".gaml") || p.endsWith(".experiment");
+	static final Predicate<Path> isModel = p -> {
+		final String s = p.getFileName().toString();
+		return s.endsWith(".gaml") || s.endsWith(".experiment");
+	};
 	static final List<GamlCompilationError> errors = new ArrayList<>();
 
 	static void log(final String s) {
-		Logger.getLogger(ModelLibraryValidator.class.getName()).info("VALIDATION: " + s);
+		System.out.println("VALIDATION: " + s);
 	}
 
 	static public void start(final String pluginsFolder) throws IOException {
 		log("Starting validation");
 		HeadlessSimulationLoader.preloadGAMA();
-		log("GAMA loaded");
+		log("Models detected");
+		final Stream<Path> paths = Files.walk(Paths.get(pluginsFolder)).filter(isModel);
+		paths.forEach(p -> log(p.toFile().getAbsolutePath()));
 		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> compile(createFileURI(p.toString()), errors));
 		log("All models validated");
 		errors.stream().filter(e -> e.isError()).forEach(e -> log(e.getURI() + ": " + e));
