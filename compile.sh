@@ -78,5 +78,5 @@ fi
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	install
 else		
-	compile
+	install
 fi
