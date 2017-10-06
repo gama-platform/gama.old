@@ -19,11 +19,17 @@ public class ModelLibraryValidator {
 
 	static final Predicate<Path> isModel = p -> p.endsWith(".gaml") || p.endsWith(".experiment");
 	static final List<GamlCompilationError> errors = new ArrayList<>();
-	static final Logger LOG = Logger.getLogger(ModelLibraryValidator.class.getName());
+
+	static void log(final String s) {
+		Logger.getLogger(ModelLibraryValidator.class.getName()).info("VALIDATION: " + s);
+	}
 
 	static public void start(final String pluginsFolder) throws IOException {
+		log("Starting validation");
 		HeadlessSimulationLoader.preloadGAMA();
+		log("GAMA loaded");
 		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> compile(createFileURI(p.toString()), errors));
-		errors.stream().filter(e -> e.isError()).forEach(e -> LOG.info(e.getURI() + ": " + e));
+		log("All models validated");
+		errors.stream().filter(e -> e.isError()).forEach(e -> log(e.getURI() + ": " + e));
 	}
 }
