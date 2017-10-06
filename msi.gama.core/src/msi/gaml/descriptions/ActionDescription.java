@@ -146,7 +146,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
 						if (!accepted) {
 							caller.error("The type of argument " + name + " should be " + formalType,
-									IGamlIssue.WRONG_TYPE);
+									IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
 							return false;
 						}
 					}

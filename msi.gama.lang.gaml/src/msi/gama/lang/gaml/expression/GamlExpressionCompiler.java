@@ -102,6 +102,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.EachExpression;
@@ -515,17 +516,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// action call
 		if (fieldExpr instanceof VariableRef) {
 			final String var = EGaml.getKeyOf(fieldExpr);
-			final IVarExpression expr = (IVarExpression) species.getVarExpr(var, true);
+			IExpression expr = species.getVarExpr(var, true);
 			if (expr == null) {
 				if (species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var)) {
 					final IType t = Types.get(IKeyword.SPECIES);
-
-					return getFactory().createTypeExpression(GamaType.from(t, Types.INT, species.getTypeNamed(var)));
+					expr = getFactory().createTypeExpression(GamaType.from(t, Types.INT, species.getTypeNamed(var)));
+				} else {
+					getContext().error("Unknown variable: '" + var + "' in " + species.getName(),
+							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
+					return null;
 				}
-				// else
-
-				getContext().error("Unknown variable: '" + var + "' in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
-						leftExpr, var, species.getName());
 			}
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
@@ -573,6 +573,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private IDescription getContext() {
 		return currentContext;
+	}
+
+	private ValidationContext getValidationContext() {
+		if (currentContext == null)
+			return null;
+		return currentContext.getValidationContext();
 	}
 
 	/**
@@ -664,11 +670,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 		return new DenotedActionExpression(ad);
-		// return getFactory().createConst(EGaml.getKeyOf(object), Types.STRING);
 	}
 
 	@Override
 	public IExpression caseExpression(final Expression object) {
+		// If an error already exists, we discard the case
+		final ValidationContext vc = getValidationContext();
+		final Expression left = object.getLeft();
+		final Expression right = object.getRight();
+		if (vc == null || vc.hasErrorOn(object, left, right))
+			return null;
 		// in the general case, we try to return a binary expression
 		final IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
 		return result;
@@ -691,19 +702,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// - type inconnu n'est pas mentionné (electors ??)
 		// - lors d'une affectation de nil warning sur le type (candidate)
 
-		if (t.isAgentType()) { return t.getSpecies().getSpeciesExpr();
-		/*
-		 * return factory.createSpeciesConstant(GamaType.from(t.getSpecies()));
-		 */ }
+		if (t.isAgentType()) { return t.getSpecies().getSpeciesExpr(); }
 		return getFactory().createTypeExpression(t);
 	}
-
-	//
-	// @Override
-	// public IExpression caseSpeciesRef(final SpeciesRef object) {
-	// IType t = fromSpeciesRef(object);
-	// return factory.createTypeExpression(t);
-	// }
 
 	@Override
 	public IExpression caseEquationRef(final EquationRef object) {
@@ -777,16 +778,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// Case of dates: #month and #year
 		final String name = EGaml.toString(object.getRight());
-		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS
-				.contains(name)) { return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
-		// if (getContext().getModelDescription().isStartingDateDefined()) {
-		// getContext().warning(
-		// "Your model uses a starting date. In that case, the usage of
-		// #month or #year is discouraged as these units will not represent
-		// realistic durations",
-		// IGamlIssue.DEPRECATED, object);
-		// }
-		}
+		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(
+				name)) { return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight()); }
 		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to
 		// the whole expression.
 		// final IExpression right = compile(object.getRight());
@@ -1026,7 +1019,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression defaultCase(final EObject object) {
-		if (!getContext().getValidationContext().hasErrors()) {
+		if (!getValidationContext().hasErrors()) {
 			// In order to avoid too many "useless errors"
 			getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
 		}

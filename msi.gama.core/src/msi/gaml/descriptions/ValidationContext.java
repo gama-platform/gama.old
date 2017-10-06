@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -159,6 +160,11 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	@Override
 	public void addCleanupTask(final ModelDescription model) {
 		docDelegate.addCleanupTask(model);
+	}
+
+	public boolean hasErrorOn(final EObject... objects) {
+		final List<EObject> list = Arrays.asList(objects);
+		return StreamEx.of(items()).filter(IS_ERROR).findAny(p -> list.contains(p.getStatement())).isPresent();
 	}
 
 }
