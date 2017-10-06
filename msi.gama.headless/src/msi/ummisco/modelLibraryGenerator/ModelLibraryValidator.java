@@ -15,21 +15,25 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gaml.compilation.GamlCompilationError;
 
 public class ModelLibraryValidator {
+	final static int[] RETURN_CODE = { 0 };
 
 	static final Predicate<Path> isModel = p -> {
 		final String s = p.getFileName().toString();
 		return s.endsWith(".gaml") || s.endsWith(".experiment");
 	};
-	static final List<GamlCompilationError> errors = new ArrayList<>();
 
 	static void log(final String s) {
 		System.out.println(s);
 	}
 
-	static public void start(final String pluginsFolder) throws IOException {
+	static public int start(final String pluginsFolder) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
+		final List<GamlCompilationError> errors = new ArrayList<>();
 		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> compile(createFileURI(p.toString()), errors));
-		errors.stream()/* .filter(e -> e.isError()) */
-				.forEach(e -> log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e));
+		errors.stream().filter(e -> e.isError()).forEach(e -> {
+			log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
+			RETURN_CODE[0] = 1;
+		});
+		return RETURN_CODE[0];
 	}
 }

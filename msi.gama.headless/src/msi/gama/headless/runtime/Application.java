@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -190,7 +191,8 @@ public class Application implements IApplication {
 		if (containHelpParameter(args)) {
 			System.out.println(showHelp());
 		} else if (containValidateLibraryCommandParameter(args)) {
-			ModelLibraryValidator.start(args[args.length - 1]);
+			System.out.println("Arguments received: " + Arrays.toString(args));
+			return ModelLibraryValidator.start(args[args.length - 1]);
 		} else if (containCheckModelsCommandParameter(args)) {
 			modelLibraryGenerator.start(this, args);
 
