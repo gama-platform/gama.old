@@ -53,6 +53,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -244,7 +245,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return !getSpecies().isHeadless();
+		return !getSpecies().isHeadless() || ((GamlSpecies)this.getSpecies()).belongsToAMicroModel();
 	}
 
 	@Override
