@@ -73,6 +73,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 				_aborts.add(0, c);
 				return;
 			case IKeyword.REFLEX:
+			case IKeyword.TEST:
 				if (_reflexes == null)
 					_reflexes = new ArrayList<>();
 				_reflexes.add(c);

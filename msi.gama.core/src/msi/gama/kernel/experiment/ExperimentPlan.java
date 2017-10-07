@@ -146,7 +146,7 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.TYPE,
 						type = IType.LABEL,
 						values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
-								IKeyword.HEADLESS_UI },
+								IKeyword.TEST, IKeyword.HEADLESS_UI },
 						optional = false,
 						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")),
 				@facet (
@@ -175,17 +175,24 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		@Override
 		public void validate(final IDescription desc) {
-			final String type = desc.getLitteral(IKeyword.TYPE);
-			if (type.equals(IKeyword.MEMORIZE)) {
+			final String type = desc.getLitteral(TYPE);
+			if (type.equals(MEMORIZE)) {
 				desc.warning("The memorize experiment is still in development. It should not be used.",
 						IGamlIssue.DEPRECATED);
 			}
-			if (!type.equals(IKeyword.BATCH)) { return; }
-			if (!desc.hasFacet(IKeyword.UNTIL)) {
-				desc.warning(
-						"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
-						IGamlIssue.MISSING_FACET);
+			if (!type.equals(BATCH)) {
+				if (desc.getChildWithKeyword(METHOD) != null) {
+					desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
+							METHOD);
+				}
 			}
+			if (type.equals(BATCH) || type.equals(TEST))
+				if (!desc.hasFacet(UNTIL)) {
+					desc.warning(
+							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
+									+ type + " experiment",
+							IGamlIssue.MISSING_FACET);
+				}
 		}
 	}
 
@@ -285,7 +292,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		setName(description.getName());
 		experimentType = description.getLitteral(IKeyword.TYPE);
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
-		if (experimentType.equals(IKeyword.BATCH)) {
+		if (experimentType.equals(IKeyword.BATCH) || experimentType.equals(IKeyword.TEST)) {
 			exploration = new ExhaustiveSearch(null);
 		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
 			setHeadless(true);
@@ -309,6 +316,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	}
 
+	@Override
 	public boolean isAutorun() {
 		return autorun;
 	}

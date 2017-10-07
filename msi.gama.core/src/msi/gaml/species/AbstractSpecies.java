@@ -378,6 +378,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			}
 		}
 		control.setChildren(behaviors);
+		behaviors.forEach(b->b.setEnclosing(this));
 		control.verifyBehaviors(this);
 	}
 

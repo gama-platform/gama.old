@@ -65,6 +65,34 @@ public class System {
 	}
 
 	@operator (
+			value = "is_error",
+			can_be_const = true,
+			concept = IConcept.TEST)
+	@doc ("Returns whether or not the argument raises an error when evaluated")
+	public static Boolean is_error(final IScope scope, final IExpression expr) {
+		try {
+			expr.value(scope);
+		} catch (final GamaRuntimeException e) {
+			return !e.isWarning();
+		} catch (final Exception e1) {}
+		return false;
+	}
+
+	@operator (
+			value = "is_warning",
+			can_be_const = true,
+			concept = IConcept.TEST)
+	@doc ("Returns whether or not the argument raises a warning when evaluated")
+	public static Boolean is_warning(final IScope scope, final IExpression expr) {
+		try {
+			expr.value(scope);
+		} catch (final GamaRuntimeException e) {
+			return e.isWarning();
+		} catch (final Exception e1) {}
+		return false;
+	}
+
+	@operator (
 			value = "command",
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })

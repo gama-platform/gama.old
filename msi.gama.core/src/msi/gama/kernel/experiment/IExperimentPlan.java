@@ -29,6 +29,7 @@ import msi.gaml.species.ISpecies;
 public interface IExperimentPlan extends ISpecies {
 
 	static final String BATCH_CATEGORY_NAME = "Exploration method";
+	static final String TEST_CATEGORY_NAME = "Configuration of tests";
 	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
 	static final String FIXED_CATEGORY_NAME = "Fixed parameters";
 	static final String SYSTEM_CATEGORY_PREFIX = "Random number generation";

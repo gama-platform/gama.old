@@ -184,7 +184,7 @@ public class BatchAgent extends ExperimentAgent {
 				p.setValue(getScope(), entry.getValue());
 			}
 		}
-		
+
 		// We update the parameters (parameter to explore)
 		getScope().getGui().showParameterView(getScope(), getSpecies());
 
@@ -256,7 +256,7 @@ public class BatchAgent extends ExperimentAgent {
 		// We reset the experiment agent to erase traces of the current
 		// simulations if any
 		this.reset();
-		
+
 		// We then return the combination (average, min or max) of the different
 		// fitness values computed by the
 		// different simulation.
@@ -265,10 +265,10 @@ public class BatchAgent extends ExperimentAgent {
 		lastFitness = fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
 				: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues)
 						: Statistics.calculateMean(fitnessValues);
-		
-		//we update the best solution found so far
-		getSpecies().getExplorationAlgorithm().updateBestFitness(lastSolution,lastFitness );
-		
+
+		// we update the best solution found so far
+		getSpecies().getExplorationAlgorithm().updateBestFitness(lastSolution, lastFitness);
+
 		// At last, we update the parameters (last fitness and best fitness)
 		getScope().getGui().showParameterView(getScope(), getSpecies());
 
@@ -295,6 +295,11 @@ public class BatchAgent extends ExperimentAgent {
 			}
 		}
 
+		addSpecificParameters(params);
+		return params;
+	}
+
+	public void addSpecificParameters(final List<IParameter.Batch> params) {
 		params.add(new ParameterAdapter("Stop condition", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
@@ -347,7 +352,7 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String value() {
 				final Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
-				if (params.isEmpty()) { return ""; }
+				if (params.isEmpty()) { return "1"; }
 				String result = "";
 				int dim = 1;
 				for (final Map.Entry<String, IParameter.Batch> entry : params.entrySet()) {
@@ -370,7 +375,6 @@ public class BatchAgent extends ExperimentAgent {
 		});
 
 		getSpecies().getExplorationAlgorithm().addParametersTo(params, this);
-		return params;
 	}
 
 	public Double[] getSeeds() {
