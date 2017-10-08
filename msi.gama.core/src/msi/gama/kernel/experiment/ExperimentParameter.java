@@ -325,12 +325,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private Number drawRandomValue(final IScope scope) {
 		final double step = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if (type.id() == IType.INT) {
-			final int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+			final int min = getMinValue(scope) == null ? Integer.MIN_VALUE : getMinValue(scope).intValue();
+			final int max = getMaxValue(scope) == null ? Integer.MAX_VALUE : getMaxValue(scope).intValue();
 			return scope.getRandom().between(min, max, (int) step);
 		}
-		final double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-		final double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+		final double min = getMinValue(scope) == null ? Double.MIN_VALUE : getMinValue(scope).doubleValue();
+		final double max = getMaxValue(scope) == null ? Double.MAX_VALUE : getMaxValue(scope).doubleValue();
 		return scope.getRandom().between(min, max, step);
 	}
 
