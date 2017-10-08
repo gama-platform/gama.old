@@ -2544,7 +2544,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 					}
 					//Faire ce calcul seulement si le dÃ©sire Ã  une force (vÃ©rifier le no value)
-					if(desire!=null){
+					if(desire!=null && desire.getStrength()>=0.0){
 						intensity = desire.getStrength()*(1+(0.5-neurotisme));
 						if(intensity>1.0){
 							intensity=1.0;
@@ -2663,8 +2663,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									desire = mental; 
 									}
 							}
-							//Faire ce calcul seulement si le dÃ©sire Ã  une force (vÃ©rifier le no value)
-							if(desire!=null){
+							if(desire!=null && desire.getStrength()>=0.0){
 								intensity = desire.getStrength()*(1+(0.5-neurotisme));
 								if(intensity>1.0){
 									intensity=1.0;
@@ -3181,24 +3180,42 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							for (final SocialLink temp : getSocialBase(scope, SOCIALLINK_BASE)) {
 								if(temp.getAgent().equals(agentTemp)){
 									if (temp.getLiking() > 0.0) {
-										final Emotion happyFor = new Emotion("happy_for", /*formule Ã  changer*/emo.getIntensity() * temp.getLiking(),
-												emo.getAbout(), agentTemp);
+										final Emotion happyFor = new Emotion("happy_for",emo.getAbout(), agentTemp);
+										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
+											if(intensity>1.0){
+												intensity=1.0;
+											}
+											if(intensity<0){
+												intensity=0.0;
+											}
 											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*happyFor.getIntensity();
 										}
+										happyFor.setIntensity(intensity);
 										happyFor.setDecay(decay);
 										addEmotion(scope, happyFor);
 									}
 									if(temp.getLiking()<0.0){
-										final Emotion resentment = new Emotion("resentment", /*formule Ã  changer*/emo.getIntensity() * -temp.getLiking(),
-												emo.getAbout(), agentTemp);
+										final Emotion resentment = new Emotion("resentment",emo.getAbout(), agentTemp);
+										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
+											if(intensity>1.0){
+												intensity=1.0;
+											}
+											if(intensity<0){
+												intensity=0.0;
+											}
 											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*resentment.getIntensity();
 										}
+										resentment.setIntensity(intensity);
 										resentment.setDecay(decay);
 										addEmotion(scope, resentment);
 									}
@@ -3212,24 +3229,42 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							for (final SocialLink temp : getSocialBase(scope, SOCIALLINK_BASE)) {
 								if(temp.getAgent().equals(agentTemp)){
 									if (temp.getLiking() > 0.0) {
-										final Emotion sorryFor = new Emotion("sorry_for", /*formule Ã  changer*/emo.getIntensity() * temp.getLiking(),
-												emo.getAbout(), agentTemp);
+										final Emotion sorryFor = new Emotion("sorry_for",emo.getAbout(), agentTemp);
+										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
+											if(intensity>1.0){
+												intensity=1.0;
+											}
+											if(intensity<0){
+												intensity=0.0;
+											}
 											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*sorryFor.getIntensity();
 										}
+										sorryFor.setIntensity(intensity);
 										sorryFor.setDecay(decay);
 										addEmotion(scope, sorryFor);
 									}
 									if(temp.getLiking()<0.0){
-										final Emotion gloating = new Emotion("gloating", /*formule Ã  changer*/emo.getIntensity() * -temp.getLiking(),
-												emo.getAbout(), agentTemp);
+										final Emotion gloating = new Emotion("gloating",emo.getAbout(), agentTemp);
+										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
+											if(intensity>1.0){
+												intensity=1.0;
+											}
+											if(intensity<0){
+												intensity=0.0;
+											}
 											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*gloating.getIntensity();
 										}
+										gloating.setIntensity(intensity);
 										gloating.setDecay(decay);
 										addEmotion(scope, gloating);
 									}
@@ -3329,6 +3364,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double decay = 0.0;
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
+										intensity = temp.getStrength()*(1+(0.5-openness));
+										if(intensity>1.0){
+											intensity=1.0;
+										}
+										if(intensity<0){
+											intensity=0.0;
+										}
 										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*pride.getIntensity();
 									}
 									pride.setIntensity(intensity);
@@ -3343,6 +3386,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double decay = 0.0;
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
+										intensity = temp.getStrength()*(1+(0.5-openness));
+										if(intensity>1.0){
+											intensity=1.0;
+										}
+										if(intensity<0){
+											intensity=0.0;
+										}
 										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*admiration.getIntensity();
 									}
 									admiration.setIntensity(intensity);
@@ -3359,6 +3410,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double decay = 0.0;
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
+										intensity = -temp.getStrength()*(1+(0.5-openness));
+										if(intensity>1.0){
+											intensity=1.0;
+										}
+										if(intensity<0){
+											intensity=0.0;
+										}
 										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*shame.getIntensity();
 									}
 									shame.setIntensity(intensity);
@@ -3373,6 +3432,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double decay = 0.0;
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
+										intensity = -temp.getStrength()*(1+(0.5-openness));
+										if(intensity>1.0){
+											intensity=1.0;
+										}
+										if(intensity<0){
+											intensity=0.0;
+										}
 										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*reproach.getIntensity();
 									}
 									reproach.setIntensity(intensity);
@@ -3480,6 +3547,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double decay = 0.0;
 								if(use_personality){
 									//Mettre les formules de calcul d'intensité et de décroissance
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
+										intensity = emo.getIntensity()*emoTemp.getIntensity();
+									}
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 								}
 								gratification.setIntensity(intensity);
 								gratification.setDecay(decay);
@@ -3496,7 +3568,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									//Mettre les formules de calcul d'intensité et de décroissance
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
+										intensity = emo.getIntensity()*emoTemp.getIntensity();
+									}
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 								}
 								gratitude.setIntensity(intensity);
 								gratitude.setDecay(decay);
@@ -3522,7 +3598,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									//Mettre les formules de calcul d'intensité et de décroissance
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
+										intensity = emo.getIntensity()*emoTemp.getIntensity();
+									}
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 								}
 								remorse.setIntensity(intensity);
 								remorse.setDecay(decay);
@@ -3539,7 +3619,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									//Mettre les formules de calcul d'intensité et de décroissance
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
+										intensity = emo.getIntensity()*emoTemp.getIntensity();
+									}
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 								}
 								anger.setIntensity(intensity);
 								anger.setDecay(decay);
