@@ -29,7 +29,7 @@ global {
 species test_species2 {
 	//The step is computed each step to test if there is still at least 5 agents of test_species1
 	test t1 {
-     	assert (length(test_species1) > 5) equals: true;
+     	assert (length(test_species1) > 5) ;
 	}
 }
 
@@ -37,4 +37,4 @@ species test_species1 {
 }
 
 
-experiment new type: gui {}
+experiment new type: test until: cycle = 10{}

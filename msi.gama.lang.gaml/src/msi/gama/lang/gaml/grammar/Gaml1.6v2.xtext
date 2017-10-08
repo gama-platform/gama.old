@@ -37,7 +37,7 @@ ExperimentFileStructure:
 ;
 
 HeadlessExperiment :
-	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) 'model:' importURI=STRING (facets+=Facet)* (block=Block | ';');
+	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) ('model:' importURI=STRING) ? (facets+=Facet)* (block=Block | ';');
 /**
  * Global statements
  */

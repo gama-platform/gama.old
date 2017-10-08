@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParamSpaceExploAlgorithm.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParamSpaceExploAlgorithm.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -36,13 +35,14 @@ import msi.gaml.types.IType;
 /**
  * The Class ParamSpaceExploAlgorithm.
  */
-@inside(kinds = { ISymbolKind.EXPERIMENT })
+@inside (
+		kinds = { ISymbolKind.EXPERIMENT })
 public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExploration {
 
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
-	@SuppressWarnings("rawtypes") public static final Class[] CLASSES = { GeneticAlgorithm.class,
-			SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class, TabuSearchReactive.class,
-			ExhaustiveSearch.class };
+	@SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
+			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
+					TabuSearchReactive.class, ExhaustiveSearch.class };
 
 	static {
 		AbstractGamlAdditions._constants(COMBINATIONS);
@@ -60,7 +60,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 	protected abstract ParametersSet findBestSolution(IScope scope) throws GamaRuntimeException;
 
-	
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		currentExperiment = agent;
@@ -88,8 +87,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		});
 	}
 
-	void initParams(final IScope scope) {
-	}
+	void initParams(final IScope scope) {}
 
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
 		super(desc);
@@ -121,8 +119,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	// }
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> commands) {
-	}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
 	protected boolean isMaximize() {
 		return isMaximize;
@@ -134,12 +131,10 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 			@Override
 			public Object value() {
-				@SuppressWarnings("rawtypes")
-				final List<Class> classes = Arrays.asList(CLASSES);
+				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
 				final String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
-				final String fit = fitnessExpression == null ? ""
-						: "fitness = " + (isMaximize ? " maximize " : " minimize ")
-								+ fitnessExpression.serialize(false);
+				final String fit = fitnessExpression == null ? "" : "fitness = "
+						+ (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serialize(false);
 				final String sim = fitnessExpression == null ? ""
 						: (combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of "
 								+ agent.getSeeds().length + " simulations";
@@ -180,9 +175,15 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		// bestFitness);
 		this.bestFitness = bestFitness;
 	}
-	
-	public void updateBestFitness(ParametersSet solution, Double fitness){
-		if ((bestSolution == null) ||(isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness())) {
+
+	@Override
+	public void updateBestFitness(final ParametersSet solution, final Double fitness) {
+		if (fitness == null)
+			return;
+		Double best = getBestFitness();
+		if (best == null)
+			best = 0d;
+		if (bestSolution == null || (isMaximize() ? fitness > best : fitness < best)) {
 			setBestFitness(fitness);
 			setBestSolution(solution);
 		}

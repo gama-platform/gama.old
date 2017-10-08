@@ -198,7 +198,7 @@
 
 
 		<module>../irit.gaml.extensions.database</module>
-		<module>../irit.gaml.extensions.test</module>
+		
 
 
 		<module>../msi.gama.models</module>

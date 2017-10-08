@@ -599,15 +599,15 @@ ruleHeadlessExperiment returns [EObject current=null]
 )
 
 )
-)	otherlv_3='model:' 
+)(	otherlv_3='model:' 
     {
-    	newLeafNode(otherlv_3, grammarAccess.getHeadlessExperimentAccess().getModelKeyword_3());
+    	newLeafNode(otherlv_3, grammarAccess.getHeadlessExperimentAccess().getModelKeyword_3_0());
     }
 (
 (
 		lv_importURI_4_0=RULE_STRING
 		{
-			newLeafNode(lv_importURI_4_0, grammarAccess.getHeadlessExperimentAccess().getImportURISTRINGTerminalRuleCall_4_0()); 
+			newLeafNode(lv_importURI_4_0, grammarAccess.getHeadlessExperimentAccess().getImportURISTRINGTerminalRuleCall_3_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -621,10 +621,10 @@ ruleHeadlessExperiment returns [EObject current=null]
 	    }
 
 )
-)(
+))?(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getFacetsFacetParserRuleCall_5_0()); 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getFacetsFacetParserRuleCall_4_0()); 
 	    }
 		lv_facets_5_0=ruleFacet		{
 	        if ($current==null) {
@@ -642,7 +642,7 @@ ruleHeadlessExperiment returns [EObject current=null]
 )*((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getBlockBlockParserRuleCall_6_0_0()); 
+	        newCompositeNode(grammarAccess.getHeadlessExperimentAccess().getBlockBlockParserRuleCall_5_0_0()); 
 	    }
 		lv_block_6_0=ruleBlock		{
 	        if ($current==null) {
@@ -660,7 +660,7 @@ ruleHeadlessExperiment returns [EObject current=null]
 )
     |	otherlv_7=';' 
     {
-    	newLeafNode(otherlv_7, grammarAccess.getHeadlessExperimentAccess().getSemicolonKeyword_6_1());
+    	newLeafNode(otherlv_7, grammarAccess.getHeadlessExperimentAccess().getSemicolonKeyword_5_1());
     }
 ))
 ;

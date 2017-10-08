@@ -39,7 +39,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 				{
 					put(grammarAccess.getEntryAccess().getAlternatives(), "rule__Entry__Alternatives");
 					put(grammarAccess.getHeadlessExperimentAccess().getNameAlternatives_2_0(), "rule__HeadlessExperiment__NameAlternatives_2_0");
-					put(grammarAccess.getHeadlessExperimentAccess().getAlternatives_6(), "rule__HeadlessExperiment__Alternatives_6");
+					put(grammarAccess.getHeadlessExperimentAccess().getAlternatives_5(), "rule__HeadlessExperiment__Alternatives_5");
 					put(grammarAccess.getS_SectionAccess().getAlternatives(), "rule__S_Section__Alternatives");
 					put(grammarAccess.getS_GlobalAccess().getAlternatives_2(), "rule__S_Global__Alternatives_2");
 					put(grammarAccess.getS_SpeciesAccess().getAlternatives_4(), "rule__S_Species__Alternatives_4");
@@ -120,6 +120,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getImportAccess().getGroup_2(), "rule__Import__Group_2__0");
 					put(grammarAccess.getPragmaAccess().getGroup(), "rule__Pragma__Group__0");
 					put(grammarAccess.getHeadlessExperimentAccess().getGroup(), "rule__HeadlessExperiment__Group__0");
+					put(grammarAccess.getHeadlessExperimentAccess().getGroup_3(), "rule__HeadlessExperiment__Group_3__0");
 					put(grammarAccess.getS_GlobalAccess().getGroup(), "rule__S_Global__Group__0");
 					put(grammarAccess.getS_SpeciesAccess().getGroup(), "rule__S_Species__Group__0");
 					put(grammarAccess.getS_ExperimentAccess().getGroup(), "rule__S_Experiment__Group__0");
@@ -265,9 +266,9 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getHeadlessExperimentAccess().getKeyAssignment_0(), "rule__HeadlessExperiment__KeyAssignment_0");
 					put(grammarAccess.getHeadlessExperimentAccess().getFirstFacetAssignment_1(), "rule__HeadlessExperiment__FirstFacetAssignment_1");
 					put(grammarAccess.getHeadlessExperimentAccess().getNameAssignment_2(), "rule__HeadlessExperiment__NameAssignment_2");
-					put(grammarAccess.getHeadlessExperimentAccess().getImportURIAssignment_4(), "rule__HeadlessExperiment__ImportURIAssignment_4");
-					put(grammarAccess.getHeadlessExperimentAccess().getFacetsAssignment_5(), "rule__HeadlessExperiment__FacetsAssignment_5");
-					put(grammarAccess.getHeadlessExperimentAccess().getBlockAssignment_6_0(), "rule__HeadlessExperiment__BlockAssignment_6_0");
+					put(grammarAccess.getHeadlessExperimentAccess().getImportURIAssignment_3_1(), "rule__HeadlessExperiment__ImportURIAssignment_3_1");
+					put(grammarAccess.getHeadlessExperimentAccess().getFacetsAssignment_4(), "rule__HeadlessExperiment__FacetsAssignment_4");
+					put(grammarAccess.getHeadlessExperimentAccess().getBlockAssignment_5_0(), "rule__HeadlessExperiment__BlockAssignment_5_0");
 					put(grammarAccess.getS_GlobalAccess().getKeyAssignment_0(), "rule__S_Global__KeyAssignment_0");
 					put(grammarAccess.getS_GlobalAccess().getFacetsAssignment_1(), "rule__S_Global__FacetsAssignment_1");
 					put(grammarAccess.getS_GlobalAccess().getBlockAssignment_2_0(), "rule__S_Global__BlockAssignment_2_0");

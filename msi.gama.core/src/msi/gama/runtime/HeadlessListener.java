@@ -447,4 +447,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void openInteractiveConsole(final IScope scope) {}
 
+	@Override
+	public void displayTests(final IScope scope) {}
+
 }

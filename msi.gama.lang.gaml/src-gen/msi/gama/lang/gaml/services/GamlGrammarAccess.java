@@ -267,23 +267,24 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cNameAlternatives_2_0 = (Alternatives)cNameAssignment_2.eContents().get(0);
 		private final RuleCall cNameValid_IDParserRuleCall_2_0_0 = (RuleCall)cNameAlternatives_2_0.eContents().get(0);
 		private final RuleCall cNameSTRINGTerminalRuleCall_2_0_1 = (RuleCall)cNameAlternatives_2_0.eContents().get(1);
-		private final Keyword cModelKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Assignment cImportURIAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cImportURISTRINGTerminalRuleCall_4_0 = (RuleCall)cImportURIAssignment_4.eContents().get(0);
-		private final Assignment cFacetsAssignment_5 = (Assignment)cGroup.eContents().get(5);
-		private final RuleCall cFacetsFacetParserRuleCall_5_0 = (RuleCall)cFacetsAssignment_5.eContents().get(0);
-		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
-		private final Assignment cBlockAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
-		private final RuleCall cBlockBlockParserRuleCall_6_0_0 = (RuleCall)cBlockAssignment_6_0.eContents().get(0);
-		private final Keyword cSemicolonKeyword_6_1 = (Keyword)cAlternatives_6.eContents().get(1);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cModelKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cImportURIAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cImportURISTRINGTerminalRuleCall_3_1_0 = (RuleCall)cImportURIAssignment_3_1.eContents().get(0);
+		private final Assignment cFacetsAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cFacetsFacetParserRuleCall_4_0 = (RuleCall)cFacetsAssignment_4.eContents().get(0);
+		private final Alternatives cAlternatives_5 = (Alternatives)cGroup.eContents().get(5);
+		private final Assignment cBlockAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
+		private final RuleCall cBlockBlockParserRuleCall_5_0_0 = (RuleCall)cBlockAssignment_5_0.eContents().get(0);
+		private final Keyword cSemicolonKeyword_5_1 = (Keyword)cAlternatives_5.eContents().get(1);
 		
 		//HeadlessExperiment:
-		//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block
-		//	| ';');
+		//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) ('model:' importURI=STRING)? facets+=Facet*
+		//	(block=Block | ';');
 		@Override public ParserRule getRule() { return rule; }
 
-		//key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block |
-		//';')
+		//key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) ('model:' importURI=STRING)? facets+=Facet* (block=Block
+		//| ';')
 		public Group getGroup() { return cGroup; }
 
 		//key=_ExperimentKey
@@ -310,32 +311,35 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_2_0_1() { return cNameSTRINGTerminalRuleCall_2_0_1; }
 
+		//('model:' importURI=STRING)?
+		public Group getGroup_3() { return cGroup_3; }
+
 		//'model:'
-		public Keyword getModelKeyword_3() { return cModelKeyword_3; }
+		public Keyword getModelKeyword_3_0() { return cModelKeyword_3_0; }
 
 		//importURI=STRING
-		public Assignment getImportURIAssignment_4() { return cImportURIAssignment_4; }
+		public Assignment getImportURIAssignment_3_1() { return cImportURIAssignment_3_1; }
 
 		//STRING
-		public RuleCall getImportURISTRINGTerminalRuleCall_4_0() { return cImportURISTRINGTerminalRuleCall_4_0; }
+		public RuleCall getImportURISTRINGTerminalRuleCall_3_1_0() { return cImportURISTRINGTerminalRuleCall_3_1_0; }
 
 		//facets+=Facet*
-		public Assignment getFacetsAssignment_5() { return cFacetsAssignment_5; }
+		public Assignment getFacetsAssignment_4() { return cFacetsAssignment_4; }
 
 		//Facet
-		public RuleCall getFacetsFacetParserRuleCall_5_0() { return cFacetsFacetParserRuleCall_5_0; }
+		public RuleCall getFacetsFacetParserRuleCall_4_0() { return cFacetsFacetParserRuleCall_4_0; }
 
 		//(block=Block | ';')
-		public Alternatives getAlternatives_6() { return cAlternatives_6; }
+		public Alternatives getAlternatives_5() { return cAlternatives_5; }
 
 		//block=Block
-		public Assignment getBlockAssignment_6_0() { return cBlockAssignment_6_0; }
+		public Assignment getBlockAssignment_5_0() { return cBlockAssignment_5_0; }
 
 		//Block
-		public RuleCall getBlockBlockParserRuleCall_6_0_0() { return cBlockBlockParserRuleCall_6_0_0; }
+		public RuleCall getBlockBlockParserRuleCall_5_0_0() { return cBlockBlockParserRuleCall_5_0_0; }
 
 		//';'
-		public Keyword getSemicolonKeyword_6_1() { return cSemicolonKeyword_6_1; }
+		public Keyword getSemicolonKeyword_5_1() { return cSemicolonKeyword_5_1; }
 	}
 
 	public class S_SectionElements extends AbstractParserRuleElementFinder {
@@ -5184,8 +5188,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//HeadlessExperiment:
-	//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) 'model:' importURI=STRING facets+=Facet* (block=Block
-	//	| ';');
+	//	key=_ExperimentKey firstFacet="name:"? name=(Valid_ID | STRING) ('model:' importURI=STRING)? facets+=Facet*
+	//	(block=Block | ';');
 	public HeadlessExperimentElements getHeadlessExperimentAccess() {
 		return pHeadlessExperiment;
 	}

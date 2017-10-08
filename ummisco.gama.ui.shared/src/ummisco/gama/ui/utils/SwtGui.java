@@ -134,6 +134,13 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
+	public void displayTests(final IScope scope) {
+		final IGamaView v = showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+		if (v != null)
+			v.reset();
+	}
+
+	@Override
 	public void clearErrors(final IScope scope) {
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 		handler.clearErrors();
@@ -497,9 +504,8 @@ public class SwtGui implements IGui {
 			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
 		}
 
-
-		WorkbenchHelper.run(() ->{
-				WorkbenchHelper.getWindow().getShell().forceActive();			
+		WorkbenchHelper.run(() -> {
+			WorkbenchHelper.getWindow().getShell().forceActive();
 		});
 	}
 

@@ -52,6 +52,7 @@ public interface IGui {
 	public static final String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
 	public static final String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
+	public static final String TEST_VIEW_ID = "msi.gama.application.view.TestView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
 	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
@@ -146,6 +147,8 @@ public interface IGui {
 	void applyLayout(IScope scope, int layout);
 
 	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
+
+	void displayTests(final IScope scope);
 
 	ILocation getMouseLocationInModel();
 

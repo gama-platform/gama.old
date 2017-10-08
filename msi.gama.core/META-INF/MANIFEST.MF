@@ -388,6 +388,7 @@ Export-Package: msi.gama.common,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions",
  msi.gaml.statements.draw,
+ msi.gaml.statements.test,
  msi.gaml.types;
   uses:="msi.gama.precompiler,
    msi.gaml.expressions,

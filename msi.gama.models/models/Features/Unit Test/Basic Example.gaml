@@ -1,8 +1,7 @@
 /**
 * Name: Example of Unit Test
-* Author: Benoit Gaudou
+* Author: Benoit Gaudou & Alexis Drogoul
 * Description: A model which shows how to use the unit test to show the possible errors 
-* you have to go in the Views, Preferences, Simulation, in "Errors" Uncheck "stop at the first error", to show all the errors.
 * Tags: test
  */
 
@@ -26,33 +25,41 @@ species test_species {
 
 	//First test executing comparison between numbers
 	test t1 {
-     	assert 100 + 100 equals: 200;
-    		assert 100 + 100 equals: 201;
+     	assert 100 + 100 = 200;
+    		assert 100 + 100 = 201 warning: true;
+    		assert is_error(a/0) warning: true;
 	}
 	
 	//Second test executing comparison between list and type
-	test t2 {
-    	assert any([1,2,3]) is_not: nil;
+	test t2 
+	{
+    	assert any([1,2,3]) != nil;
     	assert any([1,2,3]) is int;
-    	assert any([1,2,3]) is_not: 5;
+    	assert any([1,2,3]) != 5;
     	assert any([1,2,3]) is float;
     	assert any([1,2,3]) is string;
 	}
 
+
+
 	//test the incrementation of a
-	test incement_a {
+	test increment_a {
+		int b <- a;
    		a<- a + 10;
-    		write "a: " + a;
+   		assert a-b = 10;
 	}
 	
 	//Third test for lists
 	test t3 {
  		list<int> aa;
-	 	assert aa[0] raises: "error";
-	 	assert aa[0] raises: "";
-	 	assert a raises: "error";
+	 	assert is_error(aa[0]);
 	}
 }
 
 
-experiment new type: gui {}
+experiment new type: test until: cycle=10{
+	
+	test toto {
+		assert 1+2 = 3;
+	}
+}

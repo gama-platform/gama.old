@@ -16,6 +16,8 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,6 +37,8 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.test.TestStatement;
 import msi.gaml.types.IType;
 
 @symbol (
@@ -273,6 +277,20 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			addExperiment(exp);
 			exp.setChildren(forExperiment);
 		}
+	}
+
+	static Predicate<IStatement> isTest = s -> (s instanceof TestStatement);
+
+	@Override
+	public List<TestStatement> getAllTests() {
+		final List<TestStatement> tests = new ArrayList<>();
+		final Consumer<IStatement> filter = t -> {
+			if (t instanceof TestStatement)
+				tests.add((TestStatement) t);
+		};
+		getBehaviors().forEach(filter);
+		getAllSpecies().values().forEach(s -> s.getBehaviors().forEach(filter));
+		return tests;
 	}
 
 }

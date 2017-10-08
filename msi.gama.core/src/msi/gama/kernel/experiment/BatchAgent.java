@@ -67,9 +67,13 @@ public class BatchAgent extends ExperimentAgent {
 		if (getSpecies().hasFacet(IKeyword.UNTIL)) {
 			stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
 		} else {
-			stopCondition = IExpressionFactory.FALSE_EXPR;
+			stopCondition = defaultStopCondition();
 		}
 
+	}
+
+	protected IExpression defaultStopCondition() {
+		return IExpressionFactory.FALSE_EXPR;
 	}
 
 	@Override
@@ -157,11 +161,14 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus(scope)
-				.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
+		scope.getGui().getStatus(scope).informStatus(endStatus());
 		dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
+	}
+
+	protected String endStatus() {
+		return "Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.";
 	}
 
 	public int getRunNumber() {

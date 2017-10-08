@@ -1082,7 +1082,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         key=_ExperimentKey 
 	 *         firstFacet='name:'? 
 	 *         (name=Valid_ID | name=STRING) 
-	 *         importURI=STRING 
+	 *         importURI=STRING? 
 	 *         facets+=Facet* 
 	 *         block=Block?
 	 *     )

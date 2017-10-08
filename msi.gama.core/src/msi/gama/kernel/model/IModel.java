@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IModel.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IModel.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,11 +10,13 @@
 package msi.gama.kernel.model;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.test.TestStatement;
 
 /**
  * Written by drogoul Modified on 29 d�c. 2010
@@ -40,5 +41,7 @@ public interface IModel extends ISpecies {
 	public abstract Map<String, ISpecies> getAllSpecies();
 
 	public abstract Collection<String> getImportedPaths();
+
+	public abstract List<TestStatement> getAllTests();
 
 }

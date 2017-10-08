@@ -186,7 +186,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 							METHOD);
 				}
 			}
-			if (type.equals(BATCH) || type.equals(TEST))
+			if (type.equals(BATCH))
 				if (!desc.hasFacet(UNTIL)) {
 					desc.warning(
 							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "

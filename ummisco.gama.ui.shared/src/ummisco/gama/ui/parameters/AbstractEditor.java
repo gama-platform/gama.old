@@ -105,7 +105,7 @@ public abstract class AbstractEditor<T>
 	private final Integer order = ORDER++;
 	private final IAgent agent;
 	private final IScope scope;
-	private final String name;
+	protected String name;
 	protected Label titleLabel = null;
 	protected final IParameter param;
 	boolean acceptNull = true;
