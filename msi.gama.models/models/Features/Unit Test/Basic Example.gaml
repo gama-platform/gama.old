@@ -25,7 +25,6 @@ species test_species {
 
 	//First test executing comparison between numbers
 	test t1 {
-		float t <- 1/0; // An exception outside an assertion aborts the test
      	assert 100 + 100 = 200;
     		assert 100 + 100 = 201 warning: true;
     		assert is_error(a/0) warning: true;
@@ -38,6 +37,7 @@ species test_species {
     	assert any([1,2,3]) is int;
     	assert any([1,2,3]) != 5;
     	assert any([1,2,3]) is float;
+    	float t <- 1/0; // An exception outside an assertion aborts the test. The following assertion will never be tested
     	assert any([1,2,3]) is string;
 	}
 

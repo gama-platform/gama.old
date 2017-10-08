@@ -136,4 +136,13 @@
                </property>
             </product>
          </extension>
+         <extension
+               id="id1"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.TestNature">
+               </run>
+            </runtime>
+         </extension>
 </plugin>

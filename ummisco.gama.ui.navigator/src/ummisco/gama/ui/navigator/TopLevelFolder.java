@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TopLevelFolder.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TopLevelFolder.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -44,7 +43,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 public abstract class TopLevelFolder extends VirtualContent {
 
 	enum Location {
-		CoreModels, Plugins, Other, Unknown
+		CoreModels, Plugins, Other, Unknown, Tests
 	}
 
 	/**
@@ -90,8 +89,7 @@ public abstract class TopLevelFolder extends VirtualContent {
 					if (severity == IMarker.SEVERITY_ERROR) {
 						break;
 					}
-				} catch (final CoreException e) {
-				}
+				} catch (final CoreException e) {}
 
 			}
 		}
@@ -103,17 +101,11 @@ public abstract class TopLevelFolder extends VirtualContent {
 	 * @return
 	 */
 	protected final boolean accepts(final IProject project) {
-		if (project == null) {
-			return false;
-		}
-		if (!project.exists()) {
-			return false;
-		}
+		if (project == null) { return false; }
+		if (!project.exists()) { return false; }
 		// TODO This one is clearly a hack. Should be replaced by a proper way
 		// to track persistently the closed projects
-		if (!project.isOpen()) {
-			return getLocation(project.getLocation()) == getModelsLocation();
-		}
+		if (!project.isOpen()) { return getLocation(project.getLocation()) == getModelsLocation(); }
 		try {
 			return accepts(project.getDescription());
 		} catch (final CoreException e) {
@@ -129,32 +121,25 @@ public abstract class TopLevelFolder extends VirtualContent {
 	protected Location getLocation(final IPath location) {
 		URL urlRep = null;
 		try {
-
 			final URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/");
 			final URL new_url = FileLocator.resolve(old_url);
 			// windows URL formating
 			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
 			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
 			urlRep = normalizedPath.toUri().toURL();
-			// urlRep = FileLocator.resolve(new URL("platform:/plugin/" +
-			// GamaBundleLoader.CORE_MODELS + "/"));
-
-			// System.out.println("Model path:" + location.toOSString() + " |||
-			// Plugin path: " + urlRep.getPath());
-			if (location.toOSString().startsWith(urlRep.getPath())) {
-				return Location.CoreModels;
-			}
-			if (location.toOSString().startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS + "/", ""))) {
+			final String osString = location.toOSString();
+			final boolean isTest = osString.contains(GamaBundleLoader.CORE_TESTS);
+			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
+			if (osString.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS + "/", ""))) {
+				if (isTest)
+					return Location.Tests;
 				return Location.Plugins;
 			}
 			return Location.Other;
 		} catch (final IOException e) {
 			e.printStackTrace();
 			return Location.Unknown;
-		} /*
-			 * catch (URISyntaxException e) { e.printStackTrace(); return
-			 * Location.Unknown; }
-			 */
+		}
 
 	}
 
@@ -181,9 +166,7 @@ public abstract class TopLevelFolder extends VirtualContent {
 			modelCount += NavigatorBaseLighweightDecorator.countModels((IProject) o);
 		}
 
-		if (modelCount > 0) {
-			return String.valueOf(modelCount);
-		}
+		if (modelCount > 0) { return String.valueOf(modelCount); }
 		return " ";
 	}
 

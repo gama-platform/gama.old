@@ -46,6 +46,7 @@ public class GamaBundleLoader {
 	public volatile static boolean LOADED = false;
 	public static String CORE_PLUGIN = "msi.gama.core";
 	public static String CORE_MODELS = "msi.gama.models";
+	public static String CORE_TESTS = "tests";
 	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN;
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
@@ -55,6 +56,7 @@ public class GamaBundleLoader {
 	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
 	private static Set<String> GAMA_PLUGINS = new THashSet<String>();
 	private static Map<String, String> MODEL_PLUGINS = new THashMap<String, String>();
+	private static Map<String, String> TEST_PLUGINS = new THashMap<String, String>();
 	public static Set<String> HANDLED_FILE_EXTENSIONS = new THashSet<String>();
 
 	public static void preBuildContributions() {
@@ -78,6 +80,9 @@ public class GamaBundleLoader {
 			GAMA_PLUGINS.add(plugin.getName());
 			if (hasModels(plugin)) {
 				MODEL_PLUGINS.put(plugin.getName(), "models");
+			}
+			if (hasTests(plugin)) {
+				TEST_PLUGINS.put(plugin.getName(), "tests");
 			}
 		}
 
@@ -156,16 +161,18 @@ public class GamaBundleLoader {
 			e.printStackTrace();
 		}
 		if (url == null) { return false; }
-		// File file = null;
-		// try {
-		// final URL new_url = FileLocator.resolve(url);
-		// final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-		// final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-		// file = normalizedPath.toFile();
-		// } catch (final Exception e) {
-		// e.printStackTrace();
-		// }
-		// return file != null && file.exists() && file.isDirectory();
+		return true;
+	}
+
+	private static boolean hasTests(final IContributor c) {
+		URL url = null;
+		try {
+			url = new URL("platform:/plugin/" + c.getName() + "/tests");
+			url = FileLocator.find(url);
+		} catch (final MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if (url == null) { return false; }
 		return true;
 	}
 
@@ -212,6 +219,10 @@ public class GamaBundleLoader {
 	 */
 	public static Map<String, String> getPluginsWithModels() {
 		return MODEL_PLUGINS;
+	}
+
+	public static Map<String, String> getPluginsWithTests() {
+		return TEST_PLUGINS;
 	}
 
 	/**

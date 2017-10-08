@@ -180,7 +180,8 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	}
 
 	private void initializeVirtualFolders(final Object parentElement) {
-		virtualFolders = new TopLevelFolder[] { new UserProjectsFolder(parentElement, "User models"),
+		virtualFolders = new TopLevelFolder[] { new TestModelsFolder(parentElement, "Test models"),
+				new UserProjectsFolder(parentElement, "User models"),
 				new PluginsModelsFolder(parentElement, "Plugin models"),
 				new ModelsLibraryFolder(parentElement, "Library models") };
 	}

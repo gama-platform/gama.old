@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NewProjectWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NewProjectWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,8 +40,7 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
 	/**
-	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse
-	 * framework.
+	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse framework.
 	 */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
 	private WizardNewProjectCreationPage wizardPage;
@@ -64,9 +62,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {
 
-		if (project != null) {
-			return true;
-		}
+		if (project != null) { return true; }
 
 		final IProject projectHandle = wizardPage.getProjectHandle();
 		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
@@ -75,8 +71,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		desc.setLocationURI(projectURI);
 
 		/**
-		 * An operation object that modifies workspaces in order to create new
-		 * projects.
+		 * An operation object that modifies workspaces in order to create new projects.
 		 */
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 
@@ -122,17 +117,14 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			monitor.beginTask("", 2000);
 			proj.create(description, new SubProgressMonitor(monitor, 1000));
 
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 			proj.open(new SubProgressMonitor(monitor, 1000));
 			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
-			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, null);
+			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, false, null);
 
 			/*
-			 * We now have the project and we can do more things with it before
-			 * updating the perspective.
+			 * We now have the project and we can do more things with it before updating the perspective.
 			 */
 			final IContainer container = proj;
 
@@ -157,8 +149,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			imFolder.create(true, true, monitor);
 
 		} catch (final CoreException ioe) {
-			final IStatus status = new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(),
-					null);
+			final IStatus status =
+					new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		} finally {
 			monitor.done();

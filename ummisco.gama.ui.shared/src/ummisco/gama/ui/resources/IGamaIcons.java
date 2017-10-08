@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IGamaIcons.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IGamaIcons.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -87,6 +86,8 @@ public interface IGamaIcons {
 	public static final String FOLDER_BUILTIN_16 = "navigator/folder.library2.16";
 	public static final String FOLDER_PLUGIN = "navigator/folder.plugin2";
 	public static final String FOLDER_PLUGIN_16 = "navigator/folder.plugin2.16";
+	public static final String FOLDER_TEST = "navigator/folder.test2";
+	public static final String FOLDER_TEST_16 = "navigator/folder.test2.16";
 	public static final String FOLDER_PROJECT = "folder.user2";
 	public static final String FOLDER_MODEL = "folder.model3";
 	public static final String FOLDER_RESOURCES = "folder.resources2";

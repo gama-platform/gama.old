@@ -32,6 +32,7 @@ public class WorkbenchHelper {
 	public final static String GAMA_NATURE = WorkspaceModelsManager.GAMA_NATURE;
 	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE;
 	public final static String PLUGIN_NATURE = WorkspaceModelsManager.PLUGIN_NATURE;
+	public final static String TEST_NATURE = WorkspaceModelsManager.TEST_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
 	public final static Clipboard clipboard = new Clipboard(Display.getCurrent());

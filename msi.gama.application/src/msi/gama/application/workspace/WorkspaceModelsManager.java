@@ -68,6 +68,7 @@ public class WorkspaceModelsManager {
 	public final static String GAMA_NATURE = "msi.gama.application.gamaNature";
 	public final static String XTEXT_NATURE = "org.eclipse.xtext.ui.shared.xtextNature";
 	public final static String PLUGIN_NATURE = "msi.gama.application.pluginNature";
+	public final static String TEST_NATURE = "msi.gama.application.testNature";
 	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
@@ -127,10 +128,10 @@ public class WorkspaceModelsManager {
 			filePath = segments[0];
 			expName = segments[1];
 		}
-		if ( filePath.endsWith(".experiment") && expName == null) {
+		if ( filePath.endsWith(".experiment") && expName == null ) {
 			expName = "0";
 			// Verify that it works even if the included model defines experiments itself...
-			
+
 		}
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
@@ -288,7 +289,7 @@ public class WorkspaceModelsManager {
 						// We open the project
 						proj.open(IResource.NONE, monitor);
 						// And we set some properties to it
-						setValuesProjectDescription(proj, false, false, null);
+						setValuesProjectDescription(proj, false, false, false, null);
 					}
 				};
 				operation.run(new NullProgressMonitor() {
@@ -414,12 +415,6 @@ public class WorkspaceModelsManager {
 
 	}
 
-	private static void linkPluginsModelsToWorkspace() {
-		for ( final String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
-			linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false);
-		}
-	}
-
 	public static void linkSampleModelsToWorkspace() {
 		final Job job = new Job("Updating the Built-in Models Library") {
 
@@ -435,8 +430,13 @@ public class WorkspaceModelsManager {
 						e.printStackTrace();
 					}
 				}
-				linkModelsToWorkspace("msi.gama.models", "models", true);
-				linkPluginsModelsToWorkspace();
+				linkModelsToWorkspace("msi.gama.models", "models", true, false);
+				for ( final String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
+					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false, false);
+				}
+				for ( final String plugin : GamaBundleLoader.getPluginsWithTests().keySet() ) {
+					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false, true);
+				}
 				return Status.OK_STATUS;
 			}
 
@@ -450,37 +450,26 @@ public class WorkspaceModelsManager {
 	 * @param plugin
 	 */
 
-	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core) {
+	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core,
+		final boolean tests) {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final URL urlRep = null;
 		File modelsRep = null;
 		try {
 			final String ext = path == "." ? "/" : "/" + path + "/";
-			// urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
-			// urlRep = urlRep.toURI().normalize().toURL();
-
-			// urlRep = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
-
 			final URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
 			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
 			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			// urlRep = normalizedPath.toUri().toURL();
 			modelsRep = normalizedPath.toFile();
 
 		} catch (final IOException e) {
 			e.printStackTrace();
 			return;
-		} /*
-			 * catch (URISyntaxException e) {
-			 * e.printStackTrace();
-			 * }
-			 */
+		}
 
-		// File modelsRep = new File(urlRep.getPath());
-		// System.out.println("chargemen" + modelsRep.getAbsolutePath());
 		final Map<File, IPath> foundProjects = new HashMap<>();
 		findProjects(modelsRep, foundProjects);
-		importBuiltInProjects(plugin, core, workspace, foundProjects);
+		importBuiltInProjects(plugin, core, tests, workspace, foundProjects);
 
 		if ( core )
 			stampWorkspaceFromModels();
@@ -511,8 +500,8 @@ public class WorkspaceModelsManager {
 	 * @param workspace
 	 * @param project
 	 */
-	private static void importBuiltInProjects(final String plugin, final boolean core, final IWorkspace workspace,
-		final Map<File, IPath> projects) {
+	private static void importBuiltInProjects(final String plugin, final boolean core, final boolean tests,
+		final IWorkspace workspace, final Map<File, IPath> projects) {
 
 		for ( final Map.Entry<File, IPath> entry : projects.entrySet() ) {
 			final File project = entry.getKey();
@@ -534,7 +523,7 @@ public class WorkspaceModelsManager {
 						}
 					}
 					proj.open(IResource.NONE, monitor);
-					setValuesProjectDescription(proj, true, !core, plugin);
+					setValuesProjectDescription(proj, true, !core, tests, plugin);
 				}
 			};
 			try {
@@ -567,7 +556,7 @@ public class WorkspaceModelsManager {
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
 				project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 				projectHandle[0] = project;
-				setValuesProjectDescription(project, false, false, null);
+				setValuesProjectDescription(project, false, false, false, null);
 			}
 		};
 		try {
@@ -581,7 +570,7 @@ public class WorkspaceModelsManager {
 	}
 
 	static public void setValuesProjectDescription(final IProject proj, final boolean builtin, final boolean inPlugin,
-		final String pluginName) {
+		final boolean inTests, final String pluginName) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
@@ -594,10 +583,10 @@ public class WorkspaceModelsManager {
 			newIds[0] = XTEXT_NATURE;
 			// Addition of a special nature to the project.
 			if ( builtin ) {
-				newIds[2] = inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
+				newIds[2] = inPlugin ? PLUGIN_NATURE : inTests ? TEST_NATURE : BUILTIN_NATURE;
 			}
 			desc.setNatureIds(newIds);
-			if ( inPlugin && pluginName != null ) {
+			if ( (inPlugin || inTests) && pluginName != null ) {
 				desc.setComment(pluginName);
 			} else {
 				desc.setComment("");
