@@ -91,7 +91,7 @@ import msi.gaml.types.IType;
 public class TestStatement extends AbstractStatementSequence {
 
 	public static enum State {
-		FAILED("failed"), PASSED("passed"), NOT_RUN("not run"), WARNING("warning");
+		FAILED("failed"), PASSED("passed"), NOT_RUN("not run"), WARNING("warning"), ABORTED("aborted");
 		private final String name;
 
 		State(final String s) {
@@ -108,6 +108,7 @@ public class TestStatement extends AbstractStatementSequence {
 	// Assertions contained in the test. True means they are verified, false they are not, null they have emitted a
 	// warning
 	List<AssertStatement> assertions = new ArrayList<>();
+	boolean aborted = false;
 
 	public TestStatement(final IDescription desc) {
 		super(desc);
@@ -134,6 +135,7 @@ public class TestStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		aborted = false;
 		if (setup != null) {
 			setup.setup(scope);
 		}
@@ -142,7 +144,13 @@ public class TestStatement extends AbstractStatementSequence {
 		for (final IStatement statement : commands) {
 			try {
 				lastResult = statement.executeOn(scope);
-			} catch (final GamaAssertException e) {}
+			} catch (final GamaAssertException e) {
+				// Does nothing
+			} catch (final GamaRuntimeException e2) {
+				// Other exceptions abort the test
+				aborted = true;
+				break;
+			}
 		}
 		scope.disableTryMode();
 		return lastResult;
@@ -150,6 +158,8 @@ public class TestStatement extends AbstractStatementSequence {
 	}
 
 	public State getState() {
+		if (aborted)
+			return State.ABORTED;
 		State state = State.NOT_RUN;
 		for (final AssertStatement s : assertions) {
 			switch (s.getState()) {
@@ -166,6 +176,7 @@ public class TestStatement extends AbstractStatementSequence {
 					if (state.equals(State.PASSED) || state.equals(State.NOT_RUN))
 						state = State.WARNING;
 					break;
+				default:
 			}
 		}
 		return state;
@@ -186,6 +197,7 @@ public class TestStatement extends AbstractStatementSequence {
 	}
 
 	public void reset() {
+		aborted = false;
 		assertions.forEach(a -> a.state = State.NOT_RUN);
 	}
 

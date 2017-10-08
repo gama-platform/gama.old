@@ -25,6 +25,7 @@ species test_species {
 
 	//First test executing comparison between numbers
 	test t1 {
+		float t <- 1/0; // An exception outside an assertion aborts the test
      	assert 100 + 100 = 200;
     		assert 100 + 100 = 201 warning: true;
     		assert is_error(a/0) warning: true;
