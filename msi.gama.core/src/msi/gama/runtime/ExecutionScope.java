@@ -791,7 +791,7 @@ public class ExecutionScope implements IScope {
 	public IType getType(final String name) {
 		if (additionalContext.types == null)
 			additionalContext.types =
-					((ModelDescription) getSimulation().getSpecies().getDescription()).getTypesManager();
+					((ModelDescription) getExperiment().getSpecies().getModel().getDescription()).getTypesManager();
 		return additionalContext.types.get(name);
 	}
 

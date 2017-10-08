@@ -1,0 +1,43 @@
+/**
+* Name: BooleanTests
+* Author: Alexis Drogoul
+* Description: Test boolean operators
+* Tags: test
+*/
+
+experiment BooleanTests type: test {
+	
+	test Constants {
+		assert true is bool;
+		assert false is bool;
+		assert false != true;
+	}
+	
+	test And {
+		assert true and true;
+		assert (true and false) = false;
+		assert (false and false) = false;
+	}
+	
+	test Or {
+		assert true or true;
+		assert (true or false) = true;
+		assert (false or false) = false;
+	}
+	
+	test Not {
+		assert !true = false;
+		assert !false = true;
+	}
+	
+	test Iff {
+		assert true ? true : false;
+		assert (false ? true : false) = false;
+	}
+	
+	test Xor {
+		assert true xor false;
+		assert !(true xor true);
+	}
+	
+}

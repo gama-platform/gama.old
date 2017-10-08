@@ -435,7 +435,7 @@ public class WorkspaceModelsManager {
 					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false, false);
 				}
 				for ( final String plugin : GamaBundleLoader.getPluginsWithTests().keySet() ) {
-					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false, true);
+					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithTests().get(plugin), false, true);
 				}
 				return Status.OK_STATUS;
 			}
@@ -583,7 +583,7 @@ public class WorkspaceModelsManager {
 			newIds[0] = XTEXT_NATURE;
 			// Addition of a special nature to the project.
 			if ( builtin ) {
-				newIds[2] = inPlugin ? PLUGIN_NATURE : inTests ? TEST_NATURE : BUILTIN_NATURE;
+				newIds[2] = inTests ? TEST_NATURE : inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
 			}
 			desc.setNatureIds(newIds);
 			if ( (inPlugin || inTests) && pluginName != null ) {

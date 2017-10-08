@@ -10,10 +10,13 @@
 package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -740,7 +743,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public Iterable<IOutputManager> getActiveOutputManagers() {
 		if (agent == null)
 			return Collections.EMPTY_LIST;
-		return agent.getAllSimulationOutputs();
+		return Iterables.concat(agent.getAllSimulationOutputs(), Arrays.asList(experimentOutputs));
 
 	}
 
