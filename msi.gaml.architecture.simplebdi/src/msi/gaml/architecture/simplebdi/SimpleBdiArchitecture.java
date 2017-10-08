@@ -258,7 +258,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agent.dead()) { return null; }
 			}
 		}
-		computeEmotions(scope);
+		//computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
 //		if (!agent.dead()) {
@@ -904,9 +904,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		MentalState predTemp = null;
 		if (predicateDirect != null) {
 			createJoyFromPredicate(scope, predicateDirect);
-			//createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
-			//createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
-			//createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
+			createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
+			createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
+			createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
 			
 			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 				if (predTest.getPredicate()!=null && predicateDirect.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
@@ -2554,12 +2554,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 					//0.00028=1/3600
-					Double test = scope.getSimulation().getTimeStep(scope);
 					decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 				}
 				joy.setIntensity(intensity);
 				joy.setDecay(decay);
 				addEmotion(scope, joy);
+				createGratificationGratitudeFromJoy(scope, joy);
 				
 			}else{
 				for (final MentalState pred : getBase(scope, DESIRE_BASE)) {
@@ -2587,13 +2587,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									}
 								}
 								//0.00028=1/3600
-								Double test = scope.getSimulation().getTimeStep(scope);
 								decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
 							
 							}
 							sadness.setIntensity(intensity);
 							sadness.setDecay(decay);
 							addEmotion(scope, sadness);
+							createRemorseAngerFromSadness(scope, sadness);
 						}
 					}
 				}
@@ -2601,7 +2601,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
-	//va démarrer le calcul de remorse et anger
 	private void createSadness(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
@@ -2643,6 +2642,84 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	private static void createHopeFromMentalState(final IScope scope, final MentalState predTest){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				if(predTest.getPredicate()!=null){
+					if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
+						final Emotion hope = new Emotion("hope", predTest.getPredicate());
+						final IAgent agentTest = predTest.getPredicate().getAgentCause();
+						if (agentTest != null) {
+							hope.setAgentCause(agentTest);
+						}
+						//ajout de l'intensité
+						Double intensity = 1.0;
+						Double decay = 0.0;
+						if(use_personality){
+							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+							MentalState desire=null;
+							for (final MentalState mental : getBase(scope, DESIRE_BASE)) {				
+								if (mental.getPredicate()!= null && predTest.getPredicate().equals(mental.getPredicate())) { 
+									desire = mental; 
+									}
+							}
+							//Faire ce calcul seulement si le désire à une force (vérifier le no value)
+							if(desire!=null){
+								intensity = desire.getStrength()*(1+(0.5-neurotisme));
+								if(intensity>1.0){
+									intensity=1.0;
+								}
+								if(intensity<0){
+									intensity=0.0;
+								}
+							}
+							//0.00028=1/3600
+							decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
+						}
+						hope.setIntensity(intensity);
+						hope.setDecay(decay);
+						addEmotion(scope, hope);
+						
+					}else{
+						for (final MentalState pred : getBase(scope, DESIRE_BASE)) {
+							if(pred.getPredicate()!=null){
+								if (predTest.getPredicate().equalsButNotTruth(pred.getPredicate())){
+									final Emotion fear = new Emotion("fear", predTest.getPredicate());
+									final IAgent agentTest = predTest.getPredicate().getAgentCause();
+									if (agentTest != null) {
+										fear.setAgentCause(agentTest);
+									}
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									if(use_personality){
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										MentalState desire=pred;
+										//Faire ce calcul seulement si le désire à une force (vérifier le no value)
+										if(desire!=null){
+											intensity = desire.getStrength()*(1+(0.5-neurotisme));
+											if(intensity>1.0){
+												intensity=1.0;
+											}
+											if(intensity<0){
+												intensity=0.0;
+											}
+										}
+										//0.00028=1/3600
+										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*intensity;
+									
+									}
+									fear.setIntensity(intensity);
+									fear.setDecay(decay);
+									addEmotion(scope, fear);
+								}
+							}
+						}
+					}
+				}
+				
+	}
+	
 	private void createFear(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
@@ -2722,6 +2799,168 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	private static void createSatisfactionFromMentalState(final IScope scope, final MentalState predicateDirect){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				if(predicateDirect.getPredicate()!=null){
+					final GamaList<Emotion> emoTemps =
+							getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+					for (final Emotion emo : emoTemps) {
+						if (emo.getName().equals("hope")) {
+							if (emo.getAbout() != null && emo.getAbout().equals(predicateDirect.getPredicate())){
+								Emotion satisfaction = null;
+								Emotion joy = null;
+								final IAgent agentTest = emo.getAgentCause();
+								if (emo.getNoIntensity()) {
+									satisfaction = new Emotion("satisfaction", emo.getAbout());
+									if (agentTest != null) {
+										satisfaction.setAgentCause(agentTest);
+									}
+									joy = new Emotion("joy", emo.getAbout());
+									if (agentTest != null) {
+										joy.setAgentCause(agentTest);
+									}
+								} else {
+									// On décide de transmettre l'intensité de l'émotion
+									// précédente.
+									satisfaction = new Emotion("satisfaction", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										satisfaction.setAgentCause(agentTest);
+									}
+									joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										joy.setAgentCause(agentTest);
+									}
+								}
+								Double decay = 0.0;
+								if(use_personality){
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*satisfaction.getIntensity();
+								}
+								satisfaction.setDecay(decay);
+								joy.setDecay(decay);
+								addEmotion(scope, satisfaction);
+								addEmotion(scope, joy);
+								removeEmotion(scope, emo);
+							}
+							if(emo.getAbout() != null && emo.getAbout().equalsButNotTruth(predicateDirect.getPredicate())){
+								Emotion disappointment = null;
+								Emotion sadness = null;
+								final IAgent agentTest = emo.getAgentCause();
+								if (emo.getNoIntensity()) {
+									disappointment = new Emotion("disappointment", emo.getAbout());
+									if (agentTest != null) {
+										disappointment.setAgentCause(agentTest);
+									}
+									sadness = new Emotion("sadness", emo.getAbout());
+									if (agentTest != null) {
+										sadness.setAgentCause(agentTest);
+									}
+								} else {
+									// On décide de transmettre l'intensité de
+									// l'émotion précédente.
+									disappointment = new Emotion("disappointment", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										disappointment.setAgentCause(agentTest);
+									}
+									sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										sadness.setAgentCause(agentTest);
+									}
+								}
+								Double decay = 0.0;
+								if(use_personality){
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*disappointment.getIntensity();
+								
+								}
+								disappointment.setDecay(decay);
+								sadness.setDecay(decay);
+								addEmotion(scope, disappointment);
+								addEmotion(scope, sadness);
+								removeEmotion(scope, emo);
+							}
+						}
+						if (emo.getName().equals("fear")) {
+							if (emo.getAbout() != null && emo.getAbout().equals(predicateDirect.getPredicate())){
+								Emotion fearConfirmed = null;
+								Emotion sadness = null;
+								final IAgent agentTest = emo.getAgentCause();
+								if (emo.getNoIntensity()) {
+									fearConfirmed = new Emotion("fear_confirmed", emo.getAbout());
+									if (agentTest != null) {
+										fearConfirmed.setAgentCause(agentTest);
+									}
+									sadness = new Emotion("sadness", emo.getAbout());
+									if (agentTest != null) {
+										sadness.setAgentCause(agentTest);
+									}
+								} else {
+									// On décide de transmettre l'intensité de l'émotion
+									// précédente.
+									fearConfirmed = new Emotion("fear_confirmed", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										fearConfirmed.setAgentCause(agentTest);
+									}
+									sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										sadness.setAgentCause(agentTest);
+									}
+								}
+								Double decay = 0.0;
+								if(use_personality){
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*fearConfirmed.getIntensity();
+								
+								}
+								fearConfirmed.setDecay(decay);
+								sadness.setDecay(decay);
+								addEmotion(scope, fearConfirmed);
+								addEmotion(scope, sadness);
+								removeEmotion(scope, emo);
+							}
+							if(emo.getAbout() != null && emo.getAbout().equalsButNotTruth(predicateDirect.getPredicate())){
+								Emotion relief = null;
+								Emotion joy = null;
+								final IAgent agentTest = emo.getAgentCause();
+								if (emo.getNoIntensity()) {
+									relief = new Emotion("relief", emo.getAbout());
+									if (agentTest != null) {
+										relief.setAgentCause(agentTest);
+									}
+									joy = new Emotion("joy", emo.getAbout());
+									if (agentTest != null) {
+										joy.setAgentCause(agentTest);
+									}
+								} else {
+									// On décide de transmettre l'intensité de
+									// l'émotion précédente.
+									relief = new Emotion("relief", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										relief.setAgentCause(agentTest);
+									}
+									joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
+									if (agentTest != null) {
+										joy.setAgentCause(agentTest);
+									}
+								}
+								Double decay = 0.0;
+								if(use_personality){
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*relief.getIntensity();
+								
+								}
+								relief.setDecay(decay);
+								joy.setDecay(decay);
+								addEmotion(scope, relief);
+								addEmotion(scope, joy);
+								removeEmotion(scope, emo);
+							}
+						}
+					}
+				}
+	}
+	
 	private void createSatisfaction(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
@@ -2930,6 +3169,77 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		}
 	}
+	
+	private static void createHappyForFromMentalState(final IScope scope, final MentalState predicateDirect){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				if(predicateDirect.getEmotion()!=null){
+					Emotion emo = predicateDirect.getEmotion();
+					if (emo.getName().equals("joy")) {
+						final IAgent agentTemp = emo.getOwner();
+						if (!getSocialBase(scope, SOCIALLINK_BASE).isEmpty()) {
+							for (final SocialLink temp : getSocialBase(scope, SOCIALLINK_BASE)) {
+								if(temp.getAgent().equals(agentTemp)){
+									if (temp.getLiking() > 0.0) {
+										final Emotion happyFor = new Emotion("happy_for", /*formule à changer*/emo.getIntensity() * temp.getLiking(),
+												emo.getAbout(), agentTemp);
+										Double decay = 0.0;
+										if(use_personality){
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*happyFor.getIntensity();
+										}
+										happyFor.setDecay(decay);
+										addEmotion(scope, happyFor);
+									}
+									if(temp.getLiking()<0.0){
+										final Emotion resentment = new Emotion("resentment", /*formule à changer*/emo.getIntensity() * -temp.getLiking(),
+												emo.getAbout(), agentTemp);
+										Double decay = 0.0;
+										if(use_personality){
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*resentment.getIntensity();
+										}
+										resentment.setDecay(decay);
+										addEmotion(scope, resentment);
+									}
+								}
+							}
+						}
+					}
+					if (emo.getName().equals("sadness")) {
+						final IAgent agentTemp = emo.getOwner();
+						if (!getSocialBase(scope, SOCIALLINK_BASE).isEmpty()) {
+							for (final SocialLink temp : getSocialBase(scope, SOCIALLINK_BASE)) {
+								if(temp.getAgent().equals(agentTemp)){
+									if (temp.getLiking() > 0.0) {
+										final Emotion sorryFor = new Emotion("sorry_for", /*formule à changer*/emo.getIntensity() * temp.getLiking(),
+												emo.getAbout(), agentTemp);
+										Double decay = 0.0;
+										if(use_personality){
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*sorryFor.getIntensity();
+										}
+										sorryFor.setDecay(decay);
+										addEmotion(scope, sorryFor);
+									}
+									if(temp.getLiking()<0.0){
+										final Emotion gloating = new Emotion("gloating", /*formule à changer*/emo.getIntensity() * -temp.getLiking(),
+												emo.getAbout(), agentTemp);
+										Double decay = 0.0;
+										if(use_personality){
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*gloating.getIntensity();
+										}
+										gloating.setDecay(decay);
+										addEmotion(scope, gloating);
+									}
+								}
+							}
+						}
+					}
+					
+				}
+	}
 
 	private void createEmotionsRelatedToOthers(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
@@ -3004,7 +3314,78 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
-	//va démarrer le calcul de gratification, remorse, gratitude et anger
+	private static void createPrideFromMentalState(final IScope scope, final MentalState predicateDirect){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				if(predicateDirect.getPredicate()!=null){
+					for(MentalState temp : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)){
+						if(temp.getPredicate()!= null && temp.getPredicate().equals(predicateDirect.getPredicate())){
+							if(temp.getStrength()>0.0){
+								if(predicateDirect.getPredicate().getAgentCause() != null && predicateDirect.getPredicate().getAgentCause().equals(scope.getAgent())){
+									final Emotion pride = new Emotion("pride", predicateDirect.getPredicate());
+									pride.setAgentCause(scope.getAgent());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									if(use_personality){
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*pride.getIntensity();
+									}
+									pride.setIntensity(intensity);
+									pride.setDecay(decay);
+									addEmotion(scope, pride);
+								}
+								if(predicateDirect.getPredicate().getAgentCause() != null){
+									final Emotion admiration = new Emotion("admiration", predicateDirect.getPredicate());
+									admiration.setAgentCause(predicateDirect.getPredicate().getAgentCause());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									if(use_personality){
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*admiration.getIntensity();
+									}
+									admiration.setIntensity(intensity);
+									admiration.setDecay(decay);
+									addEmotion(scope, admiration);
+								}
+							}
+							if(temp.getStrength()<1.0){
+								if(predicateDirect.getPredicate().getAgentCause() != null && predicateDirect.getPredicate().getAgentCause().equals(scope.getAgent())){
+									final Emotion shame = new Emotion("shame", predicateDirect.getPredicate());
+									shame.setAgentCause(scope.getAgent());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									if(use_personality){
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*shame.getIntensity();
+									}
+									shame.setIntensity(intensity);
+									shame.setDecay(decay);
+									addEmotion(scope, shame);
+								}
+								if(predicateDirect.getPredicate().getAgentCause() != null){
+									final Emotion reproach = new Emotion("reproach", predicateDirect.getPredicate());
+									reproach.setAgentCause(predicateDirect.getPredicate().getAgentCause());
+									//ajout de l'intensité
+									Double intensity = 1.0;
+									Double decay = 0.0;
+									if(use_personality){
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*reproach.getIntensity();
+									}
+									reproach.setIntensity(intensity);
+									reproach.setDecay(decay);
+									addEmotion(scope, reproach);
+								}
+							}
+						}
+					}
+				}
+	}
+	
+	//va démarrer le calcul de gratification, remorse, gratitude et anger, peut-�tre pas
 	private void createPrideAndShameAndAdmirationAndReproach(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
@@ -3050,30 +3431,30 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						for(MentalState temp : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)){
 							if(temp.equals(predTest)){
 								if(temp.getStrength()>0.0){
-									final Emotion pride = new Emotion("pride", predTest.getPredicate());
-									pride.setAgentCause(scope.getAgent());
+									final Emotion admiration = new Emotion("admiration", predTest.getPredicate());
+									admiration.setAgentCause(predTest.getPredicate().getAgentCause());
 									//ajout de l'intensité
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
 										
 									}
-									pride.setIntensity(intensity);
-									pride.setDecay(decay);
-									addEmotion(scope, pride);
+									admiration.setIntensity(intensity);
+									admiration.setDecay(decay);
+									addEmotion(scope, admiration);
 								}
 								if(temp.getStrength()<0.0){
-									final Emotion shame = new Emotion("shame", predTest.getPredicate());
-									shame.setAgentCause(scope.getAgent());
+									final Emotion reproach = new Emotion("reproach", predTest.getPredicate());
+									reproach.setAgentCause(predTest.getPredicate().getAgentCause());
 									//ajout de l'intensité
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
 										
 									}
-									shame.setIntensity(intensity);
-									shame.setDecay(decay);
-									addEmotion(scope, shame);
+									reproach.setIntensity(intensity);
+									reproach.setDecay(decay);
+									addEmotion(scope, reproach);
 								}
 							}
 						}				
@@ -3081,6 +3462,92 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
+	}
+	
+	private static void createGratificationGratitudeFromJoy(final IScope scope, final Emotion emo){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				final GamaList<Emotion> emoTemps =
+						getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+				for (final Emotion emoTemp : emoTemps) {
+					if (emoTemp.getName().equals("pride")) {
+						if(emoTemp.getAbout()!=null && emo.getAbout()!=null && emo.getAbout().getAgentCause()!=null){
+							if(emoTemp.getAbout().equals(emo.getAbout()) && emo.getAbout().getAgentCause().equals(scope.getAgent())){
+								final Emotion gratification = new Emotion("gratification", emoTemp.getAbout());
+								gratification.setAgentCause(emo.getAgentCause());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								if(use_personality){
+									//Mettre les formules de calcul d'intensit� et de d�croissance
+								}
+								gratification.setIntensity(intensity);
+								gratification.setDecay(decay);
+								addEmotion(scope, gratification);
+							}
+						}
+					}
+					if (emoTemp.getName().equals("admiration")) {
+						if(emoTemp.getAbout()!=null && emo.getAbout()!=null && emo.getAbout().getAgentCause()!=null && emoTemp.getAbout().getAgentCause()!=null){
+							if(emoTemp.getAbout().equals(emo.getAbout()) && emo.getAbout().getAgentCause().equals(emoTemp.getAbout().getAgentCause())){
+								final Emotion gratitude = new Emotion("gratitude", emoTemp.getAbout());
+								gratitude.setAgentCause(emo.getAgentCause());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								if(use_personality){
+									//Mettre les formules de calcul d'intensit� et de d�croissance
+								}
+								gratitude.setIntensity(intensity);
+								gratitude.setDecay(decay);
+								addEmotion(scope, gratitude);
+							}
+						}
+					}
+				}
+	}
+	
+	private static void createRemorseAngerFromSadness(final IScope scope, final Emotion emo){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+				final GamaList<Emotion> emoTemps =
+						getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+				for (final Emotion emoTemp : emoTemps) {
+					if (emoTemp.getName().equals("shame")) {
+						if(emoTemp.getAbout()!=null && emo.getAbout()!=null && emo.getAbout().getAgentCause()!=null){
+							if(emoTemp.getAbout().equals(emo.getAbout()) && emo.getAbout().getAgentCause().equals(scope.getAgent())){
+								final Emotion remorse = new Emotion("remorse", emoTemp.getAbout());
+								remorse.setAgentCause(emo.getAgentCause());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								if(use_personality){
+									//Mettre les formules de calcul d'intensit� et de d�croissance
+								}
+								remorse.setIntensity(intensity);
+								remorse.setDecay(decay);
+								addEmotion(scope, remorse);
+							}
+						}
+					}
+					if (emoTemp.getName().equals("reproach")) {
+						if(emoTemp.getAbout()!=null && emo.getAbout()!=null && emo.getAbout().getAgentCause()!=null && emoTemp.getAbout().getAgentCause()!=null){
+							if(emoTemp.getAbout().equals(emo.getAbout()) && emo.getAbout().getAgentCause().equals(emoTemp.getAbout().getAgentCause())){
+								final Emotion anger = new Emotion("anger", emoTemp.getAbout());
+								anger.setAgentCause(emo.getAgentCause());
+								//ajout de l'intensité
+								Double intensity = 1.0;
+								Double decay = 0.0;
+								if(use_personality){
+									//Mettre les formules de calcul d'intensit� et de d�croissance
+								}
+								anger.setIntensity(intensity);
+								anger.setDecay(decay);
+								addEmotion(scope, anger);
+							}
+						}
+					}
+				}
 	}
 
 	private void createGratification(final IScope scope) {
@@ -3310,7 +3777,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(predicate)) {
 			removeFromBase(scope, predicate, BELIEF_BASE);
 		}
-		//createHopeFromMentalState(scope, predicateDirect)
+		createHopeFromMentalState(scope, predicate);
 		return addToBase(scope, predicate, UNCERTAINTY_BASE);
 	}
 
