@@ -1,14 +1,26 @@
 /**
 * Name: Spatial Operators
 * Author: Patrick Taillandier
-* Description: Tests various spatial operators (at_distance, closest_to, distance_to) with continuous and grid topology
-* Tags: topology, grid,test
+* Description: Tests various spatial query operators (at_distance, closest_to, inside , overlapping) with continuous and grid topology
+* Tags: topology, grid, query, test
 */
 
-model SpatialTest
+model SpatialQueriesTest
 
-species dummy ;
-grid cell width: 10 height: 10 neighbors: 4;
+species dummy {
+	rgb color <- #yellow;
+	aspect default {
+		draw circle(2) border: #black color: color;
+		draw string(int(self)) color: #black;
+	}
+}
+grid cell width: 10 height: 10 neighbors: 4 {
+	rgb color <- #white;
+	aspect default {
+		draw shape border: #black color: color;
+		draw string(int(self)) color: #black;
+	}
+}
 
 global {
 	init {
@@ -22,9 +34,11 @@ global {
 		create dummy with: [location :: {80,8}];
 		create dummy with: [location :: {34,78}];
 		create dummy with: [location :: {67,32}];
+		ask dummy(8) {color<-#red;}
+		ask cell(40) {color<-#red;}
 	}
 }
-experiment TopologyTests type: test {
+experiment QueryTests type: test {
 	test "closest_to with continuous topology"{
 		dummy closest_dummy;
 		using topology(world) {
@@ -34,8 +48,8 @@ experiment TopologyTests type: test {
 	}
 	test "closest_to with grid topology" {
 		dummy closest_dummy;
-		using topology(world) {
-			using topology(cell) {closest_dummy <- dummy closest_to dummy(8);}
+		using topology(cell) {
+			closest_dummy <- dummy closest_to dummy(8);
 		}
 		assert closest_dummy = dummy(4);
 	}
@@ -48,6 +62,25 @@ experiment TopologyTests type: test {
 		}
 		neighborhood <- remove_duplicates(neighborhood);
 		assert empty(neighborhood - cell(40).neighbors);
+	}
+	test "farthest_to with continuous topology"{
+		dummy farthest_dummy;
+		using topology(world) {
+			farthest_dummy <- dummy farthest_to dummy(8);
+		}
+		assert farthest_dummy = dummy(7);
+	}
+	test "farthest_to with grid topology" {
+		dummy farthest_dummy;
+		using topology(cell) {
+			farthest_dummy <- dummy farthest_to dummy(8);
+		}
+		assert farthest_dummy = dummy(7);
+	}
+	test "farthest_to cell with grid topology" {
+		cell farthest_cell;
+		using topology(cell) {farthest_cell<- cell farthest_to cell(40);}
+		assert farthest_cell = cell(99);
 	}
 	
 	test "at_distance with continuous topology" {
@@ -71,20 +104,33 @@ experiment TopologyTests type: test {
 		ask cell(40) {
 			using topology(cell) {neighborhood <- cell at_distance(2);}
 		}
-		write neighborhood;
 		assert empty(neighborhood - [cell(42),cell(60),cell(30),cell(31),cell(51),cell(50),cell(20),cell(41)]);
 	}
 	
-	test "distance_to with continuous topology" {
-		float distance <- dummy(8) distance_to dummy(9);
-		assert (distance with_precision 3)= 56.613;
-	}
-	test "distance_to with grid topology" {
-		float distance;
-		using topology(cell) {distance <- dummy(8) distance_to dummy(9);}
-		assert distance = 7.0;
+	test "inside" {
+		list<dummy> agents_in;
+		using topology(world) {
+			agents_in <- dummy inside cell(73);
+		}
+		assert agents_in = [dummy(8)];
 	}
 	
+	test "overlapping" {
+		list<dummy> agents_overlapping;
+		using topology(world) {
+			agents_overlapping <- dummy overlapping cell(73);
+		}
+		assert agents_overlapping = [dummy(8)];
+	}
 	
-	
+} 
+
+experiment with_visualization type: gui {
+	output {
+		display map {
+			species cell;
+			species dummy;
+		}	
+	}	
 }
+

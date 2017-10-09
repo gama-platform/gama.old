@@ -1,0 +1,78 @@
+/**
+* Name: Spatial Operators
+* Author: Patrick Taillandier
+* Description: Tests various spatial property operators
+* Tags: topology, grid, property, test
+*/
+
+model PropertyTest
+
+global {
+	geometry poly_square <- square(20);
+	geometry poly_circle <- circle(11) at_location {40,40};
+	geometry poly_triangle <- triangle(5);
+	geometry short_line <- line([{45,45},{55,55}]);
+	geometry short_line_2 <- line([{30,40},{55,55}]);
+	geometry long_line <- line([{30,40},{70,55}]);
+}
+
+experiment TopologyTests type: test {
+	test "Cover"{
+		assert (poly_square covers poly_triangle);
+	}
+	test "Not Cover"{
+		assert not(poly_square covers poly_circle);
+	}
+	test "Cross"{
+		assert (poly_square crosses long_line);
+	}
+	test "Not Cross"{
+		assert not(poly_square crosses short_line);
+	}
+	test "Disjoint"{
+		assert (poly_circle disjoint_from poly_triangle);
+	}
+	test "Not Disjoint"{
+		assert not(poly_square disjoint_from poly_circle);
+	}
+	test "Intersect"{
+		assert (poly_square intersects poly_circle);
+	}
+	test "Not Intersect"{
+		assert not(poly_circle intersects poly_triangle);
+	}
+	test "Overlap"{
+		assert (poly_square overlaps poly_circle);
+	}
+	test "Not Overlap"{
+		assert not(poly_circle overlaps poly_triangle);
+	}
+	test "Partially Overlap"{
+		assert (poly_square partially_overlaps poly_circle);
+	}
+	test "Not Partially Overlap"{
+		assert not(poly_square partially_overlaps poly_triangle);
+	}
+	test "Touch"{
+		assert (short_line_2 touches long_line);
+	}
+	test "Not Touch"{
+		assert not(short_line touches long_line);
+	}
+} 
+
+experiment with_visualization type: gui {
+	output {
+		display map {
+			graphics "view" {
+				draw poly_square color: #red border: #black;
+				draw poly_circle color: #green border: #black;
+				draw poly_triangle color: #yellow border: #black;
+				draw short_line color: #black;
+				draw short_line_2 color: #cyan;
+				draw long_line color: #blue;
+			}
+		}	
+	}	
+}
+
