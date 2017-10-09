@@ -22,6 +22,7 @@ addons:
 script: 
 - bash ./compile.sh	
 - bash ./models_validate.sh	
+- bash ./models_test.sh	
 after_success:
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export SSHPASS=$USER_PWD 
