@@ -71,6 +71,10 @@ public class HeadlessListener implements IGui {
 		GAMA.setHeadlessGui(new HeadlessListener());
 	}
 
+	private static void log(final String s) {
+		System.out.println(s);
+	}
+
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
@@ -108,12 +112,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void tell(final String message) {
-		LOGGER.log(LEVEL, "Message: " + message);
+		log("Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
-		LOGGER.log(LEVEL, "Error: " + error);
+		log("Error: " + error);
 	}
 
 	@Override
@@ -121,12 +125,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void debug(final String string) {
-		LOGGER.log(LEVEL, "Debug: " + string);
+		log("Debug: " + string);
 	}
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		LOGGER.log(LEVEL, "Runtime error: " + g.getMessage());
+		log("Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -453,7 +457,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void openTestView(final IScope scope) {
-		LOGGER.log(LEVEL, "Beginning tests in " + scope.getModel().getSpecies().getName());
+		log("Beginning tests in " + scope.getModel().getSpecies().getName());
 	}
 
 	@Override
@@ -463,7 +467,7 @@ public class HeadlessListener implements IGui {
 			return;
 		final TestAgent agent = (TestAgent) exp;
 		for (final TestStatement test : agent.getAllTests()) {
-			LOGGER.log(LEVEL, test.getSummary());
+			log(test.getSummary());
 		}
 	}
 

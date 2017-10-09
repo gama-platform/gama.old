@@ -13,13 +13,17 @@ import java.util.stream.Collectors;
 
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
+	final List<GamlCompilationError> errors = new ArrayList<>();
 
 	private ModelLibraryTester() {}
 
@@ -37,7 +41,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final String pluginsFolder, final int[] count, final int[] code, final Path p) {
-		final List<GamlCompilationError> errors = new ArrayList<>();
 		log("Testing " + p.getFileName());
 		final IModel model = compile(createFileURI(p.toString()), errors);
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
@@ -45,12 +48,15 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		log("Test experiment names = " + testExpNames);
 		if (testExpNames.isEmpty())
 			return;
-
+		for (final String expName : testExpNames) {
+			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
+			if (exp != null) {
+				exp.setHeadless(true);
+				exp.getController().getScheduler().paused = false;
+				exp.getAgent().step(exp.getAgent().getScope());
+			}
+		}
 		count[0]++;
-		errors.stream().filter(e -> e.isError()).forEach(e -> {
-			log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
-			code[0]++;
-		});
 	}
 
 	public static ModelLibraryTester getInstance() {
