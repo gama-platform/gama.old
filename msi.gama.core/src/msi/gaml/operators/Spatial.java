@@ -3373,6 +3373,7 @@ public abstract class Spatial {
 								if (ag.euclidianDistanceTo(sp) <= distance)
 									results.add((IAgent) sp);
 							}
+							results.remove(ag);
 							return results;
 						}
 					}
