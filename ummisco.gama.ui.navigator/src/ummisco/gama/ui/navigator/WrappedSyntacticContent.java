@@ -120,7 +120,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 	}
 
 	public WrappedSyntacticContent(final Object root, final ISyntacticElement e, final String name) {
-		super(root, GAMA.getGui().getGamlLabelProvider().getText(e));
+		super(root, name == null ? GAMA.getGui().getGamlLabelProvider().getText(e) : name);
 		element = e;
 		uri = element == null || element.getElement() == null ? null
 				: EcoreUtil.getURI(element.getElement()).toString();

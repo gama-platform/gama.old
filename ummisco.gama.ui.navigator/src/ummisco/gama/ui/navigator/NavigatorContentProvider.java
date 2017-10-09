@@ -23,6 +23,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
+import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
@@ -84,8 +85,10 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 					final ISyntacticElement element = GAML
 							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
 					if (element != null) {
-						l.add(new WrappedModelContent((IFile) p, element));
-						element.visitExperiments(element1 -> l.add(new WrappedExperimentContent((IFile) p, element1)));
+						if (!GamlFileExtension.isExperiment(((IFile) p).getFullPath().toOSString())) {
+							l.add(new WrappedModelContent((IFile) p, element));
+						}
+						element.visitExperiments(exp -> l.add(new WrappedExperimentContent((IFile) p, exp)));
 					}
 
 					// for (final String s : info.getExperiments()) {

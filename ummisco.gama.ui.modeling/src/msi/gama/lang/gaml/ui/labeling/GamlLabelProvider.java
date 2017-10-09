@@ -76,6 +76,10 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return "import " + display;
 	}
 
+	String text(final HeadlessExperiment e) {
+		return "Experiment " + e.getName();
+	}
+
 	String text(final EObject ele) {
 		String text;
 		String key = EGaml.getKeyOf(ele);
