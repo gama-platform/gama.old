@@ -1,4 +1,4 @@
-package msi.ummisco.modelLibraryGenerator;
+package msi.gama.headless.batch.documentation;
 
 import java.io.BufferedReader;
 import java.io.File;
