@@ -15,6 +15,7 @@ import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
@@ -54,6 +55,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
 				exp.getAgent().step(exp.getAgent().getScope());
+				code[0] += ((TestAgent) exp.getAgent()).getNumberOfFailures();
 			}
 		}
 		count[0]++;
