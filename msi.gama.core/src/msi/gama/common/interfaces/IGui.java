@@ -148,8 +148,6 @@ public interface IGui {
 
 	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
 
-	void displayTests(final IScope scope);
-
 	ILocation getMouseLocationInModel();
 
 	void setMouseLocationInModel(ILocation modelCoordinates);
@@ -159,5 +157,9 @@ public interface IGui {
 	void exit();
 
 	void openInteractiveConsole(IScope scope);
+
+	void openTestView(IScope scope);
+
+	void displayTestsResults(IScope scope);
 
 }

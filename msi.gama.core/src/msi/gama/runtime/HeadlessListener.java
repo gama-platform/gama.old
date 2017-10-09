@@ -30,8 +30,10 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -48,11 +50,13 @@ import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.operators.Strings;
+import msi.gaml.statements.test.TestStatement;
 import msi.gaml.types.IType;
 
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
+	static Level LEVEL = Level.ALL;
 	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<BufferedWriter>();
 
 	static {
@@ -104,12 +108,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void tell(final String message) {
-		System.out.println("Message: " + message);
+		LOGGER.log(LEVEL, "Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
-		System.out.println("Error: " + error);
+		LOGGER.log(LEVEL, "Error: " + error);
 	}
 
 	@Override
@@ -117,12 +121,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void debug(final String string) {
-		System.out.println("Debug: " + string);
+		LOGGER.log(LEVEL, "Debug: " + string);
 	}
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		System.out.println("Runtime error: " + g.getMessage());
+		LOGGER.log(LEVEL, "Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -448,6 +452,19 @@ public class HeadlessListener implements IGui {
 	public void openInteractiveConsole(final IScope scope) {}
 
 	@Override
-	public void displayTests(final IScope scope) {}
+	public void openTestView(final IScope scope) {
+		LOGGER.log(LEVEL, "Beginning tests in " + scope.getModel().getSpecies().getName());
+	}
+
+	@Override
+	public void displayTestsResults(final IScope scope) {
+		final IExperimentAgent exp = scope.getExperiment();
+		if (!(exp instanceof TestAgent))
+			return;
+		final TestAgent agent = (TestAgent) exp;
+		for (final TestStatement test : agent.getAllTests()) {
+			LOGGER.log(LEVEL, test.getSummary());
+		}
+	}
 
 }

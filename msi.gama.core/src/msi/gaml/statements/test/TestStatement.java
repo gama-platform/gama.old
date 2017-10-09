@@ -191,7 +191,7 @@ public class TestStatement extends AbstractStatementSequence {
 		sb.append("Test ").append(getName()).append(" ").append(getState()).append(Strings.LN);
 		for (final AssertStatement assertion : assertions) {
 			sb.append(Strings.TAB).append("Assertion ").append(assertion.getFacet(IKeyword.VALUE).serialize(true))
-					.append(" ").append(assertion.getState());
+					.append(" ").append(assertion.getState()).append(Strings.LN);
 		}
 		return sb.toString();
 	}

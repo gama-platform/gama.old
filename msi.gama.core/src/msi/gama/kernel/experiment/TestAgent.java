@@ -43,16 +43,21 @@ public class TestAgent extends BatchAgent {
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
-		getAllTests().forEach(t -> t.reset());
-		scope.getGui().displayTests(scope);
+		final List<TestStatement> allTests = getAllTests();
+		if (!allTests.isEmpty()) {
+			getAllTests().forEach(t -> t.reset());
+			scope.getGui().openTestView(scope);
+		}
 		return true;
 	}
 
 	@Override
-	public boolean step(final IScope scope) {
-		super.step(scope);
-		scope.getGui().displayTests(scope);
-		return true;
+	public void dispose() {
+		final List<TestStatement> allTests = getAllTests();
+		if (!allTests.isEmpty()) {
+			getScope().getGui().displayTestsResults(getScope());
+		}
+		super.dispose();
 	}
 
 	@Override

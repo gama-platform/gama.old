@@ -134,7 +134,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void displayTests(final IScope scope) {
+	public void openTestView(final IScope scope) {
+		displayTestsResults(scope);
+	}
+
+	@Override
+	public void displayTestsResults(final IScope scope) {
 		final IGamaView v = showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 		if (v != null)
 			v.reset();
