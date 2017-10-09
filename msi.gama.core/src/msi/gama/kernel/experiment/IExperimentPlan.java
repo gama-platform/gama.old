@@ -62,8 +62,6 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract IScope getExperimentScope();
 
-	// public abstract ParametersSet getCurrentSolution();
-
 	public abstract void open();
 
 	public abstract void reload();
@@ -105,6 +103,6 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract boolean isAutorun();
 
-	// public abstract void setController(ExperimentController controller);
+	public abstract boolean isTest();
 
 }

@@ -13,11 +13,14 @@ import msi.gaml.expressions.AbstractExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.test.TestStatement;
+import msi.gaml.statements.test.TestStatement.State;
 import msi.gaml.types.IType;
 
 @experiment (IKeyword.TEST)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class TestAgent extends BatchAgent {
+
+	int failedModels = 0;
 
 	public TestAgent(final IPopulation p) throws GamaRuntimeException {
 		super(p);
@@ -57,7 +60,16 @@ public class TestAgent extends BatchAgent {
 		if (!allTests.isEmpty()) {
 			getScope().getGui().displayTestsResults(getScope());
 		}
+		for (final TestStatement test : allTests) {
+			final TestStatement.State state = test.getState();
+			if (state.equals(State.FAILED) || state.equals(State.ABORTED))
+				failedModels++;
+		}
 		super.dispose();
+	}
+
+	public int getNumberOfFailures() {
+		return failedModels;
 	}
 
 	@Override

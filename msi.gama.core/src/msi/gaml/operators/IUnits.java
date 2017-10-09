@@ -248,7 +248,7 @@ public interface IUnits {
 			value = "infinity",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the positive infinity of type (Java Double.POSITIVE_INFINITY)")) public final static double infinity =
+			doc = @doc ("A constant holding the positive infinity of type float (Java Double.POSITIVE_INFINITY)")) public final static double infinity =
 					Double.POSITIVE_INFINITY;
 	@constant (
 			value = "min_float",

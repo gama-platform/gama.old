@@ -1,4 +1,4 @@
-package msi.ummisco.modelLibraryGenerator;
+package msi.gama.headless.batch.documentation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

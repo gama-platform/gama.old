@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gama.common.interfaces.IKeyword.TEST;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -504,6 +506,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public boolean isBatch() {
 		return exploration != null;
+	}
+
+	@Override
+	public boolean isTest() {
+		return TEST.equals(getExperimentType());
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package msi.ummisco.modelLibraryGenerator;
+package msi.gama.headless.batch.documentation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.runtime.Application;
 
-public class modelLibraryGenerator {
+public class ModelLibraryGenerator {
 	// inputs / outputs
 	static String wikiFolder = "F:/Gama/GamaWiki/";
 	static String sourceFolder = "F:/Gama/GamaSource/";

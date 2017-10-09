@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +32,9 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
+import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
+import msi.gama.headless.batch.test.ModelLibraryTester;
+import msi.gama.headless.batch.validation.ModelLibraryValidator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
@@ -42,8 +44,6 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
-import msi.ummisco.modelLibraryGenerator.ModelLibraryValidator;
-import msi.ummisco.modelLibraryGenerator.modelLibraryGenerator;
 
 public class Application implements IApplication {
 
@@ -55,6 +55,7 @@ public class Application implements IApplication {
 	final public static String BUILD_XML_PARAMERTER = "-xml";
 	final public static String CHECK_MODEL_PARAMERTER = "-check";
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
+	final public static String TEST_LIBRARY_PARAMETER = "-test";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -94,6 +95,10 @@ public class Application implements IApplication {
 
 	private static boolean containValidateLibraryCommandParameter(final String[] args) {
 		return containParameter(args, VALIDATE_LIBRARY_PARAMETER);
+	}
+
+	private static boolean containTestLibraryCommandParameter(final String[] args) {
+		return containParameter(args, TEST_LIBRARY_PARAMETER);
 	}
 
 	private static boolean containHelpParameter(final String[] args) {
@@ -191,11 +196,11 @@ public class Application implements IApplication {
 		if (containHelpParameter(args)) {
 			System.out.println(showHelp());
 		} else if (containValidateLibraryCommandParameter(args)) {
-			System.out.println("Arguments received: " + Arrays.toString(args));
-			return ModelLibraryValidator.start(args[args.length - 1]);
+			return ModelLibraryValidator.getInstance().start(args[args.length - 1]);
+		} else if (containTestLibraryCommandParameter(args)) {
+			return ModelLibraryTester.getInstance().start(args[args.length - 1]);
 		} else if (containCheckModelsCommandParameter(args)) {
-			modelLibraryGenerator.start(this, args);
-
+			ModelLibraryGenerator.start(this, args);
 		} else if (containXMLParameter(args)) {
 			buildXML(args);
 		} else {
