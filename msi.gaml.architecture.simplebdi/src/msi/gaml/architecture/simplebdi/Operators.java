@@ -34,11 +34,11 @@ public class Operators {
 		return new Predicate(name, ist);
 	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given is_true (name, priority)", examples = @example(value = "predicate(\"hasWater\", 2.0 )", test = false))
-	public static Predicate newPredicate(final String name, final Double priority) {
-		return new Predicate(name, priority);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given is_true (name, priority)", examples = @example(value = "predicate(\"hasWater\", 2.0 )", test = false))
+//	public static Predicate newPredicate(final String name, final Double priority) {
+//		return new Predicate(name, priority);
+//	}
 
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new predicate with the given is_true (name, lifetime)", examples = @example(value = "predicate(\"hasWater\", 10 ", test = false))
@@ -52,12 +52,12 @@ public class Operators {
 		return new Predicate(name, agent);
 	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority)", examples = @example(value = "predicate(\"people to meet\", people1, [\"time\"::10])", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority)
-			throws GamaRuntimeException {
-		return new Predicate(name, priority, values);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority)", examples = @example(value = "predicate(\"people to meet\", people1, [\"time\"::10])", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority)
+//			throws GamaRuntimeException {
+//		return new Predicate(name, priority, values);
+//	}
 
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new predicate with the given properties (name, values, is_true)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true)", test = false))
@@ -80,26 +80,26 @@ public class Operators {
 		return new Predicate(name, values, agent);
 	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority,lifetime)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,10)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime)
-			throws GamaRuntimeException {
-		return new Predicate(name, priority, values, lifetime);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority,lifetime)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,10)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime)
+//			throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, lifetime);
+//	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, is_true)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0, true)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority,
-			final Boolean truth) throws GamaRuntimeException {
-		return new Predicate(name, priority, values, truth);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, is_true)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0, true)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority,
+//			final Boolean truth) throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, truth);
+//	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,agentA)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority, final IAgent agent)
-			throws GamaRuntimeException {
-		return new Predicate(name, priority, values, agent);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,agentA)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority, final IAgent agent)
+//			throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, agent);
+//	}
 
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new predicate with the given properties (name, values, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], true, agentA)", test = false))
@@ -122,26 +122,26 @@ public class Operators {
 		return new Predicate(name, values, lifetime, truth);
 	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, is_true)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0,10, true)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
-			final Boolean truth) throws GamaRuntimeException {
-		return new Predicate(name, priority, values, lifetime, truth);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, is_true)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0,10, true)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
+//			final Boolean truth) throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, lifetime, truth);
+//	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,10,agentA)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
-			final IAgent agent) throws GamaRuntimeException {
-		return new Predicate(name, priority, values, lifetime, agent);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0,10,agentA)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
+//			final IAgent agent) throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, lifetime, agent);
+//	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0, true, agentA)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority,
-			final Boolean truth, final IAgent agent) throws GamaRuntimeException {
-		return new Predicate(name, priority, values, truth, agent);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 2.0, true, agentA)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority,
+//			final Boolean truth, final IAgent agent) throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, truth, agent);
+//	}
 
 	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "a new predicate with the given properties (name, values, lifetime, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10], 10, true, agentA)", test = false))
@@ -150,12 +150,12 @@ public class Operators {
 		return new Predicate(name, values, lifetime, truth, agent);
 	}
 
-	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0,10, true, agentA)", test = false))
-	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
-			final Boolean truth, final IAgent agent) throws GamaRuntimeException {
-		return new Predicate(name, priority, values, lifetime, truth, agent);
-	}
+//	@operator(value = "new_predicate", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "a new predicate with the given properties (name, values, priority, lifetime, is_true, agentCause)", examples = @example(value = "predicate(\"people to meet\", [\"time\"::10],2.0,10, true, agentA)", test = false))
+//	public static Predicate newPredicate(final String name, final Map values, final Double priority, final int lifetime,
+//			final Boolean truth, final IAgent agent) throws GamaRuntimeException {
+//		return new Predicate(name, priority, values, lifetime, truth, agent);
+//	}
 
 	@operator(value = "set_agent_cause", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the agentCause value of the given predicate", examples = @example(value = "predicate set_agent_cause agentA", test = false))
@@ -181,14 +181,14 @@ public class Operators {
 //		return temp;
 //	}
 	
-	@operator(value = "with_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	@doc(value = "change the priority of the given predicate", examples = @example(value = "predicate with_priority 2", test = false))
-	public static Predicate withPriority(final Predicate predicate, final Double priority) throws GamaRuntimeException {
-		//Penser à l'enlever car inutile avec la force des états mentaux
-		Predicate temp = predicate.copy();
-		temp.priority = priority;
-		return temp;
-	}
+//	@operator(value = "with_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	@doc(value = "change the priority of the given predicate", examples = @example(value = "predicate with_priority 2", test = false))
+//	public static Predicate withPriority(final Predicate predicate, final Double priority) throws GamaRuntimeException {
+//		//Penser à l'enlever car inutile avec la force des états mentaux
+//		Predicate temp = predicate.copy();
+//		temp.priority = priority;
+//		return temp;
+//	}
 
 	@operator(value = "with_values", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	@doc(value = "change the parameters of the given predicate", examples = @example(value = "predicate with_values [\"time\"::10]", test = false))
@@ -255,14 +255,14 @@ public class Operators {
 		}
 	}
 
-	@operator(value = "get_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
-	public static Double getPriority(final Predicate pred) {
-		if (pred != null) {
-			return pred.priority;
-		} else {
-			return null;
-		}
-	}
+//	@operator(value = "get_priority", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
+//	public static Double getPriority(final Predicate pred) {
+//		if (pred != null) {
+//			return pred.priority;
+//		} else {
+//			return null;
+//		}
+//	}
 
 	@operator(value = "get_truth", can_be_const = true, category = { "BDI" }, concept = { IConcept.BDI })
 	public static Boolean getTruth(final Predicate pred) {

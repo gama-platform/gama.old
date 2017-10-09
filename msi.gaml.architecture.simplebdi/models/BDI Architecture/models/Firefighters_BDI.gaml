@@ -32,9 +32,9 @@ species firefighter skills: [moving] control: simple_bdi{
 	rgb color <- rnd_color(150);
 	float waterValue;
 	grille maCellule <- one_of(grille);
-	predicate patrol_desire <- new_predicate("patrol") with_priority 1;
-	predicate water_predicate <- new_predicate("has water", ["water"::true]) with_priority 10;
-	predicate no_water_predicate <- new_predicate("has water", ["water"::false]) ;
+	predicate patrol_desire <- new_predicate("patrol");
+	predicate water_predicate <- new_predicate("has water",true);
+	predicate no_water_predicate <- new_predicate("has water", false) ;
 
 	//Definition of the variables featured in the BDI architecture.
 	float plan_persistence <- 1.0; 
@@ -48,8 +48,8 @@ species firefighter skills: [moving] control: simple_bdi{
 		do add_desire(patrol_desire );
 	}
 	
-	//This reflex is used to update the beliefs concerning the intern variable of the agent (the amount of water it has).
-	reflex update_variables {
+	//This perceive is used to update the beliefs concerning the intern variable of the agent (the amount of water it has).
+	perceive target:self {
 		if(waterValue>0){
 			do add_belief(water_predicate);
 			do remove_belief(no_water_predicate);
@@ -62,24 +62,24 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
 	perceive target:fireArea in: 15{
-		focus var:location strength:11;
+		focus fireLocation var:location strength:10.0;
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		}
 	}
 	
 	//The rules are used to create a desire from a belief. We can specify the priority of the desire with a statement priority.
-	rule belief: new_predicate("location_fireArea") new_desire: get_belief_with_name("location_fireArea").predicate;
-	rule belief: no_water_predicate new_desire: water_predicate;
+	rule belief: new_predicate("fireLocation") new_desire: get_predicate(get_belief_with_name("fireLocation"));
+	rule belief: no_water_predicate new_desire: water_predicate strength: 10.0;
 	
 	//The plan to do when the intention is to patrol.
-	plan patrolling intention:patrol_desire finished_when: has_belief(new_predicate("location_fireArea")) or has_belief(no_water_predicate){
+	plan patrolling intention:patrol_desire{
 		do wander amplitude: 30 speed: 2.0;
 	}
 	 
 	//The plan that is executed when the agent got the intention of extinguish a fire.
-	plan stopFire intention: new_predicate("location_fireArea") priority:5{
-		point target_fire <- point(predicate(get_current_intention().predicate).values["location_value"] );
+	plan stopFire intention: new_predicate("fireLocation") priority:5{
+		point target_fire <- point(get_predicate(get_current_intention()).values["location_value"] );
 		if(waterValue>0){
 			if (self distance_to target_fire <= 1) {
 				fireArea current_fire <- fireArea first_with (each.location = target_fire);
@@ -88,21 +88,20 @@ species firefighter skills: [moving] control: simple_bdi{
 					 current_fire.size <-  current_fire.size - 1;
 					 if ( current_fire.size <= 0) {
 						ask  current_fire {do die;}
-						do remove_belief(get_current_intention().predicate);
-						do remove_intention(get_current_intention().predicate, true);
-						do add_desire(patrol_desire );
+						do remove_belief(get_predicate(get_current_intention()));
+						do remove_intention(get_predicate(get_current_intention()), true);
+						do add_desire(patrol_desire,1.0);
 					}
 				} else {
-					do remove_belief(get_current_intention().predicate);
-					do remove_intention(get_current_intention().predicate, true);
-					do add_desire(patrol_desire );
+					do remove_belief(get_predicate(get_current_intention()));
+					do remove_intention(get_predicate(get_current_intention()), true);
+					do add_desire(patrol_desire,1.0);
 				}
-				
 			} else {
-				do goto(on: grille,target: target_fire,return_path:true);
+				do goto(target: target_fire);
 			}
 		} else {
-			do add_subintention(get_current_intention().predicate,water_predicate,true);
+			do add_subintention(get_predicate(get_current_intention()),water_predicate,true);
 			do current_intention_on_hold();
 		}
 	}  
@@ -111,7 +110,7 @@ species firefighter skills: [moving] control: simple_bdi{
     plan gotoTakeWater intention: water_predicate priority:2 {
     	waterArea wa <- first(waterArea);
     	list<grille> voisins <-  (grille(location) neighbors_at (1)) + grille(location);
-			path cheminSuivi <- self goto(on: grille,target: wa,return_path:true);
+			path cheminSuivi <- self goto(target: wa);
     	if (self distance_to wa <= 1) {
     		waterValue <- waterValue + 2.0;
 		}

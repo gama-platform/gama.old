@@ -33,9 +33,8 @@ public class PredicateType extends GamaType<Predicate> {
 		if (obj != null && obj instanceof Map) {
 			final Map<String, Object> map = (Map<String, Object>) obj;
 			final String nm = (String) (map.containsKey("name") ? map.get("name") : "predicate");
-			final Double pr = (Double) (map.containsKey("priority") ? map.get("priority") : 1.0);
 			final Map values = (Map) (map.containsKey("name") ? map.get("values") : null);
-			return new Predicate(nm, pr, values);
+			return new Predicate(nm, values);
 		}
 		return null;
 	}
