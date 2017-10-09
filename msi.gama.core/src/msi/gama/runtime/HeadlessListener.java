@@ -457,7 +457,10 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void openTestView(final IScope scope) {
-		log("Beginning tests in " + scope.getModel().getSpecies().getName());
+		final String pathToFile = scope.getModel().getFilePath().replace(scope.getModel().getWorkingPath(), "");
+		log("----------------------------------------------------------------");
+		log(" Running tests declared in " + pathToFile);
+		log("----------------------------------------------------------------");
 	}
 
 	@Override

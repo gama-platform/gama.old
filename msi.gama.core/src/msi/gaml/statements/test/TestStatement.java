@@ -188,10 +188,10 @@ public class TestStatement extends AbstractStatementSequence {
 
 	public String getSummary() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("Test ").append(getName()).append(" ").append(getState()).append(Strings.LN);
+		sb.append(getState()).append(": ").append(getName()).append(" ").append(Strings.LN);
 		for (final AssertStatement assertion : assertions) {
-			sb.append(Strings.TAB).append("Assertion ").append(assertion.getFacet(IKeyword.VALUE).serialize(true))
-					.append(" ").append(assertion.getState()).append(Strings.LN);
+			sb.append(Strings.TAB).append(assertion.getState()).append(": ")
+					.append(assertion.getFacet(IKeyword.VALUE).serialize(true)).append(" ").append(Strings.LN);
 		}
 		return sb.toString();
 	}

@@ -42,7 +42,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final String pluginsFolder, final int[] count, final int[] code, final Path p) {
-		log("Testing " + p.getFileName());
 		final IModel model = compile(createFileURI(p.toString()), errors);
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
