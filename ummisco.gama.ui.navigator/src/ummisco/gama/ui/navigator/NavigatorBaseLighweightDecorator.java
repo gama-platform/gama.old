@@ -61,7 +61,7 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 		final int modelCount[] = new int[1];
 		try {
 			element.accept(proxy -> {
-				if (proxy.getType() == IResource.FILE && GamlFileExtension.isGaml(proxy.getName()))
+				if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName()))
 					modelCount[0]++;
 				return true;
 			}, IResource.NONE);
