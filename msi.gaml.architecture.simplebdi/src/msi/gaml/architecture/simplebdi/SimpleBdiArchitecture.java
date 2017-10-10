@@ -30,6 +30,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
@@ -244,6 +245,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+		if(use_personality){
+			Double expressivity = (Double) scope.getAgent().getAttribute(EXPRESSIVITY);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENCE);
+			scope.getAgent().setAttribute(CHARISMA, expressivity);
+			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
+		}
 		final IAgent agent = scope.getAgent();
 		if (agent.dead()) { return null; }
 		if (_perceptionNumber > 0) {
@@ -3452,7 +3464,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 	}
 	
-	//va dÃ©marrer le calcul de gratification, remorse, gratitude et anger, peut-être pas
+	//va dÃ©marrer le calcul de gratification, remorse, gratitude et anger, peut-ï¿½tre pas
 	private void createPrideAndShameAndAdmirationAndReproach(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
@@ -3546,7 +3558,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									//Mettre les formules de calcul d'intensité et de décroissance
+									//Mettre les formules de calcul d'intensitï¿½ et de dï¿½croissance
 									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
 									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
 										intensity = emo.getIntensity()*emoTemp.getIntensity();
@@ -4556,12 +4568,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	//Lier les coeffiscient Ã  la personnalitÃ©
 	
 	static private void updateAppreciation(final IScope scope, final SocialLink social) {
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		final IAgent agentCause = social.getAgent();
 		Double tempPositif = 0.0;
 		Double moyPositif = 0.0;
 		Double tempNegatif = 0.0;
 		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
+		if(use_personality){
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			coefModification = 1-neurotisme;
+		}
 		Double appreciationModif = social.getLiking();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -4585,7 +4603,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}else{
 			moyNegatif = 0.0;
 		}
-		appreciationModif = appreciationModif * (1 + social.getSolidarity()) + coefModification * moyPositif - coefModification * moyNegatif;
+		appreciationModif = appreciationModif + Maths.abs(appreciationModif) * (1 - Maths.abs(appreciationModif))*social.getSolidarity() + coefModification * (1 - Maths.abs(appreciationModif)) * (moyPositif - moyNegatif);
 		if (appreciationModif > 1.0) {
 			appreciationModif = 1.0;
 		}
@@ -4596,6 +4614,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	static private void updateDominance(final IScope scope, final SocialLink social) {
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		final IAgent agentCause = social.getAgent();
 		IScope scopeAgentCause = null;
 		if (agentCause != null) {
@@ -4608,6 +4628,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Double tempNegatif = 0.0;
 		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
+		if(use_personality){
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			coefModification = 1-neurotisme;
+		}
 		Double dominanceModif = social.getDominance();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -4635,7 +4659,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}else{
 			moyNegatif = 0.0;
 		}
-		dominanceModif = dominanceModif + coefModification * moyPositif - coefModification * moyNegatif;
+		dominanceModif = dominanceModif + coefModification * Maths.abs(dominanceModif) *(moyPositif - moyNegatif);
 		if (dominanceModif > 1.0) {
 			dominanceModif = 1.0;
 		}
@@ -4647,6 +4671,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	static private void updateSolidarity(final IScope scope, final SocialLink social) {
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		final IAgent agentCause = social.getAgent();
 		IScope scopeAgentCause = null;
 		if (agentCause != null) {
@@ -4654,11 +4680,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			scopeAgentCause.push(agentCause);
 		}
 		Double tempPositif = 0.0;
+		Double moySolid = 0.0;
 		Double tempNegatif = 0.0;
+		Double nbMentalState = 0.0;
 		Double tempEmoNeg = 0.0;
 		Double moyEmoNeg = 0.0;
 		Double coefModification = 0.1;
-		Double coefModifEmo = 0.0;
+		if(use_personality){
+			Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
+			coefModification = 1-openness;
+		}
+		Double coefModifEmo = 0.1;
+		if(use_personality){
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			coefModifEmo = 1-neurotisme;
+		}
 		Double solidarityModif = social.getSolidarity();
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emo.getAgentCause() != null && emo.getAgentCause().equals(agentCause)) {
@@ -4668,13 +4704,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
+		//Modifier pour ne prendre que ses propres croyances
 		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
 				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 			}
 		}
@@ -4682,9 +4721,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
 				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 			}
 		}
@@ -4692,9 +4733,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
 				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
 					tempPositif = tempPositif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
 					tempNegatif = tempNegatif + 1.0;
+					nbMentalState = nbMentalState + 1.0;
 				}
 			}
 		}
@@ -4703,7 +4746,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}else{
 			moyEmoNeg = 0.0;
 		}
-		solidarityModif = solidarityModif + coefModification * tempPositif - coefModification * tempNegatif;
+		if(nbMentalState!=0.0){
+			moySolid = (tempPositif-tempNegatif)/nbMentalState;
+		}
+		solidarityModif = solidarityModif + solidarityModif * (1 - solidarityModif) * (coefModification * moySolid - coefModifEmo * moyEmoNeg);
 		if (solidarityModif > 1.0) {
 			solidarityModif = 1.0;
 		}
