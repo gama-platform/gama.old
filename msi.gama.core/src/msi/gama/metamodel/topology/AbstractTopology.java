@@ -38,6 +38,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
@@ -68,6 +69,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 	}
 
+	@Override
 	public void setRoot(final IScope scope, final RootTopology root) {
 		this.root = root == null ? scope.getSimulation().getTopology() : root;
 	}
@@ -188,28 +190,30 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 			throws GamaRuntimeException {
-		return PathFactory.newInstance(scope, this, GamaListFactory.create(scope, Types.POINT,
-				new IShape[] { source.getLocation(), target.getLocation() }),0.0);
+		return PathFactory.newInstance(scope, this,
+				GamaListFactory.create(scope, Types.POINT, new IShape[] { source.getLocation(), target.getLocation() }),
+				0.0);
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException {
-		return PathFactory.newInstance(scope, this, GamaListFactory.createWithoutCasting(Types.POINT, source, target),0.0);
+		return PathFactory.newInstance(scope, this, GamaListFactory.createWithoutCasting(Types.POINT, source, target),
+				0.0);
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
 			final int k) {
-		final List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
+		final IList<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 			final int k) {
-		final List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
+		final IList<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}

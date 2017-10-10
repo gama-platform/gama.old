@@ -11,7 +11,6 @@ package msi.gama.metamodel.topology.grid;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -264,14 +263,14 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
 			final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 			final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);

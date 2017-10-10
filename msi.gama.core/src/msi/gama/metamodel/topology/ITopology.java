@@ -30,6 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.IType;
 
@@ -204,9 +205,9 @@ public interface ITopology extends IValue {
 	 */
 	public abstract Integer directionInDegreesTo(IScope scope, IShape source, IShape target);
 
-	public abstract List<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
+	public abstract IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
 
-	public abstract List<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k);
+	public abstract IList<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k);
 
 	public abstract void setRoot(IScope scope, RootTopology rt);
 

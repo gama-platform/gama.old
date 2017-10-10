@@ -177,7 +177,7 @@ public class AmorphousTopology implements ITopology {
 			throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
 		return PathFactory.newInstance(scope, this,
-				GamaListFactory.createWithoutCasting(Types.GEOMETRY, new IShape[] { source, target }),0.0);
+				GamaListFactory.createWithoutCasting(Types.GEOMETRY, new IShape[] { source, target }), 0.0);
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class AmorphousTopology implements ITopology {
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException {
 		return PathFactory.newInstance(scope, this,
-				GamaListFactory.create(scope, Types.POINT, new IShape[] { source, target }),0.0);
+				GamaListFactory.create(scope, Types.POINT, new IShape[] { source, target }), 0.0);
 	}
 
 	@Override
@@ -330,17 +330,17 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
 			final int k) {
-		final List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
+		final IList<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 			final int k) {
-		final List<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
+		final IList<GamaSpatialPath> paths = GamaListFactory.create(Types.PATH);
 		paths.add(pathBetween(scope, source, target));
 		return paths;
 	}

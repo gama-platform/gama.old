@@ -140,7 +140,7 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 
 	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths);
 
-	public abstract List<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(IScope scope, Node source,
+	public abstract IList<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(IScope scope, Node source,
 			Node target, int k);
 
 	public abstract IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target,

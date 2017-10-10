@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
-import java.util.List;
 import java.util.StringTokenizer;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -102,7 +101,7 @@ public class Strings {
 			examples = @example (
 					value = "\"abcabcabc\" contains_any [\"ca\",\"xy\"]",
 					equals = "true"))
-	public static Boolean opContainsAny(final String target, final List l) {
+	public static Boolean opContainsAny(final String target, final IList l) {
 		for (final Object o : l) {
 			if (o instanceof String && opContains(target, (String) o)) { return true; }
 		}
@@ -120,7 +119,7 @@ public class Strings {
 					examples = @example (
 							value = "\"abcabcabc\" contains_all [\"ca\",\"xy\"]",
 							equals = "false")))
-	public static Boolean opContainsAll(final String target, final List l) {
+	public static Boolean opContainsAll(final String target, final IList l) {
 		for (final Object o : l) {
 			if (!(o instanceof String && opContains(target, (String) o))) { return false; }
 		}
