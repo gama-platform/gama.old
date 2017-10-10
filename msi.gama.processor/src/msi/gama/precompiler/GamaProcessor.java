@@ -800,11 +800,15 @@ public class GamaProcessor extends AbstractProcessor {
 	 * 
 	 * @param env
 	 */
+
+	// Map of the Class names -> GAML type names
+	// Impossible to use as the processor does not keep its state between two files
+	// final static Map<String, String> typeMapping = new HashMap<>();
+
 	private void processTypes(final RoundEnvironment env) {
 		final List<? extends Element> types = sortElements(env, type.class);
 		for (final Element e : types) {
 			final type t = e.getAnnotation(type.class);
-
 			final StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(TYPE_PREFIX);
@@ -829,7 +833,9 @@ public class GamaProcessor extends AbstractProcessor {
 				}
 			}
 			for (final TypeMirror tm : wraps) {
-				sb.append(SEP).append(rawNameOf(tm));
+				final String type = rawNameOf(tm);
+				sb.append(SEP).append(type);
+				// typeMapping.put(type, t.name());
 			}
 			final doc[] docs = t.doc();
 			doc doc;
@@ -889,21 +895,23 @@ public class GamaProcessor extends AbstractProcessor {
 				switch (ve.asType().getKind()) {
 					case ARRAY:
 						emitError(
-								"GAML operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (list or matrix) ",
+								"GAML: operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (list or matrix) ",
 								ve);
 						return;
 					case CHAR:
 					case BYTE:
 					case SHORT:
-						emitWarning("The type of this argument will be casted to integer in GAML", ve);
+						emitWarning("GAML: The type of this argument will be casted to int", ve);
 						break;
 					default:
 				}
 				args[i] = rawNameOf(argParams.get(i));
+				verifyClassTypeCompatibility(args[i], ve);
+
 			}
 			final int n = args.length;
 			if (n == 0 && !isStatic) {
-				emitError("GAML operators need to have at least one argument", method);
+				emitError("GAML: an operator needs to have at least one argument", method);
 				continue;
 			}
 			final boolean scope = n > 0 && args[0].contains("IScope");
@@ -926,6 +934,7 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 
 			final String ret = rawNameOf(method.getReturnType());
+			verifyClassTypeCompatibility(ret, method);
 
 			switch (method.getReturnType().getKind()) {
 				case ARRAY:
@@ -945,13 +954,13 @@ public class GamaProcessor extends AbstractProcessor {
 					emitWarning("The return type of this operator will be casted to integer in GAML", method);
 					break;
 				case EXECUTABLE:
-					emitError("GAML operators cannot return Java executables", method);
+					emitError("GAML: operators cannot return Java executables", method);
 					continue;
 				default:
 			}
 
 			if (ret.equals("void")) {
-				emitError("GAML operators need to return a value", method);
+				emitError("GAML: operators need to return a value", method);
 				continue;
 			}
 
@@ -996,6 +1005,32 @@ public class GamaProcessor extends AbstractProcessor {
 
 			gp.put(sb.toString(), "" /* docToString(documentation) */);
 		}
+	}
+
+	private void verifyClassTypeCompatibility(final String string, final Element ve) {
+		String warning = null;
+		switch (string) {
+			case "Map":
+				warning = "it is safer to use the GamaMap type";
+				break;
+			case "ArrayList":
+			case "List":
+				warning = "it is safer to use the IList type";
+				break;
+			case "short":
+			case "long":
+			case "Long":
+			case "Short":
+				warning = "it is safer to use the Integer type";
+				break;
+			case "Color":
+				warning = "it is safer to use the GamaColor type";
+				break;
+		}
+		if (warning != null) {
+			emitWarning("GAML: " + warning, ve);
+		}
+
 	}
 
 	private static Set<String> RESERVED_FACETS = new HashSet(Arrays.asList("name", "keyword", "returns"));
