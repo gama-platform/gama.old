@@ -141,8 +141,10 @@ public class MulticriteriaAnalyzeOperator {
 			Collections.sort(orderedList);
 			for (Object val : cand) {
 				int index = orderedList.indexOf(val);
-				if (listOfOrder.contains(index)) 
-					index ++;
+				while (listOfOrder.contains(index)) 
+					index++;
+				//if (listOfOrder.contains(index)) 
+				//	index ++;
 				listOfOrder.add(index);
 			}
 			double prev =  Cast.asFloat(scope, orderedList.get(0));
