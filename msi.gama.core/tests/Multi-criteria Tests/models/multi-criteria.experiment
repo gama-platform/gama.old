@@ -41,9 +41,8 @@ experiment TopologyTests type: test {
 	}
 	
 	test "fuzzy_choquet_DM"{
-		map<list<string>,float> criteria_FC <- map<list<string>, float>([["C1"]::1.0, ["C2"]::2.0, ["C3"]:: 3.0,["C1","C2"]::1.0]); 
+		map<list<string>,float> criteria_FC <- ([["C1"]::1.0, ["C2"]::2.0, ["C3"]:: 3.0,["C1","C2"]::1.0]); 
 		int choice <- fuzzy_choquet_DM(candidates,["C1", "C2", "C3"],criteria_FC);
-		write choice;
 		assert choice = 4;
 	}		
 }
