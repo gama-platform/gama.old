@@ -478,7 +478,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
-			agent.getScope().getGui().getStatus(agent.getScope()).informStatus(" Batch ready ");
+			agent.getScope().getGui().getStatus(agent.getScope())
+					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 			agent.getScope().getGui().updateExperimentState(agent.getScope());
 		}
 	}

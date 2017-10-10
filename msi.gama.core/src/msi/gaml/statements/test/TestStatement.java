@@ -13,6 +13,12 @@ package msi.gaml.statements.test;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.jgrapht.alg.util.Pair;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,6 +33,8 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaAssertException;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Strings;
@@ -90,6 +98,88 @@ import msi.gaml.types.IType;
 		see = { "setup", "assert" })
 public class TestStatement extends AbstractStatementSequence {
 
+	public static class TestSummary {
+
+		public final URI uri;
+		public final String modelName;
+		public final String testName;
+		public final Map<String, State> asserts;
+		State state;
+		boolean aborted;
+
+		TestSummary(final TestStatement test) {
+			final EObject object = test.getDescription().getUnderlyingElement(null);
+			uri = object == null ? null : EcoreUtil.getURI(object);
+			modelName = test.getDescription().getModelDescription().getName();
+			testName = test.getName();
+			asserts = new TOrderedHashMap<>();
+			for (final AssertStatement assertion : test.getAssertions()) {
+				asserts.put(assertion.getAssertion(), State.NOT_RUN);
+			}
+		}
+
+		public void reset() {
+			aborted = false;
+			for (final String key : asserts.keySet()) {
+				asserts.put(key, State.NOT_RUN);
+			}
+		}
+
+		void abort() {
+			aborted = true;
+		}
+
+		void addAssertResult(final AssertStatement a, final State s) {
+			final String key = a.getAssertion();
+			asserts.put(key, s);
+		}
+
+		@Override
+		public String toString() {
+
+			final StringBuilder sb = new StringBuilder();
+			sb.append(getState()).append(": ").append(testName).append(" ").append(Strings.LN);
+			for (final String assertion : asserts.keySet()) {
+				sb.append(Strings.TAB).append(asserts.get(assertion)).append(": ").append(assertion).append(" ")
+						.append(Strings.LN);
+			}
+			return sb.toString();
+
+		}
+
+		public State getState() {
+			if (aborted)
+				return State.ABORTED;
+			State state = State.NOT_RUN;
+			for (final State s : asserts.values()) {
+				switch (s) {
+					case NOT_RUN:
+						break;
+					case FAILED:
+						state = State.FAILED;
+						break;
+					case PASSED:
+						if (state.equals(State.NOT_RUN))
+							state = State.PASSED;
+						break;
+					case WARNING:
+						if (state.equals(State.PASSED) || state.equals(State.NOT_RUN))
+							state = State.WARNING;
+						break;
+					default:
+				}
+			}
+			return state;
+		}
+
+		public Collection<Pair<String, State>> getAssertions() {
+			final List<Pair<String, State>> result = new ArrayList<>();
+			asserts.forEach((n, s) -> result.add(new Pair<String, State>(n, s)));
+			return result;
+		}
+
+	}
+
 	public static enum State {
 		FAILED("failed"), PASSED("passed"), NOT_RUN("not run"), WARNING("warning"), ABORTED("aborted");
 		private final String name;
@@ -102,19 +192,40 @@ public class TestStatement extends AbstractStatementSequence {
 		public String toString() {
 			return name;
 		}
+
+		public GamaColor getColor() {
+			switch (this) {
+				case FAILED:
+					return GamaColor.getNamed("gamared");
+				case NOT_RUN:
+					return new GamaColor(83, 95, 107); // GamaColors.toGamaColor(IGamaColors.NEUTRAL.color());
+				case WARNING:
+					return GamaColor.getNamed("gamaorange");
+				case PASSED:
+					return GamaColor.getNamed("gamagreen");
+				default:
+					return null;
+			}
+		}
 	}
 
 	SetUpStatement setup = null;
-	// Assertions contained in the test. True means they are verified, false they are not, null they have emitted a
-	// warning
+	// Assertions contained in the test.
 	List<AssertStatement> assertions = new ArrayList<>();
-	boolean aborted = false;
+	TestSummary summary;
 
 	public TestStatement(final IDescription desc) {
 		super(desc);
 		if (hasFacet(IKeyword.NAME)) {
 			setName("test " + getLiteral(IKeyword.NAME));
 		}
+	}
+
+	public TestSummary getSummary() {
+		if (summary == null) {
+			summary = new TestSummary(this);
+		}
+		return summary;
 	}
 
 	@Override
@@ -135,70 +246,41 @@ public class TestStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		aborted = false;
+		getSummary().reset();
 		if (setup != null) {
 			setup.setup(scope);
 		}
 		Object lastResult = null;
-		scope.enableTryMode();
-		for (final IStatement statement : commands) {
-			try {
-				lastResult = statement.executeOn(scope);
-			} catch (final GamaAssertException e) {
-				// Does nothing
-			} catch (final GamaRuntimeException e2) {
-				// Other exceptions abort the test
-				aborted = true;
-				break;
+		try {
+			scope.enableTryMode();
+			for (final IStatement statement : commands) {
+				AssertStatement a = assertions.contains(statement) ? (AssertStatement) statement : null;
+				try {
+					lastResult = statement.executeOn(scope);
+				} catch (final GamaAssertException e) {
+					if (a != null) {
+						final State s = e.isWarning() ? State.WARNING : State.FAILED;
+						getSummary().addAssertResult(a, s);
+						a = null;
+					}
+				} catch (final GamaRuntimeException e2) {
+					// Other exceptions abort the test
+					getSummary().abort();
+					break;
+				}
+				if (a != null) {
+					getSummary().addAssertResult(a, State.PASSED);
+				}
 			}
+		} finally {
+			scope.disableTryMode();
 		}
-		scope.disableTryMode();
 		return lastResult;
 
 	}
 
-	public State getState() {
-		if (aborted)
-			return State.ABORTED;
-		State state = State.NOT_RUN;
-		for (final AssertStatement s : assertions) {
-			switch (s.getState()) {
-				case NOT_RUN:
-					break;
-				case FAILED:
-					state = State.FAILED;
-					break;
-				case PASSED:
-					if (state.equals(State.NOT_RUN))
-						state = State.PASSED;
-					break;
-				case WARNING:
-					if (state.equals(State.PASSED) || state.equals(State.NOT_RUN))
-						state = State.WARNING;
-					break;
-				default:
-			}
-		}
-		return state;
-	}
-
 	public Collection<AssertStatement> getAssertions() {
 		return assertions;
-	}
-
-	public String getSummary() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(getState()).append(": ").append(getName()).append(" ").append(Strings.LN);
-		for (final AssertStatement assertion : assertions) {
-			sb.append(Strings.TAB).append(assertion.getState()).append(": ")
-					.append(assertion.getFacet(IKeyword.VALUE).serialize(true)).append(" ").append(Strings.LN);
-		}
-		return sb.toString();
-	}
-
-	public void reset() {
-		aborted = false;
-		assertions.forEach(a -> a.state = State.NOT_RUN);
 	}
 
 }

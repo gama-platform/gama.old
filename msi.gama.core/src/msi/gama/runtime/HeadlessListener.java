@@ -30,10 +30,8 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
-import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
-import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -50,7 +48,7 @@ import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.test.TestStatement;
+import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 
 public class HeadlessListener implements IGui {
@@ -456,22 +454,22 @@ public class HeadlessListener implements IGui {
 	public void openInteractiveConsole(final IScope scope) {}
 
 	@Override
-	public void openTestView(final IScope scope) {
+	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
 		final String pathToFile = scope.getModel().getFilePath().replace(scope.getModel().getWorkingPath(), "");
 		log("----------------------------------------------------------------");
 		log(" Running tests declared in " + pathToFile);
 		log("----------------------------------------------------------------");
+		return null;
 	}
 
 	@Override
-	public void displayTestsResults(final IScope scope) {
-		final IExperimentAgent exp = scope.getExperiment();
-		if (!(exp instanceof TestAgent))
-			return;
-		final TestAgent agent = (TestAgent) exp;
-		for (final TestStatement test : agent.getAllTests()) {
-			log(test.getSummary());
-		}
+	public void displayTestsResults(final IScope scope, final TestSummary test) {
+		log(test.toString());
+	}
+
+	@Override
+	public List<TestSummary> runHeadlessTests(final Object model) {
+		return null;
 	}
 
 }

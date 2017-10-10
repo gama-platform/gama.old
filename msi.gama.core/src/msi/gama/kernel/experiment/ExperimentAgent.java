@@ -245,7 +245,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return !getSpecies().isHeadless() || ((GamlSpecies)this.getSpecies()).belongsToAMicroModel();
+		return !getSpecies().isHeadless() || ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
 	}
 
 	@Override
@@ -746,10 +746,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
-		return Iterables.filter(
-				Iterables.concat(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
-						Collections.singletonList(getOutputManager())),
-				ContainerHelper.NOT_NULL);
+		final SimulationPopulation pop = getSimulationPopulation();
+		if (pop != null)
+			return Iterables.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
+					Collections.singletonList(getOutputManager())), ContainerHelper.NOT_NULL);
+		return Collections.EMPTY_LIST;
 	}
 
 	/**
@@ -816,6 +817,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public boolean canStepBack() {
 		return false;
+	}
+
+	@Override
+	public boolean isHeadless() {
+		return getSpecies().isHeadless();
 	}
 
 }

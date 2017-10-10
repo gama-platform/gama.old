@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -178,6 +179,10 @@ public abstract class TopLevelFolder extends VirtualContent {
 	@Override
 	public boolean canBeDecorated() {
 		return true;
+	}
+
+	public SelectionListener getSelectionListenerForStatus() {
+		return null;
 	}
 
 }

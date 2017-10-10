@@ -146,7 +146,7 @@ public class ParameterExpandItem extends Item {
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			Point size = gc.stringExtent(title);
 			gc.setForeground(
-					GamaColors.getTextColorForBackgroundFrom(backgroundColor, IGamaColors.NEUTRAL.color()).color());
+					GamaColors.getTextColorForBackground(backgroundColor/* , IGamaColors.NEUTRAL.color() */).color());
 			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			// gc.setFont(SwtGui.getUnitFont());

@@ -16,11 +16,17 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.statements.test.TestStatement.TestSummary;
 
 /**
  * @author drogoul
  */
 public interface IGamaView {
+
+	public interface Test {
+		public void addTestResult(final TestSummary e);
+
+	}
 
 	public interface Display {
 		IDisplaySurface getDisplaySurface();

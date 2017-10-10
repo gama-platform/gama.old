@@ -5,7 +5,7 @@
 * Tags: test
  */
 
-model test_unitTest_framework
+model unit_tests
 
 global {
 	init {
@@ -23,7 +23,7 @@ species test_species {
 		write "SetUp : a = " + a;
 	}
 
-	//First test executing comparison between numbers
+	//First test showing some options and operators
 	test t1 {
      	assert 100 + 100 = 200;
     		assert 100 + 100 = 201 warning: true;
@@ -59,8 +59,12 @@ species test_species {
 
 
 experiment new type: test until: cycle=10{
-	
-	test toto {
+	// Tests can also be placed directly into the experiment
+	test in_experiment {
 		assert 1+2 = 3;
+	}
+	
+	test "No Error" {
+		assert is_error(100+100);
 	}
 }

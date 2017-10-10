@@ -35,6 +35,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Error;
 import msi.gama.common.interfaces.IGamaView.Parameters;
+import msi.gama.common.interfaces.IGamaView.Test;
 import msi.gama.common.interfaces.IGamaView.User;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
@@ -57,6 +58,7 @@ import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
@@ -74,6 +76,8 @@ import ummisco.gama.ui.resources.GamaFonts;
  *
  */
 public class SwtGui implements IGui {
+
+	public static boolean PERSISTENT_TEST_VIEW = false;
 
 	private IAgent highlightedAgent;
 	private ILocation mouseLocationInModel;
@@ -134,15 +138,16 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void openTestView(final IScope scope) {
-		displayTestsResults(scope);
+	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
+		final IGamaView.Test v = (Test) showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+		return v;
 	}
 
 	@Override
-	public void displayTestsResults(final IScope scope) {
-		final IGamaView v = showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+	public void displayTestsResults(final IScope scope, final TestSummary summary) {
+		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
 		if (v != null)
-			v.reset();
+			v.addTestResult(summary);
 	}
 
 	@Override
@@ -330,6 +335,14 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
+	public List<TestSummary> runHeadlessTests(final Object model) {
+		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		if (modelRunner == null)
+			return null;
+		return modelRunner.runHeadlessTests(model);
+	}
+
+	@Override
 	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {
 
 		WorkbenchHelper.run(() -> {
@@ -406,16 +419,6 @@ public class SwtGui implements IGui {
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 		handler.stop();
 	}
-
-	/**
-	 * Method waitForViewsToBeInitialized()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#waitForViewsToBeInitialized()
-	 */
-	// @Override
-	// public void waitForViewsToBeInitialized() {
-	// // OutputSynchronizer.waitForViewsToBeInitialized();
-	// }
 
 	@Override
 	public void runModel(final Object object, final String exp) {

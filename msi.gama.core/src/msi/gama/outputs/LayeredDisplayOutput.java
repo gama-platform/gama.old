@@ -42,7 +42,6 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -465,7 +464,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.outputReloaded();
 			return;
 		}
-		if (GAMA.isInHeadLessMode())
+		if (scope.getExperiment().isHeadless())
+			// if (GAMA.isInHeadLessMode())
 			data.setDisplayType(IKeyword.IMAGE);
 		else if (data.isOpenGL()) {
 			// If in headless mode, we need to get the 'image' surface

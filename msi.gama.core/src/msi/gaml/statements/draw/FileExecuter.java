@@ -18,7 +18,6 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
@@ -45,7 +44,8 @@ class FileExecuter extends DrawExecuter {
 				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile);
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue()
+				&& /* !GAMA.isInHeadLessMode() */ !scope.getExperiment().isHeadless()) {
 			final Scaling3D size = attributes.getSize();
 			if (size != null) {
 				// if a size is provided

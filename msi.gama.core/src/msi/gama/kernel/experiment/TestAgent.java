@@ -14,6 +14,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.test.TestStatement;
 import msi.gaml.statements.test.TestStatement.State;
+import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 
 @experiment (IKeyword.TEST)
@@ -46,21 +47,24 @@ public class TestAgent extends BatchAgent {
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
-		final List<TestStatement> allTests = getAllTests();
+		final List<TestSummary> allTests = getAllTests();
 		if (!allTests.isEmpty()) {
-			getAllTests().forEach(t -> t.reset());
-			scope.getGui().openTestView(scope);
+			scope.getGui().openTestView(scope, false);
+			getAllTests().forEach(t -> {
+				t.reset();
+				if (!getSpecies().isHeadless())
+					scope.getGui().displayTestsResults(getScope(), t);
+			});
+
 		}
 		return true;
 	}
 
 	@Override
 	public void dispose() {
-		final List<TestStatement> allTests = getAllTests();
-		if (!allTests.isEmpty()) {
-			getScope().getGui().displayTestsResults(getScope());
-		}
-		for (final TestStatement test : allTests) {
+		final List<TestSummary> allTests = getAllTests();
+		for (final TestSummary test : allTests) {
+			getScope().getGui().displayTestsResults(getScope(), test);
 			final TestStatement.State state = test.getState();
 			if (state.equals(State.FAILED) || state.equals(State.ABORTED))
 				failedModels++;
@@ -118,11 +122,11 @@ public class TestAgent extends BatchAgent {
 
 	}
 
-	public List<TestStatement> getAllTests() {
-		final List<TestStatement> tests = getModel().getAllTests();
+	public List<TestSummary> getAllTests() {
+		final List<TestSummary> tests = getModel().getAllTests();
 		final Consumer<IStatement> filter = t -> {
 			if (t instanceof TestStatement)
-				tests.add((TestStatement) t);
+				tests.add(((TestStatement) t).getSummary());
 		};
 		getSpecies().getBehaviors().forEach(filter);
 		return tests;

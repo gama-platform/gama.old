@@ -6,14 +6,13 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.statements.IStatement;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-public abstract class AbstractStatementEditor<T extends IStatement> extends AbstractEditor<Object> {
+public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> {
 
-	FlatButton textBox;
-	final T statement;
+	protected FlatButton textBox;
+	T statement;
 
 	public AbstractStatementEditor(final IScope scope, final T command, final EditorListener<Object> l) {
 		super(scope, null, l);
@@ -22,6 +21,10 @@ public abstract class AbstractStatementEditor<T extends IStatement> extends Abst
 
 	public T getStatement() {
 		return statement;
+	}
+
+	public void setStatement(final T s) {
+		statement = s;
 	}
 
 	@Override

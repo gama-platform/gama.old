@@ -26,6 +26,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 
 /**
@@ -69,7 +70,7 @@ public interface IGui {
 	public final static String NOTREADY = "NOTREADY";
 	public final static String ONUSERHOLD = "ONUSERHOLD";
 	public final static String NONE = "NONE";
-	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";;
+	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 
 	IStatusDisplayer getStatus(IScope scope);
 
@@ -158,8 +159,10 @@ public interface IGui {
 
 	void openInteractiveConsole(IScope scope);
 
-	void openTestView(IScope scope);
+	IGamaView.Test openTestView(IScope scope, boolean remainOpen);
 
-	void displayTestsResults(IScope scope);
+	void displayTestsResults(IScope scope, TestSummary summary);
+
+	public List<TestSummary> runHeadlessTests(final Object model);
 
 }

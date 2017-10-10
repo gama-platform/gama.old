@@ -63,29 +63,28 @@ import msi.gaml.types.IType;
 public class AssertStatement extends AbstractStatement {
 
 	final IExpression value, warn;
-	TestStatement.State state = TestStatement.State.NOT_RUN;
+	final String assertion;
 
 	public AssertStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
+		assertion = value.serialize(true);
 		warn = getFacet("warning");
+	}
+
+	public String getAssertion() {
+		return assertion;
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		try {
-			if (Cast.asBool(scope, value.value(scope))) {
-				state = TestStatement.State.PASSED;
-				return true;
-			}
-		} catch (final GamaRuntimeException e) {}
-		final boolean warning = warn != null && Cast.asBool(scope, warn.value(scope));
-		state = warning ? TestStatement.State.WARNING : TestStatement.State.FAILED;
-		throw new GamaAssertException(scope, "Failed assertion of '" + value.serialize(true) + "'", warning);
+		if (Cast.asBool(scope, value.value(scope))) { return true; }
+		throw new GamaAssertException(scope, "Failed assertion of '" + value.serialize(true) + "'", isWarning(scope));
+
 	}
 
-	public TestStatement.State getState() {
-		return state;
+	public boolean isWarning(final IScope scope) {
+		return warn != null && Cast.asBool(scope, warn.value(scope));
 	}
 
 }
