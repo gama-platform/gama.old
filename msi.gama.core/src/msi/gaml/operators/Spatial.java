@@ -726,7 +726,7 @@ public abstract class Spatial {
 			if (width <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(width, height, location);
 		}
-		
+
 		@operator (
 				value = "hexagon",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
@@ -741,7 +741,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
-		public static IShape hexagon(final IScope scope, final Double width, Double height) {
+		public static IShape hexagon(final IScope scope, final Double width, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -2644,12 +2644,12 @@ public abstract class Spatial {
 						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), [ag1, ag2, ag3])",
 						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost",
 						isExecutable = false) })
-		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells,
+		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells,
 				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
 
 			if (nodes.isEmpty(scope)) { return null; }
-			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
+			final ITopology topo = cells.getKeys().get(0).getTopology();
 
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
@@ -2720,10 +2720,10 @@ public abstract class Spatial {
 						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), ag1, ag2)",
 						equals = "A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost",
 						isExecutable = false) })
-		public static IPath path_between(final IScope scope, final Map<IAgent, Object> cells, final IShape source,
+		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
-			final ITopology topo = ((IAgent) ((GamaMap) cells).getKeys().get(0)).getTopology();
+			final ITopology topo = cells.getKeys().get(0).getTopology();
 			if (topo instanceof GridTopology) {
 				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
 			} else {
