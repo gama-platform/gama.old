@@ -33,6 +33,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	V source, target;
 	IList<E> edges;
+	
+	double weight = 0.0;
 
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
 	G graph;
@@ -128,11 +130,17 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public IList<E> getEdgeList() {
 		return edges;
 	}
+	
+	
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
 
 	@Override
 	public double getWeight() {
 		final G graph = getGraph();
-		if (graph == null) { return 0.0; }
+		if (graph == null) { return weight; }
 		return graph.computeWeight(this);
 	}
 

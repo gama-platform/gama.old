@@ -189,13 +189,13 @@ public abstract class AbstractTopology implements ITopology {
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 			throws GamaRuntimeException {
 		return PathFactory.newInstance(scope, this, GamaListFactory.create(scope, Types.POINT,
-				new IShape[] { source.getLocation(), target.getLocation() }));
+				new IShape[] { source.getLocation(), target.getLocation() }),0.0);
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException {
-		return PathFactory.newInstance(scope, this, GamaListFactory.createWithoutCasting(Types.POINT, source, target));
+		return PathFactory.newInstance(scope, this, GamaListFactory.createWithoutCasting(Types.POINT, source, target),0.0);
 	}
 
 	@Override

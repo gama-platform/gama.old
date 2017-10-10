@@ -177,7 +177,7 @@ public class AmorphousTopology implements ITopology {
 			throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
 		return PathFactory.newInstance(scope, this,
-				GamaListFactory.createWithoutCasting(Types.GEOMETRY, new IShape[] { source, target }));
+				GamaListFactory.createWithoutCasting(Types.GEOMETRY, new IShape[] { source, target }),0.0);
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class AmorphousTopology implements ITopology {
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException {
 		return PathFactory.newInstance(scope, this,
-				GamaListFactory.create(scope, Types.POINT, new IShape[] { source, target }));
+				GamaListFactory.create(scope, Types.POINT, new IShape[] { source, target }),0.0);
 	}
 
 	@Override

@@ -59,16 +59,19 @@ public class PathFactory {
 
 	// With Topology
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g,
-			final IList<? extends IShape> nodes) {
+			final IList<? extends IShape> nodes, double weight) {
+		GamaSpatialPath path;
 		if (g instanceof GraphTopology) {
-			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
+			path =  (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
 		} else if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
-			return new GamaSpatialPath(null, nodes);
+			path = new GamaSpatialPath(null, nodes);
 		} else if (g instanceof GridTopology) {
-			return new GamaSpatialPath(null, nodes);
+			path = new GamaSpatialPath(null, nodes);
 		} else {
 			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account", scope);
 		}
+		path.setWeight(weight);
+		return path;
 	}
 
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,

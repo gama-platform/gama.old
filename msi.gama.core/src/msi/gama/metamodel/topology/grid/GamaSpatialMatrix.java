@@ -917,7 +917,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		});
 		while (!frontier.isEmpty()) {
 			final IAgent current = (IAgent) ((List) frontier.remove()).get(0);
-			if (current == endAg) { return finalPath(scope, source, target, topo, startAg, current, cameFrom); }
+			if (current == endAg) { 
+				if (weighted)
+					return finalPath(scope, source, target, topo, startAg, current, cameFrom,onWithWeight);
+				else 
+					return finalPath(scope, source, target, topo, startAg, current, cameFrom);
+			}
 			Collection<IAgent> neigh;
 			neigh = getNeighborhood().getNeighborsIn(scope, current.getIndex(), 1);
 			final Double cost = costSoFar.get(current);
@@ -973,7 +978,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		costSoFar.put(startAg, 0.0);
 		while (!frontier.isEmpty()) {
 			final IAgent current = (IAgent) ((List) frontier.remove()).get(0);
-			if (current == endAg) { return finalPath(scope, source, target, topo, startAg, current, cameFrom); }
+			if (current == endAg) { 
+				if (weighted) {
+					return finalPath(scope, source, target, topo, startAg, current, cameFrom,onWithWeight); 
+				} else {
+					return finalPath(scope, source, target, topo, startAg, current, cameFrom); 
+				}
+			}
 			final Double cost = costSoFar.get(current);
 			final Set<IAgent> neigh = getNeighborhood().getNeighborsIn(scope, current.getIndex(), 1);
 			for (final IAgent next : neigh) {
@@ -1200,21 +1211,38 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
 		nodesPt.add(source.getLocation());
 		nodesPt.add(target.getLocation());
-		return PathFactory.newInstance(scope, topo, nodesPt);
+		return PathFactory.newInstance(scope, topo, nodesPt,0.0);
 	}
 
 	private GamaSpatialPath finalPath(final IScope scope, final IShape source, final IShape target,
-			final ITopology topo, final IAgent startAg, IAgent current, final Map<IAgent, IAgent> cameFrom) {
+			final ITopology topo, final IAgent startAg, IAgent current, final Map<IAgent, IAgent> cameFrom, final Map<IAgent, Object> on) {
 		final IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+		double weight = Cast.asFloat(scope, on.get(current));
 		nodesPt.add(target.getLocation());
 		while (current != startAg) {
 			current = cameFrom.get(current);
+			weight += Cast.asFloat(scope, on.get(current));
 			if (current != startAg)
 				nodesPt.add(current.getLocation());
 		}
 		nodesPt.add(source.getLocation());
-		Collections.reverse(nodesPt);
-		return PathFactory.newInstance(scope, topo, nodesPt);
+		Collections.reverse(nodesPt); 
+		return PathFactory.newInstance(scope, topo, nodesPt,weight);
+	}
+	private GamaSpatialPath finalPath(final IScope scope, final IShape source, final IShape target,
+			final ITopology topo, final IAgent startAg, IAgent current, final Map<IAgent, IAgent> cameFrom) {
+		final IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
+		double weight = 1;
+		nodesPt.add(target.getLocation());
+		while (current != startAg) {
+			current = cameFrom.get(current);
+			weight += 1;
+			if (current != startAg)
+				nodesPt.add(current.getLocation());
+		}
+		nodesPt.add(source.getLocation());
+		Collections.reverse(nodesPt); 
+		return PathFactory.newInstance(scope, topo, nodesPt,weight);
 	}
 
 	private void initOpen(final boolean[] open, final Collection<IAgent> on) {
