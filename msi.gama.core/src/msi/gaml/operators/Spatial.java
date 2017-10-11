@@ -90,6 +90,7 @@ import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.expressions.IExpression;
@@ -2550,33 +2551,31 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
-		public static IPath path_between(final IScope scope, final ITopology graph, final IContainer<?, IShape> nodes)
+		public static IPath path_between(final IScope scope, final ITopology topo, final IContainer<?, IShape> nodes)
 				throws GamaRuntimeException {
-			// TODO Assumes that all elements in nodes are vertices of the
-			// graph... Should be
-			// checked
-
 			if (nodes.isEmpty(scope)) { return null; }
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) { return PathFactory.newInstance(scope, scope.getTopology(), source, source,
 					GamaListFactory.<IShape> create(Types.GEOMETRY));
-			// return new GamaPath(scope.getTopology(), source, source, new
-			// GamaList());
 			}
 			final IShape target = nodes.lastValue(scope);
-			if (n == 2) { return graph.pathBetween(scope, source, target); }
+			if (n == 2) { return topo.pathBetween(scope, source, target); }
 			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
 					// TODO Take the case of ILocation
-					edges.addAll(graph.pathBetween(scope, previous, gg).getEdgeList());
+					GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
+					if (path != null && path.getEdgeList() != null)
+						edges.addAll(path.getEdgeList());
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(scope, graph, source, target, edges);
-			// new GamaPath(graph, source, target, edges);
+			
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo, source, target, edges);
+			path.setWeight(path.getVertexList().size());
+			return path;
 		}
 
 		@operator (
@@ -2610,7 +2609,8 @@ public abstract class Spatial {
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) {
 				if (topo instanceof GridTopology) {
-					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+					GamaSpatialPath path =  ((GridTopology) topo).pathBetween(scope, source, target, cells);
+					return path;
 				} else {
 					return scope.getTopology().pathBetween(scope, source, target);
 				}
@@ -2621,15 +2621,17 @@ public abstract class Spatial {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					if (topo instanceof GridTopology) {
-						edges.addAll(((GridTopology) topo).pathBetween(scope, source, target, cells).getEdgeList());
+						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						edges.addAll(path.getEdgeList());
 					} else {
-						edges.addAll(scope.getTopology().pathBetween(scope, source, target).getEdgeList());
+						edges.addAll(scope.getTopology().pathBetween(scope, previous, gg).getEdgeList());
 					}
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source,
-					target, edges);
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			path.setWeight(path.getVertexList().size());
+			return path;
 		}
 
 		@operator (
@@ -2668,21 +2670,25 @@ public abstract class Spatial {
 					return scope.getTopology().pathBetween(scope, source, target);
 				}
 			}
+			double weight = 0;
 			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					if (topo instanceof GridTopology) {
-						edges.addAll(((GridTopology) topo).pathBetween(scope, source, target, cells).getEdgeList());
+						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						edges.addAll(path.getEdgeList());
+						weight += path.getWeight();
 					} else {
-						edges.addAll(scope.getTopology().pathBetween(scope, source, target).getEdgeList());
+						edges.addAll(scope.getTopology().pathBetween(scope, previous, gg).getEdgeList());
 					}
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source,
-					target, edges);
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			path.setWeight(topo instanceof GridTopology ? weight : path.getVertexList().size());
+			return path;
 		}
 
 		@operator (

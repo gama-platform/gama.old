@@ -23,20 +23,20 @@ public class TestsRunner {
 		List<IFile> testFiles = null;
 		try {
 			testFiles = findTestModels();
-		} catch (final CoreException e) {}
-		if (testFiles != null) {
-			final IGui gui = GAMA.getRegularGui();
-			gui.openTestView(GAMA.getRuntimeScope(), true);
-			for (final IFile file : testFiles) {
-				final List<TestSummary> summaries = gui.runHeadlessTests(file);
-				for (final TestSummary summary : summaries) {
-					gui.displayTestsResults(GAMA.getRuntimeScope(), summary);
+			if (testFiles != null) {
+				final IGui gui = GAMA.getRegularGui();
+				gui.openTestView(GAMA.getRuntimeScope(), true);
+				for (final IFile file : testFiles) {
+					final List<TestSummary> summaries = gui.runHeadlessTests(file);
+					for (final TestSummary summary : summaries) {
+						gui.displayTestsResults(GAMA.getRuntimeScope(), summary);
+					}
+					// if (summary != null) {
+					// sb.append(summary).append(Strings.LN);
+					// }
 				}
-				// if (summary != null) {
-				// sb.append(summary).append(Strings.LN);
-				// }
 			}
-		}
+		} catch (final Exception e) {e.printStackTrace();}
 
 		// GAMA.getGui().getConsole(GAMA.getRuntimeScope()).showConsoleView(GAMA.agent);
 		// GAMA.getGui().getConsole(GAMA.getRuntimeScope()).informConsole(sb.toString(), GAMA.agent);

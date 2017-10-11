@@ -78,11 +78,12 @@ public class PathFactory {
 			final IShape target, final IList<IShape> edges) {
 		if (g instanceof GraphTopology) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges);
-		} else if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
+		} else {//if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
 			return new GamaSpatialPath(start, target, edges);
-		} else {
-			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account", scope);
 		}
+		/*} else {
+			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account", scope);
+		}*/
 	}
 
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,

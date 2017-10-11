@@ -37,7 +37,11 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 			final Path pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		log("Compiling " + pathToModel.getFileName());
-		compile(createFileURI(pathToModel.toString()), errors);
+		try {			
+			compile(createFileURI(pathToModel.toString()), errors);
+		}catch(Exception ex) {
+			log(ex.getMessage());
+		}
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
