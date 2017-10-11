@@ -1420,36 +1420,71 @@ public abstract class Spatial {
 		}
 
 		private static Geometry createPolygonWithPoint(final Geometry geometry, final Coordinate point) {
-			final int index = indexClosestSegment(((Polygon) geometry).getExteriorRing(), point);
-			if (index == -1) { return null; }
-			final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
-			for (int i = 0; i < index + 1; i++) {
-				coord[i] = geometry.getCoordinates()[i];
+			double simpleMinLength = Double.MAX_VALUE;
+			Geometry simpleMinGeom = null;
+			double complexMinLength = Double.MAX_VALUE;
+			Geometry complexMinGeom = null;
+			int nbPts = ((Polygon)geometry).getExteriorRing().getCoordinates().length;
+			for (int index = 0; index <= nbPts ; index++) {
+				final Coordinate[] coord = new Coordinate[nbPts + 1];
+				for (int i = 0; i < index ; i++) {
+					coord[i] = geometry.getCoordinates()[i];
+				}
+				coord[index] = point;
+				for (int i = index + 1; i < coord.length; i++) {
+					coord[i] = geometry.getCoordinates()[i - 1];
+				}
+				final LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
+				for (int i = 0; i < lrs.length; i++) {
+					lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
+				}
+				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord),
+						lrs);
+				if (g.isValid()) {
+					if (simpleMinLength > g.getArea()) {
+						simpleMinLength = g.getArea();
+						simpleMinGeom = g;
+					}
+				}else {
+					if (complexMinLength > g.getArea()) {
+						complexMinLength = g.getArea();
+						complexMinGeom = g;
+					}
+				}
 			}
-			coord[index + 1] = point;
-			for (int i = index + 2; i < coord.length; i++) {
-				coord[i] = geometry.getCoordinates()[i - 1];
-			}
-			final LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
-			for (int i = 0; i < lrs.length; i++) {
-				lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
-			}
-			return GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord),
-					lrs);
+			if (simpleMinGeom != null) return simpleMinGeom;
+			return complexMinGeom;
 		}
 
 		private static Geometry createLineStringWithPoint(final Geometry geometry, final Coordinate point) {
-			final int index = indexClosestSegment(geometry, point);
-			if (index == -1) { return null; }
-			final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
-			for (int i = 0; i < index + 1; i++) {
-				coord[i] = geometry.getCoordinates()[i];
+			double simpleMinLength = Double.MAX_VALUE;
+			Geometry simpleMinGeom = null;
+			double complexMinLength = Double.MAX_VALUE;
+			Geometry complexMinGeom = null;
+			for (int index = 0; index <= geometry.getCoordinates().length ; index++) {
+				final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
+				for (int i = 0; i < index ; i++) {
+					coord[i] = geometry.getCoordinates()[i];
+				}
+				coord[index ] = point;
+				for (int i = index + 1; i < coord.length; i++) {
+					coord[i] = geometry.getCoordinates()[i - 1];
+				}
+				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
+				if (g.isValid()) {
+					if (simpleMinLength > g.getLength()) {
+						simpleMinLength = g.getLength();
+						simpleMinGeom = g;
+					}
+				}else {
+					if (complexMinLength > g.getLength()) {
+						complexMinLength = g.getLength();
+						complexMinGeom = g;
+					}
+				}
 			}
-			coord[index + 1] = point;
-			for (int i = index + 2; i < coord.length; i++) {
-				coord[i] = geometry.getCoordinates()[i - 1];
-			}
-			return GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
+			if (simpleMinGeom != null) return simpleMinGeom;
+			return complexMinGeom;
 		}
 
 		private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
