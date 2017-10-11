@@ -12,6 +12,8 @@ package msi.gama.kernel.root;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
@@ -37,14 +39,17 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.ICollector;
+import msi.gama.util.IList;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Containers;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 @species (
 		name = IKeyword.PLATFORM,
@@ -54,7 +59,7 @@ import msi.gaml.types.Types;
 		name = PlatformAgent.MACHINE_TIME,
 		type = IType.FLOAT,
 		doc = @doc (
-				value = "Returns the current system time in milliseconds",
+				value = "Returns the current system time in milliseconds (i.e. number of milliseconds since UNIX epoch day)",
 				comment = "The return value is a float number")),
 		@var (
 				name = PlatformAgent.WORKSPACE_PATH,
@@ -64,6 +69,31 @@ import msi.gaml.types.Types;
 						value = "Contains the absolute path to the workspace of GAMA. Can be used to list all the projects and files present in the platform",
 						comment = "Always terminated with a trailing separator",
 						see = { "workspace" })),
+		@var (
+				name = "version",
+				type = IType.STRING,
+				constant = true,
+				doc = @doc (
+						value = "Returns the version of the current GAMA installation")),
+		@var (
+				name = "plugins",
+				type = IType.LIST,
+				of = IType.STRING,
+				constant = true,
+				doc = @doc (
+						value = "Lists all the plugins present in this installation of GAMA")),
+		@var (
+				name = "free_memory",
+				type = IType.INT,
+				constant = false,
+				doc = @doc (
+						value = "Returns the free memory available to GAMA in bytes")),
+		@var (
+				name = "max_memory",
+				type = IType.INT,
+				constant = false,
+				doc = @doc (
+						value = "Returns the maximum amount of memory available to GAMA in bytes")),
 		@var (
 				name = "workspace",
 				type = IType.FILE,
@@ -97,6 +127,16 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@Override
 	public ITopology getTopology() {
 		return new AmorphousTopology();
+	}
+
+	@Override
+	public String getName() {
+		return "gama";
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return "gama";
 	}
 
 	@Override
@@ -171,6 +211,39 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return url.getPath();
 	}
 
+	@SuppressWarnings ("unchecked")
+	@getter (
+			value = "plugins",
+			initializer = true)
+	public IList<String> getPluginsList() {
+		final BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		return StreamEx.of(bc.getBundles()).map(b -> b.getSymbolicName()).toCollection(Containers.listOf(Types.STRING));
+	}
+
+	@getter (
+			value = "version",
+			initializer = true)
+	public String getVersion() {
+		final BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		return bc.getBundle().getVersion().toString();
+	}
+
+	@getter (
+			value = "free_memory",
+			initializer = true)
+	public int getAvailableMemory() {
+		final long allocatedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		final long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
+		return (int) presumableFreeMemory;
+	}
+
+	@getter (
+			value = "max_memory",
+			initializer = true)
+	public int getMaxMemory() {
+		return (int) Runtime.getRuntime().maxMemory();
+	}
+
 	@getter (PlatformAgent.MACHINE_TIME)
 	public Double getMachineTime() {
 		return (double) System.currentTimeMillis();
@@ -183,7 +256,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public String getDocumentation() {
-		return "The unique instance of the platform species. Used to access platform properties";
+		return "The unique instance of the platform species. Used to access GAMA platform properties.";
 	}
 
 	@Override

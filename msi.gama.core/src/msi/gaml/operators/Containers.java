@@ -94,19 +94,19 @@ public class Containers {
 		return notNull(scope, c).parallelStream(scope);
 	}
 
-	private static GamaListSupplier listOf(final IType t) {
+	public static GamaListSupplier listOf(final IType t) {
 		return new GamaListSupplier(t);
 	}
 
-	private static Supplier<IList> listLike(final IContainer c) {
+	public static Supplier<IList> listLike(final IContainer c) {
 		return new GamaListSupplier(c == null ? Types.NO_TYPE : c.getType().getContentType());
 	}
 
-	private static Supplier<IList> listLike(final IContainer c, final IContainer c1) {
+	public static Supplier<IList> listLike(final IContainer c, final IContainer c1) {
 		return listOf(c.getType().getContentType().findCommonSupertypeWith(c1.getType().getContentType()));
 	}
 
-	private static GamaMapSupplier asMapOf(final IType k, final IType v) {
+	public static GamaMapSupplier asMapOf(final IType k, final IType v) {
 		return new GamaMapSupplier(k, v);
 	}
 
