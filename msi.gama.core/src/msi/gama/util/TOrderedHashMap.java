@@ -133,7 +133,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			}
 			if (oldKeys[insertionOrderIndex] != FREE && oldKeys[insertionOrderIndex] != REMOVED) {
 				final Object o = oldKeys[insertionOrderIndex];
-				final int index = insertionIndex((K) o);
+				final int index = insertKey((K) o);
 				if (index < 0) {
 					throwObjectContractViolation(_set[-index - 1], o);
 				}
