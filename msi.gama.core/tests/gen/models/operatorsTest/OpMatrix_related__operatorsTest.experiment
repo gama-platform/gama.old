@@ -42,16 +42,16 @@ experiment OpMatrix_related__operatorsTestTests type: test {
 		}
 	
 		test DivideOp {
-			point var0 <- {5, 7.5} / 2.5; 	// var0 equals {2, 3}
-			assert var0 = {2, 3}; 
-			point var1 <- {2,5} / 4; 	// var1 equals {0.5,1.25}
-			assert var1 = {0.5,1.25}; 
-			float var2 <- 3 / 5.0; 	// var2 equals 0.6
-			assert var2 = 0.6; 
-			rgb var3 <- rgb([255, 128, 32]) / 2.5; 	// var3 equals rgb([102,51,13])
-			assert var3 = rgb([102,51,13]); 
-			rgb var4 <- rgb([255, 128, 32]) / 2; 	// var4 equals rgb([127,64,16])
-			assert var4 = rgb([127,64,16]); 
+			rgb var0 <- rgb([255, 128, 32]) / 2.5; 	// var0 equals rgb([102,51,13])
+			assert var0 = rgb([102,51,13]); 
+			point var1 <- {5, 7.5} / 2.5; 	// var1 equals {2, 3}
+			assert var1 = {2, 3}; 
+			point var2 <- {2,5} / 4; 	// var2 equals {0.5,1.25}
+			assert var2 = {0.5,1.25}; 
+			rgb var3 <- rgb([255, 128, 32]) / 2; 	// var3 equals rgb([127,64,16])
+			assert var3 = rgb([127,64,16]); 
+			float var4 <- 3 / 5.0; 	// var4 equals 0.6
+			assert var4 = 0.6; 
 
 		}
 	
@@ -64,12 +64,12 @@ experiment OpMatrix_related__operatorsTestTests type: test {
 		test index_ofOp {
 			int var1 <-  "abcabcabc" index_of "ca"; 	// var1 equals 2
 			assert var1 = 2; 
-			int var2 <- [1,2,3,4,5,6] index_of 4; 	// var2 equals 3
-			assert var2 = 3; 
-			int var3 <- [4,2,3,4,5,4] index_of 4; 	// var3 equals 0
-			assert var3 = 0; 
-			point var4 <- matrix([[1,2,3],[4,5,6]]) index_of 4; 	// var4 equals {1.0,0.0}
-			assert var4 = {1.0,0.0}; 
+			point var2 <- matrix([[1,2,3],[4,5,6]]) index_of 4; 	// var2 equals {1.0,0.0}
+			assert var2 = {1.0,0.0}; 
+			int var3 <- [1,2,3,4,5,6] index_of 4; 	// var3 equals 3
+			assert var3 = 3; 
+			int var4 <- [4,2,3,4,5,4] index_of 4; 	// var4 equals 0
+			assert var4 = 0; 
 			unknown var0 <- [1::2, 3::4, 5::6] index_of 4; 	// var0 equals 3
 			assert var0 = 3; 
 
@@ -82,139 +82,139 @@ experiment OpMatrix_related__operatorsTestTests type: test {
 		}
 	
 		test last_index_ofOp {
-			unknown var0 <- [1::2, 3::4, 5::4] last_index_of 4; 	// var0 equals 5
-			assert var0 = 5; 
-			point var1 <- matrix([[1,2,3],[4,5,4]]) last_index_of 4; 	// var1 equals {1.0,2.0}
-			assert var1 = {1.0,2.0}; 
-			int var2 <- [1,2,3,4,5,6] last_index_of 4; 	// var2 equals 3
-			assert var2 = 3; 
-			int var3 <- [4,2,3,4,5,4] last_index_of 4; 	// var3 equals 5
+			int var0 <- [1,2,3,4,5,6] last_index_of 4; 	// var0 equals 3
+			assert var0 = 3; 
+			int var1 <- [4,2,3,4,5,4] last_index_of 4; 	// var1 equals 5
+			assert var1 = 5; 
+			point var2 <- matrix([[1,2,3],[4,5,4]]) last_index_of 4; 	// var2 equals {1.0,2.0}
+			assert var2 = {1.0,2.0}; 
+			int var3 <- "abcabcabc" last_index_of "ca"; 	// var3 equals 5
 			assert var3 = 5; 
-			int var4 <- "abcabcabc" last_index_of "ca"; 	// var4 equals 5
+			unknown var4 <- [1::2, 3::4, 5::4] last_index_of 4; 	// var4 equals 5
 			assert var4 = 5; 
 
 		}
 	
 		test MinusOp {
-			date var0 <- date('2000-01-01') - 200; 	// var0 equals date('2000-01-01')
-			assert var0 = date('2000-01-01'); 
-			rgb var1 <- rgb([255, 128, 32]) - 3; 	// var1 equals rgb([252,125,29])
-			assert var1 = rgb([252,125,29]); 
-			matrix var2 <- 3.5 - matrix([[2,5],[3,4]]); 	// var2 equals matrix([[1.5,-1.5],[0.5,-0.5]])
-			assert var2 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
-			list<int> var3 <- [1,2,3,4,5,6] - [2,4,9]; 	// var3 equals [1,3,5,6]
-			assert var3 = [1,3,5,6]; 
-			list<int> var4 <- [1,2,3,4,5,6] - [0,8]; 	// var4 equals [1,2,3,4,5,6]
-			assert var4 = [1,2,3,4,5,6]; 
-			list<int> var5 <- [1,2,3,4,5,6] - 2; 	// var5 equals [1,3,4,5,6]
-			assert var5 = [1,3,4,5,6]; 
-			list<int> var6 <- [1,2,3,4,5,6] - 0; 	// var6 equals [1,2,3,4,5,6]
-			assert var6 = [1,2,3,4,5,6]; 
-			point var7 <- {1, 2} - {4, 5}; 	// var7 equals {-3.0, -3.0}
-			assert var7 = {-3.0, -3.0}; 
-			int var8 <- 1 - 1; 	// var8 equals 0
-			assert var8 = 0; 
-			int var9 <- 1.0 - 1; 	// var9 equals 0.0
-			assert var9 = 0.0; 
-			int var10 <- 3.7 - 1.2; 	// var10 equals 2.5
-			assert var10 = 2.5; 
-			int var11 <- 3 - 1.2; 	// var11 equals 1.8
-			assert var11 = 1.8; 
-			geometry var12 <- shape - 5; 	// var12 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
-			//geometry var13 <- geom1 - geom2; 	// var13 equals a geometry corresponding to difference between geom1 and geom2
-			geometry var14 <- rectangle(10,10) - [circle(2), square(2)]; 	// var14 equals rectangle(10,10) - (circle(2) + square(2))
-			assert var14 = rectangle(10,10) - (circle(2) + square(2)); 
-			rgb var15 <- rgb([255, 128, 32]) - rgb('red'); 	// var15 equals rgb([0,128,32])
-			assert var15 = rgb([0,128,32]); 
-			float var16 <- date('2000-01-01') - date('2010-01-02'); 	// var16 equals 86400
-			assert var16 = 86400; 
-			point var17 <- {1, 2} - 4.5; 	// var17 equals {-3.5, -2.5, -4.5}
-			assert var17 = {-3.5, -2.5, -4.5}; 
-			point var18 <- {1, 2} - 4; 	// var18 equals {-3.0,-2.0,-4.0}
-			assert var18 = {-3.0,-2.0,-4.0}; 
-			map var19 <- ['a'::1,'b'::2] - ('b'::2); 	// var19 equals ['a'::1]
-			assert var19 = ['a'::1]; 
-			map var20 <- ['a'::1,'b'::2] - ('c'::3); 	// var20 equals ['a'::1,'b'::2]
-			assert var20 = ['a'::1,'b'::2]; 
-			point var21 <- -{3.0,5.0}; 	// var21 equals {-3.0,-5.0}
-			assert var21 = {-3.0,-5.0}; 
-			point var22 <- -{1.0,6.0,7.0}; 	// var22 equals {-1.0,-6.0,-7.0}
-			assert var22 = {-1.0,-6.0,-7.0}; 
-			map var23 <- ['a'::1,'b'::2] - ['b'::2]; 	// var23 equals ['a'::1]
-			assert var23 = ['a'::1]; 
-			map var24 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var24 equals ['a'::1]
-			assert var24 = ['a'::1]; 
-			int var25 <- - (-56); 	// var25 equals 56
-			assert var25 = 56; 
+			point var7 <- {1, 2} - 4.5; 	// var7 equals {-3.5, -2.5, -4.5}
+			assert var7 = {-3.5, -2.5, -4.5}; 
+			point var8 <- {1, 2} - 4; 	// var8 equals {-3.0,-2.0,-4.0}
+			assert var8 = {-3.0,-2.0,-4.0}; 
+			point var9 <- {1, 2} - {4, 5}; 	// var9 equals {-3.0, -3.0}
+			assert var9 = {-3.0, -3.0}; 
+			list<int> var10 <- [1,2,3,4,5,6] - 2; 	// var10 equals [1,3,4,5,6]
+			assert var10 = [1,3,4,5,6]; 
+			list<int> var11 <- [1,2,3,4,5,6] - 0; 	// var11 equals [1,2,3,4,5,6]
+			assert var11 = [1,2,3,4,5,6]; 
+			matrix var12 <- 3.5 - matrix([[2,5],[3,4]]); 	// var12 equals matrix([[1.5,-1.5],[0.5,-0.5]])
+			assert var12 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
+			list<int> var13 <- [1,2,3,4,5,6] - [2,4,9]; 	// var13 equals [1,3,5,6]
+			assert var13 = [1,3,5,6]; 
+			list<int> var14 <- [1,2,3,4,5,6] - [0,8]; 	// var14 equals [1,2,3,4,5,6]
+			assert var14 = [1,2,3,4,5,6]; 
+			rgb var15 <- rgb([255, 128, 32]) - 3; 	// var15 equals rgb([252,125,29])
+			assert var15 = rgb([252,125,29]); 
+			geometry var16 <- shape - 5; 	// var16 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
+			rgb var17 <- rgb([255, 128, 32]) - rgb('red'); 	// var17 equals rgb([0,128,32])
+			assert var17 = rgb([0,128,32]); 
+			geometry var18 <- rectangle(10,10) - [circle(2), square(2)]; 	// var18 equals rectangle(10,10) - (circle(2) + square(2))
+			assert var18 = rectangle(10,10) - (circle(2) + square(2)); 
+			//geometry var19 <- geom1 - geom2; 	// var19 equals a geometry corresponding to difference between geom1 and geom2
+			int var20 <- 1 - 1; 	// var20 equals 0
+			assert var20 = 0; 
+			int var21 <- 1.0 - 1; 	// var21 equals 0.0
+			assert var21 = 0.0; 
+			int var22 <- 3.7 - 1.2; 	// var22 equals 2.5
+			assert var22 = 2.5; 
+			int var23 <- 3 - 1.2; 	// var23 equals 1.8
+			assert var23 = 1.8; 
+			float var24 <- date('2000-01-01') - date('2010-01-02'); 	// var24 equals 86400
+			assert var24 = 86400; 
+			date var25 <- date('2000-01-01') - 200; 	// var25 equals date('2000-01-01')
+			assert var25 = date('2000-01-01'); 
+			point var0 <- -{3.0,5.0}; 	// var0 equals {-3.0,-5.0}
+			assert var0 = {-3.0,-5.0}; 
+			point var1 <- -{1.0,6.0,7.0}; 	// var1 equals {-1.0,-6.0,-7.0}
+			assert var1 = {-1.0,-6.0,-7.0}; 
+			map var2 <- ['a'::1,'b'::2] - ('b'::2); 	// var2 equals ['a'::1]
+			assert var2 = ['a'::1]; 
+			map var3 <- ['a'::1,'b'::2] - ('c'::3); 	// var3 equals ['a'::1,'b'::2]
+			assert var3 = ['a'::1,'b'::2]; 
+			int var4 <- - (-56); 	// var4 equals 56
+			assert var4 = 56; 
+			map var5 <- ['a'::1,'b'::2] - ['b'::2]; 	// var5 equals ['a'::1]
+			assert var5 = ['a'::1]; 
+			map var6 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var6 equals ['a'::1]
+			assert var6 = ['a'::1]; 
 
 		}
 	
 		test MultiplyOp {
-			float var0 <- {2,5} * {4.5, 5}; 	// var0 equals 34.0
-			assert var0 = 34.0; 
-			rgb var1 <- rgb([255, 128, 32]) * 2; 	// var1 equals rgb([255,255,64])
-			assert var1 = rgb([255,255,64]); 
-			geometry var2 <- shape * {0.5,0.5,2}; 	// var2 equals a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z
-			int var3 <- 1 * 1; 	// var3 equals 1
-			assert var3 = 1; 
-			point var4 <- {2,5} * 4; 	// var4 equals {8.0, 20.0}
-			assert var4 = {8.0, 20.0}; 
-			point var5 <- {2, 4} * 2.5; 	// var5 equals {5.0, 10.0}
-			assert var5 = {5.0, 10.0}; 
+			geometry var1 <- shape * {0.5,0.5,2}; 	// var1 equals a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z
+			rgb var2 <- rgb([255, 128, 32]) * 2; 	// var2 equals rgb([255,255,64])
+			assert var2 = rgb([255,255,64]); 
+			point var3 <- {2,5} * 4; 	// var3 equals {8.0, 20.0}
+			assert var3 = {8.0, 20.0}; 
+			point var4 <- {2, 4} * 2.5; 	// var4 equals {5.0, 10.0}
+			assert var4 = {5.0, 10.0}; 
+			geometry var5 <- circle(10) * 2; 	// var5 equals circle(20)
+			assert var5 = circle(20); 
+			float var6 <- {2,5} * {4.5, 5}; 	// var6 equals 34.0
+			assert var6 = 34.0; 
 			matrix<float> m <- (3.5 * matrix([[2,5],[3,4]]));	//m equals matrix([[7.0,17.5],[10.5,14]])
-			geometry var7 <- circle(10) * 2; 	// var7 equals circle(20)
-			assert var7 = circle(20); 
-			float var8 <- 2.5 * 2; 	// var8 equals 5.0
-			assert var8 = 5.0; 
+			int var8 <- 1 * 1; 	// var8 equals 1
+			assert var8 = 1; 
+			float var0 <- 2.5 * 2; 	// var0 equals 5.0
+			assert var0 = 5.0; 
 
 		}
 	
 		test PlusOp {
-			geometry var4 <- circle(5) + 5; 	// var4 equals circle(10)
-			assert var4 = circle(10); 
-			geometry var5 <- circle(5) + (5,32,#round); 	// var5 equals circle(10)
-			assert var5 = circle(10); 
-			point var6 <- {1, 2} + 4; 	// var6 equals {5.0, 6.0,4.0}
-			assert var6 = {5.0, 6.0,4.0}; 
-			point var7 <- {1, 2} + 4.5; 	// var7 equals {5.5, 6.5,4.5}
-			assert var7 = {5.5, 6.5,4.5}; 
-			geometry var8 <- circle(5) + (5,32); 	// var8 equals circle(10)
-			assert var8 = circle(10); 
-			point var9 <- {1, 2} + {4, 5}; 	// var9 equals {5.0, 7.0}
-			assert var9 = {5.0, 7.0}; 
-			date var10 <- date('2000-01-01') + 200; 	// var10 equals date('2000-01-01')
-			assert var10 = date('2000-01-01'); 
-			rgb var11 <- rgb([255, 128, 32]) + 3; 	// var11 equals rgb([255,131,35])
-			assert var11 = rgb([255,131,35]); 
-			int var12 <- 1 + 1; 	// var12 equals 2
-			assert var12 = 2; 
-			int var13 <- 1.0 + 1; 	// var13 equals 2.0
-			assert var13 = 2.0; 
-			int var14 <- 1.0 + 2.5; 	// var14 equals 3.5
-			assert var14 = 3.5; 
-			list<int> var15 <- [1,2,3,4,5,6] + 2; 	// var15 equals [1,2,3,4,5,6,2]
-			assert var15 = [1,2,3,4,5,6,2]; 
-			list<int> var16 <- [1,2,3,4,5,6] + 0; 	// var16 equals [1,2,3,4,5,6,0]
-			assert var16 = [1,2,3,4,5,6,0]; 
-			matrix var17 <- 3.5 + matrix([[2,5],[3,4]]); 	// var17 equals matrix([[5.5,8.5],[6.5,7.5]])
-			assert var17 = matrix([[5.5,8.5],[6.5,7.5]]); 
-			list<int> var18 <- [1,2,3,4,5,6] + [2,4,9]; 	// var18 equals [1,2,3,4,5,6,2,4,9]
-			assert var18 = [1,2,3,4,5,6,2,4,9]; 
-			list<int> var19 <- [1,2,3,4,5,6] + [0,8]; 	// var19 equals [1,2,3,4,5,6,0,8]
-			assert var19 = [1,2,3,4,5,6,0,8]; 
-			rgb var20 <- rgb([255, 128, 32]) + rgb('red'); 	// var20 equals rgb([255,128,32])
-			assert var20 = rgb([255,128,32]); 
-			string var21 <- "hello " + 12; 	// var21 equals "hello 12"
-			assert var21 = "hello 12"; 
-			//geometry var22 <- geom1 + geom2; 	// var22 equals a geometry corresponding to union between geom1 and geom2
-			map var0 <- ['a'::1,'b'::2] + ['c'::3]; 	// var0 equals ['a'::1,'b'::2,'c'::3]
+			point var4 <- {1, 2} + {4, 5}; 	// var4 equals {5.0, 7.0}
+			assert var4 = {5.0, 7.0}; 
+			list<int> var5 <- [1,2,3,4,5,6] + 2; 	// var5 equals [1,2,3,4,5,6,2]
+			assert var5 = [1,2,3,4,5,6,2]; 
+			list<int> var6 <- [1,2,3,4,5,6] + 0; 	// var6 equals [1,2,3,4,5,6,0]
+			assert var6 = [1,2,3,4,5,6,0]; 
+			geometry var7 <- circle(5) + (5,32); 	// var7 equals circle(10)
+			assert var7 = circle(10); 
+			rgb var8 <- rgb([255, 128, 32]) + rgb('red'); 	// var8 equals rgb([255,128,32])
+			assert var8 = rgb([255,128,32]); 
+			//geometry var9 <- geom1 + geom2; 	// var9 equals a geometry corresponding to union between geom1 and geom2
+			string var10 <- "hello " + 12; 	// var10 equals "hello 12"
+			assert var10 = "hello 12"; 
+			point var11 <- {1, 2} + 4; 	// var11 equals {5.0, 6.0,4.0}
+			assert var11 = {5.0, 6.0,4.0}; 
+			point var12 <- {1, 2} + 4.5; 	// var12 equals {5.5, 6.5,4.5}
+			assert var12 = {5.5, 6.5,4.5}; 
+			int var13 <- 1 + 1; 	// var13 equals 2
+			assert var13 = 2; 
+			int var14 <- 1.0 + 1; 	// var14 equals 2.0
+			assert var14 = 2.0; 
+			int var15 <- 1.0 + 2.5; 	// var15 equals 3.5
+			assert var15 = 3.5; 
+			rgb var16 <- rgb([255, 128, 32]) + 3; 	// var16 equals rgb([255,131,35])
+			assert var16 = rgb([255,131,35]); 
+			list<int> var17 <- [1,2,3,4,5,6] + [2,4,9]; 	// var17 equals [1,2,3,4,5,6,2,4,9]
+			assert var17 = [1,2,3,4,5,6,2,4,9]; 
+			list<int> var18 <- [1,2,3,4,5,6] + [0,8]; 	// var18 equals [1,2,3,4,5,6,0,8]
+			assert var18 = [1,2,3,4,5,6,0,8]; 
+			geometry var19 <- circle(5) + (5,32,#round); 	// var19 equals circle(10)
+			assert var19 = circle(10); 
+			date var20 <- date('2000-01-01') + 200; 	// var20 equals date('2000-01-01')
+			assert var20 = date('2000-01-01'); 
+			geometry var21 <- circle(5) + 5; 	// var21 equals circle(10)
+			assert var21 = circle(10); 
+			matrix var22 <- 3.5 + matrix([[2,5],[3,4]]); 	// var22 equals matrix([[5.5,8.5],[6.5,7.5]])
+			assert var22 = matrix([[5.5,8.5],[6.5,7.5]]); 
+			map var0 <- ['a'::1,'b'::2] + ('c'::3); 	// var0 equals ['a'::1,'b'::2,'c'::3]
 			assert var0 = ['a'::1,'b'::2,'c'::3]; 
-			map var1 <- ['a'::1,'b'::2] + [5::3.0]; 	// var1 equals ['a'::1.0,'b'::2.0,5::3.0]
-			assert var1 = ['a'::1.0,'b'::2.0,5::3.0]; 
-			map var2 <- ['a'::1,'b'::2] + ('c'::3); 	// var2 equals ['a'::1,'b'::2,'c'::3]
+			map var1 <- ['a'::1,'b'::2] + ('c'::3); 	// var1 equals ['a'::1,'b'::2,'c'::3]
+			assert var1 = ['a'::1,'b'::2,'c'::3]; 
+			map var2 <- ['a'::1,'b'::2] + ['c'::3]; 	// var2 equals ['a'::1,'b'::2,'c'::3]
 			assert var2 = ['a'::1,'b'::2,'c'::3]; 
-			map var3 <- ['a'::1,'b'::2] + ('c'::3); 	// var3 equals ['a'::1,'b'::2,'c'::3]
-			assert var3 = ['a'::1,'b'::2,'c'::3]; 
+			map var3 <- ['a'::1,'b'::2] + [5::3.0]; 	// var3 equals ['a'::1.0,'b'::2.0,5::3.0]
+			assert var3 = ['a'::1.0,'b'::2.0,5::3.0]; 
 
 		}
 	
@@ -240,9 +240,9 @@ experiment OpMatrix_related__operatorsTestTests type: test {
 		}
 	
 		test shuffleOp {
-			string var0 <- shuffle ('abc'); 	// var0 equals 'bac' (for example)
-			matrix var1 <- shuffle (matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var1 equals matrix([["c12","c21","c11"],["c13","c22","c23"]]) (for example)
-			container var2 <- shuffle ([12, 13, 14]); 	// var2 equals [14,12,13] (for example)
+			container var0 <- shuffle ([12, 13, 14]); 	// var0 equals [14,12,13] (for example)
+			string var1 <- shuffle ('abc'); 	// var1 equals 'bac' (for example)
+			matrix var2 <- shuffle (matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var2 equals matrix([["c12","c21","c11"],["c13","c22","c23"]]) (for example)
 
 		}
 	

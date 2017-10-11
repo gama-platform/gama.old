@@ -42,7 +42,7 @@ experiment OpDate_related__operatorsTestTests type: test {
 		test afterOp {
 			//reflex when: after(starting_date) {} 	// this reflex will always be run after the first step
 			//reflex when: false after(starting date + #10days) {} 	// This reflex will not be run after this date. Better to use 'until' or 'before' in that case
-			every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day
+			//every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day
 
 		}
 	
@@ -52,39 +52,39 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test betweenOp {
-			bool var2 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var2 equals true
-			assert var2 = true; 
-			//// // will return true if the current_date of the model is in_between the 2
-			//between(date('2000-01-01'), date('2020-02-02'))
-			bool var5 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var5 equals true
-			assert var5 = true; 
+			bool var0 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var0 equals true
+			assert var0 = true; 
 			//// will return true every new day between these two dates, taking the first one as the starting point
 			//every(#day between(date('2000-01-01'), date('2020-02-02'))) 
-			bool var0 <- between(5.0, 1.0, 10.0); 	// var0 equals true
-			assert var0 = true; 
-			bool var1 <- between(5, 1, 10); 	// var1 equals true
-			assert var1 = true; 
+			bool var3 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var3 equals true
+			assert var3 = true; 
+			//// // will return true if the current_date of the model is in_between the 2
+			//between(date('2000-01-01'), date('2020-02-02'))
+			bool var6 <- between(5.0, 1.0, 10.0); 	// var6 equals true
+			assert var6 = true; 
+			bool var7 <- between(5, 1, 10); 	// var7 equals true
+			assert var7 = true; 
 
 		}
 	
 		test DifferentOp {
-			bool var0 <- 3.0 != 3.0; 	// var0 equals false
+			bool var0 <- [2,3] != [2,3]; 	// var0 equals false
 			assert var0 = false; 
-			bool var1 <- 4.0 != 4.7; 	// var1 equals true
+			bool var1 <- [2,4] != [2,3]; 	// var1 equals true
 			assert var1 = true; 
-			bool var2 <- 3.0 != 3; 	// var2 equals false
+			bool var2 <- 3 != 3.0; 	// var2 equals false
 			assert var2 = false; 
-			bool var3 <- 4.7 != 4; 	// var3 equals true
+			bool var3 <- 4 != 4.7; 	// var3 equals true
 			assert var3 = true; 
-			bool var4 <- #now != #now minus_hours 1; 	// var4 equals true
-			assert var4 = true; 
-			bool var5 <- [2,3] != [2,3]; 	// var5 equals false
-			assert var5 = false; 
-			bool var6 <- [2,4] != [2,3]; 	// var6 equals true
+			bool var4 <- 3.0 != 3; 	// var4 equals false
+			assert var4 = false; 
+			bool var5 <- 4.7 != 4; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- #now != #now minus_hours 1; 	// var6 equals true
 			assert var6 = true; 
-			bool var7 <- 3 != 3.0; 	// var7 equals false
+			bool var7 <- 3.0 != 3.0; 	// var7 equals false
 			assert var7 = false; 
-			bool var8 <- 4 != 4.7; 	// var8 equals true
+			bool var8 <- 4.0 != 4.7; 	// var8 equals true
 			assert var8 = true; 
 
 		}
@@ -92,17 +92,17 @@ experiment OpDate_related__operatorsTestTests type: test {
 		test EqualsOp {
 			bool var0 <- [2,3] = [2,3]; 	// var0 equals true
 			assert var0 = true; 
-			bool var1 <- 3 = 3.0; 	// var1 equals true
-			assert var1 = true; 
-			bool var2 <- 4 = 4.7; 	// var2 equals false
+			bool var1 <- 4.5 = 4.7; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- #now = #now minus_hours 1; 	// var2 equals false
 			assert var2 = false; 
-			bool var3 <- 4.7 = 4; 	// var3 equals false
-			assert var3 = false; 
-			bool var4 <- 4.5 = 4.7; 	// var4 equals false
+			bool var3 <- 3 = 3.0; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <- 4 = 4.7; 	// var4 equals false
 			assert var4 = false; 
-			bool var5 <- 4 = 5; 	// var5 equals false
+			bool var5 <- 4.7 = 4; 	// var5 equals false
 			assert var5 = false; 
-			bool var6 <- #now = #now minus_hours 1; 	// var6 equals false
+			bool var6 <- 4 = 5; 	// var6 equals false
 			assert var6 = false; 
 
 		}
@@ -121,23 +121,23 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test GEOp {
-			bool var0 <- 'abc' >= 'aeb'; 	// var0 equals false
-			assert var0 = false; 
-			bool var1 <- 'abc' >= 'abc'; 	// var1 equals true
-			assert var1 = true; 
-			bool var2 <- {5,7} >= {4,6}; 	// var2 equals true
-			assert var2 = true; 
-			bool var3 <- {5,7} >= {4,8}; 	// var3 equals false
-			assert var3 = false; 
-			bool var4 <- 3 >= 7; 	// var4 equals false
+			bool var0 <- {5,7} >= {4,6}; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- {5,7} >= {4,8}; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- 'abc' >= 'aeb'; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- 'abc' >= 'abc'; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <- 3.5 >= 7; 	// var4 equals false
 			assert var4 = false; 
-			bool var5 <- 3.5 >= 7; 	// var5 equals false
-			assert var5 = false; 
-			bool var6 <- 3 >= 2.5; 	// var6 equals true
-			assert var6 = true; 
-			bool var7 <- #now >= #now minus_hours 1; 	// var7 equals true
+			bool var5 <- 3 >= 2.5; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- 3 >= 7; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- 3.5 >= 3.5; 	// var7 equals true
 			assert var7 = true; 
-			bool var8 <- 3.5 >= 3.5; 	// var8 equals true
+			bool var8 <- #now >= #now minus_hours 1; 	// var8 equals true
 			assert var8 = true; 
 
 		}
@@ -149,56 +149,56 @@ experiment OpDate_related__operatorsTestTests type: test {
 			assert var1 = false; 
 			bool var2 <- 'abc' > 'aeb'; 	// var2 equals false
 			assert var2 = false; 
-			bool var3 <- 3 > 2.5; 	// var3 equals true
-			assert var3 = true; 
+			bool var3 <- 3 > 7; 	// var3 equals false
+			assert var3 = false; 
 			bool var4 <- 3.5 > 7.6; 	// var4 equals false
 			assert var4 = false; 
-			bool var5 <- 3 > 7; 	// var5 equals false
-			assert var5 = false; 
+			bool var5 <- #now > #now minus_hours 1; 	// var5 equals true
+			assert var5 = true; 
 			bool var6 <- 3.5 > 7; 	// var6 equals false
 			assert var6 = false; 
-			bool var7 <- #now > #now minus_hours 1; 	// var7 equals true
+			bool var7 <- 3 > 2.5; 	// var7 equals true
 			assert var7 = true; 
 
 		}
 	
 		test LEOp {
-			bool var0 <- 'abc' <= 'aeb'; 	// var0 equals true
+			bool var5 <- 'abc' <= 'aeb'; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- {5,7} <= {4,6}; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- {5,7} <= {4,8}; 	// var7 equals false
+			assert var7 = false; 
+			bool var0 <- 3 <= 7; 	// var0 equals true
 			assert var0 = true; 
-			bool var1 <- {5,7} <= {4,6}; 	// var1 equals false
+			bool var1 <- #now <= #now minus_hours 1; 	// var1 equals false
 			assert var1 = false; 
-			bool var2 <- {5,7} <= {4,8}; 	// var2 equals false
-			assert var2 = false; 
+			bool var2 <- 3.5 <= 3.5; 	// var2 equals true
+			assert var2 = true; 
 			bool var3 <- 3 <= 2.5; 	// var3 equals false
 			assert var3 = false; 
-			bool var4 <- 3 <= 7; 	// var4 equals true
+			bool var4 <- 7.0 <= 7; 	// var4 equals true
 			assert var4 = true; 
-			bool var5 <- 3.5 <= 3.5; 	// var5 equals true
-			assert var5 = true; 
-			bool var6 <- 7.0 <= 7; 	// var6 equals true
-			assert var6 = true; 
-			bool var7 <- #now <= #now minus_hours 1; 	// var7 equals false
-			assert var7 = false; 
 
 		}
 	
 		test LTOp {
-			bool var0 <- 'abc' < 'aeb'; 	// var0 equals true
+			bool var5 <- {5,7} < {4,6}; 	// var5 equals false
+			assert var5 = false; 
+			bool var6 <- {5,7} < {4,8}; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- 'abc' < 'aeb'; 	// var7 equals true
+			assert var7 = true; 
+			bool var0 <- #now < #now minus_hours 1; 	// var0 equals true
 			assert var0 = true; 
-			bool var1 <- {5,7} < {4,6}; 	// var1 equals false
-			assert var1 = false; 
-			bool var2 <- {5,7} < {4,8}; 	// var2 equals false
+			bool var1 <- 3.5 < 7.6; 	// var1 equals true
+			assert var1 = true; 
+			bool var2 <- 3 < 2.5; 	// var2 equals false
 			assert var2 = false; 
-			bool var3 <- 3 < 2.5; 	// var3 equals false
-			assert var3 = false; 
+			bool var3 <- 3.5 < 7; 	// var3 equals true
+			assert var3 = true; 
 			bool var4 <- 3 < 7; 	// var4 equals true
 			assert var4 = true; 
-			bool var5 <- 3.5 < 7; 	// var5 equals true
-			assert var5 = true; 
-			bool var6 <- 3.5 < 7.6; 	// var6 equals true
-			assert var6 = true; 
-			bool var7 <- #now < #now minus_hours 1; 	// var7 equals true
-			assert var7 = true; 
 
 		}
 	
@@ -209,82 +209,89 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test MinusOp {
-			date var0 <- date('2000-01-01') - 200; 	// var0 equals date('2000-01-01')
-			assert var0 = date('2000-01-01'); 
-			rgb var1 <- rgb([255, 128, 32]) - 3; 	// var1 equals rgb([252,125,29])
-			assert var1 = rgb([252,125,29]); 
-			matrix var2 <- 3.5 - matrix([[2,5],[3,4]]); 	// var2 equals matrix([[1.5,-1.5],[0.5,-0.5]])
-			assert var2 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
-			list<int> var3 <- [1,2,3,4,5,6] - [2,4,9]; 	// var3 equals [1,3,5,6]
-			assert var3 = [1,3,5,6]; 
-			list<int> var4 <- [1,2,3,4,5,6] - [0,8]; 	// var4 equals [1,2,3,4,5,6]
-			assert var4 = [1,2,3,4,5,6]; 
-			list<int> var5 <- [1,2,3,4,5,6] - 2; 	// var5 equals [1,3,4,5,6]
-			assert var5 = [1,3,4,5,6]; 
-			list<int> var6 <- [1,2,3,4,5,6] - 0; 	// var6 equals [1,2,3,4,5,6]
-			assert var6 = [1,2,3,4,5,6]; 
-			point var7 <- {1, 2} - {4, 5}; 	// var7 equals {-3.0, -3.0}
-			assert var7 = {-3.0, -3.0}; 
-			int var8 <- 1 - 1; 	// var8 equals 0
-			assert var8 = 0; 
-			int var9 <- 1.0 - 1; 	// var9 equals 0.0
-			assert var9 = 0.0; 
-			int var10 <- 3.7 - 1.2; 	// var10 equals 2.5
-			assert var10 = 2.5; 
-			int var11 <- 3 - 1.2; 	// var11 equals 1.8
-			assert var11 = 1.8; 
-			geometry var12 <- shape - 5; 	// var12 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
-			//geometry var13 <- geom1 - geom2; 	// var13 equals a geometry corresponding to difference between geom1 and geom2
-			geometry var14 <- rectangle(10,10) - [circle(2), square(2)]; 	// var14 equals rectangle(10,10) - (circle(2) + square(2))
-			assert var14 = rectangle(10,10) - (circle(2) + square(2)); 
-			rgb var15 <- rgb([255, 128, 32]) - rgb('red'); 	// var15 equals rgb([0,128,32])
-			assert var15 = rgb([0,128,32]); 
-			float var16 <- date('2000-01-01') - date('2010-01-02'); 	// var16 equals 86400
-			assert var16 = 86400; 
-			point var17 <- {1, 2} - 4.5; 	// var17 equals {-3.5, -2.5, -4.5}
-			assert var17 = {-3.5, -2.5, -4.5}; 
-			point var18 <- {1, 2} - 4; 	// var18 equals {-3.0,-2.0,-4.0}
-			assert var18 = {-3.0,-2.0,-4.0}; 
-			map var19 <- ['a'::1,'b'::2] - ('b'::2); 	// var19 equals ['a'::1]
-			assert var19 = ['a'::1]; 
-			map var20 <- ['a'::1,'b'::2] - ('c'::3); 	// var20 equals ['a'::1,'b'::2]
-			assert var20 = ['a'::1,'b'::2]; 
-			point var21 <- -{3.0,5.0}; 	// var21 equals {-3.0,-5.0}
-			assert var21 = {-3.0,-5.0}; 
-			point var22 <- -{1.0,6.0,7.0}; 	// var22 equals {-1.0,-6.0,-7.0}
-			assert var22 = {-1.0,-6.0,-7.0}; 
-			map var23 <- ['a'::1,'b'::2] - ['b'::2]; 	// var23 equals ['a'::1]
-			assert var23 = ['a'::1]; 
-			map var24 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var24 equals ['a'::1]
-			assert var24 = ['a'::1]; 
-			int var25 <- - (-56); 	// var25 equals 56
-			assert var25 = 56; 
+			point var7 <- {1, 2} - 4.5; 	// var7 equals {-3.5, -2.5, -4.5}
+			assert var7 = {-3.5, -2.5, -4.5}; 
+			point var8 <- {1, 2} - 4; 	// var8 equals {-3.0,-2.0,-4.0}
+			assert var8 = {-3.0,-2.0,-4.0}; 
+			point var9 <- {1, 2} - {4, 5}; 	// var9 equals {-3.0, -3.0}
+			assert var9 = {-3.0, -3.0}; 
+			list<int> var10 <- [1,2,3,4,5,6] - 2; 	// var10 equals [1,3,4,5,6]
+			assert var10 = [1,3,4,5,6]; 
+			list<int> var11 <- [1,2,3,4,5,6] - 0; 	// var11 equals [1,2,3,4,5,6]
+			assert var11 = [1,2,3,4,5,6]; 
+			matrix var12 <- 3.5 - matrix([[2,5],[3,4]]); 	// var12 equals matrix([[1.5,-1.5],[0.5,-0.5]])
+			assert var12 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
+			list<int> var13 <- [1,2,3,4,5,6] - [2,4,9]; 	// var13 equals [1,3,5,6]
+			assert var13 = [1,3,5,6]; 
+			list<int> var14 <- [1,2,3,4,5,6] - [0,8]; 	// var14 equals [1,2,3,4,5,6]
+			assert var14 = [1,2,3,4,5,6]; 
+			rgb var15 <- rgb([255, 128, 32]) - 3; 	// var15 equals rgb([252,125,29])
+			assert var15 = rgb([252,125,29]); 
+			geometry var16 <- shape - 5; 	// var16 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
+			rgb var17 <- rgb([255, 128, 32]) - rgb('red'); 	// var17 equals rgb([0,128,32])
+			assert var17 = rgb([0,128,32]); 
+			geometry var18 <- rectangle(10,10) - [circle(2), square(2)]; 	// var18 equals rectangle(10,10) - (circle(2) + square(2))
+			assert var18 = rectangle(10,10) - (circle(2) + square(2)); 
+			//geometry var19 <- geom1 - geom2; 	// var19 equals a geometry corresponding to difference between geom1 and geom2
+			int var20 <- 1 - 1; 	// var20 equals 0
+			assert var20 = 0; 
+			int var21 <- 1.0 - 1; 	// var21 equals 0.0
+			assert var21 = 0.0; 
+			int var22 <- 3.7 - 1.2; 	// var22 equals 2.5
+			assert var22 = 2.5; 
+			int var23 <- 3 - 1.2; 	// var23 equals 1.8
+			assert var23 = 1.8; 
+			float var24 <- date('2000-01-01') - date('2010-01-02'); 	// var24 equals 86400
+			assert var24 = 86400; 
+			date var25 <- date('2000-01-01') - 200; 	// var25 equals date('2000-01-01')
+			assert var25 = date('2000-01-01'); 
+			point var0 <- -{3.0,5.0}; 	// var0 equals {-3.0,-5.0}
+			assert var0 = {-3.0,-5.0}; 
+			point var1 <- -{1.0,6.0,7.0}; 	// var1 equals {-1.0,-6.0,-7.0}
+			assert var1 = {-1.0,-6.0,-7.0}; 
+			map var2 <- ['a'::1,'b'::2] - ('b'::2); 	// var2 equals ['a'::1]
+			assert var2 = ['a'::1]; 
+			map var3 <- ['a'::1,'b'::2] - ('c'::3); 	// var3 equals ['a'::1,'b'::2]
+			assert var3 = ['a'::1,'b'::2]; 
+			int var4 <- - (-56); 	// var4 equals 56
+			assert var4 = 56; 
+			map var5 <- ['a'::1,'b'::2] - ['b'::2]; 	// var5 equals ['a'::1]
+			assert var5 = ['a'::1]; 
+			map var6 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var6 equals ['a'::1]
+			assert var6 = ['a'::1]; 
 
 		}
 	
 		test minus_daysOp {
-			date1 minus_days 20
+			date var0 <- date('2000-01-01') minus_days 20; 	// var0 equals date('1999-12-10')
+			assert var0 = date('1999-12-10'); 
 
 		}
 	
 		test minus_hoursOp {
-			date1 minus_hours 15 // equivalent to date1 - 15 #h
+			//// equivalent to date1 - 15 #h
+			date var1 <- date('2000-01-01') minus_hours 15 ; 	// var1 equals date('1999-12-31')
+			assert var1 = date('1999-12-31'); 
 
 		}
 	
 		test minus_minutesOp {
-			date var0 <- date('2000-01-01') minus_minutes 5 // equivalent to date1 - 5#mn; 	// var0 equals date('2000-01-01')
-			assert var0 = date('2000-01-01'); 
+			//// date('2000-01-01') to date1 - 5#mn
+			date var1 <- date('2000-01-01') minus_minutes 5 ; 	// var1 equals date('2000-01-01')
+			assert var1 = date('2000-01-01'); 
 
 		}
 	
 		test minus_monthsOp {
-			date1 minus_months 5
+			date var0 <- date('2000-01-01') minus_months 5; 	// var0 equals date('1999-07-01')
+			assert var0 = date('1999-07-01'); 
 
 		}
 	
 		test minus_msOp {
-			date1 minus_ms 15 // equivalent to date1 - 15 #ms
+			//// equivalent to date1 - 15 #ms
+			date var1 <- date('2000-01-01') minus_ms 15 ; 	// var1 equals date('1999-12-31')
+			assert var1 = date('1999-12-31'); 
 
 		}
 	
@@ -293,12 +300,14 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test minus_weeksOp {
-			date1 minus_weeks 15
+			date var0 <- date('2000-01-01') minus_weeks 15; 	// var0 equals date('1999-11-10')
+			assert var0 = date('1999-11-10'); 
 
 		}
 	
 		test minus_yearsOp {
-			date1 minus_years 3
+			date var0 <- date('2000-01-01') minus_years 3; 	// var0 equals date('1997-01-01')
+			assert var0 = date('1997-01-01'); 
 
 		}
 	
@@ -309,76 +318,82 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test PlusOp {
-			geometry var4 <- circle(5) + 5; 	// var4 equals circle(10)
-			assert var4 = circle(10); 
-			geometry var5 <- circle(5) + (5,32,#round); 	// var5 equals circle(10)
-			assert var5 = circle(10); 
-			point var6 <- {1, 2} + 4; 	// var6 equals {5.0, 6.0,4.0}
-			assert var6 = {5.0, 6.0,4.0}; 
-			point var7 <- {1, 2} + 4.5; 	// var7 equals {5.5, 6.5,4.5}
-			assert var7 = {5.5, 6.5,4.5}; 
-			geometry var8 <- circle(5) + (5,32); 	// var8 equals circle(10)
-			assert var8 = circle(10); 
-			point var9 <- {1, 2} + {4, 5}; 	// var9 equals {5.0, 7.0}
-			assert var9 = {5.0, 7.0}; 
-			date var10 <- date('2000-01-01') + 200; 	// var10 equals date('2000-01-01')
-			assert var10 = date('2000-01-01'); 
-			rgb var11 <- rgb([255, 128, 32]) + 3; 	// var11 equals rgb([255,131,35])
-			assert var11 = rgb([255,131,35]); 
-			int var12 <- 1 + 1; 	// var12 equals 2
-			assert var12 = 2; 
-			int var13 <- 1.0 + 1; 	// var13 equals 2.0
-			assert var13 = 2.0; 
-			int var14 <- 1.0 + 2.5; 	// var14 equals 3.5
-			assert var14 = 3.5; 
-			list<int> var15 <- [1,2,3,4,5,6] + 2; 	// var15 equals [1,2,3,4,5,6,2]
-			assert var15 = [1,2,3,4,5,6,2]; 
-			list<int> var16 <- [1,2,3,4,5,6] + 0; 	// var16 equals [1,2,3,4,5,6,0]
-			assert var16 = [1,2,3,4,5,6,0]; 
-			matrix var17 <- 3.5 + matrix([[2,5],[3,4]]); 	// var17 equals matrix([[5.5,8.5],[6.5,7.5]])
-			assert var17 = matrix([[5.5,8.5],[6.5,7.5]]); 
-			list<int> var18 <- [1,2,3,4,5,6] + [2,4,9]; 	// var18 equals [1,2,3,4,5,6,2,4,9]
-			assert var18 = [1,2,3,4,5,6,2,4,9]; 
-			list<int> var19 <- [1,2,3,4,5,6] + [0,8]; 	// var19 equals [1,2,3,4,5,6,0,8]
-			assert var19 = [1,2,3,4,5,6,0,8]; 
-			rgb var20 <- rgb([255, 128, 32]) + rgb('red'); 	// var20 equals rgb([255,128,32])
-			assert var20 = rgb([255,128,32]); 
-			string var21 <- "hello " + 12; 	// var21 equals "hello 12"
-			assert var21 = "hello 12"; 
-			//geometry var22 <- geom1 + geom2; 	// var22 equals a geometry corresponding to union between geom1 and geom2
-			map var0 <- ['a'::1,'b'::2] + ['c'::3]; 	// var0 equals ['a'::1,'b'::2,'c'::3]
+			point var4 <- {1, 2} + {4, 5}; 	// var4 equals {5.0, 7.0}
+			assert var4 = {5.0, 7.0}; 
+			list<int> var5 <- [1,2,3,4,5,6] + 2; 	// var5 equals [1,2,3,4,5,6,2]
+			assert var5 = [1,2,3,4,5,6,2]; 
+			list<int> var6 <- [1,2,3,4,5,6] + 0; 	// var6 equals [1,2,3,4,5,6,0]
+			assert var6 = [1,2,3,4,5,6,0]; 
+			geometry var7 <- circle(5) + (5,32); 	// var7 equals circle(10)
+			assert var7 = circle(10); 
+			rgb var8 <- rgb([255, 128, 32]) + rgb('red'); 	// var8 equals rgb([255,128,32])
+			assert var8 = rgb([255,128,32]); 
+			//geometry var9 <- geom1 + geom2; 	// var9 equals a geometry corresponding to union between geom1 and geom2
+			string var10 <- "hello " + 12; 	// var10 equals "hello 12"
+			assert var10 = "hello 12"; 
+			point var11 <- {1, 2} + 4; 	// var11 equals {5.0, 6.0,4.0}
+			assert var11 = {5.0, 6.0,4.0}; 
+			point var12 <- {1, 2} + 4.5; 	// var12 equals {5.5, 6.5,4.5}
+			assert var12 = {5.5, 6.5,4.5}; 
+			int var13 <- 1 + 1; 	// var13 equals 2
+			assert var13 = 2; 
+			int var14 <- 1.0 + 1; 	// var14 equals 2.0
+			assert var14 = 2.0; 
+			int var15 <- 1.0 + 2.5; 	// var15 equals 3.5
+			assert var15 = 3.5; 
+			rgb var16 <- rgb([255, 128, 32]) + 3; 	// var16 equals rgb([255,131,35])
+			assert var16 = rgb([255,131,35]); 
+			list<int> var17 <- [1,2,3,4,5,6] + [2,4,9]; 	// var17 equals [1,2,3,4,5,6,2,4,9]
+			assert var17 = [1,2,3,4,5,6,2,4,9]; 
+			list<int> var18 <- [1,2,3,4,5,6] + [0,8]; 	// var18 equals [1,2,3,4,5,6,0,8]
+			assert var18 = [1,2,3,4,5,6,0,8]; 
+			geometry var19 <- circle(5) + (5,32,#round); 	// var19 equals circle(10)
+			assert var19 = circle(10); 
+			date var20 <- date('2000-01-01') + 200; 	// var20 equals date('2000-01-01')
+			assert var20 = date('2000-01-01'); 
+			geometry var21 <- circle(5) + 5; 	// var21 equals circle(10)
+			assert var21 = circle(10); 
+			matrix var22 <- 3.5 + matrix([[2,5],[3,4]]); 	// var22 equals matrix([[5.5,8.5],[6.5,7.5]])
+			assert var22 = matrix([[5.5,8.5],[6.5,7.5]]); 
+			map var0 <- ['a'::1,'b'::2] + ('c'::3); 	// var0 equals ['a'::1,'b'::2,'c'::3]
 			assert var0 = ['a'::1,'b'::2,'c'::3]; 
-			map var1 <- ['a'::1,'b'::2] + [5::3.0]; 	// var1 equals ['a'::1.0,'b'::2.0,5::3.0]
-			assert var1 = ['a'::1.0,'b'::2.0,5::3.0]; 
-			map var2 <- ['a'::1,'b'::2] + ('c'::3); 	// var2 equals ['a'::1,'b'::2,'c'::3]
+			map var1 <- ['a'::1,'b'::2] + ('c'::3); 	// var1 equals ['a'::1,'b'::2,'c'::3]
+			assert var1 = ['a'::1,'b'::2,'c'::3]; 
+			map var2 <- ['a'::1,'b'::2] + ['c'::3]; 	// var2 equals ['a'::1,'b'::2,'c'::3]
 			assert var2 = ['a'::1,'b'::2,'c'::3]; 
-			map var3 <- ['a'::1,'b'::2] + ('c'::3); 	// var3 equals ['a'::1,'b'::2,'c'::3]
-			assert var3 = ['a'::1,'b'::2,'c'::3]; 
+			map var3 <- ['a'::1,'b'::2] + [5::3.0]; 	// var3 equals ['a'::1.0,'b'::2.0,5::3.0]
+			assert var3 = ['a'::1.0,'b'::2.0,5::3.0]; 
 
 		}
 	
 		test plus_daysOp {
-			date1 plus_days 20
+			date var0 <- date('2000-01-01') plus_days 12; 	// var0 equals date('2000-01-13')
+			assert var0 = date('2000-01-13'); 
 
 		}
 	
 		test plus_hoursOp {
-			date1 plus_hours 15 // equivalent to date1 + 15 #h
+			// equivalent to date1 + 15 #h
+			date var1 <- date('2000-01-01') plus_hours 15; 	// var1 equals date('2000-01-01')
+			assert var1 = date('2000-01-01'); 
 
 		}
 	
 		test plus_minutesOp {
-			date1 plus_minutes 5 // equivalent to date1 + 5 #mn
+			// equivalent to date1 + 5 #mn
+			date var1 <- date('2000-01-01') plus_minutes 5 ; 	// var1 equals date('2000-01-01')
+			assert var1 = date('2000-01-01'); 
 
 		}
 	
 		test plus_monthsOp {
-			date1 plus_months 5
+			date var0 <- date('2000-01-01') plus_months 5; 	// var0 equals date('2000-06-01')
+			assert var0 = date('2000-06-01'); 
 
 		}
 	
 		test plus_msOp {
-			//// equivalent to date1 + 15 #ms
+			//// equivalent to date('2000-01-01') + 15 #ms
 			date var1 <- date('2000-01-01') plus_ms 15 ; 	// var1 equals date('2000-01-02')
 			assert var1 = date('2000-01-02'); 
 
@@ -389,18 +404,20 @@ experiment OpDate_related__operatorsTestTests type: test {
 		}
 	
 		test plus_weeksOp {
-			date1 plus_weeks 15
+			date var0 <- date('2000-01-01') plus_weeks 15; 	// var0 equals date('2000-15-01')
+			assert var0 = date('2000-15-01'); 
 
 		}
 	
 		test plus_yearsOp {
-			date1 plus_years 3
+			date var0 <- date('2000-01-01') plus_years 15; 	// var0 equals date('2015-01-01')
+			assert var0 = date('2015-01-01'); 
 
 		}
 	
 		test sinceOp {
-			reflex when: since(starting_date) {} -: will always be run
-			every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date
+			//reflex when: since(starting_date) {}  	// this reflex will always be run
+			//every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date
 
 		}
 	

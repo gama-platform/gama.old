@@ -8,8 +8,8 @@ experiment OpStatistical__operatorsTestTests type: test {
 
 	
 		test buildOp {
-			//build(matrix([[1,2,3,4],[2,3,4,2]]),"GLS")
 			//matrix([[1,2,3,4],[2,3,4,2]])
+			//build(matrix([[1,2,3,4],[2,3,4,2]]),"GLS")
 
 		}
 	
@@ -42,10 +42,10 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test dtwOp {
-			float var0 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2); 	// var0 equals 2.0
-			assert var0 = 2.0; 
-			float var1 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0]); 	// var1 equals 2
-			assert var1 = 2; 
+			float var0 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0]); 	// var0 equals 2
+			assert var0 = 2; 
+			float var1 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2); 	// var1 equals 2.0
+			assert var1 = 2.0; 
 
 		}
 	

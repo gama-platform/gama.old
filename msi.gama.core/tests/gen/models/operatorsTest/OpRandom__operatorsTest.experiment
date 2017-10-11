@@ -41,16 +41,16 @@ experiment OpRandom__operatorsTestTests type: test {
 		}
 	
 		test rndOp {
-			point var0 <- rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}); 	// var0 equals a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0
-			float var1 <- rnd(3.4); 	// var1 equals a random float between 0.0 and 3.4
-			int var2 <- rnd (2, 4); 	// var2 equals 2, 3 or 4
-			point var3 <- rnd ({2.5,3, 0.0}); 	// var3 equals {x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0
-			float var4 <- rnd (2.0, 4.0); 	// var4 equals a float number between 2.0 and 4.0
-			int var5 <- rnd (2, 12, 4); 	// var5 equals 2, 6 or 10
-			int var6 <- rnd (2); 	// var6 equals 0, 1 or 2
-			float var7 <- rnd (1000) / 1000; 	// var7 equals a float between 0 and 1 with a precision of 0.001
+			float var0 <- rnd(3.4); 	// var0 equals a random float between 0.0 and 3.4
+			point var1 <- rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}); 	// var1 equals a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0
+			int var2 <- rnd (2); 	// var2 equals 0, 1 or 2
+			float var3 <- rnd (1000) / 1000; 	// var3 equals a float between 0 and 1 with a precision of 0.001
+			point var4 <- rnd ({2.5,3, 0.0}); 	// var4 equals {x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0
+			float var5 <- rnd (2.0, 4.0); 	// var5 equals a float number between 2.0 and 4.0
+			int var6 <- rnd (2, 12, 4); 	// var6 equals 2, 6 or 10
+			float var7 <- rnd (2.0, 4.0, 0.5); 	// var7 equals a float number between 2.0 and 4.0 every 0.5
 			point var8 <- rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}, 1); 	// var8 equals a point with x = 2.0, y equal to 2.0, 3.0 or 4.0 and z between 0.0 and 10.0 every 1.0
-			float var9 <- rnd (2.0, 4.0, 0.5); 	// var9 equals a float number between 2.0 and 4.0 every 0.5
+			int var9 <- rnd (2, 4); 	// var9 equals 2, 3 or 4
 
 		}
 	
@@ -60,15 +60,15 @@ experiment OpRandom__operatorsTestTests type: test {
 		}
 	
 		test sampleOp {
-			container var0 <- sample([2,10,1],2,false); 	// var0 equals [1,2]
-			container var1 <- sample([2,10,1],2,false,[0.1,0.7,0.2]); 	// var1 equals [10,2]
+			container var0 <- sample([2,10,1],2,false,[0.1,0.7,0.2]); 	// var0 equals [10,2]
+			container var1 <- sample([2,10,1],2,false); 	// var1 equals [1,2]
 
 		}
 	
 		test shuffleOp {
-			string var0 <- shuffle ('abc'); 	// var0 equals 'bac' (for example)
-			matrix var1 <- shuffle (matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var1 equals matrix([["c12","c21","c11"],["c13","c22","c23"]]) (for example)
-			container var2 <- shuffle ([12, 13, 14]); 	// var2 equals [14,12,13] (for example)
+			container var0 <- shuffle ([12, 13, 14]); 	// var0 equals [14,12,13] (for example)
+			string var1 <- shuffle ('abc'); 	// var1 equals 'bac' (for example)
+			matrix var2 <- shuffle (matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var2 equals matrix([["c12","c21","c11"],["c13","c22","c23"]]) (for example)
 
 		}
 	
