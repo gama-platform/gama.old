@@ -10,27 +10,15 @@
  *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>.
  */
 
-model </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>
-
-global {
-	init {
-		create test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> number: 1;
-		ask test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> {do _step_;}
-	}
-}
-
-entities {
-	species test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text> {
+experiment </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Tests type: test {	
 
 	</xsl:text>
 
 	<xsl:call-template name="buildOperatorsTest"/>
 
 	<xsl:text>
-	}
 }
 
-experiment test</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>Exp type: gui {}	
 	</xsl:text>
 
 </xsl:template>

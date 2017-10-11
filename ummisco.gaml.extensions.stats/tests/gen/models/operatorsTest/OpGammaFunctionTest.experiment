@@ -1,0 +1,40 @@
+/**
+ *  OpOpGammaFunctionTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpGammaFunctionTest.
+ */
+
+experiment OpGammaFunctionTestTests type: test {	
+
+	
+		test betaOp {
+
+		}
+	
+		test gammaOp {
+
+		}
+	
+		test incomplete_betaOp {
+
+		}
+	
+		test incomplete_gammaOp {
+
+		}
+	
+		test incomplete_gamma_complementOp {
+
+		}
+	
+		test lgammaOp {
+
+		}
+	
+		test log_gammaOp {
+
+		}
+	
+}
+
+	

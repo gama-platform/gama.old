@@ -1,0 +1,24 @@
+/**
+ *  OpOpEDP_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpEDP_related__operatorsTest.
+ */
+
+experiment OpEDP_related__operatorsTestTests type: test {	
+
+	
+		test diffOp {
+
+		}
+	
+		test diff2Op {
+
+		}
+	
+		test internal_zero_order_equationOp {
+
+		}
+	
+}
+
+	

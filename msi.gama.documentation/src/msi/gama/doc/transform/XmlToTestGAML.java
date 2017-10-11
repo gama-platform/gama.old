@@ -21,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import msi.gama.doc.util.Constants;
+import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.XMLUtils;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -32,6 +33,30 @@ import org.xml.sax.SAXException;
 public class XmlToTestGAML {
 
 	public static final String ATT_NAME_FILE = "fileName"; 
+	
+	public static void createEachTest(File docFile) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+		File pluginFolder = docFile.getParentFile().getParentFile();
+		
+		Document document = XMLUtils.createDoc(docFile.getAbsolutePath());
+		document = cleanDocumentTest(document);	
+
+		System.out.println("Beginning of the transformation for: " + docFile.getAbsolutePath());
+		PrepareEnv.prepareUnitTestGenerator(pluginFolder);
+
+		//////////////////////////////////////////////////////////////////////////////////
+		System.out.print("Creation of the test models for Operators.....");
+		File dirOperators = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_MODELS + File.separator + Constants.TEST_OPERATORS_FOLDER);
+		// 
+		//File dirOperators = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_OPERATORS_FOLDER);
+		dirOperators.mkdir();
+		
+		createOperatorsTests(document,
+				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Operators-xml2test.xsl",
+				dirOperators.getCanonicalPath() ); 
+		System.out.println("Done");			
+		
+	}
+	
 	
 	public static void createAllTests() 
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
@@ -122,7 +147,7 @@ public class XmlToTestGAML {
 			root.appendChild(rootOperators);
 			docTemp.appendChild(root);
 			
-			XMLUtils.transformDocument(docTemp, xsl, targetFolder + File.separator + nameFileSpecies + ".gaml"); 		
+			XMLUtils.transformDocument(docTemp, xsl, targetFolder + File.separator + nameFileSpecies + ".experiment"); 		
 		}
 	}
 	

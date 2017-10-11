@@ -84,6 +84,19 @@ public class WorkspaceManager {
 		return hmFilesPackages;
  	}
  	
+ 	// TODO : temporary method
+ 	public HashMap<String, File> getAllDocFilesLocal() throws IOException{
+		HashMap<String, File> hmFilesPackages = new HashMap<String, File>();
+		
+		for(File f : wsFile.listFiles()){			
+			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE_LOCAL);
+			if(docGamaFile.exists()){
+				hmFilesPackages.put(f.getName(),docGamaFile);
+			}
+		}
+		return hmFilesPackages;
+ 	} 	
+ 	
  	public HashMap<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException{
  		HashMap<String, File> hmFilesPackages = getAllDocFiles();
  		List<String> pluginsProduct = getAllGAMAPluginsInProduct();

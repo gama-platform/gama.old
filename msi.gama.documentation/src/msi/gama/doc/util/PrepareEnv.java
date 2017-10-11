@@ -13,8 +13,37 @@ package msi.gama.doc.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class PrepareEnv {
+	
+	/**
+	 * 
+	 * @param pluginFolder the plugin folder in which tests will be created
+	 */
+	public static void prepareUnitTestGenerator(File pluginFolder) {
+		File testsFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_FOLDER);
+		File testsGenFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_FOLDER);
+		File testsModelsFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_MODELS);
+		File projectFile = new File(Constants.PROJECT_FILE);
+		
+		if(testsFolder.exists() ) {
+			if(testsGenFolder.exists()) {deleteDirectory(testsGenFolder);}
+		} else {
+			testsFolder.mkdir();
+		}
+		
+		testsGenFolder.mkdir();
+		try {
+			Files.copy(Paths.get(projectFile.getAbsolutePath()), Paths.get(testsGenFolder.getAbsolutePath() + File.separator + ".project"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		testsModelsFolder.mkdir();
+	}
+	
 	
 	public static void prepareDocumentation(boolean online) throws IOException{
 		// - Deletes every generated folders		

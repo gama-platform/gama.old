@@ -1,0 +1,22 @@
+/**
+ *  OpOpTime_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpTime_related__operatorsTest.
+ */
+
+experiment OpTime_related__operatorsTestTests type: test {	
+
+	
+		test dateOp {
+			date("1999-12-30", 'yyyy-MM-dd')
+
+		}
+	
+		test stringOp {
+			format(#now, 'yyyy-MM-dd')
+
+		}
+	
+}
+
+	

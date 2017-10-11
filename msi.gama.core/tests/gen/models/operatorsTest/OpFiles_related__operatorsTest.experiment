@@ -1,0 +1,65 @@
+/**
+ *  OpOpFiles_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpFiles_related__operatorsTest.
+ */
+
+experiment OpFiles_related__operatorsTestTests type: test {	
+
+	
+		test crsOp {
+			//string var0 <- crs(my_shapefile); 	// var0 equals the crs of the shapefile
+
+		}
+	
+		test fileOp {
+			let fileT type: file value: file("../includes/Stupid_Cell.Data"); 
+						// fileT represents the file "../includes/Stupid_Cell.Data"
+						// fileT.contents here contains a matrix storing all the data of the text file
+
+		}
+	
+		test file_existsOp {
+
+		}
+	
+		test folderOp {
+
+			assert folder("../includes/") raises: "error"; 
+			//file dirT <- folder("../includes/");
+							// dirT represents the repository "../includes/"
+							// dirT.contents here contains the list of the names of included files
+
+		}
+	
+		test getOp {
+			//string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable
+			//string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable
+
+		}
+	
+		test new_folderOp {
+			file dirNewT <- new_folder("incl/");   	// dirNewT represents the repository "../incl/"
+																		// eventually creates the directory ../incl
+
+		}
+	
+		test osm_fileOp {
+			file myOSMfile2 <- osm_file("../includes/rouen.osm",["highway"::["primary","motorway"]], 0);
+			file myOSMfile <- osm_file("../includes/rouen.osm", ["highway"::["primary","motorway"]]);
+
+		}
+	
+		test readOp {
+			unknown agent_name <- read ('name'); 	// agent_name equals reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. 
+
+		}
+	
+		test writableOp {
+			file var0 <- shape_file("../images/point_eau.shp") writable false; 	// var0 equals returns a file in read-only mode
+
+		}
+	
+}
+
+	

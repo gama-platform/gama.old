@@ -13,7 +13,7 @@
 			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:if test="@type != 'null'"><xsl:value-of select="@type"/><xsl:text> </xsl:text> <xsl:value-of select="@var"/> &lt;- </xsl:if><xsl:value-of select="@code"/><xsl:if test="@type != 'null'">;</xsl:if> 	// <xsl:value-of select="@var"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
 </xsl:text></xsl:if>
 			<xsl:if test="@test = 'true'">
-			assert <xsl:value-of select="@var"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
+			assert <xsl:value-of select="@var"/> = <xsl:value-of select="@equals"/>;<xsl:text> 
 </xsl:text> </xsl:if>								
 				</xsl:when>
 				<xsl:otherwise>
@@ -21,7 +21,7 @@
 			<xsl:if test="@isExecutable = 'false'">//</xsl:if>	<xsl:value-of select="@type"/> var<xsl:value-of select="@index"/> &lt;- <xsl:value-of select="@code"/>; 	// var<xsl:value-of select="@index"/> equals <xsl:value-of select="@equals"/><xsl:if test="@test = 'false'"><xsl:text>
 </xsl:text></xsl:if>
 			<xsl:if test="@test = 'true'">
-			assert var<xsl:value-of select="@index"/> equals: <xsl:value-of select="@equals"/>;<xsl:text> 
+			assert var<xsl:value-of select="@index"/> = <xsl:value-of select="@equals"/>;<xsl:text> 
 </xsl:text> </xsl:if>					
 				</xsl:otherwise>
 				

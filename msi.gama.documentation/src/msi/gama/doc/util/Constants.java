@@ -61,15 +61,23 @@ public class Constants {
 	
 		
 	public static String DOCGAMA_FILE = "target"+ File.separator + "generated-sources"+ File.separator + "annotations"+ File.separator + "docGAMA.xml";
+	public static String DOCGAMA_FILE_LOCAL = "gaml"+ File.separator + "docGAMA.xml";	
 	public static String DOCGAMA_GLOBAL_FILE = JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
 		
-	public static String TEST_OPERATORS_FOLDER = "operatorsTest";
-	public static String TEST_STATEMENTS_FOLDER = "statementsTest";
-	
 	public static String DOCGAMA_PDF = PDF_FOLDER + File.separator + "docGAMAv17.pdf";	
 	public static String TOC_FILE = INPUT_FOLDER + File.separator + "toc" + File.separator + "toc17.xml";	
 	public static String MD_BLANK_PAGE = "G__BlankPage.md"; // Blank page is directly in the wiki folder
 	
+	
+	// Tests
+	public static String TEST_PLUGIN_FOLDER = "tests" ; 
+	public static String TEST_PLUGIN_GEN_FOLDER = TEST_PLUGIN_FOLDER + File.separator + "gen"; 	
+	public static String TEST_PLUGIN_GEN_MODELS = TEST_PLUGIN_GEN_FOLDER + File.separator + "models"; 	
+	
+	public static String TEST_OPERATORS_FOLDER = "operatorsTest";
+	public static String TEST_STATEMENTS_FOLDER = "statementsTest";
+	
+	public static String PROJECT_FILE = INPUT_FOLDER + File.separator + "project" + File.separator + ".project";
 	
 	// Commandes
 	public static String CMD_PANDOC = (OSUtils.isWindows()) ? "C:/Users/Julien/AppData/Local/Pandoc/pandoc" 
