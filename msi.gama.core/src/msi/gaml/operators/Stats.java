@@ -12,13 +12,15 @@ package msi.gaml.operators;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
-import org.apache.commons.math3.stat.clustering.Cluster;
-import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
-import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
-import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
@@ -64,7 +66,7 @@ import rcaller.exception.ParseException;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Stats {
 
-	public static class Instance extends EuclideanDoublePoint {
+	public static class Instance extends DoublePoint {
 
 		/**
 		 * 
@@ -962,8 +964,8 @@ public class Stats {
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
 
-		final DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
-		final List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
+		final List<DoublePoint> instances = new ArrayList<DoublePoint>();
 		for (int i = 0; i < data.size(); i++) {
 			final GamaList d = (GamaList) data.get(i);
 			final double point[] = new double[d.size()];
@@ -972,11 +974,11 @@ public class Stats {
 			}
 			instances.add(new Instance(i, point));
 		}
-		final List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
+		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
 		final GamaList results = (GamaList) GamaListFactory.create();
-		for (final Cluster<EuclideanDoublePoint> cl : clusters) {
+		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
-			for (final EuclideanDoublePoint pt : cl.getPoints()) {
+			for (final DoublePoint pt : cl.getPoints()) {
 				clG.addValue(scope, ((Instance) pt).getId());
 			}
 			results.addValue(scope, clG);
@@ -998,11 +1000,9 @@ public class Stats {
 					isExecutable = false) })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
-		final Random rand = new Random(scope.getRandom().getSeed().longValue());
-		final KMeansPlusPlusClusterer<EuclideanDoublePoint> kmeans =
-				new KMeansPlusPlusClusterer<EuclideanDoublePoint>(rand);
+		final MersenneTwister rand = new MersenneTwister(scope.getRandom().getSeed().longValue());
 
-		final List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		final List<DoublePoint> instances = new ArrayList<DoublePoint>();
 		for (int i = 0; i < data.size(); i++) {
 			final GamaList d = (GamaList) data.get(i);
 			final double point[] = new double[d.size()];
@@ -1011,11 +1011,13 @@ public class Stats {
 			}
 			instances.add(new Instance(i, point));
 		}
-		final List<Cluster<EuclideanDoublePoint>> clusters = kmeans.cluster(instances, k, maxIt);
+		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
+				new KMeansPlusPlusClusterer<DoublePoint>(k, maxIt, new EuclideanDistance(), rand);
+		final List<CentroidCluster<DoublePoint>> clusters = kmeans.cluster(instances);
 		final GamaList results = (GamaList) GamaListFactory.create();
-		for (final Cluster<EuclideanDoublePoint> cl : clusters) {
+		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
-			for (final EuclideanDoublePoint pt : cl.getPoints()) {
+			for (final DoublePoint pt : cl.getPoints()) {
 				clG.addValue(scope, ((Instance) pt).getId());
 			}
 			results.addValue(scope, clG);
