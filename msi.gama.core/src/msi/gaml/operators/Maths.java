@@ -83,7 +83,8 @@ public class Maths {
 											equals = "sqrt(16.81)",
 											isTestOnly = true),
 									@example (
-											value = "assert (10^(-9) = 0) equals: false;",
+											value = "(10^(-9) = 0)", 
+											equals= "false",
 											isTestOnly = true), }) },
 			see = { "*", "sqrt" })
 	public static Double pow(final Integer a, final Integer b) {

@@ -61,10 +61,10 @@ experiment OpSpatial__queries__operatorsTestTests type: test {
 		}
 	
 		test neighbors_ofOp {
-			container var3 <- neighbors_of (topology(self), self,10); 	// var3 equals all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
-			//container var0 <- graphEpidemio neighbors_of (node(3)); 	// var0 equals [node0,node2]
-			//container var1 <- graphFromMap neighbors_of node({12,45}); 	// var1 equals [{1.0,5.0},{34.0,56.0}]
-			container var2 <- topology(self) neighbors_of self; 	// var2 equals returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
+			container var0 <- neighbors_of (topology(self), self,10); 	// var0 equals all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
+			//container var1 <- graphEpidemio neighbors_of (node(3)); 	// var1 equals [node0,node2]
+			//container var2 <- graphFromMap neighbors_of node({12,45}); 	// var2 equals [{1.0,5.0},{34.0,56.0}]
+			container var3 <- topology(self) neighbors_of self; 	// var3 equals returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
 
 		}
 	

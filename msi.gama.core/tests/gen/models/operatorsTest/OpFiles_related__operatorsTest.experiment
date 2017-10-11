@@ -33,8 +33,8 @@ experiment OpFiles_related__operatorsTestTests type: test {
 		}
 	
 		test getOp {
-			//string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable
 			//string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable
+			//string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable
 
 		}
 	

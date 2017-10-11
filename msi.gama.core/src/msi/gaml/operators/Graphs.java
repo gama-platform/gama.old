@@ -567,7 +567,7 @@ public class Graphs {
 	@doc (
 			value = "returns the sub-graph corresponding to the main connected components of the graph",
 			examples = { @example (
-					value = "main_connected_components (my_graph)",
+					value = "main_connected_components (my_graph)", isExecutable = false,
 					equals = "the sub-graph corresponding to the main connected components of the graph",
 					test = false) },
 			see = { "connected_components_of" })
@@ -968,7 +968,7 @@ public class Graphs {
 							+ "the graph will be built with elements of the list as edges and two edges will be connected by a node if the distance between their "
 							+ "extremity (first or last points) are at distance lower or equal to the tolerance",
 					examples = { @example (
-							value = "as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1);",
+							value = "as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1)",
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })

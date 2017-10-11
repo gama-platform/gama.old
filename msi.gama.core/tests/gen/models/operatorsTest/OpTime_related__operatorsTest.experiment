@@ -13,7 +13,7 @@ experiment OpTime_related__operatorsTestTests type: test {
 		}
 	
 		test stringOp {
-			format(#now, 'yyyy-MM-dd')
+			//format(#now, 'yyyy-MM-dd')
 
 		}
 	

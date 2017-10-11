@@ -44,9 +44,9 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		}
 	
 		test as_edge_graphOp {
-			graph var0 <- as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1);	// var0 equals a graph with two edges and three vertices
-			graph var1 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]); 	// var1 equals a graph with these three vertices and two edges
-			graph var2 <- as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}])]); 	// var2 equals a graph with two edges and three vertices
+			graph var0 <- as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1); 	// var0 equals a graph with two edges and three vertices
+			graph var1 <- as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}])]); 	// var1 equals a graph with two edges and three vertices
+			graph var2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]); 	// var2 equals a graph with these three vertices and two edges
 
 		}
 	
@@ -162,11 +162,7 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(
 			//			myVertexSpecy,
 			//			myEdgeSpecy,
-			//			10, 25,
-			//		true);
-			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(
-			//			myListOfNodes,
-			//			myEdgeSpecy,
+			//			10,
 			//		true);
 			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(
 			//			myListOfNodes,
@@ -176,7 +172,11 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(
 			//			myVertexSpecy,
 			//			myEdgeSpecy,
-			//			10,
+			//			10, 25,
+			//		true);
+			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(
+			//			myListOfNodes,
+			//			myEdgeSpecy,
 			//		true);
 
 		}
@@ -243,12 +243,12 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 			//			"pajek",
 			//			"./example_of_Pajek_file",
 			//			myVertexSpecy,
-			//			myEdgeSpecy);
+			//			myEdgeSpecy , true);
 			//graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(
 			//			"pajek",
 			//			"./example_of_Pajek_file",
 			//			myVertexSpecy,
-			//			myEdgeSpecy , true);
+			//			myEdgeSpecy);
 
 		}
 	
@@ -258,7 +258,7 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		}
 	
 		test main_connected_componentOp {
-			graph var0 <- main_connected_components (my_graph); 	// var0 equals the sub-graph corresponding to the main connected components of the graph
+			//graph var0 <- main_connected_components (my_graph); 	// var0 equals the sub-graph corresponding to the main connected components of the graph
 
 		}
 	
@@ -275,10 +275,10 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		}
 	
 		test neighbors_ofOp {
-			container var3 <- neighbors_of (topology(self), self,10); 	// var3 equals all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
-			//container var0 <- graphEpidemio neighbors_of (node(3)); 	// var0 equals [node0,node2]
-			//container var1 <- graphFromMap neighbors_of node({12,45}); 	// var1 equals [{1.0,5.0},{34.0,56.0}]
-			container var2 <- topology(self) neighbors_of self; 	// var2 equals returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
+			container var0 <- neighbors_of (topology(self), self,10); 	// var0 equals all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.
+			//container var1 <- graphEpidemio neighbors_of (node(3)); 	// var1 equals [node0,node2]
+			//container var2 <- graphFromMap neighbors_of node({12,45}); 	// var2 equals [{1.0,5.0},{34.0,56.0}]
+			container var3 <- topology(self) neighbors_of self; 	// var3 equals returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.
 
 		}
 	
@@ -305,11 +305,11 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		test path_betweenOp {
 			//path var0 <- path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), [ag1, ag2, ag3]); 	// var0 equals A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost
 			//path var1 <- my_topology path_between [ag1, ag2]; 	// var1 equals A path between ag1 and ag2
-			//path var2 <- path_between (cell_grid where each.is_free, ag1, ag2); 	// var2 equals A path between ag1 and ag2 passing through the given cell_grid agents
-			//path var3 <- my_topology path_between (ag1, ag2); 	// var3 equals A path between ag1 and ag2
-			//path var4 <- path_between (my_graph, ag1, ag2); 	// var4 equals A path between ag1 and ag2
+			//path var2 <- path_between (my_graph, ag1, ag2); 	// var2 equals A path between ag1 and ag2
+			//path var3 <- path_between (cell_grid where each.is_free, ag1, ag2); 	// var3 equals A path between ag1 and ag2 passing through the given cell_grid agents
+			//path var4 <- path_between (cell_grid where each.is_free, [ag1, ag2, ag3]); 	// var4 equals A path between ag1 and ag2 and ag3 passing through the given cell_grid agents
 			//path var5 <- path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), ag1, ag2); 	// var5 equals A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost
-			//path var6 <- path_between (cell_grid where each.is_free, [ag1, ag2, ag3]); 	// var6 equals A path between ag1 and ag2 and ag3 passing through the given cell_grid agents
+			//path var6 <- my_topology path_between (ag1, ag2); 	// var6 equals A path between ag1 and ag2
 
 		}
 	

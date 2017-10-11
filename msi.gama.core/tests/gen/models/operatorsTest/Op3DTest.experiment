@@ -29,17 +29,17 @@ experiment Op3DTestTests type: test {
 		}
 	
 		test demOp {
-			//geometry var0 <- dem(dem,texture,z_factor); 	// var0 equals a geometry as a rectangle of width and height equal to the texture.
-			//geometry var1 <- dem(dem,texture); 	// var1 equals a geometry as a rectangle of weight and height equal to the texture.
-			//geometry var2 <- dem(dem,z_factor); 	// var2 equals a geometry as a rectangle of weight and height equal to the texture.
-			//geometry var3 <- dem(dem); 	// var3 equals returns a geometry as a rectangle of width and height equal to the texture.
+			//geometry var0 <- dem(dem,z_factor); 	// var0 equals a geometry as a rectangle of weight and height equal to the texture.
+			//geometry var1 <- dem(dem,texture,z_factor); 	// var1 equals a geometry as a rectangle of width and height equal to the texture.
+			//geometry var2 <- dem(dem); 	// var2 equals returns a geometry as a rectangle of width and height equal to the texture.
+			//geometry var3 <- dem(dem,texture); 	// var3 equals a geometry as a rectangle of weight and height equal to the texture.
 
 		}
 	
 		test hexagonOp {
-			geometry var0 <- hexagon(10,5); 	// var0 equals a geometry as a hexagon of width of 10 and height of 5.
-			geometry var1 <- hexagon(10); 	// var1 equals a geometry as a hexagon of width of 10 and height of 10.
-			geometry var2 <- hexagon({10,5}); 	// var2 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var0 <- hexagon({10,5}); 	// var0 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var1 <- hexagon(10,5); 	// var1 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var2 <- hexagon(10); 	// var2 equals a geometry as a hexagon of width of 10 and height of 10.
 
 		}
 	

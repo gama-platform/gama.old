@@ -221,10 +221,11 @@ public class System {
 			examples = {
 					@example ("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 					@example (
-							value = "assert (values at \"Number\") equals: 100;",
+							value = "(values at \"Number\")",
+							equals = "100",
 							isTestOnly = true),
 					@example (
-							value = "assert (values at \"Location\") equals: {10,10};",
+							value = " (values at \"Location\")", equals = "{10,10}",
 							isTestOnly = true),
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",

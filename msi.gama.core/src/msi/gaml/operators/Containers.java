@@ -1565,7 +1565,7 @@ public class Containers {
 			examples = { @example (
 					value = "create_map([0,1,2],['a','b','c'])",
 					returnType = "map<int,string>",
-					equals = "[0::'a',1::'b',2;;'c']"),
+					equals = "[0::'a',1::'b',2::'c']"),
 					@example (
 							value = "create_map([0,1],[0.1,0.2,0.3])",
 							returnType = "map<int,float>",

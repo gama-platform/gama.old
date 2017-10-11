@@ -3902,7 +3902,8 @@ public abstract class Spatial {
 						examples = { @example (
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
 								equals = "the Moran index computed",
-								test = false) }) })
+								test = false,
+								isExecutable = false) }) })
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
 			final GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
 			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows)

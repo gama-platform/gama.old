@@ -20,14 +20,14 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test circleOp {
-			geometry var0 <- circle(10,{80,30}); 	// var0 equals a geometry as a circle of radius 10, the center will be in the location {80,30}.
-			geometry var1 <- circle(10); 	// var1 equals a geometry as a circle of radius 10.
+			geometry var0 <- circle(10); 	// var0 equals a geometry as a circle of radius 10.
+			geometry var1 <- circle(10,{80,30}); 	// var1 equals a geometry as a circle of radius 10, the center will be in the location {80,30}.
 
 		}
 	
 		test coneOp {
-			geometry var0 <- cone({0, 45}); 	// var0 equals a geometry as a cone with min angle is 0 and max angle is 45.
-			geometry var1 <- cone(0, 45); 	// var1 equals a geometry as a cone with min angle is 0 and max angle is 45.
+			geometry var0 <- cone(0, 45); 	// var0 equals a geometry as a cone with min angle is 0 and max angle is 45.
+			geometry var1 <- cone({0, 45}); 	// var1 equals a geometry as a cone with min angle is 0 and max angle is 45.
 
 		}
 	
@@ -75,15 +75,15 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test hexagonOp {
-			geometry var0 <- hexagon(10,5); 	// var0 equals a geometry as a hexagon of width of 10 and height of 5.
-			geometry var1 <- hexagon(10); 	// var1 equals a geometry as a hexagon of width of 10 and height of 10.
-			geometry var2 <- hexagon({10,5}); 	// var2 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var0 <- hexagon({10,5}); 	// var0 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var1 <- hexagon(10,5); 	// var1 equals a geometry as a hexagon of width of 10 and height of 5.
+			geometry var2 <- hexagon(10); 	// var2 equals a geometry as a hexagon of width of 10 and height of 10.
 
 		}
 	
 		test lineOp {
-			geometry var1 <- polyline([{0,0}, {0,10}, {10,10}, {10,0}],0.2); 	// var1 equals a polyline geometry composed of the 4 points.
-			geometry var0 <- polyline([{0,0}, {0,10}, {10,10}, {10,0}]); 	// var0 equals a polyline geometry composed of the 4 points.
+			geometry var0 <- polyline([{0,0}, {0,10}, {10,10}, {10,0}],0.2); 	// var0 equals a polyline geometry composed of the 4 points.
+			geometry var1 <- polyline([{0,0}, {0,10}, {10,10}, {10,0}]); 	// var1 equals a polyline geometry composed of the 4 points.
 
 		}
 	
@@ -121,9 +121,9 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test rectangleOp {
-			geometry var0 <- rectangle({2.0,6.0}, {6.0,20.0}); 	// var0 equals a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.
-			geometry var1 <- rectangle(10, 5); 	// var1 equals a geometry as a rectangle with width = 10 and height = 5.
-			geometry var2 <- rectangle({10, 5}); 	// var2 equals a geometry as a rectangle with width = 10 and height = 5.
+			geometry var0 <- rectangle({10, 5}); 	// var0 equals a geometry as a rectangle with width = 10 and height = 5.
+			geometry var1 <- rectangle({2.0,6.0}, {6.0,20.0}); 	// var1 equals a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.
+			geometry var2 <- rectangle(10, 5); 	// var2 equals a geometry as a rectangle with width = 10 and height = 5.
 
 		}
 	

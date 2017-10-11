@@ -960,7 +960,7 @@ public class Stats {
 	@doc (
 			value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)") })
+			examples = { @example (value = "dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)", equals = "[]") })
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
 
@@ -1033,7 +1033,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the dynamic time warping between the two series of value with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
-			examples = { @example ("dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)") })
+			examples = { @example (value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)", equals = "2.0") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2,
 			final int radius) throws GamaRuntimeException {
 		final int n1 = vals1.size();
@@ -1088,7 +1088,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the dynamic time warping between the two series of value",
-			examples = { @example ("dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])") })
+			examples = { @example (value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])", equals = "2") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2)
 			throws GamaRuntimeException {
 		final int n1 = vals1.size();
@@ -1137,7 +1137,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
 			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
-			examples = { @example ("gamma_rnd(10.0,5.0)") })
+			examples = { @example (value = "gamma_rnd(10.0,5.0)", isExecutable = false) })
 	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
 			throws GamaRuntimeException {
 		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
@@ -1154,7 +1154,7 @@ public class Stats {
 	@doc (
 			value = "returns skewness value computed from the operand list of values",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
-			examples = { @example ("skewness ([1,2,3,4,5])") })
+			examples = { @example (value = "skewness ([1,2,3,4,5])", equals = "0.0") })
 	public static Double skewness(final IScope scope, final GamaList data) throws GamaRuntimeException {
 		final Skewness sk = new Skewness();
 		final double[] values = new double[data.length(scope)];
@@ -1173,7 +1173,7 @@ public class Stats {
 	@doc (
 			value = "returns kurtosis value computed from the operand list of values",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
-			examples = { @example ("kurtosis ([1,2,3,4,5])") })
+			examples = { @example (value = "kurtosis ([1,2,3,4,5])", equals = "1.0") })
 	public static Double kurtosis(final IScope scope, final GamaList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
@@ -1192,7 +1192,7 @@ public class Stats {
 	@doc (
 			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)") })
+			examples = { @example (value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)", equals = "[]") })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);
@@ -1206,7 +1206,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
-			examples = { @example ("build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")") })
+			examples = { @example (value = "build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")", isExecutable = false) })
 	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, final String method)
 			throws GamaRuntimeException {
 		try {
@@ -1224,7 +1224,7 @@ public class Stats {
 			concept = {})
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
-			examples = { @example ("matrix([[1,2,3,4],[2,3,4,2]])") })
+			examples = { @example (value = "matrix([[1,2,3,4],[2,3,4,2]])", isExecutable = false) })
 	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data)
 			throws GamaRuntimeException {
 		try {
@@ -1243,7 +1243,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
 			value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
-			examples = { @example ("predict(my_regression, [1,2,3]") })
+			examples = { @example (value = "predict(my_regression, [1,2,3])", isExecutable = false) })
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
 			final GamaList<Double> instance) throws GamaRuntimeException {
 		return regression.predict(scope, instance);

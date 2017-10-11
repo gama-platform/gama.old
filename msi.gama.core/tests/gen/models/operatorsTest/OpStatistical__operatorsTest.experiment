@@ -8,8 +8,8 @@ experiment OpStatistical__operatorsTestTests type: test {
 
 	
 		test buildOp {
-			matrix([[1,2,3,4],[2,3,4,2]])
-			build(matrix([[1,2,3,4],[2,3,4,2]]),"GLS")
+			//build(matrix([[1,2,3,4],[2,3,4,2]]),"GLS")
+			//matrix([[1,2,3,4],[2,3,4,2]])
 
 		}
 	
@@ -22,7 +22,8 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test dbscanOp {
-			dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)
+			msi.gama.util.IList<msi.gama.util.GamaList> var0 <- dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2); 	// var0 equals []
+			assert var0 = []; 
 
 		}
 	
@@ -35,14 +36,16 @@ experiment OpStatistical__operatorsTestTests type: test {
 	
 		test distribution2d_ofOp {
 			//map var0 <- distribution_of([1,1,2,12.5],10); 	// var0 equals map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])
-			//map var1 <- distribution_of([1,1,2,12.5],10); 	// var1 equals map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])
-			//map var2 <- distribution2d_of([1,1,2,12.5]); 	// var2 equals map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])
+			//map var1 <- distribution2d_of([1,1,2,12.5]); 	// var1 equals map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])
+			//map var2 <- distribution_of([1,1,2,12.5],10); 	// var2 equals map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])
 
 		}
 	
 		test dtwOp {
-			dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)
-			dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])
+			float var0 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2); 	// var0 equals 2.0
+			assert var0 = 2.0; 
+			float var1 <- dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0]); 	// var1 equals 2
+			assert var1 = 2; 
 
 		}
 	
@@ -52,7 +55,7 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test gamma_rndOp {
-			gamma_rnd(10.0,5.0)
+			//gamma_rnd(10.0,5.0)
 
 		}
 	
@@ -80,12 +83,14 @@ experiment OpStatistical__operatorsTestTests type: test {
 	
 		test kmeansOp {
 			//kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)
-			kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)
+			list<list> var1 <- kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2); 	// var1 equals []
+			assert var1 = []; 
 
 		}
 	
 		test kurtosisOp {
-			kurtosis ([1,2,3,4,5])
+			float var0 <- kurtosis ([1,2,3,4,5]); 	// var0 equals 1.0
+			assert var0 = 1.0; 
 
 		}
 	
@@ -129,7 +134,7 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test moranOp {
-			float var0 <- moran([1.0, 0.5, 2.0], weight_matrix); 	// var0 equals the Moran index computed
+			//float var0 <- moran([1.0, 0.5, 2.0], weight_matrix); 	// var0 equals the Moran index computed
 
 		}
 	
@@ -140,7 +145,7 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test predictOp {
-			predict(my_regression, [1,2,3]
+			//predict(my_regression, [1,2,3])
 
 		}
 	
@@ -166,7 +171,8 @@ experiment OpStatistical__operatorsTestTests type: test {
 		}
 	
 		test skewnessOp {
-			skewness ([1,2,3,4,5])
+			float var0 <- skewness ([1,2,3,4,5]); 	// var0 equals 0.0
+			assert var0 = 0.0; 
 
 		}
 	
