@@ -1,0 +1,37 @@
+/**
+* Name: Spatial Operators 
+* Author: Patrick Taillandier
+* Description: Tests various spatial operators
+* Tags: spatial, operators, test
+*/
+experiment OperatorsTest type: test {
+	test "add_point" {
+		assert ({10,10} add_point {20,20}) = line([{10,10},{20,20}]);
+		assert (line([{10,10},{20,20}]) add_point {30,30}) = line([{10,10},{20,20},{30,30}]);
+		assert (line([{10,10},{20,20},{30,30}]) add_point {0,0}) = line([{0,0},{10,10},{20,20},{30,30}]);
+		assert (line([{10,10},{20,20},{30,30}]) add_point {25,22}) = line([{10,10},{20,20},{25,22},{30,30}]);
+		assert ((square(10) at_location {50,50}) add_point {50,35}) = polygon([{45,55}, {55,55}, {55,45}, {50,35},{45,45}]);
+		assert ((square(10) at_location {50,50}) add_point {50,50}) = polygon([{45,55}, {50,50}, {55,55},{55,45},{45,45}]);											
+	}
+	test "inter" {
+		assert {10,10} inter {20,10} = nil;
+		assert {10,10} inter {10,10} = {10,10};
+		assert line([{10,10},{20,20}]) inter {10,10} = {10,10};
+		assert line([{10,10},{20,20}]) inter {20,10} = nil;
+		assert line([{10,10},{20,20}]) inter line([{5,5},{15,15}]) = line([{10,10},{15,15}]);
+		assert line([{10,5},{10,20}]) inter line([{5,15},{30,15}]) distance_to {10,15} < 0.1;
+	}
+	test "minus" {
+		
+	}
+	test "union" {
+		
+	}
+	test "masked_by" {
+		
+	}
+	test "split_at" {
+		
+	}
+}
+
