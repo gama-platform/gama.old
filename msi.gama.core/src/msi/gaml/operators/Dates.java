@@ -492,7 +492,7 @@ public class Dates {
 			value = "Add a given number of hours to a date",
 			examples = { @example(value = "// equivalent to date1 + 15 #h", test = false),
 					@example (
-					value = "date('2000-01-01') plus_hours 15", equals = "date('2000-01-01')") })
+					value = "date('2000-01-01') plus_hours 24", equals = "date('2000-01-02')") })
 	public static GamaDate addHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
 		return date1.plus(nbHours, HOURS);
@@ -508,7 +508,7 @@ public class Dates {
 			value = "Add a given number of minutes to a date",
 			examples = { @example(value = "// equivalent to date1 + 5 #mn", test = false),
 					@example (
-					value = "date('2000-01-01') plus_minutes 5 ", equals = "date('2000-01-01')") })
+					value = "date('2000-01-01') plus_minutes 5 ", equals = "date('2000-01-01 00:05:00')") })
 	public static GamaDate addMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
 		return date1.plus(nbMinutes, MINUTES);
@@ -540,7 +540,7 @@ public class Dates {
 			value = "Subtract a given number of months from a date",
 			examples = { @example (
 					value = "date('2000-01-01') minus_months 5",
-					equals = "date('1999-07-01')") })
+					equals = "date('1999-08-01')") })
 	public static GamaDate subtractMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMonths, MONTHS);
@@ -556,7 +556,7 @@ public class Dates {
 			value = "Subtract a given number of weeks from a date",
 			examples = { @example (
 					value = "date('2000-01-01') minus_weeks 15", 
-					equals = "date('1999-11-10')") })
+					equals = "date('1999-09-18')") })
 	public static GamaDate subtractWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
 		return date1.plus(-nbWeeks, WEEKS);
@@ -572,7 +572,7 @@ public class Dates {
 			value = "Subtract a given number of days from a date",
 			examples = { @example (
 					value = "date('2000-01-01') minus_days 20",
-					equals = "date('1999-12-10')") })
+					equals = "date('1999-12-12')") })
 	public static GamaDate subtractDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
 		return date1.plus(-nbDays, DAYS);
@@ -588,7 +588,7 @@ public class Dates {
 			value = "Remove a given number of hours from a date",
 			examples = { @example(value ="// equivalent to date1 - 15 #h", isExecutable = false),
 					@example (
-					value = "date('2000-01-01') minus_hours 15 ", equals = "date('1999-12-31')") })
+					value = "date('2000-01-01') minus_hours 15 ", equals = "date('1999-12-31 09:00:00')") })
 	public static GamaDate subtractHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
 		return date1.plus(-nbHours, HOURS);
@@ -604,7 +604,7 @@ public class Dates {
 			value = "Remove a given number of milliseconds from a date",
 			examples = { @example(value ="// equivalent to date1 - 15 #ms", isExecutable = false),
 					@example (
-					value = "date('2000-01-01') minus_ms 15 ", equals = "date('1999-12-31')") })
+					value = "date('2000-01-01') minus_ms 1000 ", equals = "date('1999-12-31 23:59:59')") })
 	public static GamaDate subtractMs(final IScope scope, final GamaDate date1, final int nbMs)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMs, ChronoUnit.MILLIS);
@@ -619,7 +619,7 @@ public class Dates {
 			value = "Add a given number of milliseconds to a date",
 			examples = { 
 					@example(value= "// equivalent to date('2000-01-01') + 15 #ms", isExecutable = false),
-					@example (value = "date('2000-01-01') plus_ms 15 ", equals = "date('2000-01-02')") })
+					@example (value = "date('2000-01-01') plus_ms 1000 ", equals = "date('2000-01-01 00:00:01')") })
 	public static GamaDate addMs(final IScope scope, final GamaDate date1, final int nbMs) throws GamaRuntimeException {
 		return date1.plus(nbMs, ChronoUnit.MILLIS);
 	}
@@ -633,7 +633,7 @@ public class Dates {
 			value = "Subtract a given number of minutes from a date",
 			examples = { @example(value= "// date('2000-01-01') to date1 - 5#mn", isExecutable = false),
 					@example (
-					value = "date('2000-01-01') minus_minutes 5 ", equals = "date('2000-01-01')") })
+					value = "date('2000-01-01') minus_minutes 5 ", equals = "date('1999-12-31 23:55:00')") })
 	public static GamaDate subtractMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMinutes, MINUTES);
@@ -662,7 +662,7 @@ public class Dates {
 	@doc (
 			value = "Provide the exact number of milliseconds between two dates. This number can be positive or negative (if the second operand is smaller than the first one)",
 			examples = { @example (
-					value = "milliseconds_between(date('2000-01-01'), date('2000-02-01'))", equals = "10") })
+					value = "milliseconds_between(date('2000-01-01'), date('2000-02-01'))", equals = "2.6784E9") })
 	public static double milliseconds_between(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
 		return ChronoUnit.MILLIS.between(date1, date2);
@@ -676,7 +676,7 @@ public class Dates {
 	@doc (
 			value = "Provide the exact number of months between two dates. This number can be positive or negative (if the second operand is smaller than the first one)",
 			examples = { @example (
-					value = "months_between(date('2000-01-01'), date('2000-02-01'))", equals ="12") })
+					value = "months_between(date('2000-01-01'), date('2000-02-01'))", equals ="1") })
 	public static int months_between(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
 		return (int) ChronoUnit.MONTHS.between(date1, date2);
@@ -718,7 +718,7 @@ public class Dates {
 	@doc (
 			value = "Returns true if the first date is strictly smaller than the second one",
 			examples = { @example (
-					value = "#now < #now minus_hours 1", equals="true") })
+					value = "#now < #now minus_hours 1", equals="false") })
 	public static boolean smaller_than(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
 		return date1.isSmallerThan(date2, true);
