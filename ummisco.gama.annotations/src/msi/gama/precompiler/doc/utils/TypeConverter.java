@@ -91,6 +91,7 @@ public class TypeConverter {
 		hm.put("java.util.List<java.lang.Object>", "list");
 		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list<list>");
 		hm.put("msi.gama.util.IList<msi.gama.util.IList>", "list<list>");	
+		hm.put("msi.gama.util.IList<msi.gama.util.GamaList>", "list<list>");				
 		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList>", "list<list>");
 		hm.put("java.util.List<java.util.List>", "list<list>");
 		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
@@ -128,6 +129,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.agent.IAgent>", "container<agent>");
 		hm.put("msi.gama.util.IContainer<?,? extends msi.gama.metamodel.shape.IShape>", "container<agent>");
 		hm.put("msi.gama.util.IContainer<?,java.lang.Double>", "container<float>");
+		hm.put("msi.gama.util.IContainer<?,?>", "container");
 		
 		hm.put("msi.gama.util.IList", "container");
 		hm.put("msi.gama.util.IList<KeyType,ValueType>", "list<KeyType,ValueType>");

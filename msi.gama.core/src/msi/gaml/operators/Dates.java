@@ -861,7 +861,7 @@ public class Dates {
 			usages = @usage (
 					value = "",
 					examples = @example (
-							value = "date(\"1999-12-30\", 'yyyy-MM-dd')")))
+							value = "date d <- date(\"1999-12-30\", 'yyyy-MM-dd');", test = false)))
 	public static GamaDate date(final IScope scope, final String value, final String pattern) {
 		return new GamaDate(scope, value, pattern);
 	}
