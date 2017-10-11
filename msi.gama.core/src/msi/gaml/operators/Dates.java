@@ -231,8 +231,8 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Returns true if the current_date of the model is after (or equal to) the date passed in argument. Synonym of 'current_date >= argument'. Can be used, like 'after', in its composed form with 2 arguments to express the lowest boundary of the computation of a frequency. However, contrary to 'after', there is a subtle difference: the lowest boundary will be tested against the frequency as well ",
-			examples = { @example ("reflex when: since(starting_date) {} -: will always be run"),
-					@example ("every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date") })
+			examples = { @example (value = "reflex when: since(starting_date) {}  	// this reflex will always be run", isExecutable = false),
+					@example (value = "every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date", isExecutable = false) })
 	public static boolean since(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, false);
 	}
@@ -245,7 +245,7 @@ public class Dates {
 			value = "Returns true if the current_date of the model is strictly after the date passed in argument. Synonym of 'current_date > argument'. Can be used in its composed form with 2 arguments to express the lower boundary for the computation of a frequency. Note that only dates strictly after this one will be tested against the frequency",
 			examples = { @example (value = "reflex when: after(starting_date) {} 	// this reflex will always be run after the first step", isExecutable = false),
 					@example (value = "reflex when: false after(starting date + #10days) {} 	// This reflex will not be run after this date. Better to use 'until' or 'before' in that case", isExecutable = false),
-					@example (value = "every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day", test = false) })
+					@example (value = "every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day", isExecutable = false) })
 	public static boolean after(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, true);
 	}
@@ -425,7 +425,8 @@ public class Dates {
 	@doc (
 			value = "Add a given number of years to a date",
 			examples = { @example (
-					value = "date1 plus_years 3") })
+					value = "date('2000-01-01') plus_years 15",
+					equals = "date('2015-01-01')") })
 	public static GamaDate addYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
 
@@ -441,7 +442,8 @@ public class Dates {
 	@doc (
 			value = "Add a given number of months to a date",
 			examples = { @example (
-					value = "date1 plus_months 5") })
+					value = "date('2000-01-01') plus_months 5",
+					equals = "date('2000-06-01')") })
 	public static GamaDate addMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
 
@@ -457,7 +459,8 @@ public class Dates {
 	@doc (
 			value = "Add a given number of weeks to a date",
 			examples = { @example (
-					value = "date1 plus_weeks 15") })
+					value = "date('2000-01-01') plus_weeks 15",
+					equals = "date('2000-15-01')") })
 	public static GamaDate addWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
 		return date1.plus(nbWeeks, WEEKS);
@@ -472,7 +475,8 @@ public class Dates {
 	@doc (
 			value = "Add a given number of days to a date",
 			examples = { @example (
-					value = "date1 plus_days 20") })
+					value = "date('2000-01-01') plus_days 12",
+					equals = "date('2000-01-13')") })
 	public static GamaDate addDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
 		return date1.plus(nbDays, DAYS);
@@ -486,8 +490,9 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Add a given number of hours to a date",
-			examples = { @example (
-					value = "date1 plus_hours 15 // equivalent to date1 + 15 #h") })
+			examples = { @example(value = "// equivalent to date1 + 15 #h", test = false),
+					@example (
+					value = "date('2000-01-01') plus_hours 15", equals = "date('2000-01-01')") })
 	public static GamaDate addHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
 		return date1.plus(nbHours, HOURS);
@@ -501,8 +506,9 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Add a given number of minutes to a date",
-			examples = { @example (
-					value = "date1 plus_minutes 5 // equivalent to date1 + 5 #mn") })
+			examples = { @example(value = "// equivalent to date1 + 5 #mn", test = false),
+					@example (
+					value = "date('2000-01-01') plus_minutes 5 ", equals = "date('2000-01-01')") })
 	public static GamaDate addMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
 		return date1.plus(nbMinutes, MINUTES);
@@ -517,7 +523,8 @@ public class Dates {
 	@doc (
 			value = "Subtract a given number of year from a date",
 			examples = { @example (
-					value = "date1 minus_years 3") })
+					value = "date('2000-01-01') minus_years 3",
+					equals = "date('1997-01-01')") })
 	public static GamaDate subtractYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
 		return date1.plus(-nbYears, YEARS);
@@ -532,7 +539,8 @@ public class Dates {
 	@doc (
 			value = "Subtract a given number of months from a date",
 			examples = { @example (
-					value = "date1 minus_months 5") })
+					value = "date('2000-01-01') minus_months 5",
+					equals = "date('1999-07-01')") })
 	public static GamaDate subtractMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMonths, MONTHS);
@@ -547,7 +555,8 @@ public class Dates {
 	@doc (
 			value = "Subtract a given number of weeks from a date",
 			examples = { @example (
-					value = "date1 minus_weeks 15") })
+					value = "date('2000-01-01') minus_weeks 15", 
+					equals = "date('1999-11-10')") })
 	public static GamaDate subtractWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
 		return date1.plus(-nbWeeks, WEEKS);
@@ -562,7 +571,8 @@ public class Dates {
 	@doc (
 			value = "Subtract a given number of days from a date",
 			examples = { @example (
-					value = "date1 minus_days 20") })
+					value = "date('2000-01-01') minus_days 20",
+					equals = "date('1999-12-10')") })
 	public static GamaDate subtractDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
 		return date1.plus(-nbDays, DAYS);
@@ -576,8 +586,9 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Remove a given number of hours from a date",
-			examples = { @example (
-					value = "date1 minus_hours 15 // equivalent to date1 - 15 #h") })
+			examples = { @example(value ="// equivalent to date1 - 15 #h", isExecutable = false),
+					@example (
+					value = "date('2000-01-01') minus_hours 15 ", equals = "date('1999-12-31')") })
 	public static GamaDate subtractHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
 		return date1.plus(-nbHours, HOURS);
@@ -591,8 +602,9 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Remove a given number of milliseconds from a date",
-			examples = { @example (
-					value = "date1 minus_ms 15 // equivalent to date1 - 15 #ms") })
+			examples = { @example(value ="// equivalent to date1 - 15 #ms", isExecutable = false),
+					@example (
+					value = "date('2000-01-01') minus_ms 15 ", equals = "date('1999-12-31')") })
 	public static GamaDate subtractMs(final IScope scope, final GamaDate date1, final int nbMs)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMs, ChronoUnit.MILLIS);
@@ -606,7 +618,7 @@ public class Dates {
 	@doc (
 			value = "Add a given number of milliseconds to a date",
 			examples = { 
-					@example(value= "// equivalent to date1 + 15 #ms", isExecutable = false),
+					@example(value= "// equivalent to date('2000-01-01') + 15 #ms", isExecutable = false),
 					@example (value = "date('2000-01-01') plus_ms 15 ", equals = "date('2000-01-02')") })
 	public static GamaDate addMs(final IScope scope, final GamaDate date1, final int nbMs) throws GamaRuntimeException {
 		return date1.plus(nbMs, ChronoUnit.MILLIS);
@@ -619,8 +631,9 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			value = "Subtract a given number of minutes from a date",
-			examples = { @example (
-					value = "date('2000-01-01') minus_minutes 5 // equivalent to date1 - 5#mn", equals = "date('2000-01-01')") })
+			examples = { @example(value= "// date('2000-01-01') to date1 - 5#mn", isExecutable = false),
+					@example (
+					value = "date('2000-01-01') minus_minutes 5 ", equals = "date('2000-01-01')") })
 	public static GamaDate subtractMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
 		return date1.plus(-nbMinutes, MINUTES);

@@ -14,8 +14,8 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test boxOp {
-			geometry var0 <- box(10, 5 , 5); 	// var0 equals a geometry as a rectangle with width = 10, height = 5 depth= 5.
-			geometry var1 <- box({10, 5 , 5}); 	// var1 equals a geometry as a rectangle with width = 10, height = 5 depth= 5.
+			geometry var0 <- box({10, 5 , 5}); 	// var0 equals a geometry as a rectangle with width = 10, height = 5 depth= 5.
+			geometry var1 <- box(10, 5 , 5); 	// var1 equals a geometry as a rectangle with width = 10, height = 5 depth= 5.
 
 		}
 	
@@ -48,10 +48,10 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test curveOp {
-			geometry var0 <- curve({0,0}, {0,10}, {10,10}); 	// var0 equals a cubic Bezier curve geometry composed of 10 points from p0 to p3.
-			geometry var1 <- curve({0,0}, {0,10}, {10,10}); 	// var1 equals a quadratic Bezier curve geometry composed of 10 points from p0 to p2.
+			geometry var0 <- curve({0,0}, {0,10}, {10,10}, 20); 	// var0 equals a quadratic Bezier curve geometry composed of 20 points from p0 to p2.
+			geometry var1 <- curve({0,0}, {0,10}, {10,10}); 	// var1 equals a cubic Bezier curve geometry composed of 10 points from p0 to p3.
 			geometry var2 <- curve({0,0}, {0,10}, {10,10}); 	// var2 equals a cubic Bezier curve geometry composed of 10 points from p0 to p3.
-			geometry var3 <- curve({0,0}, {0,10}, {10,10}, 20); 	// var3 equals a quadratic Bezier curve geometry composed of 20 points from p0 to p2.
+			geometry var3 <- curve({0,0}, {0,10}, {10,10}); 	// var3 equals a quadratic Bezier curve geometry composed of 10 points from p0 to p2.
 
 		}
 	
@@ -76,8 +76,8 @@ experiment OpShapeTestTests type: test {
 	
 		test hexagonOp {
 			geometry var0 <- hexagon({10,5}); 	// var0 equals a geometry as a hexagon of width of 10 and height of 5.
-			geometry var1 <- hexagon(10,5); 	// var1 equals a geometry as a hexagon of width of 10 and height of 5.
-			geometry var2 <- hexagon(10); 	// var2 equals a geometry as a hexagon of width of 10 and height of 10.
+			geometry var1 <- hexagon(10); 	// var1 equals a geometry as a hexagon of width of 10 and height of 10.
+			geometry var2 <- hexagon(10,5); 	// var2 equals a geometry as a hexagon of width of 10 and height of 5.
 
 		}
 	
@@ -121,9 +121,9 @@ experiment OpShapeTestTests type: test {
 		}
 	
 		test rectangleOp {
-			geometry var0 <- rectangle({10, 5}); 	// var0 equals a geometry as a rectangle with width = 10 and height = 5.
-			geometry var1 <- rectangle({2.0,6.0}, {6.0,20.0}); 	// var1 equals a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.
-			geometry var2 <- rectangle(10, 5); 	// var2 equals a geometry as a rectangle with width = 10 and height = 5.
+			geometry var0 <- rectangle({2.0,6.0}, {6.0,20.0}); 	// var0 equals a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.
+			geometry var1 <- rectangle(10, 5); 	// var1 equals a geometry as a rectangle with width = 10 and height = 5.
+			geometry var2 <- rectangle({10, 5}); 	// var2 equals a geometry as a rectangle with width = 10 and height = 5.
 
 		}
 	
