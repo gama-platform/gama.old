@@ -368,7 +368,7 @@ public class MentalState implements IValue {
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		return modality + "(" + (predicate == null ? "" : predicate)+ (mental == null ? "" : mental) +","+strength+","+lifetime+")";
+		return modality + "(" + (predicate == null ? "" : predicate)+ (mental == null ? "" : mental) + (emo == null ? "" : emo) +","+ (owner == null ? "" : owner) +"," +strength+","+lifetime+")";
 	}
 
 	@Override
@@ -378,17 +378,26 @@ public class MentalState implements IValue {
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		return modality + "(" + (predicate == null ? "" : predicate)+ (mental == null ? "" : mental) +","+strength+","+lifetime+")";
+		return modality + "(" + (predicate == null ? "" : predicate)+ (mental == null ? "" : mental) + (emo == null ? "" : emo) + ","+ (owner == null ? "" : owner) +"," +strength+","+lifetime+")";
 	}
 
 	@Override
 	public IValue copy(IScope scope) throws GamaRuntimeException {
+		MentalState tempMental = new MentalState(modality);
+		tempMental.setLifeTime(lifetime);
+		tempMental.setStrength(strength);
+		tempMental.setOwner(owner);
 		if(predicate!=null){
-			return new MentalState(modality,predicate,strength);
+			tempMental.setPredicate(predicate);
+			return tempMental;
 		} else if(mental!=null){
-			return new MentalState(modality,mental,strength);
+			tempMental.setMentalState(mental);
+			return tempMental;
+		}else if(emo!=null){
+			tempMental.setEmotion(emo);
+			return tempMental;
 		}
-		return new MentalState(modality);
+		return tempMental;
 	}
 	
 	@Override

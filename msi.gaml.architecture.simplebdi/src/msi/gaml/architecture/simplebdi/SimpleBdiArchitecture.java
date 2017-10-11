@@ -963,6 +963,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
+			predicateDirect.setOwner(scope.getAgent());
 			return addToBase(scope, predicateDirect, BELIEF_BASE);
 		}
 
@@ -1540,6 +1541,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 			superPredicate.getPredicate().getSubintentions().add(predicate);
 		}
+		predicate.setOwner(scope.getAgent());
 		addToBase(scope, predicate, DESIRE_BASE);
 		
 		return false;
@@ -3874,6 +3876,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			removeFromBase(scope, predicate, BELIEF_BASE);
 		}
 		createHopeFromMentalState(scope, predicate);
+		predicate.setOwner(scope.getAgent());
 		return addToBase(scope, predicate, UNCERTAINTY_BASE);
 	}
 
@@ -4151,6 +4154,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static Boolean addIdeal(final IScope scope, final MentalState predicate) {
+		predicate.setOwner(scope.getAgent());
 		return addToBase(scope, predicate, IDEAL_BASE);
 	}
 
