@@ -4,7 +4,6 @@
 * Description: Tests various spatial operators
 * Tags: spatial, operators, test
 */
-model RelationTest
 experiment OperatorsTest type: test {
 	test "add_point" {
 		assert ({10,10} add_point {20,20}) = line([{10,10},{20,20}]);
