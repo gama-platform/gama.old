@@ -13,12 +13,10 @@ global {
 	}
 }
 
-entities {
 	species testOpReverseOperatorsTest {
 
 	
 	}
-}
 
 experiment testOpReverseOperatorsTestExp type: gui {}	
 	

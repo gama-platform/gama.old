@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpBDITest {
 
 	
@@ -259,7 +258,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpBDITestExp type: gui {}	
 	

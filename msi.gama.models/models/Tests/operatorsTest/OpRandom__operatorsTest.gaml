@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpRandom__operatorsTest {
 
 	
@@ -104,7 +103,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpRandom__operatorsTestExp type: gui {}	
 	

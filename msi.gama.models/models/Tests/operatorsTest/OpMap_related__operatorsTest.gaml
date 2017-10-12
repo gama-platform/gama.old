@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpMap_related__operatorsTest {
 
 	
@@ -64,7 +64,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpMap_related__operatorsTestExp type: gui {}	
 	

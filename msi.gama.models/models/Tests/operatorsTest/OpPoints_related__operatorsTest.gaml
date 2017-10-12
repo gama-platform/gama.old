@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpPoints_related__operatorsTest {
 
 	
@@ -297,7 +296,5 @@ entities {
 		}
 	
 	}
-}
-
 experiment testOpPoints_related__operatorsTestExp type: gui {}	
 	

@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpGammaFunctionTest {
 
 	
@@ -46,7 +45,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpGammaFunctionTestExp type: gui {}	
 	

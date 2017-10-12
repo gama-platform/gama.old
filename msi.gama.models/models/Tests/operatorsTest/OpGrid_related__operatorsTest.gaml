@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpGrid_related__operatorsTest {
 
 	
@@ -49,7 +48,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpGrid_related__operatorsTestExp type: gui {}	
 	

@@ -13,12 +13,11 @@ global {
 	}
 }
 
-entities {
 	species testOpIterator__operatorsTest {
 
 	
 	}
-}
+
 
 experiment testOpIterator__operatorsTestExp type: gui {}	
 	

@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpmulticriteria__operatorsTest {
 
 	
@@ -48,7 +47,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpmulticriteria__operatorsTestExp type: gui {}	
 	

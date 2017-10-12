@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpCasting__operatorsTest {
 
 	
@@ -114,7 +114,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpCasting__operatorsTestExp type: gui {}	
 	

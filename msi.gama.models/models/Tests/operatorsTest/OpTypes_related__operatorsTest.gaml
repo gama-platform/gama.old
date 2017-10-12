@@ -13,12 +13,12 @@ global {
 	}
 }
 
-entities {
+
 	species testOpTypes_related__operatorsTest {
 
 	
 	}
-}
+
 
 experiment testOpTypes_related__operatorsTestExp type: gui {}	
 	

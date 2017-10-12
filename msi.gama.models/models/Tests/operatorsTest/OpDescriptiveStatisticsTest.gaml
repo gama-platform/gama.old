@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpDescriptiveStatisticsTest {
 
 	
@@ -70,7 +69,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpDescriptiveStatisticsTestExp type: gui {}	
 	

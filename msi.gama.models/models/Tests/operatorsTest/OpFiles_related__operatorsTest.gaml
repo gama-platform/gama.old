@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpFiles_related__operatorsTest {
 
 	
@@ -30,7 +29,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpFiles_related__operatorsTestExp type: gui {}	
 	

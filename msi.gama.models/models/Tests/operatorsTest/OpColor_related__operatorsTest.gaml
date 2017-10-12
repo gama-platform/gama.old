@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpColor_related__operatorsTest {
 
 	
@@ -229,7 +229,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpColor_related__operatorsTestExp type: gui {}	
 	

@@ -13,12 +13,12 @@ global {
 	}
 }
 
-entities {
+
 	species testOpDatesTest {
 
 	
 	}
-}
+
 
 experiment testOpDatesTestExp type: gui {}	
 	

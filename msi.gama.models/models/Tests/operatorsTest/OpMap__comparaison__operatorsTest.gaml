@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpMap__comparaison__operatorsTest {
 
 	
@@ -50,7 +49,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpMap__comparaison__operatorsTestExp type: gui {}	
 	

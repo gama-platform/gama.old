@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpSystemTest {
 
 	
@@ -81,7 +81,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpSystemTestExp type: gui {}	
 	

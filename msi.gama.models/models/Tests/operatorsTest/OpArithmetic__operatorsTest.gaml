@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpArithmetic__operatorsTest {
 
 	
@@ -417,7 +417,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpArithmetic__operatorsTestExp type: gui {}	
 	

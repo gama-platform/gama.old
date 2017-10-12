@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpFIPA_related__operatorsTest {
 
 	
@@ -22,7 +22,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpFIPA_related__operatorsTestExp type: gui {}	
 	

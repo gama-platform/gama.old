@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testStatements {
 
 	
@@ -1048,7 +1048,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testStatementsExp type: gui {}	
 	

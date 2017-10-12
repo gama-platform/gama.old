@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpLogical__operatorsTest {
 
 	
@@ -51,7 +51,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpLogical__operatorsTestExp type: gui {}	
 	

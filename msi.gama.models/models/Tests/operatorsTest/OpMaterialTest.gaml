@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpMaterialTest {
 
 	
@@ -23,7 +23,6 @@ entities {
 		}
 	
 	}
-}
 
 experiment testOpMaterialTestExp type: gui {}	
 	

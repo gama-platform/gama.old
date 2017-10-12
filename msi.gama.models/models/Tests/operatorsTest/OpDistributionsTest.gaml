@@ -13,7 +13,6 @@ global {
 	}
 }
 
-entities {
 	species testOpDistributionsTest {
 
 	
@@ -94,7 +93,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpDistributionsTestExp type: gui {}	
 	

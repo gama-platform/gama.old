@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOpComparison__operatorsTest {
 
 	
@@ -150,7 +150,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOpComparison__operatorsTestExp type: gui {}	
 	

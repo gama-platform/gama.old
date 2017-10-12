@@ -13,7 +13,7 @@ global {
 	}
 }
 
-entities {
+
 	species testOp3DTest {
 
 	
@@ -80,7 +80,7 @@ entities {
 		}
 	
 	}
-}
+
 
 experiment testOp3DTestExp type: gui {}	
 	
