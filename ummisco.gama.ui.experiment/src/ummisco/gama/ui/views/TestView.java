@@ -19,12 +19,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.jgrapht.alg.util.Pair;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ItemList;
@@ -32,31 +36,25 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.statements.test.TestStatement;
+import msi.gaml.statements.test.TestStatement.State;
 import msi.gaml.statements.test.TestStatement.TestSummary;
+import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class TestView extends ExpandableItemsView<TestSummary> implements IGamaView.Test {
 
-	public final static int EDITORS_SPACING = 0;
+	public static boolean SORT_BY_SEVERITY;
 	public final Map<TestSummary, Map<String, AssertEditor>> editors = new TOrderedHashMap<>();
-
-	class ItemComposite extends Composite {
-
-		public ItemComposite(final Composite parent, final int style) {
-			super(parent, style);
-			final GridLayout layout = new GridLayout(2, false);
-			layout.verticalSpacing = EDITORS_SPACING;
-			setLayout(layout);
-		}
-
-		public void addEditor(final AbstractEditor<?> editor) {
-			editor.createComposite(this);
-		}
-
+	public static final GridLayout layout = new GridLayout(2, false);
+	static {
+		layout.verticalSpacing = 0;
 	}
 
 	public static String ID = IGui.TEST_VIEW_ID;
@@ -75,17 +73,51 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 		return false;
 	}
 
+	protected void resortTests() {
+
+	}
+
 	@Override
 	public void addTestResult(final TestSummary e) {
+		if (e == TestSummary.FINISHED) {
+			reset();
+			return;
+		}
+		if (e == TestSummary.BEGINNING) {
+			editors.clear();
+			super.reset();
+			return;
+		}
 		if (!editors.containsKey(e))
-			editors.put(e, new TOrderedHashMap<>());
-		reset();
+			editors.put(e, null);
+		if (!SwtGui.ALL_TESTS_RUNNING)
+			reset();
+		WorkbenchHelper.run(() -> {
+			if (toolbar != null)
+				toolbar.status(null, createTestsSummary(), null, IGamaColors.BLUE, SWT.LEFT);
+		});
+	}
+
+	protected String createTestsSummary() {
+		final TObjectIntHashMap<State> map = new TObjectIntHashMap<>();
+		editors.keySet().forEach(t -> {
+			map.adjustOrPutValue(t.getState(), 1, 1);
+		});
+		for (final Object s : map.keys()) {
+			if (map.get(s) == 0)
+				map.remove(s);
+		}
+		String message = "" + editors.size() + " tests";
+		for (final Object s : map.keys()) {
+			message += ", " + (map.size() == 1 ? "all" : String.valueOf(map.get(s))) + " " + s;
+		}
+		return message;
 	}
 
 	@Override
 	public boolean addItem(final TestSummary e) {
 		final Map<String, AssertEditor> inside = editors.get(e);
-		if (inside == null || inside.isEmpty())
+		if (inside == null)
 			createItem(parent, e, false, GamaColors.get(getItemDisplayColor(e)));
 		else
 			updateItem(e);
@@ -93,6 +125,10 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	}
 
 	public void updateItem(final TestSummary test) {
+		// System.out.println("test " + test.testName + " is already present. Just updating it");
+		final ParameterExpandItem item = getViewer().getItem(test);
+		item.setText(this.getItemDisplayName(test, item.getText()));
+		item.setColor(this.getItemDisplayColor(test));
 		final Map<String, AssertEditor> inside = editors.get(test);
 		final Collection<Pair<String, TestStatement.State>> assertions = test.getAssertions();
 		for (final Pair<String, TestStatement.State> assertion : assertions) {
@@ -106,15 +142,35 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 	@Override
 	protected Composite createItemContentsFor(final TestSummary test) {
+		// System.out.println("test " + test.testName + " is not present. Creating it");
 		final Collection<Pair<String, TestStatement.State>> assertions = test.getAssertions();
-		final ItemComposite compo = new ItemComposite(getViewer(), SWT.NONE);
+		final Composite compo = new Composite(getViewer(), SWT.NONE);
+		compo.setLayout(layout);
 		compo.setBackground(getViewer().getBackground());
+		editors.put(test, new TOrderedHashMap<>());
 		for (final Pair<String, TestStatement.State> assertion : assertions) {
 			final AssertEditor ed = new AssertEditor(GAMA.getRuntimeScope(), assertion);
 			editors.get(test).put(assertion.getFirst(), ed);
-			compo.addEditor(ed);
+			((AbstractEditor<?>) ed).createComposite(compo);
 		}
 		return compo;
+	}
+
+	@Override
+	public void createToolItems(final GamaToolbar2 tb) {
+		super.createToolItems(tb);
+		final ToolItem t = tb.check(GamaIcons.create("test.sort2").getCode(), "Sort by severity",
+				"When checked, sort the tests by their decreasing state severity (i.e. aborted > failed > warning > passed > not run). Otherwise they are sorted by their order of execution.",
+				new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						SORT_BY_SEVERITY = !SORT_BY_SEVERITY;
+						resortTests();
+					}
+
+				}, SWT.RIGHT);
+		t.setSelection(SORT_BY_SEVERITY);
 	}
 
 	@Override
@@ -157,18 +213,15 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	}
 
 	@Override
-	public void updateItemValues() {
-		this.getViewer().updateItemNames();
-		this.getViewer().updateItemColors();
-	}
+	public void updateItemValues() {}
 
 	@Override
 	public void reset() {
 		WorkbenchHelper.run(() -> {
-			// TestView.super.reset();
-			displayItems();
-			updateItemValues();
-			parent.layout(true, true);
+			if (!parent.isDisposed()) {
+				displayItems();
+				parent.layout(true, false);
+			}
 		});
 
 	}
@@ -194,11 +247,6 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	@Override
 	protected boolean needsOutput() {
 		return false;
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
 	}
 
 }

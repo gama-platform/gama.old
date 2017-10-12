@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.statements.test.TestStatement.TestSummary;
 import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -18,29 +19,35 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class TestsRunner {
 
 	public static void start() {
-		SwtGui.PERSISTENT_TEST_VIEW = true;
-		// final StringBuilder sb = new StringBuilder();
-		List<IFile> testFiles = null;
+		if (SwtGui.ALL_TESTS_RUNNING)
+			return;
+		final IGui gui = GAMA.getRegularGui();
+		final IScope scope = GAMA.getRuntimeScope();
 		try {
-			testFiles = findTestModels();
-			if (testFiles != null) {
-				final IGui gui = GAMA.getRegularGui();
-				gui.openTestView(GAMA.getRuntimeScope(), true);
-				for (final IFile file : testFiles) {
-					final List<TestSummary> summaries = gui.runHeadlessTests(file);
-					for (final TestSummary summary : summaries) {
-						gui.displayTestsResults(GAMA.getRuntimeScope(), summary);
-					}
-					// if (summary != null) {
-					// sb.append(summary).append(Strings.LN);
-					// }
-				}
-			}
-		} catch (final Exception e) {e.printStackTrace();}
+			SwtGui.PERSISTENT_TEST_VIEW = true;
+			SwtGui.ALL_TESTS_RUNNING = true;
 
-		// GAMA.getGui().getConsole(GAMA.getRuntimeScope()).showConsoleView(GAMA.agent);
-		// GAMA.getGui().getConsole(GAMA.getRuntimeScope()).informConsole(sb.toString(), GAMA.agent);
-		SwtGui.PERSISTENT_TEST_VIEW = false;
+			List<IFile> testFiles = null;
+			try {
+				testFiles = findTestModels();
+				if (testFiles != null) {
+					gui.openTestView(scope, true);
+					gui.displayTestsResults(scope, TestSummary.BEGINNING);
+					for (final IFile file : testFiles) {
+						final List<TestSummary> summaries = gui.runHeadlessTests(file);
+						for (final TestSummary summary : summaries) {
+							gui.displayTestsResults(scope, summary);
+						}
+					}
+				}
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		} finally {
+			SwtGui.PERSISTENT_TEST_VIEW = false;
+			SwtGui.ALL_TESTS_RUNNING = false;
+			gui.displayTestsResults(scope, TestSummary.FINISHED);
+		}
 	}
 
 	private static List<IFile> findTestModels() throws CoreException {

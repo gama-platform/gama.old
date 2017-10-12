@@ -100,12 +100,22 @@ public class TestStatement extends AbstractStatementSequence {
 
 	public static class TestSummary {
 
+		public static TestSummary FINISHED = new TestSummary();
+		public static TestSummary BEGINNING = new TestSummary();
+
 		public final URI uri;
 		public final String modelName;
 		public final String testName;
 		public final Map<String, State> asserts;
 		State state;
 		boolean aborted;
+
+		private TestSummary() {
+			uri = null;
+			modelName = null;
+			testName = null;
+			asserts = null;
+		}
 
 		TestSummary(final TestStatement test) {
 			final EObject object = test.getDescription().getUnderlyingElement(null);
@@ -116,6 +126,13 @@ public class TestStatement extends AbstractStatementSequence {
 			for (final AssertStatement assertion : test.getAssertions()) {
 				asserts.put(assertion.getAssertion(), State.NOT_RUN);
 			}
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (o instanceof TestSummary) { return ((TestSummary) o).testName.equals(testName)
+					&& ((TestSummary) o).modelName.equals(modelName); }
+			return false;
 		}
 
 		public void reset() {
