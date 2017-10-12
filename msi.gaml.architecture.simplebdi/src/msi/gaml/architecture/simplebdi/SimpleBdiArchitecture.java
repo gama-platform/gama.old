@@ -912,14 +912,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	//le add belief crée les émotion joie, sadness, satisfaction, disapointment, relief, fear_confirmed, pride, shame, admiration, reproach
 	public static Boolean addBelief(final IScope scope, final MentalState predicateDirect) {
-		final GamaList<MentalState> factBase = getBase(scope, BELIEF_BASE);
+		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
+				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) scope.getAgent().getAttribute(USE_EMOTIONS_ARCHITECTURE);
 		MentalState predTemp = null;
 		if (predicateDirect != null) {
-			createJoyFromPredicate(scope, predicateDirect);
-			createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
-			createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
-			createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
-			
+			if(use_emotion_architecture){
+				createJoyFromPredicate(scope, predicateDirect);
+				createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
+				createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
+				createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
+			}
 			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 				if (predTest.getPredicate()!=null && predicateDirect.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
 					predTemp = predTest;
@@ -3872,10 +3874,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	//Déclencher la création des émotions peur et espoir
 	public static Boolean addUncertainty(final IScope scope, final MentalState predicate) {
+		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
+				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) scope.getAgent().getAttribute(USE_EMOTIONS_ARCHITECTURE);
 		if (getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(predicate)) {
 			removeFromBase(scope, predicate, BELIEF_BASE);
 		}
-		createHopeFromMentalState(scope, predicate);
+		if(use_emotion_architecture){
+			createHopeFromMentalState(scope, predicate);
+		}
 		predicate.setOwner(scope.getAgent());
 		return addToBase(scope, predicate, UNCERTAINTY_BASE);
 	}
@@ -4678,11 +4684,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
 				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		final IAgent agentCause = social.getAgent();
-		IScope scopeAgentCause = null;
-		if (agentCause != null) {
-			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
-			scopeAgentCause.push(agentCause);
-		}
+//		IScope scopeAgentCause = null;
+//		if (agentCause != null) {
+//			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
+//			scopeAgentCause.push(agentCause);
+//		}
 		Double tempPositif = 0.0;
 		Double moySolid = 0.0;
 		Double tempNegatif = 0.0;
@@ -4710,38 +4716,52 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		//Modifier pour ne prendre que ses propres croyances
 		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-			}
-		}
-		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Belief"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
 			}
-		}
-		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Desire"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			}
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Uncertainty"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+				}
+			}
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Ideal"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
 			}
 		}
@@ -4761,7 +4781,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			solidarityModif = 0.0;
 		}
 		social.setSolidarity(solidarityModif);
-		GAMA.releaseScope(scopeAgentCause);
+//		GAMA.releaseScope(scopeAgentCause);
 	}
 
 	static private void updateFamiliarity(final IScope scope, final SocialLink social) {
