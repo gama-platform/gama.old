@@ -1,0 +1,24 @@
+/**
+ *  OpOpUser__control__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpUser__control__operatorsTest.
+ */
+
+experiment OpUser__control__operatorsTestTests type: test {	
+
+	
+		test user_inputOp {
+			map<string,unknown> values2 <- user_input("Enter numer of agents and locations",["Number" :: 100, "Location" :: {10, 10}]);
+			//create bug number: int(values2 at "Number") with: [location:: (point(values2 at "Location"))];
+			map<string,unknown> values <- user_input(["Number" :: 100, "Location" :: {10, 10}]);
+			map<string,unknown> var3 <- (values at "Number"); 	// var3 equals 100
+			assert var3 = 100; 
+			map<string,unknown> var4 <-  (values at "Location"); 	// var4 equals {10,10}
+			assert var4 = {10,10}; 
+			//create bug number: int(values at "Number") with: [location:: (point(values at "Location"))];
+
+		}
+	
+}
+
+	

@@ -1,0 +1,475 @@
+/**
+ *  OpOpDate_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpDate_related__operatorsTest.
+ */
+
+experiment OpDate_related__operatorsTestTests type: test {	
+
+	
+		test add_daysOp {
+
+		}
+	
+		test add_hoursOp {
+
+		}
+	
+		test add_minutesOp {
+
+		}
+	
+		test add_monthsOp {
+
+		}
+	
+		test add_msOp {
+
+		}
+	
+		test add_secondsOp {
+
+		}
+	
+		test add_weeksOp {
+
+		}
+	
+		test add_yearsOp {
+
+		}
+	
+		test afterOp {
+			//reflex when: after(starting_date) {} 	// this reflex will always be run after the first step
+			//reflex when: false after(starting date + #10days) {} 	// This reflex will not be run after this date. Better to use 'until' or 'before' in that case
+			//every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day
+
+		}
+	
+		test beforeOp {
+			//reflex when: before(starting_date) {} 	// this reflex will never be run
+
+		}
+	
+		test betweenOp {
+			bool var2 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var2 equals true
+			assert var2 = true; 
+			//// will return true every new day between these two dates, taking the first one as the starting point
+			//every(#day between(date('2000-01-01'), date('2020-02-02'))) 
+			bool var5 <- (date('2016-01-01') between(date('2000-01-01'), date('2020-02-02'))); 	// var5 equals true
+			assert var5 = true; 
+			//// // will return true if the current_date of the model is in_between the 2
+			//between(date('2000-01-01'), date('2020-02-02'))
+			bool var0 <- between(5.0, 1.0, 10.0); 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- between(5, 1, 10); 	// var1 equals true
+			assert var1 = true; 
+
+		}
+	
+		test DifferentOp {
+			bool var0 <- 3.0 != 3.0; 	// var0 equals false
+			assert var0 = false; 
+			bool var1 <- 4.0 != 4.7; 	// var1 equals true
+			assert var1 = true; 
+			bool var2 <- #now != #now minus_hours 1; 	// var2 equals true
+			assert var2 = true; 
+			bool var3 <- 3 != 3.0; 	// var3 equals false
+			assert var3 = false; 
+			bool var4 <- 4 != 4.7; 	// var4 equals true
+			assert var4 = true; 
+			bool var5 <- 3.0 != 3; 	// var5 equals false
+			assert var5 = false; 
+			bool var6 <- 4.7 != 4; 	// var6 equals true
+			assert var6 = true; 
+			bool var7 <- [2,3] != [2,3]; 	// var7 equals false
+			assert var7 = false; 
+			bool var8 <- [2,4] != [2,3]; 	// var8 equals true
+			assert var8 = true; 
+
+		}
+	
+		test EqualsOp {
+			bool var0 <- [2,3] = [2,3]; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- 4 = 5; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- 3 = 3.0; 	// var2 equals true
+			assert var2 = true; 
+			bool var3 <- 4 = 4.7; 	// var3 equals false
+			assert var3 = false; 
+			bool var4 <- 4.5 = 4.7; 	// var4 equals false
+			assert var4 = false; 
+			bool var5 <- 4.7 = 4; 	// var5 equals false
+			assert var5 = false; 
+			bool var6 <- #now = #now minus_hours 1; 	// var6 equals false
+			assert var6 = false; 
+
+		}
+	
+		test everyOp {
+			//reflex when: every(2#days) since date('2000-01-01') { .. }
+			//state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time
+			//(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval
+			if every(2) {write "the cycle number is even";}
+				     else {write "the cycle number is odd";}
+
+		}
+	
+		test fromOp {
+
+		}
+	
+		test GEOp {
+			bool var5 <- {5,7} >= {4,6}; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- {5,7} >= {4,8}; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- 'abc' >= 'aeb'; 	// var7 equals false
+			assert var7 = false; 
+			bool var8 <- 'abc' >= 'abc'; 	// var8 equals true
+			assert var8 = true; 
+			bool var0 <- 3.5 >= 3.5; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- #now >= #now minus_hours 1; 	// var1 equals true
+			assert var1 = true; 
+			bool var2 <- 3.5 >= 7; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- 3 >= 7; 	// var3 equals false
+			assert var3 = false; 
+			bool var4 <- 3 >= 2.5; 	// var4 equals true
+			assert var4 = true; 
+
+		}
+	
+		test GTOp {
+			bool var0 <- {5,7} > {4,6}; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- {5,7} > {4,8}; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- 'abc' > 'aeb'; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- 3 > 2.5; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <- 3 > 7; 	// var4 equals false
+			assert var4 = false; 
+			bool var5 <- #now > #now minus_hours 1; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- 3.5 > 7.6; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- 3.5 > 7; 	// var7 equals false
+			assert var7 = false; 
+
+		}
+	
+		test LEOp {
+			bool var5 <- 'abc' <= 'aeb'; 	// var5 equals true
+			assert var5 = true; 
+			bool var6 <- {5,7} <= {4,6}; 	// var6 equals false
+			assert var6 = false; 
+			bool var7 <- {5,7} <= {4,8}; 	// var7 equals false
+			assert var7 = false; 
+			bool var0 <- #now <= #now minus_hours 1; 	// var0 equals false
+			assert var0 = false; 
+			bool var1 <- 7.0 <= 7; 	// var1 equals true
+			assert var1 = true; 
+			bool var2 <- 3 <= 2.5; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- 3 <= 7; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <- 3.5 <= 3.5; 	// var4 equals true
+			assert var4 = true; 
+
+		}
+	
+		test LTOp {
+			bool var0 <- {5,7} < {4,6}; 	// var0 equals false
+			assert var0 = false; 
+			bool var1 <- {5,7} < {4,8}; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- 'abc' < 'aeb'; 	// var2 equals true
+			assert var2 = true; 
+			bool var3 <- 3 < 7; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <- 3.5 < 7; 	// var4 equals true
+			assert var4 = true; 
+			bool var5 <- #now < #now minus_hours 1; 	// var5 equals false
+			assert var5 = false; 
+			bool var6 <- 3.5 < 7.6; 	// var6 equals true
+			assert var6 = true; 
+			bool var7 <- 3 < 2.5; 	// var7 equals false
+			assert var7 = false; 
+
+		}
+	
+		test milliseconds_betweenOp {
+			float var0 <- milliseconds_between(date('2000-01-01'), date('2000-02-01')); 	// var0 equals 2.6784E9
+			assert var0 = 2.6784E9; 
+
+		}
+	
+		test MinusOp {
+			geometry var0 <- shape - 5; 	// var0 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
+			point var1 <- {1, 2} - {4, 5}; 	// var1 equals {-3.0, -3.0}
+			assert var1 = {-3.0, -3.0}; 
+			float var2 <- date('2000-01-01') - date('2010-01-02'); 	// var2 equals 86400
+			assert var2 = 86400; 
+			list<int> var3 <- [1,2,3,4,5,6] - [2,4,9]; 	// var3 equals [1,3,5,6]
+			assert var3 = [1,3,5,6]; 
+			list<int> var4 <- [1,2,3,4,5,6] - [0,8]; 	// var4 equals [1,2,3,4,5,6]
+			assert var4 = [1,2,3,4,5,6]; 
+			rgb var5 <- rgb([255, 128, 32]) - rgb('red'); 	// var5 equals rgb([0,128,32])
+			assert var5 = rgb([0,128,32]); 
+			int var6 <- 1 - 1; 	// var6 equals 0
+			assert var6 = 0; 
+			int var7 <- 1.0 - 1; 	// var7 equals 0.0
+			assert var7 = 0.0; 
+			int var8 <- 3.7 - 1.2; 	// var8 equals 2.5
+			assert var8 = 2.5; 
+			int var9 <- 3 - 1.2; 	// var9 equals 1.8
+			assert var9 = 1.8; 
+			point var10 <- {1, 2} - 4.5; 	// var10 equals {-3.5, -2.5, -4.5}
+			assert var10 = {-3.5, -2.5, -4.5}; 
+			point var11 <- {1, 2} - 4; 	// var11 equals {-3.0,-2.0,-4.0}
+			assert var11 = {-3.0,-2.0,-4.0}; 
+			list<int> var12 <- [1,2,3,4,5,6] - 2; 	// var12 equals [1,3,4,5,6]
+			assert var12 = [1,3,4,5,6]; 
+			list<int> var13 <- [1,2,3,4,5,6] - 0; 	// var13 equals [1,2,3,4,5,6]
+			assert var13 = [1,2,3,4,5,6]; 
+			geometry var14 <- rectangle(10,10) - [circle(2), square(2)]; 	// var14 equals rectangle(10,10) - (circle(2) + square(2))
+			assert var14 = rectangle(10,10) - (circle(2) + square(2)); 
+			date var15 <- date('2000-01-01') - 200; 	// var15 equals date('2000-01-01')
+			assert var15 = date('2000-01-01'); 
+			//geometry var16 <- geom1 - geom2; 	// var16 equals a geometry corresponding to difference between geom1 and geom2
+			rgb var17 <- rgb([255, 128, 32]) - 3; 	// var17 equals rgb([252,125,29])
+			assert var17 = rgb([252,125,29]); 
+			matrix var18 <- 3.5 - matrix([[2,5],[3,4]]); 	// var18 equals matrix([[1.5,-1.5],[0.5,-0.5]])
+			assert var18 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
+			map var19 <- ['a'::1,'b'::2] - ('b'::2); 	// var19 equals ['a'::1]
+			assert var19 = ['a'::1]; 
+			map var20 <- ['a'::1,'b'::2] - ('c'::3); 	// var20 equals ['a'::1,'b'::2]
+			assert var20 = ['a'::1,'b'::2]; 
+			map var21 <- ['a'::1,'b'::2] - ['b'::2]; 	// var21 equals ['a'::1]
+			assert var21 = ['a'::1]; 
+			map var22 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var22 equals ['a'::1]
+			assert var22 = ['a'::1]; 
+			int var23 <- - (-56); 	// var23 equals 56
+			assert var23 = 56; 
+			point var24 <- -{3.0,5.0}; 	// var24 equals {-3.0,-5.0}
+			assert var24 = {-3.0,-5.0}; 
+			point var25 <- -{1.0,6.0,7.0}; 	// var25 equals {-1.0,-6.0,-7.0}
+			assert var25 = {-1.0,-6.0,-7.0}; 
+
+		}
+	
+		test minus_daysOp {
+			date var0 <- date('2000-01-01') minus_days 20; 	// var0 equals date('1999-12-12')
+			assert var0 = date('1999-12-12'); 
+
+		}
+	
+		test minus_hoursOp {
+			//// equivalent to date1 - 15 #h
+			date var1 <- date('2000-01-01') minus_hours 15 ; 	// var1 equals date('1999-12-31 09:00:00')
+			assert var1 = date('1999-12-31 09:00:00'); 
+
+		}
+	
+		test minus_minutesOp {
+			//// date('2000-01-01') to date1 - 5#mn
+			date var1 <- date('2000-01-01') minus_minutes 5 ; 	// var1 equals date('1999-12-31 23:55:00')
+			assert var1 = date('1999-12-31 23:55:00'); 
+
+		}
+	
+		test minus_monthsOp {
+			date var0 <- date('2000-01-01') minus_months 5; 	// var0 equals date('1999-08-01')
+			assert var0 = date('1999-08-01'); 
+
+		}
+	
+		test minus_msOp {
+			//// equivalent to date1 - 15 #ms
+			date var1 <- date('2000-01-01') minus_ms 1000 ; 	// var1 equals date('1999-12-31 23:59:59')
+			assert var1 = date('1999-12-31 23:59:59'); 
+
+		}
+	
+		test minus_secondsOp {
+
+		}
+	
+		test minus_weeksOp {
+			date var0 <- date('2000-01-01') minus_weeks 15; 	// var0 equals date('1999-09-18')
+			assert var0 = date('1999-09-18'); 
+
+		}
+	
+		test minus_yearsOp {
+			date var0 <- date('2000-01-01') minus_years 3; 	// var0 equals date('1997-01-01')
+			assert var0 = date('1997-01-01'); 
+
+		}
+	
+		test months_betweenOp {
+			int var0 <- months_between(date('2000-01-01'), date('2000-02-01')); 	// var0 equals 1
+			assert var0 = 1; 
+
+		}
+	
+		test PlusOp {
+			int var4 <- 1 + 1; 	// var4 equals 2
+			assert var4 = 2; 
+			int var5 <- 1.0 + 1; 	// var5 equals 2.0
+			assert var5 = 2.0; 
+			int var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			assert var6 = 3.5; 
+			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
+			assert var7 = "hello 12"; 
+			rgb var8 <- rgb([255, 128, 32]) + rgb('red'); 	// var8 equals rgb([255,128,32])
+			assert var8 = rgb([255,128,32]); 
+			point var9 <- {1, 2} + 4; 	// var9 equals {5.0, 6.0,4.0}
+			assert var9 = {5.0, 6.0,4.0}; 
+			point var10 <- {1, 2} + 4.5; 	// var10 equals {5.5, 6.5,4.5}
+			assert var10 = {5.5, 6.5,4.5}; 
+			geometry var11 <- circle(5) + (5,32,#round); 	// var11 equals circle(10)
+			assert var11 = circle(10); 
+			matrix var12 <- 3.5 + matrix([[2,5],[3,4]]); 	// var12 equals matrix([[5.5,8.5],[6.5,7.5]])
+			assert var12 = matrix([[5.5,8.5],[6.5,7.5]]); 
+			list<int> var13 <- [1,2,3,4,5,6] + [2,4,9]; 	// var13 equals [1,2,3,4,5,6,2,4,9]
+			assert var13 = [1,2,3,4,5,6,2,4,9]; 
+			list<int> var14 <- [1,2,3,4,5,6] + [0,8]; 	// var14 equals [1,2,3,4,5,6,0,8]
+			assert var14 = [1,2,3,4,5,6,0,8]; 
+			list<int> var15 <- [1,2,3,4,5,6] + 2; 	// var15 equals [1,2,3,4,5,6,2]
+			assert var15 = [1,2,3,4,5,6,2]; 
+			list<int> var16 <- [1,2,3,4,5,6] + 0; 	// var16 equals [1,2,3,4,5,6,0]
+			assert var16 = [1,2,3,4,5,6,0]; 
+			geometry var17 <- circle(5) + (5,32); 	// var17 equals circle(10)
+			assert var17 = circle(10); 
+			//geometry var18 <- geom1 + geom2; 	// var18 equals a geometry corresponding to union between geom1 and geom2
+			rgb var19 <- rgb([255, 128, 32]) + 3; 	// var19 equals rgb([255,131,35])
+			assert var19 = rgb([255,131,35]); 
+			geometry var20 <- circle(5) + 5; 	// var20 equals circle(10)
+			assert var20 = circle(10); 
+			date var21 <- date('2000-01-01') + 200; 	// var21 equals date('2000-01-01')
+			assert var21 = date('2000-01-01'); 
+			point var22 <- {1, 2} + {4, 5}; 	// var22 equals {5.0, 7.0}
+			assert var22 = {5.0, 7.0}; 
+			map var0 <- ['a'::1,'b'::2] + ['c'::3]; 	// var0 equals ['a'::1,'b'::2,'c'::3]
+			assert var0 = ['a'::1,'b'::2,'c'::3]; 
+			map var1 <- ['a'::1,'b'::2] + [5::3.0]; 	// var1 equals ['a'::1.0,'b'::2.0,5::3.0]
+			assert var1 = ['a'::1.0,'b'::2.0,5::3.0]; 
+			map var2 <- ['a'::1,'b'::2] + ('c'::3); 	// var2 equals ['a'::1,'b'::2,'c'::3]
+			assert var2 = ['a'::1,'b'::2,'c'::3]; 
+			map var3 <- ['a'::1,'b'::2] + ('c'::3); 	// var3 equals ['a'::1,'b'::2,'c'::3]
+			assert var3 = ['a'::1,'b'::2,'c'::3]; 
+
+		}
+	
+		test plus_daysOp {
+			date var0 <- date('2000-01-01') plus_days 12; 	// var0 equals date('2000-01-13')
+			assert var0 = date('2000-01-13'); 
+
+		}
+	
+		test plus_hoursOp {
+			// equivalent to date1 + 15 #h
+			date var1 <- date('2000-01-01') plus_hours 24; 	// var1 equals date('2000-01-02')
+			assert var1 = date('2000-01-02'); 
+
+		}
+	
+		test plus_minutesOp {
+			// equivalent to date1 + 5 #mn
+			date var1 <- date('2000-01-01') plus_minutes 5 ; 	// var1 equals date('2000-01-01 00:05:00')
+			assert var1 = date('2000-01-01 00:05:00'); 
+
+		}
+	
+		test plus_monthsOp {
+			date var0 <- date('2000-01-01') plus_months 5; 	// var0 equals date('2000-06-01')
+			assert var0 = date('2000-06-01'); 
+
+		}
+	
+		test plus_msOp {
+			//// equivalent to date('2000-01-01') + 15 #ms
+			date var1 <- date('2000-01-01') plus_ms 1000 ; 	// var1 equals date('2000-01-01 00:00:01')
+			assert var1 = date('2000-01-01 00:00:01'); 
+
+		}
+	
+		test plus_secondsOp {
+
+		}
+	
+		test plus_weeksOp {
+			date var0 <- date('2000-01-01') plus_weeks 15; 	// var0 equals date('2000-15-01')
+			assert var0 = date('2000-15-01'); 
+
+		}
+	
+		test plus_yearsOp {
+			date var0 <- date('2000-01-01') plus_years 15; 	// var0 equals date('2015-01-01')
+			assert var0 = date('2015-01-01'); 
+
+		}
+	
+		test sinceOp {
+			//reflex when: since(starting_date) {}  	// this reflex will always be run
+			//every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date
+
+		}
+	
+		test subtract_daysOp {
+
+		}
+	
+		test subtract_hoursOp {
+
+		}
+	
+		test subtract_minutesOp {
+
+		}
+	
+		test subtract_monthsOp {
+
+		}
+	
+		test subtract_msOp {
+
+		}
+	
+		test subtract_secondsOp {
+
+		}
+	
+		test subtract_weeksOp {
+
+		}
+	
+		test subtract_yearsOp {
+
+		}
+	
+		test toOp {
+			//date('2000-01-01') to date('2010-01-01') // builds an interval between these two dates
+			//(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval
+
+		}
+	
+		test untilOp {
+			//reflex when: until(starting_date) {} 	// This reflex will be run only once at the beginning of the simulation
+
+		}
+	
+		test years_betweenOp {
+			int var0 <- years_between(date('2000-01-01'), date('2010-01-01')); 	// var0 equals 10
+			assert var0 = 10; 
+
+		}
+	
+}
+
+	

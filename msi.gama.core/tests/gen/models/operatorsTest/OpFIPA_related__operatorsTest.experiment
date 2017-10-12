@@ -1,0 +1,16 @@
+/**
+ *  OpOpFIPA_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpFIPA_related__operatorsTest.
+ */
+
+experiment OpFIPA_related__operatorsTestTests type: test {	
+
+	
+		test messageOp {
+
+		}
+	
+}
+
+	

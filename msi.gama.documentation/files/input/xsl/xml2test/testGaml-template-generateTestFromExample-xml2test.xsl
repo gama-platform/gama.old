@@ -29,7 +29,7 @@
 
 			</xsl:when>
 			<xsl:when test="@raises">
-			assert <xsl:value-of select="@code"/> raises: "<xsl:value-of select="@raises"/>";<xsl:text> 
+			// assert <xsl:value-of select="@code"/> raises: "<xsl:value-of select="@raises"/>";<xsl:text> 
 </xsl:text>			
 			</xsl:when>
 			<xsl:otherwise>
