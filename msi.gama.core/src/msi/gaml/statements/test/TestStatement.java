@@ -20,8 +20,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jgrapht.alg.util.Pair;
 
-import com.google.common.primitives.Ints;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -100,12 +98,11 @@ import msi.gaml.types.IType;
 		see = { "setup", "assert" })
 public class TestStatement extends AbstractStatementSequence {
 
-	public static class TestSummary implements Comparable<TestSummary> {
+	public static class TestSummary {
 
 		public static TestSummary FINISHED = new TestSummary();
 		public static TestSummary INDIVIDUAL_TEST_FINISHED = new TestSummary();
 		public static TestSummary BEGINNING = new TestSummary();
-		public static boolean SORT_BY_SEVERITY;
 
 		private static int COUNT = 0;
 
@@ -199,13 +196,6 @@ public class TestStatement extends AbstractStatementSequence {
 			final List<Pair<String, State>> result = new ArrayList<>();
 			asserts.forEach((n, s) -> result.add(new Pair<String, State>(n, s)));
 			return result;
-		}
-
-		@Override
-		public int compareTo(final TestSummary o) {
-			if (SORT_BY_SEVERITY)
-				return getState().compareTo(getState());
-			return Ints.compare(number, o.number);
 		}
 
 	}

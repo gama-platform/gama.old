@@ -77,7 +77,6 @@ import ummisco.gama.ui.resources.GamaFonts;
  */
 public class SwtGui implements IGui {
 
-	public volatile static boolean PERSISTENT_TEST_VIEW = false;
 	public volatile static boolean ALL_TESTS_RUNNING;
 
 	private IAgent highlightedAgent;

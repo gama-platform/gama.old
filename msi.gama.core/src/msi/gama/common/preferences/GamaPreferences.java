@@ -124,13 +124,23 @@ public class GamaPreferences {
 		 * Validation
 		 */
 		public static final String VALIDATION = "Validation of Models";
-		public static final Pref<Boolean> WARNINGS_ENABLED = GamaPreferences
-				.create("pref_editor_enable_warnings", "Show warning markers when editing a model", true, IType.BOOL)
-				.in(NAME, VALIDATION);
+		public static final Pref<Boolean> WARNINGS_ENABLED =
+				create("pref_editor_enable_warnings", "Show warning markers when editing a model", true, IType.BOOL)
+						.in(NAME, VALIDATION);
 
-		public static final Pref<Boolean> INFO_ENABLED = GamaPreferences
-				.create("pref_editor_enable_infos", "Show information markers when editing a model", true, IType.BOOL)
-				.in(NAME, VALIDATION);
+		public static final Pref<Boolean> INFO_ENABLED =
+				create("pref_editor_enable_infos", "Show information markers when editing a model", true, IType.BOOL)
+						.in(NAME, VALIDATION);
+
+		public static final String TESTS = "Tests";
+		public static final Pref<Boolean> RUN_TESTS =
+				create("pref_run_tests", "Run tests periodically", false, IType.BOOL).in(NAME, TESTS)
+						.activates("pref_tests_period");
+		public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
+				.among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
+		public static final Pref<Boolean> TESTS_SORTED =
+				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL).in(NAME,
+						TESTS);
 	}
 
 	public static class Experiments {

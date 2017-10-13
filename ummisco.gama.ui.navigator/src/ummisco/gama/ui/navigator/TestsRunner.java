@@ -24,7 +24,6 @@ public class TestsRunner {
 		final IGui gui = GAMA.getRegularGui();
 		final IScope scope = GAMA.getRuntimeScope();
 		try {
-			SwtGui.PERSISTENT_TEST_VIEW = true;
 			SwtGui.ALL_TESTS_RUNNING = true;
 
 			List<IFile> testFiles = null;
@@ -44,7 +43,6 @@ public class TestsRunner {
 				e.printStackTrace();
 			}
 		} finally {
-			SwtGui.PERSISTENT_TEST_VIEW = false;
 			SwtGui.ALL_TESTS_RUNNING = false;
 			gui.displayTestsResults(scope, TestSummary.FINISHED);
 		}

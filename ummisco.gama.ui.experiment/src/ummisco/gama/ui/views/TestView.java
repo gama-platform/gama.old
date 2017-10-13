@@ -35,6 +35,8 @@ import com.google.common.primitives.Ints;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.TOrderedHashMap;
@@ -65,7 +67,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		if (!SwtGui.PERSISTENT_TEST_VIEW) {
+		if (!SwtGui.ALL_TESTS_RUNNING) {
 			editors.clear();
 			sortedEditors.clear();
 			super.reset();
@@ -81,7 +83,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	static Comparator<TestSummary> BY_SEVERITY = (o1, o2) -> o1.getState().compareTo(o2.getState());
 
 	protected void resortTests() {
-		final Comparator<TestSummary> comp = TestSummary.SORT_BY_SEVERITY ? BY_SEVERITY : BY_ORDER;
+		final Comparator<TestSummary> comp = GamaPreferences.Modeling.TESTS_SORTED.getValue() ? BY_SEVERITY : BY_ORDER;
 		sortedEditors.sort(comp);
 	}
 
@@ -182,14 +184,26 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						TestSummary.SORT_BY_SEVERITY = !TestSummary.SORT_BY_SEVERITY;
+						GamaPreferences.Modeling.TESTS_SORTED.set(!GamaPreferences.Modeling.TESTS_SORTED.getValue());
 						TestView.super.reset();
 						editors.clear();
 						reset();
 					}
 
 				}, SWT.RIGHT);
-		t.setSelection(TestSummary.SORT_BY_SEVERITY);
+		t.setSelection(GamaPreferences.Modeling.TESTS_SORTED.getValue());
+		GamaPreferences.Modeling.TESTS_SORTED.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				t.setSelection(newValue);
+			}
+		});
 	}
 
 	@Override
@@ -215,7 +229,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 	@Override
 	protected boolean shouldBeClosedWhenNoExperiments() {
-		return !SwtGui.PERSISTENT_TEST_VIEW;
+		return !SwtGui.ALL_TESTS_RUNNING;
 	}
 
 	@Override
