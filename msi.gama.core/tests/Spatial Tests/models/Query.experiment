@@ -39,21 +39,17 @@ global {
 	}
 }
 experiment QueryTests type: test {
-	test "closest_to with continuous topology"{
+	test "closest_to" {
 		dummy closest_dummy;
 		using topology(world) {
 			closest_dummy <- dummy closest_to dummy(8);
 		}
 		assert closest_dummy = dummy(4);
-	}
-	test "closest_to with grid topology" {
-		dummy closest_dummy;
 		using topology(cell) {
 			closest_dummy <- dummy closest_to dummy(8);
 		}
 		assert closest_dummy = dummy(4);
-	}
-	test "closest_to cell with grid topology" {
+		
 		list<cell> neighborhood;
 		loop times: 100 {
 			using topology(cell){
@@ -63,48 +59,42 @@ experiment QueryTests type: test {
 		neighborhood <- remove_duplicates(neighborhood);
 		assert empty(neighborhood - cell(40).neighbors);
 	}
+	
 	test "farthest_to with continuous topology"{
 		dummy farthest_dummy;
 		using topology(world) {
 			farthest_dummy <- dummy farthest_to dummy(8);
 		}
 		assert farthest_dummy = dummy(7);
-	}
-	test "farthest_to with grid topology" {
-		dummy farthest_dummy;
+		
 		using topology(cell) {
 			farthest_dummy <- dummy farthest_to dummy(8);
 		}
 		assert farthest_dummy = dummy(7);
-	}
-	test "farthest_to cell with grid topology" {
+		
 		cell farthest_cell;
 		using topology(cell) {farthest_cell<- cell farthest_to cell(40);}
 		assert farthest_cell = cell(99);
 	}
 	
-	test "at_distance with continuous topology" {
-		list<dummy> neighborhood;
+	test "at_distance" {
+		list<agent> neighborhood;
+		
 		ask dummy(8) {
 			neighborhood <- dummy at_distance(30);
 		}
 		assert empty(neighborhood - [dummy(3),dummy(4),dummy(5),dummy(6)]);
-	}
-	
-	test "at_distance with grid topology" {
-		list<dummy> neighborhood;
+		
 		ask dummy(8) {
 			using topology(cell) {neighborhood <- dummy at_distance(4);}
 		}
 		assert empty(neighborhood - [dummy(3),dummy(4),dummy(5),dummy(6)]);
-	}
-	
-	test "at_distance to cell with grid topology" {
-		list<cell> neighborhood;
+		
 		ask cell(40) {
 			using topology(cell) {neighborhood <- cell at_distance(2);}
 		}
 		assert empty(neighborhood - [cell(42),cell(60),cell(30),cell(31),cell(51),cell(50),cell(20),cell(41)]);
+	
 	}
 	
 	test "inside" {

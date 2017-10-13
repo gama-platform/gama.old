@@ -28,17 +28,14 @@ experiment TopologyTests type: test {
 		assert choice = 3;
 	}	
 	
-	test "promethee_DM simple"{
+	test "evidence_theory_DM"{
 		list criteria_ET <- [["name"::"C1", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::1.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true],["name"::"C2", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::2.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true],["name"::"C3", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::3.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true]];
 		int choice <- evidence_theory_DM(candidates,criteria_ET, true);
 		assert choice = 4;
-	}	
-	
-	test "promethee_DM total"{
-		list criteria_ET <- [["name"::"C1", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::1.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true],["name"::"C2", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::2.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true],["name"::"C3", "s1"::0.0, "s2"::3.0, "v1p"::0.0, "v2p"::3.0, "v1c"::0.0, "v2c"::0.0,"maximize" :: true]];
-		int choice <- evidence_theory_DM(candidates,criteria_ET, false);
+		
+		choice <- evidence_theory_DM(candidates,criteria_ET, false);
 		assert choice = 0;
-	}
+	}	
 	
 	test "fuzzy_choquet_DM"{
 		map<list<string>,float> criteria_FC <- ([["C1"]::1.0, ["C2"]::2.0, ["C3"]:: 3.0,["C1","C2"]::1.0]); 
