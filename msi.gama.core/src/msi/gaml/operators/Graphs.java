@@ -567,7 +567,7 @@ public class Graphs {
 	@doc (
 			value = "returns the sub-graph corresponding to the main connected components of the graph",
 			examples = { @example (
-					value = "main_connected_components (my_graph)", isExecutable = false,
+					value = "main_connected_component(my_graph)", isExecutable = false,
 					equals = "the sub-graph corresponding to the main connected components of the graph",
 					test = false) },
 			see = { "connected_components_of" })
