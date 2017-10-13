@@ -149,8 +149,9 @@ public class SwtGui implements IGui {
 	@Override
 	public void displayTestsResults(final IScope scope, final TestSummary summary) {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
-		if (v != null)
+		if (v != null) {
 			v.addTestResult(summary);
+		}
 	}
 
 	@Override

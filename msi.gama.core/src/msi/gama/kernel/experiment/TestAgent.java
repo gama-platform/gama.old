@@ -71,6 +71,7 @@ public class TestAgent extends BatchAgent {
 			if (state.equals(State.FAILED) || state.equals(State.ABORTED))
 				failedModels++;
 		}
+		getScope().getGui().displayTestsResults(getScope(), TestSummary.INDIVIDUAL_TEST_FINISHED);
 		super.dispose();
 	}
 

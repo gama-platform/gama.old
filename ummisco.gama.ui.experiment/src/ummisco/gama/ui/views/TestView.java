@@ -11,9 +11,11 @@ package ummisco.gama.ui.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -28,7 +30,8 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.jgrapht.alg.util.Pair;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
+import com.google.common.primitives.Ints;
+
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ItemList;
@@ -50,8 +53,8 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class TestView extends ExpandableItemsView<TestSummary> implements IGamaView.Test {
 
-	public static boolean SORT_BY_SEVERITY;
-	public final Map<TestSummary, Map<String, AssertEditor>> editors = new TOrderedHashMap<>();
+	public final Map<TestSummary, Map<String, AssertEditor>> editors = new HashMap<>();
+	public final List<TestSummary> sortedEditors = new ArrayList<>();
 	public static final GridLayout layout = new GridLayout(2, false);
 	static {
 		layout.verticalSpacing = 0;
@@ -64,6 +67,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 		super.init(site);
 		if (!SwtGui.PERSISTENT_TEST_VIEW) {
 			editors.clear();
+			sortedEditors.clear();
 			super.reset();
 		}
 	}
@@ -73,23 +77,32 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 		return false;
 	}
 
-	protected void resortTests() {
+	static Comparator<TestSummary> BY_ORDER = (o1, o2) -> Ints.compare(o1.number, o2.number);
+	static Comparator<TestSummary> BY_SEVERITY = (o1, o2) -> o1.getState().compareTo(o2.getState());
 
+	protected void resortTests() {
+		final Comparator<TestSummary> comp = TestSummary.SORT_BY_SEVERITY ? BY_SEVERITY : BY_ORDER;
+		sortedEditors.sort(comp);
 	}
 
 	@Override
 	public void addTestResult(final TestSummary e) {
-		if (e == TestSummary.FINISHED) {
+		if (e == TestSummary.FINISHED || e == TestSummary.INDIVIDUAL_TEST_FINISHED) {
+			TestView.super.reset();
+			editors.clear();
 			reset();
 			return;
 		}
 		if (e == TestSummary.BEGINNING) {
 			editors.clear();
+			sortedEditors.clear();
 			super.reset();
 			return;
 		}
-		if (!editors.containsKey(e))
+		if (!editors.containsKey(e)) {
 			editors.put(e, null);
+			sortedEditors.add(e);
+		}
 		if (!SwtGui.ALL_TESTS_RUNNING)
 			reset();
 		WorkbenchHelper.run(() -> {
@@ -99,16 +112,20 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	}
 
 	protected String createTestsSummary() {
-		final TObjectIntHashMap<State> map = new TObjectIntHashMap<>();
-		editors.keySet().forEach(t -> {
-			map.adjustOrPutValue(t.getState(), 1, 1);
+		final Map<State, Integer> map = new TreeMap<>();
+		sortedEditors.forEach(t -> {
+			final State s = t.getState();
+			if (map.containsKey(s)) {
+				map.put(s, map.get(s) + 1);
+			} else
+				map.put(s, 1);
 		});
-		for (final Object s : map.keys()) {
+		for (final State s : map.keySet()) {
 			if (map.get(s) == 0)
 				map.remove(s);
 		}
 		String message = "" + editors.size() + " tests";
-		for (final Object s : map.keys()) {
+		for (final Object s : map.keySet()) {
 			message += ", " + (map.size() == 1 ? "all" : String.valueOf(map.get(s))) + " " + s;
 		}
 		return message;
@@ -165,12 +182,14 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						SORT_BY_SEVERITY = !SORT_BY_SEVERITY;
-						resortTests();
+						TestSummary.SORT_BY_SEVERITY = !TestSummary.SORT_BY_SEVERITY;
+						TestView.super.reset();
+						editors.clear();
+						reset();
 					}
 
 				}, SWT.RIGHT);
-		t.setSelection(SORT_BY_SEVERITY);
+		t.setSelection(TestSummary.SORT_BY_SEVERITY);
 	}
 
 	@Override
@@ -209,7 +228,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 	@Override
 	public List<TestSummary> getItems() {
-		return new ArrayList<TestSummary>(editors.keySet());
+		return sortedEditors;
 	}
 
 	@Override
@@ -219,6 +238,7 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 	public void reset() {
 		WorkbenchHelper.run(() -> {
 			if (!parent.isDisposed()) {
+				resortTests();
 				displayItems();
 				parent.layout(true, false);
 			}
