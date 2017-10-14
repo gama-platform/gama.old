@@ -41,7 +41,6 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException> implements IGamaView.Error {
 

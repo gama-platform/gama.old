@@ -21,7 +21,7 @@ public class Pref<T> implements IParameter {
 
 	private final int order = ORDER++;
 
-	String key, title, tab, group;
+	String key, title, tab, group, comment;
 	boolean disabled = false; // by default
 	T value, initial;
 	final int type;
@@ -99,6 +99,11 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
+	public Pref<T> withComment(final String comment) {
+		setUnitLabel(comment);
+		return this;
+	}
+
 	public Pref<T> named(final String t) {
 		this.title = t;
 		return this;
@@ -166,11 +171,13 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
-		return null;
+		return comment;
 	}
 
 	@Override
-	public void setUnitLabel(final String label) {}
+	public void setUnitLabel(final String label) {
+		comment = label;
+	}
 
 	@SuppressWarnings ("unchecked")
 	@Override

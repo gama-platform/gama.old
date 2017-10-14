@@ -45,12 +45,12 @@ import msi.gaml.statements.test.TestStatement.State;
 import msi.gaml.statements.test.TestStatement.TestSummary;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.parameters.AbstractEditor;
+import ummisco.gama.ui.parameters.AssertEditor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class TestView extends ExpandableItemsView<TestSummary> implements IGamaView.Test {

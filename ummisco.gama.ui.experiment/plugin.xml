@@ -96,15 +96,6 @@
             name="User Control"
             restorable="false">
       </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="ummisco.gama.ui.views.TestView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.test2.png"
-            id="msi.gama.application.view.TestView"
-            name="Tests"
-            restorable="false">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
