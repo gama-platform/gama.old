@@ -53,18 +53,8 @@ fi
 }
 
 
-install 
- 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi (){
-	echo "install 
- 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi GAMA project"			
+install (){
+	echo "Install GAMA project"			
 	
 	
 	change=$(git log --pretty=format: --name-only --since="1 hour ago")
@@ -572,12 +562,7 @@ fi
 	cd msi.gama.parent
 	
 	if  [[ $MSG == *"ci debug"* ]]; then		
-		mvn -e clean install 
- 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi -DskipTests
+		mvn -e clean install -DskipTests
 	else
 		mvn clean install 
  
@@ -598,17 +583,7 @@ if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 	MSG+=" ci ext "
 fi 
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
-	install 
- 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
+	install
 else		
-	install 
- 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
+	install
 fi
