@@ -167,10 +167,10 @@
 
 	<modules>
 
-		<!-- <module>../gama.target.platform</module>
-		 -->
+		<!-- <module>../gama.target.platform</module> -->
 
 		
+		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
 		<module>../msi.gama.documentation</module>
@@ -182,6 +182,7 @@
 		<module>../msi.gama.application</module>
 
 		<module>../ummisco.gama.feature.models</module>
+		<module>../ummisco.gama.feature.dependencies</module>
 		
 
 		<module>../ummisco.gama.feature.core</module>
