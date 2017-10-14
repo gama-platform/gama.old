@@ -93,13 +93,6 @@ install (){
 
 	
 	
-	if [[ ${change} == *"ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
-		cd ummisco.gama.ui.modeling
-		mvn clean install
-		cd -
-	fi
-	
-	
 
 	
 	
@@ -111,6 +104,7 @@ install (){
 	fi
 	
 	
+	
 
 	
 	if [[ ${change} == *"ummisco.gama.ui.navigator"* ]] || [[ $MSG == *"ci ummisco.gama.ui.navigator"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
@@ -118,6 +112,16 @@ install (){
 		mvn clean install
 		cd -
 	fi
+	
+	
+	
+	if [[ ${change} == *"ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
+		cd ummisco.gama.ui.modeling
+		mvn clean install
+		cd -
+	fi
+	
+	
 	
 	
 	if [[ ${change} == *"ummisco.gama.ui.experiment"* ]] || [[ $MSG == *"ci ummisco.gama.ui.experiment"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then

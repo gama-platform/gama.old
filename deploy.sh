@@ -73,16 +73,6 @@ fi
 
 
 
-if [[ ${change} == *"ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
-	cd ummisco.gama.ui.modeling
-	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
-	cd -
-fi
-
-
-
-
-
 
 if [[ ${change} == *"ummisco.gama.ui.shared"* ]] || [[ $MSG == *"ci ummisco.gama.ui.shared"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
 	cd ummisco.gama.ui.shared
@@ -98,6 +88,19 @@ if [[ ${change} == *"ummisco.gama.ui.navigator"* ]] || [[ $MSG == *"ci ummisco.g
 	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
 	cd -
 fi
+
+
+
+
+
+if [[ ${change} == *"ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci ummisco.gama.ui.modeling"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
+	cd ummisco.gama.ui.modeling
+	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+	cd -
+fi
+
+
+
 
 
 if [[ ${change} == *"ummisco.gama.ui.experiment"* ]] || [[ $MSG == *"ci ummisco.gama.ui.experiment"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
