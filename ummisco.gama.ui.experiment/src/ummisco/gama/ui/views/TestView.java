@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
+import static msi.gama.common.preferences.GamaPreferences.Modeling.TESTS_SORTED;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -35,8 +37,6 @@ import com.google.common.primitives.Ints;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.TOrderedHashMap;
@@ -55,6 +55,15 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class TestView extends ExpandableItemsView<TestSummary> implements IGamaView.Test {
 
+	static final Comparator<TestSummary> BY_ORDER = (o1, o2) -> Ints.compare(o1.number, o2.number);
+	static final Comparator<TestSummary> BY_SEVERITY = (o1, o2) -> {
+		final State s1 = o1.getState();
+		final State s2 = o2.getState();
+		if (s1 == s2)
+			return BY_ORDER.compare(o1, o2);
+		else
+			return s1.compareTo(s2);
+	};
 	public final Map<TestSummary, Map<String, AssertEditor>> editors = new HashMap<>();
 	public final List<TestSummary> sortedEditors = new ArrayList<>();
 	public static final GridLayout layout = new GridLayout(2, false);
@@ -79,11 +88,8 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 		return false;
 	}
 
-	static Comparator<TestSummary> BY_ORDER = (o1, o2) -> Ints.compare(o1.number, o2.number);
-	static Comparator<TestSummary> BY_SEVERITY = (o1, o2) -> o1.getState().compareTo(o2.getState());
-
 	protected void resortTests() {
-		final Comparator<TestSummary> comp = GamaPreferences.Modeling.TESTS_SORTED.getValue() ? BY_SEVERITY : BY_ORDER;
+		final Comparator<TestSummary> comp = TESTS_SORTED.getValue() ? BY_SEVERITY : BY_ORDER;
 		sortedEditors.sort(comp);
 	}
 
@@ -184,26 +190,15 @@ public class TestView extends ExpandableItemsView<TestSummary> implements IGamaV
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						GamaPreferences.Modeling.TESTS_SORTED.set(!GamaPreferences.Modeling.TESTS_SORTED.getValue());
+						TESTS_SORTED.set(!TESTS_SORTED.getValue());
 						TestView.super.reset();
 						editors.clear();
 						reset();
 					}
 
 				}, SWT.RIGHT);
-		t.setSelection(GamaPreferences.Modeling.TESTS_SORTED.getValue());
-		GamaPreferences.Modeling.TESTS_SORTED.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				t.setSelection(newValue);
-			}
-		});
+		t.setSelection(TESTS_SORTED.getValue());
+		TESTS_SORTED.onChange(v -> t.setSelection(v));
 	}
 
 	@Override

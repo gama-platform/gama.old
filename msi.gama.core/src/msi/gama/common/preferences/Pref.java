@@ -22,6 +22,7 @@ public class Pref<T> implements IParameter {
 	private final int order = ORDER++;
 
 	String key, title, tab, group;
+	boolean disabled = false; // by default
 	T value, initial;
 	final int type;
 	List<T> values;
@@ -39,6 +40,15 @@ public class Pref<T> implements IParameter {
 	public Pref<T> group(final String g) {
 		this.group = g;
 		return this;
+	}
+
+	public Pref<T> disabled() {
+		disabled = true;
+		return this;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
 	}
 
 	public Pref<T> onChange(final Consumer<T> consumer) {
