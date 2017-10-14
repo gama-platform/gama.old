@@ -10,7 +10,7 @@
  **********************************************************************************************/
 package msi.gama.precompiler.doc.Element;
 
-import msi.gama.precompiler.GamlDocProcessor;
+import msi.gama.precompiler.DocProcessor;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 import org.w3c.dom.Document;
@@ -65,7 +65,7 @@ public class Operator implements IElement {
 		// eltOp.setAttribute(XMLElements.ATT_OP_CATEGORY, category);
 		eltOp.setAttribute(XMLElements.ATT_OP_ID, name);
 		eltOp.setAttribute(XMLElements.ATT_OP_NAME, name);	
-		eltOp.setAttribute(XMLElements.ATT_ALPHABET_ORDER, GamlDocProcessor.getAlphabetOrder(name));
+		eltOp.setAttribute(XMLElements.ATT_ALPHABET_ORDER, DocProcessor.getAlphabetOrder(name));
 
 		// Categories
 		org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATOR_CATEGORIES);
