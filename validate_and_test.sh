@@ -22,5 +22,17 @@ passWork=.work$RANDOM
 
 java  -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx2048m  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -validate "/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/plugins" $mfull $outputFile 
 res=$?
+		
+if [[ $res -gt 0 ]]; then	
+	rm -rf $passWork
+	exit $res
+fi
+
+
+
+java  -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx2048m  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -test "/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/plugins" $mfull $outputFile 
+res=$?			
 rm -rf $passWork
-exit $res
+if [[ $res -gt 0 ]]; then
+	exit $res
+fi

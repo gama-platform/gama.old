@@ -1,323 +1,97 @@
-cd ummisco.gama.annotations
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd - 
-cd msi.gama.processor 
-mvn clean install 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd - 
-cd msi.gama.ext 
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd ummisco.gama.feature.dependencies 
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+ #!/bin/bash 
+
+function mvn_install() {
+	echo "Building"  $1
+	cd $1
+	mvn clean install 
+	res=$?
+	if [[ $res -gt 0 ]]; then
+		exit $res
+	fi
+	cd -
+}
+
+mvn_install ummisco.gama.annotations
+
+mvn_install msi.gama.processor
+
+mvn_install msi.gama.ext
+mvn_install ummisco.gama.feature.dependencies
 
 
-cd msi.gama.core 
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.core
 
 
-cd msi.gama.lang.gaml
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.lang.gam
 
-cd msi.gama.documentation
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.documentation
 
 
-cd ummisco.gama.ui.shared
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.ui.shared
 
 
-cd ummisco.gama.ui.navigator
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.ui.navigator
 
-cd ummisco.gama.ui.modeling
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.ui.modeling
 
-cd ummisco.gama.ui.experiment
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.ui.experiment
 
-cd msi.gama.application
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.application
 
-cd msi.gaml.extensions.fipa
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gaml.extensions.fipa
 
-cd msi.gama.headless
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.headless
 
-cd simtools.gaml.extensions.traffic
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install simtools.gaml.extensions.traffic
 
-cd simtools.gaml.extensions.physics
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install simtools.gaml.extensions.physics
 
-cd irit.gaml.extensions.database
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install irit.gaml.extensions.database
 
-cd msi.gama.models
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.models
 
-cd ummisco.gama.feature.models
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -		
+mvn_install ummisco.gama.feature.models
 
-cd msi.gaml.architecture.simplebdi
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gaml.architecture.simplebdi
 
-cd simtools.graphanalysis.fr
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd simtools.graphlayout.feature
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -		
+mvn_install simtools.graphanalysis.fr
+mvn_install simtools.graphlayout.feature
 
 
-cd ummisco.gama.opengl
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.opengl
 
 
-cd ummisco.gama.java2d
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.java2d
 
-cd ummisco.gama.ui.viewers
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.ui.viewers
 
-cd ummisco.gama.serialize
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd ummisco.gama.feature.serialize
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -		
+mvn_install ummisco.gama.serialize
+mvn_install ummisco.gama.feature.serialize
 
-cd ummisco.gama.network
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd ummisco.gama.feature.network
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -		
+mvn_install ummisco.gama.network
+mvn_install ummisco.gama.feature.network
 
 
-cd ummisco.gaml.extensions.maths
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gaml.extensions.maths
 
-cd ummisco.gaml.extensions.sound
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd ummisco.gama.feature.audio
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gaml.extensions.sound
+mvn_install ummisco.gama.feature.audio
 
-cd ummisco.gaml.extensions.stats
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
-cd ummisco.gama.feature.stats
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -		
+mvn_install ummisco.gaml.extensions.stats
+mvn_install ummisco.gama.feature.stats
 
-cd ummisco.gama.feature.core
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.feature.core
 
-cd ummisco.gama.feature.core.extensions
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.feature.core.extensions
 
 
-cd ummisco.gama.feature.core.ui
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.feature.core.ui
 
-cd ummisco.gama.feature.experiment.ui
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.feature.experiment.ui
 
 
 
-cd ummisco.gama.feature.modeling.ui
-mvn clean install
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install ummisco.gama.feature.modeling.ui
 
 
-
-cd msi.gama.parent 
-mvn clean install 
-res=$?
-if [[ $res -gt 0 ]]; then
-	exit $res
-fi
-cd -
+mvn_install msi.gama.parent
