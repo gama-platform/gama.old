@@ -189,11 +189,11 @@ experiment OpArithmetic__operatorsTestTests type: test {
 			assert var5 = rgb([0,128,32]); 
 			int var6 <- 1 - 1; 	// var6 equals 0
 			assert var6 = 0; 
-			int var7 <- 1.0 - 1; 	// var7 equals 0.0
+			float var7 <- 1.0 - 1; 	// var7 equals 0.0
 			assert var7 = 0.0; 
-			int var8 <- 3.7 - 1.2; 	// var8 equals 2.5
+			float var8 <- 3.7 - 1.2; 	// var8 equals 2.5
 			assert var8 = 2.5; 
-			int var9 <- 3 - 1.2; 	// var9 equals 1.8
+			float var9 <- 3 - 1.2; 	// var9 equals 1.8
 			assert var9 = 1.8; 
 			point var10 <- {1, 2} - 4.5; 	// var10 equals {-3.5, -2.5, -4.5}
 			assert var10 = {-3.5, -2.5, -4.5}; 
@@ -258,9 +258,9 @@ experiment OpArithmetic__operatorsTestTests type: test {
 		test PlusOp {
 			int var4 <- 1 + 1; 	// var4 equals 2
 			assert var4 = 2; 
-			int var5 <- 1.0 + 1; 	// var5 equals 2.0
+			float var5 <- 1.0 + 1; 	// var5 equals 2.0
 			assert var5 = 2.0; 
-			int var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			float var6 <- 1.0 + 2.5; 	// var6 equals 3.5
 			assert var6 = 3.5; 
 			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
 			assert var7 = "hello 12"; 
@@ -327,8 +327,8 @@ experiment OpArithmetic__operatorsTestTests type: test {
 			assert var10 = sqrt(2); 
 			float var11 <- 16.81^0.5; 	// var11 equals sqrt(16.81)
 			assert var11 = sqrt(16.81); 
-			float var12 <- (10^(-9) = 0); 	// var12 equals false
-			assert var12 = false; 
+//			float var12 <- (10^(-9) = 0); 	// var12 equals false
+//			assert var12 = false; 
 			float var0 <- 4.84 ^ 0.5; 	// var0 equals 2.2
 			assert var0 = 2.2; 
 
@@ -365,9 +365,8 @@ experiment OpArithmetic__operatorsTestTests type: test {
 		}
 	
 		test sin_radOp {
-			float var0 <- sin(360); 	// var0 equals 0.0
+			float var0 <- sin_rad(#pi); 	// var0 equals 0.0
 			assert var0 = 0.0; 
-
 		}
 	
 		test sqrtOp {
