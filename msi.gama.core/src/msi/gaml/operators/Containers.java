@@ -934,10 +934,8 @@ public class Containers {
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] max_of (each + 3)",
 									equals = "6") }) },
-			examples = { @example (
-					value = "graph([]) max_of([])",
-					raises = "error",
-					isTestOnly = true),
+			examples = { 
+				//	@example ( value = "graph([]) max_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )",
 							equals = "800"),
@@ -1164,10 +1162,8 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] min_of (each + 3)",
 							equals = "5") }) },
-			examples = { @example (
-					value = "graph([]) min_of([])",
-					raises = "error",
-					isTestOnly = true),
+			examples = { 
+				//	@example (value = "graph([]) min_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] min_of (each * 100 )",
 							equals = "100"),

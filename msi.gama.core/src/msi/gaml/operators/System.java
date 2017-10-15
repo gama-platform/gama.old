@@ -173,10 +173,8 @@ public class System {
 							value = "agent1.location",
 							equals = "the location of the agent agent1",
 							isExecutable = false),
-							@example (
-									value = "map(nil).keys",
-									raises = "exception",
-									isTestOnly = false) }))
+						//	@example (value = "map(nil).keys", raises = "exception", isTestOnly = false) 
+					}))
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 			throws GamaRuntimeException {
 		if (a == null) {

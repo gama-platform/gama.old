@@ -11,10 +11,11 @@
  **********************************************************************************************/
 package msi.gama.doc;
 
+import java.io.File;
+import java.util.HashMap;
+
 import msi.gama.doc.transform.XmlToTestGAML;
-import msi.gama.doc.util.Constants;
-import msi.gama.doc.util.PrepareEnv;
-import msi.gama.doc.util.UnifyDoc;
+import msi.gama.doc.util.WorkspaceManager;
 
 public class MainGenerateUnitTest {
 
@@ -22,14 +23,23 @@ public class MainGenerateUnitTest {
 			throws Exception {
 		System.out.println("GENERATION OF THE TESTS FROM JAVA CODE");
 		System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
-		System.out.print("Preparation of the folders................");
-		PrepareEnv.prepareDocumentation(Constants.ONLINE);
-		System.out.println("DONE");
-		System.out.print("Merge all the docGAMA.xml files................");		
-		UnifyDoc.unify();
-		System.out.println("DONE");
-		System.out.print("Transform the docGAMA.xml file into test files................");		
-		XmlToTestGAML.createAllTests();
+		System.out.print("Transform each docGAMA.xml file into test files................");		
+		
+		try {
+
+			WorkspaceManager ws = new WorkspaceManager(".");
+			HashMap<String, File> hmFiles = ws.getAllDocFilesLocal();
+
+			for(File docFile : hmFiles.values()) {
+				XmlToTestGAML.createEachTest(docFile);
+			}
+			
+			System.out.println("" + hmFiles);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}				
+		
 		System.out.println("DONE");		
 	}
 
