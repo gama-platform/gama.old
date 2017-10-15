@@ -860,7 +860,7 @@ public class Containers {
 									equals = "6"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)",
-											equals = "5::6") }) },
+											equals = "(5::6)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] last_with (each > 3)",
 					equals = "8"),
@@ -899,7 +899,7 @@ public class Containers {
 									equals = "4"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)",
-											equals = "3::4") }) },
+											equals = "(3::4)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] first_with (each > 3)",
 					equals = "4"),

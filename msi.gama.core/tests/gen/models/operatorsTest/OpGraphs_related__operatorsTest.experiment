@@ -79,8 +79,8 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		}
 	
 		test connected_components_ofOp {
-			graph my_graph <- graph([]);
-			list<list> var1 <- connected_components_of (my_graph, true); 	// var1 equals the list of all the components as list
+			graph my_graph2 <- graph([]);
+			list<list> var1 <- connected_components_of (my_graph2, true); 	// var1 equals the list of all the components as list
 			graph my_graph <- graph([]);
 			list<list> var3 <- connected_components_of (my_graph); 	// var3 equals the list of all the components as list
 
@@ -95,7 +95,10 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 		test contains_edgeOp {
 			//bool var0 <- graphEpidemio contains_edge (node(0)::node(3)); 	// var0 equals true
 			graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
-			bool var2 <- graphFromMap contains_edge link({1,5}::{12,45}); 	// var2 equals true
+			write graphFromMap;
+			bool var2 <- graphFromMap contains_edge link({1,5},{12,45}); 	// var2 equals true
+			write link({1,5},{12,45});
+			write graphFromMap contains_edge link({1,5},{12,45});
 			assert var2 = true; 
 
 		}
@@ -340,7 +343,7 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 			//graph graphEpidemio <- generate_barabasi_albert( ["edges_species"::edge,"vertices_specy"::node,"size"::3,"m"::5] );
 			//unknown var1 <- graphEpidemio source_of(edge(3)); 	// var1 equals node1
 			graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
-			point var3 <- graphFromMap source_of(link({1,5}::{12,45})); 	// var3 equals {1,5}
+			point var3 <- graphFromMap source_of(link({1,5},{12,45})); 	// var3 equals {1,5}
 			assert var3 = {1,5}; 
 
 		}
@@ -374,7 +377,7 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 			//graph graphEpidemio <- generate_barabasi_albert( ["edges_species"::edge,"vertices_specy"::node,"size"::3,"m"::5] );
 			//unknown var1 <- graphEpidemio source_of(edge(3)); 	// var1 equals node1
 			graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
-			unknown var3 <- graphFromMap target_of(link({1,5}::{12,45})); 	// var3 equals {12,45}
+			unknown var3 <- graphFromMap target_of(link({1,5},{12,45})); 	// var3 equals {12,45}
 			assert var3 = {12,45}; 
 
 		}
@@ -389,7 +392,7 @@ experiment OpGraphs_related__operatorsTestTests type: test {
 	
 		test weight_ofOp {
 			graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
-			float var1 <- graphFromMap weight_of(link({1,5}::{12,45})); 	// var1 equals 1.0
+			float var1 <- graphFromMap weight_of(link({1,5},{12,45})); 	// var1 equals 1.0
 			assert var1 = 1.0; 
 
 		}

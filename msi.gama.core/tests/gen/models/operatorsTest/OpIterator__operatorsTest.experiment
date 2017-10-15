@@ -110,7 +110,7 @@ experiment OpIterator__operatorsTestTests type: test {
 			unknown var4 <- [1::2, 3::4, 5::6] last_with (each >= 4); 	// var4 equals 6
 			assert var4 = 6; 
 			unknown var5 <- [1::2, 3::4, 5::6].pairs last_with (each.value >= 4); 	// var5 equals 5::6
-			assert var5 = 5::6; 
+			assert var5 = (5::6); 
 			unknown var0 <- [1,2,3,4,5,6,7,8] last_with (each > 3); 	// var0 equals 8
 			assert var0 = 8; 
 			graph g2 <- graph([]);

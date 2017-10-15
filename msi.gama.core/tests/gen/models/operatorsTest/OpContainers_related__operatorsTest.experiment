@@ -124,7 +124,7 @@ experiment OpContainers_related__operatorsTestTests type: test {
 			//reflex when: every(2#days) since date('2000-01-01') { .. }
 			//state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time
 			//(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval
-			if every(2) {write "the cycle number is even";}
+			if every(2#cycle) {write "the cycle number is even";}
 				     else {write "the cycle number is odd";}
 
 		}
@@ -145,7 +145,7 @@ experiment OpContainers_related__operatorsTestTests type: test {
 			unknown var4 <- [1::2, 3::4, 5::6] first_with (each >= 4); 	// var4 equals 4
 			assert var4 = 4; 
 			unknown var5 <- [1::2, 3::4, 5::6].pairs first_with (each.value >= 4); 	// var5 equals 3::4
-			assert var5 = 3::4; 
+			assert var5 = (3::4); 
 			unknown var0 <- [1,2,3,4,5,6,7,8] first_with (each > 3); 	// var0 equals 4
 			assert var0 = 4; 
 			graph g2 <- graph([]);
@@ -234,7 +234,7 @@ experiment OpContainers_related__operatorsTestTests type: test {
 			unknown var4 <- [1::2, 3::4, 5::6] last_with (each >= 4); 	// var4 equals 6
 			assert var4 = 6; 
 			unknown var5 <- [1::2, 3::4, 5::6].pairs last_with (each.value >= 4); 	// var5 equals 5::6
-			assert var5 = 5::6; 
+			assert var5 = (5::6); 
 			unknown var0 <- [1,2,3,4,5,6,7,8] last_with (each > 3); 	// var0 equals 8
 			assert var0 = 8; 
 			graph g2 <- graph([]);
@@ -331,11 +331,11 @@ experiment OpContainers_related__operatorsTestTests type: test {
 			assert var5 = rgb([0,128,32]); 
 			int var6 <- 1 - 1; 	// var6 equals 0
 			assert var6 = 0; 
-			int var7 <- 1.0 - 1; 	// var7 equals 0.0
+			float var7 <- 1.0 - 1; 	// var7 equals 0.0
 			assert var7 = 0.0; 
-			int var8 <- 3.7 - 1.2; 	// var8 equals 2.5
+			float var8 <- 3.7 - 1.2; 	// var8 equals 2.5
 			assert var8 = 2.5; 
-			int var9 <- 3 - 1.2; 	// var9 equals 1.8
+			float var9 <- 3 - 1.2; 	// var9 equals 1.8
 			assert var9 = 1.8; 
 			point var10 <- {1, 2} - 4.5; 	// var10 equals {-3.5, -2.5, -4.5}
 			assert var10 = {-3.5, -2.5, -4.5}; 
@@ -397,9 +397,9 @@ experiment OpContainers_related__operatorsTestTests type: test {
 		test PlusOp {
 			int var4 <- 1 + 1; 	// var4 equals 2
 			assert var4 = 2; 
-			int var5 <- 1.0 + 1; 	// var5 equals 2.0
+			float var5 <- 1.0 + 1; 	// var5 equals 2.0
 			assert var5 = 2.0; 
-			int var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			float var6 <- 1.0 + 2.5; 	// var6 equals 3.5
 			assert var6 = 3.5; 
 			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
 			assert var7 = "hello 12"; 
