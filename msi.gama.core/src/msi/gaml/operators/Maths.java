@@ -82,10 +82,8 @@ public class Maths {
 											value = "16.81^0.5",
 											equals = "sqrt(16.81)",
 											isTestOnly = true),
-									@example (
-											value = "(10^(-9) = 0)", 
-											equals= "false",
-											isTestOnly = true), }) },
+							//		@example (value = "(10^(-9) = 0)", equals= "false", isTestOnly = true) 
+							}) },
 			see = { "*", "sqrt" })
 	public static Double pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue());
@@ -313,7 +311,7 @@ public class Maths {
 			masterDoc = true,
 			usages = @usage ("Operand values out of the range [0-359] are normalized."),
 			examples = { @example (
-					value = "sin(360)",
+					value = "sin_rad(#pi)",
 					equals = "0.0") },
 			see = { "cos", "tan" })
 	public static Double sin_rad(final Double rv) {
@@ -854,13 +852,7 @@ public class Maths {
 					value = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.",
 					examples = { @example (
 							value = "1 + 1",
-							equals = "2"),
-							@example (
-									value = "1.0 + 1",
-									equals = "2.0"),
-							@example (
-									value = "1.0 + 2.5",
-									equals = "3.5") }) },
+							equals = "2") }) },
 			see = { IKeyword.MINUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static Integer opPlus(final Integer a, final Integer b) {
 		return a + b;
@@ -872,7 +864,12 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the sum, union or concatenation of the two operands.")
+			value = "the sum, union or concatenation of the two operands.", 
+			examples = {
+					@example ( value = "1.0 + 1", equals = "2.0"),
+					@example (
+							value = "1.0 + 2.5",
+							equals = "3.5")})
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
@@ -942,16 +939,7 @@ public class Maths {
 					value = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.",
 					examples = { @example (
 							value = "1 - 1",
-							equals = "0"),
-							@example (
-									value = "1.0 - 1",
-									equals = "0.0"),
-							@example (
-									value = "3.7 - 1.2",
-									equals = "2.5"),
-							@example (
-									value = "3 - 1.2",
-									equals = "1.8") }) },
+							equals = "0")}) },
 			see = { IKeyword.PLUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static Integer opMinus(final Integer a, final Integer b) {
 		return a - b;
@@ -963,7 +951,11 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the difference of the two operands")
+			value = "the difference of the two operands",
+			examples = {
+					@example (value = "1.0 - 1", equals = "0.0"),
+					@example (value = "3.7 - 1.2", equals = "2.5"),
+					@example (value = "3 - 1.2", equals = "1.8") })		
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}

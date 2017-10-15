@@ -247,7 +247,7 @@ public class Graphs {
 			usages = @usage ("if the left-hand operand is nil, returns false"),
 			examples = { @example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap contains_edge link({1,5}::{12,45})",
+							value = "graphFromMap contains_edge link({1,5},{12,45})",
 							equals = "true") },
 			see = { "contains_vertex" })
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final Object edge) {
@@ -297,7 +297,7 @@ public class Graphs {
 					@example (
 							value = "graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap source_of(link({1,5}::{12,45}))",
+							value = "graphFromMap source_of(link({1,5},{12,45}))",
 							returnType = IKeyword.POINT,
 							equals = "{1,5}") },
 			see = { "target_of" })
@@ -324,7 +324,7 @@ public class Graphs {
 							equals = "node1",
 							isExecutable = false),
 					@example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"), @example (
-							value = "graphFromMap target_of(link({1,5}::{12,45}))",
+							value = "graphFromMap target_of(link({1,5},{12,45}))",
 							equals = "{12,45}") },
 			see = "source_of")
 	public static Object targetOf(final IScope scope, final IGraph graph, final Object edge) {
@@ -346,7 +346,7 @@ public class Graphs {
 					@usage ("if the right-hand operand is neither a node, nor an edge, returns 1.") },
 			examples = { @example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap weight_of(link({1,5}::{12,45}))",
+							value = "graphFromMap weight_of(link({1,5},{12,45}))",
 							equals = "1.0") })
 	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
 		if (graph == null) { throw GamaRuntimeException
@@ -530,9 +530,9 @@ public class Graphs {
 	@doc (
 			value = "returns the connected components of a graph, i.e. the list of all edges (if the boolean is true) or vertices (if the boolean is false) that are in the connected components. ",
 			examples = { @example (
-					value = "graph my_graph <- graph([]);"),
+					value = "graph my_graph2 <- graph([]);"),
 					@example (
-							value = "connected_components_of (my_graph, true)",
+							value = "connected_components_of (my_graph2, true)",
 							equals = "the list of all the components as list",
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })

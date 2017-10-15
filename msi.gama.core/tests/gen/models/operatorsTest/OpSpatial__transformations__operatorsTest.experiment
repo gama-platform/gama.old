@@ -65,11 +65,11 @@ experiment OpSpatial__transformations__operatorsTestTests type: test {
 			assert var5 = rgb([0,128,32]); 
 			int var6 <- 1 - 1; 	// var6 equals 0
 			assert var6 = 0; 
-			int var7 <- 1.0 - 1; 	// var7 equals 0.0
+			float var7 <- 1.0 - 1; 	// var7 equals 0.0
 			assert var7 = 0.0; 
-			int var8 <- 3.7 - 1.2; 	// var8 equals 2.5
+			float var8 <- 3.7 - 1.2; 	// var8 equals 2.5
 			assert var8 = 2.5; 
-			int var9 <- 3 - 1.2; 	// var9 equals 1.8
+			float var9 <- 3 - 1.2; 	// var9 equals 1.8
 			assert var9 = 1.8; 
 			point var10 <- {1, 2} - 4.5; 	// var10 equals {-3.5, -2.5, -4.5}
 			assert var10 = {-3.5, -2.5, -4.5}; 
@@ -128,9 +128,9 @@ experiment OpSpatial__transformations__operatorsTestTests type: test {
 		test PlusOp {
 			int var4 <- 1 + 1; 	// var4 equals 2
 			assert var4 = 2; 
-			int var5 <- 1.0 + 1; 	// var5 equals 2.0
+			float var5 <- 1.0 + 1; 	// var5 equals 2.0
 			assert var5 = 2.0; 
-			int var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			float var6 <- 1.0 + 2.5; 	// var6 equals 3.5
 			assert var6 = 3.5; 
 			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
 			assert var7 = "hello 12"; 

@@ -30,7 +30,7 @@ experiment OpSystemTestTests type: test {
 			//reflex when: every(2#days) since date('2000-01-01') { .. }
 			//state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time
 			//(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval
-			if every(2) {write "the cycle number is even";}
+			if every(2#cycle) {write "the cycle number is even";}
 				     else {write "the cycle number is odd";}
 
 		}
@@ -64,9 +64,9 @@ experiment OpSystemTestTests type: test {
 			map<string,unknown> values2 <- user_input("Enter numer of agents and locations",["Number" :: 100, "Location" :: {10, 10}]);
 			//create bug number: int(values2 at "Number") with: [location:: (point(values2 at "Location"))];
 			map<string,unknown> values <- user_input(["Number" :: 100, "Location" :: {10, 10}]);
-			map<string,unknown> var3 <- (values at "Number"); 	// var3 equals 100
+			int var3 <- (values at "Number"); 	// var3 equals 100
 			assert var3 = 100; 
-			map<string,unknown> var4 <-  (values at "Location"); 	// var4 equals {10,10}
+			point var4 <-  (values at "Location"); 	// var4 equals {10,10}
 			assert var4 = {10,10}; 
 			//create bug number: int(values at "Number") with: [location:: (point(values at "Location"))];
 

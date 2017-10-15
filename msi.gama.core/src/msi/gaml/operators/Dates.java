@@ -172,7 +172,7 @@ public class Dates {
 	@doc (
 			value = "true every operand * cycle, false otherwise",
 			comment = "the value of the every operator depends on the cycle. It can be used to do something every x cycle.",
-			examples = { @example (value = "if every(2) {write \"the cycle number is even\";}", test = false),
+			examples = { @example (value = "if every(2#cycle) {write \"the cycle number is even\";}", test = false),
 					@example (value = "	     else {write \"the cycle number is odd\";}", test = false) })
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();

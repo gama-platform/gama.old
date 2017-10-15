@@ -834,7 +834,7 @@ public class Containers {
 							isExecutable = false),
 					@example (
 							value = "[1::2, 3::4, 5::6] group_by (each > 4)",
-							equals = "[false::[2, 4], true::[6]]") },
+							equals = "[false::[2, 4], true::[6]]", returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getType().getContentType();
@@ -860,7 +860,7 @@ public class Containers {
 									equals = "6"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)",
-											equals = "5::6") }) },
+											equals = "(5::6)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] last_with (each > 3)",
 					equals = "8"),
@@ -899,7 +899,7 @@ public class Containers {
 									equals = "4"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)",
-											equals = "3::4") }) },
+											equals = "(3::4)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] first_with (each > 3)",
 					equals = "4"),
@@ -933,7 +933,7 @@ public class Containers {
 							value = "if the left-operand is a map, the keyword each will contain each value",
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] max_of (each + 3)",
-									equals = "6") }) },
+									equals = "9") }) },
 			examples = { 
 				//	@example ( value = "graph([]) max_of([])", raises = "error", isTestOnly = true),
 					@example (
@@ -1022,10 +1022,6 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] sum_of (each + 3)",
 							equals = "21") }) },
 			examples = { @example (
-					value = "graph([]) sum_of([])",
-					equals = "0.0",
-					isTestOnly = true),
-					@example (
 							value = "[1,2] sum_of (each * 100 )",
 							equals = "300") },
 			see = { "min_of", "max_of", "product_of", "mean_of" })
@@ -1068,10 +1064,7 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] product_of (each)",
 							equals = "48") }) },
-			examples = { @example (
-					value = "graph([]) product_of([])",
-					equals = "0.0",
-					isTestOnly = true),
+			examples = {
 					@example (
 							value = "[1,2] product_of (each * 10 )",
 							equals = "200") },
@@ -1122,10 +1115,7 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] mean_of (each)",
 							equals = "4") }) },
-			examples = { @example (
-					value = "graph([]) mean_of([])",
-					equals = "0.0",
-					isTestOnly = true),
+			examples = { 
 					@example (
 							value = "[1,2] mean_of (each * 10 )",
 							equals = "15") },
