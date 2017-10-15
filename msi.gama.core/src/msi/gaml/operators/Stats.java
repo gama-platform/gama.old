@@ -861,9 +861,12 @@ public class Stats {
 	@doc (
 			value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("list X <- [1, 2, 3];"), @example ("list Y <- [1, 2, 4];"), @example (
+			examples = { @example (value="list X <- [1, 2, 3];",
+					isExecutable = false), @example (value="list Y <- [1, 2, 4];",
+					isExecutable = false), @example (
 					value = "corR(X, Y)",
-					equals = "0.981980506061966") })
+					equals = "0.981980506061966",
+					isExecutable = false) })
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l1.length(scope) == 0 || l2.length(scope) == 0) { return Double.valueOf(0d); }
@@ -918,10 +921,12 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-			examples = { @example ("list<int> X <- [2, 3, 1];"), @example (
+			examples = { @example (value="list<int> X <- [2, 3, 1];",
+					isExecutable = false), @example (
 					value = "meanR(X)",
 					equals = "2",
-					returnType = IKeyword.INT) })
+					returnType = IKeyword.INT,
+					isExecutable = false) })
 	public static Object getMeanR(final IScope scope, final IContainer l)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l.length(scope) == 0) { return Double.valueOf(0d); }

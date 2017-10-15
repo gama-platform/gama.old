@@ -12,15 +12,7 @@ experiment OpStatistical__operatorsTestTests type: test {
 			//matrix([[1,2,3,4],[2,3,4,2]])
 
 		}
-	
-		test corROp {
-			list X <- [1, 2, 3];
-			list Y <- [1, 2, 4];
-			unknown var2 <- corR(X, Y); 	// var2 equals 0.981980506061966
-			assert var2 = 0.981980506061966; 
-
-		}
-	
+		
 		test dbscanOp {
 			list<list> var0 <- dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2); 	// var0 equals []
 			assert var0 = []; 
@@ -111,13 +103,6 @@ experiment OpStatistical__operatorsTestTests type: test {
 		test mean_deviationOp {
 			float var0 <- mean_deviation ([4.5, 3.5, 5.5, 7.0]); 	// var0 equals 1.125
 			assert var0 = 1.125; 
-
-		}
-	
-		test meanROp {
-			list<int> X <- [2, 3, 1];
-			int var1 <- meanR(X); 	// var1 equals 2
-			assert var1 = 2; 
 
 		}
 	
