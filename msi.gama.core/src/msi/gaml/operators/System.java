@@ -221,9 +221,11 @@ public class System {
 					@example (
 							value = "(values at \"Number\")",
 							equals = "100",
+							returnType = "int",
 							isTestOnly = true),
 					@example (
 							value = " (values at \"Location\")", equals = "{10,10}",
+							returnType = "point",
 							isTestOnly = true),
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
