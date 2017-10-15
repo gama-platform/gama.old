@@ -159,6 +159,8 @@ public interface IGui {
 
 	void openInteractiveConsole(IScope scope);
 
+	// Tests
+
 	IGamaView.Test openTestView(IScope scope, boolean remainOpen);
 
 	void displayTestsResults(IScope scope, TestSummary summary);

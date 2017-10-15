@@ -13,11 +13,11 @@
     <selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="true">
         <file path="/msi.gama.processor/.classpath"/>
         <folder path="/msi.gama.processor/META-INF/services"/>
-        <file path="/msi.gama.processor/.gitignore"/>
         <file path="/msi.gama.processor/build.properties"/>
-        <file path="/msi.gama.processor/META-INF/MANIFEST.MF"/>
+        <file path="/msi.gama.processor/.gitignore"/>
         <file path="/msi.gama.processor/.project"/>
         <file path="/msi.gama.processor/plugin.xml"/>
+        <file path="/msi.gama.processor/META-INF/MANIFEST.MF"/>
         <file path="/msi.gama.processor/pom.xml"/>
         <javaElement handleIdentifier="=ummisco.gama.annotations/src"/>
         <javaElement handleIdentifier="=msi.gama.processor/src"/>

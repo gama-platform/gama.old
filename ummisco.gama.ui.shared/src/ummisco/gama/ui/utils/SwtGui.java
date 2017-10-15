@@ -77,7 +77,7 @@ import ummisco.gama.ui.resources.GamaFonts;
  */
 public class SwtGui implements IGui {
 
-	public static boolean PERSISTENT_TEST_VIEW = false;
+	public volatile static boolean ALL_TESTS_RUNNING;
 
 	private IAgent highlightedAgent;
 	private ILocation mouseLocationInModel;
@@ -140,14 +140,17 @@ public class SwtGui implements IGui {
 	@Override
 	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
 		final IGamaView.Test v = (Test) showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+		if (!ALL_TESTS_RUNNING)
+			v.addTestResult(TestSummary.BEGINNING);
 		return v;
 	}
 
 	@Override
 	public void displayTestsResults(final IScope scope, final TestSummary summary) {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
-		if (v != null)
+		if (v != null) {
 			v.addTestResult(summary);
+		}
 	}
 
 	@Override

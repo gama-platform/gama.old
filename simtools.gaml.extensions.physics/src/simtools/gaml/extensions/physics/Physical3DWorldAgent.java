@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'Physical3DWorldAgent.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Physical3DWorldAgent.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -27,7 +26,7 @@ import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -47,14 +46,22 @@ import msi.gaml.types.Types;
 /*
  * species: The PhysicalWorldAgent is defined in this class. PhysicalWorldAgent supports the action
  *
- * @author Javier Gil-Quijano - Arnaud Grignard - 18-Nov-2012 (Gama Winter School)
- * Last Modified: 23-Mar-2012
+ * @author Javier Gil-Quijano - Arnaud Grignard - 18-Nov-2012 (Gama Winter School) Last Modified: 23-Mar-2012
  */
-@species(name = "physical_world")
-@doc("The base species for agents that act as a 3D physical world")
-@vars({ @var(name = "gravity", type = IType.BOOL, init = "true", doc = @doc("Define if the physical world has a gravity or not")),
-		@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, init = "[]", doc = {
-				@doc("The list of agents registered in this physical world") }) })
+@species (
+		name = "physical_world")
+@doc ("The base species for agents that act as a 3D physical world")
+@vars ({ @var (
+		name = "gravity",
+		type = IType.BOOL,
+		init = "true",
+		doc = @doc ("Define if the physical world has a gravity or not")),
+		@var (
+				name = IKeyword.AGENTS,
+				type = IType.LIST,
+				of = IType.AGENT,
+				init = "[]",
+				doc = { @doc ("The list of agents registered in this physical world") }) })
 public class Physical3DWorldAgent extends MinimalAgent {
 
 	private final IList<IAgent> registeredAgents = GamaListFactory.create(Types.AGENT);
@@ -66,19 +73,19 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		world = new PhysicsWorldJBullet(true);
 	}
 
-	@getter(IKeyword.AGENTS)
+	@getter (IKeyword.AGENTS)
 	public IList<IAgent> getRegisteredAgents() {
 		return registeredAgents;
 	}
 
-	@setter(IKeyword.AGENTS)
+	@setter (IKeyword.AGENTS)
 	public void setRegisteredAgents(final IList<IAgent> agents) {
 		cleanRegisteredAgents();
 		registeredAgents.addAll(agents);
 		setRegisteredAgentsToWorld();
 	}
 
-	@getter("gravity")
+	@getter ("gravity")
 	public Boolean getGravity() {
 
 		if (this.getAttribute("gravity") == null) {
@@ -89,7 +96,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		}
 	}
 
-	@setter("gravity")
+	@setter ("gravity")
 	public void setGravity(final Boolean gravity) {
 		this.setAttribute("gravity", gravity);
 		if (gravity) {
@@ -107,9 +114,8 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	}
 
 	/*
-	 * Read the value define in GAML of collisionBound to set the collisionShape
-	 * of the JBullet world. If collisionBound is not define it will create a
-	 * sphere of radius= 1 and mass =1.
+	 * Read the value define in GAML of collisionBound to set the collisionShape of the JBullet world. If collisionBound
+	 * is not define it will create a sphere of radius= 1 and mass =1.
 	 *
 	 * Once the CollisionShape is defined it is added in the JBulletPhysicWorld
 	 */
@@ -131,12 +137,12 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		} else {
 			computedZLocation = (float) geom.getInnerGeometry().getCoordinates()[0].z;
 		}
-		final Vector3f position = new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(),
-				computedZLocation);
+		final Vector3f position =
+				new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(), computedZLocation);
 
 		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
-		final Vector3f _velocity = new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(),
-				velocity.get(2).floatValue());
+		final Vector3f _velocity =
+				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
 		final Double mass = (Double) geom.getAttribute("mass");
 
@@ -185,8 +191,14 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		registeredMap.put(ia, body);
 	}
 
-	@action(name = "compute_forces")
-	@args(names = { "step" })
+	@action (
+			name = "compute_forces",
+			args = @arg (
+					name = "step",
+					type = IType.FLOAT,
+					optional = true,
+					doc = {}))
+	@doc ("This action allows the world to compute the forces exerted on each agent")
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
 		final Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;
@@ -196,8 +208,8 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		for (final IAgent ia : registeredMap.keySet()) {
 			final RigidBody node = registeredMap.get(ia);
 			final Vector3f _position = world.getNodePosition(node);
-			final GamaPoint position = new GamaPoint(new Double(_position.x), new Double(_position.y),
-					new Double(_position.z));
+			final GamaPoint position =
+					new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
 			ia.setLocation(position);
 			final Coordinate[] coordinates = ia.getInnerGeometry().getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) {

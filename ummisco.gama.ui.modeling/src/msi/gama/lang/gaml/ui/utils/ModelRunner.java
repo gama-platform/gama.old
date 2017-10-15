@@ -99,10 +99,6 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		final IModel model = findModel(object);
 		if (model == null)
 			return null;
-		// final String pathToFile = model.getFilePath().replace(model.getWorkingPath(), "");
-		// sb.append("----------------------------------------------------------------").append(Strings.LN);
-		// sb.append(" Running tests declared in " + pathToFile).append(Strings.LN);
-		// sb.append("----------------------------------------------------------------").append(Strings.LN);
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 		if (testExpNames.isEmpty())
@@ -116,9 +112,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 				exp.getAgent().step(exp.getAgent().getScope());
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				result.addAll(agent.getAllTests());
-
 				GAMA.closeExperiment(exp);
-				exp.dispose();
 			}
 		}
 		return result;

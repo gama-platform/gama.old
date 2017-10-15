@@ -33,6 +33,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import ummisco.gama.ui.commands.RefreshHandler;
+import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -164,6 +165,15 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 					ex.printStackTrace();
 				}
 
+			}
+
+		}, SWT.RIGHT);
+
+		tb.button("test.run2", "", "Run all tests", new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				TestsRunner.start();
 			}
 
 		}, SWT.RIGHT);

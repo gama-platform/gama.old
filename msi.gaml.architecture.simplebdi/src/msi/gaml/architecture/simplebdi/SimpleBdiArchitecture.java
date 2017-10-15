@@ -76,11 +76,11 @@ import msi.gaml.types.Types;
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
-				name = SimpleBdiArchitecture.CONSCIENCE,
+				name = SimpleBdiArchitecture.CONSCIENTIOUSNESS,
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
-				name = SimpleBdiArchitecture.EXPRESSIVITY,
+				name = SimpleBdiArchitecture.EXTRAVERSION,
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
@@ -88,7 +88,7 @@ import msi.gaml.types.Types;
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
-				name = SimpleBdiArchitecture.NEUROTISME,
+				name = SimpleBdiArchitecture.NEUROTISM,
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
@@ -156,10 +156,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String CHARISMA = "charisma";
 	public static final String RECEPTIVITY = "receptivity";
 	public static final String OPENNESS = "openness";
-	public static final String CONSCIENCE = "conscience";
-	public static final String EXPRESSIVITY = "expressivity";
+	public static final String CONSCIENTIOUSNESS = "conscientiousness";
+	public static final String EXTRAVERSION = "extraversion";
 	public static final String AMICABILITY = "amicability";
-	public static final String NEUROTISME = "neurotisme";
+	public static final String NEUROTISM = "neurotism";
 
 	// TODO: Not implemented yet
 
@@ -248,9 +248,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
 				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		if(use_personality){
-			Double expressivity = (Double) scope.getAgent().getAttribute(EXPRESSIVITY);
-			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
-			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENCE);
+			Double expressivity = (Double) scope.getAgent().getAttribute(EXTRAVERSION);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
+			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
 			scope.getAgent().setAttribute(CHARISMA, expressivity);
 			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
@@ -912,14 +912,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	//le add belief crée les émotion joie, sadness, satisfaction, disapointment, relief, fear_confirmed, pride, shame, admiration, reproach
 	public static Boolean addBelief(final IScope scope, final MentalState predicateDirect) {
-		final GamaList<MentalState> factBase = getBase(scope, BELIEF_BASE);
+		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
+				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) scope.getAgent().getAttribute(USE_EMOTIONS_ARCHITECTURE);
 		MentalState predTemp = null;
 		if (predicateDirect != null) {
-			createJoyFromPredicate(scope, predicateDirect);
-			createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
-			createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
-			createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
-			
+			if(use_emotion_architecture){
+				createJoyFromPredicate(scope, predicateDirect);
+				createSatisfactionFromMentalState(scope, predicateDirect); //satisfaction, disapointment, relief, fear_confirmed
+				createPrideFromMentalState(scope, predicateDirect);  //pride, shame, admiration, reproach
+				createHappyForFromMentalState(scope, predicateDirect);  //(seulement si le prédicat est sur une émotion).
+			}
 			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 				if (predTest.getPredicate()!=null && predicateDirect.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
 					predTemp = predTest;
@@ -2505,7 +2507,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					Double intensity = 1.0;
 					Double decay = 0.0;
 					if(use_personality){
-						Double neurotisme = (Double) agent.getAttribute(NEUROTISME);
+						Double neurotisme = (Double) agent.getAttribute(NEUROTISM);
 						MentalState desire=null;
 						for (final MentalState mental : getBase(scope, DESIRE_BASE)) {				
 							if (mental.getPredicate()!= null && predTest.getPredicate().equals(mental.getPredicate())) { 
@@ -2550,7 +2552,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				Double intensity = 1.0;
 				Double decay = 0.0;
 				if(use_personality){
-					Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+					Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 					MentalState desire=null;
 					for (final MentalState mental : getBase(scope, DESIRE_BASE)) {				
 						if (mental.getPredicate()!= null && predTest.getPredicate().equals(mental.getPredicate())) { 
@@ -2588,7 +2590,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							Double intensity = 1.0;
 							Double decay = 0.0;
 							if(use_personality){
-								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 								MentalState desire=pred;
 								//Faire ce calcul seulement si le désire à une force (vérifier le no value)
 								if(desire!=null){
@@ -2632,7 +2634,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					Double intensity = 1.0;
 					Double decay = 0.0;
 					if(use_personality){
-						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 						MentalState desire=desireTest;
 						//Faire ce calcul seulement si le désire à une force (vérifier le no value)
 						if(desire!=null){
@@ -2670,7 +2672,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						Double intensity = 1.0;
 						Double decay = 0.0;
 						if(use_personality){
-							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 							MentalState desire=null;
 							for (final MentalState mental : getBase(scope, DESIRE_BASE)) {				
 								if (mental.getPredicate()!= null && predTest.getPredicate().equals(mental.getPredicate())) { 
@@ -2706,7 +2708,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
-										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										MentalState desire=pred;
 										//Faire ce calcul seulement si le désire à une force (vérifier le no value)
 										if(desire!=null){
@@ -2749,7 +2751,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					Double intensity = 1.0;
 					Double decay = 0.0;
 					if(use_personality){
-						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 						MentalState desire=desireTest;
 						//Faire ce calcul seulement si le désire à une force (vérifier le no value)
 						if(desire!=null){
@@ -2789,7 +2791,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					Double intensity = 1.0;
 					Double decay = 0.0;
 					if(use_personality){
-						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+						Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 						MentalState desire=predTest;
 						//Faire ce calcul seulement si le désire à une force (vérifier le no value)
 						if(desire!=null){
@@ -2847,7 +2849,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								}
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*satisfaction.getIntensity();
 								}
 								satisfaction.setDecay(decay);
@@ -2883,7 +2885,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								}
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*disappointment.getIntensity();
 								
 								}
@@ -2922,7 +2924,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								}
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*fearConfirmed.getIntensity();
 								
 								}
@@ -2959,7 +2961,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								}
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*relief.getIntensity();
 								
 								}
@@ -3011,7 +3013,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 						Double decay = 0.0;
 						if(use_personality){
-							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 							decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*satisfaction.getIntensity();
 						}
 						satisfaction.setDecay(decay);
@@ -3062,7 +3064,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 						Double decay = 0.0;
 						if(use_personality){
-							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+							Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 							decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*fearConfirmed.getIntensity();
 						
 						}
@@ -3114,7 +3116,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 							Double decay = 0.0;
 							if(use_personality){
-								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 								decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*relief.getIntensity();
 							
 							}
@@ -3167,7 +3169,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 							Double decay = 0.0;
 							if(use_personality){
-								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 								decay = scope.getSimulation().getTimeStep(scope)*0.00028*neurotisme*disappointment.getIntensity();
 							
 							}
@@ -3198,7 +3200,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
-											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
 											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
 											if(intensity>1.0){
@@ -3218,7 +3220,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
-											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
 											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
 											if(intensity>1.0){
@@ -3247,7 +3249,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
-											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
 											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
 											if(intensity>1.0){
@@ -3267,7 +3269,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double intensity = 1.0;
 										Double decay = 0.0;
 										if(use_personality){
-											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
 											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
 											if(intensity>1.0){
@@ -3377,7 +3379,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
-										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
 										intensity = temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
@@ -3399,7 +3401,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
-										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
 										intensity = temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
@@ -3423,7 +3425,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
-										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
 										intensity = -temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
@@ -3445,7 +3447,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									Double intensity = 1.0;
 									Double decay = 0.0;
 									if(use_personality){
-										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
 										intensity = -temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
@@ -3561,7 +3563,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double decay = 0.0;
 								if(use_personality){
 									//Mettre les formules de calcul d'intensit� et de d�croissance
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
 										intensity = emo.getIntensity()*emoTemp.getIntensity();
 									}
@@ -3582,7 +3584,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
 										intensity = emo.getIntensity()*emoTemp.getIntensity();
 									}
@@ -3612,7 +3614,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
 										intensity = emo.getIntensity()*emoTemp.getIntensity();
 									}
@@ -3633,7 +3635,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double intensity = 1.0;
 								Double decay = 0.0;
 								if(use_personality){
-									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+									Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 									if(!emo.getNoIntensity() && !emoTemp.getNoIntensity()){
 										intensity = emo.getIntensity()*emoTemp.getIntensity();
 									}
@@ -3872,10 +3874,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	//Déclencher la création des émotions peur et espoir
 	public static Boolean addUncertainty(final IScope scope, final MentalState predicate) {
+		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
+				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) scope.getAgent().getAttribute(USE_EMOTIONS_ARCHITECTURE);
 		if (getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(predicate)) {
 			removeFromBase(scope, predicate, BELIEF_BASE);
 		}
-		createHopeFromMentalState(scope, predicate);
+		if(use_emotion_architecture){
+			createHopeFromMentalState(scope, predicate);
+		}
 		predicate.setOwner(scope.getAgent());
 		return addToBase(scope, predicate, UNCERTAINTY_BASE);
 	}
@@ -4581,7 +4587,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
 		if(use_personality){
-			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			coefModification = 1-neurotisme;
 		}
 		Double appreciationModif = social.getLiking();
@@ -4633,7 +4639,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Double moyNegatif = 0.0;
 		Double coefModification = 0.1;
 		if(use_personality){
-			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			coefModification = 1-neurotisme;
 		}
 		Double dominanceModif = social.getDominance();
@@ -4678,11 +4684,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
 				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		final IAgent agentCause = social.getAgent();
-		IScope scopeAgentCause = null;
-		if (agentCause != null) {
-			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
-			scopeAgentCause.push(agentCause);
-		}
+//		IScope scopeAgentCause = null;
+//		if (agentCause != null) {
+//			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
+//			scopeAgentCause.push(agentCause);
+//		}
 		Double tempPositif = 0.0;
 		Double moySolid = 0.0;
 		Double tempNegatif = 0.0;
@@ -4696,7 +4702,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		Double coefModifEmo = 0.1;
 		if(use_personality){
-			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISME);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			coefModifEmo = 1-neurotisme;
 		}
 		Double solidarityModif = social.getSolidarity();
@@ -4710,38 +4716,52 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		//Modifier pour ne prendre que ses propres croyances
 		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-			}
-		}
-		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
-				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Belief"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
 			}
-		}
-		for (final MentalState predTest1 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-			for (final MentalState predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
-				if (predTest1.getPredicate().equals(predTest2.getPredicate())) {
-					tempPositif = tempPositif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Desire"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
-				if (predTest1.getPredicate().equalsButNotTruth(predTest2.getPredicate())) {
-					tempNegatif = tempNegatif + 1.0;
-					nbMentalState = nbMentalState + 1.0;
+			}
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Uncertainty"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+				}
+			}
+			if(predTest1.getMentalState()!=null && predTest1.getMentalState().getOwner()!=null && predTest1.getMentalState().getOwner().equals(agentCause) && predTest1.getMentalState().getModality() == "Ideal"){
+				for (final MentalState predTest2 : getBase(scope, SimpleBdiArchitecture.IDEAL_BASE)) {
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equals(predTest1.getMentalState().getPredicate())) {
+						tempPositif = tempPositif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
+					if (predTest2.getPredicate() != null && predTest1.getMentalState().getPredicate()!=null && predTest2.getPredicate().equalsButNotTruth(predTest1.getMentalState().getPredicate())) {
+						tempNegatif = tempNegatif + 1.0;
+						nbMentalState = nbMentalState + 1.0;
+					}
 				}
 			}
 		}
@@ -4761,7 +4781,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			solidarityModif = 0.0;
 		}
 		social.setSolidarity(solidarityModif);
-		GAMA.releaseScope(scopeAgentCause);
+//		GAMA.releaseScope(scopeAgentCause);
 	}
 
 	static private void updateFamiliarity(final IScope scope, final SocialLink social) {

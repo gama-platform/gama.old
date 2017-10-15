@@ -100,12 +100,25 @@ public class TestStatement extends AbstractStatementSequence {
 
 	public static class TestSummary {
 
+		public static TestSummary FINISHED = new TestSummary();
+		public static TestSummary INDIVIDUAL_TEST_FINISHED = new TestSummary();
+		public static TestSummary BEGINNING = new TestSummary();
+
+		private static int COUNT = 0;
+
 		public final URI uri;
 		public final String modelName;
 		public final String testName;
 		public final Map<String, State> asserts;
-		State state;
 		boolean aborted;
+		public final int number = COUNT++;
+
+		private TestSummary() {
+			uri = null;
+			modelName = null;
+			testName = null;
+			asserts = null;
+		}
 
 		TestSummary(final TestStatement test) {
 			final EObject object = test.getDescription().getUnderlyingElement(null);
@@ -116,6 +129,13 @@ public class TestStatement extends AbstractStatementSequence {
 			for (final AssertStatement assertion : test.getAssertions()) {
 				asserts.put(assertion.getAssertion(), State.NOT_RUN);
 			}
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (o instanceof TestSummary) { return ((TestSummary) o).testName.equals(testName)
+					&& ((TestSummary) o).modelName.equals(modelName); }
+			return false;
 		}
 
 		public void reset() {
@@ -181,7 +201,7 @@ public class TestStatement extends AbstractStatementSequence {
 	}
 
 	public static enum State {
-		FAILED("failed"), PASSED("passed"), NOT_RUN("not run"), WARNING("warning"), ABORTED("aborted");
+		ABORTED("aborted"), FAILED("failed"), WARNING("warning"), PASSED("passed"), NOT_RUN("not run");
 		private final String name;
 
 		State(final String s) {
@@ -198,13 +218,13 @@ public class TestStatement extends AbstractStatementSequence {
 				case FAILED:
 					return GamaColor.getNamed("gamared");
 				case NOT_RUN:
-					return new GamaColor(83, 95, 107); // GamaColors.toGamaColor(IGamaColors.NEUTRAL.color());
+					return GamaColor.getNamed("gamablue");
 				case WARNING:
 					return GamaColor.getNamed("gamaorange");
 				case PASSED:
 					return GamaColor.getNamed("gamagreen");
 				default:
-					return null;
+					return new GamaColor(83, 95, 107); // GamaColors.toGamaColor(IGamaColors.NEUTRAL.color());
 			}
 		}
 	}

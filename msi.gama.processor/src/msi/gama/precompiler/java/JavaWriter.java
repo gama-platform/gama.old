@@ -7,12 +7,14 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.precompiler;
+package msi.gama.precompiler.java;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import msi.gama.precompiler.GamlProperties;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class JavaWriter {
@@ -29,7 +31,7 @@ public class JavaWriter {
 			ISIMULATION = "ISimulation", ISKILL = "ISkill", ISUPPORT = "IVarAndActionSupport", ISYMBOL = "ISymbol",
 			IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
 			IEXPRESSION = "IExpression", YPES = "Types", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
-	final static String[] IMPORTS =
+	public final static String[] IMPORTS =
 			new String[] { "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
 					"msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
 					"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
@@ -232,7 +234,7 @@ public class JavaWriter {
 	void writeVarsInitialization(final GamlProperties props, final StringBuilder sb) {
 		sb.append("public void initializeVars() throws SecurityException, NoSuchMethodException {");
 		for (final Map.Entry<String, String> entry : props.filterFirst(VAR_PREFIX).entrySet()) {
-			writeVarAddition(sb /* ,doc */, entry.getKey(), entry.getValue());
+			writeVarAddition(sb, entry.getKey(), entry.getValue());
 		}
 		sb.append("};");
 	}

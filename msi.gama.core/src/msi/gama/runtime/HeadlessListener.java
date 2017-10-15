@@ -464,6 +464,8 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void displayTestsResults(final IScope scope, final TestSummary test) {
+		if (test.asserts == null)
+			return;
 		log(test.toString());
 	}
 

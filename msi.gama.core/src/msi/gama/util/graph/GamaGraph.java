@@ -753,18 +753,24 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				if (path == null) { return GamaListFactory.create(getType().getContentType()); }
 				return GamaListFactory.create(scope, getType().getContentType(), path.getEdgeList());
 			case 2:
-				final Pair<V, V> nodes1 = new Pair<V, V>(source, target);
-				final IList<IList<E>> sp1 = shortestPathComputed.get(nodes1);
+				IList<IList<E>> sp1 = null;
+				if (saveComputedShortestPaths) {
+					sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+				}
 				IList<E> spl1 = null;
 				if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
 					spl1 = GamaListFactory.create(getType().getContentType());
 					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph());
-					final List<E> re = p1.getPath(source, target).getEdgeList();
-					// final List<E> re = p1.getPathEdgeList(target);
-					if (re == null) {
+					final GraphPath ph = p1.getPath(source, target);
+					if (ph == null) {
 						spl1 = GamaListFactory.create(getType().getContentType());
 					} else {
-						spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
+						final List<E> re = ph.getEdgeList();
+						if (re == null) {
+							spl1 = GamaListFactory.create(getType().getContentType());
+						} else {
+							spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
+						}
 					}
 					if (saveComputedShortestPaths) {
 						saveShortestPaths(spl1, source, target);
@@ -774,10 +780,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 				return spl1;
 			case 3:
-				// long t1 = java.lang.System.currentTimeMillis();
-				final Pair<V, V> nodes2 = new Pair<V, V>(source, target);
-				// System.out.println("nodes2 : " + nodes2);
-				final IList<IList<E>> sp2 = shortestPathComputed.get(nodes2);
+				IList<IList<E>> sp2 = null;
+				if (saveComputedShortestPaths) {
+					sp2 = shortestPathComputed.get(new Pair<V, V>(source, target));
+				}
 				IList<E> spl2 = null;
 
 				if (sp2 == null || sp2.isEmpty() || sp2.get(0).isEmpty()) {
@@ -785,14 +791,17 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 					try {
 						final DijkstraShortestPath<V, V> p2 = new DijkstraShortestPath(getProxyGraph());
-						final List re = p2.getPath(source, target).getEdgeList();
-						// final List re = p2.getPathEdgeList();
-						if (re == null) {
+						final GraphPath ph = p2.getPath(source, target);
+						if (ph == null) {
 							spl2 = GamaListFactory.create(getType().getContentType());
 						} else {
-							spl2 = GamaListFactory.create(scope, getType().getContentType(), re);
+							final List re = ph.getEdgeList();
+							if (re == null) {
+								spl2 = GamaListFactory.create(getType().getContentType());
+							} else {
+								spl2 = GamaListFactory.create(scope, getType().getContentType(), re);
+							}
 						}
-
 					} catch (final IllegalArgumentException e) {
 						spl2 = GamaListFactory.create(getType().getContentType());
 					}
@@ -802,15 +811,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				} else {
 					spl2 = GamaListFactory.create(scope, getType().getContentType(), sp2.get(0));
 				}
-				// java.lang.System.out.println("DijkstraShortestPath : " +
-				// (java.lang.System.currentTimeMillis() - t1
-				// ));
 				return spl2;
 			case 4:
-				// t1 = java.lang.System.currentTimeMillis();
-
-				final Pair<V, V> nodes3 = new Pair<V, V>(source, target);
-				final IList<IList<E>> sp3 = shortestPathComputed.get(nodes3);
+				
+				IList<IList<E>> sp3 = null;
+				if (saveComputedShortestPaths) {
+					sp3 = shortestPathComputed.get(new Pair<V, V>(source, target));
+				}
 				IList<E> spl3 = null;
 				if (sp3 == null || sp3.isEmpty() || sp3.get(0).isEmpty()) {
 					spl3 = GamaListFactory.create(getType().getContentType());

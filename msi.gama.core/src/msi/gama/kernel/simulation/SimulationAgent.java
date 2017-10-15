@@ -39,7 +39,6 @@ import msi.gama.outputs.IOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -523,8 +522,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@action (
 			name = "pause",
 			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
-	@args (
-			names = {})
+
 	public Object pause(final IScope scope) {
 		final IExperimentController controller = scope.getExperiment().getSpecies().getController();
 		controller.directPause();
@@ -536,8 +534,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc (
 					deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
 					value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
-	@args (
-			names = {})
+
 	public Object halt(final IScope scope) {
 		getExperiment().closeSimulation(this);
 		return null;

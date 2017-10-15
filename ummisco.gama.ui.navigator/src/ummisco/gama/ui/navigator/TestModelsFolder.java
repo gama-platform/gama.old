@@ -10,9 +10,6 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -42,7 +39,7 @@ public class TestModelsFolder extends TopLevelFolder {
 
 	@Override
 	public String getMessageForStatus() {
-		return "Click here to run all the tests";
+		return "Built-in tests";
 	}
 
 	@Override
@@ -68,18 +65,6 @@ public class TestModelsFolder extends TopLevelFolder {
 	@Override
 	protected Location getModelsLocation() {
 		return Location.Tests;
-	}
-
-	@Override
-	public SelectionListener getSelectionListenerForStatus() {
-		return new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				TestsRunner.start();
-			}
-
-		};
 	}
 
 }

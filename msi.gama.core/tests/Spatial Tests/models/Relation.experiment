@@ -1,7 +1,7 @@
 /**
 * Name: Spatial Operators
 * Author: Patrick Taillandier
-* Description: Tests various spatial relation operators (distance_to) with continuous and grid topology
+* Description: Tests various spatial relation operators with continuous and grid topology
 * Tags: topology, grid, relation, test
 */
 
@@ -42,55 +42,61 @@ global {
 	}
 }
 experiment RelationTests type: test {
-	test "distance_to with continuous topology" {
+	test "distance_to" {
+		//distance_to with continuous topology
 		float distance <- dummy(8) distance_to dummy(8);
 		assert (distance)= 0;
 		distance <- dummy(8) distance_to dummy(9);
 		assert (distance with_precision 3)= 56.613;
-	}
-	test "distance_to with grid topology" {
-		float distance;
+		
+		//distance_to with grid topology
 		using topology(cell) {distance <- dummy(8) distance_to dummy(8);}
 		assert distance = 0.0;
 		using topology(cell) {distance <- dummy(8) distance_to dummy(9);}
 		assert distance = 7.0;
+		
+		//distance_between with continuous topology
+		
 	}
-	test "distance_between with continuous topology" {
+	test "distance_between" {
+		//distance_between with continuous topology
 		float distance <- topology(world) distance_between [dummy(9), dummy(8), dummy(1)];
 		assert (distance with_precision 3)= 130.349;
-	}
-	test "distance_between with grid topology" {
-		float distance <-topology(cell) distance_between [dummy(9), dummy(8), dummy(1)];
+		
+		//distance_between with grid topology
+		distance <-topology(cell) distance_between [dummy(9), dummy(8), dummy(1)];
 		assert distance = 17.0;
 	}
-	test "path_to with continuous topology" {
+	
+	test "path_to" {
+		//path_to with continuous topology
 		path the_path <- dummy(8) path_to dummy(9);
 		assert (the_path.shape.perimeter with_precision 3)= 56.613;
-	}
-	test "path_to with grid topology" {
-		path the_path;
+		
+		//path_to with grid topology
 		using topology(cell) {the_path <- dummy(8) path_to dummy(9);}
 		assert the_path.weight = 8.0;
+		
+		
 	}
 	
-	test "path_between with continuous topology" {
+	test "path_between" {
+		//path_between with continuous topology
 		path the_path <- topology(world) path_between (dummy(9), dummy(8));
 		assert (the_path.shape.perimeter with_precision 3)= 56.613;
 		the_path <- topology(world) path_between [dummy(9), dummy(8), dummy(1)];
 		assert (the_path.shape.perimeter with_precision 3)= 130.349;
-	}
-	test "path_between with grid topology" {
-		path the_path;
+		
+		//path_between with grid topology
 		ask world{the_path <-  topology(cell) path_between([dummy(9)]);}
 		assert the_path.weight = 0;
 		ask world{the_path <-  topology(cell) path_between([dummy(9), dummy(8)]);}
 		assert the_path.weight = 8;
 		ask world{the_path <-  topology(cell) path_between([dummy(9), dummy(8), dummy(1)]);}
 		assert the_path.weight = 18;
-	}
-	
-	test "path_between on a grid with obstacles" {
-		path the_path <- (cell where (each.color != #pink)) path_between ([dummy(9)]);
+		
+		//path_between on a grid with obstacles
+		the_path <- (cell where (each.color != #pink)) path_between ([dummy(9)]);
 		assert the_path.weight = 0;
 		the_path <- (cell where (each.color != #pink)) path_between ([dummy(9), dummy(8)]);
 		assert the_path.weight = 12;
@@ -98,10 +104,9 @@ experiment RelationTests type: test {
 		assert the_path.weight = 12;
 		ask world{the_path <-  (cell where (each.color != #pink)) path_between([dummy(9), dummy(8), dummy(1)]);}
 		assert the_path.weight = 22;
-	}
-	
-	test "path_between on a grid with weighted cells" {
-		path the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between ([dummy(9)]);
+		
+		//path_between on a grid with weighted cells
+		the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between ([dummy(9)]);
 		assert the_path.weight= 0;
 		the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between ([dummy(9), dummy(8)]);
 		assert the_path.weight= 24;
@@ -110,6 +115,7 @@ experiment RelationTests type: test {
 		ask world{the_path <-  (cell as_map (each::(each.color = #pink ? 10.0 : 2.0)))  path_between([dummy(9), dummy(8), dummy(1)]);}
 		assert the_path.weight = 46;
 	}
+
 	test "towards" {
 		int angle <- dummy(8) towards dummy(9);
 		assert angle = 306;
