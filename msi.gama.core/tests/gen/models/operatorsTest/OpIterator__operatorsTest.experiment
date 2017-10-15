@@ -76,7 +76,7 @@ experiment OpIterator__operatorsTestTests type: test {
 			unknown var4 <- [1::2, 3::4, 5::6] first_with (each >= 4); 	// var4 equals 4
 			assert var4 = 4; 
 			unknown var5 <- [1::2, 3::4, 5::6].pairs first_with (each.value >= 4); 	// var5 equals 3::4
-			assert var5 = 3::4; 
+			assert var5 = (3::4); 
 			unknown var0 <- [1,2,3,4,5,6,7,8] first_with (each > 3); 	// var0 equals 4
 			assert var0 = 4; 
 			graph g2 <- graph([]);
@@ -95,7 +95,7 @@ experiment OpIterator__operatorsTestTests type: test {
 			assert var0 = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]; 
 			//map var1 <- g2 group_by (length(g2 out_edges_of each) ); 	// var1 equals [ 0::[node9, node7, node10, node8, node11], 1::[node6], 2::[node5], 3::[node4]]
 			//map var2 <- (list(node) group_by (round(node(each).location.x)); 	// var2 equals [32::[node5], 21::[node1], 4::[node0], 66::[node2], 96::[node3]]
-			map var3 <- [1::2, 3::4, 5::6] group_by (each > 4); 	// var3 equals [false::[2, 4], true::[6]]
+			map<bool,list> var3 <- [1::2, 3::4, 5::6] group_by (each > 4); 	// var3 equals [false::[2, 4], true::[6]]
 			assert var3 = [false::[2, 4], true::[6]]; 
 
 		}
@@ -116,12 +116,11 @@ experiment OpIterator__operatorsTestTests type: test {
 			graph g2 <- graph([]);
 			//unknown var2 <- g2 last_with (length(g2 out_edges_of each) = 0 ); 	// var2 equals node11
 			//unknown var3 <- (list(node) last_with (round(node(each).location.x) > 32); 	// var3 equals node3
-
 		}
 	
 		test max_ofOp {
 			unknown var5 <- [1::2, 3::4, 5::6] max_of (each + 3); 	// var5 equals 6
-			assert var5 = 6; 
+			assert var5 = 9; 
 
 			// assert graph([]) max_of([]) raises: "error"; 
 			unknown var1 <- [1,2,4,3,5,7,6,8] max_of (each * 100 ); 	// var1 equals 800
@@ -136,8 +135,6 @@ experiment OpIterator__operatorsTestTests type: test {
 		test mean_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] mean_of (each); 	// var2 equals 4
 			assert var2 = 4; 
-			unknown var0 <- graph([]) mean_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] mean_of (each * 10 ); 	// var1 equals 15
 			assert var1 = 15; 
 
@@ -160,8 +157,6 @@ experiment OpIterator__operatorsTestTests type: test {
 		test product_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] product_of (each); 	// var2 equals 48
 			assert var2 = 48; 
-			unknown var0 <- graph([]) product_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] product_of (each * 10 ); 	// var1 equals 200
 			assert var1 = 200; 
 
@@ -189,8 +184,6 @@ experiment OpIterator__operatorsTestTests type: test {
 		test sum_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] sum_of (each + 3); 	// var2 equals 21
 			assert var2 = 21; 
-			unknown var0 <- graph([]) sum_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] sum_of (each * 100 ); 	// var1 equals 300
 			assert var1 = 300; 
 

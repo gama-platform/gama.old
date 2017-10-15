@@ -286,8 +286,6 @@ experiment OpContainers_related__operatorsTestTests type: test {
 		test mean_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] mean_of (each); 	// var2 equals 4
 			assert var2 = 4; 
-			unknown var0 <- graph([]) mean_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] mean_of (each * 10 ); 	// var1 equals 15
 			assert var1 = 15; 
 
@@ -452,8 +450,6 @@ experiment OpContainers_related__operatorsTestTests type: test {
 		test product_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] product_of (each); 	// var2 equals 48
 			assert var2 = 48; 
-			unknown var0 <- graph([]) product_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] product_of (each * 10 ); 	// var1 equals 200
 			assert var1 = 200; 
 
@@ -528,8 +524,6 @@ experiment OpContainers_related__operatorsTestTests type: test {
 		test sum_ofOp {
 			unknown var2 <- [1::2, 3::4, 5::6] sum_of (each + 3); 	// var2 equals 21
 			assert var2 = 21; 
-			unknown var0 <- graph([]) sum_of([]); 	// var0 equals 0.0
-			assert var0 = 0.0; 
 			unknown var1 <- [1,2] sum_of (each * 100 ); 	// var1 equals 300
 			assert var1 = 300; 
 
