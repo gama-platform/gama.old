@@ -268,7 +268,6 @@ install (){
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
-MSG="ci fullbuild"
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 	MSG+=" ci ext "
 fi 
