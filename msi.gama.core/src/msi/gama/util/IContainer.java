@@ -220,7 +220,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			@usage(value = "if it is a list, reverse returns a copy of the operand list with elements in the reversed order", examples = {
 					@example(value = "reverse ([10,12,14])", equals = "[14, 12, 10]") }),
 			@usage(value = "if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)", examples = {
-					@example(value = "reverse (['k1'::44, 'k2'::32, 'k3'::12])", equals = "[12::'k3',  32::'k2', 44::'k1']") }),
+					@example(value = "reverse (['k1'::44, 'k2'::32, 'k3'::12])", equals = "[44::'k1', 32::'k2', 12::'k3']", returnType = "map<int,string>") }),
 			@usage(value = "if it is a file, reverse returns a copy of the file with a reversed content"),
 			@usage(value = "if it is a population, reverse returns a copy of the population with elements in the reversed order"),
 			@usage(value = "if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),

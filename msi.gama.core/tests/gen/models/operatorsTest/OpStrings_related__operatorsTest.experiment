@@ -271,9 +271,9 @@ experiment OpStrings_related__operatorsTestTests type: test {
 		test PlusOp {
 			int var4 <- 1 + 1; 	// var4 equals 2
 			assert var4 = 2; 
-			int var5 <- 1.0 + 1; 	// var5 equals 2.0
+			float var5 <- 1.0 + 1; 	// var5 equals 2.0
 			assert var5 = 2.0; 
-			int var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			float var6 <- 1.0 + 2.5; 	// var6 equals 3.5
 			assert var6 = 3.5; 
 			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
 			assert var7 = "hello 12"; 
@@ -334,8 +334,8 @@ experiment OpStrings_related__operatorsTestTests type: test {
 			assert var0 = 'dcba'; 
 			container var1 <- reverse ([10,12,14]); 	// var1 equals [14, 12, 10]
 			assert var1 = [14, 12, 10]; 
-			container var2 <- reverse (['k1'::44, 'k2'::32, 'k3'::12]); 	// var2 equals [12::'k3',  32::'k2', 44::'k1']
-			assert var2 = [12::'k3',  32::'k2', 44::'k1']; 
+			map<int,string> var2 <- reverse (['k1'::44, 'k2'::32, 'k3'::12]); 	// var2 equals ['k1'::44, 'k2'::32, 'k3'::12]
+			assert var2 = [44::'k1', 32::'k2', 12::'k3']; 
 			container var3 <- reverse(matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var3 equals matrix([["c11","c21"],["c12","c22"],["c13","c23"]])
 			assert var3 = matrix([["c11","c21"],["c12","c22"],["c13","c23"]]); 
 
