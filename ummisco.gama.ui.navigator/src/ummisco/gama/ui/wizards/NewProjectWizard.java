@@ -119,7 +119,6 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 			proj.open(new SubProgressMonitor(monitor, 1000));
-			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
 			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, false, null);
 
@@ -127,14 +126,14 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			 * We now have the project and we can do more things with it before updating the perspective.
 			 */
 			final IContainer container = proj;
-
-			/* Add the doc folder */
-			final IFolder libFolder = container.getFolder(new Path("doc"));
-			libFolder.create(true, true, monitor);
-
-			/* Add the snapshots folder in the doc folder */
-			final IFolder snapshotsFolder = libFolder.getFolder(new Path("snapshots"));
-			snapshotsFolder.create(true, true, monitor);
+			//
+			// /* Add the doc folder */
+			// final IFolder libFolder = container.getFolder(new Path("doc"));
+			// libFolder.create(true, true, monitor);
+			//
+			// /* Add the snapshots folder in the doc folder */
+			// final IFolder snapshotsFolder = libFolder.getFolder(new Path("snapshots"));
+			// snapshotsFolder.create(true, true, monitor);
 
 			/* Add the models folder */
 			final IFolder modelFolder = container.getFolder(new Path("models"));
@@ -145,7 +144,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			incFolder.create(true, true, monitor);
 
 			/* Add the images folder */
-			final IFolder imFolder = container.getFolder(new Path("images"));
+			final IFolder imFolder = container.getFolder(new Path("tests"));
 			imFolder.create(true, true, monitor);
 
 		} catch (final CoreException ioe) {

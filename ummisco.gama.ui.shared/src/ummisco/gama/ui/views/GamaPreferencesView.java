@@ -287,6 +287,8 @@ public class GamaPreferencesView {
 			final boolean isSubParameter = activations.containsKey(e.getKey());
 
 			final AbstractEditor ed = EditorFactory.create(null, compo, e, isSubParameter, true);
+			if (e.isDisabled())
+				ed.setActive(false);
 			// ed.acceptPopup(false);
 			editors.put(e.getKey(), ed);
 		}

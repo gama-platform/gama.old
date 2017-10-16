@@ -1,0 +1,26 @@
+/**
+ *  OpOpSpatial__statistical__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpSpatial__statistical__operatorsTest.
+ */
+
+experiment OpSpatial__statistical__operatorsTestTests type: test {	
+
+	
+		test hierarchical_clusteringOp {
+			//container var0 <- [ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0; 	// var0 equals for example, can return [[[ag1],[ag3]], [ag2], [[[ag4],[ag5]],[ag6]]
+
+		}
+	
+		test simple_clustering_by_distanceOp {
+			//list<list<agent>> var0 <- [ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0; 	// var0 equals for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]
+
+		}
+	
+		test simple_clustering_by_envelope_distanceOp {
+
+		}
+	
+}
+
+	

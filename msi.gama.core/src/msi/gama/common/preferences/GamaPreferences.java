@@ -133,14 +133,22 @@ public class GamaPreferences {
 						.in(NAME, VALIDATION);
 
 		public static final String TESTS = "Tests";
-		public static final Pref<Boolean> RUN_TESTS =
-				create("pref_run_tests", "Run tests periodically", false, IType.BOOL).in(NAME, TESTS)
-						.activates("pref_tests_period");
-		public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
-				.among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
 		public static final Pref<Boolean> TESTS_SORTED =
-				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL).in(NAME,
+				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL).in(NAME, TESTS)
+						.withComment(", if true, the display of tests will put first the aborted and failed ones");
+		public static final Pref<Boolean> RUN_TESTS =
+				create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL)
+						.in(NAME, TESTS).disabled();
+		public static final Pref<Boolean> START_TESTS =
+				create("pref_start_tests", "Run tests at each start of the platform", false, IType.BOOL).in(NAME,
 						TESTS);
+		public static final Pref<Boolean> USER_TESTS = create("pref_user_tests",
+				"Include user-defined tests in the tests suite", false, IType.BOOL).in(NAME, TESTS).withComment(
+						", if true, will look into user projects named 'tests' for models with 'test' experiments and run them automatically");
+		// .activates("pref_tests_period");
+		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
+		// .among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
+
 	}
 
 	public static class Experiments {

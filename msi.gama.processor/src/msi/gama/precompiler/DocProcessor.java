@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlDocProcessor.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlDocProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,11 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -64,29 +59,24 @@ import msi.gama.precompiler.doc.utils.ElementTypeUtils;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
-@SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class GamlDocProcessor {
+public class DocProcessor implements IProcessor<doc> {
 
 	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
 
 	public static final Character[] cuttingLettersOperatorDoc = { 'c', 'i', 'o', 't' };
 
-	ProcessingEnvironment processingEnv;
 	Messager mes;
 	TypeConverter tc;
 
 	boolean firstParsing;
 
-	// Statistiques values
+	// Statistic values
 	int nbrOperators;
 	int nbrOperatorsDoc;
 	int nbrSkills;
 	int nbrSymbols;
 
-	public GamlDocProcessor(final ProcessingEnvironment procEnv) {
-		processingEnv = procEnv;
-		mes = processingEnv.getMessager();
+	public DocProcessor() {
 		firstParsing = true;
 		nbrOperators = 0;
 		nbrOperatorsDoc = 0;
@@ -95,8 +85,15 @@ public class GamlDocProcessor {
 		tc = new TypeConverter();
 	}
 
-	public void processDocXML(final RoundEnvironment env, final Writer out) {
-
+	@Override
+	public void process(final ProcessorContext context) {
+		if (!context.shouldProduceDoc())
+			return;
+		if (!firstParsing)
+			return;
+		firstParsing = false;
+		mes = context.getMessager();
+		final Writer out = context.createWriter("docGAMA.xml");
 		DocumentBuilder docBuilder = null;
 
 		try {
@@ -113,7 +110,7 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Constants Categories
-		final Set<? extends Element> setConstants = env.getElementsAnnotatedWith(constant.class);
+		final Set<? extends Element> setConstants = context.getElementsAnnotatedWith(constant.class);
 
 		root.appendChild(this.processDocXMLCategories(setConstants, doc, XMLElements.CONSTANTS_CATEGORIES));
 
@@ -129,36 +126,34 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
-		@SuppressWarnings("unchecked")
-		final Set<? extends ExecutableElement> setOperatorsCategories = (Set<? extends ExecutableElement>) env
-				.getElementsAnnotatedWith(operator.class);
+		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperatorsCategories =
+				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, doc, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
-		@SuppressWarnings("unchecked")
-		final Set<? extends ExecutableElement> setOperators = (Set<? extends ExecutableElement>) env
-				.getElementsAnnotatedWith(operator.class);
+		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperators =
+				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLOperators(setOperators, doc));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Skills
-		final Set<? extends Element> setSkills = env.getElementsAnnotatedWith(skill.class);
-		root.appendChild(this.processDocXMLSkills(setSkills, doc, env));
+		final Set<? extends Element> setSkills = context.getElementsAnnotatedWith(skill.class);
+		root.appendChild(this.processDocXMLSkills(setSkills, doc, context));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Architectures
-		final Set<? extends Element> setArchitectures = env.getElementsAnnotatedWith(skill.class);
-		root.appendChild(this.processDocXMLArchitectures(setArchitectures, doc, env));
+		final Set<? extends Element> setArchitectures = context.getElementsAnnotatedWith(skill.class);
+		root.appendChild(this.processDocXMLArchitectures(setArchitectures, doc, context));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Species
-		final Set<? extends Element> setSpecies = env.getElementsAnnotatedWith(species.class);
+		final Set<? extends Element> setSpecies = context.getElementsAnnotatedWith(species.class);
 		root.appendChild(this.processDocXMLSpecies(setSpecies, doc));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Inside statements (kinds and symbols)
-		final Set<? extends Element> setStatements = env.getElementsAnnotatedWith(symbol.class);
+		final Set<? extends Element> setStatements = context.getElementsAnnotatedWith(symbol.class);
 		root.appendChild(this.processDocXMLStatementsInsideKind(setStatements, doc));
 		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatements, doc));
 
@@ -169,21 +164,21 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types to get operators
-		final Set<? extends Element> setOperatorsTypes = env.getElementsAnnotatedWith(type.class);
-		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromTypes = this
-				.processDocXMLOperatorsFromTypes(setOperatorsTypes, doc);
+		final Set<? extends Element> setOperatorsTypes = context.getElementsAnnotatedWith(type.class);
+		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromTypes =
+				this.processDocXMLOperatorsFromTypes(setOperatorsTypes, doc);
 
-		final org.w3c.dom.Element eltOperators = (org.w3c.dom.Element) root.getElementsByTagName(XMLElements.OPERATORS)
-				.item(0);
+		final org.w3c.dom.Element eltOperators =
+				(org.w3c.dom.Element) root.getElementsByTagName(XMLElements.OPERATORS).item(0);
 		for (final org.w3c.dom.Element eltOp : listEltOperatorsFromTypes) {
 			eltOperators.appendChild(eltOp);
 		}
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files to get operators
-		final Set<? extends Element> setFiles = env.getElementsAnnotatedWith(file.class);
-		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFiles,
-				doc);
+		final Set<? extends Element> setFiles = context.getElementsAnnotatedWith(file.class);
+		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles =
+				this.processDocXMLOperatorsFromFiles(setFiles, doc);
 
 		for (final org.w3c.dom.Element eltOp : listEltOperatorsFromFiles) {
 			eltOperators.appendChild(eltOp);
@@ -191,8 +186,8 @@ public class GamlDocProcessor {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types
-		final Set<? extends Element> setTypes = env.getElementsAnnotatedWith(type.class);
-		root.appendChild(this.processDocXMLTypes(setTypes, doc, env));
+		final Set<? extends Element> setTypes = context.getElementsAnnotatedWith(type.class);
+		root.appendChild(this.processDocXMLTypes(setTypes, doc, context));
 
 		// //////////////////////
 		// Final step:
@@ -227,14 +222,14 @@ public class GamlDocProcessor {
 		final org.w3c.dom.Element eltConstants = doc.createElement(XMLElements.CONSTANTS);
 		for (final Element e : set) {
 			if (e.getAnnotation(constant.class).value().equals(e.getSimpleName().toString())) {
-				final org.w3c.dom.Element eltConstant = DocProcessorAnnotations
-						.getConstantElt(e.getAnnotation(constant.class), doc, e, mes, tc);
+				final org.w3c.dom.Element eltConstant =
+						DocProcessorAnnotations.getConstantElt(e.getAnnotation(constant.class), doc, e, mes, tc);
 
 				// Concept
 				org.w3c.dom.Element conceptsElt;
 				if (eltConstant.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
 							(org.w3c.dom.Element) eltConstant.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
@@ -484,8 +479,12 @@ public class GamlDocProcessor {
 						categoriesElt = DocProcessorAnnotations.getCategories(e, doc,
 								doc.createElement(XMLElements.OPERATOR_CATEGORIES), tc);
 					} else {
-						categoriesElt = DocProcessorAnnotations.getCategories(e, doc, (org.w3c.dom.Element) operator
-								.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0), tc);
+						categoriesElt =
+								DocProcessorAnnotations
+										.getCategories(e, doc,
+												(org.w3c.dom.Element) operator
+														.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0),
+												tc);
 					}
 					operator.appendChild(categoriesElt);
 
@@ -506,8 +505,8 @@ public class GamlDocProcessor {
 					if (operator.getElementsByTagName(XMLElements.COMBINAISON_IO).getLength() == 0) {
 						combinaisonOpResElt = doc.createElement(XMLElements.COMBINAISON_IO);
 					} else {
-						combinaisonOpResElt = (org.w3c.dom.Element) operator
-								.getElementsByTagName(XMLElements.COMBINAISON_IO).item(0);
+						combinaisonOpResElt =
+								(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.COMBINAISON_IO).item(0);
 					}
 
 					final org.w3c.dom.Element operands = doc.createElement(XMLElements.OPERANDS);
@@ -622,8 +621,8 @@ public class GamlDocProcessor {
 				org.w3c.dom.Element conceptsElt;
 
 				if (archiElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
 							(org.w3c.dom.Element) archiElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
@@ -697,8 +696,8 @@ public class GamlDocProcessor {
 				org.w3c.dom.Element conceptsElt;
 
 				if (skillElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
 							(org.w3c.dom.Element) skillElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
@@ -782,8 +781,8 @@ public class GamlDocProcessor {
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (spec.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
 							(org.w3c.dom.Element) spec.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
@@ -900,17 +899,17 @@ public class GamlDocProcessor {
 				// /////////////////////////////////////////////////////
 				// Parsing of the documentation
 				if (t.getAnnotation(type.class).doc().length != 0) {
-					final org.w3c.dom.Element docElt = DocProcessorAnnotations.getDocElt(
-							t.getAnnotation(type.class).doc()[0], doc, mes, t.getAnnotation(type.class).name(), tc,
-							null);
+					final org.w3c.dom.Element docElt =
+							DocProcessorAnnotations.getDocElt(t.getAnnotation(type.class).doc()[0], doc, mes,
+									t.getAnnotation(type.class).name(), tc, null);
 					typeElt.appendChild(docElt);
 				}
 
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (typeElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(t, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(t, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(t, doc,
 							(org.w3c.dom.Element) typeElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
@@ -961,8 +960,8 @@ public class GamlDocProcessor {
 				}
 
 				// Parsing of inside
-				final org.w3c.dom.Element insideElt = DocProcessorAnnotations
-						.getInsideElt(e.getAnnotation(inside.class), doc, tc);
+				final org.w3c.dom.Element insideElt =
+						DocProcessorAnnotations.getInsideElt(e.getAnnotation(inside.class), doc, tc);
 				if (insideElt != null) {
 					statElt.appendChild(insideElt);
 				}
@@ -970,8 +969,8 @@ public class GamlDocProcessor {
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (statElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS),
-							tc);
+					conceptsElt =
+							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
 				} else {
 					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
 							(org.w3c.dom.Element) statElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);

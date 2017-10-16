@@ -7,7 +7,7 @@
  * 
  *
  **********************************************************************************************/
-package ummisco.gama.ui.views.inspectors;
+package ummisco.gama.ui.views;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.GamaViewPart;
 
 public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
 

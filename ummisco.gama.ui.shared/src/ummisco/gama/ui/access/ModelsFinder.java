@@ -1,4 +1,4 @@
-package ummisco.gama.ui.navigator;
+package ummisco.gama.ui.access;
 
 import java.util.ArrayList;
 import java.util.List;

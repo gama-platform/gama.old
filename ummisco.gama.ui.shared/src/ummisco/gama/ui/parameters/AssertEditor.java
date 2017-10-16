@@ -1,4 +1,4 @@
-package ummisco.gama.ui.views;
+package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -10,7 +10,6 @@ import msi.gaml.statements.test.TestStatement;
 import msi.gaml.statements.test.TestStatement.State;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.parameters.AbstractStatementEditor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;

@@ -1,0 +1,582 @@
+/**
+ *  OpOpContainers_related__operatorsTest
+ *  Author: automatic generator
+ *  Description: Unity Test of operators belonging to category OpContainers_related__operatorsTest.
+ */
+
+experiment OpContainers_related__operatorsTestTests type: test {	
+
+	
+		test accumulateOp {
+			//container var0 <- [a1,a2,a3] accumulate (each neighbors_at 10); 	// var0 equals a flat list of all the neighbors of these three agents
+			list<int> var1 <- [1,2,4] accumulate ([2,4]); 	// var1 equals [2,4,2,4,2,4]
+			assert var1 = [2,4,2,4,2,4]; 
+			list<int> var2 <- [1,2,4] accumulate (each * 2); 	// var2 equals [2,4,8]
+			assert var2 = [2,4,8]; 
+
+		}
+	
+		test amongOp {
+			list<int> var0 <- 3 among [1,2,4,3,5,7,6,8]; 	// var0 equals [1,2,8] (for example)
+			//container var1 <- 3 among g2; 	// var1 equals [node6,node11,node7]
+			//container var2 <- 3 among list(node); 	// var2 equals [node1,node11,node4]
+			list<int> var3 <- 1 among [1::2,3::4]; 	// var3 equals 2 or 4
+
+		}
+	
+		test anyOp {
+
+		}
+	
+		test atOp {
+			int var1 <- [1, 2, 3] at 2; 	// var1 equals 3
+			assert var1 = 3; 
+			point var2 <- [{1,2}, {3,4}, {5,6}] at 0; 	// var2 equals {1.0,2.0}
+			assert var2 = {1.0,2.0}; 
+			string var0 <- 'abcdef' at 0; 	// var0 equals 'a'
+			assert var0 = 'a'; 
+
+		}
+	
+		test collectOp {
+			container var0 <- [1,2,4] collect (each *2); 	// var0 equals [2,4,8]
+			assert var0 = [2,4,8]; 
+			container var1 <- [1,2,4] collect ([2,4]); 	// var1 equals [[2,4],[2,4],[2,4]]
+			assert var1 = [[2,4],[2,4],[2,4]]; 
+			container var2 <- [1::2, 3::4, 5::6] collect (each + 2); 	// var2 equals [4,6,8]
+			assert var2 = [4,6,8]; 
+			//container var3 <- (list(node) collect (node(each).location.x * 2); 	// var3 equals the list of nodes with their x multiplied by 2
+
+		}
+	
+		test containsOp {
+			bool var1 <- [1, 2, 3] contains 2; 	// var1 equals true
+			assert var1 = true; 
+			bool var2 <- [{1,2}, {3,4}, {5,6}] contains {3,4}; 	// var2 equals true
+			assert var2 = true; 
+			bool var0 <- 'abcded' contains 'bc'; 	// var0 equals true
+			assert var0 = true; 
+
+		}
+	
+		test contains_allOp {
+			bool var0 <- "abcabcabc" contains_all ["ca","xy"]; 	// var0 equals false
+			assert var0 = false; 
+			bool var1 <- [1,2,3,4,5,6] contains_all [2,4]; 	// var1 equals true 
+			assert var1 = true ; 
+			bool var2 <- [1,2,3,4,5,6] contains_all [2,8]; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- [1::2, 3::4, 5::6] contains_all [1,3]; 	// var3 equals false 
+			assert var3 = false ; 
+			bool var4 <- [1::2, 3::4, 5::6] contains_all [2,4]; 	// var4 equals true
+			assert var4 = true; 
+
+		}
+	
+		test contains_anyOp {
+			bool var0 <- "abcabcabc" contains_any ["ca","xy"]; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- [1,2,3,4,5,6] contains_any [2,4]; 	// var1 equals true 
+			assert var1 = true ; 
+			bool var2 <- [1,2,3,4,5,6] contains_any [2,8]; 	// var2 equals true
+			assert var2 = true; 
+			bool var3 <- [1::2, 3::4, 5::6] contains_any [1,3]; 	// var3 equals false
+			assert var3 = false; 
+			bool var4 <- [1::2, 3::4, 5::6] contains_any [2,4]; 	// var4 equals true
+			assert var4 = true; 
+
+		}
+	
+		test countOp {
+			int var0 <- [1,2,3,4,5,6,7,8] count (each > 3); 	// var0 equals 5
+			assert var0 = 5; 
+			// Number of nodes of graph g2 without any out edge
+			graph g2 <- graph([]);
+			int var3 <- g2 count (length(g2 out_edges_of each) = 0  ) ; 	// var3 equals the total number of out edges
+			// Number of agents node with x > 32
+			//int n <- (list(node) count (round(node(each).location.x) > 32);
+			int var6 <- [1::2, 3::4, 5::6] count (each > 4); 	// var6 equals 1
+			assert var6 = 1; 
+
+		}
+	
+		test distinctOp {
+			container var1 <- remove_duplicates([1::3,2::4,3::3,5::7]); 	// var1 equals [3,4,7]
+			assert var1 = [3,4,7]; 
+			container var0 <- remove_duplicates([3,2,5,1,2,3,5,5,5]); 	// var0 equals [3,2,5,1]
+			assert var0 = [3,2,5,1]; 
+
+		}
+	
+		test DoublePointOp {
+
+		}
+	
+		test emptyOp {
+			bool var0 <- empty ('abced'); 	// var0 equals false
+			assert var0 = false; 
+			bool var1 <- empty([]); 	// var1 equals true
+			assert var1 = true; 
+
+		}
+	
+		test everyOp {
+			//reflex when: every(2#days) since date('2000-01-01') { .. }
+			//state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time
+			//(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval
+			if every(2#cycle) {write "the cycle number is even";}
+				     else {write "the cycle number is odd";}
+
+		}
+	
+		test firstOp {
+			int var0 <- first ([1, 2, 3]); 	// var0 equals 1
+			assert var0 = 1; 
+			string var1 <- first ('abce'); 	// var1 equals 'a'
+			assert var1 = 'a'; 
+
+		}
+	
+		test first_ofOp {
+
+		}
+	
+		test first_withOp {
+			unknown var4 <- [1::2, 3::4, 5::6] first_with (each >= 4); 	// var4 equals 4
+			assert var4 = 4; 
+			unknown var5 <- [1::2, 3::4, 5::6].pairs first_with (each.value >= 4); 	// var5 equals 3::4
+			assert var5 = (3::4); 
+			unknown var0 <- [1,2,3,4,5,6,7,8] first_with (each > 3); 	// var0 equals 4
+			assert var0 = 4; 
+			graph g2 <- graph([]);
+			unknown var2 <- g2 first_with (length(g2 out_edges_of each) = 0); 	// var2 equals node9
+			//unknown var3 <- (list(node) first_with (round(node(each).location.x) > 32); 	// var3 equals node2
+
+		}
+	
+		test getOp {
+			//string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable
+			//string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable
+
+		}
+	
+		test group_byOp {
+			map var0 <- [1,2,3,4,5,6,7,8] group_by (each > 3); 	// var0 equals [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]
+			assert var0 = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]; 
+			//map var1 <- g2 group_by (length(g2 out_edges_of each) ); 	// var1 equals [ 0::[node9, node7, node10, node8, node11], 1::[node6], 2::[node5], 3::[node4]]
+			//map var2 <- (list(node) group_by (round(node(each).location.x)); 	// var2 equals [32::[node5], 21::[node1], 4::[node0], 66::[node2], 96::[node3]]
+			map var3 <- [1::2, 3::4, 5::6] group_by (each > 4); 	// var3 equals [false::[2, 4], true::[6]]
+			assert var3 = [false::[2, 4], true::[6]]; 
+
+		}
+	
+		test inOp {
+			bool var0 <- 2 in [1,2,3,4,5,6]; 	// var0 equals true
+			assert var0 = true; 
+			bool var1 <- 7 in [1,2,3,4,5,6]; 	// var1 equals false
+			assert var1 = false; 
+			bool var2 <- 3 in [1::2, 3::4, 5::6]; 	// var2 equals false
+			assert var2 = false; 
+			bool var3 <- 6 in [1::2, 3::4, 5::6]; 	// var3 equals true
+			assert var3 = true; 
+			bool var4 <-  'bc' in 'abcded'; 	// var4 equals true
+			assert var4 = true; 
+
+		}
+	
+		test index_byOp {
+			map var0 <- [1,2,3,4,5,6,7,8] index_by (each - 1); 	// var0 equals [0::1, 1::2, 2::3, 3::4, 4::5, 5::6, 6::7, 7::8]
+			assert var0 = [0::1, 1::2, 2::3, 3::4, 4::5, 5::6, 6::7, 7::8]; 
+
+		}
+	
+		test interOp {
+			container var0 <- [1::2, 3::4, 5::6] inter [2,4]; 	// var0 equals [2,4]
+			assert var0 = [2,4]; 
+			container var1 <- [1::2, 3::4, 5::6] inter [1,3]; 	// var1 equals []
+			assert var1 = []; 
+			container var2 <- matrix([[1,2,3],[4,5,4]]) inter [3,4]; 	// var2 equals [3,4]
+			assert var2 = [3,4]; 
+			container var3 <- [1,2,3,4,5,6] inter [2,4]; 	// var3 equals [2,4]
+			assert var3 = [2,4]; 
+			container var4 <- [1,2,3,4,5,6] inter [0,8]; 	// var4 equals []
+			assert var4 = []; 
+			geometry var5 <- square(10) inter circle(5); 	// var5 equals circle(5)
+			assert var5 = circle(5); 
+
+		}
+	
+		test interleaveOp {
+			container var0 <- interleave([1,2,4,3,5,7,6,8]); 	// var0 equals [1,2,4,3,5,7,6,8]
+			assert var0 = [1,2,4,3,5,7,6,8]; 
+			container var1 <- interleave([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']]); 	// var1 equals ['e11','e21','e31','e12','e22','e32','e13','e23','e33']
+			assert var1 = ['e11','e21','e31','e12','e22','e32','e13','e23','e33']; 
+
+		}
+	
+		test internal_atOp {
+
+		}
+	
+		test lastOp {
+			int var0 <- last ([1, 2, 3]); 	// var0 equals 3
+			assert var0 = 3; 
+			string var1 <- last ('abce'); 	// var1 equals 'e'
+			assert var1 = 'e'; 
+
+		}
+	
+		test last_ofOp {
+
+		}
+	
+		test last_withOp {
+			unknown var4 <- [1::2, 3::4, 5::6] last_with (each >= 4); 	// var4 equals 6
+			assert var4 = 6; 
+			unknown var5 <- [1::2, 3::4, 5::6].pairs last_with (each.value >= 4); 	// var5 equals 5::6
+			assert var5 = (5::6); 
+			unknown var0 <- [1,2,3,4,5,6,7,8] last_with (each > 3); 	// var0 equals 8
+			assert var0 = 8; 
+			graph g2 <- graph([]);
+			//unknown var2 <- g2 last_with (length(g2 out_edges_of each) = 0 ); 	// var2 equals node11
+			//unknown var3 <- (list(node) last_with (round(node(each).location.x) > 32); 	// var3 equals node3
+
+		}
+	
+		test lengthOp {
+			int var0 <- length([12,13]); 	// var0 equals 2
+			assert var0 = 2; 
+			int var1 <- length([]); 	// var1 equals 0
+			assert var1 = 0; 
+			int var2 <- length(matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var2 equals 6
+			assert var2 = 6; 
+			int var3 <- length ('I am an agent'); 	// var3 equals 13
+			assert var3 = 13; 
+
+		}
+	
+		test maxOp {
+			unknown var0 <- max ([100, 23.2, 34.5]); 	// var0 equals 100.0
+			assert var0 = 100.0; 
+			unknown var1 <- max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}]); 	// var1 equals {9.0,1.0}
+			assert var1 = {9.0,1.0}; 
+
+		}
+	
+		test max_ofOp {
+			unknown var5 <- [1::2, 3::4, 5::6] max_of (each + 3); 	// var5 equals 6
+			assert var5 = 6; 
+
+			// assert graph([]) max_of([]) raises: "error"; 
+			unknown var1 <- [1,2,4,3,5,7,6,8] max_of (each * 100 ); 	// var1 equals 800
+			assert var1 = 800; 
+			graph g2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
+			unknown var3 <- g2.vertices max_of (g2 degree_of( each )); 	// var3 equals 2
+			assert var3 = 2; 
+			//unknown var4 <- (list(node) max_of (round(node(each).location.x)); 	// var4 equals 96
+
+		}
+	
+		test meanOp {
+			unknown var0 <- mean ([4.5, 3.5, 5.5, 7.0]); 	// var0 equals 5.125 
+			assert var0 = 5.125 ; 
+
+		}
+	
+		test mean_ofOp {
+			unknown var2 <- [1::2, 3::4, 5::6] mean_of (each); 	// var2 equals 4
+			assert var2 = 4; 
+			unknown var1 <- [1,2] mean_of (each * 10 ); 	// var1 equals 15
+			assert var1 = 15; 
+
+		}
+	
+		test medianOp {
+			unknown var0 <- median ([4.5, 3.5, 5.5, 3.4, 7.0]); 	// var0 equals 5.0
+			assert var0 = 5.0; 
+
+		}
+	
+		test minOp {
+			unknown var0 <- min ([100, 23.2, 34.5]); 	// var0 equals 23.2
+			assert var0 = 23.2; 
+
+		}
+	
+		test min_ofOp {
+			unknown var5 <- [1::2, 3::4, 5::6] min_of (each + 3); 	// var5 equals 5
+			assert var5 = 5; 
+
+			// assert graph([]) min_of([]) raises: "error"; 
+			unknown var1 <- [1,2,4,3,5,7,6,8] min_of (each * 100 ); 	// var1 equals 100
+			assert var1 = 100; 
+			graph g2 <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);
+			unknown var3 <- g2 min_of (length(g2 out_edges_of each) ); 	// var3 equals 0
+			assert var3 = 0; 
+			//unknown var4 <- (list(node) min_of (round(node(each).location.x)); 	// var4 equals 4
+
+		}
+	
+		test MinusOp {
+			geometry var0 <- shape - 5; 	// var0 equals a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5
+			point var1 <- {1, 2} - {4, 5}; 	// var1 equals {-3.0, -3.0}
+			assert var1 = {-3.0, -3.0}; 
+			float var2 <- date('2000-01-01') - date('2010-01-02'); 	// var2 equals 86400
+			assert var2 = 86400; 
+			list<int> var3 <- [1,2,3,4,5,6] - [2,4,9]; 	// var3 equals [1,3,5,6]
+			assert var3 = [1,3,5,6]; 
+			list<int> var4 <- [1,2,3,4,5,6] - [0,8]; 	// var4 equals [1,2,3,4,5,6]
+			assert var4 = [1,2,3,4,5,6]; 
+			rgb var5 <- rgb([255, 128, 32]) - rgb('red'); 	// var5 equals rgb([0,128,32])
+			assert var5 = rgb([0,128,32]); 
+			int var6 <- 1 - 1; 	// var6 equals 0
+			assert var6 = 0; 
+			float var7 <- 1.0 - 1; 	// var7 equals 0.0
+			assert var7 = 0.0; 
+			float var8 <- 3.7 - 1.2; 	// var8 equals 2.5
+			assert var8 = 2.5; 
+			float var9 <- 3 - 1.2; 	// var9 equals 1.8
+			assert var9 = 1.8; 
+			point var10 <- {1, 2} - 4.5; 	// var10 equals {-3.5, -2.5, -4.5}
+			assert var10 = {-3.5, -2.5, -4.5}; 
+			point var11 <- {1, 2} - 4; 	// var11 equals {-3.0,-2.0,-4.0}
+			assert var11 = {-3.0,-2.0,-4.0}; 
+			list<int> var12 <- [1,2,3,4,5,6] - 2; 	// var12 equals [1,3,4,5,6]
+			assert var12 = [1,3,4,5,6]; 
+			list<int> var13 <- [1,2,3,4,5,6] - 0; 	// var13 equals [1,2,3,4,5,6]
+			assert var13 = [1,2,3,4,5,6]; 
+			geometry var14 <- rectangle(10,10) - [circle(2), square(2)]; 	// var14 equals rectangle(10,10) - (circle(2) + square(2))
+			assert var14 = rectangle(10,10) - (circle(2) + square(2)); 
+			date var15 <- date('2000-01-01') - 200; 	// var15 equals date('2000-01-01')
+			assert var15 = date('2000-01-01'); 
+			//geometry var16 <- geom1 - geom2; 	// var16 equals a geometry corresponding to difference between geom1 and geom2
+			rgb var17 <- rgb([255, 128, 32]) - 3; 	// var17 equals rgb([252,125,29])
+			assert var17 = rgb([252,125,29]); 
+			matrix var18 <- 3.5 - matrix([[2,5],[3,4]]); 	// var18 equals matrix([[1.5,-1.5],[0.5,-0.5]])
+			assert var18 = matrix([[1.5,-1.5],[0.5,-0.5]]); 
+			map var19 <- ['a'::1,'b'::2] - ('b'::2); 	// var19 equals ['a'::1]
+			assert var19 = ['a'::1]; 
+			map var20 <- ['a'::1,'b'::2] - ('c'::3); 	// var20 equals ['a'::1,'b'::2]
+			assert var20 = ['a'::1,'b'::2]; 
+			map var21 <- ['a'::1,'b'::2] - ['b'::2]; 	// var21 equals ['a'::1]
+			assert var21 = ['a'::1]; 
+			map var22 <- ['a'::1,'b'::2] - ['b'::2,'c'::3]; 	// var22 equals ['a'::1]
+			assert var22 = ['a'::1]; 
+			int var23 <- - (-56); 	// var23 equals 56
+			assert var23 = 56; 
+			point var24 <- -{3.0,5.0}; 	// var24 equals {-3.0,-5.0}
+			assert var24 = {-3.0,-5.0}; 
+			point var25 <- -{1.0,6.0,7.0}; 	// var25 equals {-1.0,-6.0,-7.0}
+			assert var25 = {-1.0,-6.0,-7.0}; 
+
+		}
+	
+		test mulOp {
+			unknown var0 <- mul ([100, 23.2, 34.5]); 	// var0 equals 80040.0
+			assert var0 = 80040.0; 
+
+		}
+	
+		test one_ofOp {
+			unknown var0 <- one_of([]); 	// var0 equals nil
+			assert var0 = nil; 
+			int i <- any ([1,2,3]); 	// i equals 1, 2 or 3
+			bool var2 <- [1,2,3] contains i; 	// var2 equals true
+			assert var2 = true; 
+			string sMat <- one_of(matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// sMat equals "c11","c12","c13", "c21","c22" or "c23"
+			bool var4 <- matrix([["c11","c12","c13"],["c21","c22","c23"]]) contains sMat; 	// var4 equals true
+			assert var4 = true; 
+			int im <- one_of ([2::3, 4::5, 6::7]);	// im equals 3, 5 or 7
+			bool var6 <- [2::3, 4::5, 6::7].values contains im; 	// var6 equals true
+			assert var6 = true; 
+			agent b <- one_of(agents);
+			//bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3
+
+		}
+	
+		test PlusOp {
+			int var4 <- 1 + 1; 	// var4 equals 2
+			assert var4 = 2; 
+			float var5 <- 1.0 + 1; 	// var5 equals 2.0
+			assert var5 = 2.0; 
+			float var6 <- 1.0 + 2.5; 	// var6 equals 3.5
+			assert var6 = 3.5; 
+			string var7 <- "hello " + 12; 	// var7 equals "hello 12"
+			assert var7 = "hello 12"; 
+			rgb var8 <- rgb([255, 128, 32]) + rgb('red'); 	// var8 equals rgb([255,128,32])
+			assert var8 = rgb([255,128,32]); 
+			point var9 <- {1, 2} + 4; 	// var9 equals {5.0, 6.0,4.0}
+			assert var9 = {5.0, 6.0,4.0}; 
+			point var10 <- {1, 2} + 4.5; 	// var10 equals {5.5, 6.5,4.5}
+			assert var10 = {5.5, 6.5,4.5}; 
+			geometry var11 <- circle(5) + (5,32,#round); 	// var11 equals circle(10)
+			assert var11 = circle(10); 
+			matrix var12 <- 3.5 + matrix([[2,5],[3,4]]); 	// var12 equals matrix([[5.5,8.5],[6.5,7.5]])
+			assert var12 = matrix([[5.5,8.5],[6.5,7.5]]); 
+			list<int> var13 <- [1,2,3,4,5,6] + [2,4,9]; 	// var13 equals [1,2,3,4,5,6,2,4,9]
+			assert var13 = [1,2,3,4,5,6,2,4,9]; 
+			list<int> var14 <- [1,2,3,4,5,6] + [0,8]; 	// var14 equals [1,2,3,4,5,6,0,8]
+			assert var14 = [1,2,3,4,5,6,0,8]; 
+			list<int> var15 <- [1,2,3,4,5,6] + 2; 	// var15 equals [1,2,3,4,5,6,2]
+			assert var15 = [1,2,3,4,5,6,2]; 
+			list<int> var16 <- [1,2,3,4,5,6] + 0; 	// var16 equals [1,2,3,4,5,6,0]
+			assert var16 = [1,2,3,4,5,6,0]; 
+			geometry var17 <- circle(5) + (5,32); 	// var17 equals circle(10)
+			assert var17 = circle(10); 
+			//geometry var18 <- geom1 + geom2; 	// var18 equals a geometry corresponding to union between geom1 and geom2
+			rgb var19 <- rgb([255, 128, 32]) + 3; 	// var19 equals rgb([255,131,35])
+			assert var19 = rgb([255,131,35]); 
+			geometry var20 <- circle(5) + 5; 	// var20 equals circle(10)
+			assert var20 = circle(10); 
+			date var21 <- date('2000-01-01') + 200; 	// var21 equals date('2000-01-01')
+			assert var21 = date('2000-01-01'); 
+			point var22 <- {1, 2} + {4, 5}; 	// var22 equals {5.0, 7.0}
+			assert var22 = {5.0, 7.0}; 
+			map var0 <- ['a'::1,'b'::2] + ['c'::3]; 	// var0 equals ['a'::1,'b'::2,'c'::3]
+			assert var0 = ['a'::1,'b'::2,'c'::3]; 
+			map var1 <- ['a'::1,'b'::2] + [5::3.0]; 	// var1 equals ['a'::1.0,'b'::2.0,5::3.0]
+			assert var1 = ['a'::1.0,'b'::2.0,5::3.0]; 
+			map var2 <- ['a'::1,'b'::2] + ('c'::3); 	// var2 equals ['a'::1,'b'::2,'c'::3]
+			assert var2 = ['a'::1,'b'::2,'c'::3]; 
+			map var3 <- ['a'::1,'b'::2] + ('c'::3); 	// var3 equals ['a'::1,'b'::2,'c'::3]
+			assert var3 = ['a'::1,'b'::2,'c'::3]; 
+
+		}
+	
+		test productOp {
+
+		}
+	
+		test product_ofOp {
+			unknown var2 <- [1::2, 3::4, 5::6] product_of (each); 	// var2 equals 48
+			assert var2 = 48; 
+			unknown var1 <- [1,2] product_of (each * 10 ); 	// var1 equals 200
+			assert var1 = 200; 
+
+		}
+	
+		test rangeOp {
+
+		}
+	
+		test remove_duplicatesOp {
+
+		}
+	
+		test reverseOp {
+			string var0 <- reverse ('abcd'); 	// var0 equals 'dcba'
+			assert var0 = 'dcba'; 
+			container var1 <- reverse ([10,12,14]); 	// var1 equals [14, 12, 10]
+			assert var1 = [14, 12, 10]; 
+			container var2 <- reverse (['k1'::44, 'k2'::32, 'k3'::12]); 	// var2 equals [12::'k3',  32::'k2', 44::'k1']
+			assert var2 = [12::'k3',  32::'k2', 44::'k1']; 
+			container var3 <- reverse(matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var3 equals matrix([["c11","c21"],["c12","c22"],["c13","c23"]])
+			assert var3 = matrix([["c11","c21"],["c12","c22"],["c13","c23"]]); 
+
+		}
+	
+		test selectOp {
+
+		}
+	
+		test shuffleOp {
+			matrix var0 <- shuffle (matrix([["c11","c12","c13"],["c21","c22","c23"]])); 	// var0 equals matrix([["c12","c21","c11"],["c13","c22","c23"]]) (for example)
+			string var1 <- shuffle ('abc'); 	// var1 equals 'bac' (for example)
+			container var2 <- shuffle ([12, 13, 14]); 	// var2 equals [14,12,13] (for example)
+
+		}
+	
+		test sortOp {
+
+		}
+	
+		test sort_byOp {
+			container var0 <- [1,2,4,3,5,7,6,8] sort_by (each); 	// var0 equals [1,2,3,4,5,6,7,8]
+			assert var0 = [1,2,3,4,5,6,7,8]; 
+			graph g2 <- graph([]);
+			container var2 <- g2 sort_by (length(g2 out_edges_of each) ); 	// var2 equals [node9, node7, node10, node8, node11, node6, node5, node4]
+			//container var3 <- (list(node) sort_by (round(node(each).location.x)); 	// var3 equals [node5, node1, node0, node2, node3]
+			container var4 <- [1::2, 5::6, 3::4] sort_by (each); 	// var4 equals [2, 4, 6]
+			assert var4 = [2, 4, 6]; 
+
+		}
+	
+		test splitOp {
+
+		}
+	
+		test split_inOp {
+
+		}
+	
+		test split_usingOp {
+
+		}
+	
+		test sumOp {
+			int var0 <- sum ([12,10,3]); 	// var0 equals 25
+			assert var0 = 25; 
+			unknown var1 <- sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}]); 	// var1 equals {20.0,17.0}
+			assert var1 = {20.0,17.0}; 
+
+		}
+	
+		test sum_ofOp {
+			unknown var2 <- [1::2, 3::4, 5::6] sum_of (each + 3); 	// var2 equals 21
+			assert var2 = 21; 
+			unknown var1 <- [1,2] sum_of (each * 100 ); 	// var1 equals 300
+			assert var1 = 300; 
+
+		}
+	
+		test unionOp {
+			container var0 <- [1,2,3,4,5,6] union [2,4,9]; 	// var0 equals [1,2,3,4,5,6,9]
+			assert var0 = [1,2,3,4,5,6,9]; 
+			container var1 <- [1,2,3,4,5,6] union [0,8]; 	// var1 equals [1,2,3,4,5,6,0,8]
+			assert var1 = [1,2,3,4,5,6,0,8]; 
+			container var2 <- [1,3,2,4,5,6,8,5,6] union [0,8]; 	// var2 equals [1,3,2,4,5,6,8,0]
+			assert var2 = [1,3,2,4,5,6,8,0]; 
+			//geometry var3 <- union([geom1, geom2, geom3]); 	// var3 equals a geometry corresponding to union between geom1, geom2 and geom3
+
+		}
+	
+		test variance_ofOp {
+
+		}
+	
+		test whereOp {
+			container var4 <- [1::2, 3::4, 5::6] where (each >= 4); 	// var4 equals [4, 6]
+			assert var4 = [4, 6]; 
+			container var0 <- [1,2,3,4,5,6,7,8] where (each > 3); 	// var0 equals [4, 5, 6, 7, 8] 
+			assert var0 = [4, 5, 6, 7, 8] ; 
+			graph g2 <- graph([]);
+			container var2 <- g2 where (length(g2 out_edges_of each) = 0 ); 	// var2 equals [node9, node7, node10, node8, node11]
+			//container var3 <- (list(node) where (round(node(each).location.x) > 32); 	// var3 equals [node2, node3]
+
+		}
+	
+		test with_max_ofOp {
+			unknown var0 <- [1,2,3,4,5,6,7,8] with_max_of (each ); 	// var0 equals 8
+			assert var0 = 8; 
+			graph g2 <- graph([]);
+			unknown var2 <- g2 with_max_of (length(g2 out_edges_of each)  ) ; 	// var2 equals node4
+			//unknown var3 <- (list(node) with_max_of (round(node(each).location.x)); 	// var3 equals node3
+			unknown var4 <- [1::2, 3::4, 5::6] with_max_of (each); 	// var4 equals 6
+			assert var4 = 6; 
+
+		}
+	
+		test with_min_ofOp {
+			unknown var0 <- [1,2,3,4,5,6,7,8] with_min_of (each ); 	// var0 equals 1
+			assert var0 = 1; 
+			graph g2 <- graph([]);
+			unknown var2 <- g2 with_min_of (length(g2 out_edges_of each)  ); 	// var2 equals node11
+			//unknown var3 <- (list(node) with_min_of (round(node(each).location.x)); 	// var3 equals node0
+			unknown var4 <- [1::2, 3::4, 5::6] with_min_of (each); 	// var4 equals 2
+			assert var4 = 2; 
+
+		}
+	
+}
+
+	

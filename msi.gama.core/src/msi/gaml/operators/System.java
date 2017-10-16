@@ -173,10 +173,8 @@ public class System {
 							value = "agent1.location",
 							equals = "the location of the agent agent1",
 							isExecutable = false),
-							@example (
-									value = "map(nil).keys",
-									raises = "exception",
-									isTestOnly = false) }))
+						//	@example (value = "map(nil).keys", raises = "exception", isTestOnly = false) 
+					}))
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 			throws GamaRuntimeException {
 		if (a == null) {
@@ -223,9 +221,11 @@ public class System {
 					@example (
 							value = "(values at \"Number\")",
 							equals = "100",
+							returnType = "int",
 							isTestOnly = true),
 					@example (
 							value = " (values at \"Location\")", equals = "{10,10}",
+							returnType = "point",
 							isTestOnly = true),
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",

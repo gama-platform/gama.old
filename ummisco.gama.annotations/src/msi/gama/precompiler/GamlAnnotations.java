@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -167,7 +166,9 @@ public final class GamlAnnotations {
 		 * @return The int representation of the content type of the facet (see IType#defaultContentType()). Only
 		 *         applies to the types considered as containers
 		 */
-		int of() default 0;
+		int of()
+
+		default 0;
 
 		/**
 		 * Index.
@@ -175,7 +176,9 @@ public final class GamlAnnotations {
 		 * @return The int representation of the index type of the facet (see IType#defaultKeyType()). Only applies to
 		 *         the types considered as containers
 		 */
-		int index() default 0;
+		int index()
+
+		default 0;
 
 		/**
 		 * Values.
@@ -191,14 +194,18 @@ public final class GamlAnnotations {
 		 * @return whether or not this facet is optional or mandatory.
 		 */
 
-		boolean optional() default false;
+		boolean optional()
+
+		default false;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this facet is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -267,14 +274,18 @@ public final class GamlAnnotations {
 		/**
 		 * @return the kind of Variable used to store this type. see ISymbolKind.Variable.
 		 */
-		int kind() default ISymbolKind.Variable.REGULAR;
+		int kind()
+
+		default ISymbolKind.Variable.REGULAR;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this type is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
@@ -335,7 +346,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return whether this skill is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
@@ -418,7 +431,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return whether this species is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
@@ -436,27 +451,27 @@ public final class GamlAnnotations {
 		doc[] doc() default {};
 	}
 
-	/**
-	 * The Interface args. Describes the names of the arguments passed to an action.
-	 * 
-	 * @deprecated use action.args() instead
-	 * @see action
-	 */
-	@Retention (RetentionPolicy.RUNTIME)
-	@Target (ElementType.METHOD)
-	@Deprecated
-	public static @interface args {
-
-		/**
-		 * Value.
-		 *
-		 *
-		 * @return an Array of strings, each representing an argument that can be passed to a action. Used to tag the
-		 *         method that will implement the action.
-		 */
-		String[] names();
-
-	}
+	// /**
+	// * The Interface args. Describes the names of the arguments passed to an action.
+	// *
+	// * @deprecated use action.args() instead
+	// * @see action
+	// */
+	// @Retention (RetentionPolicy.RUNTIME)
+	// @Target (ElementType.METHOD)
+	// @Deprecated
+	// public static @interface args {
+	//
+	// /**
+	// * Value.
+	// *
+	// *
+	// * @return an Array of strings, each representing an argument that can be passed to a action. Used to tag the
+	// * method that will implement the action.
+	// */
+	// String[] names();
+	//
+	// }
 
 	/**
 	 *
@@ -482,7 +497,9 @@ public final class GamlAnnotations {
 		 * Abstract
 		 */
 
-		boolean virtual() default false;
+		boolean virtual()
+
+		default false;
 
 		/**
 		 * Args
@@ -497,7 +514,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return whether this action is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -525,7 +544,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return the name of the argument as it can be used in GAML
 		 */
-		String name() default "";
+		String name()
+
+		default "";
 
 		/**
 		 * Type.
@@ -533,7 +554,9 @@ public final class GamlAnnotations {
 		 * @return An array containing the textual representation of the types that can be taken by the argument (see
 		 *         IType)
 		 */
-		int type() default 0;
+		int type()
+
+		default 0;
 
 		/**
 		 * Optional.
@@ -541,7 +564,9 @@ public final class GamlAnnotations {
 		 * @return whether this argument is optional or not
 		 * @change AD 31/08/13 : the default is now true.
 		 */
-		boolean optional() default true;
+		boolean optional()
+
+		default true;
 
 		/**
 		 * Doc.
@@ -604,28 +629,36 @@ public final class GamlAnnotations {
 		 *
 		 * @return The int representation of the content type of the variable (see IType#defaultContentType())
 		 */
-		int of() default 0;
+		int of()
+
+		default 0;
 
 		/**
 		 * Index.
 		 *
 		 * @return The int representation of the index type of the variable (see IType#defaultKeyType())
 		 */
-		int index() default 0;
+		int index()
+
+		default 0;
 
 		/**
 		 * Constant
 		 *
 		 * @return whether or not this variable should be considered as non modifiable
 		 */
-		boolean constant() default false;
+		boolean constant()
+
+		default false;
 
 		/**
 		 * Init
 		 *
 		 * @return the initial value of this variable as a String that will be interpreted by GAML
 		 */
-		String init() default "";
+		String init()
+
+		default "";
 
 		/**
 		 * Depends_on.
@@ -642,14 +675,18 @@ public final class GamlAnnotations {
 		 * @deprecated use type instead with the name of the species
 		 */
 		@Deprecated
-		String species() default "";
+		String species()
+
+		default "";
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this var is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -699,7 +736,9 @@ public final class GamlAnnotations {
 		 * @return Indicates if the statement (usually a sequence) defines its own scope. Otherwise, all the temporary
 		 *         variables defined in it are actually defined in the super-scope
 		 */
-		boolean with_scope() default true;
+		boolean with_scope()
+
+		default true;
 
 		/**
 		 * WithSequence.
@@ -713,7 +752,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return Indicates wether or not the symbol denoted by this class will accept arguments
 		 */
-		boolean with_args() default false;
+		boolean with_args()
+
+		default false;
 
 		/**
 		 * RemoteContext.
@@ -723,7 +764,9 @@ public final class GamlAnnotations {
 		 *         passed on as if the statement was executed in the current context.
 		 */
 
-		boolean remote_context() default false;
+		boolean remote_context()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -738,20 +781,26 @@ public final class GamlAnnotations {
 		 *
 		 * @return whether this symbol is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 *
 		 * @return Indicates that this statement must be unique in its super context (for example, only one return is
 		 *         allowed in the body of an action).
 		 */
-		boolean unique_in_context() default false;
+		boolean unique_in_context()
+
+		default false;
 
 		/**
 		 *
 		 * @return Indicates that only one statement with the same name should be allowed in the same super context
 		 */
-		boolean unique_name() default false;
+		boolean unique_name()
+
+		default false;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
@@ -798,13 +847,17 @@ public final class GamlAnnotations {
 		 * @see WorldSkill
 		 */
 
-		boolean iterator() default false;
+		boolean iterator()
+
+		default false;
 
 		/**
 		 * @return whether or not the operator can be evaluated as a constant if its child (resp. children) is (resp.
 		 *         are) constant.
 		 */
-		boolean can_be_const() default false;
+		boolean can_be_const()
+
+		default false;
 
 		/**
 		 * @return the type of the content if the returned value is a container. Can be directly a type in IType or one
@@ -813,7 +866,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type() default ITypeProvider.NONE;
+		int content_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -822,7 +877,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type() default ITypeProvider.NONE;
+		int index_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of
@@ -840,14 +897,18 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int type() default ITypeProvider.NONE;
+		int type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this operator is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -955,7 +1016,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return a String representing the documentation of a GAML element
 		 */
-		String value() default "";
+		String value()
+
+		default "";
 
 		/**
 		 * masterDoc.
@@ -963,7 +1026,9 @@ public final class GamlAnnotations {
 		 * @return a boolean representing the fact whether this instance of the operator is the master one, that is
 		 *         whether its value will subsume the value of all other instances of it.
 		 */
-		boolean masterDoc() default false;
+		boolean masterDoc()
+
+		default false;
 
 		/**
 		 * Deprecated.
@@ -971,21 +1036,27 @@ public final class GamlAnnotations {
 		 * @return a String indicating (if it is not empty) that the element is deprecated and defining, if possible,
 		 *         what to use instead
 		 */
-		String deprecated() default "";
+		String deprecated()
+
+		default "";
 
 		/**
 		 * Returns.
 		 *
 		 * @return the documentation concerning the value(s) returned by this element (if any).
 		 */
-		String returns() default "";
+		String returns()
+
+		default "";
 
 		/**
 		 * Comment.
 		 *
 		 * @return An optional comment that will appear differently from the documentation itself.
 		 */
-		String comment() default "";
+		String comment()
+
+		default "";
 
 		/**
 		 * Special_cases
@@ -1077,7 +1148,9 @@ public final class GamlAnnotations {
 		 * provided constants if necessary (i.e. "My templates"). When no menu is defined, GAMA tries to guess it from
 		 * the context where the template is defined
 		 */
-		String menu() default NULL;
+		String menu()
+
+		default NULL;
 
 		/**
 		 * The path indicates where to put this template in the menu. For instance, the following annotation:
@@ -1095,7 +1168,9 @@ public final class GamlAnnotations {
 		 * The name of the template should be both concise (as it will appear in a menu) and precise (to remove
 		 * ambiguities between templates).
 		 */
-		String name() default NULL;
+		String name()
+
+		default NULL;
 
 		/**
 		 * Examples
@@ -1115,7 +1190,6 @@ public final class GamlAnnotations {
 	}
 
 	@Retention (RetentionPolicy.RUNTIME)
-	// @Target({ ElementType.TYPE, ElementType.METHOD })
 	// @Inherited
 	public static @interface example {
 
@@ -1124,63 +1198,81 @@ public final class GamlAnnotations {
 		 *
 		 * @return a String representing the expression to
 		 */
-		String value() default "";
+		String value()
+
+		default "";
 
 		/**
 		 * var
 		 *
 		 * @return The variable that will be tested in the equals, if it is omitted a default variable will be used.
 		 */
-		String var() default "";
+		String var()
+
+		default "";
 
 		/**
 		 * equals
 		 *
 		 * @return The value to which the value will be compared
 		 */
-		String equals() default "";
+		String equals()
+
+		default "";
 
 		/**
 		 * returnType
 		 *
 		 * @return The type of the value that should be tested
 		 */
-		String returnType() default "";
+		String returnType()
+
+		default "";
 
 		/**
 		 * isnot
 		 *
 		 * @return The value to which the value will be compared
 		 */
-		String isNot() default "";
+		String isNot()
+
+		default "";
 
 		/**
 		 * raises
 		 *
 		 * @return The exception or warning that the expression could raise.
 		 */
-		String raises() default "";
+		String raises()
+
+		default "";
 
 		/**
 		 * isTestOnly
 		 *
 		 * @return isTestOnly specifies that the example should not be included into the documentation.
 		 */
-		boolean isTestOnly() default false;
+		boolean isTestOnly()
+
+		default false;
 
 		/**
 		 * isExecutable
 		 *
 		 * @return isExecutable specifies that the example is correct GAML code that can be executed.
 		 */
-		boolean isExecutable() default true;
+		boolean isExecutable()
+
+		default true;
 
 		/**
 		 * test
 		 *
 		 * @return test specifies that the example is will be tested with the equals.
 		 */
-		boolean test() default true;
+		boolean test()
+
+		default true;
 
 		/**
 		 * @return whether or not this example should be treated as part of a pattern (see @usage). If true, the
@@ -1188,6 +1280,21 @@ public final class GamlAnnotations {
 		 *         variables (e.g. ${my_agent})
 		 */
 		boolean isPattern() default false;
+	}
+
+	@Retention (RetentionPolicy.RUNTIME)
+	@Inherited
+	public static @interface test {
+		verify[] value() default {};
+
+	}
+
+	@Retention (RetentionPolicy.RUNTIME)
+	@Inherited
+	public static @interface verify {
+		String value();
+
+		boolean warning() default false;
 	}
 
 	@Retention (RetentionPolicy.RUNTIME)

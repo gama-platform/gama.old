@@ -21,7 +21,8 @@ public class Pref<T> implements IParameter {
 
 	private final int order = ORDER++;
 
-	String key, title, tab, group;
+	String key, title, tab, group, comment;
+	boolean disabled = false; // by default
 	T value, initial;
 	final int type;
 	List<T> values;
@@ -39,6 +40,15 @@ public class Pref<T> implements IParameter {
 	public Pref<T> group(final String g) {
 		this.group = g;
 		return this;
+	}
+
+	public Pref<T> disabled() {
+		disabled = true;
+		return this;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
 	}
 
 	public Pref<T> onChange(final Consumer<T> consumer) {
@@ -86,6 +96,11 @@ public class Pref<T> implements IParameter {
 	public Pref<T> in(final String category, final String group) {
 		this.tab = category;
 		this.group = group;
+		return this;
+	}
+
+	public Pref<T> withComment(final String comment) {
+		setUnitLabel(comment);
 		return this;
 	}
 
@@ -156,11 +171,13 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
-		return null;
+		return comment;
 	}
 
 	@Override
-	public void setUnitLabel(final String label) {}
+	public void setUnitLabel(final String label) {
+		comment = label;
+	}
 
 	@SuppressWarnings ("unchecked")
 	@Override

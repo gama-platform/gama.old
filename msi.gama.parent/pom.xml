@@ -167,7 +167,7 @@
 
 	<modules>
 
-		<!-- <module>../gama.target.platform</module> -->
+		<!-- <module>../gama.target.platform</module>
 
 		
 		<module>../msi.gama.core</module>
@@ -221,6 +221,7 @@
 		
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		 -->
 
 		<module>../ummisco.gama.product</module>
 
