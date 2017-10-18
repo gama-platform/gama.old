@@ -3,14 +3,51 @@
 function mvn_install() {
 	echo "Building"  $1
 	cd $1
-	mvn -q clean install -T 8C
+	mvn clean install -o
 	res=$?
 	if [[ $res -gt 0 ]]; then
 		exit $res
 	fi
 	cd -
 }
-projects=('ummisco.gama.annotations' 'msi.gama.processor' 'msi.gama.parent' 'msi.gama.ext' 'ummisco.gama.feature.dependencies' 'msi.gama.core' 'msi.gama.lang.gaml' 'msi.gama.documentation' 'ummisco.gama.ui.shared' 'ummisco.gama.ui.navigator' 'ummisco.gama.ui.modeling'  'ummisco.gama.ui.experiment'  'msi.gama.application'  'msi.gaml.extensions.fipa'  'msi.gama.headless'  'simtools.gaml.extensions.traffic'  'simtools.gaml.extensions.physics'  'irit.gaml.extensions.database'  'msi.gama.models'  'ummisco.gama.feature.models'  'msi.gaml.architecture.simplebdi'  'simtools.graphanalysis.fr'  'simtools.graphlayout.feature'  'ummisco.gama.opengl'  'ummisco.gama.java2d'  'ummisco.gama.ui.viewers'  'ummisco.gama.serialize'  'ummisco.gama.feature.serialize' 'ummisco.gama.network' 'ummisco.gama.feature.network' 'ummisco.gaml.extensions.maths' 'ummisco.gaml.extensions.sound' 'ummisco.gama.feature.audio' 'ummisco.gaml.extensions.stats' 'ummisco.gama.feature.stats' 'ummisco.gama.feature.core' 'ummisco.gama.feature.core.extensions' 'ummisco.gama.feature.core.ui' 'ummisco.gama.feature.experiment.ui' 'ummisco.gama.feature.modeling.ui');
+projects=('ummisco.gama.annotations' 'msi.gama.processor' 'msi.gama.ext'
+'msi.gama.core'
+'msi.gama.lang.gaml'
+'msi.gama.documentation'
+'msi.gama.application'
+'ummisco.gama.ui.shared'
+'ummisco.gama.ui.navigator'
+'ummisco.gama.ui.modeling'
+'ummisco.gama.ui.experiment'
+'msi.gama.models'
+'ummisco.gama.feature.models'
+'ummisco.gama.feature.dependencies'
+'irit.gaml.extensions.database'
+'simtools.gaml.extensions.traffic'
+'ummisco.gaml.extensions.maths'
+'msi.gama.headless'
+'ummisco.gaml.extensions.stats'
+'ummisco.gama.feature.core'
+'msi.gaml.architecture.simplebdi'
+'msi.gaml.extensions.fipa'
+'simtools.gaml.extensions.physics'
+'ummisco.gama.serialize'
+'ummisco.gama.network'
+'ummisco.gama.feature.core.extensions'
+'ummisco.gama.feature.core.ui'
+'ummisco.gama.java2d'
+'ummisco.gama.opengl'
+'ummisco.gama.feature.experiment.ui'
+'ummisco.gama.ui.viewers'
+'ummisco.gama.feature.modeling.ui'
+'ummisco.gama.feature.serialize'
+'ummisco.gama.feature.network'
+'simtools.graphanalysis.fr'
+'simtools.graphlayout.feature'
+'ummisco.gaml.extensions.sound'
+'ummisco.gama.feature.audio'
+'ummisco.gama.feature.stats'
+'ummisco.gama.product' 'msi.gama.parent' );
 
 for i in ${projects[@]}; do
 	mvn_install $i
