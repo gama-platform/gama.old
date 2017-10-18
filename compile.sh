@@ -42,7 +42,7 @@ install (){
 	echo "Install GAMA project"			
 	
 	
-	change=$(git log --pretty=format: --name-only --since="1 hour ago")
+	change=$(git log --pretty=format: --name-only --since="30 minute ago")
 	
 	if [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.annotations"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
 		mvn_install ummisco.gama.annotations 		

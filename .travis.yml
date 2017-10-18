@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
 before_install:
 - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-- echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=warn -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
+- echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
 notifications:
   email:
     recipients:
@@ -21,6 +21,7 @@ addons:
       - 51.255.46.42
 script: 
 - bash ./compile.sh		
+- bash ./validate_and_test.sh	
 after_success:
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export SSHPASS=$USER_PWD 
