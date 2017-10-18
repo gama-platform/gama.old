@@ -10,6 +10,16 @@ function mvn_install() {
 	fi
 	cd -
 }
+function mvn_compile() {
+	echo "Building " $1
+	cd $1
+	mvn clean install 
+	res=$?
+	if [[ $res -gt 0 ]]; then
+		exit $res
+	fi
+	cd -
+}
 
 compile (){
 	echo "Compile GAMA project"			
@@ -35,15 +45,19 @@ install (){
 	change=$(git log --pretty=format: --name-only --since="1 hour ago")
 	
 	if [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.annotations"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
-		mvn_install ummisco.gama.annotations 
+		mvn_install ummisco.gama.annotations 		
+		MSG+=" ci fullbuild "
 	fi
 	
 	if [[ ${change} == *"msi.gama.processor"* ]] || [[ $MSG == *"ci msi.gama.processor"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
-		mvn_install msi.gama.processor 
+		mvn_install msi.gama.processor 		
+		MSG+=" ci fullbuild "
 	fi
 	
 		
 	
+	
+	mvn_install msi.gama.parent
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
 		mvn_install msi.gama.ext 
@@ -260,8 +274,6 @@ install (){
 
 	
 	
-	mvn_install msi.gama.parent
-	
 }
 
 
@@ -269,7 +281,7 @@ install (){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
-	MSG+=" ci ext "
+	MSG+=" ci fullbuild "
 fi 
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	install
