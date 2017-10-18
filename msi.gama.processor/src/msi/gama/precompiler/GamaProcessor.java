@@ -17,7 +17,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 
@@ -51,23 +50,23 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		context.setRoundEnvironment(env);
 
-		final FileObject file = context.createSource();
 		if (!context.processingOver()) {
-			context.emitWarning("Generating additions for plugin " + context.currentPlugin, null);
-			final Set<? extends Element> elements = env.getRootElements();
-			for (final Element e : elements) {
-				context.emitWarning("Processing " + e.getSimpleName().toString() + " in package "
-						+ e.getEnclosingElement().getSimpleName().toString(), null);
-			}
+			// context.emitWarning("Generating additions for plugin " + context.currentPlugin, null);
+			// final Set<? extends Element> elements = env.getRootElements();
+			// for (final Element e : elements) {
+			// context.emitWarning("Processing " + e.getSimpleName().toString() + " in package "
+			// + e.getEnclosingElement().getSimpleName().toString(), null);
+			// }
 			try {
 				processors.values().forEach(p -> p.processXML(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: " + e.getMessage(), null);
 				throw e;
 			}
-		} else
+		} else {
+			final FileObject file = context.createSource();
 			generateJavaSource(file);
-
+		}
 		return true;
 	}
 
