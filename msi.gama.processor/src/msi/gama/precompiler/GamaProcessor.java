@@ -9,11 +9,7 @@
  **********************************************************************************************/
 package msi.gama.precompiler;
 
-import java.io.IOException;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,47 +19,14 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.constant;
-import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.experiment;
-import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.test;
-import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.java.Constants;
 import msi.gama.precompiler.java.JavaWriter;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaProcessor extends AbstractProcessor {
+public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
-	final static Map<Class<? extends Annotation>, IProcessor> processors = new LinkedHashMap();
-	static {
-		processors.put(factory.class, new FactoryProcessor());
-		processors.put(type.class, new TypeProcessor());
-		processors.put(species.class, new SpeciesProcessor());
-		processors.put(skill.class, new SkillProcessor());
-		processors.put(operator.class, new OperatorProcessor());
-		processors.put(action.class, new ActionProcessor());
-		processors.put(symbol.class, new SymbolProcessor());
-		processors.put(vars.class, new VarsProcessor());
-		processors.put(display.class, new DisplayProcessor());
-		processors.put(experiment.class, new ExperimentProcessor());
-		processors.put(file.class, new FileProcessor());
-		processors.put(constant.class, new ConstantProcessor());
-		processors.put(test.class, new TestProcessor());
-		processors.put(getter.class, IProcessor.NULL);
-		processors.put(setter.class, IProcessor.NULL);
-		processors.put(doc.class, new DocProcessor());
-	}
+	private final JavaWriter javaWriter = new JavaWriter();
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -86,32 +49,24 @@ public class GamaProcessor extends AbstractProcessor {
 		context.setRoundEnvironment(env);
 		if (!context.processingOver()) {
 			try {
-				processors.values().forEach(p -> p.process(context));
+				processors.values().forEach(p -> p.processXML(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: " + e.getMessage(), null);
 				throw e;
 			}
-			context.storeProperties();
+			// context.storeProperties();
 			generateJavaSource();
 		}
 		return true;
 	}
 
 	public void generateJavaSource() {
-		final Writer source = context.createSourceWriter();
-		if (source != null) {
-			try {
-				final StringBuilder sourceBuilder = new StringBuilder();
-				new JavaWriter().write("gaml.additions", context.getProperties(), sourceBuilder);
-				source.append(sourceBuilder);
-			} catch (final Exception e) {
-				context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
-			}
-			try {
-				source.close();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
+		try (Writer source = context.createSourceWriter()) {
+			final StringBuilder sourceBuilder = new StringBuilder();
+			javaWriter.write(context, sourceBuilder);
+			source.append(sourceBuilder);
+		} catch (final Exception e) {
+			context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
 		}
 	}
 

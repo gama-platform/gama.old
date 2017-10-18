@@ -1,19 +1,27 @@
 package msi.gama.precompiler;
 
-import java.util.List;
-
 import javax.lang.model.element.Element;
+
+import org.w3c.dom.Document;
 
 import msi.gama.precompiler.GamlAnnotations.test;
 
-public class TestProcessor implements IProcessor<test> {
+public class TestProcessor extends ElementProcessor<test> {
 
 	@Override
-	public void process(final ProcessorContext environment) {
-		final List<? extends Element> elements = environment.sortElements(test.class);
-		for (final Element e : elements) {
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final test action, final org.w3c.dom.Element node) {
 
-		}
+	}
+
+	@Override
+	protected Class<test> getAnnotationClass() {
+		return test.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
 
 	}
 }

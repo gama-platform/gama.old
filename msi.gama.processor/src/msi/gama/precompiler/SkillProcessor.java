@@ -1,50 +1,46 @@
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.java.JavaWriter.SEP;
-import static msi.gama.precompiler.java.JavaWriter.SKILL_PREFIX;
-
-import java.util.List;
-
 import javax.lang.model.element.Element;
+
+import org.w3c.dom.Document;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 
-public class SkillProcessor implements IProcessor<skill> {
+public class SkillProcessor extends ElementProcessor<skill> {
 
 	@Override
-	public void process(final ProcessorContext environment) {
-		/**
-		 * Format : prefix 0.name 1.class 2.[species$]*
-		 * 
-		 * @param env
-		 */
-		final List<? extends Element> skills = environment.sortElements(skill.class);
-		for (final Element e : skills) {
-			final skill skill = e.getAnnotation(skill.class);
-			final StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(SKILL_PREFIX);
-			// name
-			sb.append(skill.name()).append(SEP);
-			// class
-			sb.append(environment.rawNameOf(e));
-			// species
-			for (final String s : skill.attach_to()) {
-				sb.append(SEP).append(s);
-			}
-			final doc[] docs = skill.doc();
-			doc doc;
-			if (docs.length == 0) {
-				doc = e.getAnnotation(doc.class);
-			} else {
-				doc = docs[0];
-			}
-			if (doc == null && !skill.internal()) {
-				environment.emitWarning("GAML: skill '" + skill.name() + "' is not documented", e);
-			}
-			environment.getProperties().put(sb.toString(), "");
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final skill skill, final org.w3c.dom.Element node) {
+		node.setAttribute("name", skill.name());
+		node.setAttribute("class", rawNameOf(context, e));
+		node.setAttribute("attach", arrayToString(skill.attach_to()));
+		final doc[] docs = skill.doc();
+		doc d;
+		if (docs.length == 0) {
+			d = e.getAnnotation(doc.class);
+		} else {
+			d = docs[0];
 		}
+		if (d == null && !skill.internal()) {
+			context.emitWarning("GAML: skill '" + skill.name() + "' is not documented", e);
+		}
+
+	}
+
+	@Override
+	protected Class<skill> getAnnotationClass() {
+		return skill.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+		final String name = node.getAttribute("name");
+		final String clazz = node.getAttribute("class");
+		sb.append(concat(in, "_skill(", toJavaString(name), ",", toClassObject(clazz)));
+		sb.append(",").append(toArrayOfStrings(node.getAttribute("attach")));
+		sb.append(");");
 
 	}
 

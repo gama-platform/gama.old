@@ -1,32 +1,36 @@
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.java.JavaWriter.EXPERIMENT_PREFIX;
-import static msi.gama.precompiler.java.JavaWriter.SEP;
-
-import java.util.List;
-
 import javax.lang.model.element.Element;
+
+import org.w3c.dom.Document;
 
 import msi.gama.precompiler.GamlAnnotations.experiment;
 
-public class ExperimentProcessor implements IProcessor<experiment> {
+public class ExperimentProcessor extends ElementProcessor<experiment> {
 
 	@Override
-	public void process(final ProcessorContext environment) {
-		final List<? extends Element> experiments = environment.sortElements(experiment.class);
-		for (final Element e : experiments) {
-			final experiment spec = e.getAnnotation(experiment.class);
-			final StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(EXPERIMENT_PREFIX);
-			// name
-			sb.append(spec.value()).append(SEP);
-			// class
-			sb.append(environment.rawNameOf(e)).append(SEP);
-			// skills
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final experiment exp, final org.w3c.dom.Element node) {
+		node.setAttribute("name", exp.value());
+		node.setAttribute("class", rawNameOf(context, e));
+	}
 
-			environment.getProperties().put(sb.toString(), "");
-		}
+	@Override
+	protected Class<experiment> getAnnotationClass() {
+		return experiment.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+
+		final String name = node.getAttribute("name");
+		final String clazz = node.getAttribute("class");
+		sb.append(concat(in, "_experiment(", toJavaString(name), ",", toClassObject(clazz),
+				", new IExperimentAgentCreator(){", OVERRIDE,
+				"public IExperimentAgent create(IPopulation pop){return new ", clazz, "(pop);}}"));
+		sb.append(");");
+
 	}
 
 }

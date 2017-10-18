@@ -168,11 +168,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// doc missing
-	protected void _symbol(final Class c, /* final int docIndex, */final IDescriptionValidator validator,
+	protected void _symbol(final String[] names, final Class c, final IDescriptionValidator validator,
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
 			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
-			final ISymbolConstructor sc, final String... names) {
+			final ISymbolConstructor sc) {
 
 		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {

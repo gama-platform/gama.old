@@ -1,8 +1,5 @@
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.java.JavaWriter.ACTION_PREFIX;
-import static msi.gama.precompiler.java.JavaWriter.SEP;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,92 +9,114 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 
-public class ActionProcessor implements IProcessor<action> {
+public class ActionProcessor extends ElementProcessor<action> {
 	private static Set<String> RESERVED_FACETS = new HashSet<>(Arrays.asList("name", "keyword", "returns"));
 
 	@Override
-	public void process(final ProcessorContext environment) {
+	protected Class<action> getAnnotationClass() {
+		return action.class;
+	}
 
-		// Format: prefix 0.method 1.declClass 2.retClass 3.name 4.nbArgs 5.[arg]*
-		for (final Element e : environment.sortElements(action.class)) {
-			final action action = e.getAnnotation(action.class);
-			final ExecutableElement ex = (ExecutableElement) e;
-			// note("Action processed: " + ex.getSimpleName());
-			final StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(ACTION_PREFIX);
-			// method
-			sb.append(ex.getSimpleName()).append(SEP);
-			// declClass
-			sb.append(environment.rawNameOf(ex.getEnclosingElement())).append(SEP);
-			// note("On class: " + ex.getSimpleName());
-			// retClass
-			final TypeMirror tm = ex.getReturnType();
-			if (tm.getKind().equals(TypeKind.VOID)) {
-				sb.append("void").append(SEP);
-			} else {
-				sb.append(environment.rawNameOf(tm)).append(SEP);
-			}
-			// virtual
-			sb.append(action.virtual()).append(SEP);
-			// name
-			sb.append(action.name()).append(SEP);
-			// argNumber
-			final arg[] args = action.args();
-			// final args deprecatedArgs = e.getAnnotation(args.class);
-			// gathering names (in case of doublons)
-			final Set<String> strings = new HashSet<>();
-			for (int i = 0; i < args.length; i++) {
-				strings.add(args[i].name());
-			}
-			// if (deprecatedArgs != null) {
-			// for (int i = 0; i < deprecatedArgs.names().length; i++) {
-			// strings.add(deprecatedArgs.names()[i]);
-			// }
-			// }
-			final int nb = strings.size();
-			sb.append(nb).append(SEP);
-			// args format 1.name 2.type 3.optional
-			strings.clear();
-			if (args.length > 0) {
-				for (int i = 0; i < args.length; i++) {
-					final arg arg = args[i];
-					final String argName = arg.name();
-					if (RESERVED_FACETS.contains(argName)) {
-						environment.emitWarning(
-								"The argument called '" + argName
-										+ "' will prevent this primitive to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
-								e);
-					}
-					sb.append(argName).append(SEP);
-					sb.append(arg.type()).append(SEP);
-					sb.append(arg.optional()).append(SEP);
-					final doc[] docs = arg.doc();
-					if (docs.length == 0) {
-						environment.emitWarning("GAML: argument '" + argName + "' is not documented", e);
-					}
-					sb.append(environment.docToString(arg.doc())).append(SEP);
-					strings.add(args[i].name());
-				}
-			}
-			// if (deprecatedArgs != null && deprecatedArgs.names().length > 0) {
-			// for (int i = 0; i < deprecatedArgs.names().length; i++) {
-			// final String s = deprecatedArgs.names()[i];
-			// if (!strings.contains(s)) {
-			// sb.append(s).append(SEP);
-			// sb.append("unknown").append(SEP);
-			// sb.append("true").append(SEP);
-			// sb.append("").append(SEP);
-			// }
-			// }
-			// }
-			environment.getProperties().put(sb.toString(), "");
+	@Override
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final action action, final org.w3c.dom.Element node) {
+		final ExecutableElement ex = (ExecutableElement) e;
+		node.setAttribute("name", action.name());
+		node.setAttribute("method", ex.getSimpleName().toString());
+		node.setAttribute("class", rawNameOf(context, ex.getEnclosingElement()));
+		node.setAttribute("returns", getReturnType(context, ex));
+		if (action.virtual())
+			node.setAttribute("virtual", "true");
+		node.setAttribute("name", action.name());
+		final arg[] args = action.args();
+		for (int i = 0; i < args.length; i++) {
+			appendChild(node, buildArg(context, e, doc, args[i]));
 		}
 
+	}
+
+	private final org.w3c.dom.Element buildArg(final ProcessorContext context, final Element e, final Document doc,
+			final arg arg) {
+		final String argName = arg.name();
+		if (RESERVED_FACETS.contains(argName)) {
+			context.emitWarning(
+					"Argument '" + argName
+							+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+					e);
+		}
+		final org.w3c.dom.Element child = doc.createElement("arg");
+		child.setAttribute("name", argName);
+		child.setAttribute("type", String.valueOf(arg.type()));
+		if (arg.optional())
+			child.setAttribute("optional", "true");
+		final doc[] docs = arg.doc();
+		if (docs.length == 0) {
+			context.emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
+		} else
+			child.setAttribute("doc", docToString(arg.doc()));
+		return child;
+	}
+
+	private String getReturnType(final ProcessorContext context, final ExecutableElement ex) {
+		final TypeMirror tm = ex.getReturnType();
+		if (tm.getKind().equals(TypeKind.VOID)) {
+			return "void";
+		} else {
+			return rawNameOf(context, tm);
+		}
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+
+		final String method = node.getAttribute("method");
+		final String clazz = node.getAttribute("class");
+		final String virtual = toJavaString(toBoolean(node.getAttribute("virtual")));
+		final String name = node.getAttribute("name");
+		final String ret = checkPrim(node.getAttribute("returns"));
+		String args = "new ChildrenProvider(Arrays.asList(";
+		// TODO Argument types not taken into account when declaring them
+		final NodeList list = node.getElementsByTagName("*");
+		for (int i = 0; i < list.getLength(); i++) {
+			final org.w3c.dom.Element child = (org.w3c.dom.Element) list.item(i);
+			if (i > 0) {
+				args += ",";
+			}
+			args += "desc(ARG,NAME," + toJavaString(child.getAttribute("name")) + ", TYPE, "
+					+ toJavaString(child.getAttribute("type"));
+			args += ", \"optional\", " + toJavaString(toBoolean(child.getAttribute("optional"))) + ")";
+		}
+		args += "))";
+		final String desc = "desc(PRIMITIVE, null, " + args + ", NAME, " + toJavaString(name) + ",TYPE, " + "Ti("
+				+ toClassObject(ret) + "), VIRTUAL," + virtual + ")";
+		sb.append(concat(in, "_action(", toJavaString(method), ",", toClassObject(clazz), ",new GamaHelper(T(",
+				toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE, "public ",
+				ret.equals("void") ? "Object" : ret, " run(", ISCOPE, " s, ", IAGENT, " a, ", ISUPPORT,
+				" t, Object... v){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).", method, "(s); ",
+				ret.equals("void") ? "return null;" : "", "} },", desc, ",",
+				buildMethodCallForAction(clazz, method, false), ");"));
+
+	}
+
+	@Override
+	public String getExceptions() {
+		return "throws SecurityException, NoSuchMethodException";
+	}
+
+	protected String buildMethodCallForAction(final String clazz, final String name, final boolean stat) {
+		final String methodName = extractMethod(name, stat);
+		final String className = toClassObject(extractClass(name, clazz, stat));
+		String result = className + ".getMethod(" + toJavaString(methodName) + ", ";
+		result += toClassObject(ISCOPE) + ")";
+		return result;
 	}
 
 }

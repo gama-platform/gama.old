@@ -1,48 +1,44 @@
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.java.JavaWriter.CONSTANT_PREFIX;
-import static msi.gama.precompiler.java.JavaWriter.SEP;
-
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+
+import org.w3c.dom.Document;
 
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 
-public class ConstantProcessor implements IProcessor<constant> {
+public class ConstantProcessor extends ElementProcessor<constant> {
 
 	@Override
-	public void process(final ProcessorContext environment) {
-		for (final Element e : environment.sortElements(constant.class)) {
-			final VariableElement ve = (VariableElement) e;
-			final constant constant = ve.getAnnotation(constant.class);
-
-			final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
-
-			if (documentation == null) {
-				environment.emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
-			}
-
-			final String ret = environment.rawNameOf(ve.asType());
-			final String constantName = constant.value();
-			final Object valueConstant = ve.getConstantValue();
-
-			final StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(CONSTANT_PREFIX);
-			// 0.return class
-			sb.append(ret).append(SEP);
-			// 1.constant name
-			sb.append(constantName).append(SEP);
-			// 2+.alternative names
-			for (final String s : constant.altNames()) {
-				sb.append(s).append(SEP);
-			}
-			// 3.value
-			sb.append(valueConstant);
-			// 4.doc
-			environment.getProperties().put(sb.toString(), "");
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final constant constant, final org.w3c.dom.Element node) {
+		final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
+		if (documentation == null) {
+			context.emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
 		}
+		final String ret = rawNameOf(context, e.asType());
+		final String constantName = constant.value();
+		final Object valueConstant = ((VariableElement) e).getConstantValue();
+		node.setAttribute("returns", ret);
+		node.setAttribute("name", constantName);
+		node.setAttribute("value", String.valueOf(valueConstant));
+		for (final String s : constant.altNames()) {
+			final org.w3c.dom.Element alt = doc.createElement("alt");
+			alt.setAttribute("name", s);
+			appendChild(node, alt);
+		}
+	}
+
+	@Override
+	protected Class<constant> getAnnotationClass() {
+		return constant.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+		// Seems nothing is done.
 	}
 
 }

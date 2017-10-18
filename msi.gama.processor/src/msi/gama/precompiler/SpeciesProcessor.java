@@ -1,52 +1,49 @@
 package msi.gama.precompiler;
 
-import static msi.gama.precompiler.java.JavaWriter.SEP;
-import static msi.gama.precompiler.java.JavaWriter.SPECIES_PREFIX;
-
-import java.util.List;
-
 import javax.lang.model.element.Element;
+
+import org.w3c.dom.Document;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 
-public class SpeciesProcessor implements IProcessor<species> {
+public class SpeciesProcessor extends ElementProcessor<species> {
 
-	/**
-	 * Format : prefix 0.name 1.class 2.[skill$]*
-	 * 
-	 * @param env
-	 */
 	@Override
-	public void process(final ProcessorContext environment) {
-		final List<? extends Element> species = environment.sortElements(species.class);
-		for (final Element e : species) {
-			final species spec = e.getAnnotation(species.class);
-			final StringBuilder sb = new StringBuilder();
-			// prefix
-			sb.append(SPECIES_PREFIX);
-			// name
-			sb.append(spec.name()).append(SEP);
-			// class
-			sb.append(environment.rawNameOf(e));
-			// skills
-			for (final String s : spec.skills()) {
-				sb.append(SEP).append(s);
-			}
-
-			final doc[] docs = spec.doc();
-			doc doc;
-			if (docs.length == 0) {
-				doc = e.getAnnotation(doc.class);
-			} else {
-				doc = docs[0];
-			}
-			if (doc == null && !spec.internal()) {
-				environment.emitWarning("GAML: species '" + spec.name() + "' is not documented", e);
-			}
-
-			environment.getProperties().put(sb.toString(), "");
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final species spec, final org.w3c.dom.Element node) {
+		node.setAttribute("name", spec.name());
+		node.setAttribute("class", rawNameOf(context, e));
+		node.setAttribute("skills", arrayToString(spec.skills()));
+		final doc[] docs = spec.doc();
+		doc d;
+		if (docs.length == 0) {
+			d = e.getAnnotation(doc.class);
+		} else {
+			d = docs[0];
 		}
+		if (d == null && !spec.internal()) {
+			context.emitWarning("GAML: species '" + spec.name() + "' is not documented", e);
+		}
+	}
+
+	@Override
+	protected Class<species> getAnnotationClass() {
+		return species.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+
+		final String name = node.getAttribute("name");
+		final String clazz = node.getAttribute("class");
+		sb.append(in).append("_species(").append(toJavaString(name)).append(",").append(toClassObject(clazz))
+				.append(", new IAgentConstructor(){" + OVERRIDE + "public ").append(IAGENT).append(" createOneAgent(")
+				.append(IPOPULATION).append(" p) {return new ").append(clazz).append("(p);}}");
+		sb.append(",").append(toArrayOfStrings(node.getAttribute("skills")));
+		sb.append(");");
+
 	}
 
 }

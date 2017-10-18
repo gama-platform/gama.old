@@ -25,9 +25,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic.Kind;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -59,7 +56,7 @@ import msi.gama.precompiler.doc.utils.ElementTypeUtils;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
-public class DocProcessor implements IProcessor<doc> {
+public class DocProcessor extends ElementProcessor<doc> {
 
 	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
 
@@ -86,7 +83,7 @@ public class DocProcessor implements IProcessor<doc> {
 	}
 
 	@Override
-	public void process(final ProcessorContext context) {
+	public void processXML(final ProcessorContext context) {
 		if (!context.shouldProduceDoc())
 			return;
 		if (!firstParsing)
@@ -94,17 +91,8 @@ public class DocProcessor implements IProcessor<doc> {
 		firstParsing = false;
 		mes = context.getMessager();
 		final Writer out = context.createWriter("docGAMA.xml");
-		DocumentBuilder docBuilder = null;
 
-		try {
-			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (final ParserConfigurationException e) {
-			System.err.println("Impossible to create a DocumentBuilder.");
-			System.exit(1);
-			return;
-		}
-
-		final Document doc = docBuilder.newDocument();
+		final Document doc = getBuilder().newDocument();
 
 		final org.w3c.dom.Element root = doc.createElement("doc");
 
@@ -1007,5 +995,18 @@ public class DocProcessor implements IProcessor<doc> {
 
 		return order;
 	}
+
+	@Override
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final doc action, final org.w3c.dom.Element node) {}
+
+	@Override
+	protected Class<doc> getAnnotationClass() {
+		return null;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {}
 
 }
