@@ -77,9 +77,9 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				} else
 					child.setAttribute("doc", docToString(facet.doc()));
 				appendChild(node, child);
-				if (!undocumented.isEmpty())
-					context.emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
 			}
+			if (!undocumented.isEmpty())
+				context.emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
 			node.setAttribute("omissible", facets.omissible());
 		}
 
