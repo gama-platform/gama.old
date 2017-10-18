@@ -116,7 +116,7 @@ public class FileProcessor extends ElementProcessor<file> {
 		final String helper = concat("new GamaHelper(){", OVERRIDE, "public Boolean run(", ISCOPE,
 				" s,Object... o) { return GamaFileType.verifyExtension(", name, ",(String)o[0]);}}");
 		sb.append(in).append("_operator(S(").append(toJavaString("is_")).append("+").append(name)
-				.append("),null,C(S),I(0),B,true,3,0,0,").append(helper).append(");");
+				.append("),null,C(S),I(0),B,true,3,0,0,0,").append(helper).append(");");
 	}
 
 	protected String buildFileConstructor(final String[] classes, final String className) {

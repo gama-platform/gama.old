@@ -866,9 +866,16 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type()
+		int content_type() default ITypeProvider.NONE;
 
-		default ITypeProvider.NONE;
+		/**
+		 * @return the content type of the content if the returned value is a container of container (ex. a list of
+		 *         list). Can be directly a type in IType or one of the constants declared in ITypeProvider (in which
+		 *         case, the content type is searched using this provider).
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		int content_type_content_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -877,9 +884,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type()
-
-		default ITypeProvider.NONE;
+		int index_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of

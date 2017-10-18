@@ -123,6 +123,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		node.setAttribute("const", String.valueOf(op.can_be_const()));
 		node.setAttribute("type", String.valueOf(op.type()));
 		node.setAttribute("contents", String.valueOf(op.content_type()));
+		node.setAttribute("contents_content_type", String.valueOf(op.content_type_content_type()));
 		node.setAttribute("index", String.valueOf(op.index_type()));
 		node.setAttribute("iterator", String.valueOf(op.iterator()));
 		node.setAttribute("expected_contents", arrayToString(op.expected_content_type()));
@@ -150,6 +151,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final String canBeConst = toBoolean(node.getAttribute("const"));
 		final String type = node.getAttribute("type");
 		final String contentType = toType(node.getAttribute("contents"));
+		final String contentTypeContentType = toType(node.getAttribute("contents_content_type"));
 		final String indexType = toType(node.getAttribute("index"));
 		final boolean iterator = node.getAttribute("iterator").equals("true");
 		final String ret = node.getAttribute("returns");
@@ -164,7 +166,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				.append(buildMethodCall(classes, m, stat, scope)).append(',').append(classNames).append(",")
 				.append(content_type_expected).append(",").append(toClassObject(ret)).append(',').append(canBeConst)
 				.append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',')
-				.append(helper).append(");");
+				.append(contentTypeContentType).append(',').append(helper).append(");");
 
 	}
 

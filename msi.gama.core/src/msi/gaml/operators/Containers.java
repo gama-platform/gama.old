@@ -813,7 +813,8 @@ public class Containers {
 			value = { "group_by" },
 			iterator = true,
 			index_type = ITypeProvider.SECOND_TYPE,
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = IType.LIST,
+			content_type_content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
@@ -834,7 +835,8 @@ public class Containers {
 							isExecutable = false),
 					@example (
 							value = "[1::2, 3::4, 5::6] group_by (each > 4)",
-							equals = "[false::[2, 4], true::[6]]", returnType = "map<bool,list>") },
+							equals = "[false::[2, 4], true::[6]]",
+							returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getType().getContentType();
@@ -934,8 +936,8 @@ public class Containers {
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] max_of (each + 3)",
 									equals = "9") }) },
-			examples = { 
-				//	@example ( value = "graph([]) max_of([])", raises = "error", isTestOnly = true),
+			examples = {
+					// @example ( value = "graph([]) max_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )",
 							equals = "800"),
@@ -1022,8 +1024,8 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] sum_of (each + 3)",
 							equals = "21") }) },
 			examples = { @example (
-							value = "[1,2] sum_of (each * 100 )",
-							equals = "300") },
+					value = "[1,2] sum_of (each * 100 )",
+					equals = "300") },
 			see = { "min_of", "max_of", "product_of", "mean_of" })
 	public static Object sum_of(final IScope scope, final IContainer container, final IExpression filter) {
 		Stream s = stream(scope, container);
@@ -1064,10 +1066,9 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] product_of (each)",
 							equals = "48") }) },
-			examples = {
-					@example (
-							value = "[1,2] product_of (each * 10 )",
-							equals = "200") },
+			examples = { @example (
+					value = "[1,2] product_of (each * 10 )",
+					equals = "200") },
 			see = { "min_of", "max_of", "sum_of", "mean_of" })
 	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.product(scope, collect(scope, container, filter));
@@ -1115,10 +1116,9 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] mean_of (each)",
 							equals = "4") }) },
-			examples = { 
-					@example (
-							value = "[1,2] mean_of (each * 10 )",
-							equals = "15") },
+			examples = { @example (
+					value = "[1,2] mean_of (each * 10 )",
+					equals = "15") },
 			see = { "min_of", "max_of", "sum_of", "product_of" })
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
@@ -1152,8 +1152,8 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] min_of (each + 3)",
 							equals = "5") }) },
-			examples = { 
-				//	@example (value = "graph([]) min_of([])", raises = "error", isTestOnly = true),
+			examples = {
+					// @example (value = "graph([]) min_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] min_of (each * 100 )",
 							equals = "100"),
