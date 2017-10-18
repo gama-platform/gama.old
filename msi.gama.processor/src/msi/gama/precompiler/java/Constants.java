@@ -9,11 +9,13 @@ import java.util.Map;
 
 import msi.gama.precompiler.ActionProcessor;
 import msi.gama.precompiler.DisplayProcessor;
+import msi.gama.precompiler.DocProcessor;
 import msi.gama.precompiler.ExperimentProcessor;
 import msi.gama.precompiler.FactoryProcessor;
 import msi.gama.precompiler.FileProcessor;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -140,7 +142,7 @@ public interface Constants {
 					put(test.class, new TestProcessor());
 					// put(getter.class, IProcessor.NULL);
 					// put(setter.class, IProcessor.NULL);
-					// put(doc.class, new DocProcessor());
+					put(doc.class, new DocProcessor());
 				}
 			};
 

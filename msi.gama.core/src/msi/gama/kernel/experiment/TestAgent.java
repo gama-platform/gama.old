@@ -79,6 +79,10 @@ public class TestAgent extends BatchAgent {
 		return failedModels;
 	}
 
+	public int getTotalNumberOfTests() {
+		return getAllTests().size();
+	}
+
 	@Override
 	protected String endStatus() {
 		return "Tests over.";

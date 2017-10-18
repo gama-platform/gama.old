@@ -21,7 +21,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	private ModelLibraryValidator() {}
 
 	@Override
-	public int start(final String pluginsFolder) throws IOException {
+	public int start(final String pluginsFolder, final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
 		final int[] count = { 0 };
 		final int[] code = { 0 };
@@ -37,9 +37,9 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 			final Path pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		log("Compiling " + pathToModel.getFileName());
-		try {			
+		try {
 			compile(createFileURI(pathToModel.toString()), errors);
-		}catch(Exception ex) {
+		} catch (final Exception ex) {
 			log(ex.getMessage());
 		}
 		countOfModelsValidated[0]++;

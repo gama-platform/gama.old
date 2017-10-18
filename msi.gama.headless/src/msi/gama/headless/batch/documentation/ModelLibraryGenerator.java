@@ -121,7 +121,7 @@ public class ModelLibraryGenerator {
 		headlessBatPath = wikiFolder + "/headless.bat";
 	}
 
-	public static void start(final Application headlessApplication, final String[] args)
+	public static void start(final Application headlessApplication, final List<String> args)
 			throws IOException, TransformerException {
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,9 +132,9 @@ public class ModelLibraryGenerator {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////// headless
 		///////////////////////////////////////////////////////////////////////////////////////////////////////// execution.
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
-		wikiFolder = args[args.length - 2];
-		sourceFolder = args[args.length - 3];
-		Globals.OUTPUT_PATH = args[args.length - 1];
+		wikiFolder = args.get(args.size() - 2);
+		sourceFolder = args.get(args.size() - 3);
+		Globals.OUTPUT_PATH = args.get(args.size() - 1);
 		updatePath();
 		// get all the gaml files in the model folder
 		final ArrayList<File> listFiles = new ArrayList<File>();

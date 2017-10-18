@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DocProcessorAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DocProcessorAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,7 +15,6 @@ import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
-import javax.tools.Diagnostic.Kind;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -63,7 +61,7 @@ public class DocProcessorAnnotations {
 		org.w3c.dom.Element docElt = docElement;
 
 		if (docAnnot == null) {
-			mes.printMessage(Kind.WARNING, "The element __" + eltName + "__ is not documented.");
+			// mes.printMessage(Kind.WARNING, "The element __" + eltName + "__ is not documented.");
 		} else {
 			if (docElt == null) {
 				docElt = doc.createElement(XMLElements.DOCUMENTATION);

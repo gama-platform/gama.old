@@ -2,6 +2,7 @@ package msi.gama.headless.batch;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Predicate;
 
 public abstract class AbstractModelLibraryRunner {
@@ -21,5 +22,5 @@ public abstract class AbstractModelLibraryRunner {
 		System.out.println(s); // Use a logger ?
 	}
 
-	public abstract int start(final String pluginsFolder) throws IOException;
+	public abstract int start(final String pluginsFolder, List<String> args) throws IOException;
 }

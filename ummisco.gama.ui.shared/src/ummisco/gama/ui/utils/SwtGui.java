@@ -58,6 +58,7 @@ import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.statements.test.TestStatement.State;
 import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.dialogs.Messages;
@@ -147,6 +148,11 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void displayTestsResults(final IScope scope, final TestSummary summary) {
+		if (GamaPreferences.Modeling.FAILED_TESTS.getValue()) {
+			final State state = summary.getState();
+			if (state != State.FAILED && state != State.ABORTED)
+				return;
+		}
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
 		if (v != null) {
 			v.addTestResult(summary);

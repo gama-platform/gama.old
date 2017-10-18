@@ -145,6 +145,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> USER_TESTS = create("pref_user_tests",
 				"Include user-defined tests in the tests suite", false, IType.BOOL).in(NAME, TESTS).withComment(
 						", if true, will look into user projects named 'tests' for models with 'test' experiments and run them automatically");
+		public static final Pref<Boolean> FAILED_TESTS =
+				create("pref_failed_tests", "Only display (in the UI and in headless runs) failed and aborted tests",
+						false, IType.BOOL).in(NAME, TESTS).withComment(
+								", if true, only the results of tests that fail or exit abnormally are displayed");
 		// .activates("pref_tests_period");
 		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
 		// .among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);

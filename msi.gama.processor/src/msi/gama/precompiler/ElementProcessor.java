@@ -1,8 +1,5 @@
 package msi.gama.precompiler;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,11 +14,6 @@ import javax.xml.transform.Transformer;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.serialize.Method;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.java.Constants;
@@ -31,6 +23,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	private static final String XML_ENCODING = "ISO-8859-1";
 	public static DocumentBuilder BUILDER = null;
 	public static Transformer TRANSFORMER = null;
+	public Document document = getBuilder().newDocument();
 
 	static DocumentBuilder getBuilder() {
 		if (BUILDER == null)
@@ -54,7 +47,8 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 			populateElement(context, e, doc, e.getAnnotation(a), node);
 			appendChild(getRootNode(doc), node);
 		}
-		saveDocument(context, doc);
+		// XML Files are not saved for the moment as they seem to be correctly kept in memory
+		// saveDocument(context, doc);
 	}
 
 	protected abstract void populateElement(final ProcessorContext context, final Element e, final Document doc,
@@ -63,27 +57,48 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	protected abstract Class<T> getAnnotationClass();
 
 	Document getDocument(final ProcessorContext environment) {
-		try (InputStream is = environment.getInputStream(getFilename())) {
-			return getBuilder().parse(is);
-		} catch (SAXException | IOException e) {
-			return getBuilder().newDocument();
-		}
+		return document;
+		// if (d)
+
+		// try (InputStream is = environment.getInputStream(getFilename())) {
+		// return getBuilder().parse(is);
+		// } catch (final SAXException e) {
+		// environment.emitWarning("File " + getFilename() + " is corrupted. Creating a new document", null);
+		// } catch (final IOException e1) {
+		// // environment.emitWarning("File " + getFilename() + " cannot be found. Creating a new document", null);
+		// }
+		// return getBuilder().newDocument();
 	}
 
-	void saveDocument(final ProcessorContext context, final Document doc) {
-		try (final Writer xmlWriter = context.createWriter(getFilename())) {
-			final OutputFormat outFormat = new OutputFormat(Method.XML, XML_ENCODING, true);
-			final XMLSerializer serializer = new XMLSerializer(xmlWriter, outFormat);
-			serializer.serialize(doc);
-		} catch (final IOException ioEx) {
-			System.out.println("Error " + ioEx);
-		}
+	// void saveDocument(final ProcessorContext context, final Document doc) {
+	// try (final Writer xmlWriter = context.createWriter(getFilename())) {
+	// final OutputFormat outFormat = new OutputFormat(Method.XML, XML_ENCODING, true);
+	// final XMLSerializer serializer = new XMLSerializer(xmlWriter, outFormat);
+	// serializer.serialize(doc);
+	// } catch (final IOException ioEx) {
+	// System.out.println("Error " + ioEx);
+	// }
+	//
+	// }
 
-	}
+	// void saveDocument(final ProcessorContext context, final Document doc) {
+	// try (final Writer xmlWriter = context.createWriter(getFilename())) {
+	// final DOMSource domSource = new DOMSource(doc);
+	// final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+	// transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	// transformer.setOutputProperty(OutputKeys.ENCODING, ProcessorContext.CHARSET.displayName());
+	// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	// final StreamResult sr = new StreamResult(xmlWriter);
+	// transformer.transform(domSource, sr);
+	// } catch (final IOException | TransformerException ioEx) {
+	// context.emitWarning("Impossible to create " + getFilename(), null);
+	// }
+	//
+	// }
 
-	protected String getFilename() {
-		return getRootName() + ".xml";
-	}
+	// protected String getFilename() {
+	// return getRootName() + ".xml";
+	// }
 
 	protected final String getRootName() {
 		final String element = getElementName();

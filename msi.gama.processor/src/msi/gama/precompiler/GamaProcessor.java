@@ -17,7 +17,9 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.FileObject;
 
 import msi.gama.precompiler.java.Constants;
 import msi.gama.precompiler.java.JavaWriter;
@@ -27,6 +29,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
 	private final JavaWriter javaWriter = new JavaWriter();
+	int count;
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -47,24 +50,36 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		context.setRoundEnvironment(env);
+
+		final FileObject file = context.createSource();
 		if (!context.processingOver()) {
+			context.emitWarning("Generating additions for plugin " + context.currentPlugin, null);
+			final Set<? extends Element> elements = env.getRootElements();
+			for (final Element e : elements) {
+				context.emitWarning("Processing " + e.getSimpleName().toString() + " in package "
+						+ e.getEnclosingElement().getSimpleName().toString(), null);
+			}
 			try {
 				processors.values().forEach(p -> p.processXML(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: " + e.getMessage(), null);
 				throw e;
 			}
-			// context.storeProperties();
-			generateJavaSource();
-		}
+		} else
+			generateJavaSource(file);
+
 		return true;
 	}
 
-	public void generateJavaSource() {
-		try (Writer source = context.createSourceWriter()) {
-			final StringBuilder sourceBuilder = new StringBuilder();
-			javaWriter.write(context, sourceBuilder);
-			source.append(sourceBuilder);
+	public void generateJavaSource(final FileObject file) {
+		try (Writer source = context.createSourceWriter(file)) {
+			if (source != null) {
+				final StringBuilder sourceBuilder = new StringBuilder();
+				javaWriter.write(context, sourceBuilder);
+				source.append(sourceBuilder);
+			}
+			// else
+			// context.emitWarning("Cannot create source file", null);
 		} catch (final Exception e) {
 			context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
 		}

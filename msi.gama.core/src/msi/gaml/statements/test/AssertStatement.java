@@ -47,7 +47,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("if set to true, makes the assertion emit a warning instead of an error")) },
 		omissible = IKeyword.VALUE)
 @inside (
-		symbols = { "test" },
+		symbols = { "test", "action" },
 		kinds = { ISymbolKind.ACTION, ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @doc (
 		value = "Allows to check if the evaluation of a given expression returns true. If not, an error (or a warning) is raised. If the statement is used inside a test, the error is not propagagated but invalidates the test (in case of a warning, it partially invalidates it). Otherwise, it is normally propagated",

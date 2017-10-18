@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
 import msi.gama.precompiler.java.Constants;
@@ -41,6 +43,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private final ProcessingEnvironment delegate;
 	private RoundEnvironment round;
 	private TypeMirror iSkill, iAgent;
+	String currentPlugin;
 
 	ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
@@ -190,7 +193,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	Writer createWriter(final String s) {
 		try {
 			final OutputStream output = getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
-			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
+			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
 			emitWarning(e.getMessage(), null);
@@ -198,9 +201,23 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return null;
 	}
 
-	Writer createSourceWriter() {
+	FileObject createSource() {
 		try {
-			final OutputStream output = getFiler().createSourceFile(ADDITIONS, (Element[]) null).openOutputStream();
+			final FileObject obj = getFiler().createSourceFile(ADDITIONS, (Element[]) null);
+			final String pluginName =
+					URI.create(obj.toUri().toString().replace("/gaml/gaml/additions/GamlAdditions.java", "")).toURL()
+							.getFile();
+			currentPlugin = pluginName.substring(pluginName.lastIndexOf('/') + 1);
+			return obj;
+		} catch (final Exception e) {
+			emitWarning(e.getMessage(), null);
+		}
+		return null;
+	}
+
+	Writer createSourceWriter(final FileObject file) {
+		try {
+			final OutputStream output = file.openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {

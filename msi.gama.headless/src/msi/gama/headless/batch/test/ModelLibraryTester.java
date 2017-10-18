@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -25,19 +26,26 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
 	final List<GamlCompilationError> errors = new ArrayList<>();
+	private final static String FAILED_PARAMETER = "-failed";
 
 	private ModelLibraryTester() {}
 
 	@Override
-	public int start(final String pluginsFolder) throws IOException {
+	public int start(final String pluginsFolder, final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
 		final int[] count = { 0 };
 		final int[] code = { 0 };
-		Files.walk(Paths.get(pluginsFolder)).filter(isTest).forEach(p -> {
-			test(pluginsFolder, count, code, p);
-		});
-		log("" + count[0] + " test models executed in built-in library and plugins. " + code[0]
-				+ " failed or aborted tests found");
+		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
+		final boolean oldPref = GamaPreferences.Modeling.FAILED_TESTS.getValue();
+		try {
+			GamaPreferences.Modeling.FAILED_TESTS.set(onlyFailed);
+			Files.walk(Paths.get(pluginsFolder)).filter(isTest).forEach(p -> {
+				test(pluginsFolder, count, code, p);
+			});
+		} finally {
+			GamaPreferences.Modeling.FAILED_TESTS.set(oldPref);
+			log("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+		}
 		return code[0];
 	}
 
@@ -45,6 +53,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		final IModel model = compile(createFileURI(p.toString()), errors);
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
+
 		if (testExpNames.isEmpty())
 			return;
 		for (final String expName : testExpNames) {
@@ -54,9 +63,10 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				exp.getController().getScheduler().paused = false;
 				exp.getAgent().step(exp.getAgent().getScope());
 				code[0] += ((TestAgent) exp.getAgent()).getNumberOfFailures();
+				count[0] += ((TestAgent) exp.getAgent()).getTotalNumberOfTests();
 			}
 		}
-		count[0]++;
+
 	}
 
 	public static ModelLibraryTester getInstance() {

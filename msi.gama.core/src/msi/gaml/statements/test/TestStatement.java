@@ -156,7 +156,6 @@ public class TestStatement extends AbstractStatementSequence {
 
 		@Override
 		public String toString() {
-
 			final StringBuilder sb = new StringBuilder();
 			sb.append(getState()).append(": ").append(testName).append(" ").append(Strings.LN);
 			for (final String assertion : asserts.keySet()) {
