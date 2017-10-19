@@ -42,7 +42,7 @@ install (){
 	echo "Install GAMA project"			
 	
 	
-	change=$(git log --pretty=format: --name-only --since="2 hour ago")
+	change=$(git log --pretty=format: --name-only --since="30 minute ago")
 	
 	if [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.annotations"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
 		mvn_install ummisco.gama.annotations 		
@@ -59,7 +59,7 @@ install (){
 	
 	if [[ $MSG == *"ci fullbuild"* ]]; then		
 		cd msi.gama.parent 
-		mvn clean install -f pom_for_eclipse.xml -T 20C
+		mvn clean install -T 20C
 		cd -
 		return 0
 	fi
@@ -293,7 +293,9 @@ install (){
 	
 	
 
-	mvn_install msi.gama.parent
+	cd msi.gama.parent 
+	mvn clean install -f tiny_pom.xml -T 20C
+	cd -
 	
 	
 }
