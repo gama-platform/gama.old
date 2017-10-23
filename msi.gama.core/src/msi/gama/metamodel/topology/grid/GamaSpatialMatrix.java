@@ -805,7 +805,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
 		if (filter.accept(scope, source, toTest))
 			return toTest.getAgent();
-		final List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, true));
+		final List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, (filter != null) &&  (filter.getSpecies() != null) && (toTest.getAgent() != null) &&filter.getSpecies().equals(toTest.getAgent().getSpecies())));
 		agents.remove(source);
 		if (agents.isEmpty()) { return null; }
 		return (IAgent) scope.getRandom().shuffle(agents).get(0);
@@ -818,10 +818,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (filter.accept(scope, source, startAg)) { return startAg; }
 		IAgent agT = testPlace(scope, source, filter, startAg);
 		if (agT != null) { return agT; }
-		final List<IAgent> cells = new ArrayList<>();
+		final List<Integer> cells = new ArrayList<>();
 
 		int cpt = 0;
-		cells.add(startAg);
+		cells.add(startAg.getIndex());
 		// final int max = this.numCols * this.numRows;
 		List<IAgent> neighb =
 				scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
@@ -831,7 +831,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			for (final IAgent ag : neighb) {
 				agT = testPlace(scope, source, filter, ag);
 				if (agT != null) { return agT; }
-				cells.add(ag);
+				cells.add(ag.getIndex());
 				neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
 
 			}
@@ -841,12 +841,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return null;
 	}
 
-	private List<IAgent> getNeighborhoods(final IScope scope, final IAgent agent, final List cells,
+	private List<IAgent> getNeighborhoods(final IScope scope, final IAgent agent, final List<Integer> cells,
 			final List<IAgent> currentList) throws GamaRuntimeException {
 		final List<IAgent> agents = new ArrayList(getNeighborsOf(scope, agent.getLocation(), 1.0, null));
 		final List<IAgent> neighs = new ArrayList<>();
 		for (final IAgent ag : agents) {
-			if (!cells.contains(ag) && !currentList.contains(ag) && !neighs.contains(ag)) {
+			if (!cells.contains(ag.getIndex()) && !currentList.contains(ag) && !neighs.contains(ag)) {
 				neighs.add(ag);
 			}
 		}
