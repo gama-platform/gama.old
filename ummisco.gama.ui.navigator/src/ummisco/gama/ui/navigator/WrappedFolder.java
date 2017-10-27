@@ -79,7 +79,9 @@ public class WrappedFolder extends VirtualContent {
 			if (!resPath.isAbsolute()) {
 				final URI fileURI = URI.createFileURI(filePath.toString());
 				final URI resURI = URI.createURI(resPath.toString()).resolve(fileURI);
-				resPath = new Path(resURI.toFileString()).makeRelativeTo(projectPath);
+				final String fileString = resURI.toFileString();
+				if (fileString != null)
+					resPath = new Path(fileString).makeRelativeTo(projectPath);
 			} else {
 				resPath = resPath.makeRelativeTo(projectPath);
 			}
