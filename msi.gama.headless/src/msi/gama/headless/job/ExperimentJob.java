@@ -92,6 +92,9 @@ public class ExperimentJob implements IExperimentJob {
 		public OutputType getType() {
 			return type;
 		}
+		public DataType getDataType() {
+			return dataType;
+		}
 
 		public String getPath() {
 			return path;

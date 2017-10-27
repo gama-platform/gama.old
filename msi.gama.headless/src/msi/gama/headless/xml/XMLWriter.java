@@ -52,7 +52,7 @@ public class XMLWriter implements Writer {
 	public void writeResultStep(final long step, final ListenedVariable[] vars) {
 		StringBuffer sb = new StringBuffer("\t<Step id='").append(step).append("' >\n");
 		for ( int i = 0; i < vars.length; i++ ) {
-			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' type='").append(vars[i].getType().name()).append("'>").append(vars[i].getValue())
+			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' type='").append(vars[i].getDataType().name()).append("'>").append(vars[i].getValue())
 				.append("</Variable>\n");
 		}
 		sb.append("\n\t</Step>\n");
