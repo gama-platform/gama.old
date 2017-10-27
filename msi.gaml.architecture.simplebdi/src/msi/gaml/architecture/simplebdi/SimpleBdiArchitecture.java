@@ -245,6 +245,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
+		final IAgent agent = scope.getAgent();
+		if (agent.dead()) { return null; }
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
 				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		if(use_personality){
@@ -256,8 +258,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
 		}
-		final IAgent agent = scope.getAgent();
-		if (agent.dead()) { return null; }
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
 				_perceptions.get(i).executeOn(scope);
