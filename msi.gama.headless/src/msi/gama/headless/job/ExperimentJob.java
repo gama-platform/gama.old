@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.IRichExperiment;
@@ -54,11 +55,14 @@ public class ExperimentJob implements IExperimentJob {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
 
+	
+	
 	public static class ListenedVariable {
 
 		String name;
 		int frameRate;
 		OutputType type;
+		DataType dataType;
 		Object value;
 		long step;
 		String path;
@@ -75,9 +79,10 @@ public class ExperimentJob implements IExperimentJob {
 			return name;
 		}
 
-		public void setValue(final Object obj, final long st) {
+		public void setValue(final Object obj, final long st, final DataType typ) {
 			value = obj;
 			this.step = st;
+			this.dataType = typ;
 		}
 
 		public Object getValue() {
@@ -316,9 +321,9 @@ public class ExperimentJob implements IExperimentJob {
 					// .getCurrentSimulation().getScope(), g,
 					// shouldStopSimulation)
 				} else if (out.getValue() instanceof BufferedImage) {
-					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step);
+					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,out.getType());
 				} else {
-					v.setValue(out.getValue(), out.getStep());
+					v.setValue(out.getValue(), out.getStep(),out.getType());
 				}
 
 			}
