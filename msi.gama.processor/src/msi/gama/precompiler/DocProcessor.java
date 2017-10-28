@@ -88,6 +88,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 			return;
 		if (!firstParsing)
 			return;
+		context.emitWarning("Building doc for " + context.currentPlugin, null);
 		firstParsing = false;
 		mes = context.getMessager();
 		final Writer out = context.createWriter("docGAMA.xml");

@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,6 +55,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
+import org.osgi.framework.Bundle;
+import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 
@@ -430,12 +434,15 @@ public class WorkspaceModelsManager {
 						e.printStackTrace();
 					}
 				}
-				linkModelsToWorkspace("msi.gama.models", "models", true, false);
-				for ( final String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
-					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false, false);
+				final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
+				for ( final Bundle plugin : pluginsWithModels.keySet() ) {
+					for ( final String entry : pluginsWithModels.get(plugin) )
+						linkModelsToWorkspace(plugin, entry, false);
 				}
-				for ( final String plugin : GamaBundleLoader.getPluginsWithTests().keySet() ) {
-					linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithTests().get(plugin), false, true);
+				final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
+				for ( final Bundle plugin : pluginsWithTests.keySet() ) {
+					for ( final String entry : pluginsWithTests.get(plugin) )
+						linkModelsToWorkspace(plugin, entry, true);
 				}
 				return Status.OK_STATUS;
 			}
@@ -450,26 +457,25 @@ public class WorkspaceModelsManager {
 	 * @param plugin
 	 */
 
-	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core,
-		final boolean tests) {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final URL urlRep = null;
+	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
+		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
+		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;
 		try {
-			final String ext = path == "." ? "/" : "/" + path + "/";
-			final URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			modelsRep = normalizedPath.toFile();
+			final URL resolvedFileURL = FileLocator.toFileURL(fileURL);
+			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+			modelsRep = new File(resolvedURI);
 
-		} catch (final IOException e) {
-			e.printStackTrace();
-			return;
+		} catch (final URISyntaxException e1) {
+			e1.printStackTrace();
+		} catch (final IOException e1) {
+			e1.printStackTrace();
 		}
 
 		final Map<File, IPath> foundProjects = new HashMap<>();
 		findProjects(modelsRep, foundProjects);
-		importBuiltInProjects(plugin, core, tests, workspace, foundProjects);
+		importBuiltInProjects(bundle, core, tests, foundProjects);
 
 		if ( core )
 			stampWorkspaceFromModels();
@@ -500,9 +506,9 @@ public class WorkspaceModelsManager {
 	 * @param workspace
 	 * @param project
 	 */
-	private static void importBuiltInProjects(final String plugin, final boolean core, final boolean tests,
-		final IWorkspace workspace, final Map<File, IPath> projects) {
-
+	private static void importBuiltInProjects(final Bundle plugin, final boolean core, final boolean tests,
+		final Map<File, IPath> projects) {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		for ( final Map.Entry<File, IPath> entry : projects.entrySet() ) {
 			final File project = entry.getKey();
 			final IPath location = entry.getValue();
@@ -570,7 +576,7 @@ public class WorkspaceModelsManager {
 	}
 
 	static public void setValuesProjectDescription(final IProject proj, final boolean builtin, final boolean inPlugin,
-		final boolean inTests, final String pluginName) {
+		final boolean inTests, final Bundle bundle) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
@@ -586,8 +592,8 @@ public class WorkspaceModelsManager {
 				newIds[2] = inTests ? TEST_NATURE : inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
 			}
 			desc.setNatureIds(newIds);
-			if ( (inPlugin || inTests) && pluginName != null ) {
-				desc.setComment(pluginName);
+			if ( (inPlugin || inTests) && bundle != null ) {
+				desc.setComment(bundle.getSymbolicName());
 			} else {
 				desc.setComment("");
 			}

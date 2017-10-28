@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Eclipse-BundleShape: dir
 Bundle-Name: Simple bdi architecture
 Bundle-SymbolicName: msi.gaml.architecture.simplebdi;singleton:=true
 Bundle-Version: 1.7.0.qualifier

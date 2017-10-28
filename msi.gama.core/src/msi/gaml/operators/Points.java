@@ -15,6 +15,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -175,6 +176,7 @@ public class Points {
 							@example (
 									value = "{2,5} / 4",
 									equals = "{0.5,1.25}") }))
+	@test ("{5, 7.5} / 2.5 = {2,3}")
 	public static ILocation divide(final IScope scope, final GamaPoint p, final Double d) {
 		if (d == 0d)
 			throw GamaRuntimeException.error("Division by zero", scope);
@@ -188,6 +190,8 @@ public class Points {
 			concept = {})
 	@doc (
 			value = "Returns a point with coordinates divided by the number")
+	@test ("{2,5} / 4 = {0.5,1.25}")
+	@test ("is_error({2,5} / 0)")
 	public static ILocation divide(final IScope scope, final GamaPoint p, final Integer d) {
 		if (d == 0)
 			throw GamaRuntimeException.error("Division by zero", scope);
@@ -201,6 +205,8 @@ public class Points {
 			concept = { IConcept.POINT })
 	@doc (
 			value = "Returns a point with coordinates multiplied by a number.")
+	@test ("{2,5} * 4.0 = {8.0,20.0}")
+	@test ("{2,5} * 0.0 = {0.0,0.0}")
 	public static ILocation multiply(final GamaPoint p1, final Double d) {
 		if (p1 == null)
 			return new GamaPoint();
@@ -222,6 +228,8 @@ public class Points {
 							@example (
 									value = "{2, 4} * 2.5",
 									equals = "{5.0, 10.0}") }))
+	@test ("{2,5} * 4 = {8,20}")
+	@test ("{2,5} * 0 = {0,0}")
 	public static ILocation multiply(final GamaPoint p1, final Integer d) {
 		if (p1 == null)
 			return new GamaPoint();
@@ -241,6 +249,7 @@ public class Points {
 					examples = @example (
 							value = "{2,5} * {4.5, 5}",
 							equals = "34.0")))
+	@test ("{2,5} * {4.5, 5} = 34.0")
 	public static Double multiply(final GamaPoint p1, final GamaPoint p) {
 		if (p1 == null || p == null)
 			return 0d;
@@ -257,6 +266,14 @@ public class Points {
 			examples = @example (
 					value = "norm({3,4})",
 					equals = "5.0"))
+	@test (
+			value = "norm({3,4}) = 5.0",
+			name = "Regular")
+	@test (
+			value = "norm({1,1}) = sqrt(2)",
+			name = "Not")
+	@test ("norm({0,0}) = 0.0")
+	@test ("norm({1,0}) = norm({0,1})")
 	public static Double norm(final IScope scope, final GamaPoint p) throws GamaRuntimeException {
 		if (p == null)
 			return 0d;
@@ -275,6 +292,10 @@ public class Points {
 					examples = @example (
 							value = "{1, 2} + {4, 5}",
 							equals = "{5.0, 7.0}")))
+	@test ("{1, 2} + {4, 5} = {5,7}")
+	@test (
+			value = "point p <- {1, 2}; p + {0, 0} = p",
+			warning = true)
 	public static ILocation add(final GamaPoint p1, final GamaPoint p) {
 		if (p1 == null)
 			return p;
@@ -337,7 +358,7 @@ public class Points {
 			return new GamaPoint(-p, -p, -p);
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
-	
+
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -354,7 +375,7 @@ public class Points {
 									value = "-{1.0,6.0,7.0}",
 									equals = "{-1.0,-6.0,-7.0}") }))
 	public static ILocation subtract(final GamaPoint p) {
-			return new GamaPoint(-p.x, -p.y, -p.z);
+		return new GamaPoint(-p.x, -p.y, -p.z);
 	}
 
 	@operator (

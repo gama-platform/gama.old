@@ -122,16 +122,17 @@ public abstract class TopLevelFolder extends VirtualContent {
 	protected Location getLocation(final IPath location) {
 		URL urlRep = null;
 		try {
-			final URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS + "/");
+			final URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/");
 			final URL new_url = FileLocator.resolve(old_url);
 			// windows URL formating
 			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
 			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
 			urlRep = normalizedPath.toUri().toURL();
 			final String osString = location.toOSString();
-			final boolean isTest = osString.contains(GamaBundleLoader.CORE_TESTS);
+			final boolean isTest = osString.contains(GamaBundleLoader.REGULAR_TESTS_LAYOUT);
 			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
-			if (osString.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS + "/", ""))) {
+			if (osString
+					.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/", ""))) {
 				if (isTest)
 					return Location.Tests;
 				return Location.Plugins;

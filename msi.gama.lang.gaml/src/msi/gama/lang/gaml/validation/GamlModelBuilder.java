@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -39,6 +41,23 @@ public class GamlModelBuilder {
 		final ModelDescription model = buildModelDescription(uri, errors);
 		// And compile it before returning it, unless it is null.
 		return model == null ? null : (IModel) model.compile();
+	}
+
+	public static IModel compile(final java.net.URI uri, final List<GamlCompilationError> errors) {
+		final URI resolvedURI = URI.createURI(uri.toString());
+		return compile(resolvedURI, errors);
+	}
+
+	public static IModel compile(final URL url, final List<GamlCompilationError> errors) {
+		try {
+			final java.net.URI uri = new java.net.URI(url.getProtocol(), url.getPath(), null).normalize();
+			final URI resolvedURI = URI.createURI(uri.toString());
+			return compile(resolvedURI, errors);
+		} catch (final URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static IModel compile(final URI uri, final List<GamlCompilationError> errors) {

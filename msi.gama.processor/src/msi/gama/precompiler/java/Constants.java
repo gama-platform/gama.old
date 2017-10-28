@@ -8,22 +8,28 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.precompiler.ActionProcessor;
+import msi.gama.precompiler.ConstantProcessor;
 import msi.gama.precompiler.DisplayProcessor;
 import msi.gama.precompiler.DocProcessor;
 import msi.gama.precompiler.ExperimentProcessor;
 import msi.gama.precompiler.FactoryProcessor;
 import msi.gama.precompiler.FileProcessor;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.test;
+import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IProcessor;
@@ -36,12 +42,14 @@ import msi.gama.precompiler.TypeProcessor;
 import msi.gama.precompiler.VarsProcessor;
 
 public interface Constants {
+
+	public static String capitalizeFirstLetter(final String original) {
+		if (original == null || original.length() == 0) { return original; }
+		return original.substring(0, 1).toUpperCase() + original.substring(1);
+	}
+
 	public final static String DOC_SEP = "~";
-	// public final static String ACTION_PREFIX = "!", OPERATOR_PREFIX = "?", GETTER_PREFIX = "/", SETTER_PREFIX = "-",
-	// FIELD_PREFIX = "*", SPECIES_PREFIX = "&", DISPLAY_PREFIX = "\\", EXPERIMENT_PREFIX = "§",
-	// SKILL_PREFIX = ")", TYPE_PREFIX = "(", SYMBOL_PREFIX = "[", FACTORY_PREFIX = "]", VAR_PREFIX = "%",
-	// FILE_PREFIX = "+", DOC_PREFIX = "@", CONSTANT_PREFIX = "£", POPULATIONS_LINKER_PREFIX = "�", DOC_SEP = "~",
-	// DOC_REGEX = "\\~", SEP = "$";
+
 	static String ln = "\n";
 	static String tab = "\t";
 	static String in = ln;
@@ -137,11 +145,12 @@ public interface Constants {
 					put(skill.class, new SkillProcessor());
 					put(display.class, new DisplayProcessor());
 					put(experiment.class, new ExperimentProcessor());
-
-					// put(constant.class, new ConstantProcessor());
-					put(test.class, new TestProcessor());
-					// put(getter.class, IProcessor.NULL);
-					// put(setter.class, IProcessor.NULL);
+					put(example.class, IProcessor.NULL);
+					put(constant.class, new ConstantProcessor());
+					put(tests.class, new TestProcessor());
+					put(getter.class, IProcessor.NULL);
+					put(setter.class, IProcessor.NULL);
+					put(test.class, IProcessor.NULL);
 					put(doc.class, new DocProcessor());
 				}
 			};

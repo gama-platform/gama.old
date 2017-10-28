@@ -9,21 +9,24 @@
  **********************************************************************************************/
 package msi.gama.precompiler;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 
+import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.java.Constants;
 import msi.gama.precompiler.java.JavaWriter;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
+@SupportedAnnotationTypes ({ "*" })
 public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
@@ -33,17 +36,19 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
 		super.init(pe);
+
 		context = new ProcessorContext(pe);
+		// context.emitWarning("Options= " + pe.getOptions(), null);
 	}
 
-	@Override
-	public Set<String> getSupportedAnnotationTypes() {
-		return processors.keySet().stream().map(p -> p.getCanonicalName()).collect(Collectors.toSet());
-	}
+	// @Override
+	// public Set<String> getSupportedAnnotationTypes() {
+	// return processors.keySet().stream().map(p -> p.getCanonicalName()).collect(Collectors.toSet());
+	// }
 
 	@Override
 	public SourceVersion getSupportedSourceVersion() {
-		return SourceVersion.latest();
+		return SourceVersion.latestSupported();
 	}
 
 	@Override
@@ -66,8 +71,23 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		} else {
 			final FileObject file = context.createSource();
 			generateJavaSource(file);
+			generateTests();
 		}
 		return true;
+	}
+
+	public void generateTests() {
+		final TestProcessor tp = (TestProcessor) processors.get(tests.class);
+		if (!tp.hasTests(context))
+			return;
+		context.createTestsFolder();
+		try (Writer source = context.createTestWriter()) {
+			final StringBuilder sourceBuilder = new StringBuilder();
+			tp.writeTests(context, sourceBuilder);
+			source.append(sourceBuilder.toString());
+		} catch (final IOException e) {
+			context.emitWarning("An exception occured in the generation of test files: " + e.getMessage(), null);
+		}
 	}
 
 	public void generateJavaSource(final FileObject file) {

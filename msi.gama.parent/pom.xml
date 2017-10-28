@@ -73,7 +73,7 @@
 									<rules>
 										<requireFilesSize>
 											<maxsize>50000</maxsize>
-											<minsize>90</minsize>											
+											<minsize>90</minsize>
 										</requireFilesSize>
 									</rules>
 									<removeAll>true</removeAll>
@@ -169,7 +169,7 @@
 
 		<!-- <module>../gama.target.platform</module> -->
 
-		
+
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
@@ -183,7 +183,7 @@
 
 		<module>../ummisco.gama.feature.models</module>
 		<module>../ummisco.gama.feature.dependencies</module>
-		
+
 
 		<module>../ummisco.gama.feature.core</module>
 		<module>../ummisco.gama.feature.core.extensions</module>
@@ -200,7 +200,7 @@
 
 
 		<module>../irit.gaml.extensions.database</module>
-		
+
 
 
 		<module>../msi.gama.models</module>
@@ -220,7 +220,7 @@
 		<module>../ummisco.gama.serialize</module>
 		<module>../ummisco.gama.network</module>
 		<module>../ummisco.gaml.extensions.maths</module>
-		
+
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
 
@@ -313,6 +313,31 @@
 		</extensions>
 
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+				<executions>
+					<execution>
+						<id>copy-annotations</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+						<outputDirectory>${project.build.outputDirectory}/tests</outputDirectory>
+							<resources>
+								<resource>
+									<directory>target/tests</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -322,6 +347,8 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<useProjectSettings>true</useProjectSettings>
+					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
+					<optimize>true</optimize>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -530,14 +557,6 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 

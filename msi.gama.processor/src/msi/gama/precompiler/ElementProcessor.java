@@ -116,7 +116,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	@Override
 	public final String getInitializationMethodName() {
-		return "initialize" + capitalizeFirstLetter(getElementName());
+		return "initialize" + Constants.capitalizeFirstLetter(getElementName());
 	}
 
 	@Override
@@ -137,11 +137,6 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	 * 
 	 * Utilities used by subclasses
 	 */
-
-	public String capitalizeFirstLetter(final String original) {
-		if (original == null || original.length() == 0) { return original; }
-		return original.substring(0, 1).toUpperCase() + original.substring(1);
-	}
 
 	org.w3c.dom.Element getRootNode(final Document doc) {
 		org.w3c.dom.Element root = null;

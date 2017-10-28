@@ -1,18 +1,21 @@
 package msi.gama.headless.batch.validation;
 
-import static msi.gama.lang.gaml.validation.GamlModelBuilder.compile;
-import static org.eclipse.emf.common.util.URI.createFileURI;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.osgi.framework.Bundle;
+
+import com.google.common.collect.Multimap;
 
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
@@ -21,30 +24,41 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	private ModelLibraryValidator() {}
 
 	@Override
-	public int start(final String pluginsFolder, final List<String> args) throws IOException {
+	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
 		final int[] count = { 0 };
 		final int[] code = { 0 };
-		Files.walk(Paths.get(pluginsFolder)).filter(isModel).forEach(p -> {
-			validate(pluginsFolder, count, code, p);
-		});
+		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels();
+		for (final Bundle bundle : plugins.keySet()) {
+			for (final String entry : plugins.get(bundle)) {
+				final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
+				if (urls != null)
+					while (urls.hasMoreElements()) {
+						final URL url = urls.nextElement();
+						if (isModel(url)) {
+							final URL resolvedFileURL = FileLocator.toFileURL(url);
+							validate(count, code, resolvedFileURL);
+						}
+					}
+			}
+		}
+
 		log("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
 		return code[0];
 	}
 
-	private void validate(final String pluginsFolder, final int[] countOfModelsValidated, final int[] returnCode,
-			final Path pathToModel) {
+	private void validate(final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		log("Compiling " + pathToModel.getFileName());
+		log("Compiling " + pathToModel.getFile());
 		try {
-			compile(createFileURI(pathToModel.toString()), errors);
+			GamlModelBuilder.compile(pathToModel, errors);
 		} catch (final Exception ex) {
 			log(ex.getMessage());
 		}
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
-			log("Error in " + e.getURI().toFileString().replace(pluginsFolder, "") + ": " + e);
+			log("Error in " + e.getURI().lastSegment() + ": " + e);
 			returnCode[0]++;
 		});
 	}

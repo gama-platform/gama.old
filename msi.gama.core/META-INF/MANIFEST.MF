@@ -416,4 +416,3 @@ Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .
 Bundle-Activator: msi.gama.common.Activator
-Eclipse-BundleShape: dir

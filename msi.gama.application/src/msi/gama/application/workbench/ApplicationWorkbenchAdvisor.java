@@ -218,11 +218,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				if ( severity == IStatus.INFO || severity == IStatus.CANCEL )
 					return;
 				final Throwable e = statusAdapter.getStatus().getException();
-				System.err
+				System.out
 					.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage() + " " + e);
-				if ( e != null ) {
-					e.printStackTrace();
-				}
+				// if ( e != null ) {
+				// e.printStackTrace();
+				// }
 			}
 		};
 	}

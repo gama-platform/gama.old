@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +42,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private final ProcessingEnvironment delegate;
 	private RoundEnvironment round;
 	private TypeMirror iSkill, iAgent;
-	String currentPlugin;
+	volatile String currentPlugin;
 
 	ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
@@ -196,7 +195,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			emitWarning(e.getMessage(), null);
+			// emitWarning(e.getMessage(), null);
 		}
 		return null;
 	}
@@ -204,15 +203,60 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	FileObject createSource() {
 		try {
 			final FileObject obj = getFiler().createSourceFile(ADDITIONS, (Element[]) null);
-			final String pluginName =
-					URI.create(obj.toUri().toString().replace("/gaml/gaml/additions/GamlAdditions.java", "")).toURL()
-							.getFile();
-			currentPlugin = pluginName.substring(pluginName.lastIndexOf('/') + 1);
+			// To accomodate for different classpaths in Maven and Eclipse
+			final String plugin2 = obj.toUri().toASCIIString().replace("/target/gaml/additions/GamlAdditions.java", "")
+					.replace("/gaml/gaml/additions/GamlAdditions.java", "");
+			currentPlugin = plugin2.substring(plugin2.lastIndexOf('/') + 1);
+			System.out.println("CURRENT PLUGIN = " + currentPlugin);
 			return obj;
 		} catch (final Exception e) {
-			emitWarning(e.getMessage(), null);
+			// emitWarning(e.getMessage(), null);
 		}
 		return null;
+	}
+
+	Writer createTestWriter() {
+		try {
+			final OutputStream output =
+					getFiler().createResource(OUT, getTestFolderName() + ".models", getTestFileName(), (Element[]) null)
+							.openOutputStream();
+			final Writer writer = new OutputStreamWriter(output, CHARSET);
+			return writer;
+		} catch (final Exception e) {
+			// emitWarning(e.getMessage(), null);
+		}
+		return null;
+	}
+
+	private String getTestFileName() {
+		final String title = currentPlugin.substring(currentPlugin.lastIndexOf('.') + 1);
+		return Constants.capitalizeFirstLetter(title) + " Tests.experiment";
+	}
+
+	private String getTestFolderName() {
+		final String title = currentPlugin.substring(currentPlugin.lastIndexOf('.') + 1);
+		return "tests.Generated From " + Constants.capitalizeFirstLetter(title);
+	}
+
+	public void createTestsFolder() {
+		try {
+			final FileObject obj = getFiler().createResource(OUT, getTestFolderName(), ".project", (Element[]) null);
+			final OutputStream output = obj.openOutputStream();
+			final Writer writer = new OutputStreamWriter(output, CHARSET);
+			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n"
+					+ "	<name>Generated tests in " + currentPlugin + "</name>\n" + "	<comment>" + currentPlugin
+					+ "</comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n"
+					+ "		<buildCommand>\n" + "			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>\n"
+					+ "			<arguments>\n" + "			</arguments>\n" + "		</buildCommand>\n"
+					+ "	</buildSpec>\n" + "	<natures>\n"
+					+ "		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\n"
+					+ "		<nature>msi.gama.application.gamaNature</nature>\n"
+					+ "		<nature>msi.gama.application.testNature</nature>\n" + "	</natures>\n"
+					+ "</projectDescription>\n" + "");
+			writer.close();
+		} catch (final Throwable t) {
+			emitWarning(t.getMessage(), null);
+		}
 	}
 
 	Writer createSourceWriter(final FileObject file) {
@@ -232,6 +276,16 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 
 	public InputStream getInputStream(final String string) throws IOException {
 		return getFiler().getResource(ProcessorContext.OUT, "", string).openInputStream();
+	}
+
+	public List<Annotation> getUsefulAnnotationsOn(final Element e) {
+		final List<Annotation> result = new ArrayList<>();
+		for (final Class<? extends Annotation> clazz : processors.keySet()) {
+			final Annotation a = e.getAnnotation(clazz);
+			if (a != null)
+				result.add(a);
+		}
+		return result;
 	}
 
 }

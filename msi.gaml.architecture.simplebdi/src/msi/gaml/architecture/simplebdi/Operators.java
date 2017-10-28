@@ -9,6 +9,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -510,6 +511,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3)",
 					test = false))
+	@test ("get_intensity(new_emotion('joy',12.3)) = 12.3")
 	public static Emotion newEmotion(final String name, final Double intensity) throws GamaRuntimeException {
 		return new Emotion(name, intensity);
 	}

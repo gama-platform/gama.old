@@ -157,9 +157,9 @@ public class Application implements IApplication {
 		if (args.contains(HELP_PARAMETER)) {
 			System.out.println(showHelp());
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
-			return ModelLibraryValidator.getInstance().start(after(args, VALIDATE_LIBRARY_PARAMETER), args);
+			return ModelLibraryValidator.getInstance().start(args);
 		} else if (args.contains(TEST_LIBRARY_PARAMETER)) {
-			return ModelLibraryTester.getInstance().start(after(args, TEST_LIBRARY_PARAMETER), args);
+			return ModelLibraryTester.getInstance().start(args);
 		} else if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
