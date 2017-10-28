@@ -98,16 +98,16 @@ experiment OpBDITestTests type: test {
 		test new_emotionOp {
 			emotion("joy",12.3,eatFood,4)
 			emotion("joy",12.3,eatFood,4)
-			emotion("joy")
-			emotion("joy",12.3)
-			emotion("joy",12.3,eatFood,4)
-			emotion("joy",12.3,eatFood,4)
-			emotion("joy",12.3,eatFood,4)
-			emotion("joy",12.3,eatFood,4)
-			emotion("joy",12.3,4)
-			emotion("joy",12.3,eatFood,4)
 			emotion("joy",12.3,eatFood)
 			emotion("joy",eatFood)
+			emotion("joy",12.3,4)
+			emotion("joy",12.3,eatFood,4)
+			emotion("joy")
+			emotion("joy",12.3,eatFood,4)
+			emotion("joy",12.3,eatFood,4)
+			emotion("joy",12.3,eatFood,4)
+			emotion("joy",12.3,eatFood,4)
+			emotion("joy",12.3)
 
 		}
 	
@@ -142,23 +142,23 @@ experiment OpBDITestTests type: test {
 	
 		test new_predicateOp {
 			predicate("people to meet", ["time"::10], true)
-			predicate("people to meet", ["time"::10], true)
-			predicate("people to meet", ["time"::10], true, agentA)
-			predicate("people to meet", ["time"::10], 10, true, agentA)
-			predicate("people to meet", ["time"::10], 10,true)
-			predicate("people to meet", ["time"::10], 10, agentA)
-			predicate("people to meet")
-			predicate("people to meet", ["time"::10], true)
 			predicate("people to meet", ["time"::10], agentA)
-			predicate("hasWater", true)
 			predicate("hasWater", 10 
 			predicate("people to meet", people1 )
+			predicate("people to meet")
+			predicate("people to meet", ["time"::10], true)
+			predicate("people to meet", ["time"::10], 10,true)
+			predicate("people to meet", ["time"::10], 10, agentA)
+			predicate("people to meet", ["time"::10], true, agentA)
+			predicate("people to meet", ["time"::10], true)
+			predicate("people to meet", ["time"::10], 10, true, agentA)
+			predicate("hasWater", true)
 
 		}
 	
 		test new_social_linkOp {
-			new_social_link(agentA,0.0,-0.1,0.2,0.1)
 			new_social_link(agentA)
+			new_social_link(agentA,0.0,-0.1,0.2,0.1)
 
 		}
 	
