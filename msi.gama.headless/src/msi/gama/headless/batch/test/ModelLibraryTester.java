@@ -70,6 +70,8 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	public void test(final int[] count, final int[] code, final URL p) throws URISyntaxException {
 		final IModel model = GamlModelBuilder.compile(p, errors);
+		if (model == null || model.getDescription() == null)
+			return;
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 

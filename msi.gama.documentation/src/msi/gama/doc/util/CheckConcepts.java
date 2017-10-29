@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 
 import msi.gama.doc.websiteGen.utilClasses.ConceptManager;
 import msi.gama.doc.websiteGen.utilClasses.ConceptManager.WebsitePart;
+import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.doc.websiteGen.utilClasses.Utils;
 
 public class CheckConcepts {

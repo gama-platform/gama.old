@@ -36,9 +36,10 @@ public class TestsRunner {
 				gui.displayTestsResults(scope, TestSummary.BEGINNING);
 				for (final IFile file : testFiles) {
 					final List<TestSummary> summaries = gui.runHeadlessTests(file);
-					for (final TestSummary summary : summaries) {
-						gui.displayTestsResults(scope, summary);
-					}
+					if (summaries != null)
+						for (final TestSummary summary : summaries) {
+							gui.displayTestsResults(scope, summary);
+						}
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();

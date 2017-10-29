@@ -16,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import msi.gama.precompiler.doc.utils.Constants;
+
 public class PrepareEnv {
 
 	/**

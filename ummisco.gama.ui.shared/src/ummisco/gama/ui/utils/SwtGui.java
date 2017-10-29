@@ -148,7 +148,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void displayTestsResults(final IScope scope, final TestSummary summary) {
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue()) {
+		if (GamaPreferences.Modeling.FAILED_TESTS.getValue() && summary.asserts != null) {
 			final State state = summary.getState();
 			if (state != State.FAILED && state != State.ABORTED)
 				return;

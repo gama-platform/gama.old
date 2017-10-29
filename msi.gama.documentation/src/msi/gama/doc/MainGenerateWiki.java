@@ -13,10 +13,10 @@ package msi.gama.doc;
 
 import msi.gama.doc.transform.XmlToWiki;
 import msi.gama.doc.util.CheckConcepts;
-import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.GenerateCategoryXML;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
+import msi.gama.precompiler.doc.utils.Constants;
 
 public class MainGenerateWiki {
 

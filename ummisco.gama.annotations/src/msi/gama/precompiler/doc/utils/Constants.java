@@ -8,7 +8,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.doc.util;
+package msi.gama.precompiler.doc.utils;
 
 import java.io.File;
 
@@ -85,7 +85,7 @@ public class Constants {
 	// Commandes
 	public static String CMD_PANDOC =
 			OSUtils.isWindows() ? "C:/Users/Julien/AppData/Local/Pandoc/pandoc" : "/usr/local/bin/pandoc";
-	public static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/Program Files/MiKTeX 2.9/miktex/bin/x64/xelatex\""
+	public static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/Program Files/MiKTeX2.9/miktex/bin/x64/xelatex\""
 			: "/Library/TeX/Root/bin/universal-darwin/pdflatex";
 
 	// Path

@@ -22,7 +22,10 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.tests;
+import msi.gama.precompiler.doc.DocProcessor;
+import msi.gama.precompiler.tests.ExamplesToTests;
 import msi.gama.precompiler.tests.TestProcessor;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -36,7 +39,6 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
 		super.init(pe);
-
 		context = new ProcessorContext(pe);
 	}
 
@@ -61,16 +63,18 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	public void generateTests() {
 		final TestProcessor tp = (TestProcessor) processors.get(tests.class);
-		if (!tp.hasTests(context))
-			return;
-		context.createTestsFolder();
-		try (Writer source = context.createTestWriter()) {
-			final StringBuilder sourceBuilder = new StringBuilder();
-			tp.writeTests(context, sourceBuilder);
-			source.append(sourceBuilder.toString());
-		} catch (final IOException e) {
-			context.emitWarning("An exception occured in the generation of test files: " + e.getMessage(), null);
+		if (tp.hasTests(context)) {
+			try (Writer source = context.createTestWriter()) {
+				final StringBuilder sourceBuilder = new StringBuilder();
+				tp.writeTests(context, sourceBuilder);
+				source.append(sourceBuilder.toString());
+			} catch (final IOException e) {
+				context.emitWarning("An exception occured in the generation of test files: " + e.getMessage(), null);
+			}
 		}
+		// We pass the current document of the documentation processor to avoir re-reading it
+		final DocProcessor dp = (DocProcessor) processors.get(doc.class);
+		ExamplesToTests.createTests(context, ElementProcessor.getBuilder(), dp.getDocument(context));
 	}
 
 	public void generateJavaSource(final FileObject file) {

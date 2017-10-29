@@ -1,6 +1,7 @@
 package msi.gama.doc.util;
 
 import msi.gama.doc.transform.XmlToCategoryXML;
+import msi.gama.precompiler.doc.utils.Constants;
 
 public class GenerateCategoryXML {
 

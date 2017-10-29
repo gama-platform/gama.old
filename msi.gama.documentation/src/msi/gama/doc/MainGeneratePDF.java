@@ -11,10 +11,10 @@
  **********************************************************************************************/
 package msi.gama.doc;
 
-import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
+import msi.gama.precompiler.doc.utils.Constants;
 
 
 public class MainGeneratePDF {

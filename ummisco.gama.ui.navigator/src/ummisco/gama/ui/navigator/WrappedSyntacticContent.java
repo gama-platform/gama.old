@@ -90,6 +90,8 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 		@Override
 		public int getURIProblem(final String fragment) {
+			if (fragment == null)
+				return -1;
 			// final IFile file = (IFile) getParent();
 			if (uriProblems == null)
 				return -1;

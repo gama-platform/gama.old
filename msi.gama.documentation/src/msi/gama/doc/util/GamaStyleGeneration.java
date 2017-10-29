@@ -19,6 +19,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import msi.gama.precompiler.doc.utils.Constants;
+import msi.gama.precompiler.doc.utils.XMLUtils;
+
 public class GamaStyleGeneration {
 	
 	public static String KEYWORD_FILE = Constants.WIKI_FOLDER + "/keywords.xml";

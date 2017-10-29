@@ -9,5 +9,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
 Export-Package: msi.gama.common.interfaces,
  msi.gama.precompiler,
  msi.gama.precompiler.constants,
- msi.gama.precompiler.doc,
  msi.gama.precompiler.doc.utils

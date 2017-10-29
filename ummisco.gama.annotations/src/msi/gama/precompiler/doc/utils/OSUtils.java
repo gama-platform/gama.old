@@ -1,4 +1,4 @@
-package msi.gama.doc.util;
+package msi.gama.precompiler.doc.utils;
 
 public class OSUtils {
 

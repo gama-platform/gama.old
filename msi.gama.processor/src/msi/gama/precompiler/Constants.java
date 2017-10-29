@@ -31,6 +31,27 @@ public interface Constants {
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
+	public static String capitalizeAllWords(final String str) {
+		if (str == null || str.length() == 0) { return str; }
+		final int strLen = str.length();
+		final StringBuffer buffer = new StringBuffer(strLen);
+		boolean capitalizeNext = true;
+		for (int i = 0; i < strLen; i++) {
+			final char ch = str.charAt(i);
+			if (' ' == ch) {
+				buffer.append(ch);
+				capitalizeNext = true;
+			} else if (capitalizeNext) {
+				buffer.append(Character.toTitleCase(ch));
+				capitalizeNext = false;
+			} else {
+				buffer.append(ch);
+			}
+		}
+		return buffer.toString();
+
+	}
+
 	public static String getAlphabetOrder(final String name) {
 		String order = "";
 		final String lastChar = "z";

@@ -10,8 +10,6 @@
 package msi.gama.precompiler.doc;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,7 @@ import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic.Kind;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -38,14 +37,12 @@ import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.Constants;
 import msi.gama.precompiler.ElementProcessor;
-import msi.gama.precompiler.GamlAnnotations;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IConstantCategory;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -54,9 +51,14 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IConstantCategory;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.constants.ColorCSS;
-import msi.gama.precompiler.doc.DocProcessorAnnotations;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
@@ -65,7 +67,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 	Messager mes;
 	TypeConverter tc;
 
-	boolean firstParsing;
+	// boolean firstParsing;
 
 	// Statistic values
 	int nbrOperators;
@@ -74,7 +76,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 	int nbrSymbols;
 
 	public DocProcessor() {
-		firstParsing = true;
+		// firstParsing = true;
 		nbrOperators = 0;
 		nbrOperatorsDoc = 0;
 		nbrSkills = 0;
@@ -96,82 +98,80 @@ public class DocProcessor extends ElementProcessor<doc> {
 	@Override
 	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
 			final org.w3c.dom.Element node) {
-		// This is where the generation of tests needs to be done
+		// Nothing to do
 	}
 
 	@Override
 	public void processXML(final ProcessorContext context) {
 		if (!context.shouldProduceDoc())
 			return;
-		if (!firstParsing)
-			return;
-		firstParsing = false;
+		document = getBuilder().newDocument();
+		// if (!firstParsing)
+		// return;
+		// firstParsing = false;
 		mes = context.getMessager();
-		final Writer out = context.createWriter("docGAMA.xml");
 
-		final Document doc = getBuilder().newDocument();
-
-		final org.w3c.dom.Element root = doc.createElement("doc");
+		final org.w3c.dom.Element root = document.createElement("doc");
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Constants Categories
 		final Set<? extends Element> setConstants = context.getElementsAnnotatedWith(constant.class);
 
-		root.appendChild(this.processDocXMLCategories(setConstants, doc, XMLElements.CONSTANTS_CATEGORIES));
+		root.appendChild(this.processDocXMLCategories(setConstants, XMLElements.CONSTANTS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Concepts
 		final Field[] conceptArray = IConcept.class.getFields();
 
-		root.appendChild(this.processDocXMLConcepts(conceptArray, doc, XMLElements.CONCEPT_LIST));
+		root.appendChild(this.processDocXMLConcepts(conceptArray, XMLElements.CONCEPT_LIST));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Constants
-		root.appendChild(this.processDocXMLConstants(setConstants, doc));
+		root.appendChild(this.processDocXMLConstants(setConstants));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
 		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperatorsCategories =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
-		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, doc, XMLElements.OPERATORS_CATEGORIES));
+		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
 		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperators =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
-		root.appendChild(this.processDocXMLOperators(setOperators, doc));
+		root.appendChild(this.processDocXMLOperators(setOperators));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Skills
 		final Set<? extends Element> setSkills = context.getElementsAnnotatedWith(skill.class);
-		root.appendChild(this.processDocXMLSkills(setSkills, doc, context));
+		root.appendChild(this.processDocXMLSkills(setSkills, context));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Architectures
 		final Set<? extends Element> setArchitectures = context.getElementsAnnotatedWith(skill.class);
-		root.appendChild(this.processDocXMLArchitectures(setArchitectures, doc, context));
+		root.appendChild(this.processDocXMLArchitectures(setArchitectures, context));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Species
 		final Set<? extends Element> setSpecies = context.getElementsAnnotatedWith(species.class);
-		root.appendChild(this.processDocXMLSpecies(setSpecies, doc));
+		root.appendChild(this.processDocXMLSpecies(setSpecies));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Inside statements (kinds and symbols)
 		final Set<? extends Element> setStatements = context.getElementsAnnotatedWith(symbol.class);
-		root.appendChild(this.processDocXMLStatementsInsideKind(setStatements, doc));
-		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatements, doc));
+		root.appendChild(this.processDocXMLStatementsInsideKind(setStatements));
+		root.appendChild(this.processDocXMLStatementsInsideSymbol(setStatements));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Statements
-		root.appendChild(this.processDocXMLStatementsKinds(setStatements, doc));
-		root.appendChild(this.processDocXMLStatements(setStatements, doc));
+		root.appendChild(this.processDocXMLStatementsKinds(setStatements));
+		root.appendChild(this.processDocXMLStatements(setStatements));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types to get operators
 		final Set<? extends Element> setOperatorsTypes = context.getElementsAnnotatedWith(type.class);
 		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromTypes =
-				this.processDocXMLOperatorsFromTypes(setOperatorsTypes, doc);
+				this.processDocXMLOperatorsFromTypes(setOperatorsTypes);
 
 		final org.w3c.dom.Element eltOperators =
 				(org.w3c.dom.Element) root.getElementsByTagName(XMLElements.OPERATORS).item(0);
@@ -182,8 +182,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files to get operators
 		final Set<? extends Element> setFiles = context.getElementsAnnotatedWith(file.class);
-		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles =
-				this.processDocXMLOperatorsFromFiles(setFiles, doc);
+		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFiles);
 
 		for (final org.w3c.dom.Element eltOp : listEltOperatorsFromFiles) {
 			eltOperators.appendChild(eltOp);
@@ -192,51 +191,38 @@ public class DocProcessor extends ElementProcessor<doc> {
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types
 		final Set<? extends Element> setTypes = context.getElementsAnnotatedWith(type.class);
-		root.appendChild(this.processDocXMLTypes(setTypes, doc, context));
+		root.appendChild(this.processDocXMLTypes(setTypes, context));
 
 		// //////////////////////
 		// Final step:
-		doc.appendChild(root);
+		document.appendChild(root);
 
 		// ////////////////////////////////////////////////
 
-		try {
-			// Creation of the DOM source
-			final DOMSource source = new DOMSource(doc);
-
-			final StringWriter writer = new StringWriter();
-			final StreamResult result = new StreamResult(writer);
+		try (final PrintWriter out = new PrintWriter(context.createWriter("docGAMA.xml"));) {
 			final TransformerFactory tf = TransformerFactory.newInstance();
 			final Transformer transformer = tf.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1"); // "UTF-8");//
-
-			transformer.transform(source, result);
-			final String stringResult = writer.toString();
-
-			final PrintWriter docWriterXML = new PrintWriter(out);
-			docWriterXML.append(stringResult).println("");
-			docWriterXML.close();
-
-		} catch (final Exception e) {
-			throw new NullPointerException("Error in the Processor ");
+			transformer.transform(new DOMSource(document), new StreamResult(out));
+		} catch (final TransformerException e) {
+			context.emitError("XML Error when producing the documentation: " + e.getMessage(), null);
 		}
 	}
 
-	private org.w3c.dom.Element processDocXMLConstants(final Set<? extends Element> set, final Document doc) {
-		final org.w3c.dom.Element eltConstants = doc.createElement(XMLElements.CONSTANTS);
+	private org.w3c.dom.Element processDocXMLConstants(final Set<? extends Element> set) {
+		final org.w3c.dom.Element eltConstants = document.createElement(XMLElements.CONSTANTS);
 		for (final Element e : set) {
 			if (e.getAnnotation(constant.class).value().equals(e.getSimpleName().toString())) {
 				final org.w3c.dom.Element eltConstant =
-						DocProcessorAnnotations.getConstantElt(e.getAnnotation(constant.class), doc, e, mes, tc);
+						getConstantElt(e.getAnnotation(constant.class), document, e, mes, tc);
 
 				// Concept
 				org.w3c.dom.Element conceptsElt;
 				if (eltConstant.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+					conceptsElt = getConcepts(e, document,
 							(org.w3c.dom.Element) eltConstant.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 
@@ -249,22 +235,20 @@ public class DocProcessor extends ElementProcessor<doc> {
 					&& IConstantCategory.COLOR_CSS.equals(e.getAnnotation(constant.class).category()[0])) {
 				final Object[] colorTab = ColorCSS.array;
 				for (int i = 0; i < colorTab.length; i += 2) {
-					final org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);
-					constantElt.setAttribute(XMLElements.ATT_CST_NAME,
-							DocProcessorAnnotations.PREFIX_CONSTANT + colorTab[i]);
+					final org.w3c.dom.Element constantElt = document.createElement(XMLElements.CONSTANT);
+					constantElt.setAttribute(XMLElements.ATT_CST_NAME, PREFIX_CONSTANT + colorTab[i]);
 					constantElt.setAttribute(XMLElements.ATT_CST_VALUE,
 							"r=" + ((int[]) colorTab[i + 1])[0] + ", g=" + ((int[]) colorTab[i + 1])[1] + ", b="
 									+ ((int[]) colorTab[i + 1])[2] + ", alpha=" + ((int[]) colorTab[i + 1])[3]);
-					constantElt.appendChild(DocProcessorAnnotations.getCategories(e, doc,
-							doc.createElement(XMLElements.CATEGORIES), tc));
+					constantElt.appendChild(
+							getCategories(e, document, document.createElement(XMLElements.CATEGORIES), tc));
 
 					// Concept
 					org.w3c.dom.Element conceptsElt;
 					if (constantElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
-								doc.createElement(XMLElements.CONCEPTS), tc);
+						conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 					} else {
-						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+						conceptsElt = getConcepts(e, document,
 								(org.w3c.dom.Element) constantElt.getElementsByTagName(XMLElements.CONCEPTS).item(0),
 								tc);
 					}
@@ -277,8 +261,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltConstants;
 	}
 
-	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromTypes(final Set<? extends Element> set,
-			final Document doc) {
+	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromTypes(final Set<? extends Element> set) {
 
 		// Parcours de tous les types
 		// creation d'ojets types dans le XML
@@ -288,10 +271,10 @@ public class DocProcessor extends ElementProcessor<doc> {
 		for (final Element e : set) {
 			// Operators to be created:
 			// - name_type: converts the parameter into the type name_type
-			final Operator op = new Operator(doc, tc.getProperCategory("Types"), e.getAnnotation(type.class).concept(),
-					e.getAnnotation(type.class).name());
+			final Operator op = new Operator(document, tc.getProperCategory("Types"),
+					e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name());
 			op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
-			op.addOperand(new Operand(doc, "val", 0, "any"));
+			op.addOperand(new Operand(document, "val", 0, "any"));
 			op.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
 
 			eltOpFromTypes.add(op.getElementDOM());
@@ -300,8 +283,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltOpFromTypes;
 	}
 
-	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(final Set<? extends Element> set,
-			final Document doc) {
+	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(final Set<? extends Element> set) {
 
 		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<org.w3c.dom.Element>();
 		for (final Element e : set) {
@@ -309,18 +291,18 @@ public class DocProcessor extends ElementProcessor<doc> {
 			// - "is_"+name : test whether the operand parameter is of the given
 			// kind of file
 			// - name+"_file": converts the parameter into the type name_type
-			final Operator op_is = new Operator(doc, tc.getProperCategory("Files"),
+			final Operator op_is = new Operator(document, tc.getProperCategory("Files"),
 					e.getAnnotation(file.class).concept(), "is_" + e.getAnnotation(file.class).name(),
 					"Tests whether the operand is a " + e.getAnnotation(file.class).name() + " file.");
 			op_is.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
-			op_is.addOperand(new Operand(doc, "val", 0, "any"));
+			op_is.addOperand(new Operand(document, "val", 0, "any"));
 			// op_is.setDocumentation("Tests whether the operand is a "+
 			// e.getAnnotation(file.class).name() + " file.");
 
-			final Operator op_file = new Operator(doc, tc.getProperCategory("Files"),
+			final Operator op_file = new Operator(document, tc.getProperCategory("Files"),
 					e.getAnnotation(file.class).concept(), e.getAnnotation(file.class).name() + "_file");
 			op_file.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "file", "");
-			op_file.addOperand(new Operand(doc, "val", 0, "string"));
+			op_file.addOperand(new Operand(document, "val", 0, "string"));
 
 			final String[] tabExtension = e.getAnnotation(file.class).extensions();
 			String listExtension = "";
@@ -342,16 +324,15 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltOpFromTypes;
 	}
 
-	private org.w3c.dom.Element processDocXMLCategories(final Set<? extends Element> set, final Document doc,
-			final String typeElement) {
-		final org.w3c.dom.Element categories = doc.createElement(typeElement);
+	private org.w3c.dom.Element processDocXMLCategories(final Set<? extends Element> set, final String typeElement) {
+		final org.w3c.dom.Element categories = document.createElement(typeElement);
 
 		// When we parse categories of operators, we add the iterator category.
 		if (XMLElements.OPERATORS_CATEGORIES.equals(typeElement)) {
 			org.w3c.dom.Element category;
-			category = doc.createElement(XMLElements.CATEGORY);
+			category = document.createElement(XMLElements.CATEGORY);
 			category.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
-			categories.appendChild(category);
+			this.appendChild(categories, category);
 		}
 
 		for (final Element e : set) {
@@ -382,9 +363,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 					if (!found) {
 						org.w3c.dom.Element category;
-						category = doc.createElement(XMLElements.CATEGORY);
+						category = document.createElement(XMLElements.CATEGORY);
 						category.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
-						categories.appendChild(category);
+						this.appendChild(categories, category);
 					}
 				}
 			}
@@ -392,12 +373,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return categories;
 	}
 
-	private org.w3c.dom.Element processDocXMLConcepts(final Field[] conceptArray, final Document doc,
-			final String typeElement) {
-		final org.w3c.dom.Element concepts = doc.createElement(typeElement);
+	private org.w3c.dom.Element processDocXMLConcepts(final Field[] conceptArray, final String typeElement) {
+		final org.w3c.dom.Element concepts = document.createElement(typeElement);
 		for (final Field field : conceptArray) {
 			org.w3c.dom.Element conceptElem;
-			conceptElem = doc.createElement(XMLElements.CONCEPT);
+			conceptElem = document.createElement(XMLElements.CONCEPT);
 			try {
 				conceptElem.setAttribute(XMLElements.ATT_CAT_ID, field.get(new Object()).toString());
 			} catch (final DOMException e) {
@@ -412,8 +392,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return concepts;
 	}
 
-	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set, final Document doc) {
-		final org.w3c.dom.Element operators = doc.createElement(XMLElements.OPERATORS);
+	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set) {
+		final org.w3c.dom.Element operators = document.createElement(XMLElements.OPERATORS);
 
 		for (final ExecutableElement e : set) {
 			if (e.getAnnotation(operator.class).internal() == true
@@ -431,10 +411,10 @@ public class DocProcessor extends ElementProcessor<doc> {
 					// We just omit it
 				} else {
 					// Look for an already parsed operator with the same name
-					org.w3c.dom.Element operator = DocProcessorAnnotations.getOperatorElement(operators,
-							e.getAnnotation(operator.class).value()[0]);
+					org.w3c.dom.Element operator =
+							getOperatorElement(operators, e.getAnnotation(operator.class).value()[0]);
 					if (operator == null) {
-						operator = doc.createElement(XMLElements.OPERATOR);
+						operator = document.createElement(XMLElements.OPERATOR);
 						operator.setAttribute(XMLElements.ATT_OP_ID,
 								tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
 						operator.setAttribute(XMLElements.ATT_OP_NAME,
@@ -449,16 +429,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 						if (!"".equals(name) && !name.equals(e.getAnnotation(operator.class).value()[0])) {
 							// Look for an already parsed operator with the same
 							// name
-							org.w3c.dom.Element altElt = DocProcessorAnnotations.getOperatorElement(operators, name);
+							org.w3c.dom.Element altElt = getOperatorElement(operators, name);
 							if (altElt == null) {
-								altElt = doc.createElement(XMLElements.OPERATOR);
+								altElt = document.createElement(XMLElements.OPERATOR);
 								altElt.setAttribute(XMLElements.ATT_OP_ID, name);
 								altElt.setAttribute(XMLElements.ATT_OP_NAME, name);
 								altElt.setAttribute(XMLElements.ATT_OP_ALT_NAME,
 										e.getAnnotation(operator.class).value()[0]);
 								altElt.setAttribute(XMLElements.ATT_ALPHABET_ORDER, Constants.getAlphabetOrder(name));
 
-								altElt.appendChild(DocProcessorAnnotations.getCategories(e, doc, tc));
+								altElt.appendChild(getCategories(e, document, tc));
 								operators.appendChild(altElt);
 							} else {
 								// Show an error in the case where two
@@ -481,15 +461,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 					// Category
 					org.w3c.dom.Element categoriesElt;
 					if (operator.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).getLength() == 0) {
-						categoriesElt = DocProcessorAnnotations.getCategories(e, doc,
-								doc.createElement(XMLElements.OPERATOR_CATEGORIES), tc);
-					} else {
 						categoriesElt =
-								DocProcessorAnnotations
-										.getCategories(e, doc,
-												(org.w3c.dom.Element) operator
-														.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0),
-												tc);
+								getCategories(e, document, document.createElement(XMLElements.OPERATOR_CATEGORIES), tc);
+					} else {
+						categoriesElt = getCategories(e, document, (org.w3c.dom.Element) operator
+								.getElementsByTagName(XMLElements.OPERATOR_CATEGORIES).item(0), tc);
 					}
 					operator.appendChild(categoriesElt);
 
@@ -497,10 +473,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 					org.w3c.dom.Element conceptsElt;
 
 					if (operator.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
-								doc.createElement(XMLElements.CONCEPTS), tc);
+						conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 					} else {
-						conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+						conceptsElt = getConcepts(e, document,
 								(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 					}
 					operator.appendChild(conceptsElt);
@@ -508,13 +483,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 					// Parse the combination operands / result
 					org.w3c.dom.Element combinaisonOpResElt;
 					if (operator.getElementsByTagName(XMLElements.COMBINAISON_IO).getLength() == 0) {
-						combinaisonOpResElt = doc.createElement(XMLElements.COMBINAISON_IO);
+						combinaisonOpResElt = document.createElement(XMLElements.COMBINAISON_IO);
 					} else {
 						combinaisonOpResElt =
 								(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.COMBINAISON_IO).item(0);
 					}
 
-					final org.w3c.dom.Element operands = doc.createElement(XMLElements.OPERANDS);
+					final org.w3c.dom.Element operands = document.createElement(XMLElements.OPERANDS);
 					operands.setAttribute("returnType", tc.getProperType(e.getReturnType().toString()));
 					operands.setAttribute("contentType", "" + e.getAnnotation(operator.class).content_type());
 					operands.setAttribute("type", "" + e.getAnnotation(operator.class).type());
@@ -533,7 +508,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 					operands.setAttribute("class", pkgName);
 
 					if (!isStatic) {
-						final org.w3c.dom.Element operand = doc.createElement(XMLElements.OPERAND);
+						final org.w3c.dom.Element operand = document.createElement(XMLElements.OPERAND);
 						operand.setAttribute(XMLElements.ATT_OPERAND_TYPE,
 								tc.getProperType(e.getEnclosingElement().asType().toString()));
 						operand.setAttribute(XMLElements.ATT_OPERAND_POSITION, "" + arity);
@@ -545,7 +520,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 					if (args.size() > 0) {
 						final int first_index = args.get(0).asType().toString().contains("IScope") ? 1 : 0;
 						for (int i = first_index; i <= args.size() - 1; i++) {
-							final org.w3c.dom.Element operand = doc.createElement(XMLElements.OPERAND);
+							final org.w3c.dom.Element operand = document.createElement(XMLElements.OPERAND);
 							operand.setAttribute(XMLElements.ATT_OPERAND_TYPE,
 									tc.getProperType(args.get(i).asType().toString()));
 							operand.setAttribute(XMLElements.ATT_OPERAND_POSITION, "" + arity);
@@ -562,10 +537,10 @@ public class DocProcessor extends ElementProcessor<doc> {
 					// Parsing of the documentation
 					org.w3c.dom.Element docElt;
 					if (operator.getElementsByTagName(XMLElements.DOCUMENTATION).getLength() == 0) {
-						docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes,
+						docElt = getDocElt(e.getAnnotation(doc.class), document, mes,
 								"Operator " + operator.getAttribute("name"), tc, e);
 					} else {
-						docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc,
+						docElt = getDocElt(e.getAnnotation(doc.class), document,
 								(org.w3c.dom.Element) operator.getElementsByTagName(XMLElements.DOCUMENTATION).item(0),
 								mes, "Operator " + operator.getAttribute("name"), tc, e);
 					}
@@ -581,40 +556,40 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return operators;
 	}
 
-	private org.w3c.dom.Element processDocXMLArchitectures(final Set<? extends Element> setArchis, final Document doc,
+	private org.w3c.dom.Element processDocXMLArchitectures(final Set<? extends Element> setArchis,
 			final RoundEnvironment env) {
-		final org.w3c.dom.Element archis = doc.createElement(XMLElements.ARCHITECTURES);
+		final org.w3c.dom.Element archis = document.createElement(XMLElements.ARCHITECTURES);
 
 		for (final Element e : setArchis) {
 			if (e.getAnnotation(skill.class).internal() == true
 					|| e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) {
 				// Just omit it
 			} else if (ElementTypeUtils.isArchitectureElement((TypeElement) e, mes)) {
-				final org.w3c.dom.Element archiElt = doc.createElement(XMLElements.ARCHITECTURE);
+				final org.w3c.dom.Element archiElt = document.createElement(XMLElements.ARCHITECTURE);
 
 				archiElt.setAttribute(XMLElements.ATT_ARCHI_ID, e.getAnnotation(skill.class).name());
 				archiElt.setAttribute(XMLElements.ATT_ARCHI_NAME, e.getAnnotation(skill.class).name());
 
-				final org.w3c.dom.Element docEltArchi = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class),
-						doc, mes, e.getSimpleName().toString(), tc, null);
+				final org.w3c.dom.Element docEltArchi =
+						getDocElt(e.getAnnotation(doc.class), document, mes, e.getSimpleName().toString(), tc, null);
 				if (docEltArchi != null) {
 					archiElt.appendChild(docEltArchi);
 				}
 
 				// Parsing of vars
-				final org.w3c.dom.Element varsElt = DocProcessorAnnotations.getVarsElt(e.getAnnotation(vars.class), doc,
-						mes, archiElt.getAttribute("name"), tc);
+				final org.w3c.dom.Element varsElt =
+						getVarsElt(e.getAnnotation(vars.class), document, mes, archiElt.getAttribute("name"), tc);
 
 				if (varsElt != null) {
 					archiElt.appendChild(varsElt);
 				}
 
 				// Parsing of actions
-				final org.w3c.dom.Element actionsElt = doc.createElement(XMLElements.ACTIONS);
+				final org.w3c.dom.Element actionsElt = document.createElement(XMLElements.ACTIONS);
 
 				for (final Element eltMethod : e.getEnclosedElements()) {
-					final org.w3c.dom.Element actionElt = DocProcessorAnnotations
-							.getActionElt(eltMethod.getAnnotation(action.class), doc, mes, eltMethod, tc);
+					final org.w3c.dom.Element actionElt =
+							getActionElt(eltMethod.getAnnotation(action.class), document, mes, eltMethod, tc);
 
 					if (actionElt != null) {
 						actionsElt.appendChild(actionElt);
@@ -626,10 +601,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 				org.w3c.dom.Element conceptsElt;
 
 				if (archiElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+					conceptsElt = getConcepts(e, document,
 							(org.w3c.dom.Element) archiElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				archiElt.appendChild(conceptsElt);
@@ -641,10 +615,10 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return archis;
 	}
 
-	private org.w3c.dom.Element processDocXMLSkills(final Set<? extends Element> setSkills, final Document doc,
+	private org.w3c.dom.Element processDocXMLSkills(final Set<? extends Element> setSkills,
 			final RoundEnvironment env) {
 
-		final org.w3c.dom.Element skills = doc.createElement(XMLElements.SKILLS);
+		final org.w3c.dom.Element skills = document.createElement(XMLElements.SKILLS);
 
 		for (final Element e : setSkills) {
 			boolean emptySkill = true;
@@ -655,7 +629,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 			} else if (!ElementTypeUtils.isArchitectureElement((TypeElement) e, mes)) {
 
 				nbrSkills++;
-				final org.w3c.dom.Element skillElt = doc.createElement(XMLElements.SKILL);
+				final org.w3c.dom.Element skillElt = document.createElement(XMLElements.SKILL);
 
 				skillElt.setAttribute(XMLElements.ATT_SKILL_ID, e.getAnnotation(skill.class).name());
 				skillElt.setAttribute(XMLElements.ATT_SKILL_NAME, e.getAnnotation(skill.class).name());
@@ -664,16 +638,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 				skillElt.setAttribute(XMLElements.ATT_SKILL_CLASS, ((TypeElement) e).getQualifiedName().toString());
 				skillElt.setAttribute(XMLElements.ATT_SKILL_EXTENDS, ((TypeElement) e).getSuperclass().toString());
 
-				final org.w3c.dom.Element docEltSkill = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class),
-						doc, mes, e.getSimpleName().toString(), tc, null);
+				final org.w3c.dom.Element docEltSkill =
+						getDocElt(e.getAnnotation(doc.class), document, mes, e.getSimpleName().toString(), tc, null);
 				if (docEltSkill != null) {
 					skillElt.appendChild(docEltSkill);
 					emptySkill = false;
 				}
 
 				// Parsing of vars
-				final org.w3c.dom.Element varsElt = DocProcessorAnnotations.getVarsElt(e.getAnnotation(vars.class), doc,
-						mes, skillElt.getAttribute("name"), tc);
+				final org.w3c.dom.Element varsElt =
+						getVarsElt(e.getAnnotation(vars.class), document, mes, skillElt.getAttribute("name"), tc);
 
 				if (varsElt != null) {
 					skillElt.appendChild(varsElt);
@@ -684,11 +658,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 				}
 
 				// Parsing of actions
-				final org.w3c.dom.Element actionsElt = doc.createElement(XMLElements.ACTIONS);
+				final org.w3c.dom.Element actionsElt = document.createElement(XMLElements.ACTIONS);
 
 				for (final Element eltMethod : e.getEnclosedElements()) {
-					final org.w3c.dom.Element actionElt = DocProcessorAnnotations
-							.getActionElt(eltMethod.getAnnotation(action.class), doc, mes, eltMethod, tc);
+					final org.w3c.dom.Element actionElt =
+							getActionElt(eltMethod.getAnnotation(action.class), document, mes, eltMethod, tc);
 
 					if (actionElt != null) {
 						actionsElt.appendChild(actionElt);
@@ -701,10 +675,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 				org.w3c.dom.Element conceptsElt;
 
 				if (skillElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+					conceptsElt = getConcepts(e, document,
 							(org.w3c.dom.Element) skillElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				skillElt.appendChild(conceptsElt);
@@ -737,29 +710,29 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return skills;
 	}
 
-	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends Element> setSpecies, final Document doc) {
-		final org.w3c.dom.Element species = doc.createElement(XMLElements.SPECIESS);
+	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends Element> setSpecies) {
+		final org.w3c.dom.Element species = document.createElement(XMLElements.SPECIESS);
 
 		for (final Element e : setSpecies) {
 			if (e.getAnnotation(species.class).internal() == true
 					|| e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) {
 				// Just omit it
 			} else {
-				final org.w3c.dom.Element spec = doc.createElement(XMLElements.SPECIES);
+				final org.w3c.dom.Element spec = document.createElement(XMLElements.SPECIES);
 				spec.setAttribute(XMLElements.ATT_SPECIES_ID, e.getAnnotation(species.class).name());
 				spec.setAttribute(XMLElements.ATT_SPECIES_NAME, e.getAnnotation(species.class).name());
 
-				final org.w3c.dom.Element docEltSpecies = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class),
-						doc, mes, e.getSimpleName().toString(), tc, null);
+				final org.w3c.dom.Element docEltSpecies =
+						getDocElt(e.getAnnotation(doc.class), document, mes, e.getSimpleName().toString(), tc, null);
 				if (docEltSpecies != null) {
 					spec.appendChild(docEltSpecies);
 				}
 
 				// Parsing of actions
-				final org.w3c.dom.Element actionsElt = doc.createElement(XMLElements.ACTIONS);
+				final org.w3c.dom.Element actionsElt = document.createElement(XMLElements.ACTIONS);
 				for (final Element eltMethod : e.getEnclosedElements()) {
-					final org.w3c.dom.Element actionElt = DocProcessorAnnotations
-							.getActionElt(eltMethod.getAnnotation(action.class), doc, mes, eltMethod, tc);
+					final org.w3c.dom.Element actionElt =
+							getActionElt(eltMethod.getAnnotation(action.class), document, mes, eltMethod, tc);
 
 					if (actionElt != null) {
 						actionsElt.appendChild(actionElt);
@@ -768,17 +741,17 @@ public class DocProcessor extends ElementProcessor<doc> {
 				spec.appendChild(actionsElt);
 
 				// Parsing of skills
-				final org.w3c.dom.Element skillsElt = doc.createElement(XMLElements.SPECIES_SKILLS);
+				final org.w3c.dom.Element skillsElt = document.createElement(XMLElements.SPECIES_SKILLS);
 				for (final String eltSkill : e.getAnnotation(species.class).skills()) {
-					final org.w3c.dom.Element skillElt = doc.createElement(XMLElements.SPECIES_SKILL);
+					final org.w3c.dom.Element skillElt = document.createElement(XMLElements.SPECIES_SKILL);
 					skillElt.setAttribute(XMLElements.ATT_SPECIES_SKILL, eltSkill);
 					skillsElt.appendChild(skillElt);
 				}
 				spec.appendChild(skillsElt);
 
 				// Parsing of vars
-				final org.w3c.dom.Element varsElt = DocProcessorAnnotations.getVarsElt(e.getAnnotation(vars.class), doc,
-						mes, spec.getAttribute("name"), tc);
+				final org.w3c.dom.Element varsElt =
+						getVarsElt(e.getAnnotation(vars.class), document, mes, spec.getAttribute("name"), tc);
 				if (varsElt != null) {
 					spec.appendChild(varsElt);
 				}
@@ -786,10 +759,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (spec.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+					conceptsElt = getConcepts(e, document,
 							(org.w3c.dom.Element) spec.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				spec.appendChild(conceptsElt);
@@ -800,9 +772,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return species;
 	}
 
-	private org.w3c.dom.Element processDocXMLStatementsInsideSymbol(final Set<? extends Element> setStatement,
-			final Document doc) {
-		final org.w3c.dom.Element statementsInsideSymbolElt = doc.createElement(XMLElements.INSIDE_STAT_SYMBOLS);
+	private org.w3c.dom.Element processDocXMLStatementsInsideSymbol(final Set<? extends Element> setStatement) {
+		final org.w3c.dom.Element statementsInsideSymbolElt = document.createElement(XMLElements.INSIDE_STAT_SYMBOLS);
 		final ArrayList<String> insideStatementSymbol = new ArrayList<String>();
 
 		for (final Element e : setStatement) {
@@ -823,7 +794,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		}
 
 		for (final String insName : insideStatementSymbol) {
-			final org.w3c.dom.Element insideStatElt = doc.createElement(XMLElements.INSIDE_STAT_SYMBOL);
+			final org.w3c.dom.Element insideStatElt = document.createElement(XMLElements.INSIDE_STAT_SYMBOL);
 			insideStatElt.setAttribute(XMLElements.ATT_INSIDE_STAT_SYMBOL, insName);
 			statementsInsideSymbolElt.appendChild(insideStatElt);
 		}
@@ -831,9 +802,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsInsideSymbolElt;
 	}
 
-	private org.w3c.dom.Element processDocXMLStatementsInsideKind(final Set<? extends Element> setStatement,
-			final Document doc) {
-		final org.w3c.dom.Element statementsInsideKindElt = doc.createElement(XMLElements.INSIDE_STAT_KINDS);
+	private org.w3c.dom.Element processDocXMLStatementsInsideKind(final Set<? extends Element> setStatement) {
+		final org.w3c.dom.Element statementsInsideKindElt = document.createElement(XMLElements.INSIDE_STAT_KINDS);
 		final ArrayList<String> insideStatementKind = new ArrayList<String>();
 
 		for (final Element e : setStatement) {
@@ -855,7 +825,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		}
 
 		for (final String insName : insideStatementKind) {
-			final org.w3c.dom.Element insideStatElt = doc.createElement(XMLElements.INSIDE_STAT_KIND);
+			final org.w3c.dom.Element insideStatElt = document.createElement(XMLElements.INSIDE_STAT_KIND);
 			insideStatElt.setAttribute(XMLElements.ATT_INSIDE_STAT_SYMBOL, insName);
 			statementsInsideKindElt.appendChild(insideStatElt);
 		}
@@ -863,8 +833,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsInsideKindElt;
 	}
 
-	private Node processDocXMLStatementsKinds(final Set<? extends Element> setStatements, final Document doc) {
-		final org.w3c.dom.Element statementsKindsElt = doc.createElement(XMLElements.STATEMENT_KINDS);
+	private Node processDocXMLStatementsKinds(final Set<? extends Element> setStatements) {
+		final org.w3c.dom.Element statementsKindsElt = document.createElement(XMLElements.STATEMENT_KINDS);
 		final ArrayList<String> statementKinds = new ArrayList<String>();
 
 		for (final Element e : setStatements) {
@@ -881,7 +851,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		}
 
 		for (final String kindName : statementKinds) {
-			final org.w3c.dom.Element kindStatElt = doc.createElement(XMLElements.KIND);
+			final org.w3c.dom.Element kindStatElt = document.createElement(XMLElements.KIND);
 			kindStatElt.setAttribute(XMLElements.ATT_KIND_STAT, kindName);
 			statementsKindsElt.appendChild(kindStatElt);
 		}
@@ -889,13 +859,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsKindsElt;
 	}
 
-	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setTypes, final Document doc,
-			final RoundEnvironment env) {
-		final org.w3c.dom.Element types = doc.createElement(XMLElements.TYPES);
+	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setTypes, final RoundEnvironment env) {
+		final org.w3c.dom.Element types = document.createElement(XMLElements.TYPES);
 
 		for (final Element t : setTypes) {
 			if (!t.getAnnotation(type.class).internal()) {
-				final org.w3c.dom.Element typeElt = doc.createElement(XMLElements.TYPE);
+				final org.w3c.dom.Element typeElt = document.createElement(XMLElements.TYPE);
 
 				typeElt.setAttribute(XMLElements.ATT_TYPE_NAME, t.getAnnotation(type.class).name());
 				typeElt.setAttribute(XMLElements.ATT_TYPE_ID, "" + t.getAnnotation(type.class).id());
@@ -904,19 +873,17 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// /////////////////////////////////////////////////////
 				// Parsing of the documentation
 				if (t.getAnnotation(type.class).doc().length != 0) {
-					final org.w3c.dom.Element docElt =
-							DocProcessorAnnotations.getDocElt(t.getAnnotation(type.class).doc()[0], doc, mes,
-									t.getAnnotation(type.class).name(), tc, null);
+					final org.w3c.dom.Element docElt = getDocElt(t.getAnnotation(type.class).doc()[0], document, mes,
+							t.getAnnotation(type.class).name(), tc, null);
 					typeElt.appendChild(docElt);
 				}
 
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (typeElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(t, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(t, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(t, doc,
+					conceptsElt = getConcepts(t, document,
 							(org.w3c.dom.Element) typeElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				typeElt.appendChild(conceptsElt);
@@ -928,8 +895,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return types;
 	}
 
-	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement, final Document doc) {
-		final org.w3c.dom.Element statementsElt = doc.createElement(XMLElements.STATEMENTS);
+	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement) {
+		final org.w3c.dom.Element statementsElt = document.createElement(XMLElements.STATEMENTS);
 
 		for (final Element e : setStatement) {
 			if (e.getAnnotation(symbol.class).internal() == true
@@ -937,7 +904,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// We just omit it
 			} else {
 				nbrSymbols++;
-				final org.w3c.dom.Element statElt = doc.createElement(XMLElements.STATEMENT);
+				final org.w3c.dom.Element statElt = document.createElement(XMLElements.STATEMENT);
 				if (e.getAnnotation(symbol.class).name().length != 0) {
 					statElt.setAttribute(XMLElements.ATT_STAT_ID, e.getAnnotation(symbol.class).name()[0]);
 					statElt.setAttribute(XMLElements.ATT_STAT_NAME, e.getAnnotation(symbol.class).name()[0]);
@@ -951,22 +918,21 @@ public class DocProcessor extends ElementProcessor<doc> {
 						tc.getSymbolKindStringFromISymbolKind(e.getAnnotation(symbol.class).kind()));
 
 				// Parsing of facets
-				final org.w3c.dom.Element facetsElt = DocProcessorAnnotations.getFacetsElt(
-						e.getAnnotation(facets.class), doc, mes, statElt.getAttribute(XMLElements.ATT_STAT_NAME), tc);
+				final org.w3c.dom.Element facetsElt = getFacetsElt(e.getAnnotation(facets.class), document, mes,
+						statElt.getAttribute(XMLElements.ATT_STAT_NAME), tc);
 				if (facetsElt != null) {
 					statElt.appendChild(facetsElt);
 				}
 
 				// Parsing of documentation
-				final org.w3c.dom.Element docstatElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class),
-						doc, mes, "Statement " + statElt.getAttribute(XMLElements.ATT_STAT_NAME), tc, null);
+				final org.w3c.dom.Element docstatElt = getDocElt(e.getAnnotation(doc.class), document, mes,
+						"Statement " + statElt.getAttribute(XMLElements.ATT_STAT_NAME), tc, null);
 				if (docstatElt != null) {
 					statElt.appendChild(docstatElt);
 				}
 
 				// Parsing of inside
-				final org.w3c.dom.Element insideElt =
-						DocProcessorAnnotations.getInsideElt(e.getAnnotation(inside.class), doc, tc);
+				final org.w3c.dom.Element insideElt = getInsideElt(e.getAnnotation(inside.class), document, tc);
 				if (insideElt != null) {
 					statElt.appendChild(insideElt);
 				}
@@ -974,10 +940,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (statElt.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
-					conceptsElt =
-							DocProcessorAnnotations.getConcepts(e, doc, doc.createElement(XMLElements.CONCEPTS), tc);
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
 				} else {
-					conceptsElt = DocProcessorAnnotations.getConcepts(e, doc,
+					conceptsElt = getConcepts(e, document,
 							(org.w3c.dom.Element) statElt.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				statElt.appendChild(conceptsElt);
@@ -986,6 +951,499 @@ public class DocProcessor extends ElementProcessor<doc> {
 			}
 		}
 		return statementsElt;
+	}
+
+	public static final String PREFIX_CONSTANT = "#";
+
+	public org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final Messager mes,
+			final String eltName, final TypeConverter tc, final ExecutableElement e) {
+		return getDocElt(docAnnot, doc, null, mes, eltName, tc, e);
+	}
+
+	public org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
+			final String eltName, final TypeConverter tc, final ExecutableElement e) { // e.getSimpleName()
+		if (docAnnotTab == null || docAnnotTab.length == 0) { return getDocElt(null, doc, null, mes, eltName, tc, e); }
+		return getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e);
+	}
+
+	public org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final org.w3c.dom.Element docElement,
+			final Messager mes, final String eltName, final TypeConverter tc, final ExecutableElement e) { // e.getSimpleName()
+		org.w3c.dom.Element docElt = docElement;
+
+		if (docAnnot == null) {
+			// mes.printMessage(Kind.WARNING, "The element __" + eltName + "__ is not documented.");
+		} else {
+			if (docElt == null) {
+				docElt = doc.createElement(XMLElements.DOCUMENTATION);
+			}
+
+			// Parse result
+			final String value = docAnnot.value();
+			final boolean masterDoc = docAnnot.masterDoc();
+			if (value != "") {
+				if (docElt.getElementsByTagName(XMLElements.RESULT).getLength() != 0) {
+					final org.w3c.dom.Element resultElt =
+							(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.RESULT).item(0);
+					if ("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && masterDoc
+							|| !"true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && !masterDoc) {
+						resultElt.setTextContent(resultElt.getTextContent() + "\n" + value);
+					} else if (!resultElt.hasAttribute(XMLElements.ATT_RES_MASTER) && masterDoc) {
+						resultElt.setTextContent(value);
+						resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");
+					}
+				} else {
+					final org.w3c.dom.Element resultElt = doc.createElement(XMLElements.RESULT);
+					resultElt.setTextContent(value);
+					if (masterDoc) {
+						resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");
+					}
+					docElt.appendChild(resultElt);
+				}
+			}
+
+			// Parse comment
+			final String comment = docAnnot.comment();
+			if (!"".equals(comment)) {
+				if (docElt.getElementsByTagName(XMLElements.COMMENT).getLength() != 0) {
+					docElt.getElementsByTagName(XMLElements.COMMENT).item(0).setTextContent(
+							docElt.getElementsByTagName(XMLElements.COMMENT).item(0).getTextContent() + comment);
+				} else {
+					final org.w3c.dom.Element commentElt = doc.createElement(XMLElements.COMMENT);
+					commentElt.setTextContent(comment);
+					docElt.appendChild(commentElt);
+				}
+			}
+
+			// Parse: seeAlso
+			org.w3c.dom.Element seeAlsoElt;
+			if (docElt.getElementsByTagName(XMLElements.SEEALSO).getLength() != 0) {
+				seeAlsoElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.SEEALSO).item(0);
+			} else {
+				seeAlsoElt = doc.createElement(XMLElements.SEEALSO);
+			}
+			for (final String see : docAnnot.see()) {
+				final NodeList nLSee = seeAlsoElt.getElementsByTagName(XMLElements.SEE);
+				int i = 0;
+				boolean seeAlreadyInserted = false;
+				while (i < nLSee.getLength() && !seeAlreadyInserted) {
+					if (((org.w3c.dom.Element) nLSee.item(i)).getAttribute(XMLElements.ATT_SEE_ID).equals(see)) {
+						seeAlreadyInserted = true;
+					}
+					i++;
+				}
+				if (!seeAlreadyInserted) {
+					final org.w3c.dom.Element seesElt = doc.createElement(XMLElements.SEE);
+					seesElt.setAttribute(XMLElements.ATT_SEE_ID, see);
+					seeAlsoElt.appendChild(seesElt);
+				}
+			}
+			if (docAnnot.see().length != 0) {
+				docElt.appendChild(seeAlsoElt);
+			}
+
+			// Parse: usages
+
+			org.w3c.dom.Element usagesElt;
+			org.w3c.dom.Element usagesExampleElt;
+			org.w3c.dom.Element usagesNoExampleElt;
+			if (docElt.getElementsByTagName(XMLElements.USAGES).getLength() != 0) {
+				usagesElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES).item(0);
+			} else {
+				usagesElt = doc.createElement(XMLElements.USAGES);
+			}
+			if (docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).getLength() != 0) {
+				usagesExampleElt =
+						(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).item(0);
+			} else {
+				usagesExampleElt = doc.createElement(XMLElements.USAGES_EXAMPLES);
+			}
+			if (docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).getLength() != 0) {
+				usagesNoExampleElt =
+						(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).item(0);
+			} else {
+				usagesNoExampleElt = doc.createElement(XMLElements.USAGES_NO_EXAMPLE);
+			}
+			int numberOfUsages = 0;
+			int numberOfUsagesWithExamplesOnly = 0;
+			int numberOfUsagesWithoutExample = 0;
+			for (final usage usage : docAnnot.usages()) {
+				final org.w3c.dom.Element usageElt = doc.createElement(XMLElements.USAGE);
+
+				// Among the usages, we consider the ones without value
+				if ("".equals(usage.value())) {
+					numberOfUsagesWithExamplesOnly++;
+
+					final org.w3c.dom.Element examplesUsageElt = getExamplesElt(usage.examples(), doc, e, tc);
+					usageElt.appendChild(examplesUsageElt);
+					usagesExampleElt.appendChild(usageElt);
+				}
+				// Among the usages, we consider the ones with only the value
+				else if (usage.examples().length == 0) {
+					numberOfUsagesWithoutExample++;
+
+					usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
+					usagesNoExampleElt.appendChild(usageElt);
+				}
+				// Otherwise, when we have both value and examples
+				else {
+					numberOfUsages++;
+
+					usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
+					final org.w3c.dom.Element examplesUsageElt = getExamplesElt(usage.examples(), doc, e, tc);
+					usageElt.appendChild(examplesUsageElt);
+					usagesElt.appendChild(usageElt);
+				}
+			}
+
+			// Let's continue with examples and special cases
+			// - special cases are equivalent to usage without examples
+			// - examples are equivalent to usage with only examples
+			// Parse examples
+			if (docAnnot.examples().length != 0) {
+				final org.w3c.dom.Element usageExElt = doc.createElement(XMLElements.USAGE);
+
+				final org.w3c.dom.Element examplesElt = getExamplesElt(docAnnot.examples(), doc, e, tc);
+
+				numberOfUsagesWithExamplesOnly += docAnnot.examples().length;
+				usageExElt.appendChild(examplesElt);
+				usagesExampleElt.appendChild(usageExElt);
+			}
+
+			// Parse specialCases
+			for (final String cases : docAnnot.special_cases()) {
+				if (!"".equals(cases)) {
+					final org.w3c.dom.Element caseElt = doc.createElement(XMLElements.USAGE);
+					caseElt.setAttribute(XMLElements.ATT_USAGE_DESC, cases);
+					usagesNoExampleElt.appendChild(caseElt);
+					numberOfUsagesWithoutExample++;
+				}
+			}
+
+			if (numberOfUsagesWithExamplesOnly != 0) {
+				docElt.appendChild(usagesExampleElt);
+			}
+			if (numberOfUsagesWithoutExample != 0) {
+				docElt.appendChild(usagesNoExampleElt);
+			}
+			if (numberOfUsages != 0) {
+				docElt.appendChild(usagesElt);
+			}
+
+		}
+		return docElt;
+	}
+
+	public org.w3c.dom.Element getExamplesElt(final example[] examples, final Document doc, final ExecutableElement e,
+			final TypeConverter tc) {
+		final org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);
+		for (final example example : examples) {
+			examplesElt.appendChild(getExampleElt(example, doc, e, tc));
+		}
+		return examplesElt;
+	}
+
+	public org.w3c.dom.Element getExampleElt(final example example, final Document doc, final ExecutableElement e,
+			final TypeConverter tc) {
+		final org.w3c.dom.Element exampleElt = doc.createElement(XMLElements.EXAMPLE);
+		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_CODE, example.value());
+		if (!"".equals(example.var())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_VAR, example.var());
+		}
+		if (!"".equals(example.equals())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_EQUALS, example.equals());
+		}
+		if (!"".equals(example.isNot())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_NOT, example.isNot());
+		}
+		if (!"".equals(example.raises())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_RAISES, example.raises());
+		}
+		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TEST_ONLY, "" + example.isTestOnly());
+		exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_EXECUTABLE, "" + example.isExecutable());
+		if (!example.isExecutable()) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, "false");
+		} else {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, "" + example.test());
+		}
+		if (!"".equals(example.returnType())) {
+			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, example.returnType());
+		} else {
+			if (e != null) {
+				exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_TYPE, tc.getProperType(e.getReturnType().toString()));
+			}
+		}
+		return exampleElt;
+	}
+
+	public org.w3c.dom.Element getConstantElt(final constant constant, final Document doc, final Element e,
+			final Messager mes, final TypeConverter tc) {
+		final org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);
+
+		constantElt.setAttribute(XMLElements.ATT_CST_NAME, PREFIX_CONSTANT + constant.value());
+		// constantElt.setAttribute(XMLElements.ATT_CST_VALUE,
+		// ((VariableElement)e).getConstantValue().toString());
+		final Object valCst = ((VariableElement) e).getConstantValue();
+		final String valCstStr = valCst == null ? "No Default Value" : valCst.toString();
+		constantElt.setAttribute(XMLElements.ATT_CST_VALUE, valCstStr);
+
+		String names = "";
+		for (final String n : constant.altNames()) {
+			names = "".equals(names) ? PREFIX_CONSTANT + n : names + "," + PREFIX_CONSTANT + n;
+		}
+		if (!"".equals(names))
+			constantElt.setAttribute(XMLElements.ATT_CST_NAMES, names);
+
+		constantElt.appendChild(getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));
+
+		final org.w3c.dom.Element docConstantElt =
+				getDocElt(constant.doc(), doc, mes, e.getSimpleName().toString(), null, null);
+		if (docConstantElt != null) {
+			constantElt.appendChild(docConstantElt);
+		}
+
+		return constantElt;
+	}
+
+	public org.w3c.dom.Element getVarsElt(final vars varsAnnot, final Document doc, final Messager mes,
+			final String skillName, final TypeConverter tc) {
+		if (varsAnnot != null) {
+			final org.w3c.dom.Element varsElt = doc.createElement(XMLElements.VARS);
+			for (final var v : varsAnnot.value()) {
+				final org.w3c.dom.Element varElt = doc.createElement(XMLElements.VAR);
+				varElt.setAttribute(XMLElements.ATT_VAR_NAME, v.name());
+				varElt.setAttribute(XMLElements.ATT_VAR_TYPE, tc.getTypeString(Integer.valueOf(v.type())));
+				varElt.setAttribute(XMLElements.ATT_VAR_CONSTANT, "" + v.constant());
+
+				final org.w3c.dom.Element docEltVar =
+						getDocElt(v.doc(), doc, mes, "Var " + v.name() + " from " + skillName, tc, null);
+				if (docEltVar != null) {
+					varElt.appendChild(docEltVar);
+				}
+
+				String dependsOn = new String();
+				for (final String dependElement : v.depends_on()) {
+					dependsOn = ("".equals(dependsOn) ? "" : dependsOn + ",") + dependElement;
+				}
+				varElt.setAttribute(XMLElements.ATT_VAR_DEPENDS_ON, dependsOn);
+				varsElt.appendChild(varElt);
+			}
+			return varsElt;
+		}
+		return null;
+	}
+
+	public org.w3c.dom.Element getActionElt(final action actionAnnot, final Document doc, final Messager mes,
+			final Element e, final TypeConverter tc) {
+		if (!(e instanceof ExecutableElement) || actionAnnot == null) { return null; }
+
+		final ExecutableElement eltMethod = (ExecutableElement) e;
+		final org.w3c.dom.Element actionElt = doc.createElement(XMLElements.ACTION);
+		actionElt.setAttribute(XMLElements.ATT_ACTION_NAME, actionAnnot.name());
+		actionElt.setAttribute(XMLElements.ATT_ACTION_RETURNTYPE,
+				tc.getProperType(eltMethod.getReturnType().toString()));
+
+		final org.w3c.dom.Element argsElt = doc.createElement(XMLElements.ARGS);
+		for (final arg eltArg : actionAnnot.args()) {
+			final org.w3c.dom.Element argElt = doc.createElement(XMLElements.ARG);
+			argElt.setAttribute(XMLElements.ATT_ARG_NAME, eltArg.name());
+
+			final String tabType = tc.getTypeString(eltArg.type());
+			// for (int i = 0; i < eltArg.type().length; i++) {
+			// tabType = tabType + (i < eltArg.type().length - 1 ? tc.getTypeString(eltArg.type()[i]) + ","
+			// : tc.getTypeString(eltArg.type()[i]));
+			// }
+			argElt.setAttribute(XMLElements.ATT_ARG_TYPE, tabType);
+			argElt.setAttribute(XMLElements.ATT_ARG_OPTIONAL, "" + eltArg.optional());
+			final org.w3c.dom.Element docEltArg = getDocElt(eltArg.doc(), doc, mes,
+					"Arg " + eltArg.name() + " from " + eltMethod.getSimpleName(), tc, null);
+			if (docEltArg != null) {
+				argElt.appendChild(docEltArg);
+			}
+
+			argsElt.appendChild(argElt);
+		}
+		actionElt.appendChild(argsElt);
+
+		final org.w3c.dom.Element docEltAction =
+				getDocElt(actionAnnot.doc(), doc, mes, eltMethod.getSimpleName().toString(), tc, null);
+		if (docEltAction != null) {
+			actionElt.appendChild(docEltAction);
+		}
+
+		return actionElt;
+	}
+
+	public org.w3c.dom.Element getFacetsElt(final facets facetsAnnot, final Document doc, final Messager mes,
+			final String statName, final TypeConverter tc) {
+		if (facetsAnnot == null) { return null; }
+
+		final org.w3c.dom.Element facetsElt = doc.createElement(XMLElements.FACETS);
+
+		for (final facet f : facetsAnnot.value()) {
+			final org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
+			facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
+			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, tc.getTypeString(f.type()));
+			facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
+			if (f.values().length != 0) {
+				String valuesTaken = ", takes values in: {" + f.values()[0];
+				for (int i = 1; i < f.values().length; i++) {
+					valuesTaken += ", " + f.values()[i];
+				}
+				valuesTaken += "}";
+				facetElt.setAttribute(XMLElements.ATT_FACET_VALUES, valuesTaken);
+			}
+			facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
+					f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
+			final org.w3c.dom.Element docFacetElt =
+					getDocElt(f.doc(), doc, mes, "Facet " + f.name() + " from Statement" + statName, tc, null);
+			if (docFacetElt != null) {
+				facetElt.appendChild(docFacetElt);
+			}
+
+			facetsElt.appendChild(facetElt);
+		}
+		return facetsElt;
+	}
+
+	public org.w3c.dom.Element getInsideElt(final inside insideAnnot, final Document doc, final TypeConverter tc) {
+		if (insideAnnot == null) { return null; }
+
+		final org.w3c.dom.Element insideElt = doc.createElement(XMLElements.INSIDE);
+
+		final org.w3c.dom.Element symbolsElt = doc.createElement(XMLElements.SYMBOLS);
+		for (final String sym : insideAnnot.symbols()) {
+			final org.w3c.dom.Element symElt = doc.createElement(XMLElements.SYMBOL);
+			symElt.setTextContent(sym);
+			symbolsElt.appendChild(symElt);
+		}
+		insideElt.appendChild(symbolsElt);
+
+		final org.w3c.dom.Element kindsElt = doc.createElement(XMLElements.KINDS);
+		for (final int kind : insideAnnot.kinds()) {
+			final org.w3c.dom.Element kindElt = doc.createElement(XMLElements.KIND);
+			kindElt.setTextContent(tc.getSymbolKindStringFromISymbolKind(kind));
+			kindsElt.appendChild(kindElt);
+		}
+		insideElt.appendChild(kindsElt);
+
+		return insideElt;
+	}
+
+	public org.w3c.dom.Element getOperatorElement(final org.w3c.dom.Element operators, final String eltName) {
+		final NodeList nL = operators.getElementsByTagName(XMLElements.OPERATOR);
+		int i = 0;
+		final boolean found = false;
+		while (!found && i < nL.getLength()) {
+			final org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
+			if (eltName.equals(elt.getAttribute(XMLElements.ATT_OP_ID))) { return elt; }
+			i++;
+		}
+		return null;
+	}
+
+	public org.w3c.dom.Element getCategories(final Element e, final Document doc,
+			final org.w3c.dom.Element categoriesElt, final TypeConverter tc) {
+		final ArrayList<String> categories = new ArrayList<String>();
+		String[] categoriesTab = null;
+		final NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
+		for (int i = 0; i < nL.getLength(); i++) {
+			categories.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
+		}
+
+		// To be able to deal with various annotations....
+		if (e.getAnnotation(operator.class) != null) {
+			categoriesTab = e.getAnnotation(operator.class).category();
+		} else if (e.getAnnotation(constant.class) != null) {
+			categoriesTab = e.getAnnotation(constant.class).category();
+		}
+
+		if (e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0
+				|| e.getAnnotation(constant.class) != null && e.getAnnotation(constant.class).category().length > 0) {
+			if (categoriesTab != null)
+				for (final String categoryName : categoriesTab) {
+					if (!categories.contains(categoryName)) {
+						categories.add(categoryName);
+
+						final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+						catElt.setAttribute(XMLElements.ATT_CAT_ID, categoryName);
+						appendChild(categoriesElt, catElt);
+					}
+				}
+		} else {
+			if (!categories.contains(tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()))) {
+				final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+				catElt.setAttribute(XMLElements.ATT_CAT_ID,
+						tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()));
+				appendChild(categoriesElt, catElt);
+			}
+		}
+
+		// We had a particular category that is read from the iterator
+		if (e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).iterator()) {
+			final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
+			catElt.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
+			appendChild(categoriesElt, catElt);
+		}
+
+		return categoriesElt;
+	}
+
+	public org.w3c.dom.Element getCategories(final Element e, final Document doc, final TypeConverter tc) {
+		final org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
+
+		return getCategories(e, doc, categoriesElt, tc);
+	}
+
+	public org.w3c.dom.Element getConcepts(final Element e, final Document doc, final org.w3c.dom.Element conceptElt,
+			final TypeConverter tc) {
+		final ArrayList<String> concepts = new ArrayList<String>();
+		String[] conceptsTab = null;
+		final NodeList nL = conceptElt.getElementsByTagName(XMLElements.CONCEPT);
+		for (int i = 0; i < nL.getLength(); i++) {
+			concepts.add(((org.w3c.dom.Element) nL.item(i)).getAttribute(XMLElements.ATT_CAT_ID));
+		}
+
+		// To be able to deal with various annotations....
+		if (e.getAnnotation(operator.class) != null) {
+			conceptsTab = e.getAnnotation(operator.class).concept();
+		} else if (e.getAnnotation(constant.class) != null) {
+			conceptsTab = e.getAnnotation(constant.class).concept();
+		} else if (e.getAnnotation(type.class) != null) {
+			conceptsTab = e.getAnnotation(type.class).concept();
+		} else if (e.getAnnotation(species.class) != null) {
+			conceptsTab = e.getAnnotation(species.class).concept();
+		} else if (e.getAnnotation(symbol.class) != null) {
+			conceptsTab = e.getAnnotation(symbol.class).concept();
+		} else if (e.getAnnotation(skill.class) != null) {
+			conceptsTab = e.getAnnotation(skill.class).concept();
+		}
+
+		if (e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).concept().length > 0
+				|| e.getAnnotation(constant.class) != null && e.getAnnotation(constant.class).concept().length > 0
+				|| e.getAnnotation(type.class) != null && e.getAnnotation(type.class).concept().length > 0
+				|| e.getAnnotation(skill.class) != null && e.getAnnotation(skill.class).concept().length > 0
+				|| e.getAnnotation(species.class) != null && e.getAnnotation(species.class).concept().length > 0
+				|| e.getAnnotation(symbol.class) != null && e.getAnnotation(symbol.class).concept().length > 0) {
+			if (conceptsTab != null)
+				for (final String conceptName : conceptsTab) {
+					if (!concepts.contains(conceptName)) {
+						concepts.add(conceptName);
+
+						final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CONCEPT);
+						catElt.setAttribute(XMLElements.ATT_CAT_ID, conceptName);
+						conceptElt.appendChild(catElt);
+					}
+				}
+		}
+
+		// We had a particular category that is red from the iterator
+		if (e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).iterator()) {
+			final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CONCEPT);
+			catElt.setAttribute(XMLElements.ATT_CAT_ID, IOperatorCategory.ITERATOR);
+			conceptElt.appendChild(catElt);
+		}
+
+		return conceptElt;
 	}
 
 }

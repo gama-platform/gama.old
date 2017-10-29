@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.FilerException;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -140,7 +141,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return delegate.getLocale();
 	}
 
-	void emitWarning(final String s, final Element e) {
+	public void emitWarning(final String s, final Element e) {
 		if (!PRODUCES_WARNING)
 			return;
 		if (e == null)
@@ -149,7 +150,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			getMessager().printMessage(Kind.WARNING, s, e);
 	}
 
-	void emitError(final String s, final Element e) {
+	public void emitError(final String s, final Element e) {
 		if (!PRODUCES_WARNING)
 			return;
 		if (e == null)
@@ -193,7 +194,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			// emitWarning(e.getMessage(), null);
+			emitWarning(e.getMessage(), null);
 		}
 		return null;
 	}
@@ -213,15 +214,21 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return null;
 	}
 
-	Writer createTestWriter() {
+	public Writer createTestWriter() {
+		return createTestWriter(getTestFileName());
+	}
+
+	public Writer createTestWriter(final String fileName) {
+		createTestsFolder();
 		try {
 			final OutputStream output =
-					getFiler().createResource(OUT, getTestFolderName() + ".models", getTestFileName(), (Element[]) null)
+					getFiler().createResource(OUT, getTestFolderName() + ".models", fileName, (Element[]) null)
 							.openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			// emitWarning(e.getMessage(), null);
+			e.printStackTrace();
+			emitWarning("Impossible to create test file " + fileName + ": " + e.getMessage(), null);
 		}
 		return null;
 	}
@@ -237,10 +244,19 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public void createTestsFolder() {
+		FileObject obj = null;
 		try {
-			final FileObject obj = getFiler().createResource(OUT, getTestFolderName(), ".project", (Element[]) null);
-			final OutputStream output = obj.openOutputStream();
-			final Writer writer = new OutputStreamWriter(output, CHARSET);
+			obj = getFiler().createResource(OUT, getTestFolderName(), ".project", (Element[]) null);
+		} catch (final FilerException e) {
+			// Already exists. Simply return
+			return;
+		} catch (final IOException e) {
+			// More serious problem
+			emitWarning("Cannot create tests folder: " + e.getMessage(), null);
+			return;
+		}
+		try (final OutputStream output = obj.openOutputStream();
+				final Writer writer = new OutputStreamWriter(output, CHARSET);) {
 			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n"
 					+ "	<name>Generated tests in " + currentPlugin + "</name>\n" + "	<comment>" + currentPlugin
 					+ "</comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n"
@@ -251,8 +267,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 					+ "		<nature>msi.gama.application.gamaNature</nature>\n"
 					+ "		<nature>msi.gama.application.testNature</nature>\n" + "	</natures>\n"
 					+ "</projectDescription>\n" + "");
-			writer.close();
-		} catch (final Throwable t) {
+		} catch (final IOException t) {
 			emitWarning(t.getMessage(), null);
 		}
 	}
