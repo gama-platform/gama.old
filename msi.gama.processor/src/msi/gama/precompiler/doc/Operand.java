@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.precompiler.doc.Element;
+package msi.gama.precompiler.doc;
 
 import msi.gama.precompiler.doc.utils.XMLElements;
 

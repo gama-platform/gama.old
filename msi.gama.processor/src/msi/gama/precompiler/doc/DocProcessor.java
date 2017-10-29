@@ -7,7 +7,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.precompiler;
+package msi.gama.precompiler.doc;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -36,6 +36,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import msi.gama.precompiler.Constants;
+import msi.gama.precompiler.ElementProcessor;
+import msi.gama.precompiler.GamlAnnotations;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IConstantCategory;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -50,17 +57,10 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.precompiler.doc.DocProcessorAnnotations;
-import msi.gama.precompiler.doc.Element.Operand;
-import msi.gama.precompiler.doc.Element.Operator;
-import msi.gama.precompiler.doc.utils.ElementTypeUtils;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 public class DocProcessor extends ElementProcessor<doc> {
-
-	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
-
-	public static final Character[] cuttingLettersOperatorDoc = { 'c', 'i', 'o', 't' };
 
 	Messager mes;
 	TypeConverter tc;
@@ -83,12 +83,28 @@ public class DocProcessor extends ElementProcessor<doc> {
 	}
 
 	@Override
+	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
+			final doc action, final org.w3c.dom.Element node) {
+		// Nothing to do, as this processor is a bit different from the others
+	}
+
+	@Override
+	protected Class<doc> getAnnotationClass() {
+		return doc.class;
+	}
+
+	@Override
+	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
+			final org.w3c.dom.Element node) {
+		// This is where the generation of tests needs to be done
+	}
+
+	@Override
 	public void processXML(final ProcessorContext context) {
 		if (!context.shouldProduceDoc())
 			return;
 		if (!firstParsing)
 			return;
-		context.emitWarning("Building doc for " + context.currentPlugin, null);
 		firstParsing = false;
 		mes = context.getMessager();
 		final Writer out = context.createWriter("docGAMA.xml");
@@ -425,7 +441,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 								tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
 
 						operator.setAttribute(XMLElements.ATT_ALPHABET_ORDER,
-								getAlphabetOrder(e.getAnnotation(operator.class).value()[0]));
+								Constants.getAlphabetOrder(e.getAnnotation(operator.class).value()[0]));
 					}
 					// Parse the alternative names of the operator
 					// we will create one operator markup per alternative name
@@ -440,7 +456,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 								altElt.setAttribute(XMLElements.ATT_OP_NAME, name);
 								altElt.setAttribute(XMLElements.ATT_OP_ALT_NAME,
 										e.getAnnotation(operator.class).value()[0]);
-								altElt.setAttribute(XMLElements.ATT_ALPHABET_ORDER, getAlphabetOrder(name));
+								altElt.setAttribute(XMLElements.ATT_ALPHABET_ORDER, Constants.getAlphabetOrder(name));
 
 								altElt.appendChild(DocProcessorAnnotations.getCategories(e, doc, tc));
 								operators.appendChild(altElt);
@@ -971,43 +987,5 @@ public class DocProcessor extends ElementProcessor<doc> {
 		}
 		return statementsElt;
 	}
-
-	public static String getAlphabetOrder(final String name) {
-		String order = "";
-		final String lastChar = "z";
-
-		for (int i = 0; i < cuttingLettersOperatorDoc.length; i++) {
-			final Character previousChar = i == 0 ? 'a' : cuttingLettersOperatorDoc[i - 1];
-			final Character c = cuttingLettersOperatorDoc[i];
-
-			if (i == 0 && name.compareTo(c.toString()) < 0
-					|| name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0) { // name
-																											// is
-																											// <
-																											// to
-																											// cutting
-																											// letter
-				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
-			}
-		}
-		if ("".equals(order)) {
-			order = cuttingLettersOperatorDoc[cuttingLettersOperatorDoc.length - 1].toString() + lastChar;
-		}
-
-		return order;
-	}
-
-	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final doc action, final org.w3c.dom.Element node) {}
-
-	@Override
-	protected Class<doc> getAnnotationClass() {
-		return null;
-	}
-
-	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {}
 
 }

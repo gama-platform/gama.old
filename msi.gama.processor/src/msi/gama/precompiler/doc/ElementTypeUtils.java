@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.precompiler.doc.utils;
+package msi.gama.precompiler.doc;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

@@ -31,8 +31,6 @@ import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import msi.gama.precompiler.java.Constants;
-
 public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment, Constants {
 	private final static boolean PRODUCES_DOC = true;
 	public static final Charset CHARSET = Charset.forName("UTF-8");
@@ -42,7 +40,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private final ProcessingEnvironment delegate;
 	private RoundEnvironment round;
 	private TypeMirror iSkill, iAgent;
-	volatile String currentPlugin;
+	public volatile String currentPlugin;
 
 	ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
@@ -189,7 +187,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return round.getElementsAnnotatedWith(a);
 	}
 
-	Writer createWriter(final String s) {
+	public Writer createWriter(final String s) {
 		try {
 			final OutputStream output = getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);

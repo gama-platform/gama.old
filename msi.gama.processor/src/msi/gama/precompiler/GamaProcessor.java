@@ -17,20 +17,20 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 
 import msi.gama.precompiler.GamlAnnotations.tests;
-import msi.gama.precompiler.java.Constants;
-import msi.gama.precompiler.java.JavaWriter;
+import msi.gama.precompiler.tests.TestProcessor;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 @SupportedAnnotationTypes ({ "*" })
+@SupportedSourceVersion (SourceVersion.RELEASE_8)
 public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
-	private final JavaWriter javaWriter = new JavaWriter();
 	int count;
 
 	@Override
@@ -38,17 +38,6 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		super.init(pe);
 
 		context = new ProcessorContext(pe);
-		// context.emitWarning("Options= " + pe.getOptions(), null);
-	}
-
-	// @Override
-	// public Set<String> getSupportedAnnotationTypes() {
-	// return processors.keySet().stream().map(p -> p.getCanonicalName()).collect(Collectors.toSet());
-	// }
-
-	@Override
-	public SourceVersion getSupportedSourceVersion() {
-		return SourceVersion.latestSupported();
 	}
 
 	@Override
@@ -56,12 +45,6 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		context.setRoundEnvironment(env);
 
 		if (!context.processingOver()) {
-			// context.emitWarning("Generating additions for plugin " + context.currentPlugin, null);
-			// final Set<? extends Element> elements = env.getRootElements();
-			// for (final Element e : elements) {
-			// context.emitWarning("Processing " + e.getSimpleName().toString() + " in package "
-			// + e.getEnclosingElement().getSimpleName().toString(), null);
-			// }
 			try {
 				processors.values().forEach(p -> p.processXML(context));
 			} catch (final Exception e) {
@@ -94,14 +77,53 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		try (Writer source = context.createSourceWriter(file)) {
 			if (source != null) {
 				final StringBuilder sourceBuilder = new StringBuilder();
-				javaWriter.write(context, sourceBuilder);
+				writeJavaHeader(sourceBuilder);
+				writeJavaBody(sourceBuilder);
 				source.append(sourceBuilder);
 			}
-			// else
-			// context.emitWarning("Cannot create source file", null);
 		} catch (final Exception e) {
 			context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
 		}
+	}
+
+	protected void writeJavaHeader(final StringBuilder sb) {
+		sb.append("package ").append(PACKAGE_NAME).append(';');
+		for (final String element : IMPORTS) {
+			sb.append(ln).append("import ").append(element).append(".*;");
+		}
+		for (final String element : EXPLICIT_IMPORTS) {
+			sb.append(ln).append("import ").append(element).append(";");
+		}
+		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
+		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
+		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
+		sb.append(ln).append("	@SuppressWarnings({ \"rawtypes\", \"unchecked\" })");
+		sb.append(ln).append(ln).append("public class GamlAdditions extends AbstractGamlAdditions").append(" {");
+		sb.append(ln).append(tab);
+		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
+		processors.values().forEach(p -> {
+			final String method = p.getInitializationMethodName();
+			if (method != null)
+				sb.append(ln).append(tab).append(method).append("();");
+		});
+
+		sb.append(ln).append('}');
+	}
+
+	public String writeJavaBody(final StringBuilder sb) {
+
+		processors.values().forEach(p -> {
+			final String method = p.getInitializationMethodName();
+			if (method != null) {
+				sb.append("public void " + method + "() " + p.getExceptions() + " {");
+				p.writeTo(context, sb);
+				sb.append(ln);
+				sb.append("}");
+			}
+		});
+
+		sb.append(ln).append('}');
+		return sb.toString();
 	}
 
 }

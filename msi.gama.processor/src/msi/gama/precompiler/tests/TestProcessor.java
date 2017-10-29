@@ -1,4 +1,4 @@
-package msi.gama.precompiler;
+package msi.gama.precompiler.tests;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -10,6 +10,9 @@ import javax.lang.model.element.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import msi.gama.precompiler.ElementProcessor;
+import msi.gama.precompiler.GamlAnnotations;
+import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.file;

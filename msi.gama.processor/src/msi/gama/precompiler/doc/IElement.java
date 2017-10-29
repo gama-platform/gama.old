@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.precompiler.doc.Element;
+package msi.gama.precompiler.doc;
 
 public interface IElement {
 	public org.w3c.dom.Element getElementDOM();

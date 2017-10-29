@@ -1,4 +1,4 @@
-package msi.gama.precompiler.java;
+package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -7,39 +7,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.precompiler.ActionProcessor;
-import msi.gama.precompiler.ConstantProcessor;
-import msi.gama.precompiler.DisplayProcessor;
-import msi.gama.precompiler.DocProcessor;
-import msi.gama.precompiler.ExperimentProcessor;
-import msi.gama.precompiler.FactoryProcessor;
-import msi.gama.precompiler.FileProcessor;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.IProcessor;
-import msi.gama.precompiler.OperatorProcessor;
-import msi.gama.precompiler.SkillProcessor;
-import msi.gama.precompiler.SpeciesProcessor;
-import msi.gama.precompiler.SymbolProcessor;
-import msi.gama.precompiler.TestProcessor;
-import msi.gama.precompiler.TypeProcessor;
-import msi.gama.precompiler.VarsProcessor;
+import msi.gama.precompiler.doc.DocProcessor;
+import msi.gama.precompiler.tests.TestProcessor;
 
 public interface Constants {
 
@@ -47,6 +30,35 @@ public interface Constants {
 		if (original == null || original.length() == 0) { return original; }
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
+
+	public static String getAlphabetOrder(final String name) {
+		String order = "";
+		final String lastChar = "z";
+
+		for (int i = 0; i < cuttingLettersOperatorDoc.length; i++) {
+			final Character previousChar = i == 0 ? 'a' : cuttingLettersOperatorDoc[i - 1];
+			final Character c = cuttingLettersOperatorDoc[i];
+
+			if (i == 0 && name.compareTo(c.toString()) < 0
+					|| name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0) { // name
+																											// is
+																											// <
+																											// to
+																											// cutting
+																											// letter
+				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
+			}
+		}
+		if ("".equals(order)) {
+			order = cuttingLettersOperatorDoc[cuttingLettersOperatorDoc.length - 1].toString() + lastChar;
+		}
+
+		return order;
+	}
+
+	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
+
+	public static final Character[] cuttingLettersOperatorDoc = { 'c', 'i', 'o', 't' };
 
 	public final static String DOC_SEP = "~";
 
@@ -134,6 +146,9 @@ public interface Constants {
 			new LinkedHashMap<Class<? extends Annotation>, IProcessor<?>>() {
 				{
 					// Order is important
+					// Doc built first, so that test generation can happen subsequently
+					put(doc.class, new DocProcessor());
+					// Then all the processors for specific annotations
 					put(type.class, new TypeProcessor());
 					put(factory.class, new FactoryProcessor());
 					put(species.class, new SpeciesProcessor());
@@ -145,13 +160,9 @@ public interface Constants {
 					put(skill.class, new SkillProcessor());
 					put(display.class, new DisplayProcessor());
 					put(experiment.class, new ExperimentProcessor());
-					put(example.class, IProcessor.NULL);
 					put(constant.class, new ConstantProcessor());
+					// TestProcessor actually processes both @tests and @test annotations
 					put(tests.class, new TestProcessor());
-					put(getter.class, IProcessor.NULL);
-					put(setter.class, IProcessor.NULL);
-					put(test.class, IProcessor.NULL);
-					put(doc.class, new DocProcessor());
 				}
 			};
 

@@ -16,7 +16,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.java.Constants;
 
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
 	private static final String XML_VERSION = "1.0";
@@ -25,7 +24,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	public static Transformer TRANSFORMER = null;
 	public Document document = getBuilder().newDocument();
 
-	static DocumentBuilder getBuilder() {
+	protected static DocumentBuilder getBuilder() {
 		if (BUILDER == null)
 			try {
 				BUILDER = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -56,7 +55,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	protected abstract Class<T> getAnnotationClass();
 
-	Document getDocument(final ProcessorContext environment) {
+	protected Document getDocument(final ProcessorContext environment) {
 		return document;
 		// if (d)
 
@@ -138,7 +137,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	 * Utilities used by subclasses
 	 */
 
-	org.w3c.dom.Element getRootNode(final Document doc) {
+	protected org.w3c.dom.Element getRootNode(final Document doc) {
 		org.w3c.dom.Element root = null;
 		if (doc.hasChildNodes()) {
 			root = (org.w3c.dom.Element) doc.getElementsByTagName(getRootName()).item(0);
