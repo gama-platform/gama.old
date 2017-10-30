@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -644,10 +643,10 @@ public class WorkspaceModelsManager {
 		String gamaStamp = null;
 		try {
 			final URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
-			final URL new_url = FileLocator.resolve(tmpURL);
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			final File modelsRep = normalizedPath.toFile();
+			final URL resolvedFileURL = FileLocator.toFileURL(tmpURL);
+			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+			final File modelsRep = new File(resolvedURI);
 
 			// loading file from URL Path is not a good idea. There are some bugs
 			// File modelsRep = new File(urlRep.getPath());
@@ -656,7 +655,7 @@ public class WorkspaceModelsManager {
 			gamaStamp = ".built_in_models_" + time;
 			System.out.println(">GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
 			System.out.println(">GAMA models library version: " + gamaStamp);
-		} catch (final IOException e) {
+		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return gamaStamp;
