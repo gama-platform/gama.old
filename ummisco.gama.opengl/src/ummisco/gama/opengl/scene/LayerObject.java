@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -231,8 +232,9 @@ public class LayerObject {
 
 	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
 			final boolean picking) {
+		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
-		for (final AbstractObject object : list) {
+		for (final AbstractObject object : l) {
 			object.draw(gl, renderer.getDrawerFor(object.getDrawerType()), picking);
 		}
 	}
