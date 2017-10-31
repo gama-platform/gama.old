@@ -464,7 +464,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void displayTestsResults(final IScope scope, final CompoundSummary<?> summary) {
+	public void displayTestsResults(final IScope scope, final CompoundSummary<?, ?> summary) {
 		log(summary.toString());
 	}
 

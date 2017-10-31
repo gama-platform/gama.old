@@ -2,7 +2,13 @@ package msi.gaml.statements.test;
 
 import msi.gaml.operators.Strings;
 
-public class IndividualTestSummary extends CompoundSummary<TestStatement> {
+/**
+ * A summary of a test statement
+ * 
+ * @author drogoul
+ *
+ */
+public class IndividualTestSummary extends CompoundSummary<AssertionSummary, TestStatement> {
 
 	IndividualTestSummary(final TestStatement test) {
 		super(test);

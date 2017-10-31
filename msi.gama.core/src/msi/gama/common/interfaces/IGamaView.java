@@ -24,7 +24,7 @@ import msi.gaml.statements.test.CompoundSummary;
 public interface IGamaView {
 
 	public interface Test {
-		public void addTestResult(final CompoundSummary<?> summary);
+		public void addTestResult(final CompoundSummary<?, ?> summary);
 
 		public void startNewTestSequence(boolean all);
 

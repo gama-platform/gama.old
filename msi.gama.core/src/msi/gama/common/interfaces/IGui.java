@@ -164,7 +164,7 @@ public interface IGui {
 
 	IGamaView.Test openTestView(IScope scope, boolean remainOpen);
 
-	void displayTestsResults(IScope scope, CompoundSummary<?> summary);
+	void displayTestsResults(IScope scope, CompoundSummary<?, ?> summary);
 
 	public void endTestDisplay();
 

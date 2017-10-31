@@ -109,7 +109,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	@Override
-	public void addTestResult(final CompoundSummary<?> e) {
+	public void addTestResult(final CompoundSummary<?, ?> e) {
 		if (!experiments.contains(e)) {
 			experiments.add(e);
 		}
@@ -200,14 +200,14 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	public void createEditors(final Composite compo, final AbstractSummary<?> test) {
-		Map<String, AbstractSummary<?>> assertions = test.getSummaries();
-		for (final Map.Entry<String, AbstractSummary<?>> assertion : assertions.entrySet()) {
+		Map<String, ? extends AbstractSummary<?>> assertions = test.getSummaries();
+		for (final Map.Entry<String, ? extends AbstractSummary<?>> assertion : assertions.entrySet()) {
 			final AbstractSummary<?> summary = assertion.getValue();
 			final String name = assertion.getKey();
 			createEditor(compo, test, summary, name);
-			if (summary instanceof CompoundSummary<?>) {
+			if (summary instanceof CompoundSummary) {
 				assertions = summary.getSummaries();
-				for (final Map.Entry<String, AbstractSummary<?>> aa : assertions.entrySet()) {
+				for (final Map.Entry<String, ? extends AbstractSummary<?>> aa : assertions.entrySet()) {
 					createEditor(compo, test, aa.getValue(), aa.getKey());
 				}
 			}

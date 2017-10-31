@@ -6,16 +6,29 @@ import com.google.common.base.Objects;
 
 import msi.gama.util.TOrderedHashMap;
 
-public abstract class CompoundSummary<S extends WithTestSummary<?>> extends AbstractSummary<S> {
+/**
+ * A summary composed of other summaries (for instance, a TestStatement summary is composed of AsserStatement summaries)
+ * 
+ * @author drogoul
+ *
+ * @param <S>
+ *            the type of the statement represented by this summary
+ * 
+ * @param <T>
+ *            the type of the sub-summaries
+ * 
+ */
+public abstract class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSummary<?>>
+		extends AbstractSummary<S> {
 
-	public final Map<String, AbstractSummary<?>> summaries = new TOrderedHashMap<>();
+	public final Map<String, T> summaries = new TOrderedHashMap<>();
 	public boolean aborted;
 
 	@SuppressWarnings ("unchecked")
 	public CompoundSummary(final S symbol) {
 		super(symbol);
 		if (symbol != null)
-			symbol.getSubElements().forEach(a -> addSummary(a.getSummary()));
+			symbol.getSubElements().forEach(a -> addSummary((T) a.getSummary()));
 
 	}
 
@@ -34,11 +47,11 @@ public abstract class CompoundSummary<S extends WithTestSummary<?>> extends Abst
 	}
 
 	@Override
-	public Map<String, AbstractSummary<?>> getSummaries() {
+	public Map<String, ? extends AbstractSummary<?>> getSummaries() {
 		return summaries;
 	}
 
-	public void addSummary(final AbstractSummary<?> summary) {
+	public void addSummary(final T summary) {
 		summaries.put(summary.getTitle(), summary);
 	}
 

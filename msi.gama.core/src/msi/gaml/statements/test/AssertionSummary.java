@@ -2,6 +2,12 @@ package msi.gaml.statements.test;
 
 import msi.gaml.operators.Strings;
 
+/**
+ * A summary of assert statements. Conrary to other summaries, they possess a state
+ * 
+ * @author drogoul
+ *
+ */
 public class AssertionSummary extends AbstractSummary<AssertStatement> {
 	private TestState state = TestState.NOT_RUN;
 

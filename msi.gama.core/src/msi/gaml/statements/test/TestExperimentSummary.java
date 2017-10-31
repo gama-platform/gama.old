@@ -3,7 +3,13 @@ package msi.gaml.statements.test;
 import msi.gama.kernel.experiment.TestAgent;
 import msi.gaml.operators.Strings;
 
-public class TestExperimentSummary extends CompoundSummary<TestAgent> {
+/**
+ * A summary of a whole test experiment
+ * 
+ * @author drogoul
+ *
+ */
+public class TestExperimentSummary extends CompoundSummary<IndividualTestSummary, TestAgent> {
 
 	public TestExperimentSummary(final TestAgent testAgent) {
 		super(testAgent);

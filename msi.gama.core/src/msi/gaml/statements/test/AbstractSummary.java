@@ -57,7 +57,7 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 		error = null;
 	}
 
-	public Map<String, AbstractSummary<?>> getSummaries() {
+	public Map<String, ? extends AbstractSummary<?>> getSummaries() {
 		return Collections.EMPTY_MAP;
 	}
 
