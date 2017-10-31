@@ -384,14 +384,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (!isBatch()) {
 			for (final IVariable v : model.getVars()) {
 				if (v.isParameter()) {
-					// scope.getGui().debug("from ExperimentPlan.setModel:");
 					final IParameter p = new ExperimentParameter(scope, v);
 					final String name = p.getName();
 					final boolean already = parameters.containsKey(name);
 					if (!already) {
 						parameters.put(name, p);
 					}
-					// boolean registerParameter = !already;
 				}
 
 			}
