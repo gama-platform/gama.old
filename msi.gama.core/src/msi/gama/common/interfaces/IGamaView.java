@@ -16,7 +16,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.CompoundSummary;
 
 /**
  * @author drogoul
@@ -24,7 +24,11 @@ import msi.gaml.statements.test.TestStatement.TestSummary;
 public interface IGamaView {
 
 	public interface Test {
-		public void addTestResult(final TestSummary e);
+		public void addTestResult(final CompoundSummary<?> summary);
+
+		public void startNewTestSequence(boolean all);
+
+		public void finishTestSequence();
 
 	}
 

@@ -25,6 +25,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.statements.test.TestState;
 
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
@@ -80,11 +81,13 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
+				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
-				exp.getAgent().step(exp.getAgent().getScope());
-				code[0] += ((TestAgent) exp.getAgent()).getNumberOfFailures();
-				count[0] += ((TestAgent) exp.getAgent()).getTotalNumberOfTests();
+				exp.getAgent().step(agent.getScope());
+				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
+				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
+				count[0] += agent.getSummary().size();
 			}
 		}
 

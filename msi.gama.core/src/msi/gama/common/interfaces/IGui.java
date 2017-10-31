@@ -26,7 +26,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.CompoundSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
 
 /**
@@ -163,8 +164,10 @@ public interface IGui {
 
 	IGamaView.Test openTestView(IScope scope, boolean remainOpen);
 
-	void displayTestsResults(IScope scope, TestSummary summary);
+	void displayTestsResults(IScope scope, CompoundSummary<?> summary);
 
-	public List<TestSummary> runHeadlessTests(final Object model);
+	public void endTestDisplay();
+
+	public List<TestExperimentSummary> runHeadlessTests(final Object model);
 
 }

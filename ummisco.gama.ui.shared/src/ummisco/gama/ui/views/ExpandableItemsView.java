@@ -48,7 +48,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 				viewer.setLayoutData(data);
 			}
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
-			viewer.setSpacing(10);
+			viewer.setSpacing(5);
 		}
 	}
 

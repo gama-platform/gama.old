@@ -151,8 +151,11 @@ public abstract class GamaViewPart extends ViewPart
 			}
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
-				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> close(GAMA.getRuntimeScope()));
+				// System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
+				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> {
+					if (shouldBeClosedWhenNoExperiments())
+						close(GAMA.getRuntimeScope());
+				});
 
 			}
 		}

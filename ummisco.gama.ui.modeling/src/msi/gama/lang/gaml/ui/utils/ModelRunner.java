@@ -45,7 +45,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
+import msi.gaml.statements.test.WithTestSummary;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -93,8 +94,9 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		WorkbenchHelper.run(() -> editModelInternal(eObject));
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
-	public List<TestSummary> runHeadlessTests(final Object object) {
+	public List<TestExperimentSummary> runHeadlessTests(final Object object) {
 		// final StringBuilder sb = new StringBuilder();
 		final IModel model = findModel(object);
 		if (model == null)
@@ -103,15 +105,15 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 		if (testExpNames.isEmpty())
 			return null;
-		final List<TestSummary> result = new ArrayList<>();
+		final List<TestExperimentSummary> result = new ArrayList<>();
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
 				exp.setHeadless(true);
-				exp.getController().getScheduler().paused = false;
-				exp.getAgent().step(exp.getAgent().getScope());
 				final TestAgent agent = (TestAgent) exp.getAgent();
-				result.addAll(agent.getAllTests());
+				exp.getController().getScheduler().paused = false;
+				agent.step(agent.getScope());
+				result.add(((WithTestSummary<TestExperimentSummary>) agent).getSummary());
 				GAMA.closeExperiment(exp);
 			}
 		}

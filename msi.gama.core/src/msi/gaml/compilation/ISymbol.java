@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import org.eclipse.emf.common.util.URI;
+
 import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -29,6 +31,8 @@ public interface ISymbol extends INamed {
 	public abstract void setOrder(int o);
 
 	public abstract IDescription getDescription();
+
+	public URI getURI();
 
 	/**
 	 * Returns the expression located at the first facet of 'keys'

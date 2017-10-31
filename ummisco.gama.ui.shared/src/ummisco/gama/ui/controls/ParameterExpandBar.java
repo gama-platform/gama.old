@@ -105,13 +105,13 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 */
 
 	public ParameterExpandBar(final Composite parent, final int style) {
-		this(parent, style | SWT.DOUBLE_BUFFERED, false, false, false, false, null);
+		this(parent, style, false, false, false, false, null);
 	}
 
 	public ParameterExpandBar(final Composite parent, final int style, final boolean isClosable,
 			final boolean isPausable, final boolean isSelectable, final boolean isVisible,
 			final ItemList underlyingObjects) {
-		super(parent, checkStyle(style));
+		super(parent, style | SWT.DOUBLE_BUFFERED);
 		items = new ParameterExpandItem[4];
 		this.hasClosableToggle = isClosable;
 		this.hasPausableToggle = isPausable;
@@ -247,7 +247,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		layoutItems(index, true);
 	}
 
-	void destroyItem(final ParameterExpandItem item) {
+	public void destroyItem(final ParameterExpandItem item) {
 
 		if (inDispose) { return; }
 		int index = 0;
@@ -307,8 +307,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	public ParameterExpandItem getItem(final Object data) {
 		for (final ParameterExpandItem item : items) {
-			if (Objects.equal(item.getData(), data))
-				return item;
+			if (item != null)
+				if (Objects.equal(item.getData(), data))
+					return item;
 		}
 		return null;
 	}
@@ -672,7 +673,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			final Event ev = new Event();
 			ev.item = getFocusItem();
 			final boolean wasExpanded = getFocusItem().expanded;
-			getFocusItem().expanded = !getFocusItem().expanded;
+			getFocusItem().setExpanded(!getFocusItem().expanded);
 			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
 			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
@@ -724,8 +725,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		if (data == null) { return; }
 		for (final ParameterExpandItem i : items) {
 			if (data.equals(i.getData())) {
-				i.expanded = false;
-				showItem(i);
+				i.setExpanded(false);
 				return;
 			}
 		}

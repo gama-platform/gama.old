@@ -30,7 +30,6 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
@@ -49,8 +48,8 @@ import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.test.TestStatement.State;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.CompoundSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
 
 public class HeadlessListener implements IGui {
@@ -457,29 +456,24 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
-		final String pathToFile = scope.getModel().getFilePath().replace(scope.getModel().getWorkingPath(), "");
-		log("----------------------------------------------------------------");
-		log(" Running tests declared in " + pathToFile);
-		log("----------------------------------------------------------------");
+		// final String pathToFile = scope.getModel().getFilePath().replace(scope.getModel().getWorkingPath(), "");
+		// log("----------------------------------------------------------------");
+		// log(" Running tests declared in " + pathToFile);
+		// log("----------------------------------------------------------------");
 		return null;
 	}
 
 	@Override
-	public void displayTestsResults(final IScope scope, final TestSummary test) {
-		if (test.asserts == null)
-			return;
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue()) {
-			final State state = test.getState();
-			if (state != State.FAILED && state != State.ABORTED)
-				return;
-		}
-
-		log(test.toString());
+	public void displayTestsResults(final IScope scope, final CompoundSummary<?> summary) {
+		log(summary.toString());
 	}
 
 	@Override
-	public List<TestSummary> runHeadlessTests(final Object model) {
+	public List<TestExperimentSummary> runHeadlessTests(final Object model) {
 		return null;
 	}
+
+	@Override
+	public void endTestDisplay() {}
 
 }

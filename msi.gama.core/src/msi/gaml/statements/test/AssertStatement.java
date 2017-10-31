@@ -10,6 +10,8 @@
  **********************************************************************************************/
 package msi.gaml.statements.test;
 
+import java.util.Collection;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -60,31 +62,56 @@ import msi.gaml.types.IType;
 						value = "if the 'warn:' facet is set to true, the statement emits a warning (instead of an error) in case the expression is false",
 						examples = { @example ("assert 'abc' is string warning: true") }) },
 		see = { "test", "setup", "is_error", "is_warning" })
-public class AssertStatement extends AbstractStatement {
+public class AssertStatement extends AbstractStatement implements WithTestSummary<AssertionSummary> {
 
 	final IExpression value, warn;
-	final String assertion;
+	final AssertionSummary summary;
 
 	public AssertStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		assertion = value.serialize(true);
 		warn = getFacet("warning");
-	}
-
-	public String getAssertion() {
-		return assertion;
+		summary = new AssertionSummary(this);
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (Cast.asBool(scope, value.value(scope))) { return true; }
-		throw new GamaAssertException(scope, "Failed assertion of '" + value.serialize(true) + "'", isWarning(scope));
-
+		summary.reset();
+		boolean result;
+		try {
+			result = Cast.asBool(scope, value.value(scope));
+		} catch (final GamaRuntimeException e) {
+			summary.setError(e.getMessage());
+			summary.setState(TestState.ABORTED);
+			throw e;
+		}
+		if (result) {
+			summary.setState(TestState.PASSED);
+		} else {
+			final TestState s = isWarning(scope) ? TestState.WARNING : TestState.FAILED;
+			summary.setState(s);
+			throw new GamaAssertException(scope, "Assert failed: " + getTitleForSummary(), isWarning(scope));
+		}
+		return result;
 	}
 
 	public boolean isWarning(final IScope scope) {
 		return warn != null && Cast.asBool(scope, warn.value(scope));
+	}
+
+	@Override
+	public AssertionSummary getSummary() {
+		return summary;
+	}
+
+	@Override
+	public String getTitleForSummary() {
+		return value.serialize(true);
+	}
+
+	@Override
+	public Collection<? extends WithTestSummary<?>> getSubElements() {
+		return null;
 	}
 
 }

@@ -58,8 +58,8 @@ import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.statements.test.TestStatement.State;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.CompoundSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
@@ -139,23 +139,27 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
+	public IGamaView.Test openTestView(final IScope scope, final boolean allTests) {
+		ALL_TESTS_RUNNING = allTests;
 		final IGamaView.Test v = (Test) showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-		if (!ALL_TESTS_RUNNING)
-			v.addTestResult(TestSummary.BEGINNING);
+		if (v != null)
+			v.startNewTestSequence(allTests);
 		return v;
 	}
 
 	@Override
-	public void displayTestsResults(final IScope scope, final TestSummary summary) {
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue() && summary.asserts != null) {
-			final State state = summary.getState();
-			if (state != State.FAILED && state != State.ABORTED)
-				return;
-		}
+	public void displayTestsResults(final IScope scope, final CompoundSummary<?> summary) {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
 		if (v != null) {
 			v.addTestResult(summary);
+		}
+	}
+
+	@Override
+	public void endTestDisplay() {
+		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
+		if (v != null) {
+			v.finishTestSequence();
 		}
 	}
 
@@ -344,7 +348,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public List<TestSummary> runHeadlessTests(final Object model) {
+	public List<TestExperimentSummary> runHeadlessTests(final Object model) {
 		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
 		if (modelRunner == null)
 			return null;

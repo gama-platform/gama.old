@@ -16,7 +16,7 @@ import java.util.Map;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.TestStatement;
 
 /**
  * Written by drogoul Modified on 29 d�c. 2010
@@ -42,6 +42,6 @@ public interface IModel extends ISpecies {
 
 	public abstract Collection<String> getImportedPaths();
 
-	public abstract List<TestSummary> getAllTests();
+	public abstract List<TestStatement> getAllTests();
 
 }

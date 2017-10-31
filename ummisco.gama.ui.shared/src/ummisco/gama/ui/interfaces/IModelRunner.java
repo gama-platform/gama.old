@@ -11,7 +11,7 @@ package ummisco.gama.ui.interfaces;
 
 import java.util.List;
 
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 
 public interface IModelRunner {
 
@@ -19,6 +19,6 @@ public interface IModelRunner {
 
 	void runModel(Object object, String exp);
 
-	List<TestSummary> runHeadlessTests(Object model);
+	List<TestExperimentSummary> runHeadlessTests(Object model);
 
 }

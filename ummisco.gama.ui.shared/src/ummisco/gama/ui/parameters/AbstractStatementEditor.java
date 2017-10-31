@@ -2,12 +2,15 @@ package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.resources.GamaFonts;
 
 public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> {
 
@@ -43,8 +46,42 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 	}
 
 	@Override
-	protected final String computeUnitLabel() {
+	protected String computeUnitLabel() {
 		return "";
+	}
+
+	@Override
+	public void createComposite(final Composite parent) {
+		this.parent = parent;
+		internalModification = true;
+		if (!isSubParameter) {
+			titleLabel = createLeftLabel(parent, name);
+		} else {
+			createLeftLabel(parent, " ");
+		}
+		currentValue = getOriginalValue();
+		composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(parent.getBackground());
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.minimumWidth = 150;
+		composite.setLayoutData(data);
+		final GridLayout layout = new GridLayout(isSubParameter ? 3 : 2, false);
+		layout.marginWidth = 5;
+		composite.setLayout(layout);
+		createEditorControl(composite);
+		if (isSubParameter) {
+			titleLabel = createLeftLabel(composite, name);
+			titleLabel.setFont(GamaFonts.getNavigFolderFont());
+			final GridData d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
+			titleLabel.setLayoutData(d);
+		}
+
+		internalModification = false;
+		if (isSubParameter) {
+			titleLabel.setBackground(HOVERED_BACKGROUND);
+			composite.setBackground(HOVERED_BACKGROUND);
+		}
+		composite.layout();
 	}
 
 	@Override

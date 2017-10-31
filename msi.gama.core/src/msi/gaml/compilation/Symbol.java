@@ -9,6 +9,10 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -31,6 +35,13 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public IDescription getDescription() {
 		return description;
+	}
+
+	public URI getURI() {
+		if (description == null)
+			return null;
+		final EObject object = description.getUnderlyingElement(null);
+		return object == null ? null : EcoreUtil.getURI(object);
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -50,8 +49,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	protected abstract Object privateExecuteIn(IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> commands) {
-	}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
 	@Override
 	public String toString() {

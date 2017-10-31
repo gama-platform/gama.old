@@ -1,8 +1,11 @@
 package msi.gama.kernel.experiment;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
@@ -12,16 +15,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.AbstractExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.IStatement;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.TestStatement;
-import msi.gaml.statements.test.TestStatement.State;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.WithTestSummary;
 import msi.gaml.types.IType;
 
 @experiment (IKeyword.TEST)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class TestAgent extends BatchAgent {
+public class TestAgent extends BatchAgent implements WithTestSummary<TestExperimentSummary> {
 
 	int failedModels = 0;
+	TestExperimentSummary summary;
 
 	public TestAgent(final IPopulation p) throws GamaRuntimeException {
 		super(p);
@@ -47,15 +51,12 @@ public class TestAgent extends BatchAgent {
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
-		final List<TestSummary> allTests = getAllTests();
-		if (!allTests.isEmpty()) {
+		final TestExperimentSummary summary = getSummary();
+		summary.reset();
+		if (!summary.isEmpty()) {
 			scope.getGui().openTestView(scope, false);
-			getAllTests().forEach(t -> {
-				t.reset();
-				if (!getSpecies().isHeadless())
-					scope.getGui().displayTestsResults(getScope(), t);
-			});
-
+			// if (!getSpecies().isHeadless())
+			// scope.getGui().displayTestsResults(getScope(), summary);
 		}
 		return true;
 	}
@@ -64,23 +65,9 @@ public class TestAgent extends BatchAgent {
 	public void dispose() {
 		if (dead)
 			return;
-		final List<TestSummary> allTests = getAllTests();
-		for (final TestSummary test : allTests) {
-			getScope().getGui().displayTestsResults(getScope(), test);
-			final TestStatement.State state = test.getState();
-			if (state.equals(State.FAILED) || state.equals(State.ABORTED))
-				failedModels++;
-		}
-		getScope().getGui().displayTestsResults(getScope(), TestSummary.INDIVIDUAL_TEST_FINISHED);
+		getScope().getGui().displayTestsResults(getScope(), summary);
+		getScope().getGui().endTestDisplay();
 		super.dispose();
-	}
-
-	public int getNumberOfFailures() {
-		return failedModels;
-	}
-
-	public int getTotalNumberOfTests() {
-		return getAllTests().size();
 	}
 
 	@Override
@@ -129,11 +116,32 @@ public class TestAgent extends BatchAgent {
 
 	}
 
-	public List<TestSummary> getAllTests() {
-		final List<TestSummary> tests = getModel().getAllTests();
+	@Override
+	public TestExperimentSummary getSummary() {
+		if (summary == null) {
+			summary = new TestExperimentSummary(this);
+		}
+		return summary;
+	}
+
+	@Override
+	public String getTitleForSummary() {
+		final String mn = getSpecies().getDescription().getModelDescription().getModelFilePath();
+		final String modelName = mn.substring(mn.lastIndexOf('/') + 1).replace(".experiment", "").replace(".gaml", "");
+		return getSpecies().getName() + " in " + modelName;
+	}
+
+	@Override
+	public URI getURI() {
+		return getModel().getURI();
+	}
+
+	@Override
+	public Collection<? extends WithTestSummary<?>> getSubElements() {
+		final List<TestStatement> tests = getModel().getAllTests();
 		final Consumer<IStatement> filter = t -> {
 			if (t instanceof TestStatement)
-				tests.add(((TestStatement) t).getSummary());
+				tests.add((TestStatement) t);
 		};
 		getSpecies().getBehaviors().forEach(filter);
 		return tests;

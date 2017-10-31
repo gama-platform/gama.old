@@ -11,12 +11,14 @@ package ummisco.gama.ui.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 
 import msi.gama.common.interfaces.ItemList;
@@ -47,6 +49,7 @@ public class ParameterExpandItem extends Item {
 	boolean isPaused = false;
 	boolean isVisible = true;
 	boolean isSelectable = true;
+	private Runnable onExpandBlock;
 	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
 	static final int BORDER = 4;
@@ -96,8 +99,6 @@ public class ParameterExpandItem extends Item {
 			gc.drawRoundRectangle(x + 1, y + 1, width - 2, headerHeight - 2, 6, 6);
 		}
 
-		// gc.drawRoundRectangle(x, y, width, headerHeight + (expanded ? height
-		// : 0), 6, 6);
 		int drawX = x;
 		final int imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
 		if (getImage() != null && drawHover) {
@@ -145,11 +146,8 @@ public class ParameterExpandItem extends Item {
 			gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			Point size = gc.stringExtent(title);
-			gc.setForeground(
-					GamaColors.getTextColorForBackground(backgroundColor/* , IGamaColors.NEUTRAL.color() */).color());
-			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+			gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
-			// gc.setFont(SwtGui.getUnitFont());
 			if (other != null) {
 				final int j = other.indexOf(ItemList.ERROR_CODE);
 				final int k = other.indexOf(ItemList.INFO_CODE);
@@ -166,13 +164,10 @@ public class ParameterExpandItem extends Item {
 				} else {
 					gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
 				}
-				// gc.setFont(SwtGui.getParameterEditorsFont());
 				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
 
-				// gc.setClipping(drawX, y, endX - drawX, headerHeight);
 				gc.drawString(other, drawX, y + (headerHeight - size.y) / 2, true);
-				// gc.setClipping(parent.getClientArea());
 			}
 		}
 	}
@@ -189,7 +184,6 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public int getHeaderHeight() {
-		// checkWidget();
 		if (parent == null) { return imageHeight; }
 		return Math.max(parent.bandHeight, imageHeight);
 	}
@@ -253,8 +247,6 @@ public class ParameterExpandItem extends Item {
 				}
 				control.setSize(control.computeSize(w, h));
 				control.layout(true);
-				// control.setSize(FastMath.max(0, width - 2 * BORDER),
-				// FastMath.max(0, height - BORDER));
 			}
 		}
 	}
@@ -277,7 +269,6 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setControl(final Composite control) {
-		// checkWidget();
 		if (control != null) {
 			if (control.isDisposed()) {
 				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -312,6 +303,19 @@ public class ParameterExpandItem extends Item {
 		if (parent == null) { return; }
 		// checkWidget();
 		this.expanded = expanded;
+		if (onExpandBlock != null) {
+			if (expanded) {
+				onExpandBlock.run();
+				setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+			} else {
+				for (final Control c : control.getChildren()) {
+					c.dispose();
+				}
+				if (control instanceof ScrolledComposite) {
+					((ScrolledComposite) control).setContent(null);
+				}
+			}
+		}
 		parent.showItem(this);
 	}
 
@@ -339,15 +343,8 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @param height
 	 *            the new height
-	 *
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
 	 */
 	public void setHeight(final int height) {
-		// checkWidget();
 		if (height < 0) { return; }
 		setBounds(0, 0, width, height, false, true);
 		if (expanded && parent != null) {
@@ -396,6 +393,10 @@ public class ParameterExpandItem extends Item {
 		if (color != null) {
 			backgroundColor = GamaColors.get(color).color();
 		}
+	}
+
+	public void onExpand(final Runnable r) {
+		onExpandBlock = r;
 	}
 
 }

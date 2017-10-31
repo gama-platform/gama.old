@@ -39,7 +39,6 @@ import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.test.TestStatement;
-import msi.gaml.statements.test.TestStatement.TestSummary;
 import msi.gaml.types.IType;
 
 @symbol (
@@ -283,11 +282,12 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	static Predicate<IStatement> isTest = s -> (s instanceof TestStatement);
 
 	@Override
-	public List<TestSummary> getAllTests() {
-		final List<TestSummary> tests = new ArrayList<>();
+	public List<TestStatement> getAllTests() {
+
+		final List<TestStatement> tests = new ArrayList<>();
 		final Consumer<IStatement> filter = t -> {
 			if (t instanceof TestStatement)
-				tests.add(((TestStatement) t).getSummary());
+				tests.add((TestStatement) t);
 		};
 		getBehaviors().forEach(filter);
 		getAllSpecies().values().forEach(s -> s.getBehaviors().forEach(filter));

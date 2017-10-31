@@ -12,6 +12,8 @@ package msi.gaml.architecture.reflex;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -129,5 +131,18 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public void preStep(final IScope scope, final IPopulation<? extends IAgent> gamaPopulation) {}
+
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+
+	@Override
+	public void setOrder(final int o) {}
+
+	@Override
+	public URI getURI() {
+		return null;
+	}
 
 }

@@ -10,7 +10,6 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -357,10 +356,14 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void addToolbarHiders(final Control... c) {
-		controlsThatShowHideToolbars.addAll(Arrays.asList(c));
+		for (final Control control : c)
+			if (control != null)
+				controlsThatShowHideToolbars.add(control);
 	}
 
 	protected void hideToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
 		final GridData d = (GridData) toolbar.getLayoutData();
 		if (d.exclude) { return; }
 		d.exclude = true;
@@ -370,6 +373,8 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void showToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
 		final GridData d = (GridData) toolbar.getLayoutData();
 		if (!d.exclude) { return; }
 		d.exclude = false;
@@ -416,7 +421,7 @@ public abstract class AbstractEditor<T>
 		return param.getType().serialize(false);
 	}
 
-	private ToolBar createToolbar() {
+	protected ToolBar createToolbar() {
 		final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
 		final GridData d = this.getParameterGridData();
 		d.grabExcessHorizontalSpace = false;

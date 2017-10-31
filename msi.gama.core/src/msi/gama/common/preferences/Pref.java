@@ -194,6 +194,10 @@ public class Pref<T> implements IParameter {
 		listeners.remove(r);
 	}
 
+	public void removeChangeListeners() {
+		listeners.clear();
+	}
+
 	@Override
 	public T value(final IScope scope) throws GamaRuntimeException {
 		return getValue();

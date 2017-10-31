@@ -14,7 +14,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.statements.test.TestStatement.TestSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -27,17 +27,16 @@ public class TestsRunner {
 		final IGui gui = GAMA.getRegularGui();
 		final IScope scope = GAMA.getRuntimeScope();
 		try {
-			SwtGui.ALL_TESTS_RUNNING = true;
 
 			List<IFile> testFiles = null;
 			try {
 				testFiles = findTestModels();
 				gui.openTestView(scope, true);
-				gui.displayTestsResults(scope, TestSummary.BEGINNING);
+				// gui.displayTestsResults(scope, IndividualTestSummary.BEGINNING);
 				for (final IFile file : testFiles) {
-					final List<TestSummary> summaries = gui.runHeadlessTests(file);
+					final List<TestExperimentSummary> summaries = gui.runHeadlessTests(file);
 					if (summaries != null)
-						for (final TestSummary summary : summaries) {
+						for (final TestExperimentSummary summary : summaries) {
 							gui.displayTestsResults(scope, summary);
 						}
 				}
@@ -46,7 +45,7 @@ public class TestsRunner {
 			}
 		} finally {
 			SwtGui.ALL_TESTS_RUNNING = false;
-			gui.displayTestsResults(scope, TestSummary.FINISHED);
+			gui.endTestDisplay();
 		}
 	}
 
