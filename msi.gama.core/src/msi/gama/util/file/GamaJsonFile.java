@@ -10,9 +10,11 @@
 package msi.gama.util.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,6 +119,11 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 	}
 
 	@Override
+	protected String getHttpContentType() {
+		return "application/json; charset=UTF-8";
+	}
+
+	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final GamaMap<String, Object> map = getBuffer();
 		try {
@@ -124,9 +131,10 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 			if (file.exists()) {
 				GAMA.reportAndThrowIfNeeded(scope,
 						GamaRuntimeException.warning(file.getName() + " already exists", scope), false);
-			} else if (!file.exists() && file.createNewFile()) {
-				try (FileWriter writer = new FileWriter(getFile(scope))) {
-					JSONValue.writeJSONString(map, writer);
+			} else if (file.createNewFile()) {
+				try (OutputStreamWriter writer =
+						new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+					writer.write(JSONValue.toJSONString(map));
 				}
 			}
 		} catch (final IOException e) {

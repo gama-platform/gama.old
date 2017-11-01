@@ -56,8 +56,8 @@ public class RFile extends GamaFile<GamaMap, Object> {
 		parameters = null;
 	}
 
-	public RFile(final IScope scope, final String pathName, final IContainer p) {
-		super(scope, pathName);
+	public RFile(final IScope scope, final String pathName, final GamaMap p) {
+		super(scope, pathName, p);
 		parameters = p;
 	}
 

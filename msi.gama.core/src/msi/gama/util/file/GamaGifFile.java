@@ -37,11 +37,16 @@ public class GamaGifFile extends GamaImageFile {
 	}
 
 	public int getAverageDelay() {
-		return ImageUtils.getInstance().getDuration(path) / getFrameCount();
+		return ImageUtils.getInstance().getDuration(localPath) / getFrameCount();
 	}
 
 	public int getFrameCount() {
-		return ImageUtils.getInstance().getFrameCount(path);
+		return ImageUtils.getInstance().getFrameCount(localPath);
+	}
+
+	@Override
+	protected String getHttpContentType() {
+		return "image/gif";
 	}
 
 }

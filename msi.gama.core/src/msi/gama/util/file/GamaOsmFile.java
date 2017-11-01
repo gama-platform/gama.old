@@ -282,8 +282,8 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	@Override
-	protected String fetchFromURL(final IScope scope, final String urlPath) {
-		String pathName = super.fetchFromURL(scope, urlPath);
+	protected String fetchFromURL(final IScope scope) {
+		String pathName = super.fetchFromURL(scope);
 		if (pathName.endsWith(".osm.xml"))
 			pathName = pathName.replace(".xml", "");
 		return pathName;

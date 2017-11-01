@@ -10,10 +10,12 @@
 package msi.gama.util.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -47,25 +49,46 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		implements IGamaFile<Container, Contents> {
 
 	private File file;
-	protected String path;
+	protected String localPath;
 	protected final String originalPath;
-	protected URL url;
+	protected final URL url;
 	protected boolean writable = false;
 	private Container buffer;
 
 	public GamaFile(final IScope scope, final String pn) throws GamaRuntimeException {
+		this(scope, pn, true);
+	}
+
+	private GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
-		if (originalPath == null) {
-			throw GamaRuntimeException.error("Attempt to create a null file", scope);
-		} else if (originalPath.startsWith("http")) {
-			setPath(fetchFromURL(scope, originalPath));
-			if (getPath(scope) == null) {
-				// We do not attempt to create the file. It will probably be
-				// taken in charge later directly from the URL
-				setPath("");
-				return;
+		if (originalPath == null) { throw GamaRuntimeException
+				.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope); }
+		if (originalPath.startsWith("http")) {
+			url = buildURL(scope, originalPath);
+		} else
+			url = null;
+		if (url != null)
+			if (forReading) {
+				setPath(fetchFromURL(scope));
+				if (getPath(scope) == null) {
+					// We do not attempt to create the file. It will probably be taken in charge later directly from the
+					// URL or there has been an error trying to download it.
+					setPath("");
+					return;
+				}
+			} else {
+				setPath(getTempFilePathFromURL(scope));
 			}
-		}
+	}
+
+	public boolean isRemote() {
+		return url != null;
+	}
+
+	public GamaFile(final IScope scope, final String pathName, final Container container) {
+		this(scope, pathName, false);
+		setWritable(scope, true);
+		setContents(container);
 	}
 
 	@Override
@@ -87,14 +110,10 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	// Might be necessary to redefine it in order to fetch additional resources
-	protected String fetchFromURL(final IScope scope, final String urlPath) {
+	protected String fetchFromURL(final IScope scope) {
 		String pathName = "";
-		try {
-			url = new URL(urlPath);
-		} catch (final MalformedURLException e1) {
-			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
-		}
 		if (!automaticallyFetchFromURL()) { return null; }
+		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
 		try {
 			scope.getGui().getStatus(scope).beginSubStatus(status);
@@ -102,21 +121,18 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 			final URLConnection connection = url.openConnection();
 			final long size = connection.getContentLengthLong();
 			final boolean sizeKnown = size > 0;
-			if (url != null) {
-				final String suffix = url.getPath().replaceAll("/", "_");
-				pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
-				try (final InputStream r = url.openStream(); OutputStream fw = new FileOutputStream(pathName)) {
-					long doneSoFar = 0;
-					final byte[] b = new byte[2048];
-					int length;
-					while ((length = r.read(b)) != -1) {
-						if (sizeKnown) {
-							doneSoFar += 2048;
-							scope.getGui().getStatus(scope)
-									.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
-						}
-						fw.write(b, 0, length);
+			pathName = getTempFilePathFromURL(scope);
+			try (final InputStream r = url.openStream(); OutputStream fw = new FileOutputStream(pathName)) {
+				long doneSoFar = 0;
+				final byte[] b = new byte[2048];
+				int length;
+				while ((length = r.read(b)) != -1) {
+					if (sizeKnown) {
+						doneSoFar += 2048;
+						scope.getGui().getStatus(scope)
+								.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
 					}
+					fw.write(b, 0, length);
 				}
 			}
 		} catch (final IOException e) {
@@ -128,10 +144,69 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	}
 
-	public GamaFile(final IScope scope, final String pathName, final Container container) {
-		this(scope, pathName);
-		setWritable(scope, true);
-		setContents(container);
+	protected void sendToURL(final IScope scope) {
+		String pathName = "";
+		final String urlPath = url.toExternalForm();
+		final String status = "Uploading file to " + urlPath;
+		try {
+			scope.getGui().getStatus(scope).beginSubStatus(status);
+			final File localFile = getFile(scope);
+			final long size = localFile.length();
+			final boolean sizeKnown = size > 0;
+
+			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", getHttpContentType());
+
+			pathName = getTempFilePathFromURL(scope);
+			try (final OutputStream remote = connection.getOutputStream();
+					InputStream local = new FileInputStream(localFile)) {
+				long doneSoFar = 0;
+				final byte[] b = new byte[2048];
+				int length;
+				while ((length = local.read(b)) != -1) {
+					if (sizeKnown) {
+						doneSoFar += 2048;
+						scope.getGui().getStatus(scope)
+								.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
+					}
+					remote.write(b, 0, length);
+				}
+				remote.flush();
+			}
+
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			scope.getGui().getStatus(scope).endSubStatus(status);
+		}
+
+	}
+
+	/**
+	 * The content type to use for uploading the contents of the file. see
+	 * http://www.iana.org/assignments/media-types/media-types.xhtml
+	 * 
+	 * @return
+	 */
+	protected String getHttpContentType() {
+		return "text/plain; charset=UTF-8";
+	}
+
+	public String getTempFilePathFromURL(final IScope scope) {
+		final String suffix = url.getPath().replaceAll("/", "_");
+		final String pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
+		return pathName;
+	}
+
+	protected URL buildURL(final IScope scope, final String urlPath) throws GamaRuntimeException {
+		try {
+			return new URL(urlPath);
+		} catch (final MalformedURLException e1) {
+			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
+		}
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
@@ -244,7 +319,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 */
 	@Override
 	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-		getContents(null);
+		getContents(scope);
 		return getBuffer().checkBounds(scope, index, forAdding);
 
 	}
@@ -312,15 +387,15 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public String getPath(final IScope scope) {
-		if (path == null) {
+		if (localPath == null) {
 			if (scope == null || scope.getExperiment() == null)
-				path = originalPath;
+				localPath = originalPath;
 			else {
 				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist()));
 				checkValidity(scope);
 			}
 		}
-		return path;
+		return localPath;
 	}
 
 	@Override
@@ -421,7 +496,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath(null) + "')";
+		return "file('" + getPath(null) + "')";
 	}
 
 	@Override
@@ -465,10 +540,9 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public final void save(final IScope scope, final Facets saveFacets) {
-		// TO DO
-		// For http connections: create a temp file and save it "as usual" with flushBuffer
-		// Then upload it with HttpConnection
+
 		// Keep in mind that facets might contain a method for uploading (like method: #post) ?
+		// Keep in mind that facets might contain a content-type
 		// Keep in mind possible additional resources (shp additions)
 
 		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
@@ -478,12 +552,16 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		}
 		if (!writable)
 			throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope);
+		// This will save to the local file
 		flushBuffer(scope, saveFacets);
+		if (isRemote()) {
+			sendToURL(scope);
+		}
 
 	}
 
 	protected void setPath(final String path) {
-		this.path = path;
+		this.localPath = path;
 	}
 
 }
