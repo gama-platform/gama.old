@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -579,20 +580,26 @@ public class WorkspaceModelsManager {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
+
+			final List<String> ids = new ArrayList<>();
+			ids.add(XTEXT_NATURE);
+			ids.add(GAMA_NATURE);
+			if ( inTests )
+				ids.add(TEST_NATURE);
+			else if ( inPlugin )
+				ids.add(PLUGIN_NATURE);
+			else if ( builtin )
+				ids.add(BUILTIN_NATURE);
 			desc = proj.getDescription();
-			/* Automatically associate GamaNature and Xtext nature to the project */
-			// String[] ids = desc.getNatureIds();
-			final String[] newIds = new String[builtin ? 3 : 2];
-			// System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[1] = GAMA_NATURE;
-			newIds[0] = XTEXT_NATURE;
+			desc.setNatureIds(ids.toArray(new String[0]));
 			// Addition of a special nature to the project.
-			if ( builtin ) {
-				newIds[2] = inTests ? TEST_NATURE : inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
-			}
-			desc.setNatureIds(newIds);
-			if ( (inPlugin || inTests) && bundle != null ) {
-				desc.setComment(bundle.getSymbolicName());
+			if ( inTests && bundle == null ) {
+				desc.setComment("user defined");
+			} else if ( (inPlugin || inTests) && bundle != null ) {
+				String name = bundle.getSymbolicName();
+				final String[] ss = name.split("\\.");
+				name = ss[ss.length - 1] + " plugin";
+				desc.setComment(name);
 			} else {
 				desc.setComment("");
 			}

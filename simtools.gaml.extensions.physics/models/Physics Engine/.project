@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>Physics Engine</name>
-	<comment>simtools.gaml.extensions.physics</comment>
+	<comment>physics plugin</comment>
 	<projects>
 	</projects>
 	<buildSpec>

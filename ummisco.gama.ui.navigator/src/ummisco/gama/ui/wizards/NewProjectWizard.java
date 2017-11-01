@@ -33,9 +33,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import ummisco.gama.ui.commands.RefreshHandler;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
@@ -43,7 +43,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse framework.
 	 */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
-	private WizardNewProjectCreationPage wizardPage;
+	private NewProjectWizardPage wizardPage;
 	// private IConfigurationElement config;
 	private IProject project;
 
@@ -53,7 +53,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 	@Override
 	public void addPages() {
-		wizardPage = new WizardNewProjectCreationPage("NewGAMAProject");
+		wizardPage = new NewProjectWizardPage("NewGAMAProject");
 		wizardPage.setDescription("Create a new GAMA Project.");
 		wizardPage.setTitle("New GAMA Project");
 		addPage(wizardPage);
@@ -64,6 +64,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 		if (project != null) { return true; }
 
+		final boolean isTest = wizardPage.isTest();
 		final IProject projectHandle = wizardPage.getProjectHandle();
 		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -77,7 +78,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
-				createProject(desc, projectHandle, monitor);
+				createProject(desc, projectHandle, isTest, monitor);
 			}
 		};
 
@@ -92,11 +93,6 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		}
 
 		project = projectHandle;
-
-		// if ( project == null ) { return false; }
-
-		// BasicNewProjectResourceWizard.updatePerspective(config);
-
 		return true;
 
 	}
@@ -110,8 +106,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	 * @throws CoreException
 	 * @throws OperationCanceledException
 	 */
-	void createProject(final IProjectDescription description, final IProject proj, final IProgressMonitor monitor)
-			throws CoreException, OperationCanceledException {
+	void createProject(final IProjectDescription description, final IProject proj, final boolean isTest,
+			final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		try {
 
 			monitor.beginTask("", 2000);
@@ -120,7 +116,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 			proj.open(new SubProgressMonitor(monitor, 1000));
 
-			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, false, null);
+			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, isTest, null);
 
 			/*
 			 * We now have the project and we can do more things with it before updating the perspective.
@@ -146,6 +142,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			/* Add the images folder */
 			final IFolder imFolder = container.getFolder(new Path("tests"));
 			imFolder.create(true, true, monitor);
+
+			RefreshHandler.run(modelFolder);
 
 		} catch (final CoreException ioe) {
 			final IStatus status =

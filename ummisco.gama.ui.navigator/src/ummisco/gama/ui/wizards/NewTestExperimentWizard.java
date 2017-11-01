@@ -49,13 +49,13 @@ import ummisco.gama.ui.commands.RefreshHandler;
  * container. The wizard creates one file with the extension "gaml" and open the registered editor.
  */
 
-public class NewExperimentWizard extends Wizard implements INewWizard {
+public class NewTestExperimentWizard extends Wizard implements INewWizard {
 
-	private NewExperimentWizardPage page;
+	private NewTestExperimentWizardPage page;
 	private ISelection selection;
 	private String fileHeader;
 
-	public NewExperimentWizard() {
+	public NewTestExperimentWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
@@ -63,7 +63,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 	/** Adding pages to the wizard. */
 	@Override
 	public void addPages() {
-		page = new NewExperimentWizardPage(selection);
+		page = new NewTestExperimentWizardPage(selection);
 		addPage(page);
 	}
 
@@ -77,12 +77,11 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		final String fileName = page.getFileName();
 		final String author = page.getAuthor();
 		final String title = page.getExperimentName();
-		final String model = page.getModelName();
 		final String desc = page.getDescription();
 
 		final IRunnableWithProgress op = monitor -> {
 			try {
-				doFinish(containerName, fileName, author, title, model, desc, monitor);
+				doFinish(containerName, fileName, author, title, desc, monitor);
 			} catch (final CoreException e) {
 				e.printStackTrace();
 				throw new InvocationTargetException(e);
@@ -110,8 +109,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 	 * the editor on the newly created file.
 	 */
 	private void doFinish(final String containerName, final String fileName, final String author, final String title,
-			final String m, final String desc, final IProgressMonitor monitor) throws CoreException {
-		String pathToModelString = m;
+			final String desc, final IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Creating " + fileName, 2);
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource container = root.findMember(new Path(containerName));
@@ -131,13 +129,10 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		}
 		IContainer folder = (IContainer) container;
 		final IContainer project = folder.getProject();
-		final IResource modelResource = root.findMember(new Path(pathToModelString));
 		final IPath pathToExperimentFolder = folder.getFullPath();
-		final IPath pathToModel = modelResource.getFullPath().makeRelativeTo(pathToExperimentFolder);
-		pathToModelString = pathToModel.toString();
-		/* Add the models folder */
+		/* Add the tests folder */
 		if (project == container) {
-			final IFolder modelFolder = folder.getFolder(new Path("models"));
+			final IFolder modelFolder = folder.getFolder(new Path("tests"));
 			if (!modelFolder.exists()) {
 				modelFolder.create(true, true, monitor);
 			}
@@ -156,8 +151,8 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 				+ "\n" + "* Tags: Tag1, Tag2, TagN\n*/";
 
 		try {
-			InputStream streamModel = getClass().getResourceAsStream("/templates/experiment.template.resource");
-			streamModel = addFileHeader(streamModel, title, pathToModelString, desc);
+			InputStream streamModel = getClass().getResourceAsStream("/templates/test.experiment.template.resource");
+			streamModel = addFileHeader(streamModel, title, desc);
 			try {
 				file.create(streamModel, true, monitor);
 			} finally {
@@ -181,8 +176,8 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 	}
 
 	/** Method for adding to the stream the header of the file just created */
-	private InputStream addFileHeader(final InputStream streamModel, final String title, final String model,
-			final String desc) throws CoreException {
+	private InputStream addFileHeader(final InputStream streamModel, final String title, final String desc)
+			throws CoreException {
 		String line = "";
 		final StringWriter writer = new StringWriter();
 		try (final InputStreamReader streamReader = new InputStreamReader(streamModel);
@@ -199,8 +194,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		/* Final output in the String */
 		final String str = writer.toString();
 		final String output = fileHeader + java.lang.System.getProperty("line.separator")
-				+ java.lang.System.getProperty("line.separator")
-				+ str.replaceAll("\\$TITLE\\$", title).replaceAll("\\$MODEL\\$", "'" + model + "'");
+				+ java.lang.System.getProperty("line.separator") + str.replaceAll("\\$TITLE\\$", title);
 
 		return new ByteArrayInputStream(output.getBytes());
 	}

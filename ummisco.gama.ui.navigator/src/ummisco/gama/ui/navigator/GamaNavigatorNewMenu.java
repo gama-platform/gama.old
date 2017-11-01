@@ -66,6 +66,15 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu {
 
 	};
 
+	private final SelectionListener newTestExperiment = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			openWizard("msi.gama.gui.wizards.NewTestExperimentWizard", selection);
+		}
+
+	};
+
 	// private final SelectionListener newOther = new SelectionAdapter() {
 	//
 	// @Override
@@ -77,11 +86,13 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu {
 
 	@Override
 	protected void fillMenu() {
-		action("New model...", newModel, GamaIcons.create("navigator/new.model2").image());
-		action("New experiment...", newExperiment, GamaIcons.create("navigator/new.model2").image());
-		action("New project...", newProject, GamaIcons.create("navigator/new.project2").image());
+		action("New Model file...", newModel, GamaIcons.create("navigator/new.model2").image());
+		action("New Experiment file...", newExperiment, GamaIcons.create("navigator/new.model2").image());
+		action("New Project...", newProject, GamaIcons.create("navigator/new.project2").image());
 		sep();
-		action("New folder...", newFolder, GamaIcons.create("navigator/new.folder2").image());
+		action("New Test Experiment file...", newTestExperiment, GamaIcons.create("navigator/new.model2").image());
+		sep();
+		action("New Folder...", newFolder, GamaIcons.create("navigator/new.folder2").image());
 		// sep();
 		// action("Other...", newOther, GamaIcons.create("navigator/navigator.new2").image());
 	}

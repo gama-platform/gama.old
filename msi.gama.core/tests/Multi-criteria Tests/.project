@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>Multi-criteria Tests</name>
-	<comment>msi.gama.core</comment>
+	<comment>core plugin</comment>
 	<projects>
 	</projects>
 	<buildSpec>
