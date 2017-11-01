@@ -145,7 +145,7 @@
                   style="push">
                <parameter
                      name="importWizardId"
-                     value="org.eclipse.ui.wizards.import.ExternalProject">
+                     value="ummisco.gama.ui.import.ExternalProject">
                </parameter>
             </command>
             <command

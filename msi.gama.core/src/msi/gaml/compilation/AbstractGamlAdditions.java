@@ -140,7 +140,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String... skills) {
 		GamaMetaModel.INSTANCE.addSpecies(name, clazz, helper, skills);
-		DescriptionFactory.addSpeciesNameAsType(name);
+		// DescriptionFactory.addSpeciesNameAsType(name);
 	}
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,

@@ -52,7 +52,7 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			openWizard("org.eclipse.ui.wizards.import.ExternalProject", selection);
+			openWizard("ummisco.gama.ui.import.ExternalProject", selection);
 		}
 
 	};

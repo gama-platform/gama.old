@@ -76,12 +76,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardDataTransferPage;
-import org.eclipse.ui.dialogs.WorkingSetGroup;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileManipulations;
@@ -350,8 +346,6 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	// The initial path to set
 	private final String initialPath;
 
-	private WorkingSetGroup workingSetGroup;
-
 	private final IStructuredSelection currentSelection;
 
 	private Button hideConflictingProjects;
@@ -389,8 +383,8 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		this.initialPath = initialPath;
 		this.currentSelection = currentSelection;
 		setPageComplete(false);
-		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
-		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+		setTitle("Import GAMA projects");
+		setMessage("Select a directory or an archive to search for existing GAMA projects.");
 	}
 
 	@Override
@@ -407,19 +401,9 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		createProjectsRoot(workArea);
 		createProjectsList(workArea);
 		createOptionsGroup(workArea);
-		createWorkingSetGroup(workArea);
 		restoreWidgetValues();
 		Dialog.applyDialogFont(workArea);
 
-	}
-
-	/**
-	 * @param workArea
-	 */
-	private void createWorkingSetGroup(final Composite workArea) {
-		final String[] workingSetIds = new String[] { "org.eclipse.ui.resourceWorkingSetPage", //$NON-NLS-1$
-				"org.eclipse.jdt.ui.JavaWorkingSetPage" }; //$NON-NLS-1$
-		workingSetGroup = new WorkingSetGroup(workArea, currentSelection, workingSetIds);
 	}
 
 	@Override
@@ -779,7 +763,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	private void updateProjectsList(final String path, final boolean forceUpdate) {
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
-			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+			setMessage("Select a directory or an archive to search for existing GAMA projects.");
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
@@ -802,7 +786,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 				monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_SearchingMessage, 100);
 				selectedProjects = new ProjectRecord[0];
-				final Collection files = new ArrayList();
+				final Collection<ProjectRecord> files = new ArrayList<>();
 				monitor.worked(10);
 				if (!dirSelected && ArchiveFileManipulations.isTarFile(path)) {
 					final TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
@@ -812,7 +796,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 					final Object child1 = structureProvider.getRoot();
 
 					if (!collectProjectFilesFromProvider(files, child1, 0, monitor)) { return; }
-					final Iterator filesIterator1 = files.iterator();
+					final Iterator<?> filesIterator1 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index1 = 0;
 					monitor.worked(50);
@@ -827,7 +811,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 					final Object child2 = structureProvider.getRoot();
 
 					if (!collectProjectFilesFromProvider(files, child2, 0, monitor)) { return; }
-					final Iterator filesIterator2 = files.iterator();
+					final Iterator<?> filesIterator2 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index2 = 0;
 					monitor.worked(50);
@@ -840,7 +824,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 				else if (dirSelected && directory.isDirectory()) {
 
 					if (!collectProjectFilesFromDirectory(files, directory, null, monitor)) { return; }
-					final Iterator filesIterator3 = files.iterator();
+					final Iterator<?> filesIterator3 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index3 = 0;
 					monitor.worked(50);
@@ -889,7 +873,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		} else if (displayInvalidWarning) {
 			setMessage(DataTransferMessages.WizardProjectsImportPage_projectsInvalid, WARNING);
 		} else {
-			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+			setMessage("Select a directory or an archive to search for existing GAMA projects.");
 		}
 		setPageComplete(projectsList.getCheckedElements().length > 0);
 		if (selectedProjects.length == 0) {
@@ -946,8 +930,9 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 *            The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	private boolean collectProjectFilesFromDirectory(final Collection files, final File directory,
-			Set directoriesVisited, final IProgressMonitor monitor) {
+			Set<String> directoriesVisited, final IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) { return false; }
 		monitor.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage, directory.getPath()));
@@ -956,7 +941,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 		// Initialize recursion guard for recursive symbolic links
 		if (directoriesVisited == null) {
-			directoriesVisited = new HashSet();
+			directoriesVisited = new HashSet<String>();
 			try {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (final IOException exception) {
@@ -1014,11 +999,11 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		if (monitor.isCanceled()) { return false; }
 		monitor.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				structureProvider.getLabel(entry)));
-		List children = structureProvider.getChildren(entry);
+		List<?> children = structureProvider.getChildren(entry);
 		if (children == null) {
-			children = new ArrayList(1);
+			children = new ArrayList<Object>(1);
 		}
-		final Iterator childrenEnum = children.iterator();
+		final Iterator<?> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			final Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
@@ -1104,7 +1089,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		saveWidgetValues();
 
 		final Object[] selected = projectsList.getCheckedElements();
-		createdProjects = new ArrayList();
+		createdProjects = new ArrayList<IProject>();
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			@Override
 			protected void execute(final IProgressMonitor monitor)
@@ -1147,25 +1132,11 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			return false;
 		} finally {
 			ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
-
-			// Ensure the projects to the working sets
-			addToWorkingSets();
 		}
 		return true;
 	}
 
 	List<IProject> createdProjects;
-
-	private void addToWorkingSets() {
-
-		final IWorkingSet[] selectedWorkingSets = workingSetGroup.getSelectedWorkingSets();
-		if (selectedWorkingSets == null || selectedWorkingSets.length == 0) { return; // no Working set is selected
-		}
-		final IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-		for (final IProject element : createdProjects) {
-			workingSetManager.addToWorkingSets(element, selectedWorkingSets);
-		}
-	}
 
 	/**
 	 * Performs clean-up if the user cancels the wizard without doing anything
@@ -1203,7 +1174,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			final List fileSystemObjects = structureProvider.getChildren(record.parent);
+			final List<?> fileSystemObjects = structureProvider.getChildren(record.parent);
 			structureProvider.setStrip(record.level);
 			final ImportOperation operation = new ImportOperation(project.getFullPath(), structureProvider.getRoot(),
 					structureProvider, this, fileSystemObjects);
@@ -1253,7 +1224,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 		// import operation to import project files if copy checkbox is selected
 		if (copyFiles && importSource != null) {
-			final List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+			final List<?> filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
 			final ImportOperation operation = new ImportOperation(project.getFullPath(), importSource,
 					FileSystemStructureProvider.INSTANCE, this, filesToImport);
 			operation.setContext(getShell());
