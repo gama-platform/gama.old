@@ -51,18 +51,19 @@ public abstract class GamlAccessContents implements IPopupProvider {
 
 	protected Table table;
 
-	// private LocalResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
-
 	/**
 	 * A color for dulled out items created by mixing the table foreground. Will be disposed when the
 	 * {@link #resourceManager} is disposed.
 	 */
-	// private Color grayColor;
 	private TextLayout textLayout;
 	protected boolean resized = false;
 	private TriggerSequence keySequence;
 
 	private Popup popup;
+
+	public int maxProviderWidth;
+
+	public int maxDefinitionWidth;
 
 	/**
 	 * Refreshes the contents of the quick access shell
@@ -118,7 +119,6 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					} else {
 						item = new TableItem(table, SWT.NONE);
 					}
-
 					item.setData(entry);
 					item.setText(0, entry.provider.name);
 					item.setText(1, entry.element.getTitle());
@@ -132,6 +132,8 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		if (selectionIndex == -1) {
 			selectionIndex = 0;
 		}
+		// table.setSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		// table.layout();
 		return selectionIndex;
 	}
 
@@ -352,21 +354,39 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		final Font boldFont = GamaFonts.getHelpFont();
 		table.setFont(boldFont);
 		textLayout.setText("Available categories");
-		int maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
-		textLayout.setFont(boldFont);
-		for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
-			final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
-			textLayout.setText(provider.name);
-			final int width = (int) (textLayout.getBounds().width * 1.1);
-			if (width > maxProviderWidth) {
-				maxProviderWidth = width;
+		if (maxProviderWidth == 0) {
+			maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
+			textLayout.setFont(boldFont);
+			for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
+				final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
+				textLayout.setText(provider.name);
+				final int width = (int) (textLayout.getBounds().width * 1.1);
+				if (width > maxProviderWidth) {
+					maxProviderWidth = width;
+				}
 			}
+		}
+		if (maxDefinitionWidth == 0) {
+			textLayout.setText("Available definitions");
+			maxDefinitionWidth = (int) (textLayout.getBounds().width * 1.1);
+			textLayout.setFont(boldFont);
+			for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
+				final GamlIdiomsProvider<? extends IGamlDescription> provider = GamlIdiomsProvider.PROVIDERS.get(i);
+				for (final IGamlDescription d : provider.getSortedElements()) {
+					textLayout.setText(d.getTitle());
+					final int width = (int) (textLayout.getBounds().width * 1.1);
+					if (width > maxDefinitionWidth) {
+						maxDefinitionWidth = width;
+					}
+				}
+			}
+
 		}
 
 		final TableColumn c1 = new TableColumn(table, SWT.NONE);
 		final TableColumn c2 = new TableColumn(table, SWT.NONE);
-		tableColumnLayout.setColumnData(c1, new ColumnWeightData(0, maxProviderWidth));
-		tableColumnLayout.setColumnData(c2, new ColumnWeightData(100, 300));
+		tableColumnLayout.setColumnData(c1, new ColumnWeightData(0, maxProviderWidth, false));
+		tableColumnLayout.setColumnData(c2, new ColumnWeightData(0, maxDefinitionWidth, false));
 
 		table.addKeyListener(new KeyListener() {
 			@Override

@@ -153,6 +153,11 @@ public class GamlSearchField {
 				return shell.toDisplay(0, shell.getSize().y);
 			}
 
+			@Override
+			public int getPopupWidth() {
+				return table.getSize().x;
+			}
+
 		};
 		quickAccessContents.hookFilterText(text);
 		shell = new Shell(parent.getShell(), SWT.RESIZE | SWT.ON_TOP | SWT.BORDER);
@@ -275,7 +280,7 @@ public class GamlSearchField {
 
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
-		final String message = "Search in reference (" + GamaKeyBindings.SEARCH_STRING + ")";
+		final String message = "Search in GAML reference (" + GamaKeyBindings.SEARCH_STRING + ")";
 		text.setMessage(message);
 		return text;
 	}
@@ -335,7 +340,8 @@ public class GamlSearchField {
 		final Display display = text.getDisplay();
 		final Rectangle tempBounds = text.getBounds();
 		final Rectangle compBounds = display.map(text, null, tempBounds);
-		final int preferredWidth = dialogWidth == -1 ? 500 : dialogWidth;
+		final int w = quickAccessContents.maxDefinitionWidth + quickAccessContents.maxProviderWidth;
+		final int preferredWidth = dialogWidth == -1 ? w : dialogWidth;
 		final int width = Math.max(preferredWidth, compBounds.width);
 		final int height = dialogHeight == -1 ? 400 : dialogHeight;
 

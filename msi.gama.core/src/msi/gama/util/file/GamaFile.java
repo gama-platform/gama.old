@@ -465,6 +465,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public final void save(final IScope scope, final Facets saveFacets) {
+		// TO DO
+		// For http connections: create a temp file and save it "as usual" with flushBuffer
+		// Then upload it with HttpConnection
+		// Keep in mind that facets might contain a method for uploading (like method: #post) ?
+		// Keep in mind possible additional resources (shp additions)
+
 		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
 		final boolean overwrite = exp == null || Cast.asBool(scope, exp.value(scope));
 		if (overwrite && getFile(scope).exists()) {

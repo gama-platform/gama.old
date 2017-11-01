@@ -213,6 +213,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
 	}
 
+	@Override
+	public int getPopupWidth() {
+		return label.getSize().x;
+	}
+
 	/**
 	 * Method updateWith()
 	 * 

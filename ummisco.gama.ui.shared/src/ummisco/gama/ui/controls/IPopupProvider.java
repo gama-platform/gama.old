@@ -44,4 +44,8 @@ public interface IPopupProvider {
 
 	public Point getAbsoluteOrigin();
 
+	public default int getPopupWidth() {
+		return 0;
+	}
+
 }

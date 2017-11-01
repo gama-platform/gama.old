@@ -128,7 +128,7 @@ public class Popup {
 			}
 		} else if (labelsSize > controlsSize) {
 			for (int i = 0; i < labelsSize - controlsSize; i++) {
-				final Label label = new Label(popup, SWT.None);
+				final Label label = new Label(popup, SWT.WRAP);
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				labels.add(label);
 			}
@@ -144,9 +144,13 @@ public class Popup {
 
 		final Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);
+		final int width = provider.getPopupWidth();
 
 		popup.layout();
 		popup.pack();
+		if (width != 0) {
+			popup.setSize(popup.computeSize(width, SWT.DEFAULT));
+		}
 		popup.setVisible(true);
 	}
 
