@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
@@ -120,23 +121,18 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 
 	@Override
 	protected String getHttpContentType() {
-		return "application/json; charset=UTF-8";
+		return "application/json";
 	}
 
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final GamaMap<String, Object> map = getBuffer();
-		try {
-			final File file = getFile(scope);
-			if (file.exists()) {
-				GAMA.reportAndThrowIfNeeded(scope,
-						GamaRuntimeException.warning(file.getName() + " already exists", scope), false);
-			} else if (file.createNewFile()) {
-				try (OutputStreamWriter writer =
-						new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-					writer.write(JSONValue.toJSONString(map));
-				}
-			}
+		final File file = getFile(scope);
+		if (file.exists())
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.warning(file.getName() + " already exists", scope),
+					false);
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+			writer.write(JSONValue.toJSONString(map));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

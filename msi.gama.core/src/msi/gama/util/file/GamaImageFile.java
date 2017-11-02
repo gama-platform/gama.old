@@ -472,17 +472,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		return isGeoreferenced;
 	}
 
-	// @Override
-	// public void invalidateContents() {
-	// super.invalidateContents();
-	//// image = null;
+	//
+	// public void setImage(final IScope scope, final BufferedImage image2) {
+	// // AD QUESTION : Shouldnt we also erase the buffer in that case ?
+	// setBuffer(matrixValueFromImage(scope, image2, null));
+	// // image = image2;
 	// }
-
-	public void setImage(final IScope scope, final BufferedImage image2) {
-		// AD QUESTION : Shouldnt we also erase the buffer in that case ?
-		setBuffer(matrixValueFromImage(scope, image2, null));
-		// image = image2;
-	}
 
 	public boolean isAnimated() {
 		return false;

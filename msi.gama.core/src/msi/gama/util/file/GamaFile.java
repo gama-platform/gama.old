@@ -10,15 +10,12 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -31,6 +28,8 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.http.Webb;
+import msi.gama.util.file.http.WebbException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -109,75 +108,36 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return true;
 	}
 
-	// Might be necessary to redefine it in order to fetch additional resources
 	protected String fetchFromURL(final IScope scope) {
-		String pathName = "";
+		String pathName = null;
 		if (!automaticallyFetchFromURL()) { return null; }
 		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
+		pathName = getTempFilePathFromURL(scope);
+		scope.getGui().getStatus(scope).beginSubStatus(status);
+		final Webb web = Webb.create();
 		try {
-			scope.getGui().getStatus(scope).beginSubStatus(status);
-
-			final URLConnection connection = url.openConnection();
-			final long size = connection.getContentLengthLong();
-			final boolean sizeKnown = size > 0;
-			pathName = getTempFilePathFromURL(scope);
-			try (final InputStream r = url.openStream(); OutputStream fw = new FileOutputStream(pathName)) {
-				long doneSoFar = 0;
-				final byte[] b = new byte[2048];
-				int length;
-				while ((length = r.read(b)) != -1) {
-					if (sizeKnown) {
-						doneSoFar += 2048;
-						scope.getGui().getStatus(scope)
-								.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
-					}
-					fw.write(b, 0, length);
-				}
+			try (InputStream in = web.get(urlPath).ensureSuccess().connectTimeout(20000).readTimeout(20000)
+					.retry(3, false).asStream().getBody();) {
+				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
-		} catch (final IOException e) {
+		} catch (final IOException | WebbException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			scope.getGui().getStatus(scope).endSubStatus(status);
 		}
 		return pathName;
-
 	}
 
-	protected void sendToURL(final IScope scope) {
-		String pathName = "";
+	protected void sendToURL(final IScope scope) throws GamaRuntimeException {
 		final String urlPath = url.toExternalForm();
 		final String status = "Uploading file to " + urlPath;
+		scope.getGui().getStatus(scope).beginSubStatus(status);
+		final Webb web = Webb.create();
 		try {
-			scope.getGui().getStatus(scope).beginSubStatus(status);
-			final File localFile = getFile(scope);
-			final long size = localFile.length();
-			final boolean sizeKnown = size > 0;
-
-			final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", getHttpContentType());
-
-			pathName = getTempFilePathFromURL(scope);
-			try (final OutputStream remote = connection.getOutputStream();
-					InputStream local = new FileInputStream(localFile)) {
-				long doneSoFar = 0;
-				final byte[] b = new byte[2048];
-				int length;
-				while ((length = local.read(b)) != -1) {
-					if (sizeKnown) {
-						doneSoFar += 2048;
-						scope.getGui().getStatus(scope)
-								.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
-					}
-					remote.write(b, 0, length);
-				}
-				remote.flush();
-			}
-
-		} catch (final IOException e) {
+			web.post(urlPath).ensureSuccess().connectTimeout(20000).retry(1, false)
+					.header(Webb.HDR_CONTENT_TYPE, getHttpContentType()).body(getFile(scope)).asVoid();
+		} catch (final WebbException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			scope.getGui().getStatus(scope).endSubStatus(status);
@@ -192,7 +152,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 * @return
 	 */
 	protected String getHttpContentType() {
-		return "text/plain; charset=UTF-8";
+		return "text/plain";
 	}
 
 	public String getTempFilePathFromURL(final IScope scope) {
@@ -541,6 +501,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	public final void save(final IScope scope, final Facets saveFacets) {
 
+		// TODO AD
 		// Keep in mind that facets might contain a method for uploading (like method: #post) ?
 		// Keep in mind that facets might contain a content-type
 		// Keep in mind possible additional resources (shp additions)
