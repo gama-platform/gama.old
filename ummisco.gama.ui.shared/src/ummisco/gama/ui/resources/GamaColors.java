@@ -16,9 +16,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class GamaIcons.
@@ -181,7 +181,7 @@ public class GamaColors {
 	}
 
 	private static Color getColor(final int r, final int g, final int b) {
-		return new Color(Display.getCurrent(), r, g, b);
+		return new Color(WorkbenchHelper.getDisplay(), r, g, b);
 	}
 
 	public static GamaUIColor get(final java.awt.Color color) {
@@ -209,7 +209,7 @@ public class GamaColors {
 	}
 
 	public static Color system(final int c) {
-		return Display.getCurrent().getSystemColor(c);
+		return WorkbenchHelper.getDisplay().getSystemColor(c);
 	}
 
 	public static GamaUIColor get(final int... c) {

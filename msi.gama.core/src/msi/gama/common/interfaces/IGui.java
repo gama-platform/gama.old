@@ -170,4 +170,11 @@ public interface IGui {
 
 	public List<TestExperimentSummary> runHeadlessTests(final Object model);
 
+	/**
+	 * Tries to put the frontmost display in full screen mode or in normal view mode if it is already in full screen
+	 * 
+	 * @return true if the toggle has succeeded
+	 */
+	boolean toggleFullScreenMode();
+
 }

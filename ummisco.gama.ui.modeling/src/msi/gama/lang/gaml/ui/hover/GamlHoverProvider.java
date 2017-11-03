@@ -17,7 +17,6 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.xtext.Keyword;
@@ -56,6 +55,7 @@ import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
@@ -149,7 +149,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			@Override
 			public void setSize(final int width, final int height) {
 				super.setSize(width, height);
-				final org.eclipse.swt.graphics.Point p = Display.getDefault().getCursorLocation();
+				final org.eclipse.swt.graphics.Point p = WorkbenchHelper.getDisplay().getCursorLocation();
 				p.x -= 5;
 				p.y += 15;
 				setLocation(p);

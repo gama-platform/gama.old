@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'JField.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JField.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,15 +13,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.geotools.data.Parameter;
 import org.geotools.util.Converters;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import ummisco.gama.ui.utils.WorkbenchHelper;
+
 /**
- * Field that uses the converter API to hack away at a text representation of
- * the provided value.
+ * Field that uses the converter API to hack away at a text representation of the provided value.
  *
  *
  *
@@ -60,9 +59,7 @@ public class JField extends ParamField {
 	@Override
 	public Object getValue() {
 		final String txt = text.getText();
-		if (txt.length() == 0) {
-			return null;
-		}
+		if (txt.length() == 0) { return null; }
 		final Object value = Converters.convert(txt, parameter.type);
 		return value;
 	}
@@ -74,9 +71,7 @@ public class JField extends ParamField {
 	 */
 	int getD() {
 		final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) parameter.metadata.get(Parameter.CRS);
-		if (crs == null) {
-			return 2;
-		}
+		if (crs == null) { return 2; }
 		return crs.getCoordinateSystem().getDimension();
 	}
 
@@ -92,17 +87,15 @@ public class JField extends ParamField {
 	@Override
 	public boolean validate() {
 		final String txt = text.getText();
-		if (txt.length() == 0) {
-			return true;
-		}
+		if (txt.length() == 0) { return true; }
 		final Object value = Converters.convert(txt, parameter.type);
 		if (value == null) {
 			text.setToolTipText("Could not create " + parameter.type);
-			text.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+			text.setForeground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_RED));
 			return false;
 		}
 		text.setToolTipText(null);
-		text.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+		text.setForeground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		return true;
 	}
 

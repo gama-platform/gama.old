@@ -603,4 +603,15 @@ public class SwtGui implements IGui {
 
 	}
 
+	@Override
+	public boolean toggleFullScreenMode() {
+
+		final IWorkbenchPart part = WorkbenchHelper.findGamaViewUnderMouse();
+		if (part instanceof IGamaView.Display) {
+			((IGamaView.Display) part).toggleFullScreen();
+			return true;
+		}
+		return false;
+	}
+
 }

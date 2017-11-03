@@ -21,7 +21,6 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -150,7 +149,7 @@ public class CleanupHelper {
 		@Override
 		public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				// RearrangeMenus.run();
 				final IContributionItem[] items = w.getCoolBarManager2().getItems();
 				// We remove all contributions to the toolbar that do not
@@ -263,7 +262,7 @@ public class CleanupHelper {
 		};
 
 		public static void run() {
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
 
 				if (window instanceof WorkbenchWindow) {

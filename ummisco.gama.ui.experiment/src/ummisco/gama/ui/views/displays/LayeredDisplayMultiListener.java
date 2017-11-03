@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LayeredDisplayMultiListener.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LayeredDisplayMultiListener.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -46,30 +45,30 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	private class DisplayKeyListener implements KeyListener {
 
 		@Override
-		public void keyPressed(final KeyEvent e) {
-		}
+		public void keyPressed(final KeyEvent e) {}
 
 		@Override
 		public void keyReleased(final KeyEvent e) {
 			switch (e.keyCode) {
-			case SWT.ESC:
-				view.toggleFullScreen();
-				break;
-			case 'o':
-				if (GamaKeyBindings.ctrl(e)) {
-					view.toggleOverlay();
-				}
-				break;
-			case 'l':
-				if (GamaKeyBindings.ctrl(e)) {
-					view.toggleSideControls();
-				}
-				break;
-			case 'k':
-				if (GamaKeyBindings.ctrl(e)) {
-					if (view.isFullScreen())
-						view.toggleInteractiveConsole();
-				}
+				// Now taken in charge directly by GamaKeyBindings
+				// case SWT.ESC:
+				// view.toggleFullScreen();
+				// break;
+				case 'o':
+					if (GamaKeyBindings.ctrl(e)) {
+						view.toggleOverlay();
+					}
+					break;
+				case 'l':
+					if (GamaKeyBindings.ctrl(e)) {
+						view.toggleSideControls();
+					}
+					break;
+				case 'k':
+					if (GamaKeyBindings.ctrl(e)) {
+						if (view.isFullScreen())
+							view.toggleInteractiveConsole();
+					}
 			}
 
 		}
@@ -143,14 +142,13 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if (!ok())
 			return;
 		final long currentTime = System.currentTimeMillis();
-		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y) {
-			return;
-		}
+		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y) { return; }
 		setMousePosition(-1, -1);
 		if (e.button > 0)
 			return;
 		// System.out.println("Mouse exiting " + e);
-		WorkaroundForIssue1353.showShell();
+		if (!view.isFullScreen())
+			WorkaroundForIssue1353.showShell();
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseExit);
 	}
 
@@ -218,7 +216,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 			return;
 		mouseIsDown = false;
 		// System.out.println("Mouse up on " + view.getPartName());
-		WorkaroundForIssue1353.showShell();
+		if (!view.isFullScreen())
+			WorkaroundForIssue1353.showShell();
 		view.getDisplaySurface().dispatchMouseEvent(SWT.MouseUp);
 	}
 

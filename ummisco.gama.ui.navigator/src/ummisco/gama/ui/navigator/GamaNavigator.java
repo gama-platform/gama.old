@@ -54,6 +54,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -128,7 +129,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final CommonViewer commonViewer = super.createCommonViewer(parent);
 		final IResourceChangeListener resourceChangeListener = event -> {
 			if (!PlatformUI.isWorkbenchRunning()) { return; }
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				if (getCommonViewer() != null && getCommonViewer().getControl() != null
 						&& !getCommonViewer().getControl().isDisposed()) {
 					GAMA.getGui().updateDecorator("msi.gama.application.decorator");
@@ -152,7 +153,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			if (event.getType() == IResourceChangeEvent.PRE_BUILD || event.getType() == IResourceChangeEvent.PRE_CLOSE
 					|| event.getType() == IResourceChangeEvent.PRE_DELETE) { return; }
 
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) { return; }
 
 				final IResourceDelta d = event.getDelta();

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimpleSlider.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimpleSlider.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,11 +20,8 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -43,14 +39,6 @@ import ummisco.gama.ui.resources.IGamaColors;
 public class SimpleSlider extends Composite implements IPopupProvider {
 
 	final Composite parent;
-
-	private final IPositionChangeListener popupListener = new IPositionChangeListener() {
-
-		@Override
-		public void positionChanged(final double position) {
-			popup.display();
-		}
-	};
 
 	final Panel rightRegion;
 	final Thumb thumb;
@@ -108,22 +96,22 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * The class implementing this interface will be asked to give a user
-	 * understandable <code>String</code> to the slider's current position
+	 * The class implementing this interface will be asked to give a user understandable <code>String</code> to the
+	 * slider's current position
 	 */
 	private IToolTipProvider toolTipInterperter;
 	/** A list of position changed listeners */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
 	/**
-	 * stores the previous position that was sent out to the position changed
-	 * listeners
+	 * stores the previous position that was sent out to the position changed listeners
 	 */
 	double previousPosition = 0;
 
 	GamaUIColor popupColor = IGamaColors.GRAY_LABEL;
-	final Popup popup;
-	final int thumbWidth;
+	Popup2 popup = null;
+	int thumbWidth = 0;
 	private boolean notify = true;
+	private final IPositionChangeListener popupListener = position -> popup.display();
 
 	public SimpleSlider(final Composite parent, final Color color, final Image thumbImageNormal) {
 		this(parent, color, color, thumbImageNormal);
@@ -159,16 +147,11 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				mouseDown = false;
 			}
 		});
-		leftRegion.addMouseMoveListener(new MouseMoveListener() {
-
-			@Override
-			public void mouseMove(final MouseEvent e) {
-				if (mouseDown) {
-					moveThumbHorizontally(e.x - thumbWidth / 2);
-				}
+		leftRegion.addMouseMoveListener(e -> {
+			if (mouseDown) {
+				moveThumbHorizontally(e.x - thumbWidth / 2);
 			}
 		});
-
 		thumb = new Thumb(this, thumbImageNormal);
 		thumbWidth = thumb.computeSize(0, 0).x;
 		thumb.addMouseListener(new MouseAdapter() {
@@ -184,13 +167,9 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				mouseDown = false;
 			}
 		});
-		thumb.addMouseMoveListener(new MouseMoveListener() {
-
-			@Override
-			public void mouseMove(final MouseEvent e) {
-				if (mouseDown) {
-					moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2);
-				}
+		thumb.addMouseMoveListener(e -> {
+			if (mouseDown) {
+				moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2);
 			}
 		});
 
@@ -208,14 +187,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				mouseDown = false;
 			}
 		});
-		rightRegion.addMouseMoveListener(new MouseMoveListener() {
+		rightRegion.addMouseMoveListener(e -> {
+			if (mouseDown) {
+				moveThumbHorizontally(leftRegion.getBounds().width + thumb.getBounds().width / 2 + e.x);
 
-			@Override
-			public void mouseMove(final MouseEvent e) {
-				if (mouseDown) {
-					moveThumbHorizontally(leftRegion.getBounds().width + thumb.getBounds().width / 2 + e.x);
-
-				}
 			}
 		});
 
@@ -235,16 +210,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			}
 		});
 
-		addTraverseListener(new TraverseListener() {
-
-			@Override
-			public void keyTraversed(final TraverseEvent e) {
-				e.doit = true;
-			}
-		});
+		addTraverseListener(e -> e.doit = true);
 		if (withPopup) {
 			addPositionChangeListener(popupListener);
-			popup = new Popup(this, leftRegion, thumb, rightRegion);
+			popup = new Popup2(this, leftRegion, thumb, rightRegion);
 		} else
 			popup = null;
 
@@ -266,17 +235,14 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	/**
 	 *
-	 * @return the position of the slider in the form of a percentage. Note the
-	 *         range is from 0 to 1
+	 * @return the position of the slider in the form of a percentage. Note the range is from 0 to 1
 	 */
 	public double getCurrentPosition() {
 		return previousPosition;
 	}
 
 	private void updatePositionListeners(final double perc) {
-		if (!notify) {
-			return;
-		}
+		if (!notify) { return; }
 		if (Math.abs(perc - previousPosition) > 0.000001) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
@@ -422,8 +388,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	@Override
 	public PopupText getPopupText() {
 		final double value = getCurrentPosition();
-		final String text = toolTipInterperter == null ? String.valueOf(value)
-				: toolTipInterperter.getToolTipText(value);
+		final String text =
+				toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
 		return PopupText.with(popupColor, text);
 	}
 

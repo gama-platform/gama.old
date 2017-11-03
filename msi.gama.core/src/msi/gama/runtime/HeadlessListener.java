@@ -476,4 +476,10 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void endTestDisplay() {}
 
+	@Override
+	public boolean toggleFullScreenMode() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

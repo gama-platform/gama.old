@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.ui.controls.IPopupProvider;
-import ummisco.gama.ui.controls.Popup;
+import ummisco.gama.ui.controls.Popup2;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -59,7 +59,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	protected boolean resized = false;
 	private TriggerSequence keySequence;
 
-	private Popup popup;
+	private Popup2 popup;
 
 	public int maxProviderWidth;
 
@@ -457,7 +457,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			}
 		});
 
-		popup = new Popup(this, table);
+		popup = new Popup2(this, table);
 
 		final Listener listener = event -> {
 			final GamlAccessEntry entry = (GamlAccessEntry) event.item.getData();

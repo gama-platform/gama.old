@@ -63,7 +63,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -490,7 +489,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
 

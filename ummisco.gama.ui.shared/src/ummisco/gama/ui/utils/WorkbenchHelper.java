@@ -9,9 +9,13 @@
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -25,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.ui.views.IGamlEditor;
 
 public class WorkbenchHelper {
@@ -35,7 +40,7 @@ public class WorkbenchHelper {
 	public final static String TEST_NATURE = WorkspaceModelsManager.TEST_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
-	public final static Clipboard clipboard = new Clipboard(Display.getCurrent());
+	public final static Clipboard clipboard = new Clipboard(getDisplay());
 	public final static Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
 
 	public static void asyncRun(final Runnable r) {
@@ -167,6 +172,30 @@ public class WorkbenchHelper {
 
 	public static void copy(final String o) {
 		clipboard.setContents(new String[] { o }, transfers);
+	}
+
+	/**
+	 * @todo find a more robust way to find the view (maybe with the control ?)
+	 * @return
+	 */
+	public static IViewPart findGamaViewUnderMouse() {
+		final IWorkbenchPage page = getPage();
+		if (page == null) { return null; }
+		final Point p = getDisplay().getCursorLocation();
+		System.out.println("Mouse location is " + p);
+		final java.awt.geom.Point2D p2D = new Point2D.Double(p.x, p.y);
+		for (final IViewPart part : page.getViews()) {
+			if (part instanceof IGamaView) {
+				final Rectangle2D r = ((IGamaView) part).getBounds();
+				if (r.contains(p2D))
+					return part;
+				else if (part instanceof IGamaView.Display) {
+					if (((IGamaView.Display) part).isFullScreen())
+						return part;
+				}
+			}
+		}
+		return null;
 	}
 
 }

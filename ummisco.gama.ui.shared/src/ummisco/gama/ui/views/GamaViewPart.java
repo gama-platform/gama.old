@@ -12,6 +12,7 @@ package ummisco.gama.ui.views;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -54,7 +56,7 @@ public abstract class GamaViewPart extends ViewPart
 	private GamaUIJob updateJob;
 	private StateListener toolbarUpdater;
 	// Action toggle;
-	// private Composite rootComposite;
+	private Composite rootComposite;
 
 	public enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -152,7 +154,7 @@ public abstract class GamaViewPart extends ViewPart
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
 				// System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> {
+				WorkbenchHelper.asyncRun(() -> {
 					if (shouldBeClosedWhenNoExperiments())
 						close(GAMA.getRuntimeScope());
 				});
@@ -172,8 +174,15 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
+	public Rectangle2D getBounds() {
+		final Point o = rootComposite.toDisplay(0, 0);
+		final Point s = rootComposite.getSize();
+		return new Rectangle2D.Double(o.x, o.y, s.x, s.y);
+	}
+
+	@Override
 	public void createPartControl(final Composite composite) {
-		// this.rootComposite = composite;
+		this.rootComposite = composite;
 		composite.addDisposeListener(this);
 		if (needsOutput() && getOutput() == null)
 			return;

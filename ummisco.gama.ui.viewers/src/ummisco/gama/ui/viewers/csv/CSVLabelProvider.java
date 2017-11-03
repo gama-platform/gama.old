@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CSVLabelProvider.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CSVLabelProvider.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,13 +9,18 @@
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
 
-import java.util.*;
-import org.eclipse.jface.viewers.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.csv.model.CSVRow;
 import ummisco.gama.ui.viewers.csv.text.SearchResultStyle;
 
@@ -36,7 +40,7 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 	 *
 	 */
 	public CSVLabelProvider() {
-		searchColor = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);
+		searchColor = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
 	}
 
 	/**
@@ -54,9 +58,9 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 	 * @return
 	 */
 	public String getColumnText(final Object element, final int columnIndex) {
-		CSVRow row = (CSVRow) element;
+		final CSVRow row = (CSVRow) element;
 
-		if ( row.getEntries().size() > columnIndex ) { return row.getEntries().get(columnIndex).toString(); }
+		if (row.getEntries().size() > columnIndex) { return row.getEntries().get(columnIndex).toString(); }
 
 		return "";
 	}
@@ -99,16 +103,16 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 	 */
 	@Override
 	public void update(final ViewerCell cell) {
-		CSVRow element = (CSVRow) cell.getElement();
-		int index = cell.getColumnIndex();
-		String columnText = getColumnText(element, index);
+		final CSVRow element = (CSVRow) cell.getElement();
+		final int index = cell.getColumnIndex();
+		final String columnText = getColumnText(element, index);
 		cell.setText(columnText);
 		cell.setImage(null);
-		if ( searchText != null && searchText.length() > 0 ) {
-			int intRangesCorrectSize[] = SearchResultStyle.getSearchTermOccurrences(searchText, columnText);
-			List<StyleRange> styleRange = new ArrayList<StyleRange>();
-			for ( int i = 0; i < intRangesCorrectSize.length / 2; i++ ) {
-				StyleRange myStyleRange = new StyleRange(0, 0, null, searchColor);
+		if (searchText != null && searchText.length() > 0) {
+			final int intRangesCorrectSize[] = SearchResultStyle.getSearchTermOccurrences(searchText, columnText);
+			final List<StyleRange> styleRange = new ArrayList<StyleRange>();
+			for (int i = 0; i < intRangesCorrectSize.length / 2; i++) {
+				final StyleRange myStyleRange = new StyleRange(0, 0, null, searchColor);
 				myStyleRange.start = intRangesCorrectSize[i];
 				myStyleRange.length = intRangesCorrectSize[++i];
 				styleRange.add(myStyleRange);

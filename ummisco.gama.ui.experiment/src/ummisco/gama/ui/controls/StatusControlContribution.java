@@ -47,7 +47,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	volatile boolean isUpdating;
 	FlatButton label;
-	private Popup popup;
+	private Popup2 popup;
 	int state;
 	volatile String mainTaskName;
 	volatile String subTaskName;
@@ -113,7 +113,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				exp.informStatus();
 			}
 		});
-		popup = new Popup(this, label);
+		popup = new Popup2(this, label);
 		return compo;
 	}
 

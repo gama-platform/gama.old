@@ -121,6 +121,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected Composite normalParentOfFullScreenControl;
 	protected Shell fullScreenShell;
 
+	@Override
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
 			if (interactiveConsoleVisible)
@@ -160,6 +161,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			overlay.setVisible(true);
 	}
 
+	@Override
 	public boolean isFullScreen() {
 		return fullScreenShell != null;
 	}
@@ -173,21 +175,25 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			monitorId = 0;
 		if (monitorId > monitors.length - 1)
 			monitorId = monitors.length - 1;
+		final Rectangle bounds = monitors[monitorId].getBounds();
 
-		fullScreenShell = new Shell(WorkbenchHelper.getDisplay(),
-				(GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL)
-						| SWT.NO_TRIM);
-		fullScreenShell.setBounds(monitors[monitorId].getBounds());
-
-		// fullScreenShell.setMaximized(true);
+		fullScreenShell =
+				new Shell(WorkbenchHelper.getDisplay(), (GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue()
+						? SWT.ON_TOP | SWT.SYSTEM_MODAL : SWT.APPLICATION_MODAL) | SWT.NO_TRIM);
+		fullScreenShell.setBounds(bounds);
+		if (GamaPreferences.Displays.DISPLAY_NATIVE_FULLSCREEN.getValue()) {
+			fullScreenShell = new Shell(SWT.NO_TRIM | SWT.ON_TOP);
+			fullScreenShell.setMaximized(true);
+			fullScreenShell.setBounds(bounds);
+			fullScreenShell.setFullScreen(true);
+		}
 		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		gl.verticalSpacing = 0;
 		fullScreenShell.setLayout(gl);
-		// fullScreenShell.setAlpha(200);
-		// fullScreenShell.setFullScreen(true);
+
 	}
 
 	private void destroyFullScreenShell() {

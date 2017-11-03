@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.awt.geom.Rectangle2D;
+
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -40,6 +42,10 @@ public interface IGamaView {
 		 * the view to be fully realized
 		 */
 		public void waitToBeRealized();
+
+		public void toggleFullScreen();
+
+		public boolean isFullScreen();
 	}
 
 	public interface Error {
@@ -87,5 +93,7 @@ public interface IGamaView {
 	public void setName(String name);
 
 	public void updateToolbarState();
+
+	public Rectangle2D getBounds();
 
 }

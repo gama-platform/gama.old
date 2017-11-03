@@ -20,7 +20,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -34,32 +34,24 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * The class Popup.
+ * The class Popup2. An alternative to Popup, which uses JFace dialogs
  *
  * @author drogoul
- * @since 19 janv. 2012
+ * @since 31 oct. 2017
  *
  */
-public class Popup {
+public class Popup2 extends PopupDialog {
 
-	private static Shell popup;
-	private static final Listener hide = event -> hide();
+	Composite parent, contents;
 
-	static Shell getPopup() {
-		if (popup == null || popup.isDisposed() || popup.getShell() == null || popup.getShell().isDisposed()) {
-			popup = new Shell(WorkbenchHelper.getShell(), PopupDialog.HOVER_SHELLSTYLE);
-			popup.setLayout(new GridLayout(1, true));
-		}
-		return popup;
-
-	}
+	private final Listener hide = event -> hide();
+	private final Runnable display = () -> WorkbenchHelper.asyncRun(() -> display());
 
 	private final MouseTrackListener mtl = new MouseTrackListener() {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			WorkbenchHelper.asyncRun(() -> display());
-
+			display.run();
 		}
 
 		@Override
@@ -69,19 +61,19 @@ public class Popup {
 
 		@Override
 		public void mouseHover(final MouseEvent e) {
-			WorkbenchHelper.asyncRun(() -> display());
+			display.run();
 
 		}
 
 	};
 
 	private final IPopupProvider provider;
-	boolean isVisible;
 
 	/*
 	 *
 	 */
-	public Popup(final IPopupProvider provider, final Widget... controls) {
+	public Popup2(final IPopupProvider provider, final Widget... controls) {
+		super(WorkbenchHelper.getShell(), PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, false, null, null);
 		this.provider = provider;
 		final Shell parent = provider.getControllingShell();
 		parent.addListener(SWT.Move, hide);
@@ -89,6 +81,7 @@ public class Popup {
 		parent.addListener(SWT.Close, hide);
 		parent.addListener(SWT.Deactivate, hide);
 		parent.addListener(SWT.Hide, hide);
+		parent.addListener(SWT.Dispose, event -> close());
 		for (final Widget c : controls) {
 			if (c == null) {
 				continue;
@@ -100,24 +93,21 @@ public class Popup {
 		}
 	}
 
-	public void display() {
-		// We first verify that the popup is still ok
-		final Shell c = provider.getControllingShell();
-		if (c == null || c.isDisposed()) {
-			hide();
-			return;
-		}
-
+	@Override
+	protected Control createContents(final Composite parent) {
+		this.parent = parent;
+		if (contents == null)
+			this.contents = (Composite) super.createDialogArea(parent);
 		// We then grab the text and hide if it is null or empty
 		final PopupText s = provider.getPopupText();
 		if (s == null || s.isEmpty()) {
 			hide();
-			return;
+			return null;
 		}
-		final Shell popup = getPopup();
-		final Control[] array = popup.getChildren();
-		final int labelsSize = s.size();
+		final Control[] array = contents.getChildren();
 		final List<Control> labels = new ArrayList<Control>(Arrays.asList(array));
+		final int labelsSize = s.size();
+
 		final int controlsSize = array.length;
 		if (controlsSize > labelsSize) {
 			for (int i = labelsSize; i < controlsSize; i++) {
@@ -125,7 +115,7 @@ public class Popup {
 			}
 		} else if (labelsSize > controlsSize) {
 			for (int i = 0; i < labelsSize - controlsSize; i++) {
-				final Label label = new Label(popup, SWT.WRAP);
+				final Label label = new Label(contents, SWT.WRAP);
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				labels.add(label);
 			}
@@ -138,26 +128,84 @@ public class Popup {
 			label.setForeground(GamaColors.getTextColorForBackground(color.color()).color());
 			label.setText(GAML.toText(text));
 		});
+		return contents;
+	}
 
-		final Point point = provider.getAbsoluteOrigin();
-		popup.setLocation(point.x, point.y);
-		final int width = provider.getPopupWidth();
+	public void updateContents() {
+		createContents(parent);
+	}
 
-		popup.layout();
-		popup.pack();
-		if (width != 0) {
-			popup.setSize(popup.computeSize(width, SWT.DEFAULT));
-		}
-		popup.setVisible(true);
+	@Override
+	protected boolean hasTitleArea() {
+		return false;
+	}
+
+	@Override
+	protected boolean hasInfoArea() {
+		return false;
+	}
+
+	@Override
+	protected void showDialogMenu() {}
+
+	@Override
+	protected void setInfoText(final String text) {}
+
+	@Override
+	protected void setTitleText(final String text) {}
+
+	@Override
+	protected boolean getPersistLocation() {
+		return false;
+	}
+
+	@Override
+	protected boolean getPersistSize() {
+		return false;
+	}
+
+	@Override
+	protected void saveDialogBounds(final Shell shell) {}
+
+	@Override
+	protected Point getDefaultSize() {
+		int width = provider.getPopupWidth();
+		if (width <= 0)
+			width = SWT.DEFAULT;
+		return getShell().computeSize(width, SWT.DEFAULT, true);
+
+	}
+
+	@Override
+	protected Point getDefaultLocation(final Point initialSize) {
+		return provider.getAbsoluteOrigin();
 	}
 
 	public boolean isVisible() {
-		return popup != null && !popup.isDisposed() && popup.isVisible();
+		return getShell() != null && getShell().isVisible();
 	}
 
-	public static void hide() {
-		if (popup == null || popup.isDisposed() || !popup.isVisible())
-			return;
-		getPopup().setVisible(false);
+	protected void adjustSize() {
+		final Shell shell = getShell();
+		shell.layout();
+		shell.pack();
+		shell.setLocation(getDefaultLocation(null));
+		shell.setSize(getDefaultSize());
+	}
+
+	public void display() {
+		if (getShell() != null && !getShell().isDisposed()) {
+			updateContents();
+			adjustSize();
+			getShell().setVisible(true);
+		}
+
+		else
+			open();
+	}
+
+	public void hide() {
+		if (getShell() != null && !getShell().isDisposed())
+			getShell().setVisible(false);
 	}
 }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SwtMapFrame.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SwtMapFrame.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,12 +23,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.gis.geotools.action.InfoAction;
 import ummisco.gama.ui.viewers.gis.geotools.action.OpenGeotiffAction;
 import ummisco.gama.ui.viewers.gis.geotools.action.OpenShapefileAction;
@@ -41,8 +40,7 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.CrsStatusBarButton;
 import ummisco.gama.ui.viewers.gis.geotools.utils.StatusBarNotifier;
 
 /**
- * An SWT frame containing a map display pane and a toolbar, status bar and map
- * layer table.
+ * An SWT frame containing a map display pane and a toolbar, status bar and map layer table.
  *
  * @author Michael Bedward
  * @author Andrea Antonello (www.hydrologis.com)
@@ -52,8 +50,7 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.StatusBarNotifier;
 public class SwtMapFrame extends ApplicationWindow {
 
 	/**
-	 * Constants for available toolbar buttons used with the
-	 * {@linkplain #enableTool} method.
+	 * Constants for available toolbar buttons used with the {@linkplain #enableTool} method.
 	 */
 	public enum Tool {
 		/**
@@ -101,16 +98,14 @@ public class SwtMapFrame extends ApplicationWindow {
 	private final OpenGeotiffAction openCoverageAction;
 
 	/*
-	 * to see how overlay of shapes works, uncomment all the lines that contain
-	 * drawAction
+	 * to see how overlay of shapes works, uncomment all the lines that contain drawAction
 	 */
 	// private DrawShapeAction drawAction;
 
 	/**
-	 * Creates a new {@code JMapFrame} object with a toolbar, map pane and
-	 * status bar; sets the supplied {@code MapContent}; and displays the frame
-	 * on the AWT event dispatching thread. The context's title is used as the
-	 * frame's title.
+	 * Creates a new {@code JMapFrame} object with a toolbar, map pane and status bar; sets the supplied
+	 * {@code MapContent}; and displays the frame on the AWT event dispatching thread. The context's title is used as
+	 * the frame's title.
 	 *
 	 * @param content
 	 *            the map context containing the layers to display
@@ -123,8 +118,7 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	/**
-	 * Default constructor. Creates a {@code JMapFrame} with no context or
-	 * renderer set
+	 * Default constructor. Creates a {@code JMapFrame} with no context or renderer set
 	 */
 	public SwtMapFrame(final boolean showMenu, final boolean showToolBar, final boolean showStatusBar,
 			final boolean showLayerTable) {
@@ -132,8 +126,8 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	/**
-	 * Constructs a new {@code JMapFrame} object with specified context and a
-	 * default renderer (an instance of {@link StreamingRenderer}).
+	 * Constructs a new {@code JMapFrame} object with specified context and a default renderer (an instance of
+	 * {@link StreamingRenderer}).
 	 * 
 	 * @param showLayerTable
 	 * @param showStatusBar
@@ -146,8 +140,7 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	/**
-	 * Constructs a new {@code JMapFrame} object with specified context and
-	 * renderer
+	 * Constructs a new {@code JMapFrame} object with specified context and renderer
 	 * 
 	 * @param showLayerTable
 	 * @param showStatusBar
@@ -188,9 +181,8 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	/**
-	 * This method is an alternative to {@linkplain #enableToolBar(boolean)}. It
-	 * requests that a tool bar be created with specific tools, identified by
-	 * {@linkplain SwtMapFrame.Tool} constants. <code><pre>
+	 * This method is an alternative to {@linkplain #enableToolBar(boolean)}. It requests that a tool bar be created
+	 * with specific tools, identified by {@linkplain SwtMapFrame.Tool} constants. <code><pre>
 	 * myMapFrame.enableTool(Tool.PAN, Tool.ZOOM);
 	 * </pre></code>
 	 *
@@ -204,7 +196,7 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	protected Control createContents(final Composite parent) {
 		final String title = content.getTitle();
 		content.layers();
@@ -228,7 +220,7 @@ public class SwtMapFrame extends ApplicationWindow {
 		}
 
 		// the map pane is the one element that is always displayed
-		mapPane.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		mapPane.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		mapPane.setRenderer(renderer);
 
 		// drawAction.setMapPane(mapPane);
@@ -242,18 +234,18 @@ public class SwtMapFrame extends ApplicationWindow {
 
 		final StatusLineManager statusLineManager = getStatusLineManager();
 		if (statusLineManager != null) {
-			final IContributionItem filler = new ControlContribution(
-					"ummisco.gama.ui.viewers.gis.geotools.SwtMapFrame.ID") {
-				@Override
-				protected Control createControl(final Composite parent) {
-					final Label almostParent = new Label(parent, SWT.NONE);
-					final StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-					statusLineLayoutData.widthHint = 1;
-					statusLineLayoutData.heightHint = 45;
-					almostParent.setLayoutData(statusLineLayoutData);
-					return almostParent;
-				}
-			};
+			final IContributionItem filler =
+					new ControlContribution("ummisco.gama.ui.viewers.gis.geotools.SwtMapFrame.ID") {
+						@Override
+						protected Control createControl(final Composite parent) {
+							final Label almostParent = new Label(parent, SWT.NONE);
+							final StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
+							statusLineLayoutData.widthHint = 1;
+							statusLineLayoutData.heightHint = 45;
+							almostParent.setLayoutData(statusLineLayoutData);
+							return almostParent;
+						}
+					};
 			final CrsStatusBarButton crsButton = new CrsStatusBarButton(mapPane);
 			statusLineManager.add(filler);
 			statusLineManager.add(crsButton);
@@ -298,9 +290,8 @@ public class SwtMapFrame extends ApplicationWindow {
 	}
 
 	/**
-	 * Get the map context associated with this frame. Returns {@code null} if
-	 * no map context has been set explicitly with the constructor or
-	 * {@linkplain #setMapContent}.
+	 * Get the map context associated with this frame. Returns {@code null} if no map context has been set explicitly
+	 * with the constructor or {@linkplain #setMapContent}.
 	 *
 	 * @return the current {@code MapContent} object
 	 */
@@ -317,16 +308,14 @@ public class SwtMapFrame extends ApplicationWindow {
 	 *             if context is null
 	 */
 	public void setMapContent(final MapContent content) {
-		if (content == null) {
-			throw new IllegalArgumentException("content must not be null");
-		}
+		if (content == null) { throw new IllegalArgumentException("content must not be null"); }
 
 		mapPane.setMapContent(content);
 	}
 
 	/**
-	 * Get the renderer being used by this frame. Returns {@code null} if no
-	 * renderer was set via the constructor or {@linkplain #setRenderer}.
+	 * Get the renderer being used by this frame. Returns {@code null} if no renderer was set via the constructor or
+	 * {@linkplain #setRenderer}.
 	 *
 	 * @return the current {@code GTRenderer} object
 	 */
@@ -343,15 +332,12 @@ public class SwtMapFrame extends ApplicationWindow {
 	 *             if renderer is null
 	 */
 	public void setRenderer(final GTRenderer renderer) {
-		if (renderer == null) {
-			throw new IllegalArgumentException("renderer must not be null");
-		}
+		if (renderer == null) { throw new IllegalArgumentException("renderer must not be null"); }
 		mapPane.setRenderer(renderer);
 	}
 
 	/**
-	 * Provides access to the instance of {@code JMapPane} being used by this
-	 * frame.
+	 * Provides access to the instance of {@code JMapPane} being used by this frame.
 	 *
 	 * @return the {@code JMapPane} object
 	 */

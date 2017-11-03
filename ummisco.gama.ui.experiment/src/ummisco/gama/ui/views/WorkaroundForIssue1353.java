@@ -31,7 +31,6 @@ public class WorkaroundForIssue1353 {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			// System.out.println("Activating " + partRef.getPartName());
 			showShell();
 		}
 
@@ -39,9 +38,7 @@ public class WorkaroundForIssue1353 {
 		public void partClosed(final IWorkbenchPartReference partRef) {}
 
 		@Override
-		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			// System.out.println("Deactivating " + partRef.getPartName());
-		}
+		public void partDeactivated(final IWorkbenchPartReference partRef) {}
 
 		@Override
 		public void partOpened(final IWorkbenchPartReference partRef) {}
@@ -60,34 +57,34 @@ public class WorkaroundForIssue1353 {
 	}
 
 	private static Shell shell;
-	private final static PartListener listener = new PartListener();
 
 	public static void showShell() {
-		if (shell != null) // The fix has been installed
-		{
+		if (shell != null)
 			WorkbenchHelper.asyncRun(() -> {
-				shell.open();
-				shell.setVisible(false);
+				getShell().open();
+				getShell().setVisible(false);
 
 			});
 
+	}
+
+	private static Shell getShell() {
+		if (shell == null || shell.isDisposed() || shell.getShell() == null || shell.getShell().isDisposed()) {
+			createShell();
 		}
+		return shell;
 	}
 
 	private static void createShell() {
-		if (shell == null) {
-			shell = new Shell(WorkbenchHelper.getDisplay(), SWT.APPLICATION_MODAL);
-			shell.setSize(5, 5);
-			shell.setAlpha(0);
-			shell.setBackground(IGamaColors.BLACK.color());
-		}
-
+		shell = new Shell(WorkbenchHelper.getShell(), SWT.APPLICATION_MODAL);
+		shell.setSize(5, 5);
+		shell.setAlpha(0);
+		shell.setBackground(IGamaColors.BLACK.color());
 	}
 
 	public static void install() {
 		if (!PlatformHelper.isCocoa()) { return; }
-		createShell();
-		WorkbenchHelper.getPage().addPartListener(listener);
+		WorkbenchHelper.getPage().addPartListener(new PartListener());
 
 	}
 

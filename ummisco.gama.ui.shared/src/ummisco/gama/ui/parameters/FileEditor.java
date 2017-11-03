@@ -13,7 +13,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -27,6 +26,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class FileEditor extends AbstractEditor<IGamaFile> {
@@ -64,7 +64,7 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
-		final FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
+		final FileDialog dialog = new FileDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
 		IGamaFile file = currentValue;
 		dialog.setFileName(file.getPath(getScope()));
 		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
