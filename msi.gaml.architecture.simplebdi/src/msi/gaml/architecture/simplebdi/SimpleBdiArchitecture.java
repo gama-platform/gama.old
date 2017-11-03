@@ -245,6 +245,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
+		final IAgent agent = scope.getAgent();
+		if (agent.dead()) { return null; }
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
 				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		if(use_personality){
@@ -256,8 +258,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
 		}
-		final IAgent agent = scope.getAgent();
-		if (agent.dead()) { return null; }
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
 				_perceptions.get(i).executeOn(scope);
@@ -400,28 +400,40 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	protected final Boolean selectDesireWithHighestPriority(final IScope scope) {
+		//Réduire la liste des désires potentiellement intentionable en fonction des valeurs des plans
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
 				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
+		final List<BDIPlan> listPlans = getPlans(scope);
 		if (is_probabilistic_choice) {
+			final List<MentalState> desireBaseTest = GamaListFactory.create();/*= getBase(scope, DESIRE_BASE)*/;
+			for(MentalState tempDesire : getBase(scope, DESIRE_BASE)){
+				for(BDIPlan tempPlan : listPlans){
+					SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
+					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
+							.equalsIntentionPlan(tempDesire.getPredicate())){
+						desireBaseTest.add(tempDesire);
+					}
+				}
+			}
 			final GamaList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
 			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			if (desireBase.size() > 0) {
-				MentalState newIntention = desireBase.anyValue(scope);
+				MentalState newIntention = desireBase.get(0)/*.anyValue(scope)*/;
 				double newIntStrength;
-				final double priority_list[] = new double[desireBase.length(scope)];
-				for (int i = 0; i < desireBase.length(scope); i++) {
-					priority_list[i] = desireBase.get(i).getStrength();
+				final double priority_list[] = new double[desireBaseTest.size()/*.length(scope)*/];
+				for (int i = 0; i < desireBaseTest.size()/*.length(scope)*/; i++) {
+					priority_list[i] = desireBaseTest.get(i).getStrength();
 				}
 				final IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
 				final int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
-				newIntention = desireBase.get(index_choice);
-				newIntStrength = desireBase.get(index_choice).getStrength();
-				if (desireBase.size() > intentionBase.size()) {
+				newIntention = desireBaseTest.get(index_choice);
+				newIntStrength = desireBaseTest.get(index_choice).getStrength();
+				if (desireBaseTest.size() > intentionBase.size()) {
 					while (intentionBase.contains(newIntention)) {
 						final int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
-						newIntention = desireBase.get(index_choice2);
-						newIntStrength = desireBase.get(index_choice2).getStrength();
+						newIntention = desireBaseTest.get(index_choice2);
+						newIntStrength = desireBaseTest.get(index_choice2).getStrength();
 					}
 				}
 				MentalState newIntentionState = null;
@@ -452,13 +464,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		} else {
-			final GamaList<MentalState> desireBase = (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
-					.shuffle(getBase(scope, DESIRE_BASE));
+			final List<MentalState> desireBaseTest = GamaListFactory.create();
+			for(MentalState tempDesire : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
+					.shuffle(getBase(scope, DESIRE_BASE))){
+				for(BDIPlan tempPlan : listPlans){
+					SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
+					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
+							.equalsIntentionPlan(tempDesire.getPredicate())){
+						desireBaseTest.add(tempDesire);
+					}
+				}
+			}
+			final GamaList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
 			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			double maxpriority = Double.MIN_VALUE;
-			if (desireBase.size() > 0 && intentionBase != null) {
+			if (desireBaseTest.size() > 0 && intentionBase != null) {
 				MentalState newIntention = null;// desireBase.anyValue(scope);
-				for (final MentalState desire : desireBase) {
+				for (final MentalState desire : desireBaseTest) {
 
 					if (desire.getStrength() > maxpriority) {
 						if (!intentionBase.contains(desire)) {
@@ -2565,8 +2587,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 					}
 					//Faire ce calcul seulement si le désire à une force (vérifier le no value)
-					if(desire!=null && desire.getStrength()>=0.0){
-						intensity = desire.getStrength()*(1+(0.5-neurotisme));
+					if(desire!=null && desire.getStrength()>=0.0 && predTest.getStrength()>=0.0){
+						intensity = predTest.getStrength()*desire.getStrength()*(1+(0.5-neurotisme));
 						if(intensity>1.0){
 							intensity=1.0;
 						}
@@ -2598,8 +2620,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 								MentalState desire=pred;
 								//Faire ce calcul seulement si le désire à une force (vérifier le no value)
-								if(desire!=null){
-									intensity = desire.getStrength()*(1+(0.5-neurotisme));
+								if(desire!=null && desire.getStrength()>=0.0 && predTest.getStrength()>=0.0){
+									intensity = predTest.getStrength()*desire.getStrength()*(1+(0.5-neurotisme));
 									if(intensity>1.0){
 										intensity=1.0;
 									}
@@ -2684,8 +2706,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									desire = mental; 
 									}
 							}
-							if(desire!=null && desire.getStrength()>=0.0){
-								intensity = desire.getStrength()*(1+(0.5-neurotisme));
+							if(desire!=null && desire.getStrength()>=0.0 && predTest.getStrength()>=0.0){
+								intensity = predTest.getStrength()*desire.getStrength()*(1+(0.5-neurotisme));
 								if(intensity>1.0){
 									intensity=1.0;
 								}
@@ -2716,8 +2738,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										MentalState desire=pred;
 										//Faire ce calcul seulement si le désire à une force (vérifier le no value)
-										if(desire!=null){
-											intensity = desire.getStrength()*(1+(0.5-neurotisme));
+										if(desire!=null && desire.getStrength()>=0.0 && predTest.getStrength()>=0.0){
+											intensity = predTest.getStrength()*desire.getStrength()*(1+(0.5-neurotisme));
 											if(intensity>1.0){
 												intensity=1.0;
 											}
@@ -3386,7 +3408,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
-										intensity = temp.getStrength()*(1+(0.5-openness));
+										intensity = predicateDirect.getStrength()*temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
 											intensity=1.0;
 										}
@@ -3408,7 +3430,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
-										intensity = temp.getStrength()*(1+(0.5-openness));
+										intensity = predicateDirect.getStrength()*temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
 											intensity=1.0;
 										}
@@ -3432,7 +3454,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
-										intensity = -temp.getStrength()*(1+(0.5-openness));
+										intensity = -predicateDirect.getStrength()*temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
 											intensity=1.0;
 										}
@@ -3454,7 +3476,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 									if(use_personality){
 										Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 										Double openness = (Double) scope.getAgent().getAttribute(OPENNESS);
-										intensity = -temp.getStrength()*(1+(0.5-openness));
+										intensity = -predicateDirect.getStrength()*temp.getStrength()*(1+(0.5-openness));
 										if(intensity>1.0){
 											intensity=1.0;
 										}
