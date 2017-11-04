@@ -69,6 +69,12 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 						if (view.isFullScreen())
 							view.toggleInteractiveConsole();
 					}
+					break;
+				case 't':
+					if (GamaKeyBindings.ctrl(e)) {
+						if (view.isFullScreen())
+							view.toggleSimulationControls();
+					}
 			}
 
 		}

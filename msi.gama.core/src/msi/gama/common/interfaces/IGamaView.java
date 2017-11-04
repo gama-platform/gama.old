@@ -46,6 +46,10 @@ public interface IGamaView {
 		public void toggleFullScreen();
 
 		public boolean isFullScreen();
+
+		void toggleSideControls();
+
+		void toggleOverlay();
 	}
 
 	public interface Error {

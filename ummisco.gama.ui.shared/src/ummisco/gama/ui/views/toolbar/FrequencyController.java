@@ -58,9 +58,10 @@ public class FrequencyController implements StateListener {
 	 * @param tb
 	 */
 	public void install(final GamaToolbar2 tb) {
-		// createFrequencyItem(tb);
+
 		createPauseItem(tb);
 		createSynchronizeItem(tb);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 	}
 
 	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {

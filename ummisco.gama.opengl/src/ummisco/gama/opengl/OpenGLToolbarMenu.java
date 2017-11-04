@@ -39,39 +39,39 @@ public class OpenGLToolbarMenu {
 
 		new MenuItem(menu, SWT.SEPARATOR);
 
-		final MenuItem camera = new MenuItem(menu, SWT.PUSH);
-		camera.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CAMERA).image());
-		final boolean arcBall = view.getDisplaySurface().getData().isArcBallCamera();
-		camera.setText(arcBall ? "Use FreeFly camera" : "Use ArcBall camera");
-		camera.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				view.getDisplaySurface().runAndUpdate(() -> {
-					final boolean old = view.getDisplaySurface().getData().isArcBallCamera();
-					((OpenGL) view.getDisplaySurface()).getData().setArcBallCamera(!old);
-				});
-			}
-		});
-		new MenuItem(menu, SWT.SEPARATOR);
-
-		final MenuItem rotation = new MenuItem(menu, SWT.CHECK);
-		final boolean rotated = view.getDisplaySurface().getData().isRotationOn();
-		rotation.setSelection(rotated);
-		rotation.setText("Rotate scene");
-		rotation.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ROTATE).image());
-		rotation.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				view.getDisplaySurface().runAndUpdate(() -> {
-					final boolean rotated1 = view.getDisplaySurface().getData().isRotationOn();
-					view.getDisplaySurface().getData().setRotation(!rotated1);
-				});
-			}
-		});
+		// final MenuItem camera = new MenuItem(menu, SWT.PUSH);
+		// camera.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CAMERA).image());
+		// final boolean arcBall = view.getDisplaySurface().getData().isArcBallCamera();
+		// camera.setText(arcBall ? "Use FreeFly camera" : "Use ArcBall camera");
+		// camera.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		//
+		// view.getDisplaySurface().runAndUpdate(() -> {
+		// final boolean old = view.getDisplaySurface().getData().isArcBallCamera();
+		// view.getDisplaySurface().getData().setArcBallCamera(!old);
+		// });
+		// }
+		// });
+		// new MenuItem(menu, SWT.SEPARATOR);
+		//
+		// final MenuItem rotation = new MenuItem(menu, SWT.CHECK);
+		// final boolean rotated = view.getDisplaySurface().getData().isRotationOn();
+		// rotation.setSelection(rotated);
+		// rotation.setText("Rotate scene");
+		// rotation.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ROTATE).image());
+		// rotation.addSelectionListener(new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		//
+		// view.getDisplaySurface().runAndUpdate(() -> {
+		// final boolean rotated1 = view.getDisplaySurface().getData().isRotationOn();
+		// view.getDisplaySurface().getData().setRotation(!rotated1);
+		// });
+		// }
+		// });
 		final MenuItem split = new MenuItem(menu, SWT.CHECK);
 		split.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_SPLIT).image());
 		final boolean splitted = view.getDisplaySurface().getData().isLayerSplitted();

@@ -125,6 +125,7 @@ public class LayeredDisplayData {
 	private GamaPoint cameraUpVector = null;
 	private String presetCamera = "";
 	private int cameraLens = 45;
+	private double splitDistance = 0.25;
 	private final boolean isDrawingPolygons = true;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
@@ -611,7 +612,20 @@ public class LayeredDisplayData {
 
 	public void setLayerSplitted(final boolean s) {
 		isSplittingLayers = s;
-		notifyListeners(Changes.SPLIT_LAYER, s);
+		if (s)
+			notifyListeners(Changes.SPLIT_LAYER, splitDistance);
+		else
+			notifyListeners(Changes.SPLIT_LAYER, 0d);
+	}
+
+	public Double getSplitDistance() {
+		return splitDistance;
+	}
+
+	public void setSplitDistance(final Double s) {
+		splitDistance = s;
+		if (isSplittingLayers)
+			notifyListeners(Changes.SPLIT_LAYER, s);
 	}
 
 	public boolean isSynchronized() {

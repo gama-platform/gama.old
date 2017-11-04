@@ -120,7 +120,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
-	protected List<String> getCameraNames() {
+	public List<String> getCameraNames() {
 		return Collections.EMPTY_LIST;
 	}
 

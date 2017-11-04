@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.ui.views.displays.SWTDisplayView;
-import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 /**
  * Class OpenGLLayeredDisplayView.
@@ -63,13 +62,7 @@ public class OpenGLDisplayView extends SWTDisplayView {
 	}
 
 	@Override
-	public void createToolItems(final GamaToolbar2 tb) {
-		super.createToolItems(tb);
-		new OpenGLToolbarMenu().createItem(tb, this);
-	}
-
-	@Override
-	protected List<String> getCameraNames() {
+	public List<String> getCameraNames() {
 		return new ArrayList<String>(getDisplaySurface().renderer.camera.PRESETS.keySet());
 	}
 }

@@ -528,7 +528,6 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		} else if (!viewIsDetached()) {
 			display();
 		}
-		getView().overlayChanged();
 	}
 
 	public void dispose() {

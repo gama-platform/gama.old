@@ -636,9 +636,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.switchCamera();
 				break;
 			case SPLIT_LAYER:
-				final boolean yes = (Boolean) value;
+				final double dist = (Double) value;
 				final int nbLayers = this.getManager().getItems().size();
-				final double gap = yes ? 1d / (nbLayers * 2) : 0;
+				final double gap = dist;
 				double currentElevation = 0;
 				for (final ILayer layer : this.getManager().getItems()) {
 					layer.addElevation(currentElevation);

@@ -72,6 +72,18 @@ public class EditorFactory {
 		return new FloatEditor(scope, parent, title, value, min, max, step, canBeNull, whenModified);
 	}
 
+	public static AbstractEditor create(final IScope scope, final Composite parent, final String title,
+			final Double value, final Double min, final Double max, final Double step, final boolean canBeNull,
+			final boolean isSlider, final EditorListener<Double> whenModified) {
+		final InputParameter par = new InputParameter(title, value, min, max, step);
+		if (isSlider) {
+			final SliderEditor se = new SliderEditor.Float(scope, null, par, whenModified);
+			se.createComposite(parent);
+			return se;
+		}
+		return new FloatEditor(scope, parent, title, value, min, max, step, canBeNull, whenModified);
+	}
+
 	public static IntEditor create(final IScope scope, final Composite parent, final String title, final String unit,
 			final Integer value, final Integer min, final Integer max, final Integer step,
 			final EditorListener<Integer> whenModified) {
