@@ -107,7 +107,40 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	private void adaptToolbarToFullScreen(final boolean entering) {
 		fs.setImage(GamaIcons.create(entering ? "display.fullscreen3" : "display.fullscreen2").image());
+
 		if (entering) {
+			toolbar.button("display.layers2", "Toggle layers controls",
+					"Toggle layers controls " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'L'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleSideControls();
+						}
+
+					}, SWT.LEFT);
+			toolbar.button("display.overlay2", "Toggle overlay",
+					"Toggle bottom overlay " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'O'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleOverlay();
+						}
+
+					}, SWT.LEFT);
+			toolbar.button("display.presentation2", "Toggle Interactive Console",
+					"Toggle interactive console " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'K'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleInteractiveConsole();
+						}
+
+					}, SWT.LEFT);
+			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
+
 			toolbar.button(IGamaIcons.MENU_RUN_ACTION, "Run or pause experiment",
 					"Run or pause experiment " + GamaKeyBindings.PLAY_STRING, new SelectionAdapter() {
 
