@@ -188,7 +188,6 @@ public class WorkbenchHelper {
 		final IWorkbenchPage page = getPage();
 		if (page == null) { return null; }
 		final Point p = getDisplay().getCursorLocation();
-		System.out.println("Mouse location is " + p);
 		final java.awt.geom.Point2D p2D = new Point2D.Double(p.x, p.y);
 		for (final IViewPart part : page.getViews()) {
 			if (part instanceof IGamaView) {

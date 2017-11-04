@@ -101,7 +101,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			getZoomableControls()[0].forceFocus();
-
+			if (GamaPreferences.Displays.DISPLAY_TOOLBAR_FULLSCREEN.getValue())
+				toggleSimulationControls();
 		}
 	}
 
