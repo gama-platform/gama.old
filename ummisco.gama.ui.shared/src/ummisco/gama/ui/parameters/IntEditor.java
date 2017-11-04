@@ -35,7 +35,7 @@ public class IntEditor extends NumberEditor<Integer> {
 	IntEditor(final IScope scope, final Composite parent, final String title, final String unit, final Integer value,
 			final Integer min, final Integer max, final Integer step, final EditorListener<Integer> whenModified,
 			final boolean canBeNull) {
-		super(scope, new InputParameter(title, unit, value, min, max), whenModified, canBeNull);
+		super(scope, new InputParameter(title, unit, value, min, max, step), whenModified, canBeNull);
 		createComposite(parent);
 	}
 

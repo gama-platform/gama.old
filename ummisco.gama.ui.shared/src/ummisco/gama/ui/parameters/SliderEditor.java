@@ -94,11 +94,10 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	Number stepValue;
 
 	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
-		super(scope, a, variable);
+		super(scope, a, variable, l);
 		final int minChars = String.valueOf(minValue.intValue()).length();
 		final int maxChars = String.valueOf(maxValue.intValue()).length();
 		nbInts = Math.max(minChars, maxChars);
-
 	}
 
 	@Override
