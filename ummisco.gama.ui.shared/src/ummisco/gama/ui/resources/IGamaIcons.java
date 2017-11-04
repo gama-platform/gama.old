@@ -20,10 +20,10 @@ public interface IGamaIcons {
 
 	// Display toolbar
 
-	public static final String DISPLAY_TOOLBAR_PAUSE = "display.pause2";
+	public static final String DISPLAY_TOOLBAR_PAUSE = "display.pause3";
 	public static final String DISPLAY_TOOLBAR_KNOB = "display.knob2";
 	public static final String DISPLAY_TOOLBAR_SLIDER = "display.slider2";
-	public static final String DISPLAY_TOOLBAR_SYNC = "display.sync2";
+	public static final String DISPLAY_TOOLBAR_SYNC = "display.sync3";
 	public static final String DISPLAY_TOOLBAR_SNAPSHOT = "display.snapshot2";
 	public static final String DISPLAY_TOOLBAR_ZOOMIN = "display.zoomin2";
 	public static final String DISPLAY_TOOLBAR_CSVEXPORT = "menu.saveas2";
