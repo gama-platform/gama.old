@@ -215,6 +215,12 @@
      <dynamic
            class="ummisco.gama.ui.modeling.EditorMenu"
            id="ummisco.gama.ui.modeling.dynamic5">
+        <visibleWhen
+              checkEnabled="false">
+           <reference
+                 definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
+           </reference>
+        </visibleWhen>
      </dynamic>
   </menuContribution>
 	</extension>
