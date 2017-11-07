@@ -10,8 +10,9 @@
 package ummisco.gama.ui.navigator;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,14 +121,12 @@ public abstract class TopLevelFolder extends VirtualContent {
 	protected abstract Location getModelsLocation();
 
 	protected Location getLocation(final IPath location) {
-		URL urlRep = null;
 		try {
 			final URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/");
-			final URL new_url = FileLocator.resolve(old_url);
+			final URL new_url = FileLocator.toFileURL(old_url);
 			// windows URL formating
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			urlRep = normalizedPath.toUri().toURL();
+			final URI resolvedURI = new URI(new_url.getProtocol(), new_url.getPath(), null).normalize();
+			final URL urlRep = resolvedURI.toURL();
 			final String osString = location.toOSString();
 			final boolean isTest = osString.contains(GamaBundleLoader.REGULAR_TESTS_LAYOUT);
 			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
@@ -138,7 +137,7 @@ public abstract class TopLevelFolder extends VirtualContent {
 				return Location.Plugins;
 			}
 			return Location.Other;
-		} catch (final IOException e) {
+		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 			return Location.Unknown;
 		}
