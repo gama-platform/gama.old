@@ -285,7 +285,7 @@ public class GamaPreferences {
 				"Delay (in ms) between the opening of display views (increase if you experience freezes when opening displays, esp. Java2D displays)",
 				200, IType.INT).between(0, 1000).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
-				create("pref_display_show_border", "Display a border around display views", true, IType.BOOL).in(NAME,
+				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL).in(NAME,
 						PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE = create("pref_display_continue_drawing",
 				"Continue to draw displays (in the background) when in Modeling perspective", false, IType.BOOL)
