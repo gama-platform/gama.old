@@ -468,7 +468,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for(MentalState tempDesire : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE))){
 				for(BDIPlan tempPlan : listPlans){
+					if (tempPlan == null) continue;
 					SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
+					if (tempPlan.getPlanStatement() == null) continue;
+					if ((tempPlan.getPlanStatement().getIntentionExpression() == null) || (tempPlan.getPlanStatement().getIntentionExpression().value(scope) == null)){
+						desireBaseTest.add(tempDesire);
+						continue;
+					}
 					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
 							.equalsIntentionPlan(tempDesire.getPredicate())){
 						desireBaseTest.add(tempDesire);
@@ -538,7 +544,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
 			final boolean isIntentionConditionSatisfied = statement.getIntentionExpression() == null
-					|| ((Predicate) statement.getIntentionExpression().value(scope))
+					|| statement.getIntentionExpression().value(scope) == null || ((Predicate) statement.getIntentionExpression().value(scope))
 							.equalsIntentionPlan(currentIntention(scope).getPredicate());
 			final boolean isEmotionConditionSatisfied = statement.getEmotionExpression() == null
 					|| getEmotionBase(scope, EMOTION_BASE).contains(statement.getEmotionExpression().value(scope));
@@ -680,7 +686,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				continue;
 			}
 			if(currentIntention(scope)!=null){
-				if (statement.getIntentionExpression() == null
+				if (statement.getIntentionExpression() == null || ((Predicate) statement.getIntentionExpression().value(scope)) == null
 						|| ((Predicate) statement.getIntentionExpression().value(scope))
 								.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
 					plans.add(statement);
