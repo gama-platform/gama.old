@@ -31,6 +31,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certain condition")),
 		@facet(name = EmotionalContagion.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 		@facet(name = EmotionalContagion.DECAY, type = IType.FLOAT, optional = true, doc = @doc("The decay value of the emotion added to the agent")),
+		@facet(name = EmotionalContagion.INTENSITY, type = IType.FLOAT, optional = true, doc = @doc("The intensity value of the emotion created to the agent")),
 		@facet(name = EmotionalContagion.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) },
 	omissible = IKeyword.NAME)
 @doc(value = "enables to make conscious or unconscious emotional contagion", examples = {
@@ -48,6 +49,7 @@ public class EmotionalContagion extends AbstractStatement {
 	public static final String RECEPTIVITY = "receptivity";
 	public static final String THRESHOLD = "threshold";
 	public static final String DECAY = "decay";
+	public static final String INTENSITY = "intensity";
 
 	final IExpression name;
 	final IExpression emotionDetected;
@@ -57,6 +59,7 @@ public class EmotionalContagion extends AbstractStatement {
 	final IExpression receptivity;
 	final IExpression threshold;
 	final IExpression decay;
+	final IExpression intensity;
 	
 	public EmotionalContagion(IDescription desc) {
 		super(desc);
@@ -68,6 +71,7 @@ public class EmotionalContagion extends AbstractStatement {
 		receptivity = getFacet(EmotionalContagion.RECEPTIVITY);
 		threshold = getFacet(EmotionalContagion.THRESHOLD);
 		decay = getFacet(EmotionalContagion.DECAY);
+		intensity = getFacet(EmotionalContagion.INTENSITY);
 	}
 
 	@Override
@@ -79,6 +83,7 @@ public class EmotionalContagion extends AbstractStatement {
 		Double thresholdValue = 0.25;
 		IScope scopeMySelf = null;
 		Double decayValue = 0.0;
+		Double intensityValue = 0.0;
 		if (mySelfAgent != null) {
 			scopeMySelf = mySelfAgent.getScope().copy("of EmotionalContagion");
 			scopeMySelf.push(mySelfAgent);
@@ -109,6 +114,16 @@ public class EmotionalContagion extends AbstractStatement {
 								}
 							}
 							tempEmo.setDecay(decayValue);
+							if(intensity!=null){
+								intensityValue = (Double) intensity.value(scopeMySelf);
+								if(intensityValue>1.0){
+									intensityValue = 1.0;
+								}
+								if(intensityValue<0.0){
+									intensityValue = 0.0;
+								}
+							}
+							tempEmo.setIntensity(intensityValue);
 							SimpleBdiArchitecture.addEmotion(scopeMySelf, tempEmo);
 						}
 					}else{
@@ -131,8 +146,8 @@ public class EmotionalContagion extends AbstractStatement {
 								if(decayValue<0.0){
 									decayValue = 0.0;
 								}
+								temp.setDecay(decayValue);
 							}
-							temp.setDecay(decayValue);
 							SimpleBdiArchitecture.addEmotion(scopeMySelf, temp);
 						}
 					}

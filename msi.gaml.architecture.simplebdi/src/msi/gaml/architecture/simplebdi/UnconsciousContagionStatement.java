@@ -110,8 +110,8 @@ public class UnconsciousContagionStatement extends AbstractStatement {
 							if(decayValue<0.0){
 								decayValue = 0.0;
 							}
+							temp.setDecay(decayValue);
 						}
-						temp.setDecay(decayValue);
 						SimpleBdiArchitecture.addEmotion(scopeMySelf, temp);
 					}
 				}
