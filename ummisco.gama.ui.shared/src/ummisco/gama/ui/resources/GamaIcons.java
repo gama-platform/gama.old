@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaIcons.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaIcons.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,9 +20,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class GamaIcons.
@@ -89,7 +88,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 		if (sizer == null) {
 			// RGB c = new RGB(color.getRed(), color.getGreen(),
 			// color.getBlue());
-			final Image sizerImage = new Image(Display.getDefault(), width, height);
+			final Image sizerImage = new Image(WorkbenchHelper.getDisplay(), width, height);
 			final GC gc = new GC(sizerImage);
 			gc.setBackground(color);
 			gc.fillRectangle(0, 0, width, height);
@@ -126,7 +125,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 			// Color color = gcolor.color();
 			// RGB c = new RGB(color.getRed(), color.getGreen(),
 			// color.getBlue());
-			final Image image = new Image(Display.getDefault(), width, height);
+			final Image image = new Image(WorkbenchHelper.getDisplay(), width, height);
 			final GC gc = new GC(image);
 			gc.setAntialias(SWT.ON);
 			gc.setBackground(gcolor.color());
@@ -135,7 +134,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 			final ImageData data = image.getImageData();
 			data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
 			icon = new GamaIcon(name);
-			getInstance().putImageInCache(name, new Image(Display.getDefault(), data));
+			getInstance().putImageInCache(name, new Image(WorkbenchHelper.getDisplay(), data));
 			image.dispose();
 			getInstance().putIconInCache(name, icon);
 		}
@@ -153,12 +152,10 @@ public class GamaIcons /* implements IGamaIcons */ {
 	public static Image createTempColorIcon(final GamaUIColor gcolor) {
 		final String name = "color" + gcolor.getRGB().toString();
 		final GamaIcon icon = getInstance().getIcon(name);
-		if (icon != null) {
-			return icon.image();
-		}
+		if (icon != null) { return icon.image(); }
 		// Color color = gcolor.color();
 		final GamaIcon blank = create("display.color2");
-		final Image image = new Image(Display.getDefault(), blank.image().getImageData());
+		final Image image = new Image(WorkbenchHelper.getDisplay(), blank.image().getImageData());
 		final GC gc = new GC(image);
 		gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
@@ -176,12 +173,10 @@ public class GamaIcons /* implements IGamaIcons */ {
 	public static Image createTempRoundColorIcon(final GamaUIColor gcolor) {
 		final String name = "roundcolor" + gcolor.getRGB().toString();
 		final GamaIcon icon = getInstance().getIcon(name);
-		if (icon != null) {
-			return icon.image();
-		}
+		if (icon != null) { return icon.image(); }
 		// Color color = gcolor.color();
 		final GamaIcon blank = create("display.color3");
-		final Image image = new Image(Display.getDefault(), blank.image().getImageData());
+		final Image image = new Image(WorkbenchHelper.getDisplay(), blank.image().getImageData());
 		final GC gc = new GC(image);
 		gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
@@ -212,9 +207,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 	public static Image scaleImage(final Device d, final Image im, final int width, final int height) {
 		final Rectangle curBounds = im.getBounds();
 		// no change required
-		if (curBounds.width == width && curBounds.height == height) {
-			return im;
-		}
+		if (curBounds.width == width && curBounds.height == height) { return im; }
 
 		// create a new image
 		final Image newIm = new Image(d, width, height);

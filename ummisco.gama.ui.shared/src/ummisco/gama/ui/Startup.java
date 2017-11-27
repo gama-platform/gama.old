@@ -11,7 +11,9 @@ package ummisco.gama.ui;
 
 import org.eclipse.ui.IStartup;
 
+import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.utils.CleanupHelper;
 
 public class Startup implements IStartup {
@@ -20,6 +22,9 @@ public class Startup implements IStartup {
 	public void earlyStartup() {
 		CleanupHelper.run();
 		GamaKeyBindings.install();
+		if (GamaPreferences.Modeling.START_TESTS.getValue()) {
+			TestsRunner.start();
+		}
 	}
 
 }

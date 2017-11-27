@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-ext-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="streamex 0.6.2/streamex-0.6.4.jar" sourcepath="streamex 0.6.2/streamex-0.6.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
@@ -97,7 +99,7 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jgridshift-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/json-simple-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsqlparser-0.3.14.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsr-275-1.0-beta-2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsr-275-1.0-beta-2.jar" sourcepath="/home/pataillandie/.m2/repository/net/java/dev/jsr-275/jsr-275/1.0-beta-2/jsr-275-1.0-beta-2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-contour-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-rangelookup-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-utils-1.4.0.jar"/>
@@ -159,7 +161,6 @@
 	<classpathentry exported="true" kind="lib" path="svgsalamander 1.0/jars/svg-salamander-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar" sourcepath="/Users/drogoul/.m2/repository/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar" sourcepath="jgrapht 0.9.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="kabeja 0.4/jars/kabeja-0.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>

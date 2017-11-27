@@ -1,0 +1,133 @@
+/**
+* Name: Spatial Operators
+* Author: Patrick Taillandier
+* Description: Tests various spatial relation operators with continuous and grid topology
+* Tags: topology, grid, relation, test
+*/
+
+model RelationTest
+
+species dummy {
+	rgb color <- #yellow;
+	aspect default {
+		draw circle(2) border: #black color: color;
+		draw string(int(self)) color: #black;
+	}
+}
+grid cell width: 10 height: 10 {
+	rgb color <- #white;
+	aspect default {
+		draw shape border: #black color: color;
+		draw string(int(self)) color: #black;
+	}
+}
+
+global {
+	init {
+		create dummy with: [location :: {5,5}];
+		create dummy with: [location :: {8,9}];
+		create dummy with: [location :: {14,6}];
+		create dummy with: [location :: {35,55}];
+		create dummy with: [location :: {25,75}];
+		create dummy with: [location :: {56,80}];
+		create dummy with: [location :: {10,70}];
+		create dummy with: [location :: {80,8}];
+		create dummy with: [location :: {34,78}];
+		create dummy with: [location :: {67,32}];
+		ask dummy(8) {color<-#red;}
+		ask cell(40) {color<-#red;}
+		ask cell where (each.grid_y = 5 and each.grid_x > 1) {
+			color <- #pink;
+		}
+	}
+}
+experiment RelationTests type: test {
+	test "distance_to" {
+		//distance_to with continuous topology
+		float distance <- dummy(8) distance_to dummy(8);
+		assert (distance)= 0;
+		distance <- dummy(8) distance_to dummy(9);
+		assert (distance with_precision 3)= 56.613;
+		
+		//distance_to with grid topology
+		using topology(cell) {distance <- dummy(8) distance_to dummy(8);}
+		assert distance = 0.0;
+		using topology(cell) {distance <- dummy(8) distance_to dummy(9);}
+		assert distance = 7.0;
+		
+		//distance_between with continuous topology
+		
+	}
+	test "distance_between" {
+		//distance_between with continuous topology
+		float distance <- topology(world) distance_between [dummy(9), dummy(8), dummy(1)];
+		assert (distance with_precision 3)= 130.349;
+		
+		//distance_between with grid topology
+		distance <-topology(cell) distance_between [dummy(9), dummy(8), dummy(1)];
+		assert distance = 17.0;
+	}
+	
+	test "path_to" {
+		//path_to with continuous topology
+		path the_path <- dummy(8) path_to dummy(9);
+		assert (the_path.shape.perimeter with_precision 3)= 56.613;
+		
+		//path_to with grid topology
+		using topology(cell) {the_path <- dummy(8) path_to dummy(9);}
+		assert the_path.weight = 8.0;
+		
+		
+	}
+	
+	test "path_between" {
+		//path_between with continuous topology
+		path the_path <- topology(world) path_between (dummy(9), dummy(8));
+		assert (the_path.shape.perimeter with_precision 3)= 56.613;
+		the_path <- topology(world) path_between [dummy(9), dummy(8), dummy(1)];
+		assert (the_path.shape.perimeter with_precision 3)= 130.349;
+		
+		//path_between with grid topology
+		ask world{the_path <-  topology(cell) path_between([dummy(9)]);}
+		assert the_path.weight = 0;
+		ask world{the_path <-  topology(cell) path_between([dummy(9), dummy(8)]);}
+		assert the_path.weight = 8;
+		ask world{the_path <-  topology(cell) path_between([dummy(9), dummy(8), dummy(1)]);}
+		assert the_path.weight = 18;
+		
+		//path_between on a grid with obstacles
+		the_path <- (cell where (each.color != #pink)) path_between ([dummy(9)]);
+		assert the_path.weight = 0;
+		the_path <- (cell where (each.color != #pink)) path_between ([dummy(9), dummy(8)]);
+		assert the_path.weight = 12;
+		the_path <- (cell where (each.color != #pink)) path_between (dummy(9), dummy(8));
+		assert the_path.weight = 12;
+		ask world{the_path <-  (cell where (each.color != #pink)) path_between([dummy(9), dummy(8), dummy(1)]);}
+		assert the_path.weight = 22;
+		
+		//path_between on a grid with weighted cells
+		the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between ([dummy(9)]);
+		assert the_path.weight= 0;
+		the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between ([dummy(9), dummy(8)]);
+		assert the_path.weight= 24;
+		the_path <- (cell as_map (each::(each.color = #pink ? 10.0 : 2.0))) path_between (dummy(9), dummy(8));
+		assert the_path.weight= 24;
+		ask world{the_path <-  (cell as_map (each::(each.color = #pink ? 10.0 : 2.0)))  path_between([dummy(9), dummy(8), dummy(1)]);}
+		assert the_path.weight = 46;
+	}
+
+	test "towards" {
+		int angle <- dummy(8) towards dummy(9);
+		assert angle = 306;
+	}
+} 
+
+experiment with_visualization type: gui {
+	output {
+		display map {
+			species cell;
+			species dummy;
+		}	
+	}	
+}
+

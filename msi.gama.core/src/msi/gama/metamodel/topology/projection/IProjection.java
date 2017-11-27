@@ -44,5 +44,10 @@ public interface IProjection {
 	public abstract void translate(Geometry geom);
 
 	public abstract void inverseTranslate(Geometry geom);
+	
+
+	public abstract void convertUnit(Geometry geom);
+
+	public abstract void inverseConvertUnit(Geometry geom);
 
 }

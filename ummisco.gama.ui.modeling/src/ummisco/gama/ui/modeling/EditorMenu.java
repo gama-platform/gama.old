@@ -16,16 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
@@ -42,7 +38,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.common.GamlFileExtension;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -55,6 +50,7 @@ import msi.gama.lang.gaml.ui.reference.TemplateReferenceMenu;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -263,7 +259,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				final IProject proj = myFile.getProject();
 				// AD Addresses Issue 796 by passing null to the "without"
 				// parameter
-				final List<URI> resources = getAllGamaFilesInProject(proj, null);
+				final List<URI> resources = ModelsFinder.getAllGamaFilesInProject(proj, null);
 				final ResourceSet rs = editor.resourceSetProvider.get(proj);
 				for (final URI uri : resources) {
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);
@@ -284,39 +280,6 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 			}
 		});
 		return map;
-	}
-
-	public static ArrayList<URI> getAllGamaFilesInProject(final IProject project, final URI without) {
-		final ArrayList<URI> allGamaFiles = new ArrayList<>();
-		final IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		final IPath path = project.getLocation();
-		recursiveFindGamaFiles(allGamaFiles, path, myWorkspaceRoot, without);
-		return allGamaFiles;
-	}
-
-	private static void recursiveFindGamaFiles(final ArrayList<URI> allGamaFiles, final IPath path,
-			final IWorkspaceRoot myWorkspaceRoot, final URI without) {
-		final IContainer container = myWorkspaceRoot.getContainerForLocation(path);
-		if (container != null)
-			try {
-				final IResource[] iResources = container.members();
-				if (iResources != null)
-					for (final IResource iR : iResources) {
-						// for gama files
-						if (GamlFileExtension.isAny(iR.getName())) {
-							final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
-							if (!uri.equals(without)) {
-								allGamaFiles.add(uri);
-							}
-						}
-						if (iR.getType() == IResource.FOLDER) {
-							final IPath tempPath = iR.getLocation();
-							recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
-						}
-					}
-			} catch (final CoreException e) {
-				e.printStackTrace();
-			}
 	}
 
 	/**
@@ -342,7 +305,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		public void widgetSelected(final SelectionEvent e) {
 			final MenuItem mi = (MenuItem) e.widget;
 			final URI uri = (URI) mi.getData("uri");
-			GAMA.getGui().editModel(uri);
+			GAMA.getGui().editModel(null, uri);
 		}
 	};
 

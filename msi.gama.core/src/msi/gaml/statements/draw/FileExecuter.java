@@ -18,10 +18,10 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
@@ -40,10 +40,12 @@ class FileExecuter extends DrawExecuter {
 	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
 		if (file == null) { return null; }
-		final FileDrawingAttributes attributes = computeAttributes(scope, data, file instanceof GamaImageFile);
+		final FileDrawingAttributes attributes =
+				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile);
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue()
+				&& /* !GAMA.isInHeadLessMode() */ !scope.getExperiment().isHeadless()) {
 			final Scaling3D size = attributes.getSize();
 			if (size != null) {
 				// if a size is provided
@@ -59,12 +61,15 @@ class FileExecuter extends DrawExecuter {
 		return g.drawFile(file, attributes);
 	}
 
-	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile) {
+	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
+			final boolean gisFile) {
 		final FileDrawingAttributes attributes =
 				new FileDrawingAttributes(Scaling3D.of(data.size.value), data.rotation.value, data.location.value,
 						data.getCurrentColor(), data.border.value, scope.getAgent(), data.lineWidth.value, imageFile);
-		// We push the location of the agent if none has been provided
-		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
+		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
+		// are already provided, see Issue #2165)
+		if (!gisFile)
+			attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
 		if (imageFile) {
 			// If the size is provided, we automatically center the file
 			final Scaling3D size = attributes.getSize();

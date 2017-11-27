@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.awt.geom.Rectangle2D;
+
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -16,11 +18,21 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.statements.test.CompoundSummary;
 
 /**
  * @author drogoul
  */
 public interface IGamaView {
+
+	public interface Test {
+		public void addTestResult(final CompoundSummary<?, ?> summary);
+
+		public void startNewTestSequence(boolean all);
+
+		public void finishTestSequence();
+
+	}
 
 	public interface Display {
 		IDisplaySurface getDisplaySurface();
@@ -30,6 +42,14 @@ public interface IGamaView {
 		 * the view to be fully realized
 		 */
 		public void waitToBeRealized();
+
+		public void toggleFullScreen();
+
+		public boolean isFullScreen();
+
+		void toggleSideControls();
+
+		void toggleOverlay();
 	}
 
 	public interface Error {
@@ -64,7 +84,7 @@ public interface IGamaView {
 
 	IDisplayOutput getOutput();
 
-	public void close();
+	public void close(IScope scope);
 
 	public void removeOutput(IDisplayOutput putput);
 
@@ -75,5 +95,9 @@ public interface IGamaView {
 	public String getPartName();
 
 	public void setName(String name);
+
+	public void updateToolbarState();
+
+	public Rectangle2D getBounds();
 
 }

@@ -20,7 +20,6 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * Class OverlayLayer.
@@ -35,6 +34,11 @@ public class OverlayLayer extends GraphicLayer {
 
 	protected OverlayLayer(final ILayerStatement layer) {
 		super(layer);
+	}
+
+	@Override
+	public boolean isOverlay() {
+		return true;
 	}
 
 	@Override
@@ -73,37 +77,45 @@ public class OverlayLayer extends GraphicLayer {
 	}
 
 	@Override
+	public void recomputeBounds(final IGraphics g, final IScope scope) {
+		computed = false;
+		definition.getBox().setConstantBoundingBox(false);
+		definition.getBox().compute(scope);
+		setPositionAndSize(definition.getBox(), g);
+	}
+
+	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		if (computed) { return; }
 		// Voir comment conserver cette information
-		final int pixelWidth = g.getDisplayWidth();
-		final int pixelHeight = g.getDisplayHeight();
+		final int pixelWidth = g.getWidthForOverlay();
+		final int pixelHeight = g.getHeightForOverlay();
 		final double envWidth = g.getSurface().getData().getEnvWidth();
 		final double envHeight = g.getSurface().getData().getEnvHeight();
 		final double xRatioBetweenPixelsAndModelUnits = pixelWidth / envWidth;
 		final double yRatioBetweenPixelsAndModelUnits = pixelHeight / envHeight;
 
+		// L'appel via reshape provoque un recalcul qui utilise une valeur de pixel incorrecte s'il y a eu un zoom...
+
 		ILocation point = box.getPosition();
 		// Computation of x
 		final double x = point.getX();
-		final double relative_x = FastMath.abs(x) <= 1 ? pixelWidth * x : xRatioBetweenPixelsAndModelUnits * x;
-		final double absolute_x = FastMath.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
+		final double relative_x = Math.abs(x) <= 1 ? pixelWidth * x : xRatioBetweenPixelsAndModelUnits * x;
+		final double absolute_x = Math.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
 		// Computation of y
 		final double y = point.getY();
-		final double relative_y = FastMath.abs(y) <= 1 ? pixelHeight * y : yRatioBetweenPixelsAndModelUnits * y;
-		final double absolute_y = FastMath.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
+		final double relative_y = Math.abs(y) <= 1 ? pixelHeight * y : yRatioBetweenPixelsAndModelUnits * y;
+		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
 		point = box.getSize();
 		// Computation of width
 		final double w = point.getX();
-		final double absolute_width = FastMath.abs(w) <= 1 ? pixelWidth * w : xRatioBetweenPixelsAndModelUnits * w;
+		final double absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : xRatioBetweenPixelsAndModelUnits * w;
 		// Computation of height
 		final double h = point.getY();
-		final double absolute_height = FastMath.abs(h) <= 1 ? pixelHeight * h : yRatioBetweenPixelsAndModelUnits * h;
+		final double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : yRatioBetweenPixelsAndModelUnits * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		positionInPixels.setLocation(absolute_x, absolute_y);
-		// System.out.println("Overlay position: " + positionInPixels + " size:
-		// " + sizeInPixels);
 		definition.getBox().setConstantBoundingBox(true);
 		computed = true;
 	}

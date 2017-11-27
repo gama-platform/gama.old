@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,18 +13,16 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
+import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -38,17 +35,6 @@ import ummisco.gama.ui.resources.IGamaColors;
  *
  */
 public class GamaToolbarFactory {
-
-	// public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS =
-	// GamaPreferences
-	// .create("core.icons_brightness", "Icons and buttons dark mode (restart to
-	// see the change)", true, IType.BOOL)
-	// .in(GamaPreferences.UI).group("Icons");
-	// public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT =
-	// GamaPreferences
-	// .create("core.icons_size", "Size of the icons in the UI (restart to see
-	// the change)", 24, IType.INT)
-	// .among(16, 24).in(GamaPreferences.UI).group("Icons");
 
 	public static class GamaComposite extends Composite {
 
@@ -67,12 +53,8 @@ public class GamaToolbarFactory {
 	}
 
 	public static GamaComposite findGamaComposite(final Control c) {
-		if (c instanceof Shell) {
-			return null;
-		}
-		if (c instanceof GamaComposite) {
-			return (GamaComposite) c;
-		}
+		if (c instanceof Shell) { return null; }
+		if (c instanceof GamaComposite) { return (GamaComposite) c; }
 		return findGamaComposite(c.getParent());
 	}
 
@@ -88,6 +70,36 @@ public class GamaToolbarFactory {
 		protected void setIcon() {
 			setImageDescriptor(GamaIcons.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3")
 					.descriptor());
+		}
+
+	}
+
+	public static class ToggleSideControls extends Action {
+
+		boolean show = true;
+
+		ToggleSideControls() {
+			super("Toggle Side Controls", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.side2").descriptor());
+		}
+
+	}
+
+	public static class ToggleOverlay extends Action {
+
+		boolean show = true;
+
+		ToggleOverlay() {
+			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.overlay2").descriptor());
 		}
 
 	}
@@ -142,31 +154,7 @@ public class GamaToolbarFactory {
 		layout.marginBottom = 0;
 		toolbarComposite.setLayout(layout);
 		toolbarComposite.setBackground(IGamaColors.WHITE.color());
-		// Creating the toggle
-		final Action toggle = new ToggleAction() {
 
-			@Override
-			public void run() {
-				show = !show;
-				toolbarCompositeData2.exclude = !show;
-				toolbarComposite.setVisible(show);
-				toolbarComposite.getParent().layout();
-				setIcon();
-			}
-		};
-		// Install the toogle in the view site
-		final IWorkbenchSite site = view.getSite();
-		if (site instanceof IViewSite) {
-			final IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
-			tm.add(toggle);
-			tm.update(true);
-			// view.setToogle(toggle);
-		} else if (site instanceof IEditorSite) {
-			// WARNING Disabled for the moment.
-			// IActionBars tm = ((IEditorSite) site).getActionBars();
-			// tm.getToolBarManager().add(toggle);
-			// tm.updateActionBars();
-		}
 		return toolbarComposite;
 
 	}
@@ -178,33 +166,54 @@ public class GamaToolbarFactory {
 		childComposite.setLayoutData(getLayoutDataForChild());
 		childComposite.setLayout(getLayoutForChild());
 
-		final GamaToolbar2 tb = new GamaToolbar2(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS,
-				TOOLBAR_HEIGHT);
+		final GamaToolbar2 tb =
+				new GamaToolbar2(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS, TOOLBAR_HEIGHT);
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		tb.setLayoutData(data);
-		composite.addDisposeListener(new DisposeListener() {
+		composite.addDisposeListener(e -> disposeToolbar(view, tb));
+		buildToolbar(view, tb);
+
+		// Creating the toggles
+		final Action toggle = new ToggleAction() {
 
 			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				disposeToolbar(view, tb);
+			public void run() {
+				show = !show;
+				((GridData) toolbarComposite.getLayoutData()).exclude = !show;
+				toolbarComposite.setVisible(show);
+				toolbarComposite.getParent().layout();
+				setIcon();
 			}
-		});
-		// intermediateComposite.addControlListener(new ControlAdapter() {
-		//
-		// /**
-		// * Method controlResized()
-		// * @see
-		// org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
-		// */
-		// @Override
-		// public void controlResized(final ControlEvent e) {
-		// tb.refresh(true);
-		// // intermediateComposite.removeControlListener(this);
-		// }
-		//
-		// });
-		buildToolbar(view, tb);
+		};
+
+		// Install the toogles in the view site
+		final IWorkbenchSite site = view.getSite();
+		if (site instanceof IViewSite) {
+			final IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
+			tm.add(toggle);
+			if (view instanceof IGamaView.Display) {
+				final Action toggleSideControls = new ToggleSideControls() {
+					@Override
+					public void run() {
+						((IGamaView.Display) view).toggleSideControls();
+					}
+				};
+
+				final Action toggleOverlay = new ToggleOverlay() {
+					@Override
+					public void run() {
+						((IGamaView.Display) view).toggleOverlay();
+					}
+				};
+				tm.add(toggleOverlay);
+				tm.add(toggleSideControls);
+			}
+			tm.update(true);
+		}
+
+		if (!view.toolbarVisible())
+			toggle.run();
 		return childComposite;
 	}
 
@@ -232,8 +241,8 @@ public class GamaToolbarFactory {
 			b.install(tb);
 		}
 		if (view instanceof IToolbarDecoratedView.CSVExportable) {
-			final CSVExportationController csv = new CSVExportationController(
-					(IToolbarDecoratedView.CSVExportable) view);
+			final CSVExportationController csv =
+					new CSVExportationController((IToolbarDecoratedView.CSVExportable) view);
 			csv.install(tb);
 		}
 

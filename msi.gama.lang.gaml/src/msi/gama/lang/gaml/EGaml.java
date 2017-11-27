@@ -521,7 +521,7 @@ public class EGaml {
 		for (final Facet f : e.getFacets()) {
 			if (getKeyOf(f).equals(IKeyword.TYPE)) {
 				final String type = EGaml.getKeyOf(f.getExpr());
-				if (IKeyword.BATCH.equals(type)) { return true; }
+				if (IKeyword.BATCH.equals(type) || IKeyword.TEST.equals(type)) { return true; }
 			}
 		}
 		return false;

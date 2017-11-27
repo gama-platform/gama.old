@@ -84,6 +84,7 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 public class AWTDisplayGraphics extends AbstractDisplayGraphics implements PointTransformation {
 
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
+	private Rectangle2D temporaryEnvelope = null;
 	private final ShapeWriter sw = new ShapeWriter(this);
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
@@ -153,13 +154,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final List<?> textures = attributes.getTextures();
 		if (textures == null) { return null; }
 		final Object image = textures.get(0);
-		if (image instanceof GamaFile) { return drawFile((GamaFile<?, ?, ?, ?>) image, attributes); }
+		if (image instanceof GamaFile) { return drawFile((GamaFile<?, ?>) image, attributes); }
 		if (image instanceof BufferedImage) { return drawImage((BufferedImage) image, attributes); }
 		return null;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile<?, ?, ?, ?> file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile<?, ?> file, final FileDrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
 		if (file instanceof GamaImageFile) { return drawImage(
 				((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes); }
@@ -357,21 +358,21 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void beginOverlay(final OverlayLayer layer) {
 		currentRenderer = overlayRenderer;
 		currentRenderer.setColor(layer.getBackground());
+		final int x = (int) getXOffsetInPixels();
+		final int y = (int) getYOffsetInPixels();
+		final int w = getLayerWidth();
+		final int h = getLayerHeight();
 		if (layer.isRounded()) {
-			currentRenderer.fillRoundRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-					getLayerHeight(), 10, 10);
+			currentRenderer.fillRoundRect(x, y, w, h, 10, 10);
 		} else {
-			currentRenderer.fillRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-					getLayerHeight());
+			currentRenderer.fillRect(x, y, w, h);
 		}
 		if (layer.getBorder() != null) {
 			currentRenderer.setColor(layer.getBorder());
 			if (layer.isRounded()) {
-				currentRenderer.drawRoundRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-						getLayerHeight(), 10, 10);
+				currentRenderer.drawRoundRect(x, y, w, h, 10, 10);
 			} else {
-				currentRenderer.drawRect((int) getXOffsetInPixels(), (int) getYOffsetInPixels(), getLayerWidth(),
-						getLayerHeight());
+				currentRenderer.drawRect(x, y, w, h);
 			}
 		}
 	}
@@ -411,6 +412,31 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public ILocation getCameraOrientation() {
 		return GamaPoint.NULL_POINT;
+	}
+
+	@Override
+	public int getWidthForOverlay() {
+		return getDisplayWidth();
+	}
+
+	@Override
+	public int getHeightForOverlay() {
+		return getDisplayHeight();
+	}
+
+	@Override
+	public void accumulateTemporaryEnvelope(final Rectangle2D env) {
+		if (temporaryEnvelope == null)
+			temporaryEnvelope = env;
+		else
+			temporaryEnvelope.add(env);
+	}
+
+	@Override
+	public Rectangle2D getAndWipeTemporaryEnvelope() {
+		final Rectangle2D result = temporaryEnvelope;
+		temporaryEnvelope = null;
+		return result;
 	}
 
 }

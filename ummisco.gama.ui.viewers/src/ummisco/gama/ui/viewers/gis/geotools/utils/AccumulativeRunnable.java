@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AccumulativeRunnable.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AccumulativeRunnable.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,24 +15,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Display;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * An abstract class to be used in the cases where we need {@code Runnable} to
- * perform some actions on an appendable set of data. The set of data might be
- * appended after the {@code Runnable} is sent for the execution. Usually such
+ * An abstract class to be used in the cases where we need {@code Runnable} to perform some actions on an appendable set
+ * of data. The set of data might be appended after the {@code Runnable} is sent for the execution. Usually such
  * {@code Runnables} are sent to the EDT.
  *
  * <p>
  * Usage example:
  * 
  * <p>
- * Say we want to implement JLabel.setText(String text) which sends {@code text}
- * string to the JLabel.setTextImpl(String text) on the EDT. In the event
- * JLabel.setText is called rapidly many times off the EDT we will get many
- * updates on the EDT but only the last one is important. (Every next updates
- * overrides the previous one.) We might want to implement this {@code setText}
- * in a way that only the last update is delivered.
+ * Say we want to implement JLabel.setText(String text) which sends {@code text} string to the JLabel.setTextImpl(String
+ * text) on the EDT. In the event JLabel.setText is called rapidly many times off the EDT we will get many updates on
+ * the EDT but only the last one is important. (Every next updates overrides the previous one.) We might want to
+ * implement this {@code setText} in a way that only the last update is delivered.
  * <p>
  * Here is how one can do this using {@code AccumulativeRunnable}:
  * 
@@ -53,9 +49,8 @@ import org.eclipse.swt.widgets.Display;
  * </pre>
  *
  * <p>
- * Say we want want to implement addDirtyRegion(Rectangle rect) which sends this
- * region to the handleDirtyRegions(List<Rect> regions) on the EDT.
- * addDirtyRegions better be accumulated before handling on the EDT.
+ * Say we want want to implement addDirtyRegion(Rectangle rect) which sends this region to the handleDirtyRegions(List
+ * <Rect> regions) on the EDT. addDirtyRegions better be accumulated before handling on the EDT.
  * 
  * <p>
  * Here is how it can be implemented using AccumulativeRunnable:
@@ -84,8 +79,7 @@ abstract class AccumulativeRunnable<T> implements Runnable {
 	private List<T> arguments = null;
 
 	/**
-	 * Equivalent to {@code Runnable.run} method with the accumulated arguments
-	 * to process.
+	 * Equivalent to {@code Runnable.run} method with the accumulated arguments to process.
 	 *
 	 * @param args
 	 *            accumulated arguments to process.
@@ -96,8 +90,7 @@ abstract class AccumulativeRunnable<T> implements Runnable {
 	 * {@inheritDoc}
 	 *
 	 * <p>
-	 * This implementation calls {@code run(List<T> args)} method with the list
-	 * of accumulated arguments.
+	 * This implementation calls {@code run(List<T> args)} method with the list of accumulated arguments.
 	 */
 	@Override
 	public final void run() {
@@ -105,18 +98,16 @@ abstract class AccumulativeRunnable<T> implements Runnable {
 	}
 
 	/**
-	 * prepends or appends arguments and sends this {@code Runnable} for the
-	 * execution if needed.
+	 * prepends or appends arguments and sends this {@code Runnable} for the execution if needed.
 	 * <p>
-	 * This implementation uses {@see #submit} to send this {@code Runnable} for
-	 * execution.
+	 * This implementation uses {@see #submit} to send this {@code Runnable} for execution.
 	 * 
 	 * @param isPrepend
 	 *            prepend or append
 	 * @param args
 	 *            the arguments to add
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final synchronized void add(final boolean isPrepend, final T... args) {
 		boolean isSubmitted = true;
 		if (arguments == null) {
@@ -134,16 +125,14 @@ abstract class AccumulativeRunnable<T> implements Runnable {
 	}
 
 	/**
-	 * appends arguments and sends this {@code Runnable} for the execution if
-	 * needed.
+	 * appends arguments and sends this {@code Runnable} for the execution if needed.
 	 * <p>
-	 * This implementation uses {@see #submit} to send this {@code Runnable} for
-	 * execution.
+	 * This implementation uses {@see #submit} to send this {@code Runnable} for execution.
 	 * 
 	 * @param args
 	 *            the arguments to accumulate
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final void add(final T... args) {
 		add(false, args);
 	}
@@ -158,7 +147,7 @@ abstract class AccumulativeRunnable<T> implements Runnable {
 	 * This implementation uses {@code SwingWorker.invokeLater}.
 	 */
 	protected void submit() {
-		Display.getCurrent().asyncExec(this);
+		WorkbenchHelper.getDisplay().asyncExec(this);
 	}
 
 	/**

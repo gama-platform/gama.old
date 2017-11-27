@@ -159,6 +159,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				return new EachExpression(type);
 			case IVarExpression.SELF:
 				return new SelfExpression(type);
+			case IVarExpression.SUPER:
+				return new SuperExpression(type);
 			default:
 				return null;
 		}
@@ -258,8 +260,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
 			final IExpression call, final Arguments arguments) {
-		if (action.verifyArgs(callerContext,
-				arguments)) { return new PrimitiveOperator(callerContext, action, call, arguments); }
+		if (action.verifyArgs(callerContext, arguments)) { return new PrimitiveOperator(callerContext, action, call,
+				arguments, call instanceof SuperExpression); }
 		return null;
 	}
 

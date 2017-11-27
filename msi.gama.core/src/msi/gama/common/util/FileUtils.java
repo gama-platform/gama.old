@@ -136,8 +136,8 @@ public class FileUtils {
 				if (file.exists()) {
 					try {
 						// We have to try if the test is necessary.
-
-						if (GAMA.isInHeadLessMode()) {
+						if (scope.getExperiment().isHeadless()) {
+							// if (GAMA.isInHeadLessMode()) {
 							return file.getAbsolutePath();
 						} else {
 							return file.getCanonicalPath();

@@ -32,4 +32,11 @@ echo * http://gama-platform.googlecode.com                            *
 echo * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC and Partners            *
 echo ******************************************************************
 rem @echo off
-call java  -cp ..\plugins\org.eclipse.equinox.launcher*.jar -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+set FILENAME=..\plugins\org.eclipse.equinox.launcher_*.jar
+
+set FILEPATH=
+
+FOR /F %%f in ('dir /S /B %FILENAME%') do set FILEPATH=%%f
+
+rem @echo off
+call java  -cp %FILEPATH% -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 

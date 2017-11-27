@@ -12,15 +12,19 @@ package msi.gaml.operators;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
-import org.apache.commons.math3.stat.clustering.Cluster;
-import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
-import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
-import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
+
+import com.google.common.collect.Ordering;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -62,7 +66,7 @@ import rcaller.exception.ParseException;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Stats {
 
-	public static class Instance extends EuclideanDoublePoint {
+	public static class Instance extends DoublePoint {
 
 		/**
 		 * 
@@ -140,7 +144,7 @@ public class Stats {
 		public void addValue(final double value) {
 			if (dataSetSize == dataSet.length) {
 				// Increase the capacity of the array.
-				final int newLength = (int) (GROWTH_RATE * dataSetSize);
+				final int newLength = (int) Math.round(GROWTH_RATE * dataSetSize);
 				final double[] newDataSet = new double[newLength];
 				java.lang.System.arraycopy(dataSet, 0, newDataSet, 0, dataSetSize);
 				dataSet = newDataSet;
@@ -247,7 +251,7 @@ public class Stats {
 		 *             If the data set is empty.
 		 */
 		public final double getGeometricMean() {
-			return FastMath.pow(product, 1.0d / dataSetSize);
+			return Math.pow(product, 1.0d / dataSetSize);
 		}
 
 		/**
@@ -281,7 +285,7 @@ public class Stats {
 			final double mean = getArithmeticMean();
 			double diffs = 0;
 			for (int i = 0; i < dataSetSize; i++) {
-				diffs += FastMath.abs(mean - dataSet[i]);
+				diffs += Math.abs(mean - dataSet[i]);
 			}
 			return diffs / dataSetSize;
 		}
@@ -331,7 +335,16 @@ public class Stats {
 		 *             If the data set is empty.
 		 */
 		public final double getStandardDeviation() {
-			return FastMath.sqrt(getVariance());
+			return Math.sqrt(getVariance());
+		}
+
+		public double[] getStops(final int nb) {
+			final double interval = (maximum - minimum) / nb;
+			final double[] result = new double[nb - 1];
+			for (int i = 1; i < nb; i++) {
+				result[i - 1] = minimum + i * interval;
+			}
+			return result;
 		}
 
 		/**
@@ -377,6 +390,113 @@ public class Stats {
 	}
 
 	@operator (
+			value = "split",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split_in", "split_using" },
+			value = "Splits a list of numbers into n=(1+3.3*log10(elements)) bins. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split(final IScope scope, final IList<T> list) {
+		final int nb = (int) (1 + 3.3 * Math.log10(list.size()));
+		return split_in(scope, list, nb);
+	}
+
+	@operator (
+			value = "split_in",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_using" },
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb) {
+		return split_in(scope, list, nb, true);
+	}
+
+	@operator (
+			value = "split_in",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_using" },
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+
+	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb,
+			final boolean strict) {
+		if (nb <= 1) {
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			result.add(list);
+			return result;
+		}
+		final DataSet d = from(scope, list);
+		final IList<Double> stops = GamaListFactory.create(scope, Types.FLOAT, d.getStops(nb));
+		return split_using(scope, list, stops);
+	}
+
+	@operator (
+			value = "split_using",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_in" },
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
+			final IList<? extends Comparable> stops) {
+		return split_using(scope, list, stops, true);
+	}
+
+	@operator (
+			value = "split_using",
+			can_be_const = true,
+			content_type = IType.LIST,
+			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
+			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			see = { "split", "split_in" },
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
+			final IList<? extends Comparable> stops, final boolean strict) {
+		if (stops.size() == 0) {
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			result.add(list);
+			return result;
+		}
+		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops))
+			throw GamaRuntimeException.error(
+					"The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
+		final DataSet d = from(scope, stops);
+		d.addValue(Double.MAX_VALUE);
+		final IType numberType = list.getType().getContentType();
+		final IList<IList<T>> result = GamaListFactory.createWithoutCasting(Types.LIST.of(numberType));
+		for (int i = 0; i < d.dataSetSize; i++) {
+			result.add(GamaListFactory.createWithoutCasting(numberType));
+		}
+		for (final T o : list) {
+			for (int i = 0; i < d.dataSetSize; i++) {
+				if (strict ? o.doubleValue() < d.dataSet[i] : o.doubleValue() <= d.dataSet[i]) {
+					result.get(i).add((T) numberType.cast(scope, o, null, false));
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	@operator (
 			value = "max",
 			can_be_const = true,
 			type = ITypeProvider.FIRST_CONTENT_TYPE,
@@ -387,11 +507,13 @@ public class Stats {
 			value = "the maximum element found in the operand",
 			masterDoc = true,
 			comment = "the max operator behavior depends on the nature of the operand",
-			usages = { @usage (
-					value = "if it is a list of int of float, max returns the maximum of all the elements",
-					examples = { @example (
-							value = "max ([100, 23.2, 34.5])",
-							equals = "100.0") }),
+			usages = {
+
+					@usage (
+							value = "if it is a list of int of float, max returns the maximum of all the elements",
+							examples = { @example (
+									value = "max ([100, 23.2, 34.5])",
+									equals = "100.0") }),
 					@usage (
 							value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
 							examples = { @example (
@@ -739,9 +861,12 @@ public class Stats {
 	@doc (
 			value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("list X <- [1, 2, 3];"), @example ("list Y <- [1, 2, 4];"), @example (
+			examples = { @example (value="list X <- [1, 2, 3];",
+					isExecutable = false), @example (value="list Y <- [1, 2, 4];",
+					isExecutable = false), @example (
 					value = "corR(X, Y)",
-					equals = "0.981980506061966") })
+					equals = "0.981980506061966",
+					isExecutable = false) })
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l1.length(scope) == 0 || l2.length(scope) == 0) { return Double.valueOf(0d); }
@@ -796,10 +921,12 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-			examples = { @example ("list<int> X <- [2, 3, 1];"), @example (
+			examples = { @example (value="list<int> X <- [2, 3, 1];",
+					isExecutable = false), @example (
 					value = "meanR(X)",
 					equals = "2",
-					returnType = IKeyword.INT) })
+					returnType = IKeyword.INT,
+					isExecutable = false) })
 	public static Object getMeanR(final IScope scope, final IContainer l)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l.length(scope) == 0) { return Double.valueOf(0d); }
@@ -838,12 +965,12 @@ public class Stats {
 	@doc (
 			value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)") })
-	public static GamaList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
+			examples = { @example (value = "dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)", equals = "[]") })
+	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
 
-		final DBSCANClusterer<EuclideanDoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
-		final List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
+		final List<DoublePoint> instances = new ArrayList<DoublePoint>();
 		for (int i = 0; i < data.size(); i++) {
 			final GamaList d = (GamaList) data.get(i);
 			final double point[] = new double[d.size()];
@@ -852,11 +979,11 @@ public class Stats {
 			}
 			instances.add(new Instance(i, point));
 		}
-		final List<Cluster<EuclideanDoublePoint>> clusters = dbscan.cluster(instances);
+		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
 		final GamaList results = (GamaList) GamaListFactory.create();
-		for (final Cluster<EuclideanDoublePoint> cl : clusters) {
+		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
-			for (final EuclideanDoublePoint pt : cl.getPoints()) {
+			for (final DoublePoint pt : cl.getPoints()) {
 				clG.addValue(scope, ((Instance) pt).getId());
 			}
 			results.addValue(scope, clG);
@@ -878,11 +1005,9 @@ public class Stats {
 					isExecutable = false) })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
-		final Random rand = new Random(scope.getRandom().getSeed().longValue());
-		final KMeansPlusPlusClusterer<EuclideanDoublePoint> kmeans =
-				new KMeansPlusPlusClusterer<EuclideanDoublePoint>(rand);
+		final MersenneTwister rand = new MersenneTwister(scope.getRandom().getSeed().longValue());
 
-		final List<EuclideanDoublePoint> instances = new ArrayList<EuclideanDoublePoint>();
+		final List<DoublePoint> instances = new ArrayList<DoublePoint>();
 		for (int i = 0; i < data.size(); i++) {
 			final GamaList d = (GamaList) data.get(i);
 			final double point[] = new double[d.size()];
@@ -891,16 +1016,122 @@ public class Stats {
 			}
 			instances.add(new Instance(i, point));
 		}
-		final List<Cluster<EuclideanDoublePoint>> clusters = kmeans.cluster(instances, k, maxIt);
+		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
+				new KMeansPlusPlusClusterer<DoublePoint>(k, maxIt, new EuclideanDistance(), rand);
+		final List<CentroidCluster<DoublePoint>> clusters = kmeans.cluster(instances);
 		final GamaList results = (GamaList) GamaListFactory.create();
-		for (final Cluster<EuclideanDoublePoint> cl : clusters) {
+		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
-			for (final EuclideanDoublePoint pt : cl.getPoints()) {
+			for (final DoublePoint pt : cl.getPoints()) {
 				clG.addValue(scope, ((Instance) pt).getId());
 			}
 			results.addValue(scope, clG);
 		}
 		return results;
+	}
+
+	@operator (
+			value = "dtw",
+			can_be_const = false,
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			value = "returns the dynamic time warping between the two series of value with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
+			examples = { @example (value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)", equals = "2.0") })
+	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2,
+			final int radius) throws GamaRuntimeException {
+		final int n1 = vals1.size();
+		final int n2 = vals2.size();
+		final double[][] table = new double[2][n2 + 1];
+
+		table[0][0] = 0;
+
+		for (int i = 1; i <= n2; i++) {
+			table[0][i] = Double.POSITIVE_INFINITY;
+		}
+
+		for (int i = 1; i <= n1; i++) {
+			final int start = Math.max(1, i - radius);
+			final int end = Math.min(n2, i + radius);
+
+			table[1][start - 1] = Double.POSITIVE_INFINITY;
+			if (end < n2)
+				table[1][end + 1] = Double.POSITIVE_INFINITY;
+
+			for (int j = start; j <= end; j++) {
+				final double cost =
+						Math.abs(Cast.asFloat(scope, vals1.get(i - 1)) - Cast.asFloat(scope, vals2.get(j - 1)));
+
+				double min = table[0][j - 1];
+
+				if (min > table[0][j]) {
+					min = table[0][j];
+				}
+
+				if (min > table[1][j - 1]) {
+					min = table[1][j - 1];
+				}
+
+				table[1][j] = cost + min;
+			}
+
+			final double[] swap = table[0];
+			table[0] = table[1];
+			table[1] = swap;
+		}
+
+		return table[0][n2];
+
+	}
+
+	@operator (
+			value = "dtw",
+			can_be_const = false,
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			value = "returns the dynamic time warping between the two series of value",
+			examples = { @example (value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])", equals = "2") })
+	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2)
+			throws GamaRuntimeException {
+		final int n1 = vals1.size();
+		final int n2 = vals2.size();
+		final double[][] table = new double[2][n2 + 1];
+
+		table[0][0] = 0;
+
+		for (int i = 1; i <= n2; i++) {
+			table[0][i] = Double.POSITIVE_INFINITY;
+		}
+
+		for (int i = 1; i <= n1; i++) {
+			table[1][0] = Double.POSITIVE_INFINITY;
+
+			for (int j = 1; j <= n2; j++) {
+				final double cost =
+						Math.abs(Cast.asFloat(scope, vals1.get(i - 1)) - Cast.asFloat(scope, vals2.get(j - 1)));
+
+				double min = table[0][j - 1];
+
+				if (min > table[0][j]) {
+					min = table[0][j];
+				}
+
+				if (min > table[1][j - 1]) {
+					min = table[1][j - 1];
+				}
+
+				table[1][j] = cost + min;
+			}
+
+			final double[] swap = table[0];
+			table[0] = table[1];
+			table[1] = swap;
+		}
+
+		return table[0][n2];
 	}
 
 	@operator (
@@ -911,7 +1142,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
 			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
-			examples = { @example ("gamma_rnd(10.0,5.0)") })
+			examples = { @example (value = "gamma_rnd(10.0,5.0)", isExecutable = false) })
 	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
 			throws GamaRuntimeException {
 		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
@@ -928,7 +1159,7 @@ public class Stats {
 	@doc (
 			value = "returns skewness value computed from the operand list of values",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
-			examples = { @example ("skewness ([1,2,3,4,5])") })
+			examples = { @example (value = "skewness ([1,2,3,4,5])", equals = "0.0") })
 	public static Double skewness(final IScope scope, final GamaList data) throws GamaRuntimeException {
 		final Skewness sk = new Skewness();
 		final double[] values = new double[data.length(scope)];
@@ -947,7 +1178,7 @@ public class Stats {
 	@doc (
 			value = "returns kurtosis value computed from the operand list of values",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
-			examples = { @example ("kurtosis ([1,2,3,4,5])") })
+			examples = { @example (value = "kurtosis ([1,2,3,4,5])", equals = "1.0") })
 	public static Double kurtosis(final IScope scope, final GamaList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
@@ -966,7 +1197,7 @@ public class Stats {
 	@doc (
 			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example ("kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)") })
+			examples = { @example (value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)", equals = "[]") })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);
@@ -980,7 +1211,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
-			examples = { @example ("build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")") })
+			examples = { @example (value = "build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")", isExecutable = false) })
 	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, final String method)
 			throws GamaRuntimeException {
 		try {
@@ -998,7 +1229,7 @@ public class Stats {
 			concept = {})
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
-			examples = { @example ("matrix([[1,2,3,4],[2,3,4,2]])") })
+			examples = { @example (value = "matrix([[1,2,3,4],[2,3,4,2]])", isExecutable = false) })
 	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data)
 			throws GamaRuntimeException {
 		try {
@@ -1017,36 +1248,36 @@ public class Stats {
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
 			value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
-			examples = { @example ("predict(my_regression, [1,2,3]") })
+			examples = { @example (value = "predict(my_regression, [1,2,3])", isExecutable = false) })
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
 			final GamaList<Double> instance) throws GamaRuntimeException {
 		return regression.predict(scope, instance);
 	}
 
 	@operator (
-				value =  "gini",
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION})
-		@doc (
-				usages = { @usage (
-						value = "return the Gini Index of the given list of values (list of floats)",
-						examples = { @example (
-								value = "gini([1.0, 0.5, 2.0])",
-								equals = "the gini index computed",
-								test = false) }) })
-	public static double giniIndex(final IScope scope,final  IList<Double> vals) {
-		int N = vals.size();
+			value = "gini",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
+	@doc (
+			usages = { @usage (
+					value = "return the Gini Index of the given list of values (list of floats)",
+					examples = { @example (
+							value = "gini([1.0, 0.5, 2.0])",
+							equals = "the gini index computed",
+							test = false) }) })
+	public static double giniIndex(final IScope scope, final IList<Double> vals) {
+		final int N = vals.size();
 		Double G = 0.0;
 		double sumXi = 0.0;
 		for (int i = 0; i < N; i++) {
-			double xi = vals.get(i);
-			sumXi += xi;		
+			final double xi = vals.get(i);
+			sumXi += xi;
 			for (int j = 0; j < N; j++) {
-				double yi = vals.get(j);
+				final double yi = vals.get(j);
 				G += FastMath.abs(xi - yi);
 			}
 		}
-		G /= (2 * N * sumXi);
+		G /= 2 * N * sumXi;
 		return G;
 	}
 

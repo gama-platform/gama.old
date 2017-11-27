@@ -10,6 +10,7 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,8 +23,11 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractDisplayOutput extends AbstractOutput implements IDisplayOutput {
 
+	final boolean virtual;
+
 	public AbstractDisplayOutput(final IDescription desc) {
 		super(desc);
+		virtual = IKeyword.TRUE.equals(getLiteral(IKeyword.VIRTUAL, null));
 	}
 
 	protected boolean disposed = false;
@@ -32,15 +36,20 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	protected IGamaView view;
 
 	final Runnable opener = () -> {
-		view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
+		view = getScope().getGui().showView(getScope(), getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
 		if (view == null) { return; }
 		view.addOutput(AbstractDisplayOutput.this);
 	};
 
 	@Override
+	public boolean isVirtual() {
+		return virtual;
+	}
+
+	@Override
 	public void open() {
 		super.open();
-		GAMA.getGui().run(opener);
+		GAMA.getGui().run(getScope(), opener);
 	}
 
 	@Override
@@ -82,6 +91,15 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void setSynchronized(final boolean sync) {
 		synchro = sync;
+		if (view != null)
+			view.updateToolbarState();
+	}
+
+	@Override
+	public void setPaused(final boolean pause) {
+		super.setPaused(pause);
+		if (view != null)
+			view.updateToolbarState();
 	}
 
 	@Override

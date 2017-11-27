@@ -41,6 +41,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import ummisco.gama.ui.commands.RefreshHandler;
+
 /**
  * The role of this wizard is to create a new file resource in the provided container. If the container resource (a
  * folder or a project) is selected in the workspace when the wizard is opened, it will accept it as the target
@@ -166,6 +168,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
+		RefreshHandler.run(file);
 		getShell().getDisplay().asyncExec(() -> {
 			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			try {

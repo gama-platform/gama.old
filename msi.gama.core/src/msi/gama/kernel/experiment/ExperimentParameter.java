@@ -133,8 +133,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
 	private Object value = UNDEFINED;
-	// int order;
-	static int INDEX = 0;
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
 	String varName, title, category, unitLabel;
@@ -158,13 +156,21 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
+		final IScope runtimeScope = GAMA.getRuntimeScope();
+		if (min != null && min.isConst())
+			getMinValue(runtimeScope);
 		max = getFacet(IKeyword.MAX);
+		if (max != null && max.isConst())
+			getMaxValue(runtimeScope);
 		step = getFacet(IKeyword.STEP);
+		if (step != null && step.isConst())
+			getStepValue(runtimeScope);
 		among = getFacet(IKeyword.AMONG);
+		if (among != null && among.isConst())
+			getAmongValue(runtimeScope);
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		slider = getFacet("slider");
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
-		// order = desc.getDefinitionOrder();
 		isEditable = true;
 	}
 
@@ -433,7 +439,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public List getAmongValue(final IScope scope) {
 		if (amongValue == null && among != null) {
-			amongValue = (List) among.value(scope);
+			amongValue = Cast.asList(scope, among.value(scope));
 		}
 		return amongValue;
 	}

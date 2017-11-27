@@ -48,7 +48,7 @@ import msi.gaml.types.IType;
  *
  */
 @symbol (
-		name = { IKeyword.DO },
+		name = { IKeyword.DO, IKeyword.INVOKE },
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		with_sequence = true,
 		with_scope = false,
@@ -196,11 +196,14 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		@Override
 		public void validate(final StatementDescription desc) {
 			final String action = desc.getLitteral(ACTION);
-			final SpeciesDescription sd = desc.getSpeciesContext();
+			final boolean isSuperInvocation = desc.isSuperInvocation();
+			SpeciesDescription sd = desc.getSpeciesContext();
+			if (sd != null && isSuperInvocation)
+				sd = sd.getParent();
 			if (sd == null) { return; }
 			// TODO What about actions defined in a macro species (not the
 			// global one, which is filtered before) ?
-			if (!sd.hasAction(action)) {
+			if (!sd.hasAction(action, false)) {
 				desc.error("Action " + action + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_ACTION, ACTION,
 						action, sd.getName());
 			}
@@ -211,7 +214,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	Arguments args;
 	String returnString;
 	final IExpression function;
-	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO);
+	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO, IKeyword.INVOKE);
 
 	public DoStatement(final IDescription desc) {
 		super(desc);
@@ -235,7 +238,10 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final ISpecies context = scope.getAgent().getSpecies();
+		final boolean isSuperInvocation = getDescription().isSuperInvocation();
+		ISpecies context = scope.getAgent().getSpecies();
+		if (isSuperInvocation)
+			context = context.getParentSpecies();
 		final IStatement.WithArgs executer = context.getAction(name);
 		Object result = null;
 		if (executer != null) {

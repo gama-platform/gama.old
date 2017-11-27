@@ -22,7 +22,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
@@ -33,6 +32,7 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
@@ -74,6 +74,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private static final int imagePadding = 5;
 	private boolean enabled = true;
 	private boolean hovered = false;
+	private boolean down = false;
 
 	public static int IMAGE_LEFT = 0;
 	public static int IMAGE_RIGHT = 1;
@@ -101,10 +102,12 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				break;
 			case SWT.MouseUp:
 				if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
-					doButtonClicked();
+					doButtonUp();
 				}
 				break;
 			case SWT.MouseDown:
+				if (e.button == 1 && getClientArea().contains(e.x, e.y))
+					doButtonDown();
 				break;
 			default:
 				;
@@ -126,13 +129,21 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		removeListener(SWT.Selection, listener);
 	}
 
-	private void doButtonClicked() {
+	public void doButtonDown() {
+		if (!enabled) { return; }
+		down = true;
+		redraw();
+	}
+
+	private void doButtonUp() {
 		if (!enabled) { return; }
 		final Event e = new Event();
 		e.item = this;
 		e.widget = this;
 		e.type = SWT.Selection;
 		notifyListeners(SWT.Selection, e);
+		down = false;
+		redraw();
 	}
 
 	private void doHover(final boolean hover) {
@@ -143,21 +154,26 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private void drawBackground(final GC gc, final Rectangle rect) {
 		setBackground(getParent().getBackground());
 
-		final Path path = createClipping(rect);
 		final GamaUIColor color = GamaColors.get(colorCode);
 		final Color background = hovered ? color.lighter() : color.color();
 		final Color foreground = GamaColors.getTextColorForBackground(background).color();
-
-		gc.setClipping(path);
 		gc.setForeground(foreground);
 		gc.setBackground(background);
-		gc.fillRectangle(rect);
-		gc.setClipping((Rectangle) null);
-		path.dispose();
+
+		if (down) {
+			gc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, 5, 5);
+		} else {
+			final Path path = createClipping(rect);
+			gc.setClipping(path);
+			gc.fillRectangle(rect);
+			gc.setClipping((Rectangle) null);
+			path.dispose();
+		}
+
 	}
 
 	private Path createClipping(final Rectangle rect) {
-		final AdvancedPath path = new AdvancedPath(Display.getCurrent());
+		final AdvancedPath path = new AdvancedPath(WorkbenchHelper.getDisplay());
 		path.addRoundRectangle(rect.x, rect.y, rect.width, rect.height, 8, 8);
 		return path;
 	}

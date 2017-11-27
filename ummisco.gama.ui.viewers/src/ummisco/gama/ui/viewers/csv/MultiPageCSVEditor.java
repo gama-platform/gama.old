@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MultiPageCSVEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MultiPageCSVEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,7 +31,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
@@ -47,6 +45,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.csv.model.CSVModel;
 import ummisco.gama.ui.viewers.csv.model.CSVRow;
 import ummisco.gama.ui.viewers.csv.model.ICsvFileModelListener;
@@ -95,9 +94,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (tableViewer == null) {
-			return null;
-		}
+		if (tableViewer == null) { return null; }
 		return tableViewer.getTable();
 	}
 
@@ -127,9 +124,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		} else if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage = ((IStorageEditorInput) input).getStorage();
-				if (storage instanceof IFile) {
-					return (IFile) storage;
-				}
+				if (storage instanceof IFile) { return (IFile) storage; }
 			} catch (final CoreException ignore) {
 				// intentionally blank
 			}
@@ -158,8 +153,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		final Composite parent = getContainer();
 		final Composite intermediate = new Composite(parent, SWT.NONE);
 		final Composite composite = GamaToolbarFactory.createToolbars(this, intermediate);
-		tableViewer = new TableViewer(composite,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		tableViewer =
+				new TableViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		tableViewer.setUseHashlookup(true);
 		final Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
@@ -265,9 +260,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		final TableColumn[] tableColumns = tableViewer.getTable().getColumns();
 		for (int i = 0; i < tableColumns.length; i++) {
 			final TableColumn column = tableColumns[i];
-			if (columnName.equalsIgnoreCase(column.getText())) {
-				return i;
-			}
+			if (columnName.equalsIgnoreCase(column.getText())) { return i; }
 		}
 		return index;
 	}
@@ -284,15 +277,15 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 			public void widgetSelected(final SelectionEvent e) {
 				int dir = tableViewer.getTable().getSortDirection();
 				switch (dir) {
-				case SWT.UP:
-					dir = SWT.DOWN;
-					break;
-				case SWT.DOWN:
-					dir = SWT.NONE;
-					break;
-				case SWT.NONE:
-					dir = SWT.UP;
-					break;
+					case SWT.UP:
+						dir = SWT.DOWN;
+						break;
+					case SWT.DOWN:
+						dir = SWT.NONE;
+						break;
+					case SWT.NONE:
+						dir = SWT.UP;
+						break;
 				}
 				tableSorter.setColumn(index, dir);
 				tableViewer.getTable().setSortDirection(dir);
@@ -308,11 +301,10 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	}
 
 	/**
-	 * The <code>MultiPageEditorPart</code> implementation of this
-	 * <code>IWorkbenchPart</code> method disposes all nested editors. This
-	 * method is automatically called when the editor is closed and marks the
-	 * end of the editor's life cycle. It cleans up any platform resources, such
-	 * as images, clipboard, and so on, which were created by this class.
+	 * The <code>MultiPageEditorPart</code> implementation of this <code>IWorkbenchPart</code> method disposes all
+	 * nested editors. This method is automatically called when the editor is closed and marks the end of the editor's
+	 * life cycle. It cleans up any platform resources, such as images, clipboard, and so on, which were created by this
+	 * class.
 	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#dispose()
 	 */
@@ -323,11 +315,9 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	}
 
 	/**
-	 * Saves the multi-page editor's document. If the save is successful, the
-	 * part should fire a property changed event (PROP_DIRTY property),
-	 * reflecting the new dirty state. If the save is canceled via user action,
-	 * or for any other reason, the part should invoke setCanceled on the
-	 * IProgressMonitor to inform the caller
+	 * Saves the multi-page editor's document. If the save is successful, the part should fire a property changed event
+	 * (PROP_DIRTY property), reflecting the new dirty state. If the save is canceled via user action, or for any other
+	 * reason, the part should invoke setCanceled on the IProgressMonitor to inform the caller
 	 *
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -354,9 +344,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	}
 
 	/**
-	 * Saves the multi-page editor's document as another file. Also updates the
-	 * text for page 0's tab, and updates this multi-page editor's input to
-	 * correspond to the nested editor's.
+	 * Saves the multi-page editor's document as another file. Also updates the text for page 0's tab, and updates this
+	 * multi-page editor's input to correspond to the nested editor's.
 	 *
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
@@ -400,16 +389,16 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	@Override
 	protected void pageChange(final int newPageIndex) {
 		switch (newPageIndex) {
-		case indexSRC:
-			if (isDirty()) {
-				updateTextEditorFromTable();
-			}
-			break;
-		case indexTBL:
-			if (isDirty()) {
-				updateTableFromTextEditor();
-			}
-			break;
+			case indexSRC:
+				if (isDirty()) {
+					updateTextEditorFromTable();
+				}
+				break;
+			case indexTBL:
+				if (isDirty()) {
+					updateTableFromTextEditor();
+				}
+				break;
 		}
 		isPageModified = false;
 		super.pageChange(newPageIndex);
@@ -424,21 +413,20 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	}
 
 	/**
-	 * When the focus shifts to the editor, this method is called; it must then
-	 * redirect focus to the appropriate editor based on which page is currently
-	 * selected.
+	 * When the focus shifts to the editor, this method is called; it must then redirect focus to the appropriate editor
+	 * based on which page is currently selected.
 	 *
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
 	 */
 	@Override
 	public void setFocus() {
 		switch (getActivePage()) {
-		case indexSRC:
-			editor.setFocus();
-			break;
-		case indexTBL:
-			tableViewer.getTable().setFocus();
-			break;
+			case indexSRC:
+				editor.setFocus();
+				break;
+			case indexTBL:
+				tableViewer.getTable().setFocus();
+				break;
 		}
 	}
 
@@ -450,7 +438,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				final IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 				for (final IWorkbenchPage page : pages) {
 					if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
@@ -584,8 +572,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 					}
 
 				}, SWT.RIGHT);
-		final ToolItem t = tb.check("action.set.header2", "First line is header", "First line is header",
-				new SelectionAdapter() {
+		final ToolItem t =
+				tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
@@ -603,8 +591,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						final CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection())
-								.getFirstElement();
+						final CSVRow row =
+								(CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 						if (row != null) {
 							model.addRowAfterElement(row);
 						} else {
@@ -663,8 +651,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 						public void widgetSelected(final SelectionEvent e) {
 
 							// call delete column page
-							final DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(),
-									model.getArrayHeader());
+							final DeleteColumnPage dcPage =
+									new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
 							if (dcPage.open() == Window.OK) {
 								final String[] colToDelete = dcPage.getColumnSelected();
 								for (final String column : colToDelete) {

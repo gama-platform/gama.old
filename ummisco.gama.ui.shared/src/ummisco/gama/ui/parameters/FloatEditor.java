@@ -39,7 +39,9 @@ public class FloatEditor extends NumberEditor<Double> {
 	FloatEditor(final IScope scope, final Composite parent, final String title, final Double value, final Double min,
 			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
-		super(scope, new InputParameter(title, value, min, max), whenModified, canBeNull);
+		super(scope, new InputParameter(title, value, min, max, step), whenModified, canBeNull);
+		if (step != null)
+			stepValue = step;
 		this.createComposite(parent);
 	}
 

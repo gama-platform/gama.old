@@ -1,8 +1,8 @@
 /**
 * Name: Multi-level
-* Author:
+* Author: GAMA team
 * Description: 6th part of the tutorial : Incremental Model
-* Tags: multi_level
+* Tags: Tutorial, Chart, Graphe, 3d, Light, Multi-Level
 */
 
 model model6 
@@ -17,11 +17,11 @@ global  {
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
-	int current_hour update: (cycle / 60) mod 24;
+	int current_hour update: current_date.hour;
 	float staying_coeff update: 10.0 ^ (1 + min([abs(current_hour - 9), abs(current_hour - 12), abs(current_hour - 18)]));
 	
-	list<people_in_building> list_people_in_buildings update: (building accumulate each.people_inside) where (not dead(each));
-	int nb_people_infected <- nb_infected_init update: people count (each.is_infected) + (empty(list_people_in_buildings) ? 0 : list_people_in_buildings count (each.is_infected));
+	list<people_in_building> list_people_in_buildings update: (building accumulate each.people_in_building);
+	int nb_people_infected <- nb_infected_init update: (people + list_people_in_buildings) count (each.is_infected) ;
 	
 	int nb_people_not_infected <- nb_people - nb_infected_init update: nb_people - nb_people_infected;
 	bool is_night <- true update: current_hour < 7 or current_hour > 20;
@@ -33,8 +33,7 @@ global  {
 		create building from: buildings_shapefile;
 		create people number:nb_people {
 			speed <- 5.0 #km/#h;
-			building bd <- one_of(building);
-			location <- any_location_in(bd);
+			location <- any_location_in(one_of(building));
 		}
 		ask nb_infected_init among people {
 			is_infected <- true;
@@ -66,7 +65,7 @@ species people skills:[moving]{
 			}
 		}
 	}
-	aspect circle{
+	aspect default{
 		draw circle(5) color:is_infected ? #red : #green;
 	}
 	aspect sphere3D{
@@ -76,41 +75,34 @@ species people skills:[moving]{
 
 species road {
 	geometry display_shape <- shape + 2.0;
-	aspect geom {
+	aspect default {
 		draw display_shape color: #black depth: 3.0;
 	}
 }
 
 species building {
+	int nb_infected <- 0 update: self.people_in_building count each.is_infected;
+	int nb_total <- 0 update:length(self.people_in_building);
 	float height <- 10#m + rnd(10) #m;
-	list<people_in_building> people_inside -> {members collect people_in_building(each)};
 	
-	aspect geom {
-		int nbI <- members count people_in_building(each).is_infected;
-		int nbT <- length(members);
-		draw shape color:nbT = 0 ? #gray : (float(nbI)/nbT > 0.5 ? #red : #green) depth: height;
+	aspect default {
+		draw shape color:nb_total = 0 ? #gray : (float(nb_infected)/nb_total > 0.5 ? #red : #green) depth: height;
 	}
 	
 	species people_in_building parent: people schedules: [] {
 	}
 	
 	reflex let_people_leave  {
-		ask members as: people_in_building{
+		ask  people_in_building {
 			staying_counter <- staying_counter + 1;
 		}
-		list<people_in_building> leaving_people <- list<people_in_building>(members where (flip(people_in_building(each).staying_counter / staying_coeff)));
-		if not (empty (leaving_people)) {
-			release leaving_people as: people in: world returns: released_people;
-			ask released_people {
-				target <- any_location_in (one_of(building));
-			}
+		release people_in_building where (flip(each.staying_counter / staying_coeff)) as: people in: world  {
+			target <- any_location_in (one_of(building));
 		}
 	}
+	
 	reflex let_people_enter {
-		list<people> entering_people <- people inside self where (each.target = nil);
-		if not (empty (entering_people)) {
-			capture entering_people as: people_in_building ;
- 		}
+		capture (people inside self where (each.target = nil)) as: people_in_building ;
 	}
 }
 
@@ -124,14 +116,14 @@ experiment main_experiment type:gui{
 		display map_3D type: opengl {
 			light 1 color:(is_night ? 50 : 255) update:true;
 			image "../includes/soil.jpg";
-			species road aspect:geom;
+			species road ;
 			species people aspect:sphere3D;			
-			species building aspect:geom transparency: 0.5;
+			species building transparency: 0.5;
 		}
 		display chart refresh: every(10#cycles) {
 			chart "Disease spreading" type: series {
-				data "susceptible" value: nb_people_not_infected color: #green;
-				data "infected" value: nb_people_infected color: #red;
+				data "susceptible" value: nb_people_not_infected color: #green marker: false;
+				data "infected" value: nb_people_infected color: #red marker: false;
 			}
 		}
 	}

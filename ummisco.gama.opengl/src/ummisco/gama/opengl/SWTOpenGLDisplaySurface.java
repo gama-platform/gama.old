@@ -103,7 +103,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
-		if (getOutput().useShader()) {
+		if (getOutput().getData().useShader()) {
 			renderer = new ModernRenderer();
 
 		} else {
@@ -543,7 +543,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			}
 		if (withHighlight)
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
-					cleanup, AgentsMenu.HIGHLIGHT_ACTION);
+					cleanup, AgentsMenu.getHighlightActionFor(ag));
 		else
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
 					cleanup);
@@ -636,9 +636,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.switchCamera();
 				break;
 			case SPLIT_LAYER:
-				final boolean yes = (Boolean) value;
+				final double dist = (Double) value;
 				final int nbLayers = this.getManager().getItems().size();
-				final double gap = yes ? 1d / (nbLayers * 2) : 0;
+				final double gap = dist;
 				double currentElevation = 0;
 				for (final ILayer layer : this.getManager().getItems()) {
 					layer.addElevation(currentElevation);

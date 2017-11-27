@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MovingSkill3D.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MovingSkill3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -207,7 +206,7 @@ public class MovingSkill3D extends MovingSkill {
 						}
 					}
 				}
-				if (geom != null && geom.getInnerGeometry() != null) {
+				if (geom.getInnerGeometry() != null) {
 					final ILocation loc2 = computeLocationForward(scope, dist, loc, geom);
 					if (!loc2.equals(loc)) {
 						newHeading = heading - 180;
@@ -215,10 +214,10 @@ public class MovingSkill3D extends MovingSkill {
 					}
 				}
 			}
-			
+
 			setLocation(agent, loc);
-			
-			//only used for particuler case of bounded wandering
+
+			// only used for particuler case of bounded wandering
 			if (newHeading != null) {
 				setHeading(agent, newHeading);
 

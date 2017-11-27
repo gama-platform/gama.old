@@ -38,6 +38,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.WKTWriter;
@@ -937,6 +938,9 @@ public class GeometryUtils {
 	public static ICoordinates getContourCoordinates(final Polygon g) {
 		if (g.isEmpty())
 			return ICoordinates.EMPTY;
+		if(g.getExteriorRing().getCoordinateSequence() instanceof CoordinateArraySequence) {
+			return GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(g.getExteriorRing().getCoordinates());
+		}
 		return (ICoordinates) g.getExteriorRing().getCoordinateSequence();
 	}
 

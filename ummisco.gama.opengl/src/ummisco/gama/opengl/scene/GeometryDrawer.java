@@ -106,8 +106,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * @return true if a translation occured, false otherwise
 	 */
 	protected boolean applyTranslation(final GeometryObject object) {
-		if (object.getFile() != null) {
-			final GamaPoint loc = object.getLocation();
+		final GamaPoint loc = object.getLocation();
+		if (object.getFile() != null && loc != null) {
 			gl.translateBy(loc.x, -loc.y, loc.z);
 			return true;
 		}
@@ -171,7 +171,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			} else {
 				final double height = object.getHeight() == null ? 0d : object.getHeight();
 				final IShape.Type type = object.getType();
-				drawGeometry(object.getGeometry(), solid, border, height, type);
+				drawGeometry(geometry, solid, border, height, type);
 			}
 		} finally {
 			if (push)
@@ -360,6 +360,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(height);
 		drawCachedGeometry(Type.CIRCLE, border);
+	}
+
+	public void drawRoundedRectangle(final GamaPoint pos, final double width, final double height, final Color fill,
+			final Color border) {
+		_center.setCoordinate(pos);
+		_scale.setTo(width, height, 1);
+		gl.setCurrentColor(fill);
+		drawCachedGeometry(Type.ROUNDED, border);
 	}
 
 	private void drawCylinder(final Geometry g, final boolean solid, final double height, final Color border) {

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -21,7 +22,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -42,37 +42,34 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class Popup {
 
-	private static final Shell popup = new Shell(WorkbenchHelper.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
+	private static Shell popup;
 	private static final Listener hide = event -> hide();
 
-	static {
-		popup.setLayout(new GridLayout(1, true));
+	static Shell getPopup() {
+		if (popup == null || popup.isDisposed() || popup.getShell() == null || popup.getShell().isDisposed()) {
+			popup = new Shell(WorkbenchHelper.getShell(), PopupDialog.HOVER_SHELLSTYLE);
+			popup.setLayout(new GridLayout(1, true));
+		}
+		return popup;
+
 	}
 
 	private final MouseTrackListener mtl = new MouseTrackListener() {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			Display.getCurrent().asyncExec(() -> {
-				// open();
-				display();
-				isVisible = true;
-			});
+			WorkbenchHelper.asyncRun(() -> display());
 
 		}
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
 			hide();
-			isVisible = false;
 		}
 
 		@Override
 		public void mouseHover(final MouseEvent e) {
-			Display.getCurrent().asyncExec(() -> {
-				display();
-				isVisible = true;
-			});
+			WorkbenchHelper.asyncRun(() -> display());
 
 		}
 
@@ -117,7 +114,7 @@ public class Popup {
 			hide();
 			return;
 		}
-
+		final Shell popup = getPopup();
 		final Control[] array = popup.getChildren();
 		final int labelsSize = s.size();
 		final List<Control> labels = new ArrayList<Control>(Arrays.asList(array));
@@ -128,7 +125,7 @@ public class Popup {
 			}
 		} else if (labelsSize > controlsSize) {
 			for (int i = 0; i < labelsSize - controlsSize; i++) {
-				final Label label = new Label(popup, SWT.None);
+				final Label label = new Label(popup, SWT.WRAP);
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				labels.add(label);
 			}
@@ -144,19 +141,23 @@ public class Popup {
 
 		final Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);
+		final int width = provider.getPopupWidth();
 
 		popup.layout();
 		popup.pack();
+		if (width != 0) {
+			popup.setSize(popup.computeSize(width, SWT.DEFAULT));
+		}
 		popup.setVisible(true);
 	}
 
 	public boolean isVisible() {
-		return isVisible;
+		return popup != null && !popup.isDisposed() && popup.isVisible();
 	}
 
 	public static void hide() {
-		if (!popup.isDisposed()) {
-			popup.setVisible(false);
-		}
+		if (popup == null || popup.isDisposed() || !popup.isVisible())
+			return;
+		getPopup().setVisible(false);
 	}
 }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DifferentList.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DifferentList.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -42,6 +42,11 @@ public class DifferentList implements IAgentFilter {
 
 	@Override
 	public ISpecies getSpecies() {
+		return null;
+	}
+
+	@Override
+	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		return null;
 	}
 

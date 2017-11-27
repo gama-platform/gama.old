@@ -11,8 +11,8 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import msi.gama.doc.util.Constants;
-import msi.gama.doc.util.XMLUtils;
+import msi.gama.precompiler.doc.utils.Constants;
+import msi.gama.precompiler.doc.utils.XMLUtils;
 
 public class XmlToCategoryXML {
 

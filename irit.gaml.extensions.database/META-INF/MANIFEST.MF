@@ -12,4 +12,5 @@ Export-Package: irit.gaml.extensions.database.skills,
  msi.gama.database.mdx,
  msi.gama.database.sql
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Activator: msi.gama.database.Activator

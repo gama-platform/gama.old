@@ -35,11 +35,17 @@ global {
 			do add_desire(at_target);
 			
 		 	//the agent has also the desire that there is no catastrophe (we set the piority of this desire to 0 as it is a general desire)
-			do add_desire(new_predicate("catastrophe",false) with_priority 0.0);
+			do add_desire(nonCatastrophe ,0.0);
 			
 			// we give the agent a random charisma and receptivity (built-in variables linked to the emotions)
 			charisma<-rnd(1.0);
 			receptivity<-rnd(1.0);
+			
+			if(flip(0.9)){
+				fearful<-true;
+			}else{
+				fearful <- false;
+			}
       	}
       	road_network <- as_edge_graph(road);
       	current_weights <- road as_map (each::each.shape.perimeter);
@@ -60,16 +66,17 @@ species people skills: [moving] control: simple_bdi{
 	float speed <- 30 #km/#h;
 	rgb color <- #blue;
 	bool escape_mode <- false;
+	bool fearful;
 	
 	//in order to simplify the model we define  4 desires as variables
-	predicate at_target <- new_predicate("at_target") with_priority 1;
-	predicate in_shelter <- new_predicate("shelter") with_priority 5;
-	predicate has_target <- new_predicate("has target") with_priority 2;
-	predicate has_shelter <- new_predicate("has shelter") with_priority 10;
+	predicate at_target <- new_predicate("at_target");
+	predicate in_shelter <- new_predicate("shelter");
+	predicate has_target <- new_predicate("has target");
+	predicate has_shelter <- new_predicate("has shelter");
 
     //we give them as well 2 beliefs as variables
 	predicate catastropheP <- new_predicate("catastrophe");
-	predicate nonCatastrophe <- new_predicate("catastrophe",false) with_priority 0.0;
+	predicate nonCatastrophe <- new_predicate("catastrophe",false);
 	
 	//at last we define 2 emotion linked to the knowledge of the catastrophe
 	emotion fearConfirmed <- new_emotion("fear_confirmed",catastropheP);
@@ -84,7 +91,11 @@ species people skills: [moving] control: simple_bdi{
 	perceive target:hazard in: hazard_distance when: not escape_mode and flip(proba_detect_hazard){
 		ask myself {
 			do add_uncertainty(catastropheP);
-			color<-#green;
+			if(fearful){
+				do to_escape_mode;
+			}else{
+				color<-#green;
+			}
 		}
 	}
 
@@ -100,16 +111,18 @@ species people skills: [moving] control: simple_bdi{
 
 	//if the agent perceives other people agents in their neighborhood that have fear, it can be contaminate by this emotion
 	perceive target:people in: other_distance when: not escape_mode {
-		unconscious_contagion emotion:fearConfirmed when: has_emotion(fear);
+		emotional_contagion emotion_detected:fearConfirmed when: fearful;
 		unconscious_contagion emotion:new_emotion("fear") charisma: charisma receptivity:receptivity;
 		conscious_contagion emotion_detected:fearConfirmed emotion_created:fear;
 	}
 	
 	//if the agent has a fear confirmed, it has the desire to go to a shelter
-	rule emotion:fearConfirmed remove_intention: at_target new_desire:in_shelter;
+	rule emotion:fearConfirmed remove_intention: at_target new_desire:in_shelter strength:5.0;
 	
 	//if the agent has the belief that there is a a catastrophe,  it has the desire to go to a shelter
-	rule belief:catastropheP remove_intention:at_target new_desire:in_shelter;
+	rule belief:new_predicate("catastrophe") remove_intention:at_target new_desire:in_shelter strength:5.0;
+	
+	rule emotion:new_emotion("fear" ,new_predicate("catastrophe")) new_desire:in_shelter remove_intention:at_target when: fearful strength:5.0;
 	
 	//normal move plan
 	plan normal_move intention: at_target  {
@@ -141,7 +154,7 @@ species people skills: [moving] control: simple_bdi{
 	}	
 	
 	//normal evacuation plan
-	plan evacuation intention: in_shelter {
+	plan evacuation intention: in_shelter finished_when: has_emotion(fearConfirmed){
 		color <-#darkred;
 		if (target = nil or noTarget) {
 			target <- (shelter with_min_of (each.location distance_to location)).location;

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SortedTasksArchitecture.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SortedTasksArchitecture.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -22,14 +22,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 
 /**
- * The class SortedTasksArchitecture. In this architecture, the tasks are all
- * executed in the order specified by their weights (biggest first)
+ * The class SortedTasksArchitecture. In this architecture, the tasks are all executed in the order specified by their
+ * weights (biggest first)
  * 
  * @author drogoul
  * @since 22 d�c. 2011
  * 
  */
-@skill(name = SortedTasksArchitecture.ST, concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
+@skill (
+		name = SortedTasksArchitecture.ST,
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED },
+		doc = @doc ("A control architecture, based on the concept of tasks, which are executed in an order defined by their weight"))
 public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 
 	public static final String ST = "sorted_tasks";

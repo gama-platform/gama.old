@@ -89,6 +89,12 @@ import one.util.streamex.StreamEx;
 						optional = true,
 						doc = @doc ("(grid only), the chosen neighborhood (4, 6 or 8)")),
 				@facet (
+						name = "horizontal_orientation",
+						type = IType.BOOL,
+						optional = true,
+						doc = { @doc (
+								value = "(hexagonal grid only),(true by default). Allows use a hexagonal grid with a horizontal or vertical orientation. ") }),
+				@facet (
 						name = "use_individual_shapes",
 						type = IType.BOOL,
 						optional = true,
@@ -103,6 +109,12 @@ import one.util.streamex.StreamEx;
 						doc = { @doc (
 								value = "(grid only),(true by default). Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
 				@facet (
+						name = "optimizer",
+						type = IType.STRING,
+						optional = true,
+						doc = { @doc (
+								value = "(grid only),(\"A*\" by default). Allows to specify the algorithm for the shortest path computation (\"BF\", \"Dijkstra\", \"A*\" or \"JPS*\"") }),
+				@facet (
 						name = "use_neighbors_cache",
 						type = IType.BOOL,
 						optional = true,
@@ -112,7 +124,13 @@ import one.util.streamex.StreamEx;
 						name = IKeyword.FILE,
 						type = IType.FILE,
 						optional = true,
-						doc = @doc ("(grid only), a bitmap file that will be loaded at runtime so that the value of each pixel  can be assigned to the attribute 'grid_value'")),
+						doc = @doc ("(grid only), a bitmap file that will be loaded at runtime so that the value of each pixel can be assigned to the attribute 'grid_value'")),
+				@facet (
+						name = IKeyword.FILES,
+						type = IType.LIST,
+						of = IType.FILE,
+						optional = true,
+						doc = @doc ("(grid only), a list of bitmap file that will be loaded at runtime so that the value of each pixel of each file can be assigned to the attribute 'bands'")),
 				@facet (
 						name = IKeyword.TORUS,
 						type = IType.BOOL,
@@ -173,7 +191,12 @@ import one.util.streamex.StreamEx;
 						name = IKeyword.TOPOLOGY,
 						type = IType.TOPOLOGY,
 						optional = true,
-						doc = @doc ("The topology of the population of agents defined by this species. In case of nested species, it can for example be the shape of the macro-agent. In case of grid or graph species, the topology is automatically computed and cannot be redefined")) },
+						doc = @doc ("The topology of the population of agents defined by this species. In case of nested species, it can for example be the shape of the macro-agent. In case of grid or graph species, the topology is automatically computed and cannot be redefined")),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether the species is virtual (cannot be instantiated, but only used as a parent) (false by default)")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "The species statement allows modelers to define new species in the model. `" + IKeyword.GLOBAL
@@ -253,10 +276,17 @@ public class GamlSpecies extends AbstractSpecies {
 			}
 
 			final IExpression file = desc.getFacetExpr(FILE);
-
-			if (file != null && (height != null || width != null || cellWidth != null || cellHeight != null)) {
+			final IExpression files = desc.getFacetExpr(FILES);
+			if (file != null && files != null) {
 				sd.error(
-						"The use of the 'file' facet prohibits the use of dimension facets ('width', 'height', 'cell_width', 'cell_height')",
+						"The use of the 'files' facet prohibits the use of the 'files' facet: if several files have to be loaded in the grid, use the 'files' facet, otherwise use the 'file' facet",
+						IGamlIssue.CONFLICTING_FACETS, FILE);
+			}
+			if ((file != null || files != null)
+					&& (height != null || width != null || cellWidth != null || cellHeight != null)) {
+
+				sd.error(
+						"The use of the 'file' and 'files' facets prohibit the use of dimension facets ('width', 'height', 'cell_width', 'cell_height')",
 						IGamlIssue.CONFLICTING_FACETS, FILE);
 			}
 

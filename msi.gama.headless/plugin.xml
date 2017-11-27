@@ -14,5 +14,8 @@
          </run>
       </application>
    </extension>
+   <extension
+         point="gaml.extension">
+   </extension>
 
 </plugin>

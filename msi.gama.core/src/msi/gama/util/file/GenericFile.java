@@ -15,7 +15,7 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.Types;
 
-public class GenericFile extends GamaFile<IList<String>, String, Integer, String> {
+public class GenericFile extends GamaFile<IList<String>, String> {
 
 	private boolean shouldExist;
 

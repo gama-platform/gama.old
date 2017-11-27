@@ -34,7 +34,7 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 				HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(ICommandService.class);
 		service.refreshElements(event.getCommand().getId(), null);
 		if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
-			GAMA.getGui().showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			GAMA.getGui().showView(null, ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		} else {
 			WorkbenchHelper.hideView(ErrorView.ID);
 		}

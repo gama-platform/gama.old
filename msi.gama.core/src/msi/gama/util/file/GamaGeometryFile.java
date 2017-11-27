@@ -27,7 +27,7 @@ import msi.gaml.types.Types;
  * @since 30 déc. 2013
  *
  */
-public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, Integer, IShape> {
+public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 
 	protected IShape geometry;
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaPath.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,7 +10,6 @@
 package msi.gama.util.path;
 
 import org.jgrapht.GraphPath;
-import org.jgrapht.Graphs;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.metamodel.agent.IAgent;
@@ -30,19 +28,20 @@ import msi.gaml.types.Types;
 // Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
 // Si
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, GraphPath<V, E>, IPath<V, E, G> {
 
 	V source, target;
 	IList<E> edges;
+	
+	double weight = 0.0;
 
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
 	G graph;
 	int graphVersion;
 
 	// FIXME virer le constructeur par d�faut... used for the inheritance...
-	public GamaPath() {
-	}
+	public GamaPath() {}
 
 	@Override
 	public IType getType() {
@@ -131,13 +130,17 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public IList<E> getEdgeList() {
 		return edges;
 	}
+	
+	
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
 
 	@Override
 	public double getWeight() {
 		final G graph = getGraph();
-		if (graph == null) {
-			return 0.0;
-		}
+		if (graph == null) { return weight; }
 		return graph.computeWeight(this);
 	}
 
@@ -166,10 +169,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public IList<V> getVertexList() {
-		if (graph == null) {
-			return GamaListFactory.create();
-		}
-		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
+		if (graph == null) { return GamaListFactory.create(); }
+		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
 	// TODO :to check
@@ -179,9 +180,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	/**
-	 * Private method intended to compute the geometry of the path (a polyline)
-	 * from the list of segments. While the path is not invalidated, this list
-	 * of segments should not be changed and the geometry can be cached.
+	 * Private method intended to compute the geometry of the path (a polyline) from the list of segments. While the
+	 * path is not invalidated, this list of segments should not be changed and the geometry can be cached.
 	 */
 	// FIXME BEN
 	// private void computeGeometry() {
@@ -257,9 +257,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public double getDistance(final IScope scope) {
-		if (getEdgeList() == null || getEdgeList().isEmpty()) {
-			return 0;
-		}
+		if (getEdgeList() == null || getEdgeList().isEmpty()) { return 0; }
 		return getWeight();
 	}
 

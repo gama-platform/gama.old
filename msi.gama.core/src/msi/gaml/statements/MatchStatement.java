@@ -45,7 +45,8 @@ import msi.gaml.types.Types;
 		value = { @facet (
 				name = IKeyword.VALUE,
 				type = IType.NONE,
-				optional = true) },
+				optional = true,
+				doc = @doc ("The value or values this statement tries to match")) },
 		omissible = IKeyword.VALUE)
 @doc (
 		value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used",

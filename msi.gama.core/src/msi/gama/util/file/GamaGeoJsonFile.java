@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -36,7 +37,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.GIS, IConcept.FILE })
+		concept = { IConcept.GIS, IConcept.FILE },
+		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
 public class GamaGeoJsonFile extends GamaGisFile {
 
 	public GamaGeoJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -120,7 +122,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 			while (reader.hasNext()) {
 				index++;
 				if (index % 20 == 0)
-					scope.getGui().getStatus().setSubStatusCompletion(index / size);
+					scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
 				final SimpleFeature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometry();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {

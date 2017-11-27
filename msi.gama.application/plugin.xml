@@ -95,6 +95,9 @@
                      class="msi.gama.application.projects.PluginNature">
                </run>
             </runtime>
+            <requires-nature
+                  id="msi.gama.application.gamaNature">
+            </requires-nature>
          </extension>
          <extension
                id="runtime"
@@ -135,5 +138,18 @@
                      value="plugin_customization.ini">
                </property>
             </product>
+         </extension>
+         <extension
+               id="testNature"
+               name="GAMA test project"
+               point="org.eclipse.core.resources.natures">
+            <runtime>
+               <run
+                     class="msi.gama.application.projects.TestNature">
+               </run>
+            </runtime>
+             <requires-nature
+                  id="msi.gama.application.gamaNature">
+            </requires-nature>
          </extension>
 </plugin>

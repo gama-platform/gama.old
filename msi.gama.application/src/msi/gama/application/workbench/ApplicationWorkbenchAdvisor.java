@@ -218,8 +218,10 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				if ( severity == IStatus.INFO || severity == IStatus.CANCEL )
 					return;
 				final Throwable e = statusAdapter.getStatus().getException();
-				System.err
-					.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage() + " " + e);
+				final String message = statusAdapter.getStatus().getMessage();
+				// Stupid Eclipse
+				if ( !message.contains("File toolbar contribution item") )
+					System.out.println("GAMA Caught a workbench message : " + message);
 				if ( e != null ) {
 					e.printStackTrace();
 				}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NewProjectWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NewProjectWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -34,18 +33,17 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import ummisco.gama.ui.commands.RefreshHandler;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
 	/**
-	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse
-	 * framework.
+	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse framework.
 	 */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
-	private WizardNewProjectCreationPage wizardPage;
+	private NewProjectWizardPage wizardPage;
 	// private IConfigurationElement config;
 	private IProject project;
 
@@ -55,7 +53,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 	@Override
 	public void addPages() {
-		wizardPage = new WizardNewProjectCreationPage("NewGAMAProject");
+		wizardPage = new NewProjectWizardPage("NewGAMAProject");
 		wizardPage.setDescription("Create a new GAMA Project.");
 		wizardPage.setTitle("New GAMA Project");
 		addPage(wizardPage);
@@ -64,10 +62,9 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {
 
-		if (project != null) {
-			return true;
-		}
+		if (project != null) { return true; }
 
+		final boolean isTest = wizardPage.isTest();
 		final IProject projectHandle = wizardPage.getProjectHandle();
 		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -75,14 +72,13 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		desc.setLocationURI(projectURI);
 
 		/**
-		 * An operation object that modifies workspaces in order to create new
-		 * projects.
+		 * An operation object that modifies workspaces in order to create new projects.
 		 */
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
-				createProject(desc, projectHandle, monitor);
+				createProject(desc, projectHandle, isTest, monitor);
 			}
 		};
 
@@ -97,11 +93,6 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		}
 
 		project = projectHandle;
-
-		// if ( project == null ) { return false; }
-
-		// BasicNewProjectResourceWizard.updatePerspective(config);
-
 		return true;
 
 	}
@@ -115,34 +106,30 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	 * @throws CoreException
 	 * @throws OperationCanceledException
 	 */
-	void createProject(final IProjectDescription description, final IProject proj, final IProgressMonitor monitor)
-			throws CoreException, OperationCanceledException {
+	void createProject(final IProjectDescription description, final IProject proj, final boolean isTest,
+			final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		try {
 
 			monitor.beginTask("", 2000);
 			proj.create(description, new SubProgressMonitor(monitor, 1000));
 
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 			proj.open(new SubProgressMonitor(monitor, 1000));
-			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
-			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, null);
+			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, isTest, null);
 
 			/*
-			 * We now have the project and we can do more things with it before
-			 * updating the perspective.
+			 * We now have the project and we can do more things with it before updating the perspective.
 			 */
 			final IContainer container = proj;
-
-			/* Add the doc folder */
-			final IFolder libFolder = container.getFolder(new Path("doc"));
-			libFolder.create(true, true, monitor);
-
-			/* Add the snapshots folder in the doc folder */
-			final IFolder snapshotsFolder = libFolder.getFolder(new Path("snapshots"));
-			snapshotsFolder.create(true, true, monitor);
+			//
+			// /* Add the doc folder */
+			// final IFolder libFolder = container.getFolder(new Path("doc"));
+			// libFolder.create(true, true, monitor);
+			//
+			// /* Add the snapshots folder in the doc folder */
+			// final IFolder snapshotsFolder = libFolder.getFolder(new Path("snapshots"));
+			// snapshotsFolder.create(true, true, monitor);
 
 			/* Add the models folder */
 			final IFolder modelFolder = container.getFolder(new Path("models"));
@@ -153,12 +140,14 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			incFolder.create(true, true, monitor);
 
 			/* Add the images folder */
-			final IFolder imFolder = container.getFolder(new Path("images"));
+			final IFolder imFolder = container.getFolder(new Path("tests"));
 			imFolder.create(true, true, monitor);
 
+			RefreshHandler.run(modelFolder);
+
 		} catch (final CoreException ioe) {
-			final IStatus status = new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(),
-					null);
+			final IStatus status =
+					new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		} finally {
 			monitor.done();

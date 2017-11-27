@@ -11,7 +11,6 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,6 +27,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
@@ -89,7 +89,8 @@ public class GamlResourceServices {
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
 		if (listener == null)
 			return;
-		final Collection exps = model == null ? newState ? Collections.EMPTY_SET : null : model.getExperiments();
+		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
+				: Iterables.filter(model.getExperiments(), each -> !each.isAbstract());
 		listener.validationEnded(exps, status);
 	}
 
@@ -187,13 +188,13 @@ public class GamlResourceServices {
 
 	public synchronized static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
-		Resource r = null;
+		GamlResource r = null;
 		if (existing != null) {
 			final ModelDescription desc = existing.getModelDescription();
 			if (desc != null) {
 				final EObject e = desc.getUnderlyingElement(null);
 				if (e != null) {
-					r = e.eResource();
+					r = (GamlResource) e.eResource();
 					if (r != null)
 						rs = r.getResourceSet();
 				}
@@ -206,8 +207,11 @@ public class GamlResourceServices {
 		final GamlResource result = (GamlResource) rs.createResource(uri);
 		final TOrderedHashMap<URI, String> imports = new TOrderedHashMap();
 		imports.put(uri, null);
-		if (r != null)
+		if (r != null) {
 			imports.put(r.getURI(), null);
+			final Map<URI, String> uris = GamlResourceIndexer.allLabeledImportsOf(r);
+			imports.putAll(uris);
+		}
 		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
 		return result;
 	}

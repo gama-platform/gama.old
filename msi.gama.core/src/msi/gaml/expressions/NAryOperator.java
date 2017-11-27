@@ -43,18 +43,19 @@ public class NAryOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	protected IType computeType(final int t, final IType def, final int kind) {
+	protected IType computeType(final int typeProvider, final int contentTypeProvider, final IType defaultType,
+			final int kind) {
 		int index = -1;
 		int kind_of_index = -1;
-		if (t < INDEXED_TYPES) {
-			if (t >= TYPE_AT_INDEX) {
-				index = t - TYPE_AT_INDEX;
+		if (typeProvider < INDEXED_TYPES) {
+			if (typeProvider >= TYPE_AT_INDEX) {
+				index = typeProvider - TYPE_AT_INDEX;
 				kind_of_index = GamaType.TYPE;
-			} else if (t >= CONTENT_TYPE_AT_INDEX) {
-				index = t - CONTENT_TYPE_AT_INDEX;
+			} else if (typeProvider >= CONTENT_TYPE_AT_INDEX) {
+				index = typeProvider - CONTENT_TYPE_AT_INDEX;
 				kind_of_index = GamaType.CONTENT;
-			} else if (t >= KEY_TYPE_AT_INDEX) {
-				index = t - KEY_TYPE_AT_INDEX;
+			} else if (typeProvider >= KEY_TYPE_AT_INDEX) {
+				index = typeProvider - KEY_TYPE_AT_INDEX;
 				kind_of_index = GamaType.KEY;
 			}
 			if (index != -1 && exprs != null && index < exprs.length) {
@@ -69,7 +70,7 @@ public class NAryOperator extends AbstractNAryOperator {
 				}
 			}
 		}
-		return super.computeType(t, def, kind);
+		return super.computeType(typeProvider, contentTypeProvider, defaultType, kind);
 	}
 
 	@Override

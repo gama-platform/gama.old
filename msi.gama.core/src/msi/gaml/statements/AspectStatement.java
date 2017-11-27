@@ -204,18 +204,11 @@ public class AspectStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		Rectangle2D result = null;
-		for (final IStatement command : commands) {
-			final Object c = command.executeOn(stack);
-			if (result != null) {
-				if (c instanceof Rectangle2D) {
-					result = result.createUnion((Rectangle2D) c);
-				}
-			} else if (c instanceof Rectangle2D) {
-				result = (Rectangle2D) c;
-			}
-		}
-		return result;
+	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final IGraphics g = scope.getGraphics();
+		if (g == null)
+			return null;
+		super.privateExecuteIn(scope);
+		return g.getAndWipeTemporaryEnvelope();
 	}
 }

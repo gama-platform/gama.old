@@ -69,7 +69,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 			case IResource.FILE:
 				final IFile f = (IFile) element;
 				final String s = f.getFileExtension();
-				if (f.getFileExtension().equals("experiment")) { return GamaIcons.create("file.experiment2").image(); }
+				if (s != null && s.equals("experiment")) { return GamaIcons.create("file.experiment2").image(); }
 				if (isHandled(s)) {
 					if (FileMetaDataProvider.isShapeFileSupport(f)) {
 						return GamaIcons.create("file.shapesupport2").image();

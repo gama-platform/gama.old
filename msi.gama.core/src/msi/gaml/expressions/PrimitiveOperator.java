@@ -23,6 +23,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
@@ -38,11 +39,13 @@ public class PrimitiveOperator implements IExpression {
 	final Arguments parameters;
 	final IExpression target;
 	final StatementDescription action;
+	final boolean isSuper;
 
 	public PrimitiveOperator(final IDescription callerContext, final StatementDescription action,
-			final IExpression target, final Arguments args) {
+			final IExpression target, final Arguments args, final boolean superInvocation) {
 		this.target = target;
 		this.action = action;
+		isSuper = superInvocation;
 		parameters = args;
 
 	}
@@ -61,7 +64,8 @@ public class PrimitiveOperator implements IExpression {
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
 		// One way is (1) to gather the executer
-		final IStatement.WithArgs executer = target.getSpecies().getAction(getName());
+		final ISpecies species = isSuper ? target.getSpecies().getParentSpecies() : target.getSpecies();
+		final IStatement.WithArgs executer = species.getAction(getName());
 		// Then, (2) to set the caller to the actual agent on the scope (in the
 		// context of which the arguments need to
 		// be evaluated

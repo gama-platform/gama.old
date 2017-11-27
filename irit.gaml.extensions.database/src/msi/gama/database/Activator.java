@@ -1,7 +1,5 @@
 package msi.gama.database;
 
-import java.util.Map;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -10,6 +8,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.database.sql.SqlUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -19,8 +18,8 @@ public class Activator implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 		GeometryUtils.addEnvelopeComputer((scope, obj) -> {
 
-			if (!(obj instanceof Map)) { return null; }
-			final Map<String, Object> params = (Map<String, Object>) obj;
+			if (!(obj instanceof GamaMap)) { return null; }
+			final GamaMap<String, Object> params = (GamaMap<String, Object>) obj;
 			// final String crs = (String) params.get("crs");
 			// final String srid = (String) params.get("srid");
 			// final Boolean longitudeFirst =

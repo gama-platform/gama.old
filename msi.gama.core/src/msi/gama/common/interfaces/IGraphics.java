@@ -43,7 +43,7 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeight();
 
-	public abstract Rectangle2D drawFile(GamaFile<?, ?, ?, ?> file, FileDrawingAttributes attributes);
+	public abstract Rectangle2D drawFile(GamaFile<?, ?> file, FileDrawingAttributes attributes);
 
 	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 
@@ -107,5 +107,20 @@ public interface IGraphics {
 	boolean cannotDraw();
 
 	public abstract boolean isNotReadyToUpdate();
+
+	public int getWidthForOverlay();
+
+	public int getHeightForOverlay();
+
+	/**
+	 * Ask the IGraphics instance to accumulate temporary envelopes
+	 * 
+	 * @param env
+	 */
+	public default void accumulateTemporaryEnvelope(final Rectangle2D env) {}
+
+	public default Rectangle2D getAndWipeTemporaryEnvelope() {
+		return null;
+	}
 
 }

@@ -5,9 +5,9 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import msi.gama.doc.util.Constants;
 import msi.gama.doc.websiteGen.utilClasses.LearningConcept;
 import msi.gama.doc.websiteGen.utilClasses.Topic;
+import msi.gama.precompiler.doc.utils.Constants;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;

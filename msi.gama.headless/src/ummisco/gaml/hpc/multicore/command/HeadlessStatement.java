@@ -30,7 +30,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeywords.STARTSIMULATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
+@symbol(name = IKeywords.RUNSIMULARTION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
 		IConcept.HEADLESS })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeywords.MODEL, type = IType.STRING, optional = false),

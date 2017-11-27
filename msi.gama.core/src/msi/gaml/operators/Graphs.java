@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
@@ -245,7 +247,7 @@ public class Graphs {
 			usages = @usage ("if the left-hand operand is nil, returns false"),
 			examples = { @example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap contains_edge link({1,5}::{12,45})",
+							value = "graphFromMap contains_edge link({1,5},{12,45})",
 							equals = "true") },
 			see = { "contains_vertex" })
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final Object edge) {
@@ -295,7 +297,7 @@ public class Graphs {
 					@example (
 							value = "graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap source_of(link({1,5}::{12,45}))",
+							value = "graphFromMap source_of(link({1,5},{12,45}))",
 							returnType = IKeyword.POINT,
 							equals = "{1,5}") },
 			see = { "target_of" })
@@ -322,7 +324,7 @@ public class Graphs {
 							equals = "node1",
 							isExecutable = false),
 					@example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"), @example (
-							value = "graphFromMap target_of(link({1,5}::{12,45}))",
+							value = "graphFromMap target_of(link({1,5},{12,45}))",
 							equals = "{12,45}") },
 			see = "source_of")
 	public static Object targetOf(final IScope scope, final IGraph graph, final Object edge) {
@@ -344,7 +346,7 @@ public class Graphs {
 					@usage ("if the right-hand operand is neither a node, nor an edge, returns 1.") },
 			examples = { @example ("graph graphFromMap <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);"),
 					@example (
-							value = "graphFromMap weight_of(link({1,5}::{12,45}))",
+							value = "graphFromMap weight_of(link({1,5},{12,45}))",
 							equals = "1.0") })
 	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
 		if (graph == null) { throw GamaRuntimeException
@@ -496,7 +498,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc (
-			value = "returns the connected components of of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
+			value = "returns the connected components of a graph, i.e. the list of all vertices that are in the maximally connected component together with the specified vertex. ",
 			examples = { @example (
 					value = "graph my_graph <- graph([]);"),
 					@example (
@@ -506,7 +508,7 @@ public class Graphs {
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException
-				.error("In the nb_connected_components_of operator, the graph should not be null!", scope); }
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -517,6 +519,79 @@ public class Graphs {
 
 		}
 		return results;
+	}
+
+	@operator (
+			value = "connected_components_of",
+			type = IType.LIST,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the connected components of a graph, i.e. the list of all edges (if the boolean is true) or vertices (if the boolean is false) that are in the connected components. ",
+			examples = { @example (
+					value = "graph my_graph2 <- graph([]);"),
+					@example (
+							value = "connected_components_of (my_graph2, true)",
+							equals = "the list of all the components as list",
+							test = false) },
+			see = { "alpha_index", "connectivity_index", "nb_cycles" })
+	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+
+		ConnectivityInspector ci;
+		// there is an error with connectivity inspector of JGrapht....
+		ci = new ConnectivityInspector((DirectedGraph) graph);
+		final IList<IList> results = GamaListFactory.create(Types.LIST);
+		for (final Object obj : ci.connectedSets()) {
+			if (edge) {
+				final IList edges = GamaListFactory.create(scope, graph.getType().getContentType());
+				for (final Object v : (Set) obj) {
+					edges.addAll(graph.edgesOf(v));
+				}
+
+				results.add(Containers.remove_duplicates(scope, edges));
+
+			} else
+				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+		}
+		return results;
+	}
+
+	@operator (
+			value = "main_connected_component",
+			type = IType.GRAPH,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+	@doc (
+			value = "returns the sub-graph corresponding to the main connected components of the graph",
+			examples = { @example (
+					value = "main_connected_component(my_graph)", isExecutable = false,
+					equals = "the sub-graph corresponding to the main connected components of the graph",
+					test = false) },
+			see = { "connected_components_of" })
+	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+
+		final IList<IList> cc = connectedComponentOf(scope, graph);
+		final IGraph newGraph = (IGraph) graph.copy(scope);
+		IList mainCC = null;
+		int size = 0;
+		for (final IList c : cc) {
+			if (c.size() > size) {
+				size = c.size();
+				mainCC = c;
+			}
+		}
+		final Set vs = graph.vertexSet();
+		vs.removeAll(mainCC);
+		for (final Object v : vs) {
+			newGraph.removeAllEdges(graph.edgesOf(v));
+			newGraph.removeVertex(v);
+		}
+		return newGraph;
 	}
 
 	@operator (
@@ -893,7 +968,7 @@ public class Graphs {
 							+ "the graph will be built with elements of the list as edges and two edges will be connected by a node if the distance between their "
 							+ "extremity (first or last points) are at distance lower or equal to the tolerance",
 					examples = { @example (
-							value = "as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1);",
+							value = "as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1)",
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })
@@ -1307,7 +1382,7 @@ public class Graphs {
 					value = "paths_between(my_graph, ag1:: ag2, 2)",
 					equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
 					isExecutable = false) })
-	public static List<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
+	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
 		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
@@ -1690,6 +1765,51 @@ public class Graphs {
 			value = "adjacency matrix of the given graph.")
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
+	}
+
+	@operator (
+			value = "strahler",
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH, IConcept.EDGE })
+	@doc (
+			value = "retur for each edge, its strahler number")
+	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
+		final GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
+		if (graph == null || graph.isEmpty(scope))
+			return results;
+		if (!graph.getConnected() || graph.hasCycle()) { throw GamaRuntimeException
+				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope); }
+
+		List currentEdges = (List) graph.getEdges().stream().filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0)
+				.collect(Collectors.toList());
+		while (!currentEdges.isEmpty()) {
+			final List newList = new ArrayList<>();
+			for (final Object e : currentEdges) {
+				final List previousEdges = inEdgesOf(scope, graph, graph.getEdgeSource(e));
+				final List nextEdges = outEdgesOf(scope, graph, graph.getEdgeTarget(e));
+				if (nextEdges.isEmpty()) {
+					results.put(e, 1);
+					newList.addAll(previousEdges);
+				} else {
+					final boolean notCompleted = nextEdges.stream().anyMatch(a -> !results.containsKey(a));
+					if (notCompleted) {
+						newList.add(e);
+					} else {
+						final List<Integer> vals = (List<Integer>) nextEdges.stream().map(a -> results.get(a))
+								.collect(Collectors.toList());
+						final Integer maxVal = Collections.max(vals);
+						final int nbIt = Collections.frequency(vals, maxVal);
+						if (nbIt > 1)
+							results.put(e, maxVal + 1);
+						else
+							results.put(e, maxVal);
+						newList.addAll(previousEdges);
+					}
+				}
+			}
+			currentEdges = newList;
+		}
+		return results;
 	}
 
 	// TODO "complete" (pour créer un graphe complet)

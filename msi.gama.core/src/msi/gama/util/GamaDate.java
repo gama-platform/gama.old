@@ -598,8 +598,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		final boolean month = name.startsWith("m");
 		final GamaDate next = this.plus(number, month ? ChronoUnit.MONTHS : ChronoUnit.YEARS);
 		final double result = this.until(next, ChronoUnit.MILLIS) / 1000d;
-		System.out.println("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
-				+ this.until(next, ChronoUnit.DAYS) + " days");
+//		System.out.println("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
+//				+ this.until(next, ChronoUnit.DAYS) + " days");
 
 		return result;
 	}

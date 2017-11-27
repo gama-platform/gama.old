@@ -22,6 +22,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -46,8 +47,9 @@ import msi.gaml.types.Types;
 		name = "xml",
 		extensions = "xml",
 		buffer_type = IType.MAP,
-		concept = { IConcept.FILE, IConcept.XML })
-public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, String, String> {
+		concept = { IConcept.FILE, IConcept.XML },
+		doc = @doc ("Represents XML files. The internal representation is a list of strings"))
+public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 
 	/**
 	 * @param scope

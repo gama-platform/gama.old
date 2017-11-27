@@ -124,13 +124,35 @@ public class GamaPreferences {
 		 * Validation
 		 */
 		public static final String VALIDATION = "Validation of Models";
-		public static final Pref<Boolean> WARNINGS_ENABLED = GamaPreferences
-				.create("pref_editor_enable_warnings", "Show warning markers when editing a model", true, IType.BOOL)
-				.in(NAME, VALIDATION);
+		public static final Pref<Boolean> WARNINGS_ENABLED =
+				create("pref_editor_enable_warnings", "Show warning markers when editing a model", true, IType.BOOL)
+						.in(NAME, VALIDATION);
 
-		public static final Pref<Boolean> INFO_ENABLED = GamaPreferences
-				.create("pref_editor_enable_infos", "Show information markers when editing a model", true, IType.BOOL)
-				.in(NAME, VALIDATION);
+		public static final Pref<Boolean> INFO_ENABLED =
+				create("pref_editor_enable_infos", "Show information markers when editing a model", true, IType.BOOL)
+						.in(NAME, VALIDATION);
+
+		public static final String TESTS = "Tests";
+		public static final Pref<Boolean> TESTS_SORTED =
+				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL).in(NAME, TESTS)
+						.withComment(", if true, the display of tests will put first the aborted and failed ones");
+		public static final Pref<Boolean> RUN_TESTS =
+				create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL)
+						.in(NAME, TESTS).disabled();
+		public static final Pref<Boolean> START_TESTS =
+				create("pref_start_tests", "Run tests at each start of the platform", false, IType.BOOL).in(NAME,
+						TESTS);
+		public static final Pref<Boolean> USER_TESTS = create("pref_user_tests",
+				"Include user-defined tests in the tests suite", false, IType.BOOL).in(NAME, TESTS).withComment(
+						", if true, will look into user projects named 'tests' for models with 'test' experiments and run them automatically");
+		public static final Pref<Boolean> FAILED_TESTS =
+				create("pref_failed_tests", "Only display (in the UI and in headless runs) failed and aborted tests",
+						false, IType.BOOL).in(NAME, TESTS).withComment(
+								", if true, only the results of tests that fail or exit abnormally are displayed");
+		// .activates("pref_tests_period");
+		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
+		// .among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
+
 	}
 
 	public static class Experiments {
@@ -263,18 +285,25 @@ public class GamaPreferences {
 				"Delay (in ms) between the opening of display views (increase if you experience freezes when opening displays, esp. Java2D displays)",
 				200, IType.INT).between(0, 1000).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
-				create("pref_display_show_border", "Display a border around display views", true, IType.BOOL).in(NAME,
+				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL).in(NAME,
 						PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE = create("pref_display_continue_drawing",
 				"Continue to draw displays (in the background) when in Modeling perspective", false, IType.BOOL)
 						.in(NAME, PRESENTATION);
-		public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN = create("pref_display_fullscreen_menu",
-				"Disable the menu bar when displays are turned full-screen", true, IType.BOOL).in(NAME, PRESENTATION);
+		public static final Pref<Boolean> DISPLAY_NATIVE_FULLSCREEN = create("pref_display_fullscreen_native",
+				"Use the OS native mode for full-screen (experimental)", false, IType.BOOL).in(NAME, PRESENTATION);
+		public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN =
+				create("pref_display_fullscreen_menu", "Disable the OS menu bar when a display is turned full-screen",
+						true, IType.BOOL).in(NAME, PRESENTATION);
+		public static final Pref<Boolean> DISPLAY_TOOLBAR_FULLSCREEN = create("pref_display_fullscreen_toolbar",
+				"Show the toolbar when a display is turned full-screen", false, IType.BOOL).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 				"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
 				false, IType.BOOL).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> CORE_OVERLAY =
-				create("pref_display_show_overlay", "Automatically show the display overlay", false, IType.BOOL)
+		public static final Pref<Boolean> CORE_DISPLAY_TOOLBAR = create("pref_display_show_toolbar",
+				"Whether the display top toolbar is initially visible or not", true, IType.BOOL).in(NAME, PRESENTATION);
+		public static final Pref<Boolean> CORE_OVERLAY = create("pref_display_show_overlay",
+				"Whether the display bottom overlay is initially visible or not", false, IType.BOOL)
 						.in(NAME, PRESENTATION).activates("pref_display_show_scale", "pref_display_show_fps");
 		public static final Pref<Boolean> CORE_SCALE =
 				create("pref_display_show_scale", "Show scale bar in overlay", false, IType.BOOL).in(NAME,
@@ -293,6 +322,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
 				"Keep the data displayed in charts in memory (to save them later as CSV)", true, IType.BOOL).in(NAME,
 						CHARTS);
+		public static final Pref<Boolean> CHART_GRIDLINES = create("pref_chart_display_gridlines",
+				"Display grid lines on charts by default (true if x_tick_unit or y_tick_unit is defined)", true,
+				IType.BOOL).in(NAME, CHARTS);
 		/**
 		 * Drawing methods and defaults
 		 */

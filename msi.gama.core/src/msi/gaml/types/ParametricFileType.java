@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParametricFileType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParametricFileType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,16 +28,15 @@ public class ParametricFileType extends ParametricType {
 
 	int id;
 	int varKind;
-	@SuppressWarnings("rawtypes") final Class<IGamaFile> support;
+	@SuppressWarnings ("rawtypes") final Class<IGamaFile> support;
 	final IContainerType<?> bufferType;
-	final GamaHelper<IGamaFile<?, ?, ?, ?>> builder;
+	final GamaHelper<IGamaFile<?, ?>> builder;
 	final String alias;
 	String plugin;
 	static ParametricFileType genericInstance;
 
-	protected ParametricFileType(final String name, @SuppressWarnings("rawtypes") final Class<IGamaFile> class1,
-			final GamaHelper<IGamaFile<?, ?, ?, ?>> helper, final IType<?> buffer, final IType<?> kt,
-			final IType<?> ct) {
+	protected ParametricFileType(final String name, @SuppressWarnings ("rawtypes") final Class<IGamaFile> class1,
+			final GamaHelper<IGamaFile<?, ?>> helper, final IType<?> buffer, final IType<?> kt, final IType<?> ct) {
 		super(Types.FILE, kt, ct);
 		support = class1;
 		bufferType = (IContainerType<?>) buffer;
@@ -51,7 +49,7 @@ public class ParametricFileType extends ParametricType {
 		return GamaGeometryFile.class.isAssignableFrom(support) || GamaImageFile.class.isAssignableFrom(support);
 	}
 
-	public GamaHelper<IGamaFile<?, ?, ?, ?>> getBuilder() {
+	public GamaHelper<IGamaFile<?, ?>> getBuilder() {
 		return builder;
 	}
 
@@ -68,32 +66,25 @@ public class ParametricFileType extends ParametricType {
 
 	@Override
 	public boolean equals(final Object c) {
-		if (c instanceof ParametricFileType) {
-			return ((ParametricFileType) c).id() == id();
-		}
+		if (c instanceof ParametricFileType) { return ((ParametricFileType) c).id() == id(); }
 		return super.equals(c);
 	}
 
 	@Override
-	public IGamaFile<?, ?, ?, ?> cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,
+	public IGamaFile<?, ?> cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,
 			final IType<?> contentType, final boolean copy) {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		if (obj instanceof IGamaFile) {
 			if (support.isInstance(obj))
-				return (IGamaFile<?, ?, ?, ?>) obj;
+				return (IGamaFile<?, ?>) obj;
 			else {
-				return cast(scope, ((IGamaFile<?, ?, ?, ?>) obj).getPath(scope), param, keyType, contentType, copy);
+				return cast(scope, ((IGamaFile<?, ?>) obj).getPath(scope), param, keyType, contentType, copy);
 			}
 		}
 		if (obj instanceof String) {
-			if (param == null) {
-				return createFile(scope, (String) obj, null);
-			}
-			if (param instanceof IContainer.Modifiable) {
-				return createFile(scope, (String) obj, (IModifiableContainer<?, ?, ?, ?>) param);
-			}
+			if (param == null) { return createFile(scope, (String) obj, null); }
+			if (param instanceof IContainer.Modifiable) { return createFile(scope, (String) obj,
+					(IModifiableContainer<?, ?, ?, ?>) param); }
 		}
 		return null;
 	}
@@ -101,11 +92,11 @@ public class ParametricFileType extends ParametricType {
 	public static ParametricFileType getGenericInstance() {
 
 		if (genericInstance == null) {
-			genericInstance = new ParametricFileType("generic_file", IGamaFile.class,
-					new GamaHelper<IGamaFile<?, ?, ?, ?>>() {
+			genericInstance =
+					new ParametricFileType("generic_file", IGamaFile.class, new GamaHelper<IGamaFile<?, ?>>() {
 
 						@Override
-						public IGamaFile<?, ?, ?, ?> run(final IScope s, final Object... o) {
+						public IGamaFile<?, ?> run(final IScope s, final Object... o) {
 							return new GenericFile(s, (String) o[0]);
 						}
 					}, Types.LIST, Types.NO_TYPE, Types.NO_TYPE);
@@ -113,7 +104,7 @@ public class ParametricFileType extends ParametricType {
 		return genericInstance;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public Class toClass() {
 		return support;
@@ -152,7 +143,7 @@ public class ParametricFileType extends ParametricType {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	public IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
 		final IGamaFile file = builder.run(scope, path);
 		if (contents != null) {

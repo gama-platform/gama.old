@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +63,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -491,7 +489,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
-			Display.getDefault().asyncExec(() -> {
+			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
 
@@ -538,8 +536,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	@Override
-	public void validationEnded(final Collection<? extends IDescription> newExperiments,
-			final ValidationContext status) {
+	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
 		if (newExperiments == null && state != null)
 			updateToolbar(state, true);
 		else {

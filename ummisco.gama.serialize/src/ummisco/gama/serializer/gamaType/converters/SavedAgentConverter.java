@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SavedAgentConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SavedAgentConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,14 +20,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import gnu.trove.map.hash.THashMap;
-import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.util.GAML;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SavedAgentConverter implements Converter {
 
 	private final static String TAG = "IMacroAgent";
@@ -50,33 +44,31 @@ public class SavedAgentConverter implements Converter {
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
 
-		ArrayList<String> keys = new ArrayList<String>();
-		ArrayList<Object> datas = new ArrayList<Object>();
-		
-		for(String ky :savedAgt.getKeys())
-		{
+		final ArrayList<String> keys = new ArrayList<String>();
+		final ArrayList<Object> datas = new ArrayList<Object>();
+
+		for (final String ky : savedAgt.getKeys()) {
 			keys.add(ky);
 			datas.add(savedAgt.get(ky));
 		}
-	
+
 		writer.startNode("variables");
-			writer.startNode("keys");
-				context.convertAnother(keys);
-			writer.endNode();
-			writer.startNode("data");
-				context.convertAnother(datas);
-			writer.endNode();
+		writer.startNode("keys");
+		context.convertAnother(keys);
+		writer.endNode();
+		writer.startNode("data");
+		context.convertAnother(datas);
+		writer.endNode();
 		writer.endNode();
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if(inPop.size()>0)
-		{
+		if (inPop.size() > 0) {
 			writer.startNode("innerPopulations");
 			context.convertAnother(inPop);
 			writer.endNode();
 		}
 
 		writer.startNode(TAG);
-		context.convertAnother(new Boolean(inPop == null ? false : true));
+		context.convertAnother(true);
 		writer.endNode();
 	}
 
@@ -94,23 +86,21 @@ public class SavedAgentConverter implements Converter {
 		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveUp();
-		Map<String, Object> localData = new HashMap<String, Object> ();
-		for(int ii = 0; ii< keys.size(); ii++)
-		{
+		final Map<String, Object> localData = new HashMap<String, Object>();
+		for (int ii = 0; ii < keys.size(); ii++) {
 			localData.put(keys.get(ii), datas.get(ii));
 		}
 		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = null;
-		if(reader.getNodeName().equals("innerPopulations"))
-		{
-			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null,Map.class);
+		if (reader.getNodeName().equals("innerPopulations")) {
+			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, Map.class);
 			reader.moveUp();
 			reader.moveDown();
 		}
 		final Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
 		reader.moveUp();
 
-		final SavedAgent agtToReturn = new SavedAgent(index, localData,  null);
+		final SavedAgent agtToReturn = new SavedAgent(index, localData, null);
 
 		return agtToReturn;
 	}

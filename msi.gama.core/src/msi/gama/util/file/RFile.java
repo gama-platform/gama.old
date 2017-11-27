@@ -17,6 +17,7 @@ import java.util.List;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -40,10 +41,12 @@ import rcaller.RCode;
 		buffer_type = IType.MAP,
 		buffer_content = IType.LIST,
 		buffer_index = IType.STRING,
-		concept = { IConcept.FILE, IConcept.R })
+		concept = { IConcept.FILE, IConcept.R },
+		doc = @doc ("Represents an R file. The internal representation is a map of lists (the result of the evaluation)"))
 @SuppressWarnings ({ "rawtypes" })
-public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
+public class RFile extends GamaFile<GamaMap, Object> {
 
+	// GamaMap<String, IList>, IList, String, IList
 	private final boolean DEBUG = false; // Change DEBUG = false for release
 											// version
 	private final IContainer parameters;
@@ -53,8 +56,8 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 		parameters = null;
 	}
 
-	public RFile(final IScope scope, final String pathName, final IContainer p) {
-		super(scope, pathName);
+	public RFile(final IScope scope, final String pathName, final GamaMap p) {
+		super(scope, pathName, p);
 		parameters = p;
 	}
 
@@ -62,7 +65,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		final StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
-		for (final IList s : getBuffer().iterable(scope)) {
+		for (final Object s : getBuffer().iterable(scope)) {
 			sb.append(s).append(Strings.LN); // TODO Factorize the different
 												// calls to
 			// "new line" ...

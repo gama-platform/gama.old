@@ -9,7 +9,10 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gama.common.interfaces.IKeyword.TEST;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,7 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.ExhaustiveSearch;
 import msi.gama.kernel.batch.IExploration;
@@ -46,7 +50,6 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ContainerHelper;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -76,6 +79,7 @@ import msi.gaml.variables.IVariable;
 		kind = ISymbolKind.EXPERIMENT,
 		with_sequence = true,
 		concept = { IConcept.EXPERIMENT })
+@doc ("Declaration of a particular type of agent that can manage simulations")
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
@@ -147,9 +151,19 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.TYPE,
 						type = IType.LABEL,
 						values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
-								IKeyword.HEADLESS_UI },
+								IKeyword.TEST, IKeyword.HEADLESS_UI },
 						optional = false,
-						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")) },
+						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")),
+				@facet (
+						name = IKeyword.AUTORUN,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether this experiment should be run automatically when launched (false by default)")) },
 		omissible = IKeyword.NAME)
 @inside (
 		kinds = { ISymbolKind.MODEL })
@@ -166,17 +180,24 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		@Override
 		public void validate(final IDescription desc) {
-			final String type = desc.getLitteral(IKeyword.TYPE);
-			if (type.equals(IKeyword.MEMORIZE)) {
+			final String type = desc.getLitteral(TYPE);
+			if (type.equals(MEMORIZE)) {
 				desc.warning("The memorize experiment is still in development. It should not be used.",
 						IGamlIssue.DEPRECATED);
 			}
-			if (!type.equals(IKeyword.BATCH)) { return; }
-			if (!desc.hasFacet(IKeyword.UNTIL)) {
-				desc.warning(
-						"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
-						IGamlIssue.MISSING_FACET);
+			if (!type.equals(BATCH)) {
+				if (desc.getChildWithKeyword(METHOD) != null) {
+					desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
+							METHOD);
+				}
 			}
+			if (type.equals(BATCH))
+				if (!desc.hasFacet(UNTIL)) {
+					desc.warning(
+							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
+									+ type + " experiment",
+							IGamlIssue.MISSING_FACET);
+				}
 		}
 	}
 
@@ -197,6 +218,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private final boolean keepSeed;
 	private final boolean keepSimulations;
 	private final String experimentType;
+	private final boolean autorun;
 
 	public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
 
@@ -275,7 +297,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		setName(description.getName());
 		experimentType = description.getLitteral(IKeyword.TYPE);
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
-		if (experimentType.equals(IKeyword.BATCH)) {
+		if (experimentType.equals(IKeyword.BATCH) || experimentType.equals(IKeyword.TEST)) {
 			exploration = new ExhaustiveSearch(null);
 		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
 			setHeadless(true);
@@ -290,7 +312,18 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			keepSimulations = Cast.asBool(scope, ksExpr.value(scope));
 		else
 			keepSimulations = true;
+		final IExpression ar = getFacet(IKeyword.AUTORUN);
+		if (ar == null) {
+			autorun = GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
+		} else {
+			autorun = Cast.asBool(scope, ar.value(scope));
+		}
 
+	}
+
+	@Override
+	public boolean isAutorun() {
+		return autorun;
 	}
 
 	@Override
@@ -351,14 +384,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (!isBatch()) {
 			for (final IVariable v : model.getVars()) {
 				if (v.isParameter()) {
-					// scope.getGui().debug("from ExperimentPlan.setModel:");
 					final IParameter p = new ExperimentParameter(scope, v);
 					final String name = p.getName();
 					final boolean already = parameters.containsKey(name);
 					if (!already) {
 						parameters.put(name, p);
 					}
-					// boolean registerParameter = !already;
 				}
 
 			}
@@ -439,14 +470,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public void open() {
+	public synchronized void open() {
 		createAgent();
-		scope.getGui().prepareForExperiment(this);
+		scope.getGui().prepareForExperiment(scope, this);
 		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
-			agent.getScope().getGui().getStatus().informStatus(" Batch ready ");
-			agent.getScope().getGui().updateExperimentState();
+			agent.getScope().getGui().getStatus(agent.getScope())
+					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+			agent.getScope().getGui().updateExperimentState(agent.getScope());
 		}
 	}
 
@@ -457,10 +489,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			open();
 		} else {
 			agent.reset();
-			agent.getScope().getGui().getConsole().eraseConsole(false);
+			agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
 			agent.init(agent.getScope());
 
-			agent.getScope().getGui().updateParameterView(this);
+			agent.getScope().getGui().updateParameterView(agent.getScope(), this);
 		}
 	}
 
@@ -473,6 +505,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public boolean isBatch() {
 		return exploration != null;
+	}
+
+	@Override
+	public boolean isTest() {
+		return TEST.equals(getExperimentType());
 	}
 
 	@Override
@@ -577,7 +614,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if (hasParameter(name)) {
 				setParameterValue(this, name, v);
-				GAMA.getGui().updateParameterView(ExperimentPlan.this);
+				GAMA.getGui().updateParameterView(getCurrentSimulation().getScope(), ExperimentPlan.this);
 				return;
 			}
 			final SimulationAgent a = getCurrentSimulation();
@@ -642,6 +679,41 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 	}
 
+	@Override
+	public void pauseAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.pause();
+		}
+	}
+
+	@Override
+	public void resumeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.resume();
+		}
+	}
+
+	@Override
+	public void synchronizeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.synchronize();
+		}
+	}
+
+	@Override
+	public void unSynchronizeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.unSynchronize();
+		}
+	}
+
+	@Override
+	public void closeAllOutputs() {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
+			manager.close();
+		}
+	}
+
 	/**
 	 * Same as the previous one, but forces the outputs to do one step of computation (if some values have changed)
 	 */
@@ -677,10 +749,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public Iterable<IOutputManager> getActiveOutputManagers() {
 		if (agent == null)
 			return Collections.EMPTY_LIST;
-
-		return Iterables.filter(
-				Iterables.concat(getAgent().getAllSimulationOutputs(), Collections.singleton(experimentOutputs)),
-				ContainerHelper.NOT_NULL);
+		return Iterables.concat(agent.getAllSimulationOutputs(), Arrays.asList(experimentOutputs));
 
 	}
 

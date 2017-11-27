@@ -25,12 +25,14 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 import java.util.Arrays;
 
 import msi.gama.precompiler.GamlProperties;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
+import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -66,28 +68,39 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	// }
 
 	protected void computeType() {
-		type = computeType(prototype.typeProvider, type, GamaType.TYPE);
+		type = computeType(prototype.typeProvider, 0, type, GamaType.TYPE);
 		if (type.isContainer()) {
-			final IType contentType =
-					computeType(prototype.contentTypeProvider, type.getContentType(), GamaType.CONTENT);
-			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), GamaType.KEY);
+			final IType contentType = computeType(prototype.contentTypeProvider,
+					prototype.contentTypeContentTypeProvider, type.getContentType(), GamaType.CONTENT);
+			final IType keyType = computeType(prototype.keyTypeProvider, 0, type.getKeyType(), GamaType.KEY);
 			type = GamaType.from(type, keyType, contentType);
 		}
 	}
 
-	protected IType computeType(final int t, final IType def, final int kind) {
-		switch (t) {
+	protected IType computeType(final int typeProvider, final int contentTypeProvider, final IType defaultType,
+			final int kind) {
+		final IType t = computeType(typeProvider, defaultType, kind);
+		if (t.isContainer() && contentTypeProvider != ITypeProvider.NONE) {
+			final IType c = computeType(contentTypeProvider, t.getContentType(), GamaType.CONTENT);
+			if (c != Types.NO_TYPE) { return ((IContainerType) t).of(c); }
+		}
+		return t;
+	}
+
+	protected IType computeType(final int typeProvider, final IType defaultType, final int kind) {
+		switch (typeProvider) {
+
 			case WRAPPED:
 				return arg(0).getType().getWrappedType();
 			case NONE:
-				return def;
+				return defaultType;
 			case BOTH:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return GamaType.findCommonType(exprs, kind);
 			case FIRST_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[0].getType();
 			case FIRST_CONTENT_TYPE_OR_TYPE:
 				final IType leftType = exprs[0].getType();
@@ -96,37 +109,37 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				return t2;
 			case SECOND_DENOTED_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[1].getDenotedType();
 			case SECOND_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[1].getType();
 			case FIRST_CONTENT_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[0].getType().getContentType();
 			case FIRST_KEY_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[0].getType().getKeyType();
 			case SECOND_CONTENT_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[1].getType().getContentType();
 			case SECOND_CONTENT_TYPE_OR_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				final IType rightType = exprs[1].getType();
 				final IType t3 = rightType.getContentType();
 				if (t3 == Types.NO_TYPE) { return rightType; }
 				return t3;
 			case SECOND_KEY_TYPE:
 				if (exprs == null)
-					return def;
+					return defaultType;
 				return exprs[1].getType().getKeyType();
 			default:
-				return t >= 0 ? Types.get(t) : def;
+				return typeProvider >= 0 ? Types.get(typeProvider) : defaultType;
 		}
 	}
 

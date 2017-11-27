@@ -26,7 +26,6 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
@@ -103,7 +102,8 @@ class ShapeExecuter extends DrawExecuter {
 		attributes.type = shape.getGeometricalType();
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue()
+				&& /* !GAMA.isInHeadLessMode() */ !scope.getExperiment().isHeadless()) {
 			final Envelope e = shape.getEnvelope();
 			final Envelope visible = gr.getVisibleRegion();
 			if (visible != null)

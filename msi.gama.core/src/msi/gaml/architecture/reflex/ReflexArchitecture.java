@@ -12,9 +12,12 @@ package msi.gaml.architecture.reflex;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -30,7 +33,8 @@ import msi.gaml.statements.IStatement;
  */
 @skill (
 		name = IKeyword.REFLEX,
-		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
+		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
+		doc = @doc ("Represents the default behavioral architecture attached to species of agents if none is specified"))
 public class ReflexArchitecture extends AbstractArchitecture {
 
 	protected List<IStatement> _inits;
@@ -71,6 +75,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 				_aborts.add(0, c);
 				return;
 			case IKeyword.REFLEX:
+			case IKeyword.TEST:
 				if (_reflexes == null)
 					_reflexes = new ArrayList<>();
 				_reflexes.add(c);
@@ -126,5 +131,18 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public void preStep(final IScope scope, final IPopulation<? extends IAgent> gamaPopulation) {}
+
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+
+	@Override
+	public void setOrder(final int o) {}
+
+	@Override
+	public URI getURI() {
+		return null;
+	}
 
 }

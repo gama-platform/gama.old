@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaSpeciesType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSpeciesType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,6 +12,7 @@ package msi.gaml.types;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -22,17 +22,21 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 
 /**
- * The type used for representing species objects (since they can be manipulated
- * in a model)
+ * The type used for representing species objects (since they can be manipulated in a model)
  *
  * Written by drogoul Modified on 1 aout 2010
  *
  * @todo Description
  *
  */
-@type(name = IKeyword.SPECIES, id = IType.SPECIES, wraps = {
-		ISpecies.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.SPECIES })
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@type (
+		name = IKeyword.SPECIES,
+		id = IType.SPECIES,
+		wraps = { ISpecies.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE, IConcept.SPECIES },
+		doc = @doc ("Meta-type of the species present in the GAML language"))
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
@@ -41,9 +45,8 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 		// TODO Add a more general cast with list of agents to find a common
 		// species.
 		ISpecies species = obj == null ? getDefault()
-				: obj instanceof ISpecies ? (ISpecies) obj
-						: obj instanceof IAgent ? ((IAgent) obj).getSpecies()
-								: obj instanceof String ? scope.getModel().getSpecies((String) obj) : getDefault();
+				: obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent ? ((IAgent) obj).getSpecies()
+						: obj instanceof String ? scope.getModel().getSpecies((String) obj) : getDefault();
 		if (obj instanceof IPopulationSet) {
 			species = ((IPopulationSet) obj).getSpecies();
 		}
@@ -56,9 +59,7 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 		final ISpecies result = cast(scope, obj, param, copy);
 		if (result == null) {
-			if (contentType.isAgentType()) {
-				return scope.getModel().getSpecies(contentType.getName());
-			}
+			if (contentType.isAgentType()) { return scope.getModel().getSpecies(contentType.getName()); }
 		}
 		return result;
 	}
@@ -88,12 +89,10 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
 		final IType itemType = exp.getType();
-		if (itemType.isAgentType()) {
-			return itemType;
-		}
+		if (itemType.isAgentType()) { return itemType; }
 		switch (exp.getType().id()) {
-		case SPECIES:
-			return itemType.getContentType();
+			case SPECIES:
+				return itemType.getContentType();
 		}
 		return exp.getType();
 	}

@@ -93,7 +93,7 @@ public class BenchmarkStatement extends AbstractStatementSequence {
 		final String result = title + " (over " + repeatTimes + " iteration(s)): min = " + min + " ms (iteration #"
 				+ timeOfMin + ") | max = " + max + " ms (iteration #" + timeOfMax + ") | average = "
 				+ total / repeatTimes + "ms";
-		scope.getGui().getConsole().informConsole(result, scope.getRoot(), null);
+		scope.getGui().getConsole(scope).informConsole(result, scope.getRoot(), null);
 		return result;
 	}
 

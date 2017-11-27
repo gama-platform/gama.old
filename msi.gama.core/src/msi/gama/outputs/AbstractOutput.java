@@ -94,8 +94,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		setOpen(false);
 	}
 
-	// @Override
-	boolean isOpen() {
+	@Override
+	public boolean isOpen() {
 		return open;
 	}
 

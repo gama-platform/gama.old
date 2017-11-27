@@ -90,6 +90,8 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 		@Override
 		public int getURIProblem(final String fragment) {
+			if (fragment == null)
+				return -1;
 			// final IFile file = (IFile) getParent();
 			if (uriProblems == null)
 				return -1;
@@ -120,7 +122,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 	}
 
 	public WrappedSyntacticContent(final Object root, final ISyntacticElement e, final String name) {
-		super(root, GAMA.getGui().getGamlLabelProvider().getText(e));
+		super(root, name == null ? GAMA.getGui().getGamlLabelProvider().getText(e) : name);
 		element = e;
 		uri = element == null || element.getElement() == null ? null
 				: EcoreUtil.getURI(element.getElement()).toString();
@@ -160,7 +162,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 		if (element.isExperiment()) {
 			GAMA.getGui().runModel(getParent(), element.getName());
 		} else
-			GAMA.getGui().editModel(element.getElement());
+			GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
 

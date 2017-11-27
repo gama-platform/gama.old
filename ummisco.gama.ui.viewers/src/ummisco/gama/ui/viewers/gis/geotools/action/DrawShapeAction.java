@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DrawShapeAction.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DrawShapeAction.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,12 +28,12 @@ import org.geotools.map.event.MapBoundsListener;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.tool.InfoTool;
 
 /**
- * Action that activates the Info tool for the current {@link SwtMapPane map
- * pane}.
+ * Action that activates the Info tool for the current {@link SwtMapPane map pane}.
  * 
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -53,8 +52,8 @@ public class DrawShapeAction extends MapAction implements MapBoundsListener {
 	private static boolean first = true;
 
 	/**
-	 * Called when the associated control is activated. Leads to the map pane's
-	 * cursor tool being set to a PanTool object
+	 * Called when the associated control is activated. Leads to the map pane's cursor tool being set to a PanTool
+	 * object
 	 * 
 	 * @param ev
 	 *            the event (not used)
@@ -87,7 +86,7 @@ public class DrawShapeAction extends MapAction implements MapBoundsListener {
 	 */
 	private void drawShapes(final Rectangle visibleRect, final ReferencedEnvelope areaOfInterest,
 			final boolean boundsChanged) {
-		final Display display = Display.getDefault();
+		final Display display = WorkbenchHelper.getDisplay();
 
 		/*
 		 * create an image with transparent color (this can be done better?)
@@ -141,14 +140,12 @@ public class DrawShapeAction extends MapAction implements MapBoundsListener {
 		getMapPane().setOverlay(img, areaOfInterest, false, boundsChanged);
 	}
 
-	public void selectionChanged(final IAction action, final ISelection selection) {
-	}
+	public void selectionChanged(final IAction action, final ISelection selection) {}
 
 	@Override
 	public void mapBoundsChanged(final MapBoundsEvent event) {
 		/*
-		 * every time the bounds change (zoom, etc...), the drawing has to
-		 * occurr again on the new bounds
+		 * every time the bounds change (zoom, etc...), the drawing has to occurr again on the new bounds
 		 */
 		final ReferencedEnvelope newAreaOfInterest = event.getNewAreaOfInterest();
 		final Rectangle visibleRect = getMapPane().getVisibleRect();

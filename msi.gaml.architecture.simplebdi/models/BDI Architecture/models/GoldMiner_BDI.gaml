@@ -24,6 +24,10 @@ global {
 		create gold number:nbgold;
 		create miner number:nbminer;
 	}
+	
+	reflex stop when:length(gold)=0{
+		do pause;
+	}
 }
 
 //give the simple_bdi architecture to the miner agents
@@ -34,10 +38,10 @@ species miner skills: [moving] control:simple_bdi {
 	rgb mycolor<-rnd_color(255);
 	
 	//to simplify the writting of the agent behavior, we define as variables 4 desires for the agents
-	predicate define_gold_target <- new_predicate("define_gold_target") with_priority 20;
-	predicate get_gold <- new_predicate("get_gold") with_priority 10;
+	predicate define_gold_target <- new_predicate("define_gold_target");
+	predicate get_gold <- new_predicate("get_gold");
 	predicate wander <- new_predicate("wander");
-	predicate return_base <- new_predicate("return_base") with_priority 100;
+	predicate return_base <- new_predicate("return_base");
 	
 	//we define in the same way a belief that I have already gold that I have to return to the base
 	predicate has_gold <- new_predicate("has_gold");
@@ -52,15 +56,15 @@ species miner skills: [moving] control:simple_bdi {
 	
 	//if the agent perceive a gold nugget in its neighborhood, it adds a belief a belief concening its location and remove its wandering intention
 	perceive target:gold in:viewdist {
-		focus var:location;
+		focus location_gold var:location;
 		ask myself {do remove_intention(wander, false);}
 	}
 	
 	//if the agent has the belief that their is gold at given location, it adds the desire to get gold 
-	rule belief: new_predicate("location_gold") new_desire: get_gold ;
+	rule belief: new_predicate("location_gold") new_desire: get_gold strength:10.0;
 	
 	//if the agent has the belief that it has gold, it adds the desire to return to the base
-	rule belief: has_gold new_desire: return_base ;
+	rule belief: has_gold new_desire: return_base strength:100;
 	
 	
 	// plan that has for goal to fulfill the wander desire	
@@ -95,7 +99,7 @@ species miner skills: [moving] control:simple_bdi {
 	
 	//plan that has for goal to fulfill the define gold target desire. This plan is instantaneous (does not take a complete simulation step to apply).
 	plan choose_gold_target intention: define_gold_target instantaneous: true{
-		list<point> possible_golds <- get_beliefs_with_name("location_gold") collect (point(predicate(each).values["location_value"]));
+		list<point> possible_golds <- get_beliefs(new_predicate("location_gold")) collect (point(get_predicate(mental_state (each)).values["location_value"]));
 		if (empty(possible_golds)) {
 			do remove_intention(get_gold, true);
 		} else {

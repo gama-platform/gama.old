@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,9 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
+import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
+import msi.gama.headless.batch.test.ModelLibraryTester;
+import msi.gama.headless.batch.validation.ModelLibraryValidator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.HeadlessSimulationLoader;
@@ -41,17 +45,18 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
-import msi.ummisco.modelLibraryGenerator.modelLibraryGenerator;
 
 public class Application implements IApplication {
 
 	final public static String CONSOLE_PARAMETER = "-c";
 	final public static String TUNNELING_PARAMETER = "-p";
-	final public static String THREAD_PARAMERTER = "-hpc";
-	final public static String VERBOSE_PARAMERTER = "-v";
-	final public static String HELP_PARAMERTER = "-help";
-	final public static String BUILD_XML_PARAMERTER = "-xml";
-	final public static String CHECK_MODEL_PARAMERTER = "-check";
+	final public static String THREAD_PARAMETER = "-hpc";
+	final public static String VERBOSE_PARAMETER = "-v";
+	final public static String HELP_PARAMETER = "-help";
+	final public static String BUILD_XML_PARAMETER = "-xml";
+	final public static String CHECK_MODEL_PARAMETER = "-check";
+	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
+	final public static String TEST_LIBRARY_PARAMETER = "-test";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -61,15 +66,19 @@ public class Application implements IApplication {
 	public SimulationRuntime processorQueue;
 
 	private static String showHelp() {
-		final String res = " sh ./gama-headless.sh [Options] [XML Input] [output directory]\n"
-				+ "\nList of available options:" + "\n      -help     -- get the help of the command line"
-				+ "\n      -m mem    -- allocate memory (ex 2048m)"
-				+ "\n      -c        -- start the console to write xml parameter file"
-				+ "\n      -v 		-- verbose mode"
-				+ "\n      -hpc core -- set the number of core available for experimentation"
-				+ "\n      -p        -- start piplines to interact with another framework" + "\n" + "\n"
-				+ " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
-				+ "\n      build an xml parameter file from a model" + "\n" + "\n";
+		final String res =
+				" sh ./gama-headless.sh [Options] [XML Input] [output directory]\n" + "\nList of available options:"
+						+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
+						+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
+						+ "\n      -failed		   				-- only display the failed and aborted test results"
+						+ "\n      -help     				 	-- get the help of the command line"
+						+ "\n      -m mem    					-- allocate memory (ex 2048m)"
+						+ "\n      -c        					-- start the console to write xml parameter file"
+						+ "\n      -v 							-- verbose mode"
+						+ "\n      -hpc core 					-- set the number of core available for experimentation"
+						+ "\n      -p        					-- start pipeline to interact with another framework"
+						+ "\n" + "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
+						+ "\n      build an xml parameter file from a model" + "\n" + "\n";
 		return res;
 	}
 
@@ -81,59 +90,23 @@ public class Application implements IApplication {
 		return false;
 	}
 
-	private static boolean containConsoleParameter(final String[] args) {
-		return containParameter(args, CONSOLE_PARAMETER);
-	}
+	private boolean checkParameters(final List<String> args) {
 
-	private static boolean containCheckModelsCommandParameter(final String[] args) {
-		return containParameter(args, CHECK_MODEL_PARAMERTER);
-	}
-
-	private static boolean containHelpParameter(final String[] args) {
-		return containParameter(args, HELP_PARAMERTER);
-	}
-
-	private static boolean containXMLParameter(final String[] args) {
-		return containParameter(args, BUILD_XML_PARAMERTER);
-	}
-
-	private static boolean containTunnellingParameter(final String[] args) {
-		return containParameter(args, TUNNELING_PARAMETER);
-	}
-
-	private static boolean containVerboseParameter(final String[] args) {
-		return containParameter(args, VERBOSE_PARAMERTER);
-	}
-
-	private static boolean containNumberOfThread(final String[] args) {
-		return containParameter(args, THREAD_PARAMERTER);
-	}
-
-	private static int getNumberOfThread(final String[] args) {
-		for (int n = 0; n < args.length; n++) {
-			if (args[n].equals(THREAD_PARAMERTER))
-				return Integer.valueOf(args[n + 1]).intValue();
-		}
-		return SimulationRuntime.UNDEFINED_QUEUE_SIZE;
-	}
-
-	private boolean checkParameters(final String[] args) {
-
-		int size = args.length;
+		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
-		if (containConsoleParameter(args)) {
+		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
 		}
-		if (containTunnellingParameter(args)) {
+		if (args.contains(TUNNELING_PARAMETER)) {
 			size = size - 1;
 			mustContainOutFile = false;
 		}
-		if (containNumberOfThread(args)) {
+		if (args.contains(THREAD_PARAMETER)) {
 			size = size - 2;
 		}
-		if (containVerboseParameter(args)) {
+		if (args.contains(VERBOSE_PARAMETER)) {
 			size = size - 1;
 		}
 		if (mustContainInFile && mustContainOutFile && size < 2) {
@@ -146,9 +119,9 @@ public class Application implements IApplication {
 		}
 
 		if (mustContainOutFile) {
-			final int outIndex = args.length - 1;
-			Globals.OUTPUT_PATH = args[outIndex];
-			Globals.IMAGES_PATH = args[outIndex] + "/snapshot";
+			final int outIndex = size - 1;
+			Globals.OUTPUT_PATH = args.get(outIndex);
+			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
 			final File output = new File(Globals.OUTPUT_PATH);
 			if (!output.exists())
 				output.mkdir();
@@ -158,10 +131,10 @@ public class Application implements IApplication {
 		}
 
 		if (mustContainInFile) {
-			final int inIndex = mustContainOutFile ? args.length - 2 : args.length - 1;
-			final File input = new File(args[inIndex]);
+			final int inIndex = mustContainOutFile ? size - 2 : size - 1;
+			final File input = new File(args.get(inIndex));
 			if (!input.exists()) {
-				showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[inIndex]);
+				showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args.get(inIndex));
 				return false;
 			}
 		}
@@ -178,15 +151,18 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		SystemLogger.removeDisplay();
+		// SystemLogger.removeDisplay();
 		final Map<String, String[]> mm = context.getArguments();
-		final String[] args = mm.get("application.args");
-		if (containHelpParameter(args)) {
+		final List<String> args = Arrays.asList(mm.get("application.args"));
+		if (args.contains(HELP_PARAMETER)) {
 			System.out.println(showHelp());
-		} else if (containCheckModelsCommandParameter(args)) {
-			modelLibraryGenerator.start(this, args);
-
-		} else if (containXMLParameter(args)) {
+		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
+			return ModelLibraryValidator.getInstance().start(args);
+		} else if (args.contains(TEST_LIBRARY_PARAMETER)) {
+			return ModelLibraryTester.getInstance().start(args);
+		} else if (args.contains(CHECK_MODEL_PARAMETER)) {
+			ModelLibraryGenerator.start(this, args);
+		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else {
 			runSimulation(args);
@@ -194,23 +170,34 @@ public class Application implements IApplication {
 		return null;
 	}
 
-	public void buildXML(final String arg[]) throws ParserConfigurationException, TransformerException, IOException {
-		verbose = containVerboseParameter(arg);
+	public String after(final List<String> args, final String arg) {
+		if (args == null || args.size() < 2)
+			return null;
+		for (int i = 0; i < args.size() - 1; i++) {
+			if (args.get(i).equals(arg))
+				return args.get(i + 1);
+		}
+		return null;
+	}
+
+	public void buildXML(final List<String> arg)
+			throws ParserConfigurationException, TransformerException, IOException {
+		verbose = arg.contains(VERBOSE_PARAMETER);
 		if (this.verbose) {
 			SystemLogger.activeDisplay();
 		}
 
-		if (arg.length < 3) {
+		if (arg.size() < 3) {
 			SystemLogger.activeDisplay();
 			System.out.println("Check your parameters!");
 			System.out.println(showHelp());
 			return;
 		}
 		HeadlessSimulationLoader.preloadGAMA();
-		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg[arg.length - 2]);
+		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg.get(arg.size() - 2));
 		final ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
 		for (final IExperimentJob j : jb) {
-			if (j.getExperimentName().equals(arg[arg.length - 3])) {
+			if (j.getExperimentName().equals(arg.get(arg.size() - 3))) {
 				selectedJob.add(j);
 				break;
 			}
@@ -220,7 +207,7 @@ public class Application implements IApplication {
 		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		final Transformer transformer = transformerFactory.newTransformer();
 		final DOMSource source = new DOMSource(dd);
-		final File output = new File(arg[arg.length - 1]);
+		final File output = new File(arg.get(arg.size() - 1));
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay();
@@ -268,19 +255,22 @@ public class Application implements IApplication {
 		}
 	}
 
-	public void runSimulation(final String args[]) throws FileNotFoundException, InterruptedException {
+	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
 		if (!checkParameters(args)) {
 			System.exit(-1);
 		}
 
-		verbose = containVerboseParameter(args);
+		verbose = args.contains(VERBOSE_PARAMETER);
 		if (verbose) {
 			SystemLogger.activeDisplay();
 		}
 		HeadlessSimulationLoader.preloadGAMA();
-		this.tunnelingMode = Application.containTunnellingParameter(args);
-		this.consoleMode = Application.containConsoleParameter(args);
-		this.numberOfThread = Application.getNumberOfThread(args);
+		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
+		this.consoleMode = args.contains(CONSOLE_PARAMETER);
+		if (args.contains(THREAD_PARAMETER))
+			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
+		else
+			numberOfThread = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
 		Reader in = null;
@@ -291,7 +281,7 @@ public class Application implements IApplication {
 		if (this.consoleMode) {
 			in = new Reader(ConsoleReader.readOnConsole());
 		} else {
-			in = new Reader(args[args.length - 2]);
+			in = new Reader(args.get(args.size() - 2));
 		}
 		in.parseXmlFile();
 		this.buildAndRunSimulation(in.getSimulation());

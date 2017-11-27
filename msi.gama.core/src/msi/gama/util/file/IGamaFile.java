@@ -72,8 +72,8 @@ import msi.gaml.types.IType;
 				index = ITypeProvider.FIRST_KEY_TYPE,
 				doc = { @doc ("Returns the contents of the receiver file in the form of a container") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
-		extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
+public interface IGamaFile<C extends IModifiableContainer, Contents>
+		extends IAddressableContainer, IModifiableContainer {
 
 	public abstract void setWritable(IScope scope, final boolean w);
 

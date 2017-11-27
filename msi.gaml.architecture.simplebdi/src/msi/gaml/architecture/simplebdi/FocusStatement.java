@@ -49,16 +49,46 @@ import msi.gaml.types.IType;
 		@facet(name = FocusStatement.LIFETIME, type = IType.INT, optional = true, doc = @doc("the lifetime value of the created belief")),
 		@facet(name = FocusStatement.TRUTH, type = IType.BOOL, optional = true, doc = @doc("the truth value of the created belief")),
 		@facet(name = FocusStatement.AGENTCAUSE, type = IType.AGENT, optional = true, doc = @doc("the agentCause value of the created belief (can be nil")),
-		@facet(name = FocusStatement.PRIORITY, type = { IType.FLOAT,
+		@facet (
+				name = FocusStatement.BELIEF,
+				type = PredicateType.id,
+				optional = true,
+				doc = @doc ("The predicate to focus on the beliefs of the other agent")),
+		@facet (
+				name = FocusStatement.DESIRE,
+				type = PredicateType.id,
+				optional = true,
+				doc = @doc ("The predicate to focus on the desires of the other agent")),
+		@facet (
+				name = FocusStatement.EMOTION,
+				type = EmotionType.id,
+				optional = true,
+				doc = @doc ("The emotion to focus on the emotions of the other agent")),
+		@facet (
+				name = FocusStatement.UNCERTAINTY,
+				type = PredicateType.id,
+				optional = true,
+				doc = @doc ("The predicate to focus on the uncertainties of the other agent")),
+		@facet(
+				name = FocusStatement.IDEAL,
+				type = PredicateType.id,
+				optional = true,
+				doc = @doc ("The predicate to focus on the ideals of the other agent")),
+		@facet(name = FocusStatement.STRENGTH, type = { IType.FLOAT,
 				IType.INT }, optional = true, doc = @doc("The priority of the created predicate")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
 		@example("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
 public class FocusStatement extends AbstractStatement {
 
 	public static final String FOCUS = "focus";
-	public static final String PRIORITY = "priority";
+	public static final String STRENGTH = "strength";
 	public static final String EXPRESSION = "expression";
 	public static final String VAR = "var";
+	public static final String BELIEF = "belief";
+	public static final String DESIRE = "desire";
+	public static final String UNCERTAINTY = "uncertainty";
+	public static final String IDEAL = "ideal";
+	public static final String EMOTION = "emotion";
 	public static final String LIFETIME = "lifetime";
 	public static final String TRUTH = "truth";
 	public static final String AGENTCAUSE = "agent_cause";
@@ -66,8 +96,13 @@ public class FocusStatement extends AbstractStatement {
 	final IExpression name;
 	final IExpression variable;
 	final IExpression expression;
+	final IExpression belief;
+	final IExpression desire;
+	final IExpression uncertainty;
+	final IExpression ideal;
+	final IExpression emotion;
 	final IExpression when;
-	final IExpression priority;
+	final IExpression strength;
 	final IExpression lifetime;
 	final IExpression truth;
 	final IExpression agentCause;
@@ -77,8 +112,13 @@ public class FocusStatement extends AbstractStatement {
 		name = getFacet(IKeyword.NAME);
 		variable = getFacet(FocusStatement.VAR);
 		expression = getFacet(FocusStatement.EXPRESSION);
+		belief = getFacet(FocusStatement.BELIEF);
+		desire = getFacet(FocusStatement.DESIRE);
+		uncertainty = getFacet(FocusStatement.UNCERTAINTY);
+		ideal = getFacet(FocusStatement.IDEAL);
+		emotion = getFacet(FocusStatement.EMOTION);
 		when = getFacet(IKeyword.WHEN);
-		priority = getFacet(FocusStatement.PRIORITY);
+		strength = getFacet(FocusStatement.STRENGTH);
 		lifetime = getFacet(FocusStatement.LIFETIME);
 		truth = getFacet(FocusStatement.TRUTH);
 		agentCause = getFacet(FocusStatement.AGENTCAUSE);
@@ -95,7 +135,7 @@ public class FocusStatement extends AbstractStatement {
 				scopeMySelf = mySelfAgent.getScope().copy("in FocusStatement");
 				scopeMySelf.push(mySelfAgent);
 			}
-			final Predicate tempPred;
+			Predicate tempPred;
 			if (variable != null) {
 				// Pour la liste, faire un truc générique dans un premier temps
 				// avec un nom des variables du genre test_i, sans chercher à
@@ -120,12 +160,6 @@ public class FocusStatement extends AbstractStatement {
 							GamaMapFactory.createWithoutCasting(
 									((GamaMap<String, Object>) tempValues).getType().getKeyType(),
 									((GamaMap<String, Object>) tempValues).getType().getContentType(), tempValues));
-					if (priority != null) {
-						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}
-					if (lifetime != null) {
-						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
-					}
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
@@ -134,8 +168,17 @@ public class FocusStatement extends AbstractStatement {
 					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					MentalState tempBelief;
+					if (strength != null) {
+						tempBelief = new MentalState("Belief",tempPred,(Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+					}else{
+						tempBelief = new MentalState("Belief",tempPred);
+					}
+					if (lifetime != null) {
+						tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
 					}
 				} else {
 					String namePred;
@@ -152,12 +195,6 @@ public class FocusStatement extends AbstractStatement {
 						tempValues.put(nameVar + "_value", variable.value(scope));
 					}
 					tempPred = new Predicate(namePred, tempValues);
-					if (priority != null) {
-						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}
-					if (lifetime != null) {
-						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
-					}
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
@@ -166,11 +203,129 @@ public class FocusStatement extends AbstractStatement {
 					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					MentalState tempBelief;
+					if (strength != null) {
+						tempBelief = new MentalState("Belief",tempPred,(Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+					}else{
+						tempBelief = new MentalState("Belief",tempPred);
+					}
+					if (lifetime != null) {
+						tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
 					}
 				}
 			} else {
+				if(belief !=null){
+					MentalState temporaryBelief = new MentalState("Belief");
+					temporaryBelief.setPredicate((Predicate) belief.value(scope));
+					if(SimpleBdiArchitecture.hasBelief(scope, temporaryBelief)){
+						MentalState tempBelief = new MentalState("Belief");
+						for(MentalState temp : SimpleBdiArchitecture.getBase(scope, "belief_base")){
+							if(temp.equals(temporaryBelief)){
+								temporaryBelief = temp;
+							}
+						}
+						tempBelief.setMentalState(temporaryBelief);
+						if (strength != null) {
+							tempBelief.setStrength((Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+						}
+						if (lifetime != null) {
+							tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+						}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+						}
+					}
+				}
+				if(desire != null){
+					MentalState temporaryBelief = new MentalState("Desire");
+					temporaryBelief.setPredicate((Predicate) desire.value(scope));
+					if(SimpleBdiArchitecture.hasDesire(scope, temporaryBelief)){
+						MentalState tempBelief = new MentalState("Belief");
+						for(MentalState temp : SimpleBdiArchitecture.getBase(scope, "desire_base")){
+							if(temp.equals(temporaryBelief)){
+								temporaryBelief = temp;
+							}
+						}
+						tempBelief.setMentalState(temporaryBelief);
+						if (strength != null) {
+							tempBelief.setStrength((Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+						}
+						if (lifetime != null) {
+							tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+						}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+						}
+					}
+				}
+				if(uncertainty != null){
+					MentalState temporaryBelief = new MentalState("Uncertainty");
+					temporaryBelief.setPredicate((Predicate) uncertainty.value(scope));
+					if(SimpleBdiArchitecture.hasUncertainty(scope, temporaryBelief)){
+						MentalState tempBelief = new MentalState("Belief");
+						for(MentalState temp : SimpleBdiArchitecture.getBase(scope, "uncertainty_base")){
+							if(temp.equals(temporaryBelief)){
+								temporaryBelief = temp;
+							}
+						}
+						tempBelief.setMentalState(temporaryBelief);
+						if (strength != null) {
+							tempBelief.setStrength((Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+						}
+						if (lifetime != null) {
+							tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+						}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+						}
+					}
+				}
+				if(ideal != null){
+					MentalState temporaryBelief = new MentalState("Ideal");
+					temporaryBelief.setPredicate((Predicate) ideal.value(scope));
+					if(SimpleBdiArchitecture.hasIdeal(scope, temporaryBelief)){
+						MentalState tempBelief = new MentalState("Belief");
+						for(MentalState temp : SimpleBdiArchitecture.getBase(scope, "ideal_base")){
+							if(temp.equals(temporaryBelief)){
+								temporaryBelief = temp;
+							}
+						}
+						tempBelief.setMentalState(temporaryBelief);
+						if (strength != null) {
+							tempBelief.setStrength((Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+						}
+						if (lifetime != null) {
+							tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+						}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+						}
+					}
+				}
+				if(emotion != null){
+					Emotion temporaryEmotion = (Emotion) emotion.value(scope);
+					if(SimpleBdiArchitecture.hasEmotion(scope, temporaryEmotion)){
+						MentalState tempBelief = new MentalState("Belief");
+						for(Emotion temp : SimpleBdiArchitecture.getEmotionBase(scope, "emotion_base")){
+							if(temp.equals(temporaryEmotion)){
+								temporaryEmotion = temp;
+							}
+						}
+						tempBelief.setEmotion(temporaryEmotion);
+						if (strength != null) {
+							tempBelief.setStrength((Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+						}
+						if (lifetime != null) {
+							tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+						}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+						}
+					}
+				}
 				if (expression != null) {
 					String namePred;
 					if (name != null) {
@@ -182,12 +337,6 @@ public class FocusStatement extends AbstractStatement {
 					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					tempValues.put(nameVar + "_value", expression.value(scope));
 					tempPred = new Predicate(namePred, tempValues);
-					if (priority != null) {
-						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}
-					if (lifetime != null) {
-						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
-					}
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
@@ -196,22 +345,26 @@ public class FocusStatement extends AbstractStatement {
 					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					MentalState tempBelief;
+					if (strength != null) {
+						tempBelief = new MentalState("Belief",tempPred,(Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+					}else{
+						tempBelief = new MentalState("Belief",tempPred);
 					}
-				} else {
+					if (lifetime != null) {
+						tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
+					}
+				} 
+				if(variable==null && belief == null && desire == null && uncertainty == null && ideal == null && emotion == null && expression == null){
 					String namePred = null;
 					if (name != null) {
 						namePred = (String) name.value(scope);
 					}
 					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					tempPred = new Predicate(namePred, tempValues);
-					if (priority != null) {
-						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}
-					if (lifetime != null) {
-						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
-					}
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
@@ -220,8 +373,17 @@ public class FocusStatement extends AbstractStatement {
 					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					MentalState tempBelief;
+					if (strength != null) {
+						tempBelief = new MentalState("Belief",tempPred,(Cast.asFloat(scopeMySelf, strength.value(scopeMySelf))));
+					}else{
+						tempBelief = new MentalState("Belief",tempPred);
+					}
+					if (lifetime != null) {
+						tempBelief.setLifeTime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempBelief)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempBelief);
 					}
 				}
 			}

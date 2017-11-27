@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Symbol.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Symbol.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,15 +9,19 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the
- * root of all Gaml Symbols
+ * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the root of all Gaml Symbols
  * 
  * @todo Description
  * 
@@ -27,37 +30,54 @@ public abstract class Symbol implements ISymbol {
 
 	protected String name;
 	protected final IDescription description;
+	protected int order;
 
 	@Override
 	public IDescription getDescription() {
 		return description;
 	}
 
+	public URI getURI() {
+		if (description == null)
+			return null;
+		final EObject object = description.getUnderlyingElement(null);
+		return object == null ? null : EcoreUtil.getURI(object);
+	}
+
+	@Override
+	public int getOrder() {
+		return order;
+	}
+
+	@Override
+	public void setOrder(final int i) {
+		order = i;
+	}
+
 	public Symbol(final IDescription desc) {
 		description = desc;
+		if (desc != null)
+			order = desc.getOrder();
+		else
+			order = SymbolDescription.ORDER++;
+		// System.out.println("Order of " + desc.getName() + " = " + order);
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if (description == null) {
-			return "";
-		}
+		if (description == null) { return ""; }
 		return description.serialize(includingBuiltIn);
 	}
 
 	@Override
 	public String getKeyword() {
-		if (description == null) {
-			return null;
-		}
+		if (description == null) { return null; }
 		return description.getKeyword();
 	}
 
 	@Override
 	public final IExpression getFacet(final String... keys) {
-		if (description == null) {
-			return null;
-		}
+		if (description == null) { return null; }
 		return description.getFacetExpr(keys);
 	}
 
@@ -65,7 +85,7 @@ public abstract class Symbol implements ISymbol {
 		return getFacetValue(scope, key, null);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue)
 			throws GamaRuntimeException {
 		final IExpression exp = getFacet(key);
@@ -82,9 +102,7 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	protected void setFacet(final String key, final IExpressionDescription expr) {
-		if (description == null) {
-			return;
-		}
+		if (description == null) { return; }
 		description.setFacet(key, expr);
 	}
 

@@ -34,7 +34,7 @@ public class PlayPauseSimulationHandler extends AbstractHandler implements IElem
 		if (GAMA.isPaused())
 			element.setText("Run Experiment (" + GamaKeyBindings.PLAY_STRING + ")");
 		else
-			element.setText("Pause Experiment" + GamaKeyBindings.PLAY_STRING + ")");
+			element.setText("Pause Experiment (" + GamaKeyBindings.PLAY_STRING + ")");
 
 	}
 }

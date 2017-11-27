@@ -12,6 +12,8 @@ package msi.gama.outputs.layers;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.primitives.Ints;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayData;
@@ -38,7 +40,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	private IDisplayLayerBox box;
 	LayeredDisplayOutput output;
-	private Integer order = 0;
 	protected boolean layerToCreate = true;
 
 	public boolean isToCreate() {
@@ -57,18 +58,8 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public void setOrder(final Integer o) {
-		order = o;
-	}
-
-	@Override
-	public Integer getOrder() {
-		return order;
-	}
-
-	@Override
 	public int compareTo(final ILayerStatement o) {
-		return order.compareTo(o.getOrder());
+		return Ints.compare(getOrder(), o.getOrder());
 	}
 
 	@Override

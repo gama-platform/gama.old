@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaMap.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaMap.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,8 +18,11 @@ import com.google.common.base.Objects;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,13 +37,22 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaMap.
  */
-@vars({ @var(name = GamaMap.KEYS, type = IType.LIST, of = ITypeProvider.FIRST_KEY_TYPE, doc = {
-		@doc("Returns the list of keys of this map (in their order of insertion)") }),
-		@var(name = GamaMap.VALUES, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE, doc = {
-				@doc("Returns the list of values of this map (in their order of insertion)") }),
-		@var(name = GamaMap.PAIRS, type = IType.LIST, of = IType.PAIR, doc = {
-				@doc("Returns the list of pairs (key, value) that compose this map") }) })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@vars ({ @var (
+		name = GamaMap.KEYS,
+		type = IType.LIST,
+		of = ITypeProvider.FIRST_KEY_TYPE,
+		doc = { @doc ("Returns the list of keys of this map (in their order of insertion)") }),
+		@var (
+				name = GamaMap.VALUES,
+				type = IType.LIST,
+				of = ITypeProvider.FIRST_CONTENT_TYPE,
+				doc = { @doc ("Returns the list of values of this map (in their order of insertion)") }),
+		@var (
+				name = GamaMap.PAIRS,
+				type = IType.LIST,
+				of = IType.PAIR,
+				doc = { @doc ("Returns the list of pairs (key, value) that compose this map") }) })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		implements IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V> {
 
@@ -72,19 +83,14 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@Override
 	public boolean equals(final Object other) {
-		if (!(other instanceof GamaMap)) {
-			return false;
-		}
+		if (!(other instanceof GamaMap)) { return false; }
 		final GamaMap that = (GamaMap) other;
-		if (this == that) {
-			return true;
-		}
+		if (this == that) { return true; }
 		return super.equals(other);
 	}
 
 	/**
-	 * Returns the list of values by default (NOT the list of pairs) Method
-	 * listValue()
+	 * Returns the list of values by default (NOT the list of pairs) Method listValue()
 	 * 
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
@@ -163,8 +169,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method add()
 	 * 
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public void addValue(final IScope scope, final V v) {
@@ -180,8 +185,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method add()
 	 * 
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope,
-	 *      java.lang.Object, java.lang.Object)
+	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object index, final V value) {
@@ -195,8 +199,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method put()
 	 * 
-	 * @see msi.gama.util.IContainer#put(msi.gama.runtime.IScope,
-	 *      java.lang.Object, java.lang.Object)
+	 * @see msi.gama.util.IContainer#put(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void setValueAtIndex(final IScope scope, final Object index, final V value) {
@@ -208,12 +211,10 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method addAll()
 	 * 
-	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer)
+	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
-	public void addValues(final IScope scope,
-			final IContainer/* <?, GamaPair<K, V>> */ values) {
+	public void addValues(final IScope scope, final IContainer/* <?, GamaPair<K, V>> */ values) {
 		// if ( values instanceof GamaMap ) {
 		// putAll((GamaMap) values);
 		// } else {
@@ -227,8 +228,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method setAll()
 	 * 
-	 * @see msi.gama.util.IContainer#setAll(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gama.util.IContainer#setAll(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public void setAllValues(final IScope scope, final V value) {
@@ -243,8 +243,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method remove()
 	 * 
-	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
@@ -278,8 +277,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method removeAt()
 	 * 
-	 * @see msi.gama.util.IContainer#removeAt(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gama.util.IContainer#removeAt(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public void removeIndex(final IScope scope, final Object index) {
@@ -289,8 +287,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method removeAll()
 	 * 
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer)
+	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
 	public void removeValues(final IScope scope, final IContainer<?, ?> values) {
@@ -303,8 +300,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method removeAll()
 	 * 
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
@@ -374,6 +370,15 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		return /* containsKey(o) || */containsValue(o);
 	}
 
+	@operator (
+			value = "reverse",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@doc ("Specialization of the reverse operator for maps. Reverses keys and values")
 	@Override
 	public IContainer reverse(final IScope scope) {
 		final GamaMap map = new GamaMap(size(), getType().getContentType(), getType().getKeyType());
@@ -383,17 +388,17 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		return map;
 	}
 
-	@getter("keys")
+	@getter ("keys")
 	public IList<K> getKeys() {
 		return GamaListFactory.<K> createWithoutCasting(getType().getKeyType(), keySet());
 	}
 
-	@getter("values")
+	@getter ("values")
 	public IList<V> getValues() {
 		return GamaListFactory.<V> createWithoutCasting(getType().getContentType(), values());
 	}
 
-	@getter("pairs")
+	@getter ("pairs")
 	public GamaPairList getPairs() {
 		// FIXME: in the future, this method will be directly operating upon the
 		// entry set (so as to
@@ -405,8 +410,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@Override
 	public GamaMap copy(final IScope scope) {
-		final GamaMap result = GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(),
-				this);
+		final GamaMap result =
+				GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), this);
 		return result;
 	}
 
@@ -427,9 +432,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@Override
 	public V getFromIndicesList(final IScope scope, final IList<K> indices) throws GamaRuntimeException {
-		if (indices == null || indices.isEmpty()) {
-			return null;
-		}
+		if (indices == null || indices.isEmpty()) { return null; }
 		return get(scope, indices.get(0));
 		// We do not consider the case where multiple indices are used. Maybe
 		// could be used in the
@@ -457,8 +460,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method removeIndexes()
 	 * 
-	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer)
+	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
 	public void removeIndexes(final IScope scope, final IContainer<?, ?> index) {
@@ -470,16 +472,14 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method buildValue()
 	 * 
-	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope,
-	 *      java.lang.Object, msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
+	 *      msi.gaml.types.IContainerType)
 	 */
 	protected V buildValue(final IScope scope, final Object object) {
 		// If we pass a pair to this method, but the content type is not a pair,
 		// then it is is interpreted as a key + a value by addValue()
 		if (object instanceof GamaPair) {
-			if (!type.getContentType().isTranslatableInto(Types.PAIR)) {
-				return (V) object;
-			}
+			if (!type.getContentType().isTranslatableInto(Types.PAIR)) { return (V) object; }
 		}
 		return (V) type.getContentType().cast(scope, object, null, false);
 
@@ -491,8 +491,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method buildValues()
 	 * 
-	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer, msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
+	 *      msi.gaml.types.IContainerType)
 	 */
 	protected IContainer<?, GamaPair<K, V>> buildValues(final IScope scope, final IContainer objects) {
 		return GamaMapType.staticCast(scope, objects, type.getKeyType(), type.getContentType(), false);
@@ -501,8 +501,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	/**
 	 * Method buildIndex()
 	 * 
-	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope,
-	 *      java.lang.Object, msi.gaml.types.IContainerType)
+	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
+	 *      msi.gaml.types.IContainerType)
 	 */
 	protected K buildIndex(final IScope scope, final Object object) {
 		return (K) type.getKeyType().cast(scope, object, null, false);
@@ -517,9 +517,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	}
 
 	/**
-	 * WARNING: exposes raw internal values WARNING The values are not ordered
-	 * as they would be when accessing the map (cause of Issue #1335) Never use
-	 * this method unless you are sure of what you are doing
+	 * WARNING: exposes raw internal values WARNING The values are not ordered as they would be when accessing the map
+	 * (cause of Issue #1335) Never use this method unless you are sure of what you are doing
 	 */
 	public Object[] getRawValues() {
 		return _values;

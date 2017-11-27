@@ -104,6 +104,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		CONE,
 		CUBE,
 		SQUARE,
+		ROUNDED,
 		CYLINDER,
 		ENVIRONMENT,
 		GRIDLINE,

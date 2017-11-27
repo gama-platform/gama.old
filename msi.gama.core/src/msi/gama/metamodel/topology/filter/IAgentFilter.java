@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IAgentFilter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IAgentFilter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -13,6 +12,7 @@ package msi.gama.metamodel.topology.filter;
 import java.util.Collection;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -39,11 +39,17 @@ public interface IAgentFilter {
 		}
 
 		@Override
-		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {}
+
+		@Override
+		public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+			return null;
 		}
 	};
 
 	public ISpecies getSpecies();
+
+	public IPopulation<? extends IAgent> getPopulation(IScope scope);
 
 	public IContainer<?, ? extends IAgent> getAgents(IScope scope);
 

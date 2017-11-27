@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Utils.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Utils.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -53,6 +51,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.gis.geotools.control.ExceptionMonitor;
 
 /**
@@ -117,8 +116,7 @@ public class Utils {
 	 * 
 	 * @param rect
 	 *            the swt <code>Rectangle</code>
-	 * @return a {@link java.awt.Rectangle} instance with the appropriate
-	 *         location and size.
+	 * @return a {@link java.awt.Rectangle} instance with the appropriate location and size.
 	 */
 	public static java.awt.Rectangle toAwtRectangle(final Rectangle rect) {
 		final java.awt.Rectangle rect2d = new java.awt.Rectangle();
@@ -130,14 +128,11 @@ public class Utils {
 	 * Create a Style to display the features.
 	 * 
 	 * <p>
-	 * If an SLD file is in the same directory as the shapefile then we will
-	 * create the Style by processing this.
+	 * If an SLD file is in the same directory as the shapefile then we will create the Style by processing this.
 	 */
 	public static Style createStyle(final File file, final SimpleFeatureSource featureSource) {
 		final File sld = toSLDFile(file);
-		if (sld != null) {
-			return createFromSLD(sld);
-		}
+		if (sld != null) { return createFromSLD(sld); }
 
 		return createStyle2(featureSource);
 	}
@@ -154,14 +149,10 @@ public class Utils {
 		final String base = path.substring(0, path.length() - 4);
 		String newPath = base + ".sld";
 		File sld = new File(newPath);
-		if (sld.exists()) {
-			return sld;
-		}
+		if (sld.exists()) { return sld; }
 		newPath = base + ".SLD";
 		sld = new File(newPath);
-		if (sld.exists()) {
-			return sld;
-		}
+		if (sld.exists()) { return sld; }
 		return null;
 	}
 
@@ -221,8 +212,7 @@ public class Utils {
 		final Fill fill = styleFactory.createFill(filterFactory.literal(Color.CYAN), filterFactory.literal(0.5));
 
 		/*
-		 * Setting the geometryPropertyName arg to null signals that we want to
-		 * draw the default geomettry of features
+		 * Setting the geometryPropertyName arg to null signals that we want to draw the default geomettry of features
 		 */
 		final PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, fill, null);
 
@@ -244,8 +234,7 @@ public class Utils {
 		final Stroke stroke = styleFactory.createStroke(filterFactory.literal(Color.BLUE), filterFactory.literal(1));
 
 		/*
-		 * Setting the geometryPropertyName arg to null signals that we want to
-		 * draw the default geomettry of features
+		 * Setting the geometryPropertyName arg to null signals that we want to draw the default geomettry of features
 		 */
 		final LineSymbolizer sym = styleFactory.createLineSymbolizer(stroke, null);
 
@@ -277,8 +266,7 @@ public class Utils {
 		gr.setSize(filterFactory.literal(5));
 
 		/*
-		 * Setting the geometryPropertyName arg to null signals that we want to
-		 * draw the default geomettry of features
+		 * Setting the geometryPropertyName arg to null signals that we want to draw the default geomettry of features
 		 */
 		final PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);
 
@@ -297,32 +285,28 @@ public class Utils {
 	 * @param runner
 	 *            the runnable to run.
 	 * @param sync
-	 *            if <code>true</code>, the runnable is run in sync mode, else
-	 *            in async.
+	 *            if <code>true</code>, the runnable is run in sync mode, else in async.
 	 */
 	public static void runGuiRunnableSafe(final Runnable runner, final boolean sync) {
-		if (Display.getCurrent() != null) {
+		if (WorkbenchHelper.getDisplay() != null) {
 			runner.run();
 		} else {
 			if (sync) {
-				Display.getDefault().syncExec(runner);
+				WorkbenchHelper.run(runner);
 			} else {
-				Display.getDefault().asyncExec(runner);
+				WorkbenchHelper.asyncRun(runner);
 			}
 		}
 	}
 
 	/**
-	 * This method examines the names of the sample dimensions in the provided
-	 * coverage looking for "red...", "green..." and "blue..." (case insensitive
-	 * match). If these names are not found it uses bands 1, 2, and 3 for the
-	 * red, green and blue channels. It then sets up a raster symbolizer and
-	 * returns this wrapped in a Style.
+	 * This method examines the names of the sample dimensions in the provided coverage looking for "red...", "green..."
+	 * and "blue..." (case insensitive match). If these names are not found it uses bands 1, 2, and 3 for the red, green
+	 * and blue channels. It then sets up a raster symbolizer and returns this wrapped in a Style.
 	 * 
 	 * @param reader
 	 *
-	 * @return a new Style object containing a raster symbolizer set up for RGB
-	 *         image
+	 * @return a new Style object containing a raster symbolizer set up for RGB image
 	 */
 	public static Style createRGBStyle(final GridCoverage2DReader reader) {
 		GridCoverage2D cov = null;
@@ -333,9 +317,7 @@ public class Utils {
 		}
 		// We need at least three bands to create an RGB style
 		final int numBands = cov.getNumSampleDimensions();
-		if (numBands < 3) {
-			return null;
-		}
+		if (numBands < 3) { return null; }
 		// Get the names of the bands
 		final String[] sampleDimensionNames = new String[numBands];
 		for (int i = 0; i < numBands; i++) {
@@ -368,8 +350,8 @@ public class Utils {
 		}
 		// Now we create a RasterSymbolizer using the selected channels
 		final SelectedChannelType[] sct = new SelectedChannelType[cov.getNumSampleDimensions()];
-		final ContrastEnhancement ce = styleFactory.contrastEnhancement(filterFactory.literal(1.0),
-				ContrastMethod.NORMALIZE);
+		final ContrastEnhancement ce =
+				styleFactory.contrastEnhancement(filterFactory.literal(1.0), ContrastMethod.NORMALIZE);
 		for (int i = 0; i < 3; i++) {
 			sct[i] = styleFactory.createSelectedChannelType(String.valueOf(channelNum[i]), ce);
 		}
@@ -381,12 +363,10 @@ public class Utils {
 	}
 
 	/**
-	 * Check if the given map layer contains a grid coverage or a grid coverage
-	 * reader.
+	 * Check if the given map layer contains a grid coverage or a grid coverage reader.
 	 * <p>
-	 * Implementation note: we avoid referencing org.geotools.coverage.grid
-	 * classes directly here so that applications dealing only with other data
-	 * types are not forced to have JAI in the classpath.
+	 * Implementation note: we avoid referencing org.geotools.coverage.grid classes directly here so that applications
+	 * dealing only with other data types are not forced to have JAI in the classpath.
 	 *
 	 * @param layer
 	 *            the map layer
@@ -399,9 +379,8 @@ public class Utils {
 		for (final PropertyDescriptor desc : descriptors) {
 			final Class<?> binding = desc.getType().getBinding();
 
-			if (BASE_GRID_CLASS.isAssignableFrom(binding) || BASE_READER_CLASS.isAssignableFrom(binding)) {
-				return true;
-			}
+			if (BASE_GRID_CLASS.isAssignableFrom(binding)
+					|| BASE_READER_CLASS.isAssignableFrom(binding)) { return true; }
 		}
 
 		return false;

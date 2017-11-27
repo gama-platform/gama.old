@@ -39,6 +39,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -63,7 +64,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.SHAPEFILE, IConcept.FILE })
+		concept = { IConcept.SHAPEFILE, IConcept.FILE },
+		doc = @doc ("Represents a shape file as defined by the ESRI standard"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
 
@@ -295,7 +297,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus().beginSubStatus("Reading file" + getName(scope));
+		scope.getGui().getStatus(scope).beginSubStatus("Reading file" + getName(scope));
 		ShapefileDataStore store = null;
 		final File file = getFile(scope);
 		final IList list = getBuffer();
@@ -311,7 +313,7 @@ public class GamaShapeFile extends GamaGisFile {
 				while (reader.hasNext()) {
 					index++;
 					if (index % 20 == 0)
-						scope.getGui().getStatus().setSubStatusCompletion(index / size);
+						scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
@@ -337,7 +339,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().getStatus().endSubStatus("Reading file " + getName(scope));
+			scope.getGui().getStatus(scope).endSubStatus("Reading file " + getName(scope));
 		}
 		if (size > list.size()) {
 			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "

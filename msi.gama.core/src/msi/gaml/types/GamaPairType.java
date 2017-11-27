@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaPairType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaPairType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -13,6 +12,7 @@ package msi.gaml.types;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.DynamicLineString;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -29,9 +29,14 @@ import msi.gama.util.IList;
  * @todo Description
  *
  */
-@type(name = IKeyword.PAIR, id = IType.PAIR, wraps = {
-		GamaPair.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.CONTAINER })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@type (
+		name = IKeyword.PAIR,
+		id = IType.PAIR,
+		wraps = { GamaPair.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE, IConcept.CONTAINER },
+		doc = @doc ("Represents a pair of 2 arbitrary elements"))
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPairType extends GamaContainerType<GamaPair> {
 
 	@Override
@@ -63,21 +68,21 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 		} else if (obj instanceof IList) {
 			final IList l = (IList) obj;
 			switch (l.size()) {
-			case 0:
-				key = null;
-				value = null;
-				break;
-			case 1:
-				key = l.get(0);
-				value = l.get(0);
-				break;
-			case 2:
-				key = l.get(0);
-				value = l.get(1);
-				break;
-			default:
-				key = l;
-				value = l;
+				case 0:
+					key = null;
+					value = null;
+					break;
+				case 1:
+					key = l.get(0);
+					value = l.get(0);
+					break;
+				case 2:
+					key = l.get(0);
+					value = l.get(1);
+					break;
+				default:
+					key = l;
+					value = l;
 			}
 
 		} else {

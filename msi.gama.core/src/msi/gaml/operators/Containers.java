@@ -17,6 +17,7 @@ import static msi.gama.util.GAML.notNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
@@ -93,19 +94,19 @@ public class Containers {
 		return notNull(scope, c).parallelStream(scope);
 	}
 
-	private static GamaListSupplier listOf(final IType t) {
+	public static GamaListSupplier listOf(final IType t) {
 		return new GamaListSupplier(t);
 	}
 
-	private static Supplier<IList> listLike(final IContainer c) {
+	public static Supplier<IList> listLike(final IContainer c) {
 		return new GamaListSupplier(c == null ? Types.NO_TYPE : c.getType().getContentType());
 	}
 
-	private static Supplier<IList> listLike(final IContainer c, final IContainer c1) {
+	public static Supplier<IList> listLike(final IContainer c, final IContainer c1) {
 		return listOf(c.getType().getContentType().findCommonSupertypeWith(c1.getType().getContentType()));
 	}
 
-	private static GamaMapSupplier asMapOf(final IType k, final IType v) {
+	public static GamaMapSupplier asMapOf(final IType k, final IType v) {
 		return new GamaMapSupplier(k, v);
 	}
 
@@ -812,7 +813,8 @@ public class Containers {
 			value = { "group_by" },
 			iterator = true,
 			index_type = ITypeProvider.SECOND_TYPE,
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = IType.LIST,
+			content_type_content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
@@ -833,7 +835,8 @@ public class Containers {
 							isExecutable = false),
 					@example (
 							value = "[1::2, 3::4, 5::6] group_by (each > 4)",
-							equals = "[false::[2, 4], true::[6]]") },
+							equals = "[false::[2, 4], true::[6]]",
+							returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getType().getContentType();
@@ -859,7 +862,7 @@ public class Containers {
 									equals = "6"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs last_with (each.value >= 4)",
-											equals = "5::6") }) },
+											equals = "(5::6)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] last_with (each > 3)",
 					equals = "8"),
@@ -898,7 +901,7 @@ public class Containers {
 									equals = "4"),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)",
-											equals = "3::4") }) },
+											equals = "(3::4)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] first_with (each > 3)",
 					equals = "4"),
@@ -932,11 +935,9 @@ public class Containers {
 							value = "if the left-operand is a map, the keyword each will contain each value",
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] max_of (each + 3)",
-									equals = "6") }) },
-			examples = { @example (
-					value = "graph([]) max_of([])",
-					raises = "error",
-					isTestOnly = true),
+									equals = "9") }) },
+			examples = {
+					// @example ( value = "graph([]) max_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] max_of (each * 100 )",
 							equals = "800"),
@@ -999,6 +1000,7 @@ public class Containers {
 			value = "sum",
 			can_be_const = true,
 			type = IType.GRAPH,
+			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	public static double sum(final IScope scope, final IGraph g) {
@@ -1022,12 +1024,8 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] sum_of (each + 3)",
 							equals = "21") }) },
 			examples = { @example (
-					value = "graph([]) sum_of([])",
-					equals = "0.0",
-					isTestOnly = true),
-					@example (
-							value = "[1,2] sum_of (each * 100 )",
-							equals = "300") },
+					value = "[1,2] sum_of (each * 100 )",
+					equals = "300") },
 			see = { "min_of", "max_of", "product_of", "mean_of" })
 	public static Object sum_of(final IScope scope, final IContainer container, final IExpression filter) {
 		Stream s = stream(scope, container);
@@ -1069,12 +1067,8 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] product_of (each)",
 							equals = "48") }) },
 			examples = { @example (
-					value = "graph([]) product_of([])",
-					equals = "0.0",
-					isTestOnly = true),
-					@example (
-							value = "[1,2] product_of (each * 10 )",
-							equals = "200") },
+					value = "[1,2] product_of (each * 10 )",
+					equals = "200") },
 			see = { "min_of", "max_of", "sum_of", "mean_of" })
 	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.product(scope, collect(scope, container, filter));
@@ -1123,12 +1117,8 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] mean_of (each)",
 							equals = "4") }) },
 			examples = { @example (
-					value = "graph([]) mean_of([])",
-					equals = "0.0",
-					isTestOnly = true),
-					@example (
-							value = "[1,2] mean_of (each * 10 )",
-							equals = "15") },
+					value = "[1,2] mean_of (each * 10 )",
+					equals = "15") },
 			see = { "min_of", "max_of", "sum_of", "product_of" })
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
@@ -1162,10 +1152,8 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] min_of (each + 3)",
 							equals = "5") }) },
-			examples = { @example (
-					value = "graph([]) min_of([])",
-					raises = "error",
-					isTestOnly = true),
+			examples = {
+					// @example (value = "graph([]) min_of([])", raises = "error", isTestOnly = true),
 					@example (
 							value = "[1,2,4,3,5,7,6,8] min_of (each * 100 )",
 							equals = "100"),
@@ -1545,6 +1533,42 @@ public class Containers {
 		final IExpression value = pair.arg(1);
 		return (GamaMap) stream(scope, original).collect(Collectors.toMap(function(scope, key), function(scope, value),
 				(a, b) -> a, asMapOf(key.getType(), value.getType())));
+	}
+
+	@operator (
+			value = { "create_map" },
+			iterator = true,
+			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = IOperatorCategory.MAP,
+			expected_content_type = ITypeProvider.BOTH,
+			concept = { IConcept.CONTAINER, IConcept.MAP })
+	@doc (
+			value = "returns a new map using the left operand as keys for the right operand",
+			usages = { @usage ("if the left operand contains duplicates, create_map throws an error."),
+					@usage ("if both operands have different lengths, choose the minimum length between the two operands"
+							+ "for the size of the map") },
+			examples = { @example (
+					value = "create_map([0,1,2],['a','b','c'])",
+					returnType = "map<int,string>",
+					equals = "[0::'a',1::'b',2::'c']"),
+					@example (
+							value = "create_map([0,1],[0.1,0.2,0.3])",
+							returnType = "map<int,float>",
+							equals = "[0::0.1,1::0.2]"),
+					@example (
+							value = "create_map(['a','b','c','d'],[1.0,2.0,3.0])",
+							returnType = "map<string,float>",
+							equals = "['a'::1.0,'b'::2.0,'c'::3.0]") },
+			see = {})
+	public static GamaMap create_map(final IScope scope, final IList keys, final IList values) {
+		if (keys.length(scope) != values.length(scope)) {
+			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
+		}
+		final HashSet newSet = new HashSet(keys);
+		if (newSet.size() < keys.length(scope)) { throw GamaRuntimeException
+				.error("'create_map' expects unique values in the keys list", scope); }
+		return GamaMapFactory.create(scope, keys.getType(), values.getType(), keys, values);
 	}
 
 	@operator (

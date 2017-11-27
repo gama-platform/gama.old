@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'InputParameter.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'InputParameter.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,12 +16,12 @@ import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class InputParameter extends ParameterAdapter {
 
 	private Object value;
 	private final List among;
-	private Number min, max;
+	private Number min, max, step;
 
 	InputParameter(final String name, final Object value) {
 		this(name, value, Types.get(value == null ? Object.class : (Class<Object>) value.getClass()));
@@ -44,9 +43,23 @@ public class InputParameter extends ParameterAdapter {
 		this.max = max;
 	}
 
+	InputParameter(final String name, final Object value, final Number min, final Number max, final Number step) {
+		this(name, value);
+		this.min = min;
+		this.max = max;
+		this.step = step;
+	}
+
 	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max) {
 		this(name, value, min, max);
 		unitLabel = unit;
+	}
+
+	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
+			final Number step) {
+		this(name, value, min, max);
+		unitLabel = unit;
+		this.step = step;
 	}
 
 	@Override
@@ -72,6 +85,11 @@ public class InputParameter extends ParameterAdapter {
 	@Override
 	public List getAmongValue(final IScope scope) {
 		return among;
+	}
+
+	@Override
+	public Number getStepValue(final IScope scope) {
+		return step;
 	}
 
 	@Override

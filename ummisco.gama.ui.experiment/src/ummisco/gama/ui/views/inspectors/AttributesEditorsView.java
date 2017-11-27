@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
+import ummisco.gama.ui.views.ExpandableItemsView;
 
 public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 

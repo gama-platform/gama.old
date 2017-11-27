@@ -439,7 +439,7 @@ public class GraphsGraphstream {
 		for (final GamlAgent e : listVertex) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
 					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().getConsole().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
+			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
 		}
@@ -475,7 +475,7 @@ public class GraphsGraphstream {
 		for (final GamlAgent e : listVertex) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
 					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().getConsole().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
+			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
 		}

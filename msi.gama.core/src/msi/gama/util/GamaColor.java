@@ -103,6 +103,10 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 		final GamaColor blue = new NamedGamaColor("gamablue", new int[] { 22, 94, 147, 1 });
 		colors.put("gamablue", blue);
 		int_colors.put(blue.getRGB(), blue);
+
+		final GamaColor green = new NamedGamaColor("gamagreen", new int[] { 81, 135, 56, 1 });
+		colors.put("gamagreen", green);
+		int_colors.put(green.getRGB(), green);
 	}
 
 	public static class NamedGamaColor extends GamaColor {

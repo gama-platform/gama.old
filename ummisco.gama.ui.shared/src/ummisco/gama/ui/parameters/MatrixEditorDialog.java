@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MatrixEditorDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MatrixEditorDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,7 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -38,8 +36,9 @@ import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class MatrixEditorDialog extends Dialog {
 
 	private IMatrix data;
@@ -48,7 +47,7 @@ public class MatrixEditorDialog extends Dialog {
 	private Table table = null;
 	private final IScope scope;
 
-	private final Color gray = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+	private final Color gray = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY);
 
 	protected MatrixEditorDialog(final IScope scope, final Shell parentShell, final IMatrix paramValue) {
 		super(parentShell);
@@ -107,20 +106,20 @@ public class MatrixEditorDialog extends Dialog {
 						final Text text = new Text(table, SWT.NONE);
 						final Listener textListener = e -> {
 							switch (e.type) {
-							case SWT.FocusOut:
-								item.setText(column, text.getText());
-								text.dispose();
-								break;
-							case SWT.Traverse:
-								switch (e.detail) {
-								case SWT.TRAVERSE_RETURN:
+								case SWT.FocusOut:
 									item.setText(column, text.getText());
-									//$FALL-THROUGH$
-								case SWT.TRAVERSE_ESCAPE:
 									text.dispose();
-									e.doit = false;
-								}
-								break;
+									break;
+								case SWT.Traverse:
+									switch (e.detail) {
+										case SWT.TRAVERSE_RETURN:
+											item.setText(column, text.getText());
+											//$FALL-THROUGH$
+										case SWT.TRAVERSE_ESCAPE:
+											text.dispose();
+											e.doit = false;
+									}
+									break;
 							}
 						};
 						text.addListener(SWT.FocusOut, textListener);
@@ -135,9 +134,7 @@ public class MatrixEditorDialog extends Dialog {
 						visible = true;
 					}
 				}
-				if (!visible) {
-					return;
-				}
+				if (!visible) { return; }
 				index1++;
 			}
 		});

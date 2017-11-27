@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExperimentAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExperimentAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,5 +40,7 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	public boolean canStepBack();
 
 	public abstract void informStatus();
+
+	public abstract boolean isHeadless();
 
 }

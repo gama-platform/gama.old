@@ -53,6 +53,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -85,7 +86,8 @@ import msi.gaml.types.Types;
 		// @var(name = GAMA._FATAL, type = IType.BOOL),
 		@var (
 				name = GAMA._WARNINGS,
-				type = IType.BOOL),
+				type = IType.BOOL,
+				doc = @doc ("The value of the preference 'Consider warnings as errors'")),
 		@var (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
@@ -209,11 +211,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			scope.getGui().setSelectedAgent(null);
 			scope.getGui().setHighlightedAgent(null);
-			scope.getGui().getStatus().resumeStatus();
+			scope.getGui().getStatus(scope).resumeStatus();
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something
 			// else in the dynamics of closing/opening
-			scope.getGui().closeDialogs();
+			scope.getGui().closeDialogs(scope);
 		}
 		// simulation = null;
 		// populationOfSimulations = null;
@@ -243,7 +245,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return !getSpecies().isHeadless();
+		return !getSpecies().isHeadless() || ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
 	}
 
 	@Override
@@ -253,8 +255,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) {
 			outputs.init(scope);
 		}
-		scope.getGui().getStatus().informStatus("Experiment ready");
-		scope.getGui().updateExperimentState();
+		scope.getGui().getStatus(scope).informStatus("Experiment ready");
+		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
 
@@ -270,7 +272,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
 		GAMA.closeExperiment(getSpecies());
-		GAMA.getGui().closeSimulationViews(true, false);
+		GAMA.getGui().closeSimulationViews(scope, true, false);
 		return null;
 	}
 
@@ -308,6 +310,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * Building the simulation agent and its population
 	 */
 
+	@SuppressWarnings ("unchecked")
 	protected void createSimulationPopulation() {
 		final IModel model = getModel();
 		SimulationPopulation pop = (SimulationPopulation) this.getMicroPopulation(model);
@@ -393,7 +396,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (initialMinimumDuration == null) {
 			initialMinimumDuration = d;
 		}
-		scope.getGui().updateSpeedDisplay(currentMinimumDuration * 1000, false);
+		scope.getGui().updateSpeedDisplay(scope, currentMinimumDuration * 1000, false);
 	}
 
 	/**
@@ -571,7 +574,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
 		if (species == getModel()) { return getSimulationPopulation(); }
-		return this.getSimulation().getPopulationFor(species.getName());
+		final SimulationAgent sim = getSimulation();
+		if (sim == null)
+			return IPopulation.createEmpty(species);
+		return sim.getPopulationFor(species.getName());
 
 	}
 
@@ -598,7 +604,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public void informStatus() {
 		if (!getSpecies().isBatch() && getSimulation() != null) {
-			getScope().getGui().getStatus().informStatus(null, "status.clock");
+			getScope().getGui().getStatus(getScope()).informStatus(null, "status.clock");
 		}
 	}
 
@@ -674,8 +680,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (ExperimentAgent.this.hasAttribute(name)
 					|| getSpecies().hasVar(name)) { return super.getGlobalVarValue(name); }
 			// Second case: the simulation is not null, so it should handle it
-			if (getSimulation() != null
-					&& !getSimulation().dead()) { return getSimulation().getScope().getGlobalVarValue(name); }
+			final SimulationAgent sim = getSimulation();
+			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(name); }
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible
 			if (this.getModel().getSpecies()
@@ -687,12 +693,27 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
+		public boolean hasAccessToGlobalVar(final String name) {
+			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name))
+				return true;
+			if (this.getModel().getSpecies().hasVar(name))
+				return true;
+			if (getSpecies().hasParameter(name))
+				return true;
+			if (extraParametersMap.containsKey(name))
+				return true;
+			return false;
+		}
+
+		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
 			if (getSpecies().hasVar(name)) {
 				super.setGlobalVarValue(name, v);
-			} else if (getSimulation() != null && !getSimulation().dead()
-					&& getSimulation().getSpecies().hasVar(name)) {
-				getSimulation().getScope().setGlobalVarValue(name, v);
+				return;
+			}
+			final SimulationAgent sim = getSimulation();
+			if (sim != null && !sim.dead() && sim.getSpecies().hasVar(name)) {
+				sim.getScope().setGlobalVarValue(name, v);
 			} else {
 				extraParametersMap.put(name, v);
 			}
@@ -725,10 +746,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
-		return Iterables.concat(
-				Iterables.filter(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
-						ContainerHelper.NOT_NULL),
-				Collections.singletonList(getOutputManager()));
+		final SimulationPopulation pop = getSimulationPopulation();
+		if (pop != null)
+			return Iterables.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
+					Collections.singletonList(getOutputManager())), ContainerHelper.NOT_NULL);
+		return Collections.EMPTY_LIST;
 	}
 
 	/**
@@ -795,6 +817,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public boolean canStepBack() {
 		return false;
+	}
+
+	@Override
+	public boolean isHeadless() {
+		return getSpecies().isHeadless();
 	}
 
 }

@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.precision.EnhancedPrecisionOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
@@ -89,6 +90,7 @@ import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.expressions.IExpression;
@@ -707,7 +709,7 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
 				concept = { IConcept.THREED })
 		@doc (
-				value = "A hexagon geometry which the given with and height",
+				value = "A hexagon geometry which the given width and height",
 				usages = { @usage ("returns nil if the operand is nil.") },
 				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
@@ -723,6 +725,28 @@ public abstract class Spatial {
 			final Double width = size.x;
 			final Double height = size.y;
 			if (width <= 0 || height <= 0) { return new GamaShape(location); }
+			return GamaGeometryType.buildHexagon(width, height, location);
+		}
+
+		@operator (
+				value = "hexagon",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE, IOperatorCategory.THREED },
+				concept = { IConcept.THREED })
+		@doc (
+				value = "A hexagon geometry which the given width and height",
+				usages = { @usage ("returns nil if the operand is nil.") },
+				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "hexagon(10,5)",
+						equals = "a geometry as a hexagon of width of 10 and height of 5.",
+						test = false) },
+				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+						"triangle" })
+		public static IShape hexagon(final IScope scope, final Double width, final Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgent();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if (width == null || height == null || width <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(width, height, location);
 		}
 
@@ -1283,12 +1307,31 @@ public abstract class Spatial {
 				return g1.difference(g2);
 			} catch (AssertionFailedException | TopologyException e) {
 				try {
+					java.lang.System.out.println("Topology exception: trying single floating point precision");
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					return GeometryPrecisionReducer.reducePointwise(g1, pm)
 							.difference(GeometryPrecisionReducer.reducePointwise(g2, pm));
-				} catch (final Exception e1) {
-					return g1.buffer(0, 0, BufferParameters.CAP_FLAT)
-							.difference(g2.buffer(0, 0, BufferParameters.CAP_FLAT));
+				} catch (final RuntimeException e1) {
+					try {
+						java.lang.System.out.println("Topology exception: trying to buffer geometries");
+						return g1.buffer(0, 10, BufferParameters.CAP_FLAT)
+								.difference(g2.buffer(0, 10, BufferParameters.CAP_FLAT));
+					} catch (final TopologyException e2) {
+						try {
+							java.lang.System.out.println("Topology exception: trying fixed precision operation");
+							final PrecisionModel pm = new PrecisionModel(100000d);
+							return GeometryPrecisionReducer.reduce(g1, pm)
+									.difference(GeometryPrecisionReducer.reduce(g2, pm));
+						} catch (final RuntimeException e3) {
+							java.lang.System.out.println("Topology exception: trying enhanced precision operation");
+							try {
+								return EnhancedPrecisionOp.difference(g1, g2);
+							} catch (final RuntimeException last) {
+								java.lang.System.out.println("Unable to compute difference: returning null instead");
+								return null; // return g1; ??
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1377,36 +1420,71 @@ public abstract class Spatial {
 		}
 
 		private static Geometry createPolygonWithPoint(final Geometry geometry, final Coordinate point) {
-			final int index = indexClosestSegment(((Polygon) geometry).getExteriorRing(), point);
-			if (index == -1) { return null; }
-			final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
-			for (int i = 0; i < index + 1; i++) {
-				coord[i] = geometry.getCoordinates()[i];
+			double simpleMinLength = Double.MAX_VALUE;
+			Geometry simpleMinGeom = null;
+			double complexMinLength = Double.MAX_VALUE;
+			Geometry complexMinGeom = null;
+			int nbPts = ((Polygon)geometry).getExteriorRing().getCoordinates().length;
+			for (int index = 0; index <= nbPts ; index++) {
+				final Coordinate[] coord = new Coordinate[nbPts + 1];
+				for (int i = 0; i < index ; i++) {
+					coord[i] = geometry.getCoordinates()[i];
+				}
+				coord[index] = point;
+				for (int i = index + 1; i < coord.length; i++) {
+					coord[i] = geometry.getCoordinates()[i - 1];
+				}
+				final LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
+				for (int i = 0; i < lrs.length; i++) {
+					lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
+				}
+				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord),
+						lrs);
+				if (g.isValid()) {
+					if (simpleMinLength > g.getArea()) {
+						simpleMinLength = g.getArea();
+						simpleMinGeom = g;
+					}
+				}else {
+					if (complexMinLength > g.getArea()) {
+						complexMinLength = g.getArea();
+						complexMinGeom = g;
+					}
+				}
 			}
-			coord[index + 1] = point;
-			for (int i = index + 2; i < coord.length; i++) {
-				coord[i] = geometry.getCoordinates()[i - 1];
-			}
-			final LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
-			for (int i = 0; i < lrs.length; i++) {
-				lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
-			}
-			return GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord),
-					lrs);
+			if (simpleMinGeom != null) return simpleMinGeom;
+			return complexMinGeom;
 		}
 
 		private static Geometry createLineStringWithPoint(final Geometry geometry, final Coordinate point) {
-			final int index = indexClosestSegment(geometry, point);
-			if (index == -1) { return null; }
-			final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
-			for (int i = 0; i < index + 1; i++) {
-				coord[i] = geometry.getCoordinates()[i];
+			double simpleMinLength = Double.MAX_VALUE;
+			Geometry simpleMinGeom = null;
+			double complexMinLength = Double.MAX_VALUE;
+			Geometry complexMinGeom = null;
+			for (int index = 0; index <= geometry.getCoordinates().length ; index++) {
+				final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
+				for (int i = 0; i < index ; i++) {
+					coord[i] = geometry.getCoordinates()[i];
+				}
+				coord[index ] = point;
+				for (int i = index + 1; i < coord.length; i++) {
+					coord[i] = geometry.getCoordinates()[i - 1];
+				}
+				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
+				if (g.isValid()) {
+					if (simpleMinLength > g.getLength()) {
+						simpleMinLength = g.getLength();
+						simpleMinGeom = g;
+					}
+				}else {
+					if (complexMinLength > g.getLength()) {
+						complexMinLength = g.getLength();
+						complexMinGeom = g;
+					}
+				}
 			}
-			coord[index + 1] = point;
-			for (int i = index + 2; i < coord.length; i++) {
-				coord[i] = geometry.getCoordinates()[i - 1];
-			}
-			return GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
+			if (simpleMinGeom != null) return simpleMinGeom;
+			return complexMinGeom;
 		}
 
 		private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
@@ -2267,7 +2345,7 @@ public abstract class Spatial {
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 				throws GamaRuntimeException {
 			// cols, rows
-			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, false, false, false);
+			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, false, false, false, "");
 		}
 
 		@operator (
@@ -2286,7 +2364,7 @@ public abstract class Spatial {
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 				throws GamaRuntimeException {
 			// cols, rows
-			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false);
+			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false, "");
 		}
 
 		@operator (
@@ -2303,14 +2381,8 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			Geometry nodedLineStrings = geoms.firstValue(scope).getInnerGeometry();
-
-			for (final Object obj : geoms.iterable(scope)) {
-				final Geometry g = ((IShape) obj).getInnerGeometry();
-				if (g instanceof LineString) {
-					nodedLineStrings = nodedLineStrings.union(g);
-				}
-			}
+			final IShape line = Spatial.Operators.union(scope, geoms);
+			final Geometry nodedLineStrings = line.getInnerGeometry();
 			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
 
 			for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
@@ -2392,6 +2464,23 @@ public abstract class Spatial {
 			final Geometry geomSimp = DouglasPeuckerSimplifier.simplify(g1.getInnerGeometry(), distanceTolerance);
 			if (geomSimp != null && !geomSimp.isEmpty() && geomSimp.isSimple()) { return new GamaShape(g1, geomSimp); }
 			return g1.copy(scope);
+		}
+
+		@operator (
+				value = "with_precision",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A geometry corresponding to the rounding of points of the operand considering a given precison.",
+				examples = { @example (
+						value = "self with_precision 2",
+						equals = "the geometry resulting from the rounding of points of the geometry with a precision of 0.1.",
+						test = false) })
+		public static IShape withPrecision(final IScope scope, final IShape g1, final Integer precision) {
+			if (g1 == null || g1.getInnerGeometry() == null) { return g1; }
+			final double scale = Math.pow(10, precision);
+			final PrecisionModel pm = new PrecisionModel(scale);
+			return new GamaShape(GeometryPrecisionReducer.reduce(g1.getInnerGeometry(), pm));
 		}
 
 	}
@@ -2497,33 +2586,31 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
-		public static IPath path_between(final IScope scope, final ITopology graph, final IContainer<?, IShape> nodes)
+		public static IPath path_between(final IScope scope, final ITopology topo, final IContainer<?, IShape> nodes)
 				throws GamaRuntimeException {
-			// TODO Assumes that all elements in nodes are vertices of the
-			// graph... Should be
-			// checked
-
 			if (nodes.isEmpty(scope)) { return null; }
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) { return PathFactory.newInstance(scope, scope.getTopology(), source, source,
 					GamaListFactory.<IShape> create(Types.GEOMETRY));
-			// return new GamaPath(scope.getTopology(), source, source, new
-			// GamaList());
 			}
 			final IShape target = nodes.lastValue(scope);
-			if (n == 2) { return graph.pathBetween(scope, source, target); }
+			if (n == 2) { return topo.pathBetween(scope, source, target); }
 			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
 					// TODO Take the case of ILocation
-					edges.addAll(graph.pathBetween(scope, previous, gg).getEdgeList());
+					GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
+					if (path != null && path.getEdgeList() != null)
+						edges.addAll(path.getEdgeList());
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(scope, graph, source, target, edges);
-			// new GamaPath(graph, source, target, edges);
+			
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo, source, target, edges);
+			path.setWeight(path.getVertexList().size());
+			return path;
 		}
 
 		@operator (
@@ -2557,7 +2644,8 @@ public abstract class Spatial {
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) {
 				if (topo instanceof GridTopology) {
-					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+					GamaSpatialPath path =  ((GridTopology) topo).pathBetween(scope, source, target, cells);
+					return path;
 				} else {
 					return scope.getTopology().pathBetween(scope, source, target);
 				}
@@ -2568,15 +2656,74 @@ public abstract class Spatial {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					if (topo instanceof GridTopology) {
-						edges.addAll(((GridTopology) topo).pathBetween(scope, source, target, cells).getEdgeList());
+						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						edges.addAll(path.getEdgeList());
 					} else {
-						edges.addAll(scope.getTopology().pathBetween(scope, source, target).getEdgeList());
+						edges.addAll(scope.getTopology().pathBetween(scope, previous, gg).getEdgeList());
 					}
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source,
-					target, edges);
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			path.setWeight(path.getVertexList().size());
+			return path;
+		}
+
+		@operator (
+				value = "path_between",
+
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
+				concept = { IConcept.GRID })
+		@doc (
+				value = "The shortest path between several objects according to set of cells with corresponding weights",
+				masterDoc = true,
+				examples = { @example (
+						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), [ag1, ag2, ag3])",
+						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost",
+						isExecutable = false) })
+		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells,
+				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
+			if (cells == null || cells.isEmpty()) { return null; }
+
+			if (nodes.isEmpty(scope)) { return null; }
+			final ITopology topo = cells.getKeys().get(0).getTopology();
+
+			final int n = nodes.length(scope);
+			final IShape source = nodes.firstValue(scope);
+			if (n == 1) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, source, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, source);
+				}
+			}
+			final IShape target = nodes.lastValue(scope);
+			if (n == 2) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, target);
+				}
+			}
+			double weight = 0;
+			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
+			IShape previous = null;
+			for (final IShape gg : nodes.iterable(scope)) {
+				if (previous != null) {
+					// TODO Take the case of ILocation
+					if (topo instanceof GridTopology) {
+						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						edges.addAll(path.getEdgeList());
+						weight += path.getWeight();
+					} else {
+						edges.addAll(scope.getTopology().pathBetween(scope, previous, gg).getEdgeList());
+					}
+				}
+				previous = gg;
+			}
+			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			path.setWeight(topo instanceof GridTopology ? weight : path.getVertexList().size());
+			return path;
 		}
 
 		@operator (
@@ -2595,6 +2742,29 @@ public abstract class Spatial {
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
 			final ITopology topo = cells.get(0).getTopology();
+			if (topo instanceof GridTopology) {
+				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+			} else {
+				return scope.getTopology().pathBetween(scope, source, target);
+			}
+		}
+
+		@operator (
+				value = "path_between",
+
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH },
+				concept = { IConcept.GRID })
+		@doc (
+				value = "The shortest path between two objects according to set of cells with corresponding weights",
+				masterDoc = true,
+				examples = { @example (
+						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), ag1, ag2)",
+						equals = "A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost",
+						isExecutable = false) })
+		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells, final IShape source,
+				final IShape target) throws GamaRuntimeException {
+			if (cells == null || cells.isEmpty()) { return null; }
+			final ITopology topo = cells.getKeys().get(0).getTopology();
 			if (topo instanceof GridTopology) {
 				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
 			} else {
@@ -3244,6 +3414,7 @@ public abstract class Spatial {
 								if (ag.euclidianDistanceTo(sp) <= distance)
 									results.add((IAgent) sp);
 							}
+							results.remove(ag);
 							return results;
 						}
 					}
@@ -3772,7 +3943,8 @@ public abstract class Spatial {
 						examples = { @example (
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
 								equals = "the Moran index computed",
-								test = false) }) })
+								test = false,
+								isExecutable = false) }) })
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
 			final GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
 			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows)

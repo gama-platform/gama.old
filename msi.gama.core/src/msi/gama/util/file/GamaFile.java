@@ -10,13 +10,12 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -29,6 +28,8 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.http.Webb;
+import msi.gama.util.file.http.WebbException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -43,29 +44,50 @@ import one.util.streamex.StreamEx;
  *
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
-		implements IGamaFile<C, ValueToAdd, K, V> {
+public abstract class GamaFile<Container extends IAddressableContainer & IModifiableContainer, Contents>
+		implements IGamaFile<Container, Contents> {
 
 	private File file;
-	protected String path;
+	protected String localPath;
 	protected final String originalPath;
-	protected URL url;
+	protected final URL url;
 	protected boolean writable = false;
-	private C buffer;
+	private Container buffer;
 
 	public GamaFile(final IScope scope, final String pn) throws GamaRuntimeException {
+		this(scope, pn, true);
+	}
+
+	private GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
-		if (originalPath == null) {
-			throw GamaRuntimeException.error("Attempt to create a null file", scope);
-		} else if (originalPath.startsWith("http")) {
-			setPath(fetchFromURL(scope, originalPath));
-			if (getPath(scope) == null) {
-				// We do not attempt to create the file. It will probably be
-				// taken in charge later directly from the URL
-				setPath("");
-				return;
+		if (originalPath == null) { throw GamaRuntimeException
+				.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope); }
+		if (originalPath.startsWith("http")) {
+			url = buildURL(scope, originalPath);
+		} else
+			url = null;
+		if (url != null)
+			if (forReading) {
+				setPath(fetchFromURL(scope));
+				if (getPath(scope) == null) {
+					// We do not attempt to create the file. It will probably be taken in charge later directly from the
+					// URL or there has been an error trying to download it.
+					setPath("");
+					return;
+				}
+			} else {
+				setPath(getTempFilePathFromURL(scope));
 			}
-		}
+	}
+
+	public boolean isRemote() {
+		return url != null;
+	}
+
+	public GamaFile(final IScope scope, final String pathName, final Container container) {
+		this(scope, pathName, false);
+		setWritable(scope, true);
+		setContents(container);
 	}
 
 	@Override
@@ -86,52 +108,65 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return true;
 	}
 
-	// Might be necessary to redefine it in order to fetch additional resources
-	protected String fetchFromURL(final IScope scope, final String urlPath) {
-		String pathName = "";
-		try {
-			url = new URL(urlPath);
-		} catch (final MalformedURLException e1) {
-			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
-		}
+	protected String fetchFromURL(final IScope scope) {
+		String pathName = null;
 		if (!automaticallyFetchFromURL()) { return null; }
+		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
+		pathName = getTempFilePathFromURL(scope);
+		scope.getGui().getStatus(scope).beginSubStatus(status);
+		final Webb web = Webb.create();
 		try {
-			scope.getGui().getStatus().beginSubStatus(status);
-
-			final URLConnection connection = url.openConnection();
-			final long size = connection.getContentLengthLong();
-			final boolean sizeKnown = size > 0;
-			if (url != null) {
-				final String suffix = url.getPath().replaceAll("/", "_");
-				pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
-				try (final InputStream r = url.openStream(); OutputStream fw = new FileOutputStream(pathName)) {
-					long doneSoFar = 0;
-					final byte[] b = new byte[2048];
-					int length;
-					while ((length = r.read(b)) != -1) {
-						if (sizeKnown) {
-							doneSoFar += 2048;
-							scope.getGui().getStatus()
-									.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
-						}
-						fw.write(b, 0, length);
-					}
-				}
+			try (InputStream in = web.get(urlPath).ensureSuccess().connectTimeout(20000).readTimeout(20000)
+					.retry(3, false).asStream().getBody();) {
+				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
-		} catch (final IOException e) {
+		} catch (final IOException | WebbException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus(status);
+			scope.getGui().getStatus(scope).endSubStatus(status);
 		}
 		return pathName;
+	}
+
+	protected void sendToURL(final IScope scope) throws GamaRuntimeException {
+		final String urlPath = url.toExternalForm();
+		final String status = "Uploading file to " + urlPath;
+		scope.getGui().getStatus(scope).beginSubStatus(status);
+		final Webb web = Webb.create();
+		try {
+			web.post(urlPath).ensureSuccess().connectTimeout(20000).retry(1, false)
+					.header(Webb.HDR_CONTENT_TYPE, getHttpContentType()).body(getFile(scope)).asVoid();
+		} catch (final WebbException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			scope.getGui().getStatus(scope).endSubStatus(status);
+		}
 
 	}
 
-	public GamaFile(final IScope scope, final String pathName, final C container) {
-		this(scope, pathName);
-		setWritable(scope, true);
-		setContents(container);
+	/**
+	 * The content type to use for uploading the contents of the file. see
+	 * http://www.iana.org/assignments/media-types/media-types.xhtml
+	 * 
+	 * @return
+	 */
+	protected String getHttpContentType() {
+		return "text/plain";
+	}
+
+	public String getTempFilePathFromURL(final IScope scope) {
+		final String suffix = url.getPath().replaceAll("/", "_");
+		final String pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
+		return pathName;
+	}
+
+	protected URL buildURL(final IScope scope, final String urlPath) throws GamaRuntimeException {
+		try {
+			return new URL(urlPath);
+		} catch (final MalformedURLException e1) {
+			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
+		}
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
@@ -157,7 +192,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public final void setContents(final C cont) throws GamaRuntimeException {
+	public final void setContents(final Container cont) throws GamaRuntimeException {
 		if (writable) {
 			setBuffer(cont);
 		}
@@ -171,7 +206,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// Three methods for add and put operations:
 	// The simple method, that simply contains the object to add
 	@Override
-	public void addValue(final IScope scope, final ValueToAdd value) {
+	public void addValue(final IScope scope, final Object value) {
 		fillBuffer(scope);
 		getBuffer().addValue(scope, value);
 	}
@@ -179,14 +214,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// The same but with an index (this index represents the old notion of
 	// parameter where it is needed.
 	@Override
-	public void addValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
+	public void addValueAtIndex(final IScope scope, final Object index, final Object value) {
 		fillBuffer(scope);
 		getBuffer().addValueAtIndex(scope, index, value);
 	}
 
 	// Put, that takes a mandatory index (also replaces the parameter)
 	@Override
-	public void setValueAtIndex(final IScope scope, final Object index, final ValueToAdd value) {
+	public void setValueAtIndex(final IScope scope, final Object index, final Object value) {
 		fillBuffer(scope);
 		getBuffer().setValueAtIndex(scope, index, value);
 	}
@@ -202,7 +237,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	// Adds this value to all slots (if this operation is available), otherwise
 	// replaces the values with this one
 	@Override
-	public void setAllValues(final IScope scope, final ValueToAdd value) {
+	public void setAllValues(final IScope scope, final Object value) {
 		fillBuffer(scope);
 		getBuffer().setAllValues(scope, value);
 	}
@@ -232,7 +267,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, ?> indexes) {
+	public void removeIndexes(final IScope scope, final IContainer indexes) {
 		fillBuffer(scope);
 		getBuffer().removeIndexes(scope, indexes);
 	}
@@ -244,7 +279,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	 */
 	@Override
 	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-		getContents(null);
+		getContents(scope);
 		return getBuffer().checkBounds(scope, index, forAdding);
 
 	}
@@ -276,24 +311,24 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	 * @see msi.gama.interfaces.IGamaContainer#first()
 	 */
 	@Override
-	public V firstValue(final IScope scope) throws GamaRuntimeException {
+	public Contents firstValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().firstValue(scope);
+		return (Contents) getBuffer().firstValue(scope);
 	}
 
 	/*
 	 * @see msi.gama.interfaces.IGamaContainer#get(java.lang.Object)
 	 */
 	@Override
-	public V get(final IScope scope, final K index) throws GamaRuntimeException {
+	public Contents get(final IScope scope, final Object index) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().get(scope, index);
+		return (Contents) getBuffer().get(scope, index);
 	}
 
 	@Override
-	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+	public Contents getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().getFromIndicesList(scope, indices);
+		return (Contents) getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -312,19 +347,19 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public String getPath(final IScope scope) {
-		if (path == null) {
+		if (localPath == null) {
 			if (scope == null || scope.getExperiment() == null)
-				path = originalPath;
+				localPath = originalPath;
 			else {
 				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist()));
 				checkValidity(scope);
 			}
 		}
-		return path;
+		return localPath;
 	}
 
 	@Override
-	public C getContents(final IScope scope) throws GamaRuntimeException {
+	public Container getContents(final IScope scope) throws GamaRuntimeException {
 		if (buffer == null && !exists(scope)) { throw GamaRuntimeException
 				.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope); }
 		fillBuffer(scope);
@@ -353,14 +388,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public java.lang.Iterable<? extends V> iterable(final IScope scope) {
+	public java.lang.Iterable<? extends Contents> iterable(final IScope scope) {
 		return getContents(scope).iterable(scope);
 	}
 
 	@Override
-	public V lastValue(final IScope scope) throws GamaRuntimeException {
+	public Contents lastValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		return getBuffer().lastValue(scope);
+		return (Contents) getBuffer().lastValue(scope);
 	}
 
 	@Override
@@ -370,14 +405,14 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IList<Contents> listValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().listValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public StreamEx<V> stream(final IScope scope) {
+	public StreamEx<Contents> stream(final IScope scope) {
 		getContents(scope);
 		return getBuffer().stream(scope);
 	}
@@ -421,13 +456,13 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath(null) + "')";
+		return "file('" + getPath(null) + "')";
 	}
 
 	@Override
-	public V anyValue(final IScope scope) {
+	public Contents anyValue(final IScope scope) {
 		getContents(scope);
-		return getBuffer().anyValue(scope);
+		return (Contents) getBuffer().anyValue(scope);
 	}
 
 	public File getFile(final IScope scope) {
@@ -438,11 +473,11 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public C getBuffer() {
+	public Container getBuffer() {
 		return buffer;
 	}
 
-	protected void setBuffer(final C buffer) {
+	protected void setBuffer(final Container buffer) {
 		this.buffer = buffer;
 	}
 
@@ -465,6 +500,12 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public final void save(final IScope scope, final Facets saveFacets) {
+
+		// TODO AD
+		// Keep in mind that facets might contain a method for uploading (like method: #post) ?
+		// Keep in mind that facets might contain a content-type
+		// Keep in mind possible additional resources (shp additions)
+
 		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
 		final boolean overwrite = exp == null || Cast.asBool(scope, exp.value(scope));
 		if (overwrite && getFile(scope).exists()) {
@@ -472,12 +513,16 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		}
 		if (!writable)
 			throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope);
+		// This will save to the local file
 		flushBuffer(scope, saveFacets);
+		if (isRemote()) {
+			sendToURL(scope);
+		}
 
 	}
 
 	protected void setPath(final String path) {
-		this.path = path;
+		this.localPath = path;
 	}
 
 }

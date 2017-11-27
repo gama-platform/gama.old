@@ -1,0 +1,110 @@
+/**
+* Name: Spatial Operators
+* Author: Patrick Taillandier
+* Description: Tests various spatial property operators
+* Tags: topology, grid, property, test
+*/
+
+model PropertyTest
+
+global {
+	geometry poly_square <- square(20);
+	geometry poly_circle <- circle(11) at_location {40,40};
+	geometry poly_triangle <- triangle(5);
+	geometry short_line <- line([{50,50},{55,55}]);
+	geometry short_line_2 <- line([{30,40},{55,55}]);
+	geometry long_line <- line([{30,40},{70,55}]);
+	point pt_center <- {50,50};
+	point pt_0 <- {0,0};
+}
+
+experiment TopologyTests type: test {
+	test "Cover"{
+		assert (pt_0 covers pt_0);
+		assert not(pt_center covers pt_0);
+		assert not(pt_0 covers poly_square);
+		assert not(pt_0 covers short_line);
+		assert (short_line covers short_line);
+		assert (short_line covers pt_center);
+		assert not(short_line covers pt_0);
+		assert (poly_square covers pt_center);
+		assert not(poly_square covers pt_0);
+		assert (poly_square covers short_line);
+		assert not(poly_square covers long_line);
+		assert (poly_square covers poly_triangle);
+		assert not(poly_square covers poly_circle);
+	}
+	
+	test "Cross"{
+		assert (poly_square crosses long_line);
+		assert not(poly_square crosses short_line);
+		assert not(poly_square crosses pt_0);
+		assert not(poly_square crosses poly_triangle);
+		assert not(poly_square crosses poly_triangle);
+		assert not(poly_triangle crosses poly_circle);
+	}
+	
+	test "Disjoint"{
+		assert (poly_circle disjoint_from poly_triangle);
+		assert not(poly_square disjoint_from poly_circle);
+		assert (pt_0 disjoint_from pt_center);
+		assert (pt_0 disjoint_from long_line);
+		assert not(pt_center disjoint_from short_line);
+		assert not(long_line disjoint_from poly_square);
+	}
+	
+	test "Intersect"{
+		assert (poly_square intersects poly_circle);
+		assert not(poly_circle intersects poly_triangle);
+		assert not(pt_0 intersects pt_center);
+		assert not(pt_0 intersects long_line);
+		assert (pt_center intersects short_line);
+		assert (long_line intersects poly_square);
+	}
+
+	test "Overlap"{
+		assert (poly_square overlaps poly_circle);
+		assert not(poly_circle overlaps poly_triangle);
+		assert not(pt_0 overlaps pt_center);
+		assert not(pt_0 overlaps long_line);
+		assert (pt_center overlaps short_line);
+		assert (long_line overlaps poly_square);
+	}
+	
+	test "Partially Overlap"{
+		assert (poly_square partially_overlaps poly_circle);
+		assert not(poly_square partially_overlaps poly_triangle);
+		assert not(pt_0 partially_overlaps pt_center);
+		assert not(pt_0 partially_overlaps long_line);
+		assert not(pt_center partially_overlaps short_line);
+		assert not(long_line partially_overlaps poly_square);
+	}
+	
+	test "Touch"{
+		assert (short_line_2 touches long_line);
+		assert not(short_line touches long_line);
+		assert not(pt_0 touches pt_center);
+		assert (pt_center touches short_line);
+		assert not(pt_center touches poly_square);
+		assert not(poly_square touches poly_triangle);
+		assert not(poly_square touches poly_circle);
+	}
+} 
+
+experiment with_visualization type: gui {
+	output {
+		display map {
+			graphics "view" {
+				draw poly_square color: #red border: #black;
+				draw poly_circle color: #green border: #black;
+				draw poly_triangle color: #yellow border: #black;
+				draw short_line color: #black;
+				draw short_line_2 color: #cyan;
+				draw long_line color: #blue;
+				draw circle(1) at: 	pt_center color: #magenta;
+				draw circle(1) at: 	pt_0 color: #pink;
+			}
+		}	
+	}	
+}
+

@@ -1,8 +1,8 @@
 /**
 * Name: Movement on Graph
-* Author:
+* Author: GAMA team
 * Description: 4th part of the tutorial : Incremental Model
-* Tags: graph
+* Tags: Tutorial, Chart, Graph
 */
  
 model model4 
@@ -16,7 +16,7 @@ global {
 	file roads_shapefile <- file("../includes/road.shp");
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
-	int current_hour update: (cycle / 60) mod 24;
+	int current_hour update: current_date.hour;
 	graph road_network;
 	float staying_coeff update: 10.0 ^ (1 + min([abs(current_hour - 9), abs(current_hour - 12), abs(current_hour - 18)]));
 	int nb_people_infected <- nb_infected_init update: people count (each.is_infected);
@@ -29,8 +29,7 @@ global {
 		create building from: buildings_shapefile; 
 		create people number:nb_people {
 			speed <- 5.0 #km/#h;
-			building bd <- one_of(building); 
-			location <- any_location_in(bd);
+			location <- any_location_in(one_of(building));
 		}
 		ask nb_infected_init among people {
 			is_infected <- true;
@@ -66,19 +65,19 @@ species people skills:[moving]{
 			}
 		}
 	}
-	aspect circle{
+	aspect default{
 		draw circle(5) color:is_infected ? #red : #green;
 	}
 }
 
 species road {
-	aspect geom {
+	aspect default {
 		draw shape color: #black;
 	}
 }
 
 species building {
-	aspect geom {
+	aspect default {
 		draw shape color: #gray;
 	}
 }
@@ -91,14 +90,14 @@ experiment main_experiment type:gui{
 		monitor "Current hour" value: current_hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map {
-			species road aspect:geom;
-			species building aspect:geom;
-			species people aspect:circle;			
+			species road ;
+			species building ;
+			species people ;			
 		}
 		display chart refresh: every(10#cycles) {
-			chart "Disease spreading" type: series {
-				data "susceptible" value: nb_people_not_infected color: #green;
-				data "infected" value: nb_people_infected color: #red;
+			chart "Disease spreading" type: series style: spline{
+				data "susceptible" value: nb_people_not_infected color: #green marker: false;
+				data "infected" value: nb_people_infected color: #red marker: false;
 			}
 		}
 	}

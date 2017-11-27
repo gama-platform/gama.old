@@ -10,7 +10,7 @@
 package ummisco.gama.ui.views.inspectors;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,17 +23,13 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.GAMA;
-import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
-import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
@@ -63,8 +59,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			experiment = exp;
 			if (!exp.hasParametersOrUserCommands()) { return; }
 			reset();
-			final Collection<IParameter> params = new ArrayList<>(exp.getParameters().values());
+			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getParameters().values());
 			params.addAll(exp.getExplorableParameters().values());
+			params.addAll(exp.getUserCommands());
+			params.sort(null);
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
 			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
 					+ StringUtils.capitalize(experiment.getDescription().getTitle());
@@ -75,37 +73,37 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		}
 	}
 
-	@Override
-	public void displayItems() {
-		super.displayItems();
-		this.displayCommands();
-	}
+	// @Override
+	// public void displayItems() {
+	// super.displayItems();
+	// // this.displayCommands();
+	// }
 
-	protected void displayCommands() {
-		toolbar.wipe(SWT.LEFT, true);
-		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-		for (final UserCommandStatement command : userCommands) {
-			GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
-			if (color == null)
-				color = IGamaColors.BLUE;
-			toolbar.button(color, command.getName(), new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-
-					GAMA.getExperiment().getAgent().executeAction(scope -> {
-						final Object result = command.executeOn(scope);
-						GAMA.getExperiment().refreshAllOutputs();
-						return result;
-					});
-				}
-
-			}, SWT.LEFT);
-			toolbar.sep(2, SWT.LEFT);
-		}
-		toolbar.refresh(true);
-
-	}
+	// protected void displayCommands() {
+	// toolbar.wipe(SWT.LEFT, true);
+	// final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
+	// for (final UserCommandStatement command : userCommands) {
+	// GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
+	// if (color == null)
+	// color = IGamaColors.BLUE;
+	// toolbar.button(color, command.getName(), new SelectionAdapter() {
+	//
+	// @Override
+	// public void widgetSelected(final SelectionEvent e) {
+	//
+	// GAMA.getExperiment().getAgent().executeAction(scope -> {
+	// final Object result = command.executeOn(scope);
+	// GAMA.getExperiment().refreshAllOutputs();
+	// return result;
+	// });
+	// }
+	//
+	// }, SWT.LEFT);
+	// toolbar.sep(2, SWT.LEFT);
+	// }
+	// toolbar.refresh(true);
+	//
+	// }
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -150,7 +148,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	public void stopDisplayingTooltips() {
-		displayCommands();
+		// displayCommands();
 	}
 
 	@Override

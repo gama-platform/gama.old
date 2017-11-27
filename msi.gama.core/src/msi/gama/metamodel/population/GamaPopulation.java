@@ -167,7 +167,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final int step = scope.getClock().getCycle();
 			if (frequency == 0 || step % frequency != 0) { return true; }
 		}
-		getSpecies().getArchitecture().preStep(scope,this);
+		getSpecies().getArchitecture().preStep(scope, this);
 		return stepAgents(scope);
 
 	}
@@ -179,6 +179,24 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public StreamEx<T> stream(final IScope scope) {
 		return super.stream(scope);
+	}
+
+	/**
+	 * Take copy into account and always creates a list (necessary for #2254)
+	 */
+	@Override
+	public IList<T> listValue(final IScope scope, final IType contentsType, final boolean copy) {
+		if (copy)
+			return GamaListFactory.create(scope, contentsType, this);
+		return this;
+	}
+
+	/**
+	 * Explicity copy (necessary for #2254)
+	 */
+	@Override
+	public IList<T> copy(final IScope scope) {
+		return listValue(scope, getType().getContentType(), true);
 	}
 
 	@Override
@@ -476,11 +494,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
 		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
-		final int rows =
-				exp == null
-						? species.hasFacet(IKeyword.CELL_WIDTH) ? (int) (env.getWidth()
-								/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
-						: Cast.asInt(scope, exp.value(scope));
+		final int rows = exp == null
+				? species.hasFacet(IKeyword.CELL_WIDTH) ? (int) (env.getWidth()
+						/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
+				: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null
 				? species.hasFacet(IKeyword.CELL_HEIGHT) ? (int) (env.getHeight()
@@ -492,20 +509,36 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbors_cache");
 		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
+		exp = species.getFacet("horizontal_orientation");
+		final boolean horizontalOrientation = exp == null || Cast.asBool(scope, exp.value(scope));
+
+		exp = species.getFacet("optimizer");
+		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));
+
 		exp = species.getFacet(IKeyword.NEIGHBORS);
 		if (exp == null) {
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
 		}
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-		exp = species.getFacet(IKeyword.FILE);
-		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+		exp = species.getFacet(IKeyword.FILES);
+		// AD WARNING: The following line is really UNSAFE !!!
+		final IList<GamaGridFile> files = (IList<GamaGridFile>) (exp != null ? exp.value(scope) : null);
 		GridTopology result;
-		if (file == null) {
-			result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
-					useNeighborsCache);
-		} else
-			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
+		if (files != null && !files.isEmpty()) {
+			result = new GridTopology(scope, host, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
+					optimizer);
+		} else {
+			exp = species.getFacet(IKeyword.FILE);
+			final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+			if (file == null) {
+				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, horizontalOrientation,
+						useIndividualShapes, useNeighborsCache, optimizer);
+			} else
+				result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
+						optimizer);
+
+		}
 		// Reverts the modification of the world envelope (see #1953 and #1939)
 		//
 		// final Envelope3D env =
@@ -563,11 +596,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object index, final T value) {
-		addValue(scope, value);
-	}
-
-	public void addAll(final IScope scope, final T value) {
-		addValue(scope, value);
+		fireAgentAdded(scope, value);
+		super.addValueAtIndex(scope, index, value);
 	}
 
 	@Override

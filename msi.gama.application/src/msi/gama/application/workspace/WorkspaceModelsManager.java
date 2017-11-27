@@ -14,11 +14,13 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +55,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
+import org.osgi.framework.Bundle;
+import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 
@@ -68,6 +72,7 @@ public class WorkspaceModelsManager {
 	public final static String GAMA_NATURE = "msi.gama.application.gamaNature";
 	public final static String XTEXT_NATURE = "org.eclipse.xtext.ui.shared.xtextNature";
 	public final static String PLUGIN_NATURE = "msi.gama.application.pluginNature";
+	public final static String TEST_NATURE = "msi.gama.application.testNature";
 	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
@@ -127,6 +132,11 @@ public class WorkspaceModelsManager {
 			filePath = segments[0];
 			expName = segments[1];
 		}
+		if ( filePath.endsWith(".experiment") && expName == null ) {
+			expName = "0";
+			// Verify that it works even if the included model defines experiments itself...
+
+		}
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
 			final String fp = filePath;
@@ -155,7 +165,7 @@ public class WorkspaceModelsManager {
 				if ( en == null ) {
 					// System.out
 					// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
-					GAMA.getGui().editModel(file);
+					GAMA.getGui().editModel(null, file);
 				} else {
 					// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
 					GAMA.getGui().runModel(file, en);
@@ -283,7 +293,7 @@ public class WorkspaceModelsManager {
 						// We open the project
 						proj.open(IResource.NONE, monitor);
 						// And we set some properties to it
-						setValuesProjectDescription(proj, false, false, null);
+						setValuesProjectDescription(proj, false, false, false, null);
 					}
 				};
 				operation.run(new NullProgressMonitor() {
@@ -409,12 +419,6 @@ public class WorkspaceModelsManager {
 
 	}
 
-	private static void linkPluginsModelsToWorkspace() {
-		for ( final String plugin : GamaBundleLoader.getPluginsWithModels().keySet() ) {
-			linkModelsToWorkspace(plugin, GamaBundleLoader.getPluginsWithModels().get(plugin), false);
-		}
-	}
-
 	public static void linkSampleModelsToWorkspace() {
 		final Job job = new Job("Updating the Built-in Models Library") {
 
@@ -430,8 +434,16 @@ public class WorkspaceModelsManager {
 						e.printStackTrace();
 					}
 				}
-				linkModelsToWorkspace("msi.gama.models", "models", true);
-				linkPluginsModelsToWorkspace();
+				final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
+				for ( final Bundle plugin : pluginsWithModels.keySet() ) {
+					for ( final String entry : pluginsWithModels.get(plugin) )
+						linkModelsToWorkspace(plugin, entry, false);
+				}
+				final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
+				for ( final Bundle plugin : pluginsWithTests.keySet() ) {
+					for ( final String entry : pluginsWithTests.get(plugin) )
+						linkModelsToWorkspace(plugin, entry, true);
+				}
 				return Status.OK_STATUS;
 			}
 
@@ -445,37 +457,25 @@ public class WorkspaceModelsManager {
 	 * @param plugin
 	 */
 
-	private static void linkModelsToWorkspace(final String plugin, final String path, final boolean core) {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final URL urlRep = null;
+	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
+		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
+		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;
 		try {
-			final String ext = path == "." ? "/" : "/" + path + "/";
-			// urlRep = FileLocator.toFileURL(new URL("platform:/plugin/" + plugin + ext));
-			// urlRep = urlRep.toURI().normalize().toURL();
+			final URL resolvedFileURL = FileLocator.toFileURL(fileURL);
+			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+			modelsRep = new File(resolvedURI);
 
-			// urlRep = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
+		} catch (final URISyntaxException e1) {
+			e1.printStackTrace();
+		} catch (final IOException e1) {
+			e1.printStackTrace();
+		}
 
-			final URL new_url = FileLocator.resolve(new URL("platform:/plugin/" + plugin + ext));
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			// urlRep = normalizedPath.toUri().toURL();
-			modelsRep = normalizedPath.toFile();
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-			return;
-		} /*
-			 * catch (URISyntaxException e) {
-			 * e.printStackTrace();
-			 * }
-			 */
-
-		// File modelsRep = new File(urlRep.getPath());
-		// System.out.println("chargemen" + modelsRep.getAbsolutePath());
 		final Map<File, IPath> foundProjects = new HashMap<>();
 		findProjects(modelsRep, foundProjects);
-		importBuiltInProjects(plugin, core, workspace, foundProjects);
+		importBuiltInProjects(bundle, core, tests, foundProjects);
 
 		if ( core )
 			stampWorkspaceFromModels();
@@ -506,9 +506,9 @@ public class WorkspaceModelsManager {
 	 * @param workspace
 	 * @param project
 	 */
-	private static void importBuiltInProjects(final String plugin, final boolean core, final IWorkspace workspace,
+	private static void importBuiltInProjects(final Bundle plugin, final boolean core, final boolean tests,
 		final Map<File, IPath> projects) {
-
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		for ( final Map.Entry<File, IPath> entry : projects.entrySet() ) {
 			final File project = entry.getKey();
 			final IPath location = entry.getValue();
@@ -529,7 +529,7 @@ public class WorkspaceModelsManager {
 						}
 					}
 					proj.open(IResource.NONE, monitor);
-					setValuesProjectDescription(proj, true, !core, plugin);
+					setValuesProjectDescription(proj, true, !core, tests, plugin);
 				}
 			};
 			try {
@@ -562,7 +562,7 @@ public class WorkspaceModelsManager {
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
 				project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
 				projectHandle[0] = project;
-				setValuesProjectDescription(project, false, false, null);
+				setValuesProjectDescription(project, false, false, false, null);
 			}
 		};
 		try {
@@ -576,24 +576,30 @@ public class WorkspaceModelsManager {
 	}
 
 	static public void setValuesProjectDescription(final IProject proj, final boolean builtin, final boolean inPlugin,
-		final String pluginName) {
+		final boolean inTests, final Bundle bundle) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
+
+			final List<String> ids = new ArrayList<>();
+			ids.add(XTEXT_NATURE);
+			ids.add(GAMA_NATURE);
+			if ( inTests )
+				ids.add(TEST_NATURE);
+			else if ( inPlugin )
+				ids.add(PLUGIN_NATURE);
+			else if ( builtin )
+				ids.add(BUILTIN_NATURE);
 			desc = proj.getDescription();
-			/* Automatically associate GamaNature and Xtext nature to the project */
-			// String[] ids = desc.getNatureIds();
-			final String[] newIds = new String[builtin ? 3 : 2];
-			// System.arraycopy(ids, 0, newIds, 0, ids.length);
-			newIds[1] = GAMA_NATURE;
-			newIds[0] = XTEXT_NATURE;
+			desc.setNatureIds(ids.toArray(new String[0]));
 			// Addition of a special nature to the project.
-			if ( builtin ) {
-				newIds[2] = inPlugin ? PLUGIN_NATURE : BUILTIN_NATURE;
-			}
-			desc.setNatureIds(newIds);
-			if ( inPlugin && pluginName != null ) {
-				desc.setComment(pluginName);
+			if ( inTests && bundle == null ) {
+				desc.setComment("user defined");
+			} else if ( (inPlugin || inTests) && bundle != null ) {
+				String name = bundle.getSymbolicName();
+				final String[] ss = name.split("\\.");
+				name = ss[ss.length - 1] + " plugin";
+				desc.setComment(name);
 			} else {
 				desc.setComment("");
 			}
@@ -644,10 +650,10 @@ public class WorkspaceModelsManager {
 		String gamaStamp = null;
 		try {
 			final URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
-			final URL new_url = FileLocator.resolve(tmpURL);
-			final String path_s = new_url.getPath().replaceFirst("^/(.:/)", "$1");
-			final java.nio.file.Path normalizedPath = Paths.get(path_s).normalize();
-			final File modelsRep = normalizedPath.toFile();
+			final URL resolvedFileURL = FileLocator.toFileURL(tmpURL);
+			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+			final File modelsRep = new File(resolvedURI);
 
 			// loading file from URL Path is not a good idea. There are some bugs
 			// File modelsRep = new File(urlRep.getPath());
@@ -656,7 +662,7 @@ public class WorkspaceModelsManager {
 			gamaStamp = ".built_in_models_" + time;
 			System.out.println(">GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
 			System.out.println(">GAMA models library version: " + gamaStamp);
-		} catch (final IOException e) {
+		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return gamaStamp;

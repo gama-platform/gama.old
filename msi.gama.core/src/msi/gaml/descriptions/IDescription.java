@@ -137,7 +137,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract IVarDescriptionProvider getDescriptionDeclaringVar(final String name);
 
-	public abstract IDescription getDescriptionDeclaringAction(final String name);
+	public abstract IDescription getDescriptionDeclaringAction(final String name, boolean superInvocation);
 
 	public abstract Iterable<IDescription> getChildrenWithKeyword(String keyword);
 
@@ -227,5 +227,11 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public boolean isSynthetic();
 
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
+
+	public void replaceChildrenWith(Iterable<IDescription> array);
+
+	public boolean isDocumenting();
+
+	public int getOrder();
 
 }

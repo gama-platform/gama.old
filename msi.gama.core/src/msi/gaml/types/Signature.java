@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'Signature.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'Signature.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 
 public class Signature {
 
@@ -57,15 +56,11 @@ public class Signature {
 	}
 
 	public boolean matchesDesiredSignature(final IType... types) {
-		if (types.length != list.length) {
-			return false;
-		}
+		if (types.length != list.length) { return false; }
 		for (int i = 0; i < list.length; i++) {
 			final IType ownType = list[i];
 			final IType desiredType = types[i];
-			if (!Types.intFloatCase(ownType, desiredType) && !desiredType.isAssignableFrom(ownType)) {
-				return false;
-			}
+			if (!Types.intFloatCase(ownType, desiredType) && !desiredType.isAssignableFrom(ownType)) { return false; }
 		}
 		return true;
 	}
@@ -87,20 +82,29 @@ public class Signature {
 	}
 
 	public int distanceTo(final IType... types) {
-		if (types.length != list.length) {
-			return Integer.MAX_VALUE;
-		}
-		int dist = 0;
+		if (types.length != list.length) { return Integer.MAX_VALUE; }
+		// int dist = 0;
+		int max = 0;
+		int min = Integer.MAX_VALUE;
+		// for (int i = 0; i < list.length; i++) {
+		// // 19/02/14 Now using the maximum distance between two types of the
+		// // signature instead of addition.
+		// final int d = types[i].distanceTo(list[i]);
+		// if (d > dist) {
+		// dist = d;
+		// }
+		// // dist += types[i].distanceTo(list[i]);
+		// }
+		// We now take into account the min and the max (see #2266 and the case where [unknown, geometry, geometry] was
+		// preffered to [topology, geometry, geometry] for an input of [topology, a_species, a_species])
 		for (int i = 0; i < list.length; i++) {
-			// 19/02/14 Now using the maximum distance between two types of the
-			// signature instead of addition.
 			final int d = types[i].distanceTo(list[i]);
-			if (d > dist) {
-				dist = d;
-			}
-			// dist += types[i].distanceTo(list[i]);
+			if (max < d)
+				max = d;
+			if (min > d)
+				min = d;
 		}
-		return dist;
+		return min + max;
 	}
 
 	public int distanceTo(final Signature types) {
@@ -108,22 +112,16 @@ public class Signature {
 	}
 
 	public boolean equals(final Signature p) {
-		if (p.list.length != list.length) {
-			return false;
-		}
+		if (p.list.length != list.length) { return false; }
 		for (int i = 0; i < list.length; i++) {
-			if (p.list[i] != list[i]) {
-				return false;
-			}
+			if (p.list[i] != list[i]) { return false; }
 		}
 		return true;
 	}
 
 	@Override
 	public boolean equals(final Object p) {
-		if (!(p instanceof Signature)) {
-			return false;
-		}
+		if (!(p instanceof Signature)) { return false; }
 		return equals((Signature) p);
 	}
 

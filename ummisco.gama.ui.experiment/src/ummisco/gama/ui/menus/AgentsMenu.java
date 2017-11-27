@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -154,7 +155,11 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if (a != null && !a.dead()) {
-				a.getScope().getGui().setHighlightedAgent(a);
+				final IGui gui = a.getScope().getGui();
+				if (gui.getHighlightedAgent() != a)
+					gui.setHighlightedAgent(a);
+				else
+					gui.setHighlightedAgent(null);
 				GAMA.getExperiment().refreshAllOutputs();
 			}
 		}
@@ -247,6 +252,8 @@ public class AgentsMenu extends ContributionItem {
 		if (!topLevel) {
 			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 					"Focus on all displays");
+			actionAgentMenuItem(menu, agent, highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
+					agent.getScope().getGui().getHighlightedAgent() == agent ? "Remove highlight" : "Highlight");
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
@@ -338,11 +345,18 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
+	public static MenuAction getHighlightActionFor(final IAgent a) {
+		if (a == null)
+			return null;
+		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
+				a.getScope().getGui().getHighlightedAgent() == a ? "Remove highlight" : "Highlight");
+	}
+
 	public static MenuAction HIGHLIGHT_ACTION =
 			new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(), "Highlight");
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true, true, HIGHLIGHT_ACTION);
+		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true, true);
 	}
 }

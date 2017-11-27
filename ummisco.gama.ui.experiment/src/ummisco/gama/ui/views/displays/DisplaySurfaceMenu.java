@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DisplaySurfaceMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DisplaySurfaceMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -101,9 +100,7 @@ public class DisplaySurfaceMenu {
 	org.eclipse.swt.widgets.Menu menu;
 
 	public void buildMenu(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
-		if (displays.isEmpty()) {
-			return;
-		}
+		if (displays.isEmpty()) { return; }
 		if (menu != null && !menu.isDisposed()) {
 			menu.dispose();
 			menu = null;
@@ -174,8 +171,8 @@ public class DisplaySurfaceMenu {
 			if (!menu.isVisible() && retriesRemaining > 0) {
 				menu.setVisible(false);
 				{
-					final Shell shell = new Shell(WorkbenchHelper.getDisplay(),
-							SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+					final Shell shell =
+							new Shell(WorkbenchHelper.getDisplay(), SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 					shell.setSize(10, 10); // big enough to avoid errors
 											// from the gtk layer
 					shell.setLocation(menu.getShell().getLocation());
@@ -206,16 +203,12 @@ public class DisplaySurfaceMenu {
 		}
 		if (!byLayer) {
 			// If the list is null or empty, no need to display anything more
-			if (filteredList == null || filteredList.isEmpty()) {
-				return menu;
-			}
+			if (filteredList == null || filteredList.isEmpty()) { return menu; }
 			// If only the world is selected, no need to display anything more
-			if (filteredList.size() == 1 && filteredList.contains(surface.getScope().getSimulation())) {
-				return menu;
-			}
+			if (filteredList.size() == 1 && filteredList.contains(surface.getScope().getSimulation())) { return menu; }
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
-			final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
-					"Focus on this display");
+			final MenuAction focus =
+					new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(), "Focus on this display");
 			final MenuAction[] actions2 = new MenuAction[actions.length + 1];
 			for (int i = 0; i < actions.length; i++) {
 				actions2[i + 1] = actions[i];
@@ -239,7 +232,7 @@ public class DisplaySurfaceMenu {
 					if (layer instanceof GridLayer)
 						actions2 = new MenuAction[] { focus };
 					else
-						actions2 = new MenuAction[] { focus, AgentsMenu.HIGHLIGHT_ACTION };
+						actions2 = new MenuAction[] { focus };
 
 					if (filteredList != null) {
 						pop.retainAll(filteredList);
@@ -259,7 +252,7 @@ public class DisplaySurfaceMenu {
 		return menu;
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
 			final Map<String, Runnable> actions, final Map<String, Image> images) {
 

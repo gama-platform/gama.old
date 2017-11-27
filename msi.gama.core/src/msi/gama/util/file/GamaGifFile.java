@@ -1,6 +1,7 @@
 package msi.gama.util.file;
 
 import msi.gama.common.util.ImageUtils;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -14,7 +15,8 @@ import msi.gaml.types.IType;
 		buffer_type = IType.MATRIX,
 		buffer_content = IType.INT,
 		buffer_index = IType.POINT,
-		concept = { IConcept.IMAGE, IConcept.FILE })
+		concept = { IConcept.IMAGE, IConcept.FILE },
+		doc = @doc ("GIF files represent a particular type of image files, which can be animated"))
 public class GamaGifFile extends GamaImageFile {
 
 	private int averageDelay;
@@ -35,11 +37,16 @@ public class GamaGifFile extends GamaImageFile {
 	}
 
 	public int getAverageDelay() {
-		return ImageUtils.getInstance().getDuration(path) / getFrameCount();
+		return ImageUtils.getInstance().getDuration(localPath) / getFrameCount();
 	}
 
 	public int getFrameCount() {
-		return ImageUtils.getInstance().getFrameCount(path);
+		return ImageUtils.getInstance().getFrameCount(localPath);
+	}
+
+	@Override
+	protected String getHttpContentType() {
+		return "image/gif";
 	}
 
 }

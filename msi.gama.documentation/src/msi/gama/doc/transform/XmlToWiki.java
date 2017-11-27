@@ -22,14 +22,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import msi.gama.doc.util.Constants;
-import msi.gama.doc.util.WorkspaceManager;
-import msi.gama.doc.util.XMLUtils;
-import msi.gama.precompiler.doc.utils.XMLElements;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import msi.gama.doc.util.WorkspaceManager;
+import msi.gama.precompiler.doc.utils.Constants;
+import msi.gama.precompiler.doc.utils.XMLElements;
+import msi.gama.precompiler.doc.utils.XMLUtils;
 
 
 public class XmlToWiki {
@@ -47,14 +47,20 @@ public class XmlToWiki {
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAC-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAC"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAB-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAB"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsDM-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsDM"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsCH-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsCH"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsNZ-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsNZ"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsIN-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsIN"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsOS-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsOS"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsTZ-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsTZ"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		

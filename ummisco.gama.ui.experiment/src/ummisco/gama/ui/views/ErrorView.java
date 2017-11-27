@@ -36,12 +36,13 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.inspectors.ExpandableItemsView;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException> implements IGamaView.Error {
 
@@ -57,7 +58,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
 		createItem(parent, e, false, null);
-
 		return true;
 	}
 
@@ -69,13 +69,35 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public void ownCreatePartControl(final Composite view) {}
 
+	// Experimental: creates a deferred item
 	@Override
-	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
+	protected ParameterExpandItem createItem(final Composite parent, final GamaRuntimeException data,
+			final boolean expanded, final GamaUIColor color) {
+		createViewer(parent);
+		if (getViewer() == null) { return null; }
+		final ScrolledComposite control = createItemContentsFor(data);
+		ParameterExpandItem item;
+		if (expanded) {
+			createStackTrace(control, data);
+			item = createItem(parent, data, control, expanded, color);
+		} else {
+			item = createItem(parent, data, control, expanded, color);
+			item.onExpand(() -> createStackTrace(control, data));
+		}
+		return item;
+	}
+
+	@Override
+	protected ScrolledComposite createItemContentsFor(final GamaRuntimeException exception) {
 		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.H_SCROLL);
 		final GridLayout layout = new GridLayout(1, false);
-		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
+		createStackTrace(compo, exception);
+		return compo;
+	}
+
+	private void createStackTrace(final ScrolledComposite compo, final GamaRuntimeException exception) {
 		final Table t = new Table(compo, SWT.H_SCROLL);
 		t.setFont(GamaFonts.getExpandfont());
 
@@ -83,12 +105,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				GAMA.getGui().editModel(exception.getEditorContext());
+				GAMA.getGui().editModel(null, exception.getEditorContext());
 			}
 
 			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {}
 		});
+		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
 		t.setForeground(exception.isWarning() ? GamaColors.get(PreferencesHelper.WARNING_TEXT_COLOR.getValue()).color()
@@ -106,7 +129,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		t.pack();
 		compo.setContent(t);
 		compo.pack();
-		return compo;
 	}
 
 	@Override
@@ -192,7 +214,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
 			clipboard.dispose();
 		});
-		result.put("Show in editor", () -> GAMA.getGui().editModel(item.getEditorContext()));
+		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getEditorContext()));
 		result.put("Report issue on GitHub", () -> this.reportError(item));
 		return result;
 	}

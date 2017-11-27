@@ -34,6 +34,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -59,7 +60,8 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
-		concept = { IConcept.DXF, IConcept.FILE })
+		concept = { IConcept.DXF, IConcept.FILE },
+		doc = @doc ("DXF files are 2D geometrical files. The internal representation is a list of geometries"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaDXFFile extends GamaGeometryFile {
 

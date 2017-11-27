@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.IRichExperiment;
@@ -34,6 +35,8 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -41,6 +44,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 
 public class ExperimentJob implements IExperimentJob {
@@ -51,11 +55,14 @@ public class ExperimentJob implements IExperimentJob {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
 
+	
+	
 	public static class ListenedVariable {
 
 		String name;
 		int frameRate;
 		OutputType type;
+		DataType dataType;
 		Object value;
 		long step;
 		String path;
@@ -72,9 +79,10 @@ public class ExperimentJob implements IExperimentJob {
 			return name;
 		}
 
-		public void setValue(final Object obj, final long st) {
+		public void setValue(final Object obj, final long st, final DataType typ) {
 			value = obj;
 			this.step = st;
+			this.dataType = typ;
 		}
 
 		public Object getValue() {
@@ -83,6 +91,9 @@ public class ExperimentJob implements IExperimentJob {
 
 		public OutputType getType() {
 			return type;
+		}
+		public DataType getDataType() {
+			return dataType;
 		}
 
 		public String getPath() {
@@ -201,7 +212,7 @@ public class ExperimentJob implements IExperimentJob {
 		for (int i = 0; i < parameters.size(); i++) {
 			final Parameter temp = parameters.get(i);
 
-			if (temp.getName()==null||"".equals(temp.getName())) {
+			if (temp.getName() == null || "".equals(temp.getName())) {
 				this.simulator.setParameter(temp.getVar(), temp.getValue());
 			} else {
 				this.simulator.setParameter(temp.getName(), temp.getValue());
@@ -258,16 +269,16 @@ public class ExperimentJob implements IExperimentJob {
 
 		try {
 			int step = 0;
-			while (!Types.BOOL.cast(simulator.getSimulation().getScope(),
-					endCondition.value(simulator.getSimulation().getScope()), null, false).booleanValue()
-					&& (finalStep >= 0 ? step < finalStep : true)) {
+			// Added because the simulation may be null in case we deal with a batch experiment
+			IScope scope = GAMA.getRuntimeScope();
+			while (!Cast.asBool(scope, endCondition.value(scope)) && (finalStep >= 0 ? step < finalStep : true)) {
 				if (step % affDelay == 0) {
 					System.out.print(".");
 				}
 				if (simulator.isInterrupted())
 					break;
 				doStep();
-
+				scope = GAMA.getRuntimeScope();
 				step++;
 			}
 		} catch (final GamaRuntimeException e) {
@@ -307,15 +318,15 @@ public class ExperimentJob implements IExperimentJob {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v.getName());
-				if (out.getValue() == null) {
+				if (out == null || out.getValue() == null) {
 					// LOGGER UNE ERREUR
 					// GAMA.reportError(this.
 					// .getCurrentSimulation().getScope(), g,
 					// shouldStopSimulation)
 				} else if (out.getValue() instanceof BufferedImage) {
-					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step);
+					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,out.getType());
 				} else {
-					v.setValue(out.getValue(), out.getStep());
+					v.setValue(out.getValue(), out.getStep(),out.getType());
 				}
 
 			}

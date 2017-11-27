@@ -284,4 +284,8 @@ public class GamaToolbar2 extends Composite {
 		return hasTooltip;
 	}
 
+	public void updateItems() {
+
+	}
+
 }

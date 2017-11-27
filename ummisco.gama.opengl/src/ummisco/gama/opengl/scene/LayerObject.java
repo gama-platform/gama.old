@@ -13,12 +13,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
@@ -44,12 +47,12 @@ public class LayerObject {
 	private boolean sceneIsInitialized = false;
 	protected boolean constantRedrawnLayer = false;
 
-	GamaPoint offset = NULL_OFFSET;
-	GamaPoint scale = null;
+	GamaPoint offset = new GamaPoint(NULL_OFFSET);
+	GamaPoint scale = new GamaPoint(NULL_SCALE);
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
-	volatile boolean overlay;
+	final boolean overlay;
 	volatile boolean locked;
 	boolean isAnimated;
 	final Abstract3DRenderer renderer;
@@ -61,12 +64,17 @@ public class LayerObject {
 	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
 		this.layer = layer;
+		this.overlay = computeOverlay();
 		currentList = newCurrentList();
 		if (layer != null && layer.getTrace() != null || renderer instanceof ModernRenderer) {
 			objects = new LinkedList();
 			objects.add(currentList);
 		} else
 			objects = null;
+	}
+
+	protected boolean computeOverlay() {
+		return layer != null && layer.isOverlay();
 	}
 
 	public boolean isLightInteraction() {
@@ -132,24 +140,43 @@ public class LayerObject {
 	}
 
 	private void drawWithoutShader(final OpenGL gl) {
+		final GamaPoint scale = getScale();
 
-		// if (objects.size() == 0) { return; }
 		if (overlay) {
+			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
+			// Addition to fix #2228 and #2222
+			gl.suspendZTranslation();
+			//
+			final double viewHeight = gl.getViewHeight();
+			final double viewWidth = gl.getViewWidth();
+			final double viewRatio = viewWidth / (viewHeight == 0 ? 1 : viewHeight);
+			final double worldHeight = gl.getWorldHeight();
+			final double worldWidth = gl.getWorldWidth();
+			final double maxDim = worldHeight > worldWidth ? worldHeight : worldWidth;
+
 			gl.pushIdentity(GL2.GL_PROJECTION);
-			gl.getGL().glOrtho(0, 1, 0, 1, 1, -1);
+			if (viewRatio >= 1.0) {
+				gl.getGL().glOrtho(0, maxDim * viewRatio, -maxDim, 0, -1, 1);
+			} else {
+				gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
+			}
+
 			gl.pushIdentity(GL2.GL_MODELVIEW);
+		} else {
+			gl.getGL().glEnable(GL2.GL_DEPTH_TEST);
 		}
 		try {
 			gl.pushMatrix();
 			final GamaPoint offset = getOffset();
-			gl.translateBy(offset.x, -offset.y, offset.z);
-			final GamaPoint scale = getScale();
+			gl.translateBy(offset.x, -offset.y, overlay ? 0 : offset.z);
 			gl.scaleBy(scale.x, scale.y, scale.z);
+
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
 			if (picking) {
-				gl.runWithNames(() -> drawAllObjects(gl, true));
+				if (!overlay)
+					gl.runWithNames(() -> drawAllObjects(gl, true));
 			} else {
-				if (isAnimated) {
+				if (isAnimated || overlay) {
 					drawAllObjects(gl, false);
 				} else {
 					if (openGLListIndex == null) {
@@ -161,6 +188,8 @@ public class LayerObject {
 		} finally {
 			gl.popMatrix();
 			if (overlay) {
+				// Addition to fix #2228 and #2222
+				gl.resumeZTranslation();
 				gl.pop(GL2.GL_MODELVIEW);
 				gl.pop(GL2.GL_PROJECTION);
 			}
@@ -168,7 +197,24 @@ public class LayerObject {
 
 	}
 
+	private void addFrame(final OpenGL gl) {
+		final double width = layer.getDefinition().getBox().getSize().getX();
+		final double height = layer.getDefinition().getBox().getSize().getY();
+
+		gl.pushMatrix();
+		gl.translateBy(offset.x, -offset.y - height, 0);
+		gl.scaleBy(width, height, 1);
+		gl.setCurrentColor(((OverlayLayer) layer).getBackground());
+		gl.setCurrentObjectAlpha(((OverlayLayer) layer).getDefinition().getTransparency());
+		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
+		gl.popMatrix();
+		gl.translateBy(offset.x, -offset.y, 0);
+	}
+
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
+		if (overlay) {
+			addFrame(gl);
+		}
 		if (objects != null) {
 			double delta = 0;
 			if (isFading) {
@@ -186,8 +232,9 @@ public class LayerObject {
 
 	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
 			final boolean picking) {
+		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
-		for (final AbstractObject object : list) {
+		for (final AbstractObject object : l) {
 			object.draw(gl, renderer.getDrawerFor(object.getDrawerType()), picking);
 		}
 	}
@@ -218,7 +265,7 @@ public class LayerObject {
 	}
 
 	public void setScale(final GamaPoint scale) {
-		this.scale = scale;
+		this.scale.setLocation(scale);
 	}
 
 	public StringObject addString(final String string, final DrawingAttributes attributes) {
@@ -314,10 +361,6 @@ public class LayerObject {
 
 	public boolean hasTrace() {
 		return getTrace() > 0;
-	}
-
-	public void setOverlay(final boolean b) {
-		overlay = b;
 	}
 
 	public boolean isLocked() {

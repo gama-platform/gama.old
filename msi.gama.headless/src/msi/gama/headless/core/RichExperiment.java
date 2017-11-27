@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.headless.core;
 
+import msi.gama.headless.common.DataType;
 import msi.gama.headless.job.ExperimentJob.OutputType;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.IModel;
@@ -20,7 +21,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class RichExperiment extends Experiment implements IRichExperiment {
-
 	public RichExperiment(final IModel mdl) {
 		super(mdl);
 	}
@@ -45,16 +45,28 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 		output.update();
 
 		Object val = null;
+		DataType tpe = null;
 
 		if ( output instanceof MonitorOutput ) {
 //			((SimulationAgent) this.currentExperiment.getAgent().getSimulation()).getOutputManager().getOutputWithName(parameterName)
 			val = ((MonitorOutput) output).getLastValue();
+			if(val instanceof Integer)
+				tpe = DataType.INT;
+			else if(val instanceof Double)
+				tpe = DataType.INT;
+			else if(val instanceof String)
+				tpe = DataType.STRING;
+			else tpe = DataType.UNDEFINED;
+
+			
 		} else if ( output instanceof LayeredDisplayOutput ) {
 			val = ((LayeredDisplayOutput) output).getImage();
+			tpe = DataType.DISPLAY2D;
 		} else if ( output instanceof LayeredDisplayOutput ) {
 			val = ((FileOutput) output).getFile();
+			tpe = DataType.DISPLAY2D;
 		}
-		return new RichOutput(parameterName, this.currentStep, val);
+		return new RichOutput(parameterName, this.currentStep, val,tpe);
 	}
 
 	@Override

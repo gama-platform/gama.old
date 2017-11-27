@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StatusStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StatusStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -35,14 +34,30 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.STATUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
-		IConcept.DISPLAY, IConcept.TEXT })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-		@facet(name = IKeyword.MESSAGE, type = IType.NONE, optional = false, doc = @doc("Allows to display a necessarily short message in the status box in the upper left corner. No formatting characters (carriage returns, tabs, or Unicode characters) should be used, but a background color can be specified. The message will remain in place until it is replaced by another one or by nil, in which case the standard status (number of cycles) will be displayed again")) }, omissible = IKeyword.MESSAGE)
-@doc(value = "The statement makes the agent output an arbitrary message in the status box.", usages = {
-		@usage(value = "Outputting a message", examples = {
-				@example("status ('This is my status ' + self) color: #yellow;") }) })
+@symbol (
+		name = IKeyword.STATUS,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.DISPLAY, IConcept.TEXT })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+@facets (
+		value = { @facet (
+				name = IKeyword.COLOR,
+				type = IType.COLOR,
+				optional = true,
+				doc = @doc ("The color used for displaying the background of the status message")),
+				@facet (
+						name = IKeyword.MESSAGE,
+						type = IType.NONE,
+						optional = false,
+						doc = @doc ("Allows to display a necessarily short message in the status box in the upper left corner. No formatting characters (carriage returns, tabs, or Unicode characters) should be used, but a background color can be specified. The message will remain in place until it is replaced by another one or by nil, in which case the standard status (number of cycles) will be displayed again")) },
+		omissible = IKeyword.MESSAGE)
+@doc (
+		value = "The statement makes the agent output an arbitrary message in the status box.",
+		usages = { @usage (
+				value = "Outputting a message",
+				examples = { @example ("status ('This is my status ' + self) color: #yellow;") }) })
 public class StatusStatement extends AbstractStatement {
 
 	@Override
@@ -67,7 +82,8 @@ public class StatusStatement extends AbstractStatement {
 		if (agent != null && !agent.dead()) {
 			final Object o = message.value(scope);
 			final String msg = o == null ? null : Cast.asString(scope, o);
-			scope.getGui().getStatus().setStatus(msg, color == null ? null : Cast.asColor(scope, color.value(scope)));
+			scope.getGui().getStatus(scope).setStatus(msg,
+					color == null ? null : Cast.asColor(scope, color.value(scope)));
 		}
 		return mes;
 	}

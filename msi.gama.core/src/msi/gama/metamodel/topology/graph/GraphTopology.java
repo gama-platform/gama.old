@@ -710,7 +710,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public List KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
+	public IList KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		final ISpatialGraph graph = getPlaces();
 		final boolean sourceNode = graph.containsVertex(source);
 		final boolean targetNode = graph.containsVertex(target);
@@ -757,12 +757,12 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 			final int k) {
 		return KpathsBetween(scope, source.getGeometry(), target.getGeometry(), k);
 	}
 
-	public List KpathsBetweenCommon(final IScope scope, final IShape edgeS, final IShape edgeT, final IShape source,
+	public IList KpathsBetweenCommon(final IScope scope, final IShape edgeS, final IShape edgeT, final IShape source,
 			final IShape target, final boolean sourceNode, final boolean targetNode, final int k) {
 		IShape nodeS = source;
 		IShape nodeSbis = source;
@@ -795,7 +795,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 		}
 		final List<IList<IShape>> edgesList = getPlaces().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
-		final List results = GamaListFactory.create(Types.PATH);
+		final IList results = GamaListFactory.create(Types.PATH);
 		for (final IList<IShape> edges : edgesList) {
 			final GamaSpatialPath pp = pathFromEdgesUndirected(scope, edges, edgeS, edgeT, source, target, sourceNode,
 					targetNode, nodeS, nodeSbis, nodeT, false);
@@ -808,9 +808,9 @@ public class GraphTopology extends AbstractTopology {
 		return results;
 	}
 
-	public List KpathsBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
+	public IList KpathsBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
 			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode, final int k) {
-		final List results = GamaListFactory.create(Types.PATH);
+		final IList results = GamaListFactory.create(Types.PATH);
 		if (edgeS.equals(edgeT)) {
 			final GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if (source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS)) {

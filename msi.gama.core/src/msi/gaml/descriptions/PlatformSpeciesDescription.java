@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
@@ -23,6 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 
@@ -103,6 +105,14 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 		if (provider == null && alternateVarProvider != null && alternateVarProvider.hasAttribute(name))
 			provider = alternateVarProvider;
 		return provider;
+	}
+
+	public IExpression getFakePrefExpression(final String key) {
+		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key,
+				"This preference is not available in the current configuration of GAMA");
+		final VariableDescription var = (VariableDescription) DescriptionFactory.create(IKeyword.UNKNOWN,
+				PlatformSpeciesDescription.this, NAME, key);
+		return var.getVarExpr(true);
 	}
 
 }

@@ -39,7 +39,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 				{
 					put(grammarAccess.getEntryAccess().getAlternatives(), "rule__Entry__Alternatives");
 					put(grammarAccess.getHeadlessExperimentAccess().getNameAlternatives_2_0(), "rule__HeadlessExperiment__NameAlternatives_2_0");
-					put(grammarAccess.getHeadlessExperimentAccess().getAlternatives_6(), "rule__HeadlessExperiment__Alternatives_6");
+					put(grammarAccess.getHeadlessExperimentAccess().getAlternatives_5(), "rule__HeadlessExperiment__Alternatives_5");
 					put(grammarAccess.getS_SectionAccess().getAlternatives(), "rule__S_Section__Alternatives");
 					put(grammarAccess.getS_GlobalAccess().getAlternatives_2(), "rule__S_Global__Alternatives_2");
 					put(grammarAccess.getS_SpeciesAccess().getAlternatives_4(), "rule__S_Species__Alternatives_4");
@@ -68,6 +68,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.get_SpeciesKeyAccess().getAlternatives(), "rule___SpeciesKey__Alternatives");
 					put(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getAlternatives(), "rule___1Expr_Facets_BlockOrEnd_Key__Alternatives");
 					put(grammarAccess.get_LayerKeyAccess().getAlternatives(), "rule___LayerKey__Alternatives");
+					put(grammarAccess.get_DoKeyAccess().getAlternatives(), "rule___DoKey__Alternatives");
 					put(grammarAccess.get_VarOrConstKeyAccess().getAlternatives(), "rule___VarOrConstKey__Alternatives");
 					put(grammarAccess.get_ReflexKeyAccess().getAlternatives(), "rule___ReflexKey__Alternatives");
 					put(grammarAccess.get_AssignmentKeyAccess().getAlternatives(), "rule___AssignmentKey__Alternatives");
@@ -119,6 +120,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getImportAccess().getGroup_2(), "rule__Import__Group_2__0");
 					put(grammarAccess.getPragmaAccess().getGroup(), "rule__Pragma__Group__0");
 					put(grammarAccess.getHeadlessExperimentAccess().getGroup(), "rule__HeadlessExperiment__Group__0");
+					put(grammarAccess.getHeadlessExperimentAccess().getGroup_3(), "rule__HeadlessExperiment__Group_3__0");
 					put(grammarAccess.getS_GlobalAccess().getGroup(), "rule__S_Global__Group__0");
 					put(grammarAccess.getS_SpeciesAccess().getGroup(), "rule__S_Species__Group__0");
 					put(grammarAccess.getS_ExperimentAccess().getGroup(), "rule__S_Experiment__Group__0");
@@ -127,6 +129,8 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_LoopAccess().getGroup(), "rule__S_Loop__Group__0");
 					put(grammarAccess.getS_IfAccess().getGroup(), "rule__S_If__Group__0");
 					put(grammarAccess.getS_IfAccess().getGroup_4(), "rule__S_If__Group_4__0");
+					put(grammarAccess.getS_TryAccess().getGroup(), "rule__S_Try__Group__0");
+					put(grammarAccess.getS_TryAccess().getGroup_2(), "rule__S_Try__Group_2__0");
 					put(grammarAccess.getS_OtherAccess().getGroup(), "rule__S_Other__Group__0");
 					put(grammarAccess.getS_ReturnAccess().getGroup(), "rule__S_Return__Group__0");
 					put(grammarAccess.getS_ReflexAccess().getGroup(), "rule__S_Reflex__Group__0");
@@ -262,9 +266,9 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getHeadlessExperimentAccess().getKeyAssignment_0(), "rule__HeadlessExperiment__KeyAssignment_0");
 					put(grammarAccess.getHeadlessExperimentAccess().getFirstFacetAssignment_1(), "rule__HeadlessExperiment__FirstFacetAssignment_1");
 					put(grammarAccess.getHeadlessExperimentAccess().getNameAssignment_2(), "rule__HeadlessExperiment__NameAssignment_2");
-					put(grammarAccess.getHeadlessExperimentAccess().getImportURIAssignment_4(), "rule__HeadlessExperiment__ImportURIAssignment_4");
-					put(grammarAccess.getHeadlessExperimentAccess().getFacetsAssignment_5(), "rule__HeadlessExperiment__FacetsAssignment_5");
-					put(grammarAccess.getHeadlessExperimentAccess().getBlockAssignment_6_0(), "rule__HeadlessExperiment__BlockAssignment_6_0");
+					put(grammarAccess.getHeadlessExperimentAccess().getImportURIAssignment_3_1(), "rule__HeadlessExperiment__ImportURIAssignment_3_1");
+					put(grammarAccess.getHeadlessExperimentAccess().getFacetsAssignment_4(), "rule__HeadlessExperiment__FacetsAssignment_4");
+					put(grammarAccess.getHeadlessExperimentAccess().getBlockAssignment_5_0(), "rule__HeadlessExperiment__BlockAssignment_5_0");
 					put(grammarAccess.getS_GlobalAccess().getKeyAssignment_0(), "rule__S_Global__KeyAssignment_0");
 					put(grammarAccess.getS_GlobalAccess().getFacetsAssignment_1(), "rule__S_Global__FacetsAssignment_1");
 					put(grammarAccess.getS_GlobalAccess().getBlockAssignment_2_0(), "rule__S_Global__BlockAssignment_2_0");
@@ -298,6 +302,9 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_IfAccess().getExprAssignment_2(), "rule__S_If__ExprAssignment_2");
 					put(grammarAccess.getS_IfAccess().getBlockAssignment_3(), "rule__S_If__BlockAssignment_3");
 					put(grammarAccess.getS_IfAccess().getElseAssignment_4_1(), "rule__S_If__ElseAssignment_4_1");
+					put(grammarAccess.getS_TryAccess().getKeyAssignment_0(), "rule__S_Try__KeyAssignment_0");
+					put(grammarAccess.getS_TryAccess().getBlockAssignment_1(), "rule__S_Try__BlockAssignment_1");
+					put(grammarAccess.getS_TryAccess().getCatchAssignment_2_1(), "rule__S_Try__CatchAssignment_2_1");
 					put(grammarAccess.getS_OtherAccess().getKeyAssignment_0(), "rule__S_Other__KeyAssignment_0");
 					put(grammarAccess.getS_OtherAccess().getFacetsAssignment_1(), "rule__S_Other__FacetsAssignment_1");
 					put(grammarAccess.getS_OtherAccess().getBlockAssignment_2_0(), "rule__S_Other__BlockAssignment_2_0");

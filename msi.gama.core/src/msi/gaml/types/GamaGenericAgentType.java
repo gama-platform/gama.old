@@ -11,6 +11,7 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -32,7 +33,8 @@ import msi.gaml.descriptions.SpeciesDescription;
 		id = IType.AGENT,
 		wraps = { IAgent.class },
 		kind = ISymbolKind.Variable.REGULAR,
-		concept = { IConcept.TYPE, IConcept.SPECIES })
+		concept = { IConcept.TYPE, IConcept.SPECIES },
+		doc = @doc ("The basic and default type of agents in GAML"))
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {

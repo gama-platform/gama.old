@@ -130,6 +130,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected LightHelper lightHelper;
 	protected volatile boolean inited;
 	protected volatile boolean visible;
+	// protected volatile boolean shouldRecomputeLayerBounds;
 
 	public boolean colorPicking = false;
 	protected GL2 gl;
@@ -148,6 +149,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	@Override
 	public void setDisplaySurface(final IDisplaySurface d) {
 		super.setDisplaySurface(d);
+		d.getScope().setGraphics(this);
 		worldDimensions = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		camera = new CameraArcBall(this);
 		camera.initialize();
@@ -162,7 +164,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public abstract IKeystoneState getKeystone();
 
-	@SuppressWarnings ("unused")
 	public GLAutoDrawable createDrawable(final Composite parent) {
 		final GLProfile profile = GLProfile.getDefault();
 		final GLCapabilities cap = new GLCapabilities(profile);
@@ -252,6 +253,26 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		camera.initialize();
 		initializeCanvasListeners();
 
+	}
+
+	@Override
+	public double getxRatioBetweenPixelsAndModelUnits() {
+		if (currentLayer == null) {
+			return getDisplayWidth() / data.getEnvWidth();
+		} else if (currentLayer instanceof OverlayLayer) { return this.getViewWidth() / data.getEnvWidth(); }
+		return currentLayer.getSizeInPixels().x / data.getEnvWidth();
+	}
+
+	@Override
+	public double getyRatioBetweenPixelsAndModelUnits() {
+		if (currentLayer == null) {
+			return getDisplayHeight() / data.getEnvHeight();
+		} else if (currentLayer instanceof OverlayLayer) {
+			// return getxRatioBetweenPixelsAndModelUnits();
+			return this.getViewHeight() / data.getEnvHeight();
+		} else {
+			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
+		}
 	}
 
 	public final double getWidth() {
@@ -375,10 +396,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public double getCurrentZRotation() {
 		return data.getCurrentRotationAboutZ();
-	}
-
-	public boolean isDrawRotationHelper() {
-		return drawRotationHelper;
 	}
 
 	public GamaPoint getRotationHelperPosition() {
@@ -522,6 +539,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		if (currentScene == null) { return; }
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(openGL);
+		// if (this.shouldRecomputeLayerBounds) {
+		// surface.getManager().recomputeBounds(this);
+		// shouldRecomputeLayerBounds = false;
+		// }
 		// if picking, we draw a first pass to pick the color
 		if (pickingState.isBeginningPicking()) {
 			beginPicking();
@@ -574,7 +595,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 		GamaPoint currentOffset, currentScale;
-		if (!(layer instanceof OverlayLayer)) {
+		if (!layer.isOverlay()) {
 			final double currentZLayer = getMaxEnvDim() * (layer.getPosition().getZ() + layer.getAddedElevation());
 
 			// get the value of the z scale if positive otherwise set it to 1.
@@ -589,11 +610,12 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 					getYOffsetInPixels() / (getHeight() / worldDimensions.y), currentZLayer);
 			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
 		} else {
-			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / worldDimensions.x),
-					getYOffsetInPixels() / (getHeight() / worldDimensions.y), 1);
+			layer.recomputeBounds(this, surface.getScope());
+			currentOffset = new GamaPoint(getXOffsetInPixels() * (worldDimensions.x / openGL.getViewWidth()),
+					getYOffsetInPixels() * (worldDimensions.y / openGL.getViewHeight()), 0);
+			// System.out.println("XOffsetinPixels: " + getXOffsetInPixels() + " Y " + getYOffsetInPixels());
 
-			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), 1);
-
+			currentScale = new GamaPoint(1, 1, 1);
 		}
 		final ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if (scene != null) {
@@ -618,4 +640,13 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public abstract void endPicking();
 
+	@Override
+	public int getWidthForOverlay() {
+		return getViewWidth();
+	}
+
+	@Override
+	public int getHeightForOverlay() {
+		return getViewHeight();
+	}
 }

@@ -65,12 +65,61 @@ public class System {
 	}
 
 	@operator (
+			value = "is_error",
+			can_be_const = true,
+			concept = IConcept.TEST)
+	@doc ("Returns whether or not the argument raises an error when evaluated")
+	public static Boolean is_error(final IScope scope, final IExpression expr) {
+		try {
+			expr.value(scope);
+		} catch (final GamaRuntimeException e) {
+			return !e.isWarning();
+		} catch (final Exception e1) {}
+		return false;
+	}
+
+	@operator (
+			value = "is_warning",
+			can_be_const = true,
+			concept = IConcept.TEST)
+	@doc ("Returns whether or not the argument raises a warning when evaluated")
+	public static Boolean is_warning(final IScope scope, final IExpression expr) {
+		try {
+			expr.value(scope);
+		} catch (final GamaRuntimeException e) {
+			return e.isWarning();
+		} catch (final Exception e1) {}
+		return false;
+	}
+
+	@operator (
+			value = "command",
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
+	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
+
+	public static String console(final IScope scope, final String s) {
+		return console(scope, s, scope.getSimulation().getExperiment().getWorkingPath());
+	}
+
+	@operator (
+			value = "command",
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
+	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
+
+	public static String console(final IScope scope, final String s, final String directory) {
+		return console(scope, s, directory, GamaMapFactory.create());
+	}
+
+	@operator (
 			value = "command",
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
 
-	public static String cpnsole(final IScope scope, final String s) {
+	public static String console(final IScope scope, final String s, final String directory,
+			final GamaMap<String, String> environment) {
 		if (s == null || s.isEmpty())
 			return "";
 		final StringBuilder output = new StringBuilder();
@@ -85,7 +134,8 @@ public class System {
 		}
 		final ProcessBuilder b = new ProcessBuilder(commands);
 		b.redirectErrorStream(true);
-		b.directory(new File(scope.getSimulation().getExperiment().getWorkingPath()));
+		b.directory(new File(directory));
+		b.environment().putAll(environment);
 		try {
 			final Process p = b.start();
 			if (nonBlocking)
@@ -123,10 +173,8 @@ public class System {
 							value = "agent1.location",
 							equals = "the location of the agent agent1",
 							isExecutable = false),
-							@example (
-									value = "map(nil).keys",
-									raises = "exception",
-									isTestOnly = false) }))
+						//	@example (value = "map(nil).keys", raises = "exception", isTestOnly = false) 
+					}))
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 			throws GamaRuntimeException {
 		if (a == null) {
@@ -171,10 +219,13 @@ public class System {
 			examples = {
 					@example ("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 					@example (
-							value = "assert (values at \"Number\") equals: 100;",
+							value = "(values at \"Number\")",
+							equals = "100",
+							returnType = "int",
 							isTestOnly = true),
 					@example (
-							value = "assert (values at \"Location\") equals: {10,10};",
+							value = " (values at \"Location\")", equals = "{10,10}",
+							returnType = "point",
 							isTestOnly = true),
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
@@ -234,7 +285,7 @@ public class System {
 			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent).getValue();
 		} catch (final GamaRuntimeException e) {
-			scope.getGui().getConsole().informConsole(
+			scope.getGui().getConsole(scope).informConsole(
 					"Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgent()
 							+ java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage(),
 					scope.getRoot());

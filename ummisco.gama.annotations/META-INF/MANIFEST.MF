@@ -4,9 +4,9 @@ Bundle-Name: Annotations shared by all GAMA plugins
 Bundle-SymbolicName: ummisco.gama.annotations
 Bundle-Version: 1.7.0.qualifier
 Bundle-Vendor: UMMISCO
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ JavaSE-1.8
 Export-Package: msi.gama.common.interfaces,
  msi.gama.precompiler,
  msi.gama.precompiler.constants,
- msi.gama.precompiler.doc,
  msi.gama.precompiler.doc.utils

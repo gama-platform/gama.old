@@ -10,6 +10,7 @@
 package ummisco.gama.ui.wizards;
 
 import java.net.InetAddress;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -32,6 +33,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
+import msi.gaml.operators.Strings;
+import ummisco.gama.ui.resources.GamaFonts;
+
 /**
  * The "New" wizard page allows setting the container for the new file as well as the file name. The page will only
  * accept file name without the extension OR with the extension that matches the expected one.
@@ -45,10 +49,10 @@ public class NewFileWizardPage extends WizardPage {
 	private Text descriptionText;
 	private Text titleText;
 	private Button yesButton;
-	private Button exampleModelButton;
-	private Button emptyModelButton;
-	private Button skeletonModelButton;
-	private String typeOfModel = "empty";;
+	// private Button testModelButton;
+	// private Button emptyModelButton;
+	// private Button skeletonModelButton;
+	private String typeOfModel = "Empty";
 	private final ISelection selection;
 
 	public NewFileWizardPage(final ISelection selection) {
@@ -65,8 +69,8 @@ public class NewFileWizardPage extends WizardPage {
 		container.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
-		Label label = new Label(container, SWT.NULL);
-		label.setText("&Container:");
+
+		createLabel(container, "&Container:");
 
 		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -82,53 +86,31 @@ public class NewFileWizardPage extends WizardPage {
 				handleBrowse();
 			}
 		});
+		createLabel(container, "&Choose a template:");
 
-		label = new Label(container, SWT.NULL);
-		label.setText("&Choose a model:");
-
-		Composite middleComposite = new Composite(container, SWT.NULL);
+		final Composite middleComposite = new Composite(container, SWT.NULL);
 		FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
+		Arrays.asList("Empty", "Skeleton", "Test").forEach(s -> {
+			final Button b = new Button(middleComposite, SWT.RADIO);
+			b.setText(s);
+			if (s.equals("Empty"))
+				b.setSelection(true);
+			b.addSelectionListener(new SelectionAdapter() {
 
-		emptyModelButton = new Button(middleComposite, SWT.RADIO);
-		emptyModelButton.setText("Empty");
-		emptyModelButton.setSelection(true);
-		skeletonModelButton = new Button(middleComposite, SWT.RADIO);
-		skeletonModelButton.setText("Skeleton");
-		exampleModelButton = new Button(middleComposite, SWT.RADIO);
-		exampleModelButton.setText("Example");
-		emptyModelButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					typeOfModel = Strings.toLowerCase(((Button) e.widget).getText());
+					updateStatus(null);
+					dialogChanged();
+					descriptionText.setText(typeOfModel.equals("test") ? "A model dedicated to run unit tests" : "");
+				}
 
-			@Override
-			public void widgetSelected(final SelectionEvent se) {
-				typeOfModel = "empty";
-				radioChanged();
-			}
-
-		});
-		exampleModelButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent se) {
-				typeOfModel = "example";
-				radioChanged();
-			}
-		});
-		skeletonModelButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent se) {
-				typeOfModel = "skeleton";
-				radioChanged();
-			}
+			});
 		});
 
-		/* Need to add empty label so the next controls are pushed to the next line in the grid. */
-		label = new Label(container, SWT.NULL);
-		label.setText("");
-
-		label = new Label(container, SWT.NULL);
-		label.setText("&File name:");
+		createLabel(container, null);
+		createLabel(container, "&File name:");
 
 		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -140,20 +122,12 @@ public class NewFileWizardPage extends WizardPage {
 			if (i > 0) {
 				// model title = filename less extension less all non alphanumeric characters
 				titleText.setText(fname.substring(0, i).replaceAll("[^\\p{Alnum}]", ""));
-			} /*
-				 * else if (fname.length()>0) { int pos = t.getSelection().x; fname =
-				 * fname.replaceAll("[[^\\p{Alnum}]&&[^_-]&&[^\\x2E]]", "_"); t.setText(fname+".gaml");
-				 * t.setSelection(pos); } else { t.setText("new.gaml"); }
-				 */
+			}
 			dialogChanged();
 		});
 
-		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		label = new Label(container, SWT.NULL);
-		label.setText("");
-
-		label = new Label(container, SWT.NULL);
-		label.setText("&Author:");
+		createLabel(container, null);
+		createLabel(container, "&Author:");
 
 		authorText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -161,25 +135,17 @@ public class NewFileWizardPage extends WizardPage {
 		authorText.setText(getComputerFullName());
 		authorText.addModifyListener(e -> dialogChanged());
 
-		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		label = new Label(container, SWT.NULL);
-		label.setText("");
-
-		label = new Label(container, SWT.NULL);
-		label.setText("&Model name:");
+		createLabel(container, null);
+		createLabel(container, "&Model name:");
 
 		titleText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		titleText.setLayoutData(gd);
-		titleText.setText("new");
+		titleText.setText("New Model");
 		titleText.addModifyListener(e -> dialogChanged());
 
-		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		label = new Label(container, SWT.NULL);
-		label.setText("");
-
-		label = new Label(container, SWT.NULL);
-		label.setText("&Model description:");
+		createLabel(container, null);
+		createLabel(container, "&Model description:");
 
 		descriptionText = new Text(container, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		descriptionText.setBounds(0, 0, 250, 100);
@@ -192,22 +158,20 @@ public class NewFileWizardPage extends WizardPage {
 		 */
 		// TODO Dirty!! Change the way to do this
 		for (int i = 0; i < 7; i++) {
-			label = new Label(container, SWT.NULL);
-			label.setText("");
+			createLabel(container, null);
 		}
 
-		label = new Label(container, SWT.NULL);
-		label.setText("&Create a html template \nfor the model description ?");
+		createLabel(container, "&Create a html template \nfor the model description ?");
 
-		middleComposite = new Composite(container, SWT.NULL);
+		final Composite compo = new Composite(container, SWT.NULL);
 		fillLayout = new FillLayout();
-		middleComposite.setLayout(fillLayout);
+		compo.setLayout(fillLayout);
 
-		yesButton = new Button(middleComposite, SWT.RADIO);
+		yesButton = new Button(compo, SWT.RADIO);
 		yesButton.setText("Yes");
-		yesButton.setSelection(true);
-		final Button noButton = new Button(middleComposite, SWT.RADIO);
+		final Button noButton = new Button(compo, SWT.RADIO);
 		noButton.setText("No");
+		noButton.setSelection(true);
 		yesButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -220,6 +184,15 @@ public class NewFileWizardPage extends WizardPage {
 		initialize();
 		dialogChanged();
 		setControl(container);
+	}
+
+	Label createLabel(final Composite c, final String t) {
+		final Label label = new Label(c, t == null ? SWT.NULL : SWT.RIGHT);
+		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		label.setLayoutData(d);
+		label.setFont(GamaFonts.getLabelfont());
+		label.setText(t == null ? "" : t);
+		return label;
 	}
 
 	/**
@@ -238,22 +211,6 @@ public class NewFileWizardPage extends WizardPage {
 		return uname;
 	}
 
-	private void radioChanged() {
-		if (exampleModelButton.getSelection()) {
-			descriptionText.setText("This model displays an awesome simulation of something ...");
-			// titleText.setText("example");
-			// fileText.setText("example.gaml");
-			updateStatus(null);
-		}
-		if (emptyModelButton.getSelection() || skeletonModelButton.getSelection()) {
-			descriptionText.setText("Describe here the model and its experiments");
-			// titleText.setText("new");
-			// fileText.setText("new.gaml");
-			updateStatus(null);
-		}
-		dialogChanged();
-	}
-
 	/** Tests if the current workbench selection is a suitable container to use. */
 	private void initialize() {
 		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
@@ -270,7 +227,7 @@ public class NewFileWizardPage extends WizardPage {
 				containerText.setText(container.getFullPath().toString());
 			}
 		}
-		fileText.setText("new.gaml");
+		fileText.setText("New Model.gaml");
 	}
 
 	/**
@@ -310,7 +267,7 @@ public class NewFileWizardPage extends WizardPage {
 		final String author = getAuthor();
 		final String titleName = getModelName();
 		if (author.length() == 0) {
-			updateStatus("The name of the author must be specified");
+			updateStatus("The name of the author should be specified");
 			return;
 		}
 
@@ -320,10 +277,6 @@ public class NewFileWizardPage extends WizardPage {
 		}
 
 		final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
-		// if ( resource == null ) {
-		// updateStatus("File container must be specified");
-		// return;
-		// }
 		final IContainer container = (IContainer) resource;
 
 		if (container != null) {
@@ -333,20 +286,12 @@ public class NewFileWizardPage extends WizardPage {
 				updateStatus("A model file with the same name already exists");
 				return;
 			}
-			if (htmlfile.exists()) {
-				updateStatus("Model name already defined in documentation");
-				return;
-			}
+			// if (htmlfile.exists()) {
+			// updateStatus("Model name already defined in documentation");
+			// return;
+			// }
 		}
 
-		// if ( (resource.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0 ) {
-		// updateStatus("File container must exist");
-		// return;
-		// }
-		// if ( !resource.isAccessible() ) {
-		// updateStatus("Project must be writable");
-		// return;
-		// }
 		updateStatus(null);
 	}
 

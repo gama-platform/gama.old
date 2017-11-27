@@ -264,7 +264,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
 		if (DEBUG) {
-			scope.getGui().getConsole().informConsole(updateComm + " was run", scope.getRoot());
+			scope.getGui().getConsole(scope).informConsole(updateComm + " was run", scope.getRoot());
 		}
 
 		return row_count;
@@ -360,7 +360,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString(), scope);
 		}
 		if (DEBUG) {
-			scope.getGui().getConsole().informConsole("Insert into " + " was run", scope.getRoot());
+			scope.getGui().getConsole(scope).informConsole("Insert into " + " was run", scope.getRoot());
 		}
 
 		return rec_no;

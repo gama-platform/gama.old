@@ -95,8 +95,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 			layout = Cast.asInt(scope, exp.value(scope));
 		}
 		if (super.init(scope)) {
-			scope.getGui().applyLayout(getLayout());
-			if (GamaPreferences.Runtime.CORE_AUTO_RUN.getValue()) {
+			scope.getGui().applyLayout(scope, getLayout());
+			if (scope.getExperiment().getSpecies().isAutorun()) {
 				GAMA.startFrontmostExperiment();
 			}
 			return true;
@@ -108,23 +108,24 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		return layout;
 	}
 
-	// We dont allow permanent outputs to do their first step (to fix Issue
-	// #1273)
+	// We dont allow permanent outputs for batch experiments to do their first step (to fix Issue
+	// #1273) -- Conflicts with Issue #2204
 	@Override
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		return true;
+		if (scope.getExperiment().getSpecies().isBatch())
+			return true;
+		return super.initialStep(scope, output);
 	}
 
 	@Override
 	public void add(final IOutput output) {
-		if (!(output instanceof AbstractOutput)) { return; }
 		((AbstractOutput) output).setPermanent();
 		super.add(output);
 	}
 
 	@Override
-	public synchronized void dispose() {
-		GAMA.getGui().cleanAfterExperiment();
+	public synchronized void dispose(final IScope scope) {
+		GAMA.getGui().cleanAfterExperiment(scope);
 		super.dispose();
 	}
 

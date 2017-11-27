@@ -109,15 +109,29 @@
                </parameter>
             </command>
             <separator
-                  name="msi.gama.application.separator2"
+                  name="msi.gama.application.separator22"
                   visible="true">
             </separator>
+            <command
+                  commandId="org.eclipse.ui.newWizard"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+                  label="Test…"
+                  style="push">
+               <parameter
+                     name="newWizardId"
+                     value="msi.gama.gui.wizards.NewTestExperimentWizard">
+               </parameter>
+            </command>
             <command
                   commandId="org.eclipse.ui.newWizard"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
                   label="Other..."
                   style="push">
             </command>
+            <separator
+                  name="msi.gama.application.separator2"
+                  visible="true">
+            </separator>
          </menu>
          <menu
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
@@ -131,7 +145,7 @@
                   style="push">
                <parameter
                      name="importWizardId"
-                     value="org.eclipse.ui.wizards.import.ExternalProject">
+                     value="ummisco.gama.ui.import.ExternalProject">
                </parameter>
             </command>
             <command
@@ -266,16 +280,30 @@
                   value="msi.gama.gui.wizards.NewExperimentWizard">
             </parameter>
          </command>
+         <separator
+               name="msi.gama.application.separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+               label="Test…"
+               style="push">
+            <parameter
+                  name="newWizardId"
+                  value="msi.gama.gui.wizards.NewTestExperimentWizard">
+            </parameter>
+         </command>
+         <separator
+               name="msi.gama.application.separator10"
+               visible="true">
+         </separator>
          <command
                commandId="org.eclipse.ui.newWizard"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
                label="Other..."
                style="push">
          </command>
-         <separator
-               name="msi.gama.application.separator10"
-               visible="true">
-         </separator>
       </menuContribution>
    </extension>
    <extension
@@ -512,26 +540,38 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="ummisco.gama.ui.wizards.NewFileWizard"
+            hasPages="true"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
             id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
             project="false">
       </wizard>
        <wizard
-            category="msi.gama.gui.wizards.GAMA"
-            class="ummisco.gama.ui.wizards.NewExperimentWizard"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
-            id="msi.gama.gui.wizards.NewExperimentWizard"
-            name="Experiment file"
-            project="false">
+             category="msi.gama.gui.wizards.GAMA"
+             class="ummisco.gama.ui.wizards.NewExperimentWizard"
+             hasPages="true"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+             id="msi.gama.gui.wizards.NewExperimentWizard"
+             name="Experiment file"
+             project="false">
       </wizard>
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="ummisco.gama.ui.wizards.NewProjectWizard"
+            hasPages="true"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">
+      </wizard>
+      <wizard
+            category="msi.gama.gui.wizards.GAMA"
+            class="ummisco.gama.ui.wizards.NewTestExperimentWizard"
+            hasPages="true"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
+            id="msi.gama.gui.wizards.NewTestExperimentWizard"
+            name="Test experiment file"
+            project="false">
       </wizard>
    </extension>
    <extension
@@ -630,5 +670,15 @@ type="java.lang.Object">
          </activeWhen>
       </handler>
    </extension>
+    <extension
+          point="org.eclipse.ui.importWizards">
+       <wizard
+             category="msi.gama.gui.wizards.GAMA"
+             class="ummisco.gama.ui.wizards.ImportProjectWizard"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
+             id="ummisco.gama.ui.import.ExternalProject"
+             name="GAMA Project">
+       </wizard>
+    </extension>
 
 </plugin>

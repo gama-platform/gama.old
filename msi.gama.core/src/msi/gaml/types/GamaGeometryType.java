@@ -47,6 +47,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -74,7 +75,8 @@ import msi.gaml.species.ISpecies;
 		id = IType.GEOMETRY,
 		wraps = { IShape.class, GamaShape.class },
 		kind = ISymbolKind.Variable.REGULAR,
-		concept = { IConcept.TYPE, IConcept.GEOMETRY })
+		concept = { IConcept.TYPE, IConcept.GEOMETRY },
+		doc = @doc ("Represents geometries, i.e. the support for the shapes of agents and all the spatial operations in GAMA."))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGeometryType extends GamaType<IShape> {
 
@@ -361,21 +363,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildHexagon(final double size, final ILocation location) {
-		final double x = location.getX();
-		final double y = location.getY();
-		final double h = size / 2;
-		final double width = size * (FastMath.sqrt(3) / 2.0);
-		final Coordinate[] coords = new Coordinate[7];
-		coords[0] = new GamaPoint(x, y + width);
-		coords[1] = new GamaPoint(x + h, y);
-		coords[2] = new GamaPoint(x + 1.5 * size, y);
-		coords[3] = new GamaPoint(x + 2 * size, y + width);
-		coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
-		coords[5] = new GamaPoint(x + h, y + 2 * width);
-		coords[6] = new GamaPoint(coords[0]);
-		final Geometry g = GeometryUtils.GEOMETRY_FACTORY
-				.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coords), null);
-		return new GamaShape(g);
+		return buildHexagon(size, size,location);
 	}
 
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {

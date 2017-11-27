@@ -25,6 +25,7 @@ import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -48,7 +49,8 @@ import ummisco.gama.opengl.scene.OpenGL;
 		name = "obj",
 		extensions = { "obj", "OBJ" },
 		buffer_type = IType.LIST,
-		buffer_content = IType.GEOMETRY)
+		buffer_content = IType.GEOMETRY,
+		doc = @doc ("'.obj' files are files containing 3D geometries. The internal representation is a list of one geometry"))
 public class GamaObjFile extends Gama3DGeometryFile {
 
 	public final ArrayList<double[]> setOfVertex = new ArrayList<>();

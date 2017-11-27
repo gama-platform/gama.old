@@ -105,12 +105,12 @@ public class SimulationClock {
 				scope); }
 		final int previous = cycle;
 		cycle = i;
-		setCurrentDate(getCurrentDate().plus(step, cycle - previous, ChronoUnit.SECONDS));
+		setCurrentDate(getCurrentDate().plus(getStepInMillis(), cycle - previous, ChronoUnit.MILLIS));
 	}
 
 	public void incrementCycle() {
 		cycle++;
-		setCurrentDate(getCurrentDate().plus(step, ChronoUnit.SECONDS));
+		setCurrentDate(getCurrentDate().plusMillis(getStepInMillis()));
 	}
 
 	public void resetCycles() {

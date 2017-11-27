@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ITyped;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -80,8 +81,8 @@ import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;
@@ -126,7 +127,7 @@ import msi.gaml.types.Types;
 						name = IKeyword.TO,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("an expression that evaluates to an string, the path to the file")),
+						doc = @doc ("an expression that evaluates to an string, the path to the file, or directly to a file")),
 				@facet (
 						name = "crs",
 						type = IType.NONE,
@@ -137,13 +138,13 @@ import msi.gaml.types.Types;
 						type = { IType.MAP },
 						optional = true,
 						doc = @doc (
-								value = "Allows to specify the attributes of a shape file (or other files that accept attributes). The keys of the map are the names of the attributes that will be present in the file, the values are whatever expression neeeded to define their value")),
+								value = "Allows to specify the attributes of a shape file where agents are saved. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value")),
 				@facet (
 						name = IKeyword.WITH,
 						type = { IType.MAP },
 						optional = true,
 						doc = @doc (
-								/* deprecated = "Please use 'attributes:' instead", */
+								deprecated = "Please use 'attributes:' instead",
 								value = "Allows to define the attributes of a shape file. Keys of the map are the attributes of agents to save, values are the names of attributes in the shape file")) },
 		omissible = IKeyword.DATA)
 @doc (
@@ -196,12 +197,28 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		 */
 		@Override
 		public void validate(final StatementDescription description) {
+
 			final StatementDescription desc = description;
+			final Facets args = desc.getPassedArgs();
+			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
+			if (att != null) {
+				if (args != null && !args.isEmpty()) {
+					desc.warning(
+							"'with' and 'attributes' are mutually exclusive. Only the first one will be considered",
+							IGamlIssue.CONFLICTING_FACETS, ATTRIBUTES, WITH);
+				}
+				final IExpression type = desc.getFacetExpr(TYPE);
+				if (type == null || !type.literalValue().equals("shp")) {
+					desc.warning("Attributes can only be defined for shape files", IGamlIssue.WRONG_TYPE, ATTRIBUTES);
+				}
+
+			}
+
 			final IExpression data = desc.getFacetExpr(DATA);
 			if (data == null) { return; }
 			final IType<?> t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
-			final Facets args = desc.getPassedArgs();
+
 			if (args == null || args.isEmpty()) { return; }
 			if (species == null) {
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
@@ -280,15 +297,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		// json_file("ddd.json"); see #1362
 
 		String path = "";
-		if (file == null) {
-			// scope.setStatus(ExecutionStatus.failure);
-			return null;
-		}
+		if (file == null) { return null; }
 		path = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
-		if (path.equals("")) {
-			// scope.setStatus(ExecutionStatus.failure);
-			return null;
-		}
+		if (path.equals("")) { return null; }
 		String type = "text";
 		if (typeExp != null) {
 			type = typeExp;
@@ -509,21 +520,21 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final SpeciesDescription species = agents instanceof IPopulation
 					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
 					: agents.getType().getContentType().getSpecies();
-			final Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);
-			final List<String> attString = new ArrayList<String>();
+			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			if (species != null) {
-				computeInitsFromWithFacet(scope, attributes, species);
+				if (withFacet != null)
+					computeInitsFromWithFacet(scope, withFacet, attributes, species);
+				else if (attributesFacet != null)
+					computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
 				for (final String e : attributes.keySet()) {
-					final String var = attributes.get(e);
+					final IExpression var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
 					name = name.replaceAll("'", "");
-					final String type = type(species.getAttribute(var));
-					if ("String".equals(type))
-						attString.add(name);
+					final String type = type(var);
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			saveShapeFile(scope, path, agents, specs.toString(), attributes, attString);
+			saveShapeFile(scope, path, agents, specs.toString(), attributes);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
@@ -580,16 +591,44 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 					}
 				} else {
-					for (int i = 0; i < values.size() - 1; i++) {
-						String val = Cast.toGaml(values.get(i)).replace(';', ',');
+					if (header) {
+						fw.write(item.serialize(true).replace("]", "").replace("[", ""));
+						fw.write(Strings.LN);
+					}
+					if(itemType.id()==IType.MATRIX)
+					{
+						String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
+						for (int i = 0; i < tmpValue.length - 1; i++) {
+							String val = Cast.toGaml(tmpValue[i]);
+							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+								val = val.substring(1, val.length() - 1);
+							if(tmpValue[i].contains(";"))
+							{
+								String[] valueSplitted = val.split(";");
+								fw.write(valueSplitted[0]);
+								val = valueSplitted[1];
+								fw.write(Strings.LN);
+							}
+							fw.write(val + ",");
+						}
+						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
 						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
 							val = val.substring(1, val.length() - 1);
-						fw.write(val + ",");
+						fw.write(val + Strings.LN);
 					}
-					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-					if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
-						val = val.substring(1, val.length() - 1);
-					fw.write(val + Strings.LN);
+					else
+					{
+						for (int i = 0; i < values.size() - 1; i++) {
+							String val = Cast.toGaml(values.get(i)).replace(';', ',');
+							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+								val = val.substring(1, val.length() - 1);
+							fw.write(val + ",");
+						}
+						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							val = val.substring(1, val.length() - 1);
+						fw.write(val + Strings.LN);
+					}
 				}
 
 			}
@@ -602,7 +641,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public String type(final VariableDescription var) {
+	public String type(final ITyped var) {
 		switch (var.getType().id()) {
 			case IType.BOOL:
 				return "Boolean";
@@ -618,27 +657,35 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
 			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
 
-	private void computeInitsFromWithFacet(final IScope scope, final Map<String, String> values,
-			final SpeciesDescription species) throws GamaRuntimeException {
-		if (withFacet == null) { return; }
+	private void computeInitsFromWithFacet(final IScope scope, final Arguments withFacet,
+			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
 		if (withFacet.isEmpty() && species != null) {
 			for (final String var : species.getAttributeNames()) {
 				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var))
-					values.put(var, var);
+					values.put(var, species.getVarExpr(var, false));
 			}
 		} else {
-			for (final Map.Entry<String, IExpressionDescription> f : withFacet.entrySet()) {
-				if (f != null) {
-					values.put(f.getValue().toString(), f.getKey());
-				}
-			}
+			withFacet.forEach((key, value) -> {
+				values.put(value.getExpression().literalValue(), species.getVarExpr(key, false));
+			});
+		}
+	}
+
+	private void computeInitsFromAttributesFacet(final IScope scope, final IExpression attributesFacet,
+			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
+		if (attributesFacet instanceof MapExpression) {
+			final Map<IExpression, IExpression> map = ((MapExpression) attributesFacet).getElements();
+			map.forEach((key, value) -> {
+				final String name = Cast.asString(scope, key.value(scope));
+				values.put(name, value);
+			});
 		}
 	}
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, String> attributes,
-			final List<String> stringVars) throws IOException, SchemaException, GamaRuntimeException {
+			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes)
+			throws IOException, SchemaException, GamaRuntimeException {
 
 		String code = null;
 		if (crsCode != null) {
@@ -675,7 +722,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		try (FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT)) {
 
 			// AD Builds once the list of agent attributes to evaluate
-			final Collection<String> attributeValues =
+			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			final List<Object> values = new ArrayList<>();
 			for (final IShape ag : agents) {
@@ -684,17 +731,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				// geometry is by convention (in specs) at position 0
 				values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
 				if (ag instanceof IAgent) {
-					for (final String variable : attributeValues) {
-						if (stringVars.contains(variable)) {
-							String val = Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable));
-							if (val.equals("nil"))
+					for (final IExpression variable : attributeValues) {
+						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
+						if (variable.getType().equals(IType.STRING)) {
+							if (val == null)
 								val = "";
-							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
-								val = val.substring(1, val.length() - 1);
-							values.add(val);
-
-						} else
-							values.add(((IAgent) ag).getDirectVarValue(scope, variable));
+							else {
+								final String val2 = val.toString();
+								if (val2.startsWith("'") && val2.endsWith("'")
+										|| val2.startsWith("\"") && val2.endsWith("\""))
+									val = val2.substring(1, val2.length() - 1);
+							}
+						}
+						values.add(val);
 					}
 				}
 				// AD Assumes that the type is ok.
@@ -710,6 +759,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (gis != null) {
 				writePRJ(scope, path, gis);
 			}
+		} catch (final ClassCastException e){
+			throw GamaRuntimeException.error("Cannot save agents/geometries with different types of geometries (point, line, polygon) in a same shapefile", scope);
 		} finally {
 			store.dispose();
 		}

@@ -73,7 +73,11 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 			}
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
-			nbFracs = String.valueOf(stepValue).split("\\.")[1].length();
+			final String[] segments = String.valueOf(stepValue).split("\\.");
+			if (segments.length > 1)
+				nbFracs = segments[1].length();
+			else
+				nbFracs = 1;
 			formatter.setMaximumFractionDigits(nbFracs);
 			formatter.setMinimumFractionDigits(nbFracs);
 			formatter.setGroupingUsed(false);
@@ -87,14 +91,13 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	}
 
 	SimpleSlider slider;
-	T stepValue;
+	Number stepValue;
 
 	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
-		super(scope, a, variable);
+		super(scope, a, variable, l);
 		final int minChars = String.valueOf(minValue.intValue()).length();
 		final int maxChars = String.valueOf(maxValue.intValue()).length();
 		nbInts = Math.max(minChars, maxChars);
-
 	}
 
 	@Override
@@ -103,8 +106,8 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	}
 
 	@SuppressWarnings ("unchecked")
-	protected T getStep() {
-		return (T) param.getStepValue(getScope());
+	protected Number getStep() {
+		return param.getStepValue(getScope());
 	}
 
 	@Override

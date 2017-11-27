@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,9 @@ import org.eclipse.swt.widgets.Text;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
@@ -36,6 +40,8 @@ import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.ExpandableItemsView;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -159,16 +165,20 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public String getItemDisplayName(final MonitorOutput o, final String previousName) {
-		final Object v = o.getLastValue();
+
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
-		sb.append(o.getName()).append(ItemList.SEPARATION_CODE)
-				.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
+		sb.append(o.getName()).append(ItemList.SEPARATION_CODE).append(getValueAsString(o));
 		if (o.isPaused()) {
 			sb.append(" (paused)");
 		}
 		return sb.toString();
 
+	}
+
+	public String getValueAsString(final MonitorOutput o) {
+		final Object v = o.getLastValue();
+		return v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString();
 	}
 
 	@Override
@@ -268,14 +278,29 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {
+		final Map<String, Runnable> menu = new HashMap();
 		final IExpression exp = data.getValue();
 		if (exp == null)
 			return null;
 		final IType<?> type = exp.getType();
-		if (type.isNumber()) {
-
+		menu.put("Copy to clipboard", () -> {
+			WorkbenchHelper.copy(getValueAsString(data));
+		});
+		if (type.isNumber() || type.isContainer() && type.getContentType().isNumber()) {
+			// menu.put("Open chart", () -> {});
+			menu.put("Save as CSV", () -> {
+				data.saveHistory();
+			});
+		} else if (type.isAgentType()) {
+			menu.put("Inspect", () -> {
+				data.getScope().getGui().setSelectedAgent((IAgent) data.getLastValue());
+			});
+		} else if (type.isContainer() && type.getContentType().isAgentType()) {
+			menu.put("Browse", () -> {
+				InspectDisplayOutput.browse((Collection<? extends IAgent>) data.getLastValue());
+			});
 		}
-		return null;
+		return menu;
 	}
 
 }

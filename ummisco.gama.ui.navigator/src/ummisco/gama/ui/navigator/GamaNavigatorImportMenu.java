@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaNavigatorImportMenu.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaNavigatorImportMenu.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
@@ -52,7 +52,7 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			openWizard("org.eclipse.ui.wizards.import.ExternalProject", selection);
+			openWizard("ummisco.gama.ui.import.ExternalProject", selection);
 		}
 
 	};
@@ -62,12 +62,9 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
 		action("Import project...", project, GamaIcons.create("navigator/navigator.import.project2").image());
 		sep();
 		action("Import resources into projects from disk...", fromDisk,
-			GamaIcons.create("navigator/navigator.import.disk2").image());
+				GamaIcons.create("navigator/navigator.import.disk2").image());
 		action("Import resources into projects from archive...", fromArchive,
-			GamaIcons.create("navigator/navigator.import.archive2").image());
-
-		// sep();
-		// action("Other...", newOther, GamaIcons.create("navigator/navigator.new2").image());
+				GamaIcons.create("navigator/navigator.import.archive2").image());
 	}
 
 }

@@ -10,7 +10,6 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,7 +104,7 @@ public abstract class AbstractEditor<T>
 	private final Integer order = ORDER++;
 	private final IAgent agent;
 	private final IScope scope;
-	private final String name;
+	protected String name;
 	protected Label titleLabel = null;
 	protected final IParameter param;
 	boolean acceptNull = true;
@@ -175,11 +174,17 @@ public abstract class AbstractEditor<T>
 		this.scope = scope;
 		param = variable;
 		agent = a;
-		isCombo = param.getAmongValue(getScope()) != null;
-		isEditable = param.isEditable();
-		name = param.getTitle();
-		minValue = param.getMinValue(getScope());
-		maxValue = param.getMaxValue(getScope());
+		if (param != null) {
+			isCombo = param.getAmongValue(getScope()) != null;
+			isEditable = param.isEditable();
+			name = param.getTitle();
+			minValue = param.getMinValue(getScope());
+			maxValue = param.getMaxValue(getScope());
+		} else {
+			isCombo = false;
+			isEditable = true;
+			name = "";
+		}
 		listener = l;
 	}
 
@@ -209,6 +214,7 @@ public abstract class AbstractEditor<T>
 		} else {
 			checkButtons();
 		}
+
 		this.getEditor().setEnabled(active);
 	}
 
@@ -350,10 +356,14 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void addToolbarHiders(final Control... c) {
-		controlsThatShowHideToolbars.addAll(Arrays.asList(c));
+		for (final Control control : c)
+			if (control != null)
+				controlsThatShowHideToolbars.add(control);
 	}
 
 	protected void hideToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
 		final GridData d = (GridData) toolbar.getLayoutData();
 		if (d.exclude) { return; }
 		d.exclude = true;
@@ -363,6 +373,8 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void showToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
 		final GridData d = (GridData) toolbar.getLayoutData();
 		if (!d.exclude) { return; }
 		d.exclude = false;
@@ -409,7 +421,7 @@ public abstract class AbstractEditor<T>
 		return param.getType().serialize(false);
 	}
 
-	private ToolBar createToolbar() {
+	protected ToolBar createToolbar() {
 		final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
 		final GridData d = this.getParameterGridData();
 		d.grabExcessHorizontalSpace = false;
@@ -420,6 +432,8 @@ public abstract class AbstractEditor<T>
 			unitItem.setText(unitText);
 			unitItem.setEnabled(false);
 		}
+		if (!isEditable)
+			return t;
 		final int[] codes = this.getToolItems();
 		for (final int i : codes) {
 			ToolItem item = null;
@@ -487,6 +501,10 @@ public abstract class AbstractEditor<T>
 				.toJavaString(GamaStringType.staticCast(scope, result, false)); }
 		return (T) getExpectedType().cast(scope, result, null, false);
 
+	}
+
+	protected EditorListener<?> getListener() {
+		return listener;
 	}
 
 	protected void setParameterValue(final T val) {

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlProperties.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlProperties.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,7 +26,7 @@ import java.util.Set;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlProperties {
 
 	Map<String, LinkedHashSet<String>> map;
@@ -38,7 +37,6 @@ public class GamlProperties {
 	public final static String STATEMENTS = "statements";
 	public final static String OPERATORS = "operators";
 	public final static String GAML = "gaml.properties";
-	public final static String FACTORIES = "factories";
 	public final static String SPECIES = "species";
 	public final static String CONSTANTS = "constants";
 	public final static String ARCHITECTURES = "architectures";
@@ -71,9 +69,7 @@ public class GamlProperties {
 
 	public String getFirst(final String key) {
 		final Set<String> result = get(key);
-		if (result == null) {
-			return null;
-		}
+		if (result == null) { return null; }
 		for (final Iterator<String> it = result.iterator(); it.hasNext();) {
 			return it.next();
 		}
@@ -166,8 +162,7 @@ public class GamlProperties {
 		} catch (final IOException e) {
 			try {
 				reader.close();
-			} catch (final IOException e1) {
-			}
+			} catch (final IOException e1) {}
 			return null;
 		}
 		for (final String s : prop.stringPropertyNames()) {
@@ -177,8 +172,7 @@ public class GamlProperties {
 		}
 		try {
 			reader.close();
-		} catch (final IOException e) {
-		}
+		} catch (final IOException e) {}
 		return this;
 	}
 

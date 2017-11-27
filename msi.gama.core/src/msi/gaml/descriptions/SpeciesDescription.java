@@ -178,7 +178,7 @@ public class SpeciesDescription extends TypeDescription {
 			return true;
 		if (skills != null)
 			for (final SkillDescription skill : skills) {
-				if (skill.hasAction(name))
+				if (skill.hasAction(name, false))
 					return true;
 			}
 		return false;

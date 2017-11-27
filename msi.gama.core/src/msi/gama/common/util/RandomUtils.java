@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.common.util;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +21,7 @@ import msi.gama.util.random.CellularAutomatonRNG;
 import msi.gama.util.random.GamaRNG;
 import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -329,8 +331,12 @@ public class RandomUtils {
 		// the step
 		final double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
-		final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
-		final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
+		double valSup = FastMath.min(max,min + (nbStep + 1.0) * step);
+		double valMin = min + nbStep * step;
+		int precision = BigDecimal.valueOf(step).scale() + 5;
+		
+		final double high = Maths.round(valSup, precision);
+		final double low = Maths.round(valMin, precision);
 		return val - low < high - val ? low : high;
 	}
 

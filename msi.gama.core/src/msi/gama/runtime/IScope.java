@@ -569,6 +569,14 @@ public interface IScope extends Closeable {
 	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 
 	/**
+	 * Verifies that this scope has access to the global var value named 'name'
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public abstract boolean hasAccessToGlobalVar(String name);
+
+	/**
 	 * Sets the global var value.
 	 *
 	 * @param name
@@ -769,8 +777,18 @@ public interface IScope extends Closeable {
 
 	public abstract IExecutionContext getExecutionContext();
 
+	public abstract boolean isInTryMode();
+
+	public void enableTryMode();
+
+	public void disableTryMode();
+
 	/**
 	 * @return the current statement or null if none
 	 */
+
+	public abstract void setCurrentError(GamaRuntimeException g);
+
+	public GamaRuntimeException getCurrentError();
 
 }

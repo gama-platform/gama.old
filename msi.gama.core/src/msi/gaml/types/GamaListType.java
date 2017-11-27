@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -49,7 +50,12 @@ public class GamaListType extends GamaContainerType<IList> {
 		final IType contentsType = ct == null ? Types.NO_TYPE : ct;
 		if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
 		if (obj instanceof GamaDate) { return ((GamaDate) obj).listValue(scope, ct); }
-		if (obj instanceof IContainer) { return ((IContainer) obj).listValue(scope, contentsType, copy); }
+		if (obj instanceof IContainer) {
+			if (obj instanceof IPopulation)
+				// Explicitly set copy to true if we deal with a population
+				return ((IPopulation) obj).listValue(scope, contentsType, true);
+			return ((IContainer) obj).listValue(scope, contentsType, copy);
+		}
 		// Dont copy twice the collection
 		if (obj instanceof Collection) { return GamaListFactory.create(scope, contentsType, (Collection) obj); }
 		if (obj instanceof Color) {

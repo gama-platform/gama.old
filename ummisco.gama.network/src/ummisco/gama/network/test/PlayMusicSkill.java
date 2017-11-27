@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PlayMusicSkill.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PlayMusicSkill.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,11 +17,15 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
 
-@skill(name = IPlayMusic.MUSIC_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
+@skill (
+		name = IPlayMusic.MUSIC_SKILL,
+		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL },
+		doc = @doc ("Skill allowing agents to output sounds"))
 public class PlayMusicSkill extends Skill implements IPlayMusic {
 
 	public int volume = 200;

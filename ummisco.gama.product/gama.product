@@ -25,6 +25,8 @@ Visit http://gama-platform.org
 --launcher.defaultAction
 openFile
       </programArgs>
+      <programArgsLin>--launcher.GTK_version 2
+      </programArgsLin>
       <vmArgs>-server
 -noverify
 -Xmn128m
@@ -32,6 +34,9 @@ openFile
 -XX:+UseParallelGC
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
       </vmArgs>
       <vmArgsLin>
          <argsX86>-Xms256m -Xmx1024m</argsX86>
@@ -279,7 +284,7 @@ openFile
       <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
@@ -305,7 +310,7 @@ openFile
       <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
       <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
    </repositories>
-   
+
    <preferencesInfo>
       <targetfile overwrite="false"/>
    </preferencesInfo>

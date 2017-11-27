@@ -49,10 +49,11 @@ public class Experiment implements IExperiment {
 		this.model = mdl;
 	}
 
+	@Override
 	public SimulationAgent getSimulation() {
 		return currentSimulation;
 	}
-	
+
 	protected IScope getScope() {
 		return this.currentExperiment.getCurrentSimulation().getScope();
 	}
@@ -136,10 +137,10 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public boolean isInterrupted() {
-		return currentExperiment.getAgent().getSimulation() == null
-				|| currentExperiment.getAgent().getSimulation().dead()
-				|| currentExperiment.getAgent().getSimulation().getScope().interrupted();// currentExperiment.getAgent().dead();
-																							// //().interrupted();
+		final SimulationAgent sim = currentExperiment.getCurrentSimulation();
+		if (currentExperiment.isBatch() && sim == null)
+			return false;
+		return sim == null || sim.dead() || sim.getScope().interrupted();
 	}
 
 	@Override
@@ -154,17 +155,20 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
-	public IExpression compileExpression(String expression) {
-		return GAML.compileExpression(expression, this.getSimulation(), true);	
+	public IExpression compileExpression(final String expression) {
+		System.out.println("expression " + expression);
+		return GAML.compileExpression(expression, this.getSimulation(), false);
 	}
-	public Object evaluateExpression(IExpression exp)
-	{
+
+	@Override
+	public Object evaluateExpression(final IExpression exp) {
 		return exp.value(this.getSimulation().getScope());
 	}
-	public Object evaluateExpression(String exp)
-	{
-		IExpression localExpression = compileExpression(exp);
+
+	@Override
+	public Object evaluateExpression(final String exp) {
+		final IExpression localExpression = compileExpression(exp);
 		return evaluateExpression(localExpression);
 	}
-	
+
 }

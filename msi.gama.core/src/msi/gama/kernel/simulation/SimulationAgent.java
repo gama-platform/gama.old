@@ -32,7 +32,6 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.metamodel.topology.projection.WorldProjection;
@@ -40,7 +39,6 @@ import msi.gama.outputs.IOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -73,7 +71,8 @@ import msi.gaml.types.IType;
  *
  */
 @species (
-		name = IKeyword.MODEL)
+		name = IKeyword.MODEL,
+		internal = true)
 @vars ({ @var (
 		name = IKeyword.COLOR,
 		type = IType.COLOR,
@@ -214,6 +213,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return this;
 	}
 
+	public void setTopology(final RootTopology topology2) {
+		if (topology != null)
+			topology.dispose();
+		topology = topology2;
+
+	}
+
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index
@@ -222,7 +228,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr == null ? false : Cast.asBool(scope, expr.value(scope));
-			topology = new RootTopology(scope, shape, torus);
+			setTopology(new RootTopology(scope, shape, torus));
 		}
 	}
 
@@ -250,7 +256,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public ITopology getTopology() {
+	public RootTopology getTopology() {
 		return topology;
 	}
 
@@ -325,14 +331,24 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			outputs = null;
 		}
 		if (topology != null) {
-			topology.dispose();
-			topology = null;
+			if (!isMicroSimulation()) {
+				topology.dispose();
+				topology = null;
+			} else {
+				for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
+					topology.remove(pop);
+				}
+			}
 		}
 
 		GAMA.releaseScope(getScope());
 		// scope = null;
 		super.dispose();
 
+	}
+
+	private boolean isMicroSimulation() {
+		return getSpecies().getDescription().belongsToAMicroModel();
 	}
 
 	@Override
@@ -355,9 +371,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
+			((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
 		}
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
+		if (getProjectionFactory().getUnitConverter() != null) {
+			((WorldProjection) getProjectionFactory().getWorld()).convertUnit(geometry.getInnerGeometry());
+
+		}
 		setTopology(getScope(), geometry);
 
 	}
@@ -501,8 +522,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@action (
 			name = "pause",
 			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
-	@args (
-			names = {})
+
 	public Object pause(final IScope scope) {
 		final IExperimentController controller = scope.getExperiment().getSpecies().getController();
 		controller.directPause();
@@ -514,8 +534,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc (
 					deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily",
 					value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
-	@args (
-			names = {})
+
 	public Object halt(final IScope scope) {
 		getExperiment().closeSimulation(this);
 		return null;
@@ -648,7 +667,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public void prepareGuiForSimulation(final IScope s) {
-		s.getGui().clearErrors();
+		s.getGui().clearErrors(s);
 	}
 
 	public void initOutputs() {
@@ -767,6 +786,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			}
 		}
 
+	}
+
+	public void adoptTopologyOf(final SimulationAgent root) {
+		final RootTopology rt = root.getTopology();
+		rt.mergeWith(topology);
+		setTopology(rt);
+		for (final IPopulation p : getMicroPopulations()) {
+			p.getTopology().setRoot(root.getScope(), rt);
+		}
 	}
 
 }

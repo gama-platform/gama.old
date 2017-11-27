@@ -31,6 +31,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	protected ILayer currentLayer;
 
+	@Override
 	public void setDisplaySurface(final IDisplaySurface surface) {
 		this.surface = surface;
 		data = surface.getData();

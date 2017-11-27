@@ -22,7 +22,7 @@ global
 			shape::square(width_and_height_of_environment), 
 			width_and_height_of_environment::width_and_height_of_environment, 
 			z_max::100,
-			number_of_agents::500
+			number_of_agents::200
 		];
 		//create experiment form micro-model Procedural City
 		create City."Adapter" 
@@ -41,7 +41,6 @@ global
 		{
 			Building theBuilding <- Building((City."Adapter"[0]).get_building_at(theBoid)); 
 			if(theBuilding != nil){				
-				write theBoid distance_to theBuilding;
 				if (theBoid distance_to theBuilding < theBuilding.width)
 				{
 					ask theBoid

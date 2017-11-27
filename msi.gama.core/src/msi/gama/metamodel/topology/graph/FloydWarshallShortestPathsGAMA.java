@@ -16,8 +16,8 @@ import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.graph.GraphPathImpl;
-import org.jgrapht.util.VertexPair;
+import org.jgrapht.alg.util.Pair;
+import org.jgrapht.graph.GraphWalk;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.GAMA;
@@ -26,6 +26,8 @@ import msi.gama.util.matrix.GamaIntMatrix;
 
 // Copy of the jgrapht algorithm: just make it usable with GAMA undirected graph
 public class FloydWarshallShortestPathsGAMA<V, E> {
+
+	// TODO Look at the new implementantion of the algorithm in JGraphT 1.0.1 and try to derive from it.
 
 	// ~ Instance fields --------------------------------------------------------
 
@@ -36,7 +38,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	private double[][] d = null;
 	private int[][] backtrace = null;
 	private GamaIntMatrix matrix = null;
-	private THashMap<VertexPair<V>, GraphPath<V, E>> paths = null;
+	private THashMap<Pair<V, V>, GraphPath<V, E>> paths = null;
 
 	// ~ Constructors -----------------------------------------------------------
 
@@ -51,7 +53,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph, final GamaIntMatrix matrix) {
 		this.graph = graph;
 		this.vertices = new ArrayList<V>(graph.getVertexMap().keySet());
-		this.paths = new THashMap<VertexPair<V>, GraphPath<V, E>>();
+		this.paths = new THashMap<Pair<V, V>, GraphPath<V, E>>();
 		nShortestPaths = 0;
 		this.matrix = matrix;
 	}
@@ -233,12 +235,12 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		// no path, return null
 		if (edges.size() < 1) { return null; }
-		final GraphPathImpl<V, E> path = new GraphPathImpl<V, E>(graph, a, b, edges, edges.size());
+		final GraphWalk<V, E> path = new GraphWalk<V, E>(graph, a, b, edges, edges.size());
 		if (graph.isSaveComputedShortestPaths()) {
 			final V v_i = vertices.get(v_a);
 			final V v_j = vertices.get(v_b);
 
-			paths.put(new VertexPair<V>(v_i, v_j), path);
+			paths.put(new Pair<V, V>(v_i, v_j), path);
 			nShortestPaths++;
 		}
 		return path;
@@ -253,7 +255,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		lazyCalculateMatrix();
 
-		this.paths = new THashMap<VertexPair<V>, GraphPath<V, E>>();
+		this.paths = new THashMap<Pair<V, V>, GraphPath<V, E>>();
 
 		nShortestPaths = 0;
 

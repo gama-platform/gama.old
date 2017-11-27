@@ -34,6 +34,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -58,9 +59,10 @@ import msi.gaml.types.Types;
 		buffer_type = IType.MATRIX,
 		buffer_content = IType.INT,
 		buffer_index = IType.POINT,
-		concept = { IConcept.IMAGE, IConcept.FILE })
+		concept = { IConcept.IMAGE, IConcept.FILE },
+		doc = @doc ("Image files can be of 6 different formats: tiff, jpeg, png, pict or bmp. Their internal representation is a matrix of colors"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
+public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {
 
@@ -146,7 +148,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			name = "pgm",
 			extensions = { "pgm" },
 			buffer_type = IType.MATRIX,
-			buffer_content = IType.INT)
+			buffer_content = IType.INT,
+			doc = @doc ("PGM files are special image files in 256 gray levels"))
 	public static class GamaPgmFile extends GamaImageFile {
 
 		/**
@@ -469,17 +472,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		return isGeoreferenced;
 	}
 
-	// @Override
-	// public void invalidateContents() {
-	// super.invalidateContents();
-	//// image = null;
+	//
+	// public void setImage(final IScope scope, final BufferedImage image2) {
+	// // AD QUESTION : Shouldnt we also erase the buffer in that case ?
+	// setBuffer(matrixValueFromImage(scope, image2, null));
+	// // image = image2;
 	// }
-
-	public void setImage(final IScope scope, final BufferedImage image2) {
-		// AD QUESTION : Shouldnt we also erase the buffer in that case ?
-		setBuffer(matrixValueFromImage(scope, image2, null));
-		// image = image2;
-	}
 
 	public boolean isAnimated() {
 		return false;

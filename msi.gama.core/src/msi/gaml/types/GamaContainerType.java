@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaContainerType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaContainerType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,6 +10,7 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -26,8 +26,13 @@ import msi.gaml.expressions.IExpression;
  * A generic type for containers. Tentative.
  * 
  */
-@type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = {
-		IContainer.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.CONTAINER })
+@type (
+		name = IKeyword.CONTAINER,
+		id = IType.CONTAINER,
+		wraps = { IContainer.class },
+		kind = ISymbolKind.Variable.CONTAINER,
+		concept = { IConcept.TYPE, IConcept.CONTAINER },
+		doc = @doc ("Generic super-type of all the container types (list, graph, matrix, etc.)"))
 public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> implements IContainerType<T> {
 
 	@Override
@@ -39,7 +44,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,
 			final IType<?> contentType, final boolean copy) throws GamaRuntimeException {
@@ -76,9 +81,8 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	@Override
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
 		final IType<?> itemType = exp.getType();
-		if (itemType.isContainer() || itemType.isAgentType() || itemType.isCompoundType()) {
-			return itemType.getContentType();
-		}
+		if (itemType.isContainer() || itemType.isAgentType()
+				|| itemType.isCompoundType()) { return itemType.getContentType(); }
 		return itemType;
 	}
 
@@ -92,18 +96,14 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IContainerType<?> of(final IType<?>... subs) {
-		if (subs.length == 0) {
-			return this;
-		}
+		if (subs.length == 0) { return this; }
 		IType<?> kt = subs.length == 1 ? getKeyType() : subs[0];
 		IType<?> ct = subs.length == 1 ? subs[0] : subs[1];
 		if (ct == Types.NO_TYPE) {
-			if (kt == Types.NO_TYPE) {
-				return this;
-			}
+			if (kt == Types.NO_TYPE) { return this; }
 			ct = getContentType();
 		}
 		if (kt == Types.NO_TYPE) {

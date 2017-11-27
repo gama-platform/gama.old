@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModelRunner.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModelRunner.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,6 +11,7 @@ package msi.gama.lang.gaml.ui.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -29,20 +29,24 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.statements.test.TestExperimentSummary;
+import msi.gaml.statements.test.WithTestSummary;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -75,8 +79,8 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 				return;
 			}
 			try {
-				final IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
-						.getDefaultEditor(file.getName());
+				final IEditorDescriptor desc =
+						PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
 				WorkbenchHelper.getPage().openEditor(new FileEditorInput(file), desc.getId());
 			} catch (final PartInitException e) {
 				e.printStackTrace();
@@ -87,60 +91,87 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 
 	@Override
 	public void editModel(final Object eObject) {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				editModelInternal(eObject);
-			}
-		});
+		WorkbenchHelper.run(() -> editModelInternal(eObject));
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
-	public void runModel(final Object object, final String exp) {
-		if (object instanceof IModel) {
-			GAMA.runGuiExperiment(exp, (IModel) object);
-		} else if (object instanceof IFile) {
+	public List<TestExperimentSummary> runHeadlessTests(final Object object) {
+		// final StringBuilder sb = new StringBuilder();
+		final IModel model = findModel(object);
+		if (model == null)
+			return null;
+		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
+				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
+		if (testExpNames.isEmpty())
+			return null;
+		final List<TestExperimentSummary> result = new ArrayList<>();
+		for (final String expName : testExpNames) {
+			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
+			if (exp != null) {
+				exp.setHeadless(true);
+				final TestAgent agent = (TestAgent) exp.getAgent();
+				exp.getController().getScheduler().paused = false;
+				agent.step(agent.getScope());
+				result.add(((WithTestSummary<TestExperimentSummary>) agent).getSummary());
+				GAMA.closeExperiment(exp);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	private IModel findModel(final Object object) {
+		if (object instanceof IModel)
+			return (IModel) object;
+		if (object instanceof IFile) {
 			final IFile file = (IFile) object;
 			try {
 				if (file.findMaxProblemSeverity(IMarker.PROBLEM, true,
 						IResource.DEPTH_ZERO) == IMarker.SEVERITY_ERROR) {
-					GAMA.getGui().error("Model " + file.getFullPath() + " has errors and cannot be launched");
-					return;
+					System.err.println("Model " + file.getFullPath() + " has errors and cannot be launched");
+					return null;
 				}
 			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 			final URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-			runModel(uri, exp);
-		} else if (object instanceof URI) {
+			return findModel(uri);
+		}
+		if (object instanceof URI) {
 			final URI uri = (URI) object;
 			final List<GamlCompilationError> errors = new ArrayList<>();
 			final IModel model = GamlModelBuilder.compile(uri, errors);
 			if (model == null) {
 				GAMA.getGui().error("File " + uri.lastSegment() + " cannot be built because of " + errors.size()
 						+ " compilation errors");
-				return;
 			}
-			runModel(model, exp);
-		} else if (object instanceof IXtextDocument) {
+			return model;
+		}
+		if (object instanceof IXtextDocument) {
 			final IXtextDocument doc = (IXtextDocument) object;
 			IModel model = null;
 			try {
-				model = doc.readOnly(new IUnitOfWork<IModel, XtextResource>() {
-
-					@Override
-					public IModel exec(final XtextResource state) throws Exception {
-						return GamlModelBuilder.compile(state.getURI(), null);
-					}
-
-				});
+				model = doc.readOnly(state -> GamlModelBuilder.compile(state.getURI(), null));
 			} catch (final GamaRuntimeException ex) {
-				GAMA.getGui().error("Experiment " + exp + " cannot be instantiated because of the following error: "
-						+ ex.getMessage());
+				GAMA.getGui()
+						.error("Experiment cannot be instantiated because of the following error: " + ex.getMessage());
 			}
-			runModel(model, exp);
+			return model;
+
 		}
+		return null;
+	}
+
+	@Override
+	public void runModel(final Object object, final String exp) {
+		final IModel model = findModel(object);
+		if (model == null)
+			return;
+		GAMA.runGuiExperiment(exp, model);
 	}
 
 	@Override

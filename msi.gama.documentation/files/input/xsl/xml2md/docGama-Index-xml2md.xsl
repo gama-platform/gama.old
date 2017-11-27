@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
-<xsl:import href="docGama-utils-xml2md.xsl"/>
+<xsl:stylesheet version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
+<xsl:import href="docGama-utils-xml2md.xsl" />
 
 
-<xsl:variable name="fileOperatorsAC" select="'OperatorsAC'"/>
-<xsl:variable name="fileOperatorsDM" select="'OperatorsDM'"/>
-<xsl:variable name="fileOperatorsNZ" select="'OperatorsNZ'"/>
-<xsl:variable name="fileStatements" select="'Statements'"/>
-<xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'"/>
-<xsl:variable name="fileControl" select="'BuiltInControlArchitectures'"/>
-<xsl:variable name="fileSpecies" select="'BuiltInSpecies'"/>
-<xsl:variable name="fileSkills" select="'BuiltInSkills'"/>
+<xsl:variable name="fileOperatorsAB" select="'OperatorsAB'" />
+<xsl:variable name="fileOperatorsCH" select="'OperatorsCH'" />
+<xsl:variable name="fileOperatorsIN" select="'OperatorsIN'" />
+<xsl:variable name="fileOperatorsOS" select="'OperatorsOS'" />
+<xsl:variable name="fileOperatorsTZ" select="'OperatorsTZ'" />
+<xsl:variable name="fileStatements" select="'Statements'" />
+<xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'" />
+<xsl:variable name="fileControl" select="'BuiltInControlArchitectures'" />
+<xsl:variable name="fileSpecies" select="'BuiltInSpecies'" />
+<xsl:variable name="fileSkills" select="'BuiltInSkills'" />
 
 
 <xsl:template match="/">
@@ -23,53 +26,109 @@
 ----
 
 ## Operators
-<xsl:for-each select="/doc/operators/operator"> 
-			<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = 'ac'"><xsl:value-of select="$fileOperatorsAC"/></xsl:when><xsl:when test="@alphabetOrder = 'dm'"><xsl:value-of select="$fileOperatorsDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileOperatorsNZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
-	</xsl:for-each>
-			  	
+<xsl:for-each select="/doc/operators/operator">
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:choose>
+		<xsl:when test="@alphabetOrder = 'ab'">
+			<xsl:value-of select="$fileOperatorsAB" />
+		</xsl:when>
+		<xsl:when test="@alphabetOrder = 'ch'">
+			<xsl:value-of select="$fileOperatorsCH" />
+		</xsl:when>
+		<xsl:when test="@alphabetOrder = 'in'">
+			<xsl:value-of select="$fileOperatorsIN" />
+		</xsl:when>
+		<xsl:when test="@alphabetOrder = 'os'">
+			<xsl:value-of select="$fileOperatorsOS" />
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$fileOperatorsTZ" />
+		</xsl:otherwise>
+	</xsl:choose>
+	<xsl:text>#</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>
+</xsl:for-each>
+
 ----
 
-## Statements 
+## Statements
 <xsl:for-each select="/doc/statements/statement">
-    	<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileStatements"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
-    </xsl:for-each>
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:value-of select="$fileStatements" />
+	<xsl:text>#</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>
+</xsl:for-each>
 
 ----
 
 ## Architectures
 <xsl:for-each select="/doc/architectures/architecture">
-    	<xsl:sort select="@name" />
-		<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileControl"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text>   	
-    </xsl:for-each>
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:value-of select="$fileControl" />
+	<xsl:text>#</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>
+</xsl:for-each>
 
 ----
 
 ## Constants and colors
-<xsl:for-each select="/doc/constants/constant"> 
-			<xsl:sort select="@name" />
+<xsl:for-each select="/doc/constants/constant">
+	<xsl:sort select="@name" />
 
-<xsl:text>[</xsl:text><xsl:value-of select="@name"/><xsl:text>](</xsl:text><xsl:value-of select="$fileUnitsConstants"/><xsl:text>)</xsl:text> <xsl:if test="@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="@altNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, </xsl:text>
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:value-of select="$fileUnitsConstants" />
+	<xsl:text>)</xsl:text>
+	<xsl:if test="@altNames">
+		<xsl:text> (</xsl:text>
+		<xsl:value-of select="@altNames" />
+		<xsl:text>)</xsl:text>
+	</xsl:if>
+	<xsl:text>, </xsl:text>
 </xsl:for-each>
 
 ----
 
 ## Skills
 <xsl:for-each select="/doc/skills/skill">
-    	<xsl:sort select="@name" />
-		<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSkills"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:value-of select="$fileSkills" />
+	<xsl:text>#</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>
 
-</xsl:for-each>	
+</xsl:for-each>
 
 ----
 
 ## Species
 <xsl:for-each select="/doc/speciess/species">
-    	<xsl:sort select="@name" />
-		<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSpecies"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
-   	</xsl:for-each>
-   	[world](BuiltInSpecies#model )
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](</xsl:text>
+	<xsl:value-of select="$fileSpecies" />
+	<xsl:text>#</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>
+</xsl:for-each>
+[world](BuiltInSpecies#model )
 
 ----
 
@@ -77,26 +136,42 @@
 <xsl:for-each select="/doc/speciess/species">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
-<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSpecies"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
-</xsl:for-each>
+		<xsl:text>[</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>](</xsl:text>
+		<xsl:value-of select="$fileSpecies" />
+		<xsl:text>#</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>), </xsl:text>
+	</xsl:for-each>
 </xsl:for-each>
 
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
-<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSkills"/><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+		<xsl:text>[</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>](</xsl:text>
+		<xsl:value-of select="$fileSkills" />
+		<xsl:text>#</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>), </xsl:text>
 	</xsl:for-each>
-</xsl:for-each>   	
+</xsl:for-each>
 
 ----
 
 ## Variables
 <xsl:for-each select="/doc/skills/skill">
-    	<xsl:sort select="@name" />
-    	<xsl:for-each select="vars/var">
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:value-of select="$fileSkills"/><xsl:text>), </xsl:text> 
-		</xsl:for-each>	
-</xsl:for-each>   	
+	<xsl:sort select="@name" />
+	<xsl:for-each select="vars/var">
+		<xsl:text>[</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>](</xsl:text>
+		<xsl:value-of select="$fileSkills" />
+		<xsl:text>), </xsl:text>
+	</xsl:for-each>
+</xsl:for-each>
 
 ----
 
@@ -107,26 +182,44 @@
 ----
 
 ## Types
-[bool](DataTypes#bool), [float](DataTypes#float), [int](DataTypes#int), [string](DataTypes#string), [agent](DataTypes#agent), [container](DataTypes#container)
-, [file](DataTypes#file), [geometry](DataTypes#geometry), [graph](DataTypes#graph), [list](DataTypes#list), [map](DataTypes#map), [matrix](DataTypes#matrix)
-, [pair](DataTypes#pair), [path](DataTypes#path), [point](DataTypes#point), [rgb](DataTypes#rgb), [color](DataTypes#rgb), [species](DataTypes#species), [topology](DataTypes#topology)
+[bool](DataTypes#bool), [float](DataTypes#float), [int](DataTypes#int),
+[string](DataTypes#string), [agent](DataTypes#agent),
+[container](DataTypes#container)
+, [file](DataTypes#file), [geometry](DataTypes#geometry),
+[graph](DataTypes#graph), [list](DataTypes#list),
+[map](DataTypes#map), [matrix](DataTypes#matrix)
+, [pair](DataTypes#pair), [path](DataTypes#path),
+[point](DataTypes#point), [rgb](DataTypes#rgb),
+[color](DataTypes#rgb), [species](DataTypes#species),
+[topology](DataTypes#topology)
 
 ----
 
 ## [the world](GlobalSpecies)
-[torus](GlobalSpecies), [Environment Size](GlobalSpecies#Environment_Size), [world](GlobalSpecies#world), [time](GlobalSpecies#time)
-[cycle](GlobalSpecies#cycle ), [step](GlobalSpecies#step), [time](GlobalSpecies#time), [duration](GlobalSpecies#duration), [total_duration](GlobalSpecies#total_duration)
-[average_duration](GlobalSpecies#average_duration), [machine_time](GlobalSpecies#machine_time), [agents](GlobalSpecies#agents), [stop](GlobalSpecies#halt), [halt](GlobalSpecies#halt), [pause](GlobalSpecies#pause), [scheduling](GlobalSpecies#scheduling)
+[torus](GlobalSpecies), [Environment Size](GlobalSpecies#Environment_Size),
+[world](GlobalSpecies#world), [time](GlobalSpecies#time)
+[cycle](GlobalSpecies#cycle ), [step](GlobalSpecies#step),
+[time](GlobalSpecies#time), [duration](GlobalSpecies#duration),
+[total_duration](GlobalSpecies#total_duration)
+[average_duration](GlobalSpecies#average_duration),
+[machine_time](GlobalSpecies#machine_time),
+[agents](GlobalSpecies#agents), [stop](GlobalSpecies#halt),
+[halt](GlobalSpecies#halt), [pause](GlobalSpecies#pause),
+[scheduling](GlobalSpecies#scheduling)
 
 ----
 
 ## Grid
-[grid_x](GridSpecies#grid_x), [grid_y](GridSpecies#grid_y), [agents](GridSpecies#agents), [color](GridSpecies#color), [grid_value](GridSpecies#grid_value) 
+[grid_x](GridSpecies#grid_x), [grid_y](GridSpecies#grid_y), [agents](GridSpecies#agents),
+[color](GridSpecies#color), [grid_value](GridSpecies#grid_value)
 
 ----
 
 ## Other concepts
-[scheduling](RuntimeConcepts#Scheduling_of_Agents ), [step](RuntimeConcepts#Agents_Step), [Key concepts](KeyConcepts), [KeyConcepts#Vocabulary_correspondance_with_the_agent-based_paradigm_as_in_Ne correspondance GAMA Netlogo], [operators statements type species](KeyConcepts#Translation_into_a_concrete_syntax)
+[scheduling](RuntimeConcepts#Scheduling_of_Agents ), [step](RuntimeConcepts#Agents_Step), [Key concepts](KeyConcepts),
+[KeyConcepts#Vocabulary_correspondance_with_the_agent-based_paradigm_as_in_Ne
+correspondance GAMA Netlogo], [operators statements type
+species](KeyConcepts#Translation_into_a_concrete_syntax)
 
 </xsl:template>
 

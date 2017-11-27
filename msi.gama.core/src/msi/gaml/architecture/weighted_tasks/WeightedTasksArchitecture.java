@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WeightedTasksArchitecture.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WeightedTasksArchitecture.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,6 +12,7 @@ package msi.gaml.architecture.weighted_tasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -21,9 +21,8 @@ import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.statements.IStatement;
 
 /**
- * The class WeightedTasksArchitecture. A simple architecture of competing
- * tasks, where one can be active at a time. Weights of the tasks are computed
- * every step and the chosen task is simply the one with the maximal weight.
+ * The class WeightedTasksArchitecture. A simple architecture of competing tasks, where one can be active at a time.
+ * Weights of the tasks are computed every step and the chosen task is simply the one with the maximal weight.
  * 
  * task t1 weight: a_float { ... } task t2 weight: another_float {...}
  * 
@@ -31,7 +30,10 @@ import msi.gaml.statements.IStatement;
  * @since 21 dec. 2011
  * 
  */
-@skill(name = WeightedTasksArchitecture.WT, concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
+@skill (
+		name = WeightedTasksArchitecture.WT,
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED },
+		doc = @doc ("A control architecture, based on the concept of tasks, where the most 'heavy' one is executed"))
 public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	public static final String WT = "weighted_tasks";
@@ -48,9 +50,7 @@ public class WeightedTasksArchitecture extends ReflexArchitecture {
 		// We let inits, reflexes run
 		super.executeOn(scope);
 		final WeightedTaskStatement active = chooseTask(scope);
-		if (active != null) {
-			return active.executeOn(scope);
-		}
+		if (active != null) { return active.executeOn(scope); }
 		return null;
 	}
 

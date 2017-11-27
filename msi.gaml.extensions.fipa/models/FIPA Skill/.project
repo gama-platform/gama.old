@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>FIPA Skill</name>
-	<comment>msi.gaml.extensions.fipa</comment>
+	<comment>fipa plugin</comment>
 	<projects>
 	</projects>
 	<buildSpec>

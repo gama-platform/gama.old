@@ -31,7 +31,7 @@ public class SocialLink implements IValue {
 		return agent;
 	}
 
-	@getter("appreciation")
+	@getter("liking")
 	public Double getLiking() {
 		return liking;
 	}

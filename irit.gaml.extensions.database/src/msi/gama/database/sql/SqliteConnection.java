@@ -170,7 +170,7 @@ public class SqliteConnection extends SqlConnection {
 						// scope.getGui().debug("convert at [" + i + "," + j +
 						// "]: ");
 						// }
-						// rowList.add(SqlUtils.read(rs.getBytes(j)));
+						 rowList.add(SqlUtils.read(rs.getBytes(j)));
 					} else {
 						rowList.add(rs.getObject(j));
 					}
@@ -520,7 +520,7 @@ public class SqliteConnection extends SqlConnection {
 		try {
 			final Statement stmt = conn.createStatement();
 			stmt.setQueryTimeout(30); // set timeout to 30 sec.
-			stmt.execute("SELECT load_extension('" + extension + "')");
+			stmt.execute("SELECT load_extension('" + extension.replace('\\', '/') + "')");
 			// String sql = "SELECT InitSpatialMetadata()";
 			// stmt.execute(sql);
 			stmt.close();

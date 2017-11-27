@@ -41,7 +41,7 @@
 				<executions>
 					<execution>
 						<id>create-zip-files</id>
-						<phase>package</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -49,7 +49,10 @@
 							<target>
 								<copy file="../ummisco.gama.product/extraresources/Model.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
-
+								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
+								<copy file="../ummisco.gama.product/extraresources/Info.plist"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/" overwrite="true"/>	
 								<copy
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
@@ -119,118 +122,6 @@
 					</products>
 				</configuration>
 			</plugin>
-			<!-- inject information into the PList file for cocoa, only way to do 
-				that actually, see project fix-info-plist and https://github.com/buchen/fix-info-plist-maven-plugin/issues/1 -->
-			<plugin>
-				<groupId>name.abuchen</groupId>
-				<artifactId>fix-info-plist-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>fix-info-plist</id>
-						<phase>package</phase>
-						<goals>
-							<goal>fix-info-plist</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<productId>ummisco.gama.application.product</productId>
-					<appName>Gama.app</appName>
-					<properties>
-						<property>
-
-							<name>CFBundleDocumentTypes</name>
-							<value>Gama</value>
-						</property>
-
-						<property>
-							<name>CFBundleExecutable</name>
-							<value>Gama</value>
-						</property>
-
-						<property>
-							<name>CFBundleGetInfoString</name>
-							<value>Gama 1.7.0, Copyright UMMISCO IRD/UPMC and partners
-								2006-2016 http://gama-platform.org</value>
-						</property>
-
-						<property>
-							<name>CFBundleIdentifier</name>
-							<value>Gama</value>
-						</property>
-
-						<property>
-							<name>CFBundleInfoDictionaryVersion</name>
-							<value>6.0</value>
-						</property>
-
-						<property>
-							<name>CFBundleName</name>
-							<value>Gama</value>
-						</property>
-
-						<property>
-							<name>CFBundlePackageType</name>
-							<value>APPL</value>
-						</property>
-
-						<property>
-							<name>CFBundleShortVersionString</name>
-							<value>1.7.0</value>
-						</property>
-
-						<property>
-							<name>CFBundleSignature</name>
-							<value>GAMA</value>
-						</property>
-
-						<property>
-							<name>CFBundleVersion</name>
-							<value>1.7.0</value>
-						</property>
-
-						<property>
-							<name>NSHighResolutionCapable</name>
-							<value>True</value>
-						</property>
-
-						<property>
-							<name>CFBundleDevelopmentRegion</name>
-							<value>English</value>
-						</property>
-
-						<property>
-							<name>CFBundleDocumentTypes</name>
-							<value>
-								<dict>
-									<key>CFBundleTypeExtensions</key>
-									<array>
-										<string>gaml</string>
-									</array>
-									<key>CFBundleTypeIconFile</key>
-									<string>Model.icns</string>
-									<key>CFBundleTypeName</key>
-									<string>Gama Model</string>
-									<key>CFBundleTypeRole</key>
-									<string>Editor</string>
-									<key>CFBundleTypeOSTypes</key>
-									<array>
-										<string>TEXT</string>
-									</array>
-								</dict>
-							</value>
-						</property>
-
-						<property>
-							<name>Eclipse</name>
-							<value />
-						</property>
-					</properties>
-				</configuration>
-			</plugin>
-
-
 
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
 				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ 
@@ -248,11 +139,6 @@
 								<resource>
 									<directory>${project.build.directory}/../</directory>
 									<filtering>false</filtering>
-									<!-- in case you have a defined config.ini -->
-									<!-- <includes> <include>config.ini</include> </includes> -->
-									<!-- <excludes> <exclude>src</exclude> <exclude>gaml</exclude> <exclude>target</exclude> 
-										<exclude>META-INF</exclude> <exclude>bin</exclude> <exclude>products</exclude> 
-										</excludes> -->
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/configuration</outputDirectory>

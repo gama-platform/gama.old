@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParameterExpandBar.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParameterExpandBar.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,6 +31,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Widget;
 
+import com.google.common.base.Objects;
+
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -41,10 +42,9 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * Instances of this class support the layout of selectable expand bar items.
  * <p>
- * The item children that may be added to instances of this class must be of
- * type <code>ExpandItem</code>.
+ * The item children that may be added to instances of this class must be of type <code>ExpandItem</code>.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ParameterExpandBar extends Composite/* implements IPopupProvider */ {
 
 	/**
@@ -74,22 +74,18 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	/**
 	 * @param underlyingObjects
-	 *            Constructs a new instance of this class given its parent and a
-	 *            style value describing its behavior and appearance.
+	 *            Constructs a new instance of this class given its parent and a style value describing its behavior and
+	 *            appearance.
 	 *            <p>
-	 *            The style value is either one of the style constants defined
-	 *            in class <code>SWT</code> which is applicable to instances of
-	 *            this class, or must be built by <em>bitwise OR</em>'ing
-	 *            together (that is, using the <code>int</code> "|" operator)
-	 *            two or more of those <code>SWT</code> style constants. The
-	 *            class description lists the style constants that are
-	 *            applicable to the class. Style bits are also inherited from
-	 *            superclasses.
+	 *            The style value is either one of the style constants defined in class <code>SWT</code> which is
+	 *            applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is,
+	 *            using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The
+	 *            class description lists the style constants that are applicable to the class. Style bits are also
+	 *            inherited from superclasses.
 	 *            </p>
 	 *
 	 * @param parent
-	 *            a composite control which will be the parent of the new
-	 *            instance (cannot be null)
+	 *            a composite control which will be the parent of the new instance (cannot be null)
 	 * @param style
 	 *            the style of control to construct
 	 *
@@ -99,10 +95,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the parent</li>
-	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an
-	 *                allowed subclass</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
 	 *                </ul>
 	 *
 	 * @see SWT#V_SCROLL
@@ -111,13 +105,13 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 */
 
 	public ParameterExpandBar(final Composite parent, final int style) {
-		this(parent, style | SWT.DOUBLE_BUFFERED, false, false, false, false, null);
+		this(parent, style, false, false, false, false, null);
 	}
 
 	public ParameterExpandBar(final Composite parent, final int style, final boolean isClosable,
 			final boolean isPausable, final boolean isSelectable, final boolean isVisible,
 			final ItemList underlyingObjects) {
-		super(parent, checkStyle(style));
+		super(parent, style | SWT.DOUBLE_BUFFERED);
 		items = new ParameterExpandItem[4];
 		this.hasClosableToggle = isClosable;
 		this.hasPausableToggle = isPausable;
@@ -126,32 +120,32 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		this.underlyingObjects = underlyingObjects;
 		listener = event -> {
 			switch (event.type) {
-			case SWT.Dispose:
-				onDispose(event);
-				break;
-			case SWT.MenuDetect:
-				onContextualMenu(event);
-				break;
-			case SWT.MouseDown:
-				if ((event.stateMask & SWT.CTRL) != 0 || event.button == 3) {
+				case SWT.Dispose:
+					onDispose(event);
+					break;
+				case SWT.MenuDetect:
 					onContextualMenu(event);
-				} else {
-					onMouseDown(event);
-				}
-				break;
-			case SWT.MouseUp:
-				onMouseUp(event);
-				break;
-			case SWT.Paint:
-				onPaint(event);
-				break;
-			case SWT.Resize:
-				onResize();
-				break;
-			case SWT.FocusIn:
-			case SWT.FocusOut:
-				onFocus();
-				break;
+					break;
+				case SWT.MouseDown:
+					if ((event.stateMask & SWT.CTRL) != 0 || event.button == 3) {
+						onContextualMenu(event);
+					} else {
+						onMouseDown(event);
+					}
+					break;
+				case SWT.MouseUp:
+					onMouseUp(event);
+					break;
+				case SWT.Paint:
+					onPaint(event);
+					break;
+				case SWT.Resize:
+					onResize();
+					break;
+				case SWT.FocusIn:
+				case SWT.FocusOut:
+					onFocus();
+					break;
 			}
 		};
 		addListener(SWT.Dispose, listener);
@@ -194,8 +188,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	@Override
-	protected void checkSubclass() {
-	}
+	protected void checkSubclass() {}
 
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
@@ -254,11 +247,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		layoutItems(index, true);
 	}
 
-	void destroyItem(final ParameterExpandItem item) {
+	public void destroyItem(final ParameterExpandItem item) {
 
-		if (inDispose) {
-			return;
-		}
+		if (inDispose) { return; }
 		int index = 0;
 		while (index < itemCount) {
 			if (items[index] == item) {
@@ -266,9 +257,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			}
 			index++;
 		}
-		if (index == itemCount) {
-			return;
-		}
+		if (index == itemCount) { return; }
 		if (item == getFocusItem()) {
 			final int focusIndex = index > 0 ? index - 1 : 1;
 			if (focusIndex < itemCount) {
@@ -285,17 +274,13 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			underlyingObjects.removeItem(item.getData());
 		}
 		layoutItems(index, true);
-		if (this.isDisposed()) {
-			return;
-		}
+		if (this.isDisposed()) { return; }
 		this.redraw();
 		this.update();
 	}
 
 	void computeBandHeight() {
-		if (getFont() == null) {
-			return;
-		}
+		if (getFont() == null) { return; }
 		final GC gc = new GC(this);
 		final FontMetrics metrics = gc.getFontMetrics();
 		gc.dispose();
@@ -303,8 +288,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	/**
-	 * Returns the item at the given, zero-relative index in the receiver.
-	 * Throws an exception if the index is out of range.
+	 * Returns the item at the given, zero-relative index in the receiver. Throws an exception if the index is out of
+	 * range.
 	 *
 	 * @param index
 	 *            the index of the item to return
@@ -312,13 +297,21 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0
-	 *                and the number of elements in the list minus 1 (inclusive)
-	 *                </li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list
+	 *                minus 1 (inclusive)</li>
 	 *                </ul>
 	 */
 	public ParameterExpandItem getItem(final int index) {
 		return items[index];
+	}
+
+	public ParameterExpandItem getItem(final Object data) {
+		for (final ParameterExpandItem item : items) {
+			if (item != null)
+				if (Objects.equal(item.getData(), data))
+					return item;
+		}
+		return null;
 	}
 
 	/**
@@ -328,10 +321,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int getItemCount() {
@@ -339,21 +330,18 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	/**
-	 * Returns an array of <code>ExpandItem</code>s which are the items in the
-	 * receiver.
+	 * Returns an array of <code>ExpandItem</code>s which are the items in the receiver.
 	 * <p>
-	 * Note: This is not the actual structure used by the receiver to maintain
-	 * its list of items, so modifying the array will not affect the receiver.
+	 * Note: This is not the actual structure used by the receiver to maintain its list of items, so modifying the array
+	 * will not affect the receiver.
 	 * </p>
 	 *
 	 * @return the items in the receiver
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public ParameterExpandItem[] getItems() {
@@ -363,9 +351,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	/**
-	 * Searches the receiver's list starting at the first item (index 0) until
-	 * an item is found that is equal to the argument, and returns the index of
-	 * that item. If no item is found, returns -1.
+	 * Searches the receiver's list starting at the first item (index 0) until an item is found that is equal to the
+	 * argument, and returns the index of that item. If no item is found, returns -1.
 	 *
 	 * @param item
 	 *            the search item
@@ -374,15 +361,12 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 * @exception IllegalArgumentException
 	 *                <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the item is null</li>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the item has been disposed
-	 *                </li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the item has been disposed</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int indexOf(final ParameterExpandItem item) {
@@ -390,9 +374,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		for (int i = 0; i < itemCount; i++) {
-			if (items[i] == item) {
-				return i;
-			}
+			if (items[i] == item) { return i; }
 		}
 		return -1;
 	}
@@ -422,18 +404,14 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	public void updateItemNames() {
-		if (underlyingObjects == null) {
-			return;
-		}
+		if (underlyingObjects == null) { return; }
 		for (int i = 0; i < itemCount; i++) {
 			items[i].setText(underlyingObjects.getItemDisplayName(items[i].getData(), items[i].getText()));
 		}
 	}
 
 	public void updateItemColors() {
-		if (underlyingObjects == null) {
-			return;
-		}
+		if (underlyingObjects == null) { return; }
 		for (int i = 0; i < itemCount; i++) {
 			items[i].setColor(underlyingObjects.getItemDisplayColor(items[i].getData()));
 		}
@@ -448,13 +426,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void setScrollbar() {
-		if (itemCount == 0) {
-			return;
-		}
+		if (itemCount == 0) { return; }
 		final ScrollBar verticalBar = getVerticalBar();
-		if (verticalBar == null) {
-			return;
-		}
+		if (verticalBar == null) { return; }
 		final int height = getClientArea().height;
 		final ParameterExpandItem item = items[itemCount - 1];
 		int maxHeight = item.y + bandHeight + spacing;
@@ -477,20 +451,15 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	/**
-	 * Sets the receiver's spacing. Spacing specifies the number of pixels
-	 * allocated around each item.
+	 * Sets the receiver's spacing. Spacing specifies the number of pixels allocated around each item.
 	 *
 	 * @param spacing
 	 *            the spacing around each item
 	 *
 	 */
 	public void setSpacing(final int spacing) {
-		if (spacing < 0) {
-			return;
-		}
-		if (spacing == this.spacing) {
-			return;
-		}
+		if (spacing < 0) { return; }
+		if (spacing == this.spacing) { return; }
 		this.spacing = spacing;
 		final int width = Math.max(0, getClientArea().width - spacing * 2);
 		for (int i = 0; i < itemCount; i++) {
@@ -523,11 +492,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		notifyListeners(SWT.Dispose, event);
 		event.type = SWT.None;
 		/*
-		 * Usually when an item is disposed, destroyItem will change the size of
-		 * the items array, reset the bounds of all the tabs and manage the
-		 * widget associated with the tab. Since the whole folder is being
-		 * disposed, this is not necessary. For speed the inDispose flag is used
-		 * to skip over this part of the item dispose.
+		 * Usually when an item is disposed, destroyItem will change the size of the items array, reset the bounds of
+		 * all the tabs and manage the widget associated with the tab. Since the whole folder is being disposed, this is
+		 * not necessary. For speed the inDispose flag is used to skip over this part of the item dispose.
 		 */
 		inDispose = true;
 
@@ -565,9 +532,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void changeHoverTo(final ParameterExpandItem item) {
-		if (hoverItem == item) {
-			return;
-		}
+		if (hoverItem == item) { return; }
 		final ParameterExpandItem oldHoverItem = hoverItem;
 		hoverItem = item;
 		if (oldHoverItem != null) {
@@ -615,9 +580,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void onMouseDown(final Event event) {
-		if (event.button != 1) {
-			return;
-		}
+		if (event.button != 1) { return; }
 		final int x = event.x;
 		final int y = event.y;
 		for (int i = 0; i < itemCount; i++) {
@@ -697,12 +660,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			ignoreMouseUp = false;
 			return;
 		}
-		if (event.button != 1) {
-			return;
-		}
-		if (getFocusItem() == null) {
-			return;
-		}
+		if (event.button != 1) { return; }
+		if (getFocusItem() == null) { return; }
 		final int x = event.x;
 		final int y = event.y;
 		final boolean hover = getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width
@@ -714,7 +673,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			final Event ev = new Event();
 			ev.item = getFocusItem();
 			final boolean wasExpanded = getFocusItem().expanded;
-			getFocusItem().expanded = !getFocusItem().expanded;
+			getFocusItem().setExpanded(!getFocusItem().expanded);
 			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
 			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
@@ -763,13 +722,10 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	public void collapseItemWithData(final Object data) {
-		if (data == null) {
-			return;
-		}
+		if (data == null) { return; }
 		for (final ParameterExpandItem i : items) {
 			if (data.equals(i.getData())) {
-				i.expanded = false;
-				showItem(i);
+				i.setExpanded(false);
 				return;
 			}
 		}

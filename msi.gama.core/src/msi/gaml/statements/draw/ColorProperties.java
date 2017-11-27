@@ -30,6 +30,8 @@ public class ColorProperties {
 	}
 
 	public GamaColor getBorderColor() {
+		if (empty && border == null)
+			return fill;
 		return border;
 	}
 

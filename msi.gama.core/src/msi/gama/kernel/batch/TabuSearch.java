@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'TabuSearch.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'TabuSearch.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -10,10 +9,24 @@
  **********************************************************************************************/
 package msi.gama.kernel.batch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ParameterAdapter;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -23,35 +36,59 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.TABU, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = { IConcept.BATCH, IConcept.ALGORITHM })
-@inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(
-	value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false, internal = true),
-		@facet(name = TabuSearch.ITER_MAX, type = IType.INT, optional = true, doc = @doc("number of iterations") ),
-		@facet(name = TabuSearch.LIST_SIZE, type = IType.INT, optional = true, doc = @doc("size of the tabu list") ),
-		@facet(name = IKeyword.MAXIMIZE,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the value the algorithm tries to maximize") ),
-		@facet(name = IKeyword.MINIMIZE,
-			type = IType.FLOAT,
-			optional = true,
-			doc = @doc("the value the algorithm tries to minimize") ),
-		@facet(name = IKeyword.AGGREGATION,
-			type = IType.LABEL,
-			optional = true,
-			values = { IKeyword.MIN, IKeyword.MAX },
-			doc = @doc("the agregation method") ) },
-	omissible = IKeyword.NAME)
-@doc(
-	value = "This algorithm is an implementation of the Tabu Search algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
-	usages = {
-		@usage(
-			value = "As other batch methods, the basic syntax of the tabu statement uses `method tabu` instead of the expected `tabu name: id` : ",
-			examples = { @example(value = "method tabu [facet: value];", isExecutable = false) }),
-		@usage(value = "For example: ",
-			examples = { @example(value = "method tabu iter_max: 50 tabu_list_size: 5 maximize: food_gathered;",
-				isExecutable = false) }) })
+@symbol (
+		name = IKeyword.TABU,
+		kind = ISymbolKind.BATCH_METHOD,
+		with_sequence = false,
+		concept = { IConcept.BATCH, IConcept.ALGORITHM })
+@inside (
+		kinds = { ISymbolKind.EXPERIMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.ID,
+				optional = false,
+				internal = true,
+				doc = @doc ("The name of the method. For internal use only")),
+				@facet (
+						name = TabuSearch.ITER_MAX,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("number of iterations")),
+				@facet (
+						name = TabuSearch.LIST_SIZE,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("size of the tabu list")),
+				@facet (
+						name = IKeyword.MAXIMIZE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the value the algorithm tries to maximize")),
+				@facet (
+						name = IKeyword.MINIMIZE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the value the algorithm tries to minimize")),
+				@facet (
+						name = IKeyword.AGGREGATION,
+						type = IType.LABEL,
+						optional = true,
+						values = { IKeyword.MIN, IKeyword.MAX },
+						doc = @doc ("the agregation method")) },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "This algorithm is an implementation of the Tabu Search algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
+		usages = { @usage (
+				value = "As other batch methods, the basic syntax of the tabu statement uses `method tabu` instead of the expected `tabu name: id` : ",
+				examples = { @example (
+						value = "method tabu [facet: value];",
+						isExecutable = false) }),
+				@usage (
+						value = "For example: ",
+						examples = { @example (
+								value = "method tabu iter_max: 50 tabu_list_size: 5 maximize: food_gathered;",
+								isExecutable = false) }) })
 public class TabuSearch extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
@@ -85,26 +122,26 @@ public class TabuSearch extends LocalSearchAlgorithm {
 			// scope.getGui().debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, bestSolutionAlgo);
 			neighbors.removeAll(tabuList);
-			if ( neighbors.isEmpty() ) {
-				if ( tabuList.isEmpty() ) {
+			if (neighbors.isEmpty()) {
+				if (tabuList.isEmpty()) {
 					break;
 				}
 				neighbors.add(tabuList.get(scope.getRandom().between(0, tabuList.size() - 1)));
 			}
-			if ( isMaximize() ) {
+			if (isMaximize()) {
 				bestFitnessAlgo = -Double.MAX_VALUE;
 			} else {
 				bestFitnessAlgo = Double.MAX_VALUE;
 			}
 			ParametersSet bestNeighbor = null;
 
-			for ( final ParametersSet neighborSol : neighbors ) {
+			for (final ParametersSet neighborSol : neighbors) {
 				// scope.getGui().debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
-				if ( neighborSol == null ) {
+				if (neighborSol == null) {
 					continue;
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
-				if ( neighborFitness == null || neighborFitness == Double.MAX_VALUE ) {
+				if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
 					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 					nbIt++;
 				} else {
@@ -115,25 +152,20 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				// scope.getGui().debug("TabuSearch.findBestSolution neighborFitness = " + neighborFitness +
 				// " bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
 				// " current fitness = " + currentFitness);
-				boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
-				if ( isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest ) {
+				final boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
+				if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness;
 				}
-				boolean curFitnessGreaterThanBest = currentFitness > getBestFitness();
 
-				if ( isMaximize() && curFitnessGreaterThanBest || !isMaximize() && !curFitnessGreaterThanBest ) {
-					setBestSolution(new ParametersSet(bestSolutionAlgo));
-					setBestFitness(currentFitness);
-				}
-				if ( nbIt > iterMax ) {
+				if (nbIt > iterMax) {
 					break;
 				}
 			}
-			if ( bestNeighbor != null ) {
+			if (bestNeighbor != null) {
 				bestSolutionAlgo = bestNeighbor;
 				tabuList.add(bestSolutionAlgo);
-				if ( tabuList.size() > tabuListSize ) {
+				if (tabuList.size() > tabuListSize) {
 					tabuList.remove(0);
 				}
 				currentFitness = bestFitnessAlgo;
@@ -156,14 +188,15 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 	}
 
+	@Override
 	public void initParams(final IScope scope) {
 		final IExpression maxIt = getFacet(ITER_MAX);
-		if ( maxIt != null ) {
+		if (maxIt != null) {
 			iterMax = Cast.asInt(scope, maxIt.value(scope));
 			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
 		}
 		final IExpression listsize = getFacet(LIST_SIZE);
-		if ( listsize != null ) {
+		if (listsize != null) {
 			tabuListSize = Cast.asInt(scope, listsize.value(scope));
 		}
 	}
@@ -180,14 +213,14 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 		});
 		params.add(
-			new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+				new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
-				@Override
-				public Object value() {
-					return iterMax;
-				}
+					@Override
+					public Object value() {
+						return iterMax;
+					}
 
-			});
+				});
 	}
 
 }

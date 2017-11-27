@@ -140,7 +140,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String... skills) {
 		GamaMetaModel.INSTANCE.addSpecies(name, clazz, helper, skills);
-		DescriptionFactory.addSpeciesNameAsType(name);
+		// DescriptionFactory.addSpeciesNameAsType(name);
 	}
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
@@ -148,7 +148,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> helper,
+	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?>> helper,
 			final int innerType, final int keyType, final int contentType, final String[] s) {
 		helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
@@ -168,11 +168,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	// doc missing
-	protected void _symbol(final Class c, /* final int docIndex, */final IDescriptionValidator validator,
+	protected void _symbol(final String[] names, final Class c, final IDescriptionValidator validator,
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
 			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
-			final ISymbolConstructor sc, final String... names) {
+			final ISymbolConstructor sc) {
 
 		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
@@ -191,14 +191,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _iterator(final String[] keywords, final Method method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
-			final int index, final GamaHelper helper) {
+			final int index, final int contentContentType, final GamaHelper helper) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, helper);
+		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, contentContentType,
+				helper);
 	}
 
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
-			final int content, final int index, final GamaHelper helper) {
+			final int content, final int index, final int contentContentType, final GamaHelper helper) {
 		final Signature signature = new Signature(classes);
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
@@ -217,19 +218,22 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				}
 				if (classes.length == 1) { // unary
 					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
-							IExpression.class.equals(classes[0]), t, content, index, expectedContentTypes, plugin);
+							IExpression.class.equals(classes[0]), t, content, index, contentContentType,
+							expectedContentTypes, plugin);
 				} else if (classes.length == 2) { // binary
 					if ((kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType()) {
 						proto = new OperatorProto(kw, method, helper, c, true, rt, signature,
-								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
+								IExpression.class.equals(classes[1]), t, content, index, contentContentType,
+								expectedContentTypes, plugin);
 					} else {
 						proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
-								IExpression.class.equals(classes[1]), t, content, index, expectedContentTypes, plugin);
+								IExpression.class.equals(classes[1]), t, content, index, contentContentType,
+								expectedContentTypes, plugin);
 					}
 				} else {
 					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
 							IExpression.class.equals(classes[classes.length - 1]), t, content, index,
-							expectedContentTypes, plugin);
+							contentContentType, expectedContentTypes, plugin);
 				}
 				map.put(signature, proto);
 			}
@@ -243,7 +247,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final GamaHelper helper/* , final int doc */) {
 		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
 		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE,
-				ITypeProvider.NONE, ITypeProvider.NONE, helper);
+				ITypeProvider.NONE, ITypeProvider.NONE, ITypeProvider.NONE, helper);
 	}
 
 	protected void _populationsLinker(final String name, final Class clazz,

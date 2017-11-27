@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WrappedPlugin.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WrappedPlugin.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,12 +10,12 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 
-import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
-import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class WrappedFile.
@@ -42,6 +41,7 @@ public class WrappedPlugin extends VirtualContent {
 
 	/**
 	 * Method hasChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -56,6 +56,7 @@ public class WrappedPlugin extends VirtualContent {
 
 	/**
 	 * Method getNavigatorChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
@@ -65,20 +66,23 @@ public class WrappedPlugin extends VirtualContent {
 
 	/**
 	 * Method getImage()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getImage()
 	 */
 	@Override
 	public Image getImage() {
+		return null;
 		// should be handled by the label provider
-		if ( GamaBundleLoader.contains(getName()) ) {
-			return GamaIcons.create("gaml/_present").image();
-		} else {
-			return GamaIcons.create("gaml/_missing").image();
-		}
+		// if ( GamaBundleLoader.contains(getName()) ) {
+		// return GamaIcons.create("gaml/_present").image();
+		// } else {
+		// return GamaIcons.create("gaml/_missing").image();
+		// }
 	}
 
 	/**
 	 * Method getColor()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getColor()
 	 */
 	@Override
@@ -88,6 +92,7 @@ public class WrappedPlugin extends VirtualContent {
 
 	/**
 	 * Method isParentOf()
+	 * 
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
 	// @Override

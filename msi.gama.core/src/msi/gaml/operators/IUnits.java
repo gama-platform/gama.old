@@ -248,7 +248,7 @@ public interface IUnits {
 			value = "infinity",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the positive infinity of type (Java Double.POSITIVE_INFINITY)")) public final static double infinity =
+			doc = @doc ("A constant holding the positive infinity of type float (Java Double.POSITIVE_INFINITY)")) public final static double infinity =
 					Double.POSITIVE_INFINITY;
 	@constant (
 			value = "min_float",
@@ -640,6 +640,16 @@ public interface IUnits {
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
 			doc = { @doc ("square mile unit") }) public final static double sqmi = mile * mile, square_mile = sqmi,
 					square_miles = sqmi;
+	/*
+	 * Others
+	 */
+	@constant (
+			value = "current_error",
+			altNames = {},
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.ACTION },
+			doc = { @doc ("The text of the last error thrown during the current execution") }) public final static String current_error =
+					"";
 
 	public final static Map<String, UnitConstantExpression> UNITS_EXPR = new HashMap<>();
 

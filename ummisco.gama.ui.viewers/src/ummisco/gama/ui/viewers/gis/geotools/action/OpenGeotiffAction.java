@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'OpenGeotiffAction.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OpenGeotiffAction.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,6 +28,7 @@ import org.geotools.styling.StyleFactoryImpl;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.gis.geotools.control.JFileImageChooser;
 
 /**
@@ -48,7 +48,7 @@ public class OpenGeotiffAction extends MapAction implements ISelectionChangedLis
 
 	@Override
 	public void run() {
-		final Display display = Display.getCurrent();
+		final Display display = WorkbenchHelper.getDisplay();
 		final Shell shell = new Shell(display);
 		final File openFile = JFileImageChooser.showOpenFile(shell);
 

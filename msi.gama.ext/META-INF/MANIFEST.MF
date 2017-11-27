@@ -97,6 +97,8 @@ Export-Package: com.kitfox.svg;
  it.geosolutions.imageioimpl.plugins.tiff,
  it.geosolutions.io,
  it.geosolutions.io.input,
+ javax.measure.converter,
+ javax.measure.unit,
  javax.media.jai,
  javax.vecmath,
  net.sf.jsqlparser,
@@ -139,6 +141,8 @@ Export-Package: com.kitfox.svg;
    org.apache.commons.math3.analysis,
    org.apache.commons.math3.exception,
    org.apache.commons.math3.util",
+ org.apache.commons.math3.ml.clustering,
+ org.apache.commons.math3.ml.distance,
  org.apache.commons.math3.ode;
   uses:="org.apache.commons.math3.ode.sampling,
    org.apache.commons.math3.ode.nonstiff,
@@ -583,6 +587,10 @@ Export-Package: com.kitfox.svg;
    org.jgrapht.event,
    org.jgrapht.graph,
    org.jgrapht",
+ org.jgrapht.alg.interfaces,
+ org.jgrapht.alg.shortestpath,
+ org.jgrapht.alg.spanning,
+ org.jgrapht.alg.util,
  org.jgrapht.graph;
   uses:="org.jgrapht.event,
    org.jgrapht.graph.builder,
@@ -772,7 +780,6 @@ Bundle-ClassPath: .,
  svgsalamander 1.0/jars/svg-salamander-1.0.jar,
  trove 3.0.3/jars/trove-3.0.3.jar,
  vecmath 1.5.2/jars/vecmath-1.5.2.jar,
- jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar,
  kabeja 0.4/jars/kabeja-0.4.jar,
  graphstream 1.3/jars/gs-algo-1.3.jar,
  graphstream 1.3/jars/gs-core-1.3.jar,
@@ -925,5 +932,7 @@ Bundle-ClassPath: .,
  geotools 14.5/jt-vectorbin-1.0.9.jar,
  geotools 14.5/jt-zonal-1.0.9.jar,
  geotools 14.5/core-0.26.jar,
- streamex 0.6.2/streamex-0.6.4.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+ streamex 0.6.2/streamex-0.6.4.jar,
+ jgrapht 1.0.1/jgrapht-core-1.0.1.jar,
+ jgrapht 1.0.1/jgrapht-ext-1.0.1.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

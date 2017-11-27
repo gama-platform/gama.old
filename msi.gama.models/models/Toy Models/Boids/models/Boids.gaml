@@ -133,6 +133,18 @@ species boids skills: [moving] {
 			} else if (location.y) > ymax {
 				velocity <- velocity - {0,bounds};
 			}
+		} else {
+			if (location.x) < 0.0 {
+				location <- {width_and_height_of_environment + location.x,location.y};
+			} else if (location.x) > width_and_height_of_environment {
+				location <- {location.x - width_and_height_of_environment ,location.y};
+			}
+			
+			if (location.y) < 0.0 {
+				location <- {location.x, width_and_height_of_environment + location.y};
+			} else if (location.y) > width_and_height_of_environment {
+				location <- {location.x,location.y - width_and_height_of_environment};
+			}
 			
 		}
 	}
@@ -158,6 +170,7 @@ species boids skills: [moving] {
 	//Reflex to apply the movement by calling the do_move action
 	reflex movement {
 		do do_move;
+		do bounding;
 	}
 	
 	aspect image {

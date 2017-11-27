@@ -10,37 +10,22 @@
 package ummisco.gama.ui.views.displays;
 
 import java.awt.Color;
-import java.awt.Robot;
-import java.awt.image.BufferedImage;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -52,45 +37,20 @@ import org.eclipse.ui.PartInitException;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
-import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
-import msi.gaml.operators.Files;
 import msi.gaml.operators.Maths;
-import msi.gaml.types.Types;
-import ummisco.gama.ui.controls.ParameterExpandBar;
-import ummisco.gama.ui.controls.ParameterExpandItem;
-import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.parameters.BooleanEditor;
-import ummisco.gama.ui.parameters.ColorEditor;
-import ummisco.gama.ui.parameters.EditorFactory;
-import ummisco.gama.ui.parameters.FloatEditor;
-import ummisco.gama.ui.parameters.IntEditor;
-import ummisco.gama.ui.parameters.PointEditor;
-import ummisco.gama.ui.parameters.StringEditor;
+import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -112,33 +72,118 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public DisplayOverlay overlay;
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
-	protected ToolItem overlayItem, sideControlsItem;
-	boolean sideControlsVisible = false, interactiveConsoleVisible = false;
+	boolean sideControlsVisible = false, interactiveConsoleVisible = false, simulationControlsVisible = false;
 	int[] sideControlWeights = new int[] { 30, 70 };
-	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected Composite normalParentOfFullScreenControl;
 	protected Shell fullScreenShell;
 
+	@Override
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
+			adaptToolbarToFullScreen(false);
 			if (interactiveConsoleVisible)
 				toggleInteractiveConsole();
+			if (simulationControlsVisible)
+				toggleSimulationControls();
 			controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
 			this.setFocus();
 		} else {
-			createFullScreenShell();
+			adaptToolbarToFullScreen(true);
+			fullScreenShell = createFullScreenShell();
 			normalParentOfFullScreenControl = controlToSetFullScreen().getParent();
 			controlToSetFullScreen().setParent(fullScreenShell);
 			createOverlay();
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			getZoomableControls()[0].forceFocus();
+			if (GamaPreferences.Displays.DISPLAY_TOOLBAR_FULLSCREEN.getValue())
+				toggleSimulationControls();
 		}
+	}
+
+	private void adaptToolbarToFullScreen(final boolean entering) {
+		fs.setImage(GamaIcons.create(entering ? "display.fullscreen3" : "display.fullscreen2").image());
+
+		if (entering) {
+			toolbar.button("display.layers2", "Toggle layers controls",
+					"Toggle layers controls " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'L'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleSideControls();
+						}
+
+					}, SWT.LEFT);
+			toolbar.button("display.overlay2", "Toggle overlay",
+					"Toggle bottom overlay " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'O'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleOverlay();
+						}
+
+					}, SWT.LEFT);
+			toolbar.button("display.presentation2", "Toggle Interactive Console",
+					"Toggle interactive console " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'K'),
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							toggleInteractiveConsole();
+						}
+
+					}, SWT.LEFT);
+			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
+
+			toolbar.button(IGamaIcons.MENU_RUN_ACTION, "Run or pause experiment",
+					"Run or pause experiment " + GamaKeyBindings.PLAY_STRING, new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							final ToolItem item = (ToolItem) e.widget;
+							if (!GAMA.isPaused()) {
+								item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+								item.setToolTipText("Run experiment " + GamaKeyBindings.PLAY_STRING);
+							} else {
+								item.setImage(GamaIcons.create("menu.pause4").image());
+								item.setToolTipText("Pause experiment " + GamaKeyBindings.PLAY_STRING);
+							}
+							GAMA.startPauseFrontmostExperiment();
+
+						}
+
+					}, SWT.LEFT);
+			toolbar.button("menu.step4", "Step experiment", "Step experiment " + GamaKeyBindings.STEP_STRING,
+					new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							GAMA.stepFrontmostExperiment();
+
+						}
+
+					}, SWT.LEFT);
+
+			toolbar.button("toolbar.stop2", "Closes experiment",
+					"Closes experiment (" + GamaKeyBindings.QUIT_STRING + ")", new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							new Thread(() -> GAMA.closeAllExperiments(true, false)).start();
+
+						}
+
+					}, SWT.LEFT);
+
+		} else
+			toolbar.wipe(SWT.LEFT, true);
 	}
 
 	public Control controlToSetFullScreen() {
@@ -160,34 +205,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			overlay.setVisible(true);
 	}
 
+	@Override
 	public boolean isFullScreen() {
 		return fullScreenShell != null;
 	}
 
-	private void createFullScreenShell() {
-		if (fullScreenShell != null)
-			return;
-		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
-		int monitorId = getOutput().getData().fullScreen();
-		if (monitorId < 0)
-			monitorId = 0;
-		if (monitorId > monitors.length - 1)
-			monitorId = monitors.length - 1;
-
-		fullScreenShell = new Shell(WorkbenchHelper.getDisplay(),
-				(GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL)
-						| SWT.NO_TRIM);
-		fullScreenShell.setBounds(monitors[monitorId].getBounds());
-
-		// fullScreenShell.setMaximized(true);
-		final GridLayout gl = new GridLayout(1, true);
-		gl.horizontalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.verticalSpacing = 0;
-		fullScreenShell.setLayout(gl);
-		// fullScreenShell.setAlpha(200);
-		// fullScreenShell.setFullScreen(true);
+	private Shell createFullScreenShell() {
+		final int monitorId = getOutput().getData().fullScreen();
+		return WorkbenchHelper.obtainFullScreenShell(monitorId);
 	}
 
 	private void destroyFullScreenShell() {
@@ -204,7 +229,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	};
 
 	protected void updateOverlay() {
-		if (overlay.isVisible())
+		if (overlay != null && overlay.isVisible())
 			overlay.update();
 	}
 
@@ -225,8 +250,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			if (scope != null && scope.getSimulation() != null) {
 				final ITopLevelAgent root = scope.getRoot();
 				final Color color = root.getColor();
-				// String name = root.getClass().getSimpleName() +
-				// root.getIndex();
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 			}
 		}
@@ -234,17 +257,19 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public boolean isOpenGL() {
 		if (outputs.isEmpty()) { return false; }
-		return getOutput().isOpenGL();
+		return getOutput().getData().isOpenGL();
 	}
 
 	public ILayerManager getDisplayManager() {
 		return getDisplaySurface().getManager();
 	}
 
+	@Override
 	public void toggleOverlay() {
 		overlay.setVisible(!overlay.isVisible());
 	}
 
+	@Override
 	public void toggleSideControls() {
 		if (sideControlsVisible) {
 			sideControlWeights = form.getWeights();
@@ -255,7 +280,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			form.setMaximizedControl(null);
 			sideControlsVisible = true;
 		}
-		sideControlsItem.setSelection(sideControlsVisible);
 	}
 
 	public void toggleInteractiveConsole() {
@@ -274,7 +298,23 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			interactiveConsoleVisible = true;
 		}
 		sidePanel.layout(true, true);
+	}
 
+	Composite tp;
+
+	public void toggleSimulationControls() {
+		if (simulationControlsVisible) {
+			toolbar.setParent(tp);
+			tp = null;
+			parent.getParent().layout(true, true);
+			simulationControlsVisible = false;
+		} else {
+			tp = toolbar.getParent();
+			toolbar.setParent(parent.getParent());
+			simulationControlsVisible = true;
+		}
+		toolbar.layout(true, true);
+		toolbar.getParent().layout();
 	}
 
 	public Composite getSurfaceComposite() {
@@ -283,6 +323,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void ownCreatePartControl(final Composite c) {
+		final LayerSideControls side = new LayerSideControls();
 		if (getOutput() == null) { return; }
 
 		final GridLayout ll = new GridLayout(1, true);
@@ -332,17 +373,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		gl.verticalSpacing = 0;
 		parent.setLayout(gl);
 		createSurfaceComposite(parent);
-
-		surfaceComposite.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				final Rectangle r =
-						WorkbenchHelper.getDisplay().map(surfaceComposite, null, surfaceComposite.getBounds());
-				surfaceCompositeBounds.setBounds(r.x, r.y, r.width, r.height);
-			}
-		});
-
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = 0;
 		gd.verticalIndent = 0;
@@ -355,7 +385,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			overlay.update();
 		}
 		// Create after the surface composite
-		fillLayerSideControls(sidePanel);
+		side.fill(sidePanel, this);
 
 		// form.setWeights(new int[] { 30, 70 });
 		form.setMaximizedControl(centralPanel);
@@ -426,8 +456,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void widgetDisposed(final DisposeEvent e) {
 		if (disposed) { return; }
-		if (getOutput() != null) {
-			getOutput().getData().removeListener(this);
+		final LayeredDisplayOutput output = getOutput();
+		if (output != null) {
+			output.getData().listeners.clear();
+			final IDisplaySurface s = output.getSurface();
+			if (isOpenGL() && s != null) {
+				s.dispose();
+				output.setSurface(null);
+			}
 		}
 		if (keyAndMouseListener != null) {
 			keyAndMouseListener.dispose();
@@ -440,8 +476,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			}
 		}
-		// final IDisplaySurface s = getDisplaySurface();
-		// if ( s != null ) {
 		releaseLock();
 		// }
 		if (updateThread != null) {
@@ -540,31 +574,35 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	@Override
+	public boolean toolbarVisible() {
+		return getOutput().getData().isToolbarVisible();
+	}
+
+	ToolItem fs = null;
+
+	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		// { LAYER_CONTROLS, INSPECT_AGENTS, OPENGL, SEP, SNAPSHOT };
 
-		sideControlsItem = tb.check("display.layers2", "Toggle layers controls",
-				"Toggle layers controls (CTRL+L or COMMAND+L)", new SelectionAdapter() {
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "Take a snapshot", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						toggleSideControls();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				SnapshotMaker.getInstance().doSnapshot(getOutput(), getDisplaySurface(), surfaceComposite);
+			}
 
-				}, SWT.LEFT);
-		overlayItem = tb.check("display.overlay2", "Toggle overlay", "Toggle bottom overlay (CTRL+O or COMMAND+O)",
-				new SelectionAdapter() {
+		}, SWT.RIGHT);
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						overlay.setVisible(overlayItem.getSelection());
-					}
+		fs = tb.button("display.fullscreen2", "Toggle fullscreen", "Toggle fullscreen ESC", new SelectionAdapter() {
 
-				}, SWT.LEFT);
-		overlayItem.setSelection(GamaPreferences.Displays.CORE_OVERLAY.getValue());
-		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				toggleFullScreen();
+			}
 
+		}, SWT.RIGHT);
+		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.menu(IGamaIcons.MENU_POPULATION, "Browse displayed agents by layers", "Browse through all displayed agents",
 				new SelectionAdapter() {
 
@@ -572,7 +610,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 					@Override
 					public void widgetSelected(final SelectionEvent trigger) {
-						// final boolean asMenu = trigger.detail == SWT.ARROW;
 						final ToolItem target = (ToolItem) trigger.widget;
 						final ToolBar toolBar = target.getParent();
 						if (menu != null) {
@@ -585,17 +622,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 						menu.setVisible(true);
 
 					}
-				}, SWT.LEFT);
-
-		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "Take a snapshot", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				doSnapshot();
-			}
-
-		}, SWT.RIGHT);
+				}, SWT.RIGHT);
 	}
 
 	@Override
@@ -661,7 +688,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 						acquireLock();
 						s.updateDisplay(false);
 						if (s.getData().isAutosave()) {
-							doSnapshot();
+							SnapshotMaker.getInstance().doSnapshot(output, s, surfaceComposite);
 						}
 						// Fix for issue #1693
 						if (output.isInInitPhase()) {
@@ -681,7 +708,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			final IDisplaySurface s = getDisplaySurface();
 			s.updateDisplay(false);
 			if (getOutput().getData().isAutosave() && s.isRealized()) {
-				doSnapshot();
+				SnapshotMaker.getInstance().doSnapshot(output, s, surfaceComposite);
 			}
 			while (!s.isRendered() && !s.isDisposed() && !disposed) {
 				try {
@@ -695,79 +722,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			releaseLock();
 		}
 
-	}
-
-	void doSnapshot() {
-		if (getOutput() == null || getDisplaySurface() == null)
-			return;
-		final IDisplaySurface surface = getDisplaySurface();
-		final IScope scope = surface.getScope();
-		final LayeredDisplayData data = getOutput().getData();
-		final int w = (int) data.getImageDimension().getX();
-		final int h = (int) data.getImageDimension().getY();
-		final int width = w == -1 ? surface.getWidth() : w;
-		final int height = h == -1 ? surface.getHeight() : h;
-		BufferedImage snapshot = null;
-		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
-			try {
-				final Robot robot = new Robot();
-				snapshot = robot.createScreenCapture(surfaceCompositeBounds);
-				snapshot = ImageUtils.resize(snapshot, width, height);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		}
-		// in case it has not worked, snapshot is still null
-		if (snapshot == null) {
-			snapshot = surface.getImage(width, height);
-		}
-		if (!scope.interrupted())
-			saveSnapshot(scope, snapshot);
-	}
-
-	/**
-	 * Save this surface into an image passed as a parameter
-	 * 
-	 * @param scope
-	 * @param image
-	 */
-	public final void saveSnapshot(final IScope scope, final BufferedImage image) {
-		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
-		// prevent the exceptions from being masked.
-		if (image == null) { return; }
-		try {
-			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-		} catch (final GamaRuntimeException e1) {
-			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			e1.printStackTrace();
-			return;
-		}
-		final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME
-				+ "/" + GAMA.getModel().getName() + "_display_" + getOutput().getName(), false);
-
-		final String file = snapshotFile + "_size_" + image.getWidth() + "x" + image.getHeight() + "_cycle_"
-				+ scope.getClock().getCycle() + "_time_" + java.lang.System.currentTimeMillis() + ".png";
-		DataOutputStream os = null;
-		try {
-			os = new DataOutputStream(new FileOutputStream(file));
-			ImageIO.write(image, "png", os);
-			image.flush();
-		} catch (final java.io.IOException ex) {
-			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-		} finally {
-			try {
-				if (os != null) {
-					os.close();
-				}
-			} catch (final Exception ex) {
-				final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-			}
-		}
 	}
 
 	private volatile boolean lockAcquired = false;
@@ -788,301 +742,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		notify();
 	}
 
-	public Composite fillLayerSideControls(final Composite parent) {
-		//
-
-		final Composite column = new Composite(parent, SWT.NONE);
-		column.setBackground(IGamaColors.WHITE.color());
-		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
-		column.setLayoutData(data);
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		column.setLayout(layout);
-
-		final Composite viewersComposite = new Composite(parent, SWT.None);
-		viewersComposite.setBackground(IGamaColors.WHITE.color());
-		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		viewersComposite.setLayoutData(data);
-		viewersComposite.setLayout(new GridLayout(1, true));
-
-		final ParameterExpandBar propertiesViewer =
-				new ParameterExpandBar(viewersComposite, SWT.V_SCROLL, false, false, false, false, null);
-		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		propertiesViewer.setLayoutData(data);
-		propertiesViewer.setSpacing(5);
-		final ItemList<ILayer> list = getDisplayManager();
-		final ParameterExpandBar layerViewer =
-				new ParameterExpandBar(viewersComposite, SWT.V_SCROLL, false, false, true, true, list);
-		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layerViewer.setLayoutData(data);
-		layerViewer.setSpacing(5);
-		// Fill the 2 viewers
-		fillGeneralParameters(propertiesViewer);
-		if (getOutput().isOpenGL()) {
-			fillCameraParameters(propertiesViewer);
-			fillKeystoneParameters(propertiesViewer);
-		}
-		for (final ILayer layer : list.getItems()) {
-			fillLayerParameters(layerViewer, layer);
-		}
-
-		viewersComposite.layout();
-		layerViewer.addListener(SWT.Collapse, e -> viewersComposite.redraw());
-		layerViewer.addListener(SWT.Expand, e -> viewersComposite.redraw());
-		propertiesViewer.addListener(SWT.Collapse, e -> viewersComposite.redraw());
-		propertiesViewer.addListener(SWT.Expand, e -> viewersComposite.redraw());
-		parent.layout();
-		return viewersComposite;
-
-	}
-
-	PointEditor cameraPos, cameraTarget, cameraUp;
-	StringEditor preset;
-	IntEditor zoom;
-	FloatEditor rotate;
-
-	private void fillCameraParameters(final ParameterExpandBar viewer) {
-		final Composite contents = createContentsComposite(viewer);
-		final IDisplaySurface ds = getDisplaySurface();
-		final IScope scope = getDisplaySurface().getScope();
-		final LayeredDisplayData data = getDisplaySurface().getData();
-
-		final boolean cameraLocked = getOutput().getData().cameraInteractionDisabled();
-		final BooleanEditor lock = EditorFactory.create(scope, contents, "Lock camera:", cameraLocked,
-				(EditorListener<Boolean>) newValue -> {
-					preset.setActive(!newValue);
-					cameraPos.setActive(!newValue);
-					cameraTarget.setActive(!newValue);
-					cameraUp.setActive(!newValue);
-					zoom.setActive(!newValue);
-					getOutput().getData().disableCameraInteractions(newValue);
-				});
-
-		preset = EditorFactory.choose(scope, contents, "Preset camera:", "Choose...", true, getCameraNames(),
-				(EditorListener<String>) newValue -> {
-					if (newValue.isEmpty())
-						return;
-					data.setPresetCamera(newValue);
-					ds.updateDisplay(true);
-				});
-
-		cameraPos = EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
-				(EditorListener<ILocation>) newValue -> {
-					data.setCameraPos((GamaPoint) newValue);
-					ds.updateDisplay(true);
-				});
-		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraLookPos(),
-				(EditorListener<ILocation>) newValue -> {
-					data.setCameraLookPos((GamaPoint) newValue);
-					ds.updateDisplay(true);
-				});
-		cameraUp = EditorFactory.create(scope, contents, "Orientation:", data.getCameraUpVector(),
-				(EditorListener<ILocation>) newValue -> {
-					data.setCameraUpVector((GamaPoint) newValue, true);
-					ds.updateDisplay(true);
-				});
-		preset.setActive(!cameraLocked);
-		cameraPos.setActive(!cameraLocked);
-		cameraTarget.setActive(!cameraLocked);
-		cameraUp.setActive(!cameraLocked);
-		zoom.setActive(!cameraLocked);
-		data.addListener((p, v) -> {
-			switch (p) {
-				case CAMERA_POS:
-					cameraPos.getParam().setValue(scope, data.getCameraPos());
-					cameraPos.forceUpdateValueAsynchronously();
-					break;
-				case CAMERA_TARGET:
-					cameraTarget.getParam().setValue(scope, data.getCameraLookPos());
-					cameraTarget.forceUpdateValueAsynchronously();
-					break;
-				case CAMERA_UP:
-					cameraUp.getParam().setValue(scope, data.getCameraUpVector());
-					cameraUp.forceUpdateValueAsynchronously();
-					break;
-				case CAMERA_PRESET:
-					preset.getParam().setValue(scope, "Choose...");
-					preset.forceUpdateValueAsynchronously();
-					break;
-				default:
-					;
-			}
-		});
-		final Label l = new Label(contents, SWT.None);
-		l.setText("");
-		final Button copy = new Button(contents, SWT.PUSH);
-		copy.setText("Copy as facets");
-		copy.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-		copy.setToolTipText(
-				"Copy the definition of the camera properties to the clipboard in a format suitable for pasting them in the definition of a display in GAML");
-		copy.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
-				String text = IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().serialize(false);
-				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
-						+ cameraTarget.getCurrentValue().yNegated().serialize(false);
-				text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
-
-			}
-
-		});
-		createItem(viewer, "Camera", null, contents);
-
-	}
-
-	protected abstract List<String> getCameraNames();
-
-	private void fillKeystoneParameters(final ParameterExpandBar viewer) {
-		final Composite contents = createContentsComposite(viewer);
-		final IDisplaySurface ds = getDisplaySurface();
-		final IScope scope = getDisplaySurface().getScope();
-		final LayeredDisplayData data = getDisplaySurface().getData();
-
-		final PointEditor[] point = new PointEditor[4];
-		final ICoordinates points = data.getKeystone();
-		int i = 0;
-		for (final GamaPoint p : points) {
-			final int j = i;
-			i++;
-			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":",
-					(GamaPoint) data.getKeystone().at(j).clone(), (EditorListener<ILocation>) newValue -> {
-						data.getKeystone().at(j).setLocation(newValue);
-						data.setKeystone(data.getKeystone());
-						ds.updateDisplay(true);
-					});
-		}
-
-		data.addListener((p, v) -> {
-			switch (p) {
-				case KEYSTONE:
-					for (int k = 0; k < 4; k++) {
-						point[k].getParam().setValue(scope, data.getKeystone().at(k));
-						point[k].forceUpdateValueAsynchronously();
-					}
-					break;
-				default:
-					;
-			}
-
-		});
-		final Label l = new Label(contents, SWT.None);
-		l.setText("");
-		final Button copy = new Button(contents, SWT.PUSH);
-		copy.setText("Copy as facet");
-		copy.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-		copy.setToolTipText(
-				"Copy the definition of the keystone values to the clipboard in a format suitable for pasting them in the definition of a display in GAML");
-		copy.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
-				final IList<GamaPoint> pp =
-						GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
-				final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
-			}
-
-		});
-		createItem(viewer, "Keystone", null, contents);
-	}
-
-	private void fillGeneralParameters(final ParameterExpandBar viewer) {
-		final Composite contents = createContentsComposite(viewer);
-		final IDisplaySurface ds = getDisplaySurface();
-		final IScope scope = getDisplaySurface().getScope();
-		final LayeredDisplayData data = getDisplaySurface().getData();
-		EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(), (EditorListener<Boolean>) newValue -> {
-			data.setAntialias(newValue);
-			ds.updateDisplay(true);
-		});
-		final ColorEditor background = EditorFactory.create(scope, contents, "Background:", data.getBackgroundColor(),
-				(EditorListener<Color>) newValue -> {
-					data.setBackgroundColor(new GamaColor(newValue));
-					ds.updateDisplay(true);
-				});
-		final ColorEditor highlight = EditorFactory.create(scope, contents, "Highlight:", data.getHighlightColor(),
-				(EditorListener<Color>) newValue -> {
-					data.setHighlightColor(new GamaColor(newValue));
-					ds.updateDisplay(true);
-				});
-		zoom = EditorFactory.create(scope, contents, "Zoom (%):", "",
-				Integer.valueOf((int) (data.getZoomLevel() * 100)), 0, null, 1, (EditorListener<Integer>) newValue -> {
-					data.setZoomLevel(newValue.doubleValue() / 100d, true);
-					ds.updateDisplay(true);
-				});
-		rotate = EditorFactory.create(scope, contents, "Rotation angle about z-axis (degrees):",
-				Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
-				(EditorListener<Double>) newValue -> {
-					data.setZRotationAngle(newValue);
-					ds.updateDisplay(true);
-				});
-
-		createItem(viewer, "General", null, contents);
-
-		ds.getData().addListener((p, v) -> {
-			switch (p) {
-				case ZOOM:
-					zoom.getParam().setValue(scope, (int) (data.getZoomLevel() * 100));
-					zoom.forceUpdateValueAsynchronously();
-					break;
-				case BACKGROUND:
-					background.getParam().setValue(scope, data.getBackgroundColor());
-					background.forceUpdateValueAsynchronously();
-					break;
-				case ROTATION:
-					rotate.getParam().setValue(scope, (double) v);
-					rotate.forceUpdateValueAsynchronously();
-					break;
-				default:
-					;
-			}
-
-		});
-
-	}
-
-	public void createItem(final ParameterExpandBar viewer, final String name, final Object data,
-			final Composite contents) {
-		final ParameterExpandItem i = new ParameterExpandItem(viewer, data, SWT.None, null);
-		i.setText(name);
-		contents.pack(true);
-		contents.layout();
-		i.setControl(contents);
-		i.setHeight(contents.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		i.setExpanded(false);
-	}
-
-	public void fillLayerParameters(final ParameterExpandBar viewer, final ILayer layer) {
-		final Composite contents = createContentsComposite(viewer);
-		if (layer instanceof AbstractLayer) {
-			LayerSideControls.fill(contents, layer, getDisplaySurface());
-		}
-		createItem(viewer, "Layer " + layer.getName(), layer, contents);
-	}
-
-	public Composite createContentsComposite(final ParameterExpandBar viewer) {
-		final Composite contents = new Composite(viewer, SWT.NONE);
-		contents.setBackground(IGamaColors.WHITE.color());
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		contents.setLayout(layout);
-		return contents;
-	}
-
-	/**
-	 * Ensures that the overlay tool item is coherent with the state of the overlay
-	 * 
-	 * @param hidden
-	 */
-	public void overlayChanged() {
-		overlayItem.setSelection(overlay.isVisible());
-	}
+	public abstract List<String> getCameraNames();
 
 	@Override
 	public boolean zoomWhenScrolling() {
@@ -1101,19 +761,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			close();
+			close(GAMA.getRuntimeScope());
 		}
-	}
-
-	private ToolItem message;
-
-	public void setMessage(final String msg) {
-		if (message != null) {
-			message.dispose();
-			message = null;
-		}
-		if (msg != null)
-			toolbar.status((String) null, msg, null, SWT.LEFT);
 	}
 
 }

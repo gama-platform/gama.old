@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartDataSourceList.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartDataSourceList.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -57,6 +56,40 @@ public class ChartDataSourceList extends ChartDataSource {
 	public void setNames(final IScope scope, final IList<?> lval) {
 
 	}
+
+	// @Override
+	// public void updatevalues(final IScope scope, final int chartCycle) {
+	// super.updatevalues(scope, chartCycle);
+	// final HashMap<String, Object> barvalues = new HashMap<String, Object>();
+	// if (this.isUseYErrValues())
+	// barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope));
+	// if (this.isUseXErrValues())
+	// barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
+	// if (this.isUseYMinMaxValues())
+	// barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
+	// if (this.isUseSizeExp())
+	// barvalues.put(ChartDataStatement.MARKERSIZE, this.getSizeexp().value(scope));
+	// if (this.isUseColorExp())
+	// barvalues.put(IKeyword.COLOR, this.getColorexp().value(scope));
+	//
+	// // TODO check same length and list
+	//
+	// updateserielist(scope, chartCycle);
+	//
+	// // int type_val = this.DATA_TYPE_NULL;
+	// final IExpression value = getValue();
+	// if (value == null)
+	// return;
+	//
+	// if (value instanceof ListExpression) {
+	// final IExpression[] exprs = ((ListExpression) value).getElements();
+	// int i = 0;
+	// for (final IExpression expr : exprs) {
+	// updateseriewithvalue(scope, mySeries.get(currentseries.get(i++)), expr, chartCycle, barvalues, i);
+	// }
+	// }
+	//
+	// }
 
 	@Override
 	public void updatevalues(final IScope scope, final int chartCycle) {
@@ -212,6 +245,21 @@ public class ChartDataSourceList extends ChartDataSource {
 		inferDatasetProperties(scope);
 	}
 
+	// public void inferDatasetProperties(final IScope scope) {
+	// int type_val = ChartDataSource.DATA_TYPE_NULL;
+	// final IExpression value = getValue();
+	// if (value != null) {
+	// if (Types.LIST.isAssignableFrom(value.getType()) && value instanceof ListExpression
+	// && ((ListExpression) value).getElements().length > 0) {
+	// type_val = computeTypeOfData(scope, value);
+	// }
+	//
+	// }
+	//
+	// getDataset().getOutput().setDefaultPropertiesFromType(scope, this, type_val);
+	//
+	// }
+
 	public void inferDatasetProperties(final IScope scope) {
 		Object o = null;
 		int type_val = ChartDataSource.DATA_TYPE_NULL;
@@ -224,8 +272,7 @@ public class ChartDataSourceList extends ChartDataSource {
 
 		}
 
-		getDataset().getOutput().setDefaultPropertiesFromType(scope, this, o, type_val);
+		getDataset().getOutput().setDefaultPropertiesFromType(scope, this, type_val);
 
 	}
-
 }

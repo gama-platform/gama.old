@@ -277,13 +277,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				texture, material, perspective, lineWidth));
 		if (item == null) {
 			executer = null;
-			// data = null;
 		} else {
-			// data = new DrawingData(getFacet(SIZE), getFacet(DEPTH),
-			// getFacet(ROTATE), getFacet(AT), getFacet(EMPTY),
-			// getFacet(BORDER), getFacet(COLOR), getFacet(FONT),
-			// getFacet(TEXTURE), getFacet("bitmap", PERSPECTIVE));
-
 			if (item.getType().getType().id() == IType.FILE) {
 				executer = new FileExecuter(item);
 			} else if (item.getType().id() == IType.STRING) {
@@ -305,7 +299,10 @@ public class DrawStatement extends AbstractStatementSequence {
 			// final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
 			// material, perspective, lineWidth);
 
-			return executer.executeOn(scope, g, data.get().computeAttributes(scope));
+			final Rectangle2D result = executer.executeOn(scope, g, data.get().computeAttributes(scope));
+			if (result != null)
+				g.accumulateTemporaryEnvelope(result);
+			return result;
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {

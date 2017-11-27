@@ -24,7 +24,6 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -53,11 +52,13 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected THashMap<String, ActionDescription> actions;
 	protected TOrderedHashMap<String, VariableDescription> attributes;
 	protected TypeDescription parent;
+	protected final boolean isAbstract;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
 			final TypeDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets, final String plugin) {
 		super(keyword, macroDesc, source, /* cp, */ facets);
+		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
 		addChildren(cp);
 		// parent can be null
 		if (parent != null)
@@ -264,11 +265,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 	}
 
-	Predicate<VariableDescription> IS_UPDATABLE = input -> input.isUpdatable();
-	Predicate<String> VAR_IS_UPDATABLE = input -> getAttribute(input).isUpdatable();
-
 	public List<String> getUpdatableAttributeNames() {
-		return Lists.newArrayList(Iterables.filter(getOrderedAttributeNames(false), VAR_IS_UPDATABLE));
+		return Lists.newArrayList(
+				Iterables.filter(getOrderedAttributeNames(false), input -> getAttribute(input).isUpdatable()));
 	}
 
 	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
@@ -400,7 +399,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			return false;
 		if (parent == null || parent == this)
 			return false;
-		return parent.hasAction(name);
+		return parent.hasAction(name, false);
 	}
 
 	@Override
@@ -437,12 +436,29 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public boolean hasAction(final String a) {
+	public boolean hasAction(final String a, final boolean superInvocation) {
+		if (superInvocation) {
+			if (parent == null || parent == this)
+				return false;
+			return parent.hasAction(a, false);
+		}
 		return actions != null && actions.containsKey(a)
-				|| parent != null && parent != this && getParent().hasAction(a);
+				|| parent != null && parent != this && getParent().hasAction(a, superInvocation);
 	}
 
-	public boolean isAbstract() {
+	@Override
+	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+		if (superInvocation) {
+			if (parent == null)
+				return null;
+			return parent.getDescriptionDeclaringAction(name, false);
+		}
+		return hasAction(name, false) ? this : null;
+	}
+
+	public final boolean isAbstract() {
+		if (isAbstract)
+			return true;
 		for (final ActionDescription a : getActions()) {
 			if (a.isAbstract()) { return true; }
 		}

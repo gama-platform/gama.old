@@ -10,9 +10,12 @@
 package msi.gama.util.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,8 +49,9 @@ import msi.gaml.types.Types;
 		concept = { IConcept.FILE })
 @doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, String, Object> {
+public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 
+	// GamaMap<String, Object>, Object, String, Object
 	public GamaJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
@@ -116,18 +120,19 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	}
 
 	@Override
+	protected String getHttpContentType() {
+		return "application/json";
+	}
+
+	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final GamaMap<String, Object> map = getBuffer();
-		try {
-			final File file = getFile(scope);
-			if (file.exists()) {
-				GAMA.reportAndThrowIfNeeded(scope,
-						GamaRuntimeException.warning(file.getName() + " already exists", scope), false);
-			} else if (!file.exists() && file.createNewFile()) {
-				try (FileWriter writer = new FileWriter(getFile(scope))) {
-					JSONValue.writeJSONString(map, writer);
-				}
-			}
+		final File file = getFile(scope);
+		if (file.exists())
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.warning(file.getName() + " already exists", scope),
+					false);
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+			writer.write(JSONValue.toJSONString(map));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

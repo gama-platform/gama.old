@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,7 +9,11 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
+import msi.gama.util.ICollector;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -19,7 +22,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings ("rawtypes")
 public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
@@ -30,8 +33,7 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public void setName(final String s) {
-	}
+	public void setName(final String s) {}
 
 	@Override
 	public IType<?> getType() {
@@ -44,8 +46,7 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
@@ -86,6 +87,35 @@ public abstract class AbstractExpression implements IExpression {
 	@Override
 	public String getDefiningPlugin() {
 		return null;
+	}
+
+	@Override
+	public String getTitle() {
+		// Serialized version by default
+		return serialize(false);
+	}
+
+	@Override
+	public String getDocumentation() {
+		// Return nothing by default
+		return "";
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		// Does nothing by default
+	}
+
+	@Override
+	public boolean isConst() {
+		// false by default
+		return false;
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+		// Nothing by default
+
 	}
 
 }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaNavigator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaNavigator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -55,6 +54,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -74,9 +74,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		commonDescriptionProvider = anElement -> {
 			if (anElement instanceof IStructuredSelection) {
 				final IStructuredSelection selection = (IStructuredSelection) anElement;
-				if (selection.isEmpty()) {
-					return "";
-				}
+				if (selection.isEmpty()) { return ""; }
 				String message = null;
 				if (selection.size() > 1) {
 					message = "Multiple elements";
@@ -130,10 +128,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	public CommonViewer createCommonViewer(final Composite parent) {
 		final CommonViewer commonViewer = super.createCommonViewer(parent);
 		final IResourceChangeListener resourceChangeListener = event -> {
-			if (!PlatformUI.isWorkbenchRunning()) {
-				return;
-			}
-			Display.getDefault().asyncExec(() -> {
+			if (!PlatformUI.isWorkbenchRunning()) { return; }
+			WorkbenchHelper.asyncRun(() -> {
 				if (getCommonViewer() != null && getCommonViewer().getControl() != null
 						&& !getCommonViewer().getControl().isDisposed()) {
 					GAMA.getGui().updateDecorator("msi.gama.application.decorator");
@@ -155,14 +151,10 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 		listener = event -> {
 			if (event.getType() == IResourceChangeEvent.PRE_BUILD || event.getType() == IResourceChangeEvent.PRE_CLOSE
-					|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
-				return;
-			}
+					|| event.getType() == IResourceChangeEvent.PRE_DELETE) { return; }
 
-			Display.getDefault().asyncExec(() -> {
-				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
-					return;
-				}
+			WorkbenchHelper.asyncRun(() -> {
+				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) { return; }
 
 				final IResourceDelta d = event.getDelta();
 				if (d != null) {
@@ -238,8 +230,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
-				final GamaNavigatorImportMenu menu = new GamaNavigatorImportMenu(
-						(IStructuredSelection) getCommonViewer().getSelection());
+				final GamaNavigatorImportMenu menu =
+						new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
 				final ToolItem target = (ToolItem) trigger.widget;
 				final ToolBar toolBar = target.getParent();
 				menu.open(toolBar, trigger);
@@ -251,8 +243,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
-				final GamaNavigatorNewMenu menu = new GamaNavigatorNewMenu(
-						(IStructuredSelection) getCommonViewer().getSelection());
+				final GamaNavigatorNewMenu menu =
+						new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
 				final ToolItem target = (ToolItem) trigger.widget;
 				final ToolBar toolBar = target.getParent();
 				menu.open(toolBar, trigger);
@@ -318,7 +310,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			message = folder.getMessageForStatus();
 			img = folder.getImageForStatus();
 			color = folder.getColorForStatus();
-			l = null;
+			l = folder.getSelectionListenerForStatus();
 		} else {
 			message = commonDescriptionProvider.getDescription(selection);
 			img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(selection.getFirstElement());
@@ -327,8 +319,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					final IAction action = getViewSite().getActionBars()
-							.getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
+					final IAction action =
+							getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
 					if (action != null) {
 						action.run();
 					}
@@ -346,9 +338,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	public Menu getSubMenu(final String text) {
 		final Menu m = getCommonViewer().getTree().getMenu();
 		for (final MenuItem mi : m.getItems()) {
-			if (text.equals(mi.getText())) {
-				return mi.getMenu();
-			}
+			if (text.equals(mi.getText())) { return mi.getMenu(); }
 		}
 		return m;
 	}
@@ -360,17 +350,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 		final CommonViewer localViewer = getCommonViewer();
 
-		if (localViewer == null || localViewer.getControl().isDisposed()) {
-			return;
-		}
+		if (localViewer == null || localViewer.getControl().isDisposed()) { return; }
 		final Display display = localViewer.getControl().getDisplay();
-		if (display.isDisposed()) {
-			return;
-		}
+		if (display.isDisposed()) { return; }
 		display.syncExec(() -> {
-			if (localViewer.getControl().isDisposed()) {
-				return;
-			}
+			if (localViewer.getControl().isDisposed()) { return; }
 			final Object[] expanded = localViewer.getExpandedElements();
 			SafeRunner.run(new NavigatorSafeRunnable() {
 

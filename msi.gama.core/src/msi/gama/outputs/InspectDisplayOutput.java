@@ -276,6 +276,9 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		// What to do in case of multi-simulations ???
 		if (scope.getSimulation() != null)
 			scope.getSimulation().addOutput(InspectDisplayOutput.this);
+		else if (scope.getExperiment() != null) {
+			scope.getExperiment().getSpecies().getExperimentOutputs().add(InspectDisplayOutput.this);
+		}
 		setPaused(false);
 		open();
 		step(scope);

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SWTChartEditor.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SWTChartEditor.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -58,6 +57,7 @@ import org.jfree.chart.title.Title;
 
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.GraphicsHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * An editor for chart properties.
@@ -95,7 +95,7 @@ public class SWTChartEditor implements ChartEditor {
 	public SWTChartEditor(final Display display, final JFreeChart chart2edit, final Point position) {
 		this.shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.NO_TRIM);
 		this.shell.setSize(400, 500);
-		this.shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		this.shell.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		// this.shell.setAlpha(140);
 		this.chart = chart2edit;
 		this.shell.setText("Chart properties");
@@ -214,8 +214,7 @@ public class SWTChartEditor implements ChartEditor {
 		private Font font;
 
 		/**
-		 * Standard constructor: builds a panel for displaying/editing the
-		 * properties of the specified title.
+		 * Standard constructor: builds a panel for displaying/editing the properties of the specified title.
 		 *
 		 * @param parent
 		 *            the parent.
@@ -347,8 +346,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Sets the properties of the specified title to match the properties
-		 * defined on this panel.
+		 * Sets the properties of the specified title to match the properties defined on this panel.
 		 *
 		 * @param chart
 		 *            the chart whose title is to be modified.
@@ -372,14 +370,12 @@ public class SWTChartEditor implements ChartEditor {
 	class SWTPlotEditor extends Composite {
 
 		/**
-		 * A panel used to display/edit the properties of the domain axis (if
-		 * any).
+		 * A panel used to display/edit the properties of the domain axis (if any).
 		 */
 		private final SWTAxisEditor domainAxisPropertyPanel;
 
 		/**
-		 * A panel used to display/edit the properties of the range axis (if
-		 * any).
+		 * A panel used to display/edit the properties of the range axis (if any).
 		 */
 		private final SWTAxisEditor rangeAxisPropertyPanel;
 
@@ -473,8 +469,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Updates the plot properties to match the properties defined on the
-		 * panel.
+		 * Updates the plot properties to match the properties defined on the panel.
 		 *
 		 * @param plot
 		 *            The plot.
@@ -527,8 +522,7 @@ public class SWTChartEditor implements ChartEditor {
 	class SWTOtherEditor extends Composite {
 
 		/**
-		 * A checkbox indicating whether or not the chart is drawn with
-		 * anti-aliasing.
+		 * A checkbox indicating whether or not the chart is drawn with anti-aliasing.
 		 */
 		private final Button antialias;
 
@@ -625,8 +619,7 @@ public class SWTChartEditor implements ChartEditor {
 		private final Text labelFontField;
 
 		/**
-		 * A field containing a description of the font for displaying tick
-		 * labels on the axis.
+		 * A field containing a description of the font for displaying tick labels on the axis.
 		 */
 		private final Text tickLabelFontField;
 
@@ -648,16 +641,14 @@ public class SWTChartEditor implements ChartEditor {
 		private final TabFolder otherTabs;
 
 		/**
-		 * Standard constructor: builds a composite for displaying/editing the
-		 * properties of the specified axis.
+		 * Standard constructor: builds a composite for displaying/editing the properties of the specified axis.
 		 *
 		 * @param parent
 		 *            The parent composite.
 		 * @param style
 		 *            The SWT style of the SwtAxisEditor.
 		 * @param axis
-		 *            the axis whose properties are to be displayed/edited in
-		 *            the composite.
+		 *            the axis whose properties are to be displayed/edited in the composite.
 		 */
 		public SWTAxisEditor(final Composite parent, final int style, final Axis axis) {
 			super(parent, style);
@@ -789,18 +780,15 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * A static method that returns a panel that is appropriate for the axis
-		 * type.
+		 * A static method that returns a panel that is appropriate for the axis type.
 		 *
 		 * @param parent
 		 *            the parent.
 		 * @param style
 		 *            the style.
 		 * @param axis
-		 *            the axis whose properties are to be displayed/edited in
-		 *            the composite.
-		 * @return A composite or <code>null</code< if axis is <code>null</code>
-		 *         .
+		 *            the axis whose properties are to be displayed/edited in the composite.
+		 * @return A composite or <code>null</code< if axis is <code>null</code> .
 		 */
 		public static SWTAxisEditor getInstance(final Composite parent, final int style, final Axis axis) {
 
@@ -871,8 +859,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Sets the properties of the specified axis to match the properties
-		 * defined on this panel.
+		 * Sets the properties of the specified axis to match the properties defined on this panel.
 		 *
 		 * @param axis
 		 *            the axis.
@@ -1107,11 +1094,11 @@ public class SWTChartEditor implements ChartEditor {
 					@Override
 					public void widgetSelected(final SelectionEvent event) {
 						switch (SWTPlotAppearanceEditor.this.orientation.getSelectionIndex()) {
-						case ORIENTATION_HORIZONTAL:
-							SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.HORIZONTAL;
-							break;
-						default:
-							SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.VERTICAL;
+							case ORIENTATION_HORIZONTAL:
+								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.HORIZONTAL;
+								break;
+							default:
+								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.VERTICAL;
 						}
 					}
 				});
@@ -1158,8 +1145,7 @@ public class SWTChartEditor implements ChartEditor {
 	static class SWTNumberAxisEditor extends SWTAxisEditor implements FocusListener {
 
 		/**
-		 * A flag that indicates whether or not the axis range is determined
-		 * automatically.
+		 * A flag that indicates whether or not the axis range is determined automatically.
 		 */
 		private boolean autoRange;
 
@@ -1170,8 +1156,7 @@ public class SWTChartEditor implements ChartEditor {
 		private double maximumValue;
 
 		/**
-		 * A checkbox that indicates whether or not the axis range is determined
-		 * automatically.
+		 * A checkbox that indicates whether or not the axis range is determined automatically.
 		 */
 		private final Button autoRangeCheckBox;
 
@@ -1249,8 +1234,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Revalidate the range minimum: it should be less than the current
-		 * maximum.
+		 * Revalidate the range minimum: it should be less than the current maximum.
 		 *
 		 * @param candidate
 		 *            the minimum value
@@ -1270,8 +1254,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Revalidate the range maximum: it should be greater than the current
-		 * minimum
+		 * Revalidate the range maximum: it should be greater than the current minimum
 		 *
 		 * @param candidate
 		 *            the maximum value
@@ -1293,8 +1276,7 @@ public class SWTChartEditor implements ChartEditor {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see org.eclipse.swt.events.FocusListener#focusGained(
-		 * org.eclipse.swt.events.FocusEvent)
+		 * @see org.eclipse.swt.events.FocusListener#focusGained( org.eclipse.swt.events.FocusEvent)
 		 */
 		@Override
 		public void focusGained(final FocusEvent e) {
@@ -1304,8 +1286,7 @@ public class SWTChartEditor implements ChartEditor {
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see org.eclipse.swt.events.FocusListener#focusLost(
-		 * org.eclipse.swt.events.FocusEvent)
+		 * @see org.eclipse.swt.events.FocusListener#focusLost( org.eclipse.swt.events.FocusEvent)
 		 */
 		@Override
 		public void focusLost(final FocusEvent e) {
@@ -1327,8 +1308,7 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Sets the properties of the specified axis to match the properties
-		 * defined on this panel.
+		 * Sets the properties of the specified axis to match the properties defined on this panel.
 		 *
 		 * @param axis
 		 *            the axis.

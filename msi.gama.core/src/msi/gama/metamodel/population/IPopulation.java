@@ -70,9 +70,18 @@ public interface IPopulation<T extends IAgent>
 
 	}
 
+	public static IPopulation<? extends IAgent> createEmpty(final ISpecies species) {
+		return new GamaPopulation<IAgent>(null, species);
+	}
+
 	public abstract void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;
 
 	public abstract boolean hasVar(final String n);
+
+	@Override
+	public default IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+		return this;
+	}
 
 	/**
 	 * Create agents as members of this population.

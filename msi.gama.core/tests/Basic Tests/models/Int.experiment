@@ -1,0 +1,55 @@
+/**
+* Name: IntTests
+* Author: A. Drogoul
+* Description: Tests various operators related to int values
+* Tags: test
+*/
+
+experiment IntTests type: test {
+	
+	test Type {
+		assert 0 is int;
+		assert 1000000000 is int;
+		assert (100 * 100) is int;
+		assert !((100/100) is int);
+		assert int(100.0) is int;
+		assert int("223") is int;
+		assert int("223.3") is int;
+		assert is_number(100);
+		assert is_finite(100);
+ 	}
+ 	
+ 	test Operations {
+ 		assert (100 + 100) = 200;
+ 		assert -1 * 100 = -100;
+ 		assert abs(-100) = 100;
+ 		assert div(100.0,10.0) = 10;
+ 		assert mod(100,11) = 1;
+ 		assert (100^2) = 10000;
+ 	}
+ 	
+ 	test Rounding {
+ 		assert round(100.5) = 101;
+ 		assert round (100.4) = 100;
+ 		assert floor(100.5) = 100;
+ 		assert ceil(100.5) = 101;
+ 	}
+ 	
+ 	test Comparisons {
+ 		assert 100 = 100;
+ 		assert 1000 != 100;
+ 		assert 100 > 99;
+ 		assert 100 >= 99;
+ 		assert 100 < 101;
+ 		assert 100 <= 100;
+ 		assert 100 between(99,101);
+ 	}
+ 	
+ 	test Constants {
+ 		assert 100 < #max_int;
+ 		assert is_number(#max_int);
+ 		assert 100 > #min_int;
+ 		assert is_number(#min_int);
+ 	}
+	
+}

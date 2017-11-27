@@ -37,7 +37,7 @@ import msi.gaml.types.Types;
 		buffer_type = IType.LIST,
 		buffer_content = IType.STRING,
 		concept = { IConcept.TEXT, IConcept.FILE })
-public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
+public class URLFile extends GamaFile<IList<String>, String> {
 
 	private final String URL;
 

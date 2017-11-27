@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
@@ -63,6 +64,7 @@ public class OperatorProto extends AbstractProto {
 	public final boolean[] lazy;
 	public final int typeProvider, contentTypeProvider, keyTypeProvider;
 	public final int[] expectedContentType;
+	public final int contentTypeContentTypeProvider;
 
 	public IExpression create(final IDescription context, final EObject currentEObject, final IExpression... exprs) {
 		try {
@@ -103,7 +105,8 @@ public class OperatorProto extends AbstractProto {
 	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
 			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
 			final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
-			final int keyTypeProvider, final int[] expectedContentType, final String plugin) {
+			final int keyTypeProvider, final int contentTypeContentTypeProvider, final int[] expectedContentType,
+			final String plugin) {
 		super(name, method, plugin);
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
@@ -115,6 +118,7 @@ public class OperatorProto extends AbstractProto {
 		this.contentTypeProvider = contentTypeProvider;
 		this.keyTypeProvider = keyTypeProvider;
 		this.expectedContentType = expectedContentType;
+		this.contentTypeContentTypeProvider = contentTypeContentTypeProvider;
 	}
 
 	private boolean[] computeLazyness(final AnnotatedElement method) {
@@ -142,12 +146,13 @@ public class OperatorProto extends AbstractProto {
 			final int keyTypeProvider, final int[] expectedContentType) {
 		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField,
 				/* doc, */Types.get(returnType), new Signature(signature), lazy, typeProvider, contentTypeProvider,
-				keyTypeProvider, expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+				keyTypeProvider, ITypeProvider.NONE, expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
 	public OperatorProto(final OperatorProto op, final IType gamaType) {
 		this(op.name, op.support, op.helper, op.canBeConst, op.isVarOrField, op.returnType, new Signature(gamaType),
-				true, op.typeProvider, op.contentTypeProvider, op.keyTypeProvider, op.expectedContentType, op.plugin);
+				true, op.typeProvider, op.contentTypeProvider, op.keyTypeProvider, op.contentTypeContentTypeProvider,
+				op.expectedContentType, op.plugin);
 	}
 
 	public void setSignature(final IType... t) {

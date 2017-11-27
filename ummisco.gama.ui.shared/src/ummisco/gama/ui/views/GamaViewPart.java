@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaViewPart.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaViewPart.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,14 +12,15 @@ package ummisco.gama.ui.views;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -36,6 +36,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -53,8 +54,9 @@ public abstract class GamaViewPart extends ViewPart
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
-	Action toggle;
-	// private Composite rootComposite;
+	private StateListener toolbarUpdater;
+	// Action toggle;
+	private Composite rootComposite;
 
 	public enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
@@ -66,18 +68,18 @@ public abstract class GamaViewPart extends ViewPart
 			super("Updating " + getPartName());
 			final UpdatePriority p = jobPriority();
 			switch (p) {
-			case HIGHEST:
-				setPriority(INTERACTIVE);
-				break;
-			case LOWEST:
-				setPriority(DECORATE);
-				break;
-			case HIGH:
-				setPriority(SHORT);
-				break;
-			case LOW:
-				setPriority(LONG);
-				break;
+				case HIGHEST:
+					setPriority(INTERACTIVE);
+					break;
+				case LOWEST:
+					setPriority(DECORATE);
+					break;
+				case HIGH:
+					setPriority(SHORT);
+					break;
+				case LOW:
+					setPriority(LONG);
+					break;
 			}
 		}
 
@@ -90,7 +92,17 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
-	public void reset() {
+	public void reset() {}
+
+	@Override
+	public void addStateListener(final StateListener listener) {
+		toolbarUpdater = listener;
+	}
+
+	@Override
+	public void updateToolbarState() {
+		if (toolbarUpdater != null)
+			toolbarUpdater.updateToReflectState();
 	}
 
 	@Override
@@ -101,6 +113,7 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
+		OutputPartsManager.install();
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
@@ -122,8 +135,8 @@ public abstract class GamaViewPart extends ViewPart
 				if (sim != null) {
 					final String[] stemp = id.split("#");
 					if (stemp.length > 1) {
-						final IPopulation<? extends IAgent> externPop = sim
-								.getExternMicroPopulationFor(stemp[1] + "." + stemp[2]);
+						final IPopulation<? extends IAgent> externPop =
+								sim.getExternMicroPopulationFor(stemp[1] + "." + stemp[2]);
 						if (externPop != null) {
 							for (final IAgent expAgent : externPop) {
 								final SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
@@ -140,8 +153,11 @@ public abstract class GamaViewPart extends ViewPart
 			}
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
-				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> close());
+				// System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
+				WorkbenchHelper.asyncRun(() -> {
+					if (shouldBeClosedWhenNoExperiments())
+						close(GAMA.getRuntimeScope());
+				});
 
 			}
 		}
@@ -149,8 +165,7 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	/**
-	 * Can be redefined by subclasses that accept that their instances remain
-	 * open when no experiment is running.
+	 * Can be redefined by subclasses that accept that their instances remain open when no experiment is running.
 	 * 
 	 * @return
 	 */
@@ -159,8 +174,15 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
+	public Rectangle2D getBounds() {
+		final Point o = rootComposite.toDisplay(0, 0);
+		final Point s = rootComposite.getSize();
+		return new Rectangle2D.Double(o.x, o.y, s.x, s.y);
+	}
+
+	@Override
 	public void createPartControl(final Composite composite) {
-		// this.rootComposite = composite;
+		this.rootComposite = composite;
 		composite.addDisposeListener(this);
 		if (needsOutput() && getOutput() == null)
 			return;
@@ -199,17 +221,13 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public IDisplayOutput getOutput() {
-		if (outputs.isEmpty()) {
-			return null;
-		}
+		if (outputs.isEmpty()) { return null; }
 		return outputs.get(0);
 	}
 
 	@Override
 	public void addOutput(final IDisplayOutput out) {
-		if (out == null) {
-			return;
-		}
+		if (out == null) { return; }
 		if (!outputs.contains(out)) {
 			outputs.add(out);
 		} else {
@@ -224,8 +242,7 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
-	public void setFocus() {
-	}
+	public void setFocus() {}
 
 	@Override
 	public void widgetDisposed(final DisposeEvent e) {
@@ -237,20 +254,19 @@ public abstract class GamaViewPart extends ViewPart
 	public void dispose() {
 		// System.err.println("+++ Part " + this.getPartName() + " is being
 		// disposed");
+		toolbarUpdater = null;
 		super.dispose();
 	}
 
 	/**
-	 * Needs to be redefined for views that use the left toolbar (so that they
-	 * maintain their previous state) Method stopDisplayingTooltips()
+	 * Needs to be redefined for views that use the left toolbar (so that they maintain their previous state) Method
+	 * stopDisplayingTooltips()
 	 * 
 	 * @see ummisco.gama.ui.controls.ITooltipDisplayer#stopDisplayingTooltips()
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
-		if (toolbar == null || toolbar.isDisposed()) {
-			return;
-		}
+		if (toolbar == null || toolbar.isDisposed()) { return; }
 		if (toolbar.hasTooltip()) {
 			toolbar.wipe(SWT.LEFT, false);
 		}
@@ -258,14 +274,12 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
-		if (toolbar == null || toolbar.isDisposed()) {
-			return;
-		}
+		if (toolbar == null || toolbar.isDisposed()) { return; }
 		toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
 	@Override
-	public void close() {
+	public void close(final IScope scope) {
 
 		WorkbenchHelper.asyncRun(() -> {
 			try {
@@ -281,7 +295,7 @@ public abstract class GamaViewPart extends ViewPart
 	public void removeOutput(final IDisplayOutput output) {
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			close();
+			close(output.getScope());
 		}
 	}
 

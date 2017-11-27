@@ -203,7 +203,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 							isAll ? list.getType().toString() : contentType.toString());
 				}
 				final IType<?> keyType = list.getType().getKeyType();
-				if (index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType())) {
+				if (index != null && keyType != Types.NO_TYPE && !index.getType().isTranslatableInto(keyType)) {
 					cd.warning(
 							"The type of the index of " + list.serialize(false) + " (" + keyType
 									+ ") does not match with the type of " + index.serialize(false) + " ("

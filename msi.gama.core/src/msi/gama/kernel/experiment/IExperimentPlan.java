@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,6 +29,7 @@ import msi.gaml.species.ISpecies;
 public interface IExperimentPlan extends ISpecies {
 
 	static final String BATCH_CATEGORY_NAME = "Exploration method";
+	static final String TEST_CATEGORY_NAME = "Configuration of tests";
 	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
 	static final String FIXED_CATEGORY_NAME = "Fixed parameters";
 	static final String SYSTEM_CATEGORY_PREFIX = "Random number generation";
@@ -42,6 +42,16 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract void refreshAllOutputs();
 
+	public abstract void pauseAllOutputs();
+
+	public abstract void resumeAllOutputs();
+
+	public abstract void synchronizeAllOutputs();
+
+	public abstract void unSynchronizeAllOutputs();
+
+	public abstract void closeAllOutputs();
+
 	public abstract IOutputManager getExperimentOutputs();
 
 	public abstract boolean isGui();
@@ -51,8 +61,6 @@ public interface IExperimentPlan extends ISpecies {
 	public ExperimentAgent getAgent();
 
 	public abstract IScope getExperimentScope();
-
-	// public abstract ParametersSet getCurrentSolution();
 
 	public abstract void open();
 
@@ -93,6 +101,8 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract Iterable<IOutputManager> getActiveOutputManagers();
 
-	// public abstract void setController(ExperimentController controller);
+	public abstract boolean isAutorun();
+
+	public abstract boolean isTest();
 
 }

@@ -11,11 +11,16 @@ package msi.gama.metamodel.topology.projection;
 
 import java.util.Map;
 
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.cs.CartesianCS;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -25,7 +30,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
-
 /**
  * Class ProjectionFactory.
  * 
@@ -43,6 +47,7 @@ public class ProjectionFactory {
 	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap<>();
 
 	private IProjection world;
+	private UnitConverter unitConverter = null;
 	public CoordinateReferenceSystem targetCRS;
 
 	public void setWorldProjectionEnv(final IScope scope, final Envelope3D env) {
@@ -61,7 +66,11 @@ public class ProjectionFactory {
 				targetCRS = computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 			} else {
 				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution
-																	// can be found
+					CartesianCS ccs = ((ProjectedCRS) crs).getCoordinateSystem();
+					Unit<?> unitX = ccs.getAxis(0).getUnit();
+					if (unitX != null && !unitX.equals(SI.METER)) {
+						unitConverter = unitX.getConverterTo(SI.METER);
+					} 
 					targetCRS = crs;
 				} else {
 					final int index = (int) (0.5 + (longitude + 186.0) / 6);
@@ -240,4 +249,10 @@ public class ProjectionFactory {
 					scope); }
 		}
 	}
+
+	public UnitConverter getUnitConverter() {
+		return unitConverter;
+	}
+	
+	
 }
