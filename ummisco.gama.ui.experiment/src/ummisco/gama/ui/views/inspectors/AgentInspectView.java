@@ -66,7 +66,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		}
 
 		final IAgent agent = agents[0];
-		if (parent == null) {
+		if (getParentComposite() == null) {
 			super.addOutput(out);
 		} else if (editors == null || !editors.getCategories().containsKey(agent)) {
 			super.addOutput(out);
@@ -142,7 +142,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			editors.add(getParametersToInspect(agent), agent);
 			// System.out.println("Asking to create the item " + agent.getName()
 			// + " in inspector");
-			final ParameterExpandItem item = createItem(parent, agent, true, null);
+			final ParameterExpandItem item = createItem(getParentComposite(), agent, true, null);
 			if (item == null) { return false; }
 			return true;
 		}

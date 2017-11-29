@@ -9,19 +9,30 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
+import static org.eclipse.core.resources.IResourceChangeEvent.POST_CHANGE;
+import static org.eclipse.core.resources.IResourceChangeEvent.PRE_DELETE;
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.GAML_CT_ID;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_CT_ID;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.isSupport;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.shapeFileSupportedBy;
+import static ummisco.gama.ui.navigator.contents.NavigatorRoot.INSTANCE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jface.viewers.ITreePathContentProvider;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.navigator.CommonViewer;
 
 import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
@@ -29,169 +40,132 @@ import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import ummisco.gama.ui.metadata.FileMetaDataProvider;
-import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
-import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedModelContent;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
+import ummisco.gama.ui.navigator.contents.VirtualContent;
+import ummisco.gama.ui.navigator.contents.Category;
+import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
+import ummisco.gama.ui.navigator.contents.WrappedModelContent;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class NavigatorContentProvider extends WorkbenchContentProvider {
+public class NavigatorContentProvider extends WorkbenchContentProvider implements ITreePathContentProvider {
 
-	private TopLevelFolder[] virtualFolders;
-
-	public NavigatorContentProvider() {
-
-	}
-
-	@Override
-	public Object[] getElements(final Object inputElement) {
-		return getChildren(inputElement);
-	}
+	public volatile static boolean FILE_CHILDREN_ENABLED = true;
+	private CommonViewer viewer;
+	ResourceManager mapper;
 
 	@Override
 	public Object getParent(final Object element) {
 		if (element instanceof VirtualContent) { return ((VirtualContent) element).getParent(); }
-		if (element instanceof IProject) {
-			for (final TopLevelFolder folder : virtualFolders) {
-				if (folder.accepts((IProject) element)) { return folder; }
+		if (element instanceof IFile) {
+			final IFile file = (IFile) element;
+			if (SHAPEFILE_SUPPORT_CT_ID.equals(getContentTypeId(file))) {
+				final IResource shape = shapeFileSupportedBy(file);
+				if (shape != null) { return shape; }
 			}
-		}
-		if (element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
-				.equals(FileMetaDataProvider.getContentTypeId((IFile) element))) {
-			final IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
-			if (r != null) { return r; }
+			final IContainer parent = file.getParent();
+			return mapper.findWrappedInstanceOf(parent);
 		}
 		return super.getParent(element);
 	}
 
 	@Override
 	public Object[] getChildren(final Object p) {
-		if (p instanceof NavigatorRoot) {
-			if (virtualFolders == null) {
-				initializeVirtualFolders(p);
-			}
-			return virtualFolders;
-		}
 		if (p instanceof VirtualContent) { return ((VirtualContent) p).getNavigatorChildren(); }
-		if (p instanceof IFile) {
-
-			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
-			if (ctid.equals(FileMetaDataProvider.GAML_CT_ID)) {
-
-				final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, true);
-				if (metaData instanceof GamlFileInfo) {
-					final GamlFileInfo info = (GamlFileInfo) metaData;
-					final List l = new ArrayList<>();
-
-					final ISyntacticElement element = GAML
-							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
-					if (element != null) {
-						if (!GamlFileExtension.isExperiment(((IFile) p).getFullPath().toOSString())) {
-							l.add(new WrappedModelContent((IFile) p, element));
-						}
-						element.visitExperiments(exp -> l.add(new WrappedExperimentContent((IFile) p, exp)));
-					}
-
-					// for (final String s : info.getExperiments()) {
-					// l.add(new WrappedExperiment((IFile) p, s));
-					// }
-					if (!info.getImports().isEmpty()) {
-						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getImports(), "Imports");
-						if (wf.getNavigatorChildren().length > 0)
-							l.add(wf);
-					}
-					if (!info.getUses().isEmpty()) {
-						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getUses(), "Uses");
-						if (wf.getNavigatorChildren().length > 0)
-							l.add(wf);
-					}
-					// addPluginsTo((IFile) p, l);
-					return l.toArray();
-				}
-				return VirtualContent.EMPTY;
-
-			} else if (ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID)) {
-				try {
-					final IContainer folder = ((IFile) p).getParent();
-					final List<IResource> sub = new ArrayList<>();
-					for (final IResource r : folder.members()) {
-						if (r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r)) {
-							sub.add(r);
-						}
-					}
-					return sub.toArray();
-				} catch (final CoreException e) {
-					e.printStackTrace();
-					return super.getChildren(p);
-				}
+		if (p instanceof IFile && FILE_CHILDREN_ENABLED) {
+			switch (getContentTypeId((IFile) p)) {
+				case GAML_CT_ID:
+					return getGamlFileChildren((IFile) p);
+				case SHAPEFILE_CT_ID:
+					return getShapeFileChildren((IFile) p);
 			}
-
 		}
 		return super.getChildren(p);
 	}
 
-	/**
-	 * @param p
-	 * @param l
-	 */
-	// private void addPluginsTo(final IFile f, final List l) {
-	// final IProject p = f.getProject();
-	// IPath path = f.getProjectRelativePath();
-	// final String s = ".metadata/" + path.toPortableString() + ".meta";
-	// path = Path.fromPortableString(s);
-	// final IResource r = p.findMember(path);
-	// if (r == null || !(r instanceof IFile)) {
-	// return;
-	// }
-	// final IFile m = (IFile) r;
-	// try {
-	// final InputStream is = m.getContents();
-	// final BufferedReader in = new BufferedReader(new InputStreamReader(is));
-	// final GamlProperties props = new GamlProperties(in);
-	// final Set<String> contents = props.get(GamlProperties.PLUGINS);
-	//
-	// if (contents == null || contents.isEmpty()) {
-	// return;
-	// }
-	// l.add(new WrappedPlugins(f, contents, "Requires"));
-	// } catch (final CoreException e) {
-	// e.printStackTrace();
-	// }
-	// }
-
 	@Override
 	public boolean hasChildren(final Object element) {
 		if (element instanceof VirtualContent) { return ((VirtualContent) element).hasChildren(); }
-		if (element instanceof NavigatorRoot) { return true; }
 		if (element instanceof IFile) {
-			final String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
-			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext))
-					&& getChildren(element).length > 0;
+			final String ext = getContentTypeId((IFile) element);
+			return GAML_CT_ID.equals(ext) || SHAPEFILE_CT_ID.equals(ext);
 		}
 		return super.hasChildren(element);
 	}
 
-	@Override
-	public void dispose() {
-		super.dispose();
-		this.virtualFolders = null;
+	public Object[] getGamlFileChildren(final IFile p) {
+		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
+		if (metaData instanceof GamlFileInfo) {
+			final GamlFileInfo info = (GamlFileInfo) metaData;
+			final List<VirtualContent> l = new ArrayList<>();
+			final String path = p.getFullPath().toOSString();
+			final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
+			if (element != null) {
+				if (!GamlFileExtension.isExperiment(path)) {
+					l.add(new WrappedModelContent(p, element));
+				}
+				element.visitExperiments(exp -> l.add(new WrappedExperimentContent(p, exp)));
+			}
+			if (!info.getImports().isEmpty()) {
+				final Category wf = new Category(p, info.getImports(), "Imports");
+				if (wf.getNavigatorChildren().length > 0)
+					l.add(wf);
+			}
+			if (!info.getUses().isEmpty()) {
+				final Category wf = new Category(p, info.getUses(), "Uses");
+				if (wf.getNavigatorChildren().length > 0)
+					l.add(wf);
+			}
+			return l.toArray();
+		}
+		return VirtualContent.EMPTY;
+	}
+
+	public Object[] getShapeFileChildren(final IFile p) {
+		try {
+			final IContainer folder = p.getParent();
+			final List<IResource> sub = new ArrayList<>();
+			for (final IResource r : folder.members()) {
+				if (r instanceof IFile && isSupport(p, (IFile) r)) {
+					sub.add(r);
+				}
+			}
+			return sub.toArray();
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		}
+		return VirtualContent.EMPTY;
 	}
 
 	@Override
-	protected void processDelta(final IResourceDelta delta) {
-		super.processDelta(delta);
-
-	}
-
-	private void initializeVirtualFolders(final Object parentElement) {
-		virtualFolders = new TopLevelFolder[] { new TestModelsFolder(parentElement, "Test models"),
-				new UserProjectsFolder(parentElement, "User models"),
-				new PluginsModelsFolder(parentElement, "Plugin models"),
-				new ModelsLibraryFolder(parentElement, "Library models") };
+	public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
+		this.viewer = (CommonViewer) v;
+		mapper = new ResourceManager(this, viewer);
+		INSTANCE.initializeVirtualFolders(mapper);
+		getWorkspace().addResourceChangeListener(mapper, POST_CHANGE | PRE_DELETE);
+		super.inputChanged(viewer, oldInput, newInput);
 	}
 
 	@Override
-	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-		super.inputChanged(viewer, null, ResourcesPlugin.getWorkspace());
+	public Object[] getChildren(final TreePath parentPath) {
+		return getChildren(parentPath.getLastSegment());
+	}
+
+	@Override
+	public boolean hasChildren(final TreePath path) {
+		return hasChildren(path.getLastSegment());
+	}
+
+	@Override
+	public TreePath[] getParents(final Object element) {
+		final ArrayList segments = new ArrayList();
+		Object parent = element;
+		do {
+			parent = getParent(parent);
+			if (parent != null && parent != INSTANCE)
+				segments.add(0, parent);
+		} while (parent != null && parent != INSTANCE);
+		if (!segments.isEmpty()) { return new TreePath[] { new TreePath(segments.toArray()) }; }
+		return new TreePath[0];
 	}
 
 }

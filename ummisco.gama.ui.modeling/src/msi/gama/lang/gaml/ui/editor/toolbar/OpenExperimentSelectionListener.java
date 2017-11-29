@@ -11,7 +11,6 @@ package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -21,6 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The class CreateExperimentSelectionListener.
@@ -29,7 +29,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 27 août 2016
  *
  */
-public class OpenExperimentSelectionListener implements SelectionListener {
+public class OpenExperimentSelectionListener implements Selector {
 
 	GamlEditor editor;
 	GamlEditorState state;
@@ -72,11 +72,5 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 		}
 
 	}
-
-	/**
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
-	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CSVExportationController.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CSVExportationController.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,8 +10,6 @@
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -40,13 +37,7 @@ public class CSVExportationController {
 	 */
 	public void install(final GamaToolbar2 tb) {
 		tb.button(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CSVEXPORT).getCode(), "CSV Export", "CSV Export",
-				new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						view.saveAsCSV();
-					}
-				}, SWT.RIGHT);
+				e -> view.saveAsCSV(), SWT.RIGHT);
 
 	}
 

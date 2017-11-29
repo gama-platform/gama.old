@@ -64,6 +64,7 @@ public class GamaToolbarFactory {
 
 		ToggleAction() {
 			super("Toggle toolbar", IAction.AS_PUSH_BUTTON);
+			setId("toolbar.toggle");
 			setIcon();
 		}
 

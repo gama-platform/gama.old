@@ -10,8 +10,6 @@
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -65,25 +63,19 @@ public class FrequencyController implements StateListener {
 	}
 
 	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
-		syncItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC, "Synchronize with simulation", "Synchronize",
-				new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final IDisplayOutput output = view.getOutput();
-						if (!internalChange) {
-							if (output != null) {
-								if (output.isSynchronized()) {
-									output.setSynchronized(false);
-								} else {
-									output.setSynchronized(true);
-								}
-							}
-						}
-						toggleSync((ToolItem) e.widget, output);
+		syncItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC, "Synchronize with simulation", "Synchronize", e -> {
+			final IDisplayOutput output = view.getOutput();
+			if (!internalChange) {
+				if (output != null) {
+					if (output.isSynchronized()) {
+						output.setSynchronized(false);
+					} else {
+						output.setSynchronized(true);
 					}
-
-				}, SWT.RIGHT);
+				}
+			}
+			toggleSync((ToolItem) e.widget, output);
+		}, SWT.RIGHT);
 		syncItem.setSelection(view.getOutput() != null && view.getOutput().isSynchronized()
 				|| GamaPreferences.Runtime.CORE_SYNC.getValue());
 		return syncItem;
@@ -94,26 +86,20 @@ public class FrequencyController implements StateListener {
 	 */
 	private void createPauseItem(final GamaToolbar2 tb) {
 
-		pauseItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE, "Pause", "Pause or resume the current view",
-				new SelectionAdapter() {
+		pauseItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE, "Pause", "Pause or resume the current view", e -> {
+			final IOutput output = view.getOutput();
+			if (!internalChange) {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final IOutput output = view.getOutput();
-						if (!internalChange) {
-
-							if (output != null) {
-								if (output.isPaused()) {
-									output.setPaused(false);
-								} else {
-									output.setPaused(true);
-								}
-							}
-						}
-						togglePause((ToolItem) e.widget, output);
+				if (output != null) {
+					if (output.isPaused()) {
+						output.setPaused(false);
+					} else {
+						output.setPaused(true);
 					}
-
-				}, SWT.RIGHT);
+				}
+			}
+			togglePause((ToolItem) e.widget, output);
+		}, SWT.RIGHT);
 
 	}
 

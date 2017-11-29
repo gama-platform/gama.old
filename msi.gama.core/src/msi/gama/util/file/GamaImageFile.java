@@ -122,6 +122,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		}
 
 		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			sb.append(width).append("x").append(height).append(SUFFIX_DEL).append(getShortLabel(type));
+		}
+
+		@Override
 		public String getDocumentation() {
 			final StringBuilder sb = new StringBuilder();
 			sb.append(getShortLabel(type)).append(" Image File").append(Strings.LN);

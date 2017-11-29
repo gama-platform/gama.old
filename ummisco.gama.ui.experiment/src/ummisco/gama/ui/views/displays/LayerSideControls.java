@@ -12,9 +12,6 @@ package ummisco.gama.ui.views.displays;
 import java.awt.Color;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -243,14 +240,11 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
 				String text = IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().serialize(false);
 				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
 						+ cameraTarget.getCurrentValue().yNegated().serialize(false);
 				text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
-
+				WorkbenchHelper.copy(text);
 			}
 
 		});
@@ -302,12 +296,10 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
 				final IList<GamaPoint> pp =
 						GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
 				final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
+				WorkbenchHelper.copy(text);
 			}
 
 		});

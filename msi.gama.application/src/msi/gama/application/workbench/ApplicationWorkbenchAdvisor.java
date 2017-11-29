@@ -49,10 +49,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
 		ResourcesPlugin.getPlugin().getStateLocation();
-		super.initialize(configurer);
-		IDE.registerAdapters();
-		configurer.setSaveAndRestore(true);
 		try {
+			super.initialize(configurer);
+			IDE.registerAdapters();
+			configurer.setSaveAndRestore(true);
+
 			final IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
 			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
@@ -61,7 +62,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
 			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
 		} catch (final CoreException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}

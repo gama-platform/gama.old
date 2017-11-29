@@ -25,6 +25,7 @@ public class Startup implements IStartup {
 		if (GamaPreferences.Modeling.START_TESTS.getValue()) {
 			TestsRunner.start();
 		}
+
 	}
 
 }

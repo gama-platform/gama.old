@@ -35,7 +35,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
-import ummisco.gama.ui.commands.RefreshHandler;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
@@ -140,10 +139,12 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			incFolder.create(true, true, monitor);
 
 			/* Add the images folder */
-			final IFolder imFolder = container.getFolder(new Path("tests"));
-			imFolder.create(true, true, monitor);
+			if (isTest) {
+				final IFolder imFolder = container.getFolder(new Path("tests"));
+				imFolder.create(true, true, monitor);
+			}
 
-			RefreshHandler.run(modelFolder);
+			// RefreshHandler.run(modelFolder);
 
 		} catch (final CoreException ioe) {
 			final IStatus status =

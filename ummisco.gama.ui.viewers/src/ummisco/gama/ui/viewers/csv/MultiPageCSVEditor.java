@@ -508,173 +508,137 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		});
 
 		tb.menu("action.set.delimiter2", "Determine which character should be used as delimiter of fields",
-				"Determine which character should be used as delimiter of fields", new SelectionAdapter() {
+				"Determine which character should be used as delimiter of fields", e -> {
+					final GamaMenu menu = new GamaMenu() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final GamaMenu menu = new GamaMenu() {
+						@Override
+						protected void fillMenu() {
+							action(", (comma)", new SelectionAdapter() {
 
-							@Override
-							protected void fillMenu() {
-								action(", (comma)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter(',');
+								}
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter(',');
-									}
+							}, null);
+							action("; (semicolon)", new SelectionAdapter() {
 
-								}, null);
-								action("; (semicolon)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter(';');
+								}
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter(';');
-									}
+							}, null);
+							action("  (space)", new SelectionAdapter() {
 
-								}, null);
-								action("  (space)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter(' ');
+								}
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter(' ');
-									}
+							}, null);
+							action("  (tabulation)", new SelectionAdapter() {
 
-								}, null);
-								action("  (tabulation)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter('\t');
+								}
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter('\t');
-									}
+							}, null);
+							action(": (colon)", new SelectionAdapter() {
 
-								}, null);
-								action(": (colon)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter(':');
+								}
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter(':');
-									}
+							}, null);
+							action("| (pipe)", new SelectionAdapter() {
 
-								}, null);
-								action("| (pipe)", new SelectionAdapter() {
+								@Override
+								public void widgetSelected(final SelectionEvent e1) {
+									refreshWithDelimiter('|');
 
-									@Override
-									public void widgetSelected(final SelectionEvent e1) {
-										refreshWithDelimiter('|');
+								}
 
-									}
+							}, null);
 
-								}, null);
-
-							}
-						};
-						menu.open(tb.getToolbar(SWT.RIGHT), e);
-					}
-
+						}
+					};
+					menu.open(tb.getToolbar(SWT.RIGHT), e);
 				}, SWT.RIGHT);
-		final ToolItem t =
-				tb.check("action.set.header2", "First line is header", "First line is header", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final ToolItem t1 = (ToolItem) e.widget;
-						model.setFirstLineHeader(t1.getSelection());
-						refreshWithDelimiter(null);
-					}
-
-				}, SWT.RIGHT);
+		final ToolItem t = tb.check("action.set.header2", "First line is header", "First line is header", e -> {
+			final ToolItem t1 = (ToolItem) e.widget;
+			model.setFirstLineHeader(t1.getSelection());
+			refreshWithDelimiter(null);
+		}, SWT.RIGHT);
 		t.setSelection(model.isFirstLineHeader());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("action.add.row2", "Add row",
 				"Insert a new row before the currently selected one or at the end of the file if none is selected",
-				new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final CSVRow row =
-								(CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-						if (row != null) {
-							model.addRowAfterElement(row);
-						} else {
-							model.addRow();
-						}
-						tableModified();
-					}
-				}, SWT.RIGHT);
-		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
-				while (row != null) {
-					row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+				e -> {
+					final CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 					if (row != null) {
-						model.removeRow(row);
-						tableModified();
+						model.addRowAfterElement(row);
+					} else {
+						model.addRow();
 					}
+					tableModified();
+				}, SWT.RIGHT);
+		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", e -> {
+
+			CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+			while (row != null) {
+				row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+				if (row != null) {
+					model.removeRow(row);
+					tableModified();
 				}
 			}
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		if (model.isFirstLineHeader()) {
-			tb.button("action.add.column2", "Add column", "Add new column", new SelectionAdapter() {
+			tb.button("action.add.column2", "Add column", "Add new column", arg0 -> {
+				// call insert/add column page
+				final InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
+				if (acPage.open() == Window.OK) {
+					final String colToInsert = acPage.getColumnNewName();
+					model.addColumn(colToInsert);
+					tableViewer.setInput(model);
+					final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
+					column.setText(colToInsert);
+					column.setWidth(100);
+					column.setResizable(true);
+					column.setMoveable(true);
+					addMenuItemToColumn(column, model.getColumnCount() - 1);
+					defineCellEditing();
+					tableModified();
 
-				@Override
-				public void widgetSelected(final SelectionEvent arg0) {
-					// call insert/add column page
-					final InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
-					if (acPage.open() == Window.OK) {
-						final String colToInsert = acPage.getColumnNewName();
-						model.addColumn(colToInsert);
-						tableViewer.setInput(model);
-						final TableColumn column = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-						column.setText(colToInsert);
-						column.setWidth(100);
-						column.setResizable(true);
-						column.setMoveable(true);
-						addMenuItemToColumn(column, model.getColumnCount() - 1);
-						defineCellEditing();
-						tableModified();
-
-					}
 				}
 			}, SWT.RIGHT);
 
 		}
 		if (model.isFirstLineHeader()) {
-			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)",
-					new SelectionAdapter() {
+			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)", e -> {
 
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
+				// call delete column page
+				final DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
+				if (dcPage.open() == Window.OK) {
+					final String[] colToDelete = dcPage.getColumnSelected();
+					for (final String column : colToDelete) {
+						final int colIndex = findColumnForName(column);
+						tableViewer.getTable().getColumn(colIndex).dispose();
+						// tableHeaderMenu.getItem(colIndex).dispose();
+						model.removeColumn(column);
+					}
+					tableModified();
+				}
 
-							// call delete column page
-							final DeleteColumnPage dcPage =
-									new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
-							if (dcPage.open() == Window.OK) {
-								final String[] colToDelete = dcPage.getColumnSelected();
-								for (final String column : colToDelete) {
-									final int colIndex = findColumnForName(column);
-									tableViewer.getTable().getColumn(colIndex).dispose();
-									// tableHeaderMenu.getItem(colIndex).dispose();
-									model.removeColumn(column);
-								}
-								tableModified();
-							}
-
-						}
-					}, SWT.RIGHT);
+			}, SWT.RIGHT);
 		}
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				doSaveAs();
-			}
-		}, SWT.RIGHT);
+		tb.button("menu.saveas2", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 

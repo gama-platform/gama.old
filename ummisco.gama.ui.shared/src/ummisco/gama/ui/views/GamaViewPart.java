@@ -51,7 +51,7 @@ public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	protected final List<IDisplayOutput> outputs = new ArrayList<>();
-	protected Composite parent;
+	private Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 	private StateListener toolbarUpdater;
@@ -186,8 +186,8 @@ public abstract class GamaViewPart extends ViewPart
 		composite.addDisposeListener(this);
 		if (needsOutput() && getOutput() == null)
 			return;
-		this.parent = GamaToolbarFactory.createToolbars(this, composite);
-		ownCreatePartControl(parent);
+		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
+		ownCreatePartControl(getParentComposite());
 		// activateContext();
 		// toggle.run();
 	}
@@ -318,6 +318,14 @@ public abstract class GamaViewPart extends ViewPart
 	public void setName(final String name) {
 		super.setPartName(name);
 
+	}
+
+	public Composite getParentComposite() {
+		return parent;
+	}
+
+	public void setParentComposite(Composite parent) {
+		this.parent = parent;
 	}
 
 }

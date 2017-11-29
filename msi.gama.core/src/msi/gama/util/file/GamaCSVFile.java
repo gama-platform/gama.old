@@ -114,6 +114,13 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 					+ delimiter + "' | " + type;
 		}
 
+		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			sb.append(cols).append("x").append(rows).append(SUFFIX_DEL);
+			sb.append(header ? "with header" : "no header").append(SUFFIX_DEL);
+			sb.append("delimiter: '").append(delimiter).append("'").append(SUFFIX_DEL).append(type);
+		}
+
 		/**
 		 * @return
 		 */

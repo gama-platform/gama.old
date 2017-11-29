@@ -33,6 +33,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
@@ -40,14 +44,28 @@ import ummisco.gama.ui.views.IGamlEditor;
 
 public class WorkbenchHelper {
 
+	private static final Object NULL = new Object();
+
+	public final static LoadingCache<Class<?>, Object> SERVICES =
+			CacheBuilder.newBuilder().build(new CacheLoader<Class<?>, Object>() {
+
+				@Override
+				public Object load(final Class<?> key) throws Exception {
+					final Object o = getWorkbench().getService(key);
+					if (o == null)
+						return NULL;
+					return o;
+				}
+			});
+
 	public final static String GAMA_NATURE = WorkspaceModelsManager.GAMA_NATURE;
 	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE;
 	public final static String PLUGIN_NATURE = WorkspaceModelsManager.PLUGIN_NATURE;
 	public final static String TEST_NATURE = WorkspaceModelsManager.TEST_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
-	public final static Clipboard clipboard = new Clipboard(getDisplay());
-	public final static Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
+	public final static Clipboard CLIPBOARD = new Clipboard(getDisplay());
+	public final static Transfer[] TRANSFERS = new Transfer[] { TextTransfer.getInstance() };
 
 	public static void asyncRun(final Runnable r) {
 		final Display d = getDisplay();
@@ -90,6 +108,7 @@ public class WorkbenchHelper {
 	}
 
 	public static Shell getShell() {
+
 		return getDisplay().getActiveShell();
 	}
 
@@ -160,24 +179,18 @@ public class WorkbenchHelper {
 
 	}
 
+	@SuppressWarnings ("unchecked")
 	public static <T> T getService(final Class<T> class1) {
-
-		// final Object[] result = new Object[1];
-		// run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// result[0] = getWorkbench().getService(class1);
-		//
-		// }
-		// });
-		// return (T) result[0];
-		final T result = getWorkbench().getService(class1);
-		return result;
+		final Object o = SERVICES.getUnchecked(class1);
+		if (o == NULL) {
+			SERVICES.invalidate(class1);
+			return null;
+		}
+		return (T) o;
 	}
 
 	public static void copy(final String o) {
-		clipboard.setContents(new String[] { o }, transfers);
+		CLIPBOARD.setContents(new String[] { o }, TRANSFERS);
 	}
 
 	/**

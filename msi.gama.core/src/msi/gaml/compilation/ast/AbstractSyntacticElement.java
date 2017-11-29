@@ -44,6 +44,11 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
+	public String toString() {
+		return getKeyword() + " " + getName() + " " + (facets == null ? "" : facets.keySet().toString());
+	}
+
+	@Override
 	public void addChild(final ISyntacticElement e) {
 		throw new RuntimeException("No children allowed for " + getKeyword());
 	}

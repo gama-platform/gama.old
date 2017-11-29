@@ -10,13 +10,13 @@
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The class CreateExperimentSelectionListener.
@@ -25,7 +25,7 @@ import msi.gama.lang.gaml.validation.GamlModelBuilder;
  * @since 27 août 2016
  *
  */
-public class RevalidateModelSelectionListener implements SelectionListener {
+public class RevalidateModelSelectionListener implements Selector {
 
 	GamlEditor editor;
 
@@ -51,11 +51,5 @@ public class RevalidateModelSelectionListener implements SelectionListener {
 		});
 
 	}
-
-	/**
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
-	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 }

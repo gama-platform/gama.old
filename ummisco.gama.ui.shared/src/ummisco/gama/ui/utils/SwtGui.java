@@ -120,7 +120,7 @@ public class SwtGui implements IGui {
 		if (g.isReported())
 			return;
 		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return; }
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		if (!handler.isRunning())
 			handler.start();
 		handler.offer(g);
@@ -165,7 +165,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void clearErrors(final IScope scope) {
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.clearErrors();
 	}
 
@@ -339,9 +339,13 @@ public class SwtGui implements IGui {
 		highlightedAgent = a;
 	}
 
+	private IModelRunner getModelRunner() {
+		return WorkbenchHelper.getService(IModelRunner.class);
+	}
+
 	@Override
 	public void editModel(final IScope scope, final Object eObject) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return;
 		modelRunner.editModel(eObject);
@@ -349,7 +353,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public List<TestExperimentSummary> runHeadlessTests(final Object model) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return null;
 		return modelRunner.runHeadlessTests(model);
@@ -429,13 +433,17 @@ public class SwtGui implements IGui {
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null)
 			icv.reset();
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
+	}
+
+	private IRuntimeExceptionHandler getRuntimeExceptionHandler() {
+		return WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 	}
 
 	@Override
 	public void runModel(final Object object, final String exp) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return;
 		modelRunner.runModel(object, exp);
@@ -605,7 +613,6 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean toggleFullScreenMode() {
-
 		final IWorkbenchPart part = WorkbenchHelper.findGamaViewUnderMouse();
 		if (part instanceof IGamaView.Display) {
 			((IGamaView.Display) part).toggleFullScreen();

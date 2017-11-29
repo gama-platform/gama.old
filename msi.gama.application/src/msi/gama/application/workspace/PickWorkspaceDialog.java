@@ -90,7 +90,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 */
 	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
-		// setTitleImage(IGamaIcons.GAMA_ICON.image());
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		try {
 			final Composite inner = new Composite(parent, SWT.NONE);
-			final GridLayout l = new GridLayout(5, false);
+			final GridLayout l = new GridLayout(4, false);
 			// double[][] layout =
 			// new double[][] {
 			// { 5, LatticeConstants.PREFERRED, 5, 250, 5,
@@ -145,17 +144,18 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			// { 5, LatticeConstants.PREFERRED, 5, LatticeConstants.PREFERRED,
 			// 40 } };
 			inner.setLayout(l);
-			inner.setLayoutData(
-				new GridData(GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
+			inner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 
 			/* Label on the left */
 			final CLabel label = new CLabel(inner, SWT.NONE);
-			label.setText("GAMA Models Workspace");
-			label.setLayoutData(new GridData());
+			label.setText("GAMA Workspace");
+			label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 
 			/* Combo in the middle */
 			workspacePathCombo = new Combo(inner, SWT.BORDER);
-			workspacePathCombo.setLayoutData(new GridData());
+			final GridData data = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+			data.widthHint = 200;
+			workspacePathCombo.setLayoutData(data);
 			String wsRoot = getNode().get(keyWorkspaceRootDir, "");
 			if ( wsRoot == null || wsRoot.length() == 0 ) {
 				wsRoot = getWorkspacePathSuggestion();
@@ -164,8 +164,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 			/* Checkbox below */
 			rememberWorkspaceButton = new Button(inner, SWT.CHECK);
-			rememberWorkspaceButton.setText("Remember workspace");
-			rememberWorkspaceButton.setLayoutData(new GridData());
+			rememberWorkspaceButton.setText("Remember");
+			rememberWorkspaceButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 			rememberWorkspaceButton.setSelection(getNode().getBoolean(keyRememberWorkspace, false));
 
 			final String lastUsed = getNode().get(keyLastUsedWorkspaces, "");
@@ -183,7 +183,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			/* Browse button on the right */
 			final Button browse = new Button(inner, SWT.PUSH);
 			browse.setText("Browse...");
-			browse.setLayoutData(new GridData());
+			browse.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 			browse.addListener(SWT.Selection, event -> {
 				final DirectoryDialog dd = new DirectoryDialog(getParentShell());
 				dd.setText("Select Workspace Root");

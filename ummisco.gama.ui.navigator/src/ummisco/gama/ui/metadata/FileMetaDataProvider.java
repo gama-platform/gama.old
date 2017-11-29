@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +23,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -38,7 +37,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 
 import msi.gama.common.GamlFileExtension;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
@@ -51,7 +49,6 @@ import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class FileMetaDataProvider.
@@ -92,6 +89,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static final QualifiedName CACHE_KEY = new QualifiedName("msi.gama.application", "metadata");
+	public static final QualifiedName CHANGE_KEY = new QualifiedName("msi.gama.application", "changed");
 	public static final String CSV_CT_ID = "msi.gama.gui.csv.type";
 	public static final String IMAGE_CT_ID = "msi.gama.gui.images.type";
 	public static final String GAML_CT_ID = "msi.gama.gui.gaml.type";
@@ -148,6 +146,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 
 		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			if (suffix != null)
+				sb.append(suffix);
+		}
+
+		@Override
 		public String toPropertyString() {
 			return super.toPropertyString() + DELIMITER + suffix;
 		}
@@ -182,6 +186,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 
 		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			if (comment != null && !comment.isEmpty())
+				sb.append(comment);
+		}
+
+		@Override
 		public String toPropertyString() {
 			return super.toPropertyString() + DELIMITER + comment;
 		}
@@ -212,14 +222,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(CACHE_KEY);
 	}
 
-	@Override
-	public String getDecoratorSuffix(final Object element) {
-		final IGamaFileMetaData data = getMetaData(element, false, true);
-		if (data == null) { return ""; }
-		return data.getSuffix();
-	}
-
-	private IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
+	public IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
 		if (!project.isAccessible()) { return null; }
 		final String ct = "project";
 		final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
@@ -227,7 +230,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		final IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
 		if (data == null) {
 			try {
-				storeMetadata(project, new ProjectInfo(project), false);
+				storeMetaData(project, new ProjectInfo(project), false);
 			} catch (final CoreException e) {
 				e.printStackTrace();
 				return null;
@@ -305,14 +308,14 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 						// System.out
 						// .println("Storing the metadata just created (or
 						// recreated) while reading it for " + theFile);
-						storeMetadata(theFile, data[0], false);
+						storeMetaData(theFile, data[0], immediately);
 						try {
 
 							theFile.refreshLocal(IResource.DEPTH_ZERO, null);
 						} catch (final CoreException e) {
 							e.printStackTrace();
 						}
-						GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+						// GAMA.getGui().updateDecorator("msi.gama.application.decorator");
 					} finally {
 						processing.remove(element);
 					}
@@ -338,13 +341,14 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		T result = null;
 		final long modificationStamp = file.getModificationStamp();
 		try {
-			final byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
-			if (b != null) {
-				final String s = new String(b, "UTF-8");
-				// String s = file.getPersistentProperty(CACHE_KEY);
+			// final String s = file.getPersistentProperty(CACHE_KEY);
+			final String s = (String) file.getSessionProperty(CACHE_KEY);
+			// final byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
+			// if (b != null) {
+			// final String s = new String(b, "UTF-8");
+			if (s != null)
 				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
-				if (!clazz.isInstance(result)) { return null; }
-			}
+			if (!clazz.isInstance(result)) { return null; }
 		} catch (final Exception ignore) {
 			System.err.println("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
@@ -352,16 +356,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	@Override
-	public void storeMetadata(final File f, final IGamaFileMetaData data) {
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IPath location = Path.fromOSString(f.getAbsolutePath());
-		final IFile file = workspace.getRoot().getFileForLocation(location);
-		storeMetadata(file, data, false);
-
-	}
-
-	@Override
-	public void storeMetadata(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
+	public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
+		if (!file.isAccessible())
+			return;
 		try {
 			// System.out.println("Writing back metadata to " + file);
 			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
@@ -375,18 +372,24 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			final Runnable runnable = () -> {
 				try {
-					ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
-							data == null ? null : data.toPropertyString().getBytes("UTF-8"));
-				} catch (UnsupportedEncodingException | CoreException e) {
+					// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
+					file.setSessionProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
+					file.setSessionProperty(CHANGE_KEY, true);
+
+					// ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
+					// data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
 				// System.out.println("Success: sync info written");
 			};
 			// WorkspaceModifyOperation
 			if (!immediately) {
-				WorkbenchHelper.asyncRun(runnable);
+				executor.submit(runnable);
+				// WorkbenchHelper.asyncRun(runnable);
 			} else {
-				WorkbenchHelper.run(runnable);
+				runnable.run();
+				// WorkbenchHelper.run(runnable);
 				// file.setPersistentProperty(CACHE_KEY, data == null ? null :
 				// data.toPropertyString());
 			}
@@ -448,7 +451,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	static GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
 		ShapeInfo info = null;
 		try {
-			info = new ShapeInfo(GAMA.getRuntimeScope(), file.getLocationURI().toURL(), file.getModificationStamp());
+			info = new ShapeInfo(null, file.getLocationURI().toURL(), file.getModificationStamp());
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -484,11 +487,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			return new GenericFileInfo(file.getModificationStamp(), "Generic file");
 		ext = ext.toUpperCase();
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
-	}
-
-	@Override
-	public boolean isGAML(final IFile p) {
-		return p != null && GamlFileExtension.isAny(p.getName());
 	}
 
 	public static String getContentTypeId(final IFile p) {
@@ -527,6 +525,62 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	public static FileMetaDataProvider getInstance() {
 		return instance;
+	}
+
+	@Override
+	public void startup() {
+		System.out.print("Reading workspace metadata ");
+		final long ms = System.currentTimeMillis();
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+				if (resource.isAccessible())
+					resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
+				return true;
+			});
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("in " + (System.currentTimeMillis() - ms) + "ms");
+		}
+		try {
+			ResourcesPlugin.getWorkspace().addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static ISaveParticipant getSaveParticipant() {
+		return new ISaveParticipant() {
+
+			@Override
+			public void saving(final ISaveContext context) throws CoreException {
+				if (context.getKind() != ISaveContext.FULL_SAVE)
+					return;
+				System.out.print("Saving workspace metadata ");
+				final long ms = System.currentTimeMillis();
+				try {
+					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+						if (resource.isAccessible())
+							resource.setPersistentProperty(CACHE_KEY, (String) resource.getSessionProperty(CACHE_KEY));
+						return true;
+					});
+				} catch (final CoreException e) {
+					e.printStackTrace();
+				} finally {
+					System.out.println("in " + (System.currentTimeMillis() - ms) + "ms");
+				}
+
+			}
+
+			@Override
+			public void rollback(final ISaveContext context) {}
+
+			@Override
+			public void prepareToSave(final ISaveContext context) throws CoreException {}
+
+			@Override
+			public void doneSaving(final ISaveContext context) {}
+		};
 	}
 
 }

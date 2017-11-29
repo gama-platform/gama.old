@@ -21,6 +21,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -30,8 +31,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.ActionSetContributionItem;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -51,6 +51,14 @@ public class CleanupHelper {
 		RemoveUnwantedActionSets.run();
 		RearrangeMenus.run();
 		ForceMaximizeRestoration.run();
+		RemoveActivities.run();
+	}
+
+	static class RemoveActivities {
+		static void run() {
+			final IWorkbenchActivitySupport was = PlatformUI.getWorkbench().getActivitySupport();
+			was.setEnabledActivityIds(new HashSet<>());
+		}
 	}
 
 	static class ForceMaximizeRestoration {
@@ -62,46 +70,25 @@ public class CleanupHelper {
 					page.addPartListener(new IPartListener2() {
 
 						@Override
-						public void partVisible(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partVisible(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partOpened(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partOpened(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partInputChanged(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partInputChanged(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partHidden(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partHidden(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partDeactivated(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partDeactivated(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partClosed(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partClosed(final IWorkbenchPartReference partRef) {}
 
 						@Override
-						public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-							// TODO Auto-generated method stub
-
-						}
+						public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
 
 						@Override
 						public void partActivated(final IWorkbenchPartReference partRef) {
@@ -129,7 +116,8 @@ public class CleanupHelper {
 
 	static class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */ {
 
-		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = new String[] { "org.eclipse", "msi.gama.lang.gaml.Gaml" };
+		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = new String[] { "org.eclipse", "msi.gama.lang.gaml.Gaml",
+				"org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo" };
 		String[] MENUS_TO_REMOVE = new String[] { "org.eclipse.ui.run", "window", "navigate", "project" };
 
 		public static void run() {
@@ -152,6 +140,7 @@ public class CleanupHelper {
 			WorkbenchHelper.asyncRun(() -> {
 				// RearrangeMenus.run();
 				final IContributionItem[] items = w.getCoolBarManager2().getItems();
+				// System.out.println(Arrays.toString(items));
 				// We remove all contributions to the toolbar that do not
 				// relate
 				// to gama
@@ -159,8 +148,6 @@ public class CleanupHelper {
 
 					for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
 						if (item.getId().contains(s1)) {
-							// System.out.println("Removed perspective
-							// contribution to toolbar:" + item.getId());
 							try {
 								if (w.getCoolBarManager2().find(item.getId()) != null)
 									w.getCoolBarManager2().remove(item);
@@ -236,9 +223,10 @@ public class CleanupHelper {
 
 	static class RearrangeMenus {
 
-		public final static String[] MENU_ITEMS_TO_REMOVE = new String[] { "openWorkspace", "helpSearch" };
+		public final static Set<String> MENU_ITEMS_TO_REMOVE =
+				new HashSet<>(Arrays.asList("openWorkspace", "helpSearch", "org.eclipse.search.OpenFileSearchPage",
+						"textSearchSubMenu", "reopenEditors", "converstLineDelimitersTo"));
 		public final static Map<String, String> MENU_IMAGES = new HashMap<String, String>() {
-
 			{
 				put("print", "menu.print2");
 				put("save", "menu.save2");
@@ -257,17 +245,15 @@ public class CleanupHelper {
 				put("delete", "menu.delete2");
 				put("helpContents", "menu.help2");
 				put("org.eclipse.search.OpenSearchDialog", "menu.search2");
-				put("org.eclipse.search.OpenFileSearchPage", "menu.searchfile2");
+				put("org.eclipse.ui.openLocalFile", "navigator/navigator.open2");
+				put("converstLineDelimitersTo", "menu.delimiter2");
 			}
 		};
 
 		public static void run() {
-			WorkbenchHelper.asyncRun(() -> {
+			WorkbenchHelper.run(() -> {
 				final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
-
 				if (window instanceof WorkbenchWindow) {
-					ActionFactory.REFRESH.create(window)
-							.setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());
 					final IMenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
 					for (final IContributionItem item : menuManager.getItems()) {
 						IMenuManager menu = null;
@@ -279,9 +265,7 @@ public class CleanupHelper {
 							}
 						}
 						if (menu != null) {
-							// printItemIds(menu);
-							removeUnwantedItems(menu);
-							changeFileIcons(menu);
+							processItems(menu);
 						}
 					}
 					menuManager.updateAll(true);
@@ -291,70 +275,43 @@ public class CleanupHelper {
 
 		}
 
-		/**
-		 * @param menu
-		 */
-		// private static void printItemIds(final MenuManager menu) {
-		// StringBuilder sb = new StringBuilder();
-		// sb.append("Menu ").append(menu.getId()).append(" :: ");
-		// for ( IContributionItem item : menu.getItems() ) {
-		// sb.append(item.getId()).append('[').append(item.getClass().getSimpleName()).append("]
-		// :: ");
-		// }
-		// System.out.println(sb.toString());
-		// }
-
-		private static void removeUnwantedItems(final IMenuManager menu) {
-			if (menu.getId().equals("file")) {
-				final IContributionItem item = menu.find("new");
-				if (item instanceof MenuManager) {
-					final MenuManager newMenu = (MenuManager) item;
-					for (final IContributionItem subItem : newMenu.getItems()) {
-						if (subItem instanceof NewWizardMenu) {
-							// final NewWizardMenu nw = (NewWizardMenu) subItem;
-							newMenu.remove(subItem);
-							subItem.dispose();
-						}
-					}
-
+		private static void processItems(final IMenuManager menu) {
+			// final StringBuilder sb = new StringBuilder();
+			// sb.append("Menu ").append(menu.getId()).append(" :: ");
+			for (final IContributionItem item : menu.getItems()) {
+				final String name = item.getId();
+				if (MENU_ITEMS_TO_REMOVE.contains(name)) {
+					item.setVisible(false);
+					continue;
 				}
-			}
-			for (final String name : MENU_ITEMS_TO_REMOVE) {
-				final IContributionItem item = menu.find(name);
-				if (item != null) {
-					menu.remove(item);
-					item.dispose();
+				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible())
+					continue;
+				if (MENU_IMAGES.containsKey(name)) {
+					changeIcon(menu, item, GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
 				}
+				// sb.append(Strings.LN).append(Strings.TAB);
+				// sb.append(name).append('[').append(item.getClass().getSimpleName()).append("]:: ");
 			}
+			// System.out.println(sb.toString());
 		}
 
-		private static void changeFileIcons(final IMenuManager menu) {
-			for (final String name : MENU_IMAGES.keySet()) {
-				final IContributionItem item = menu.find(name);
-				if (item != null) {
-					changeIcon(menu, item);
-				}
-			}
-		}
-
-		private static void changeIcon(final IMenuManager menu, final IContributionItem item) {
-			final String name = item.getId();
-
+		private static void changeIcon(final IMenuManager menu, final IContributionItem item,
+				final ImageDescriptor image) {
 			if (item instanceof ActionContributionItem) {
-				((ActionContributionItem) item).getAction()
-						.setImageDescriptor(GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
+				((ActionContributionItem) item).getAction().setImageDescriptor(image);
 			} else if (item instanceof CommandContributionItem) {
 				final CommandContributionItemParameter data = ((CommandContributionItem) item).getData();
 				data.commandId = ((CommandContributionItem) item).getCommand().getId();
-				// int index = menu.iindexOf(name);
-				data.icon = GamaIcons.create(MENU_IMAGES.get(name)).descriptor();
+				data.icon = image;
 				final CommandContributionItem newItem = new CommandContributionItem(data);
-				newItem.setId(name);
-				menu.insertAfter(name, newItem);
+				newItem.setId(item.getId());
+				menu.insertAfter(item.getId(), newItem);
 				menu.remove(item);
 				item.dispose();
 			} else if (item instanceof ActionSetContributionItem) {
-				changeIcon(menu, ((ActionSetContributionItem) item).getInnerItem());
+				changeIcon(menu, ((ActionSetContributionItem) item).getInnerItem(), image);
+			} else if (item instanceof MenuManager) {
+				((MenuManager) item).setImageDescriptor(image);
 			}
 		}
 

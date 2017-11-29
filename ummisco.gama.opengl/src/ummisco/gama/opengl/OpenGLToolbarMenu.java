@@ -111,24 +111,19 @@ public class OpenGLToolbarMenu {
 	 */
 	public void createItem(final GamaToolbar2 tb, final OpenGLDisplayView view) {
 
-		tb.menu("display.presentation2", "Presentation", "OpenGL options", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent trigger) {
-				final boolean asMenu = trigger.detail == SWT.ARROW;
-				if (!asMenu) { return; }
-				final ToolItem target = (ToolItem) trigger.widget;
-				final ToolBar toolBar = target.getParent();
-				if (menu != null) {
-					menu.dispose();
-				}
-				menu = new Menu(toolBar.getShell(), SWT.POP_UP);
-				fillMenu(menu, view);
-				final Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
-				menu.setLocation(point.x, point.y);
-				menu.setVisible(true);
-
+		tb.menu("display.presentation2", "Presentation", "OpenGL options", trigger -> {
+			final boolean asMenu = trigger.detail == SWT.ARROW;
+			if (!asMenu) { return; }
+			final ToolItem target = (ToolItem) trigger.widget;
+			final ToolBar toolBar = target.getParent();
+			if (menu != null) {
+				menu.dispose();
 			}
+			menu = new Menu(toolBar.getShell(), SWT.POP_UP);
+			fillMenu(menu, view);
+			final Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+			menu.setLocation(point.x, point.y);
+			menu.setVisible(true);
 
 		}, SWT.LEFT);
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'OpenImportedErrorSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OpenImportedErrorSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,13 +14,13 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditorState;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The class CreateExperimentSelectionListener.
@@ -30,7 +29,7 @@ import ummisco.gama.ui.menus.GamaMenu;
  * @since 27 août 2016
  *
  */
-public class OpenImportedErrorSelectionListener implements SelectionListener {
+public class OpenImportedErrorSelectionListener implements Selector {
 
 	GamlEditor editor;
 	GamlEditorState state;
@@ -71,14 +70,6 @@ public class OpenImportedErrorSelectionListener implements SelectionListener {
 			};
 			menu.open((Control) e.widget, e, 32);
 		}
-	}
-
-	/**
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
-	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {
-		widgetSelected(e);
 	}
 
 }

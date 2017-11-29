@@ -27,6 +27,7 @@ import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class AutoStartup implements IStartup {
 
@@ -157,6 +158,7 @@ public class AutoStartup implements IStartup {
 		GamlRuntimeModule.staticInitialize();
 		GamlEditorBindings.install();
 		GamlReferenceSearch.install();
+		FileMetaDataProvider.getInstance().startup();
 	}
 
 }

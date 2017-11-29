@@ -13,9 +13,6 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Font;
@@ -676,10 +673,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			getFocusItem().setExpanded(!getFocusItem().expanded);
 			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
-			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
-			final String data = getFocusItem().getText();
-			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-			clipboard.dispose();
+			WorkbenchHelper.copy(getFocusItem().getText());
 		}
 	}
 

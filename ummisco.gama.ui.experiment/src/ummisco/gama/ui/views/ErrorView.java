@@ -17,9 +17,6 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -57,7 +54,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
-		createItem(parent, e, false, null);
+		createItem(getParentComposite(), e, false, null);
 		return true;
 	}
 
@@ -195,7 +192,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		WorkbenchHelper.run(() -> {
 			ErrorView.super.reset();
 			displayItems();
-			parent.layout(true, true);
+			getParentComposite().layout(true, true);
 		});
 
 	}
@@ -209,10 +206,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
 		result.put("Copy error to clipboard", () -> {
-			final Clipboard clipboard = new Clipboard(parent.getDisplay());
-			final String data = item.getAllText();
-			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-			clipboard.dispose();
+			WorkbenchHelper.copy(item.getAllText());
 		});
 		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getEditorContext()));
 		result.put("Report issue on GitHub", () -> this.reportError(item));

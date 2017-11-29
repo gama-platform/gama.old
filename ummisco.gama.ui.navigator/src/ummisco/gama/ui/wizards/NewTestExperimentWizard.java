@@ -76,7 +76,7 @@ public class NewTestExperimentWizard extends Wizard implements INewWizard {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		final String author = page.getAuthor();
-		final String title = page.getExperimentName();
+		final String title = page.getTitleName();
 		final String desc = page.getDescription();
 
 		final IRunnableWithProgress op = monitor -> {

@@ -342,6 +342,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 		final IProject handle = getProjectHandle();
 		if (handle.exists()) {
+			getProjectHandle();
 			setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
 			return false;
 		}

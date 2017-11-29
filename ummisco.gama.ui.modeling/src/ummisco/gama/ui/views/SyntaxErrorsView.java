@@ -20,8 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
@@ -108,75 +106,48 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 
 	@Override
 	protected void setContentDescription(final String description) {
-		toolbar.status((Image) null, description, new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				openFilterDialog();
-			}
-
-		}, IGamaColors.BLUE, SWT.LEFT);
+		toolbar.status((Image) null, description, e -> openFilterDialog(), IGamaColors.BLUE, SWT.LEFT);
 	}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 
-		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
-			}
+		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", e -> {
+			final boolean b = ((ToolItem) e.widget).getSelection();
+			GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
 
-		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
-			}
+		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", e -> {
+			final boolean b = ((ToolItem) e.widget).getSelection();
+			GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("build.all2", "", "Clean and validate all projects", new SelectionAdapter() {
+		tb.button("build.all2", "", "Clean and validate all projects", e -> {
+			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			try {
+				GamlResourceIndexer.eraseIndex();
+				workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				try {
-					GamlResourceIndexer.eraseIndex();
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
+					@Override
+					public void done() {
+						super.done();
+						RefreshHandler.run(workspace.getRoot());
 
-						@Override
-						public void done() {
-							super.done();
-							RefreshHandler.run(workspace.getRoot());
+					}
 
-						}
+				});
 
-					});
-
-				} catch (final CoreException ex) {
-					ex.printStackTrace();
-				}
-
+			} catch (final CoreException ex) {
+				ex.printStackTrace();
 			}
 
 		}, SWT.RIGHT);
 
-		tb.button("test.run2", "", "Run all tests", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				TestsRunner.start();
-			}
-
-		}, SWT.RIGHT);
+		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}
 

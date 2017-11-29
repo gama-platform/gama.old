@@ -122,6 +122,7 @@ import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /*
  * The class GamlEditor.
@@ -467,6 +468,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected void handleCursorPositionChanged() {
+		/// AAAAA
 		super.handleCursorPositionChanged();
 		this.markInNavigationHistory();
 	}
@@ -496,7 +498,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				final GamaUIColor c = state.getColor();
 				final String msg = state.getStatus();
 
-				SelectionListener listener = null;
+				Selector listener = null;
 				String imageName = null;
 
 				if (msg == GamlEditorState.NO_EXP_DEFINED) {

@@ -70,9 +70,6 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			public void afterComponentCreatedSWTThread() {
-				if (GamaPreferences.Displays.CORE_OVERLAY.getValue()) {
-					overlay.setVisible(true);
-				}
 				WorkaroundForIssue1353.install();
 
 			}

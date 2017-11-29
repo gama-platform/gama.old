@@ -76,7 +76,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		final String typeOfModel = page.getTypeOfModel();
 		final String fileName = page.getFileName();
 		final String author = page.getAuthor();
-		final String title = page.getModelName();
+		final String title = page.getTitleName();
 		final String desc = page.getDescription();
 		final boolean htmlTemplate = page.getValueHtmlTemplate();
 		final IRunnableWithProgress op = monitor -> {

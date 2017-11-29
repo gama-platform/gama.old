@@ -20,11 +20,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
@@ -151,7 +146,8 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 			if (state != TestState.FAILED && state != TestState.ABORTED)
 				return false;
 		}
-		item = createItem(parent, experiment, !runningAllTests, GamaColors.get(getItemDisplayColor(experiment)));
+		item = createItem(getParentComposite(), experiment, !runningAllTests,
+				GamaColors.get(getItemDisplayColor(experiment)));
 		return true;
 	}
 
@@ -233,29 +229,19 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		FAILED_TESTS.removeChangeListeners();
 		final ToolItem t = tb.check(GamaIcons.create("test.sort2").getCode(), "Sort by severity",
 				"When checked, sort the tests by their decreasing state severity (i.e. errored > failed > warning > passed > not run). Otherwise they are sorted by their order of execution.",
-				new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						TESTS_SORTED.set(!TESTS_SORTED.getValue());
-						TestView.super.reset();
-						reset();
-					}
-
+				e -> {
+					TESTS_SORTED.set(!TESTS_SORTED.getValue());
+					TestView.super.reset();
+					reset();
 				}, SWT.RIGHT);
 		t.setSelection(TESTS_SORTED.getValue());
 		TESTS_SORTED.onChange(v -> t.setSelection(v));
 
 		final ToolItem t2 = tb.check(GamaIcons.create("test.filter2").getCode(), "Filter tests",
-				"When checked, show only errored and failed tests and assertions", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						FAILED_TESTS.set(!FAILED_TESTS.getValue());
-						TestView.super.reset();
-						reset();
-					}
-
+				"When checked, show only errored and failed tests and assertions", e -> {
+					FAILED_TESTS.set(!FAILED_TESTS.getValue());
+					TestView.super.reset();
+					reset();
 				}, SWT.RIGHT);
 		t2.setSelection(FAILED_TESTS.getValue());
 		FAILED_TESTS.onChange(v -> t2.setSelection(v));
@@ -306,10 +292,10 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	@Override
 	public void reset() {
 		WorkbenchHelper.run(() -> {
-			if (!parent.isDisposed()) {
+			if (!getParentComposite().isDisposed()) {
 				resortTests();
 				displayItems();
-				parent.layout(true, false);
+				getParentComposite().layout(true, false);
 			}
 		});
 
@@ -324,10 +310,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	public Map<String, Runnable> handleMenu(final AbstractSummary<?> item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
 		result.put("Copy summary to clipboard", () -> {
-			final Clipboard clipboard = new Clipboard(parent.getDisplay());
-			final String data = item.toString();
-			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-			clipboard.dispose();
+			WorkbenchHelper.copy(item.toString());
 		});
 		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getURI()));
 		return result;
