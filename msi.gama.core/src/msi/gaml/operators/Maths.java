@@ -13,6 +13,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -41,50 +42,18 @@ public class Maths {
 							value = "Various examples of power",
 							examples = { @example (
 									value = "2 ^ 3",
-									equals = "8.0"),
-									@example (
-											value = "4.0^2",
-											equals = "16.0",
-											isTestOnly = true),
-									@example (
-											value = "4.0^0.5",
-											equals = "2.0",
-											isTestOnly = true),
-									@example (
-											value = "8^0",
-											equals = "1.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^0",
-											equals = "1.0",
-											isTestOnly = true),
-									@example (
-											value = "8^1",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^1",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8^1.0",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^1.0",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "2^0.5",
-											equals = "sqrt(2)",
-											isTestOnly = true),
-									@example (
-											value = "16.81^0.5",
-											equals = "sqrt(16.81)",
-											isTestOnly = true),
-							//		@example (value = "(10^(-9) = 0)", equals= "false", isTestOnly = true) 
+									equals = "8.0")
 							}) },
 			see = { "*", "sqrt" })
+	@test("4.0^2 = 16.0")
+	@test("4.0^0.5 = 2.0")
+	@test("8^0 = 1.0")
+	@test("8.0^0 = 1.0")
+	@test("8.0^1 = 8.0")
+	@test("8^1.0 = 8.0")
+	@test("2^0.5 = sqrt(2)")
+	@test("8.0^1.0 = 8.0")
+	@test("16.81^0.5 = sqrt(16.81)")
 	public static Double pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
