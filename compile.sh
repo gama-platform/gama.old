@@ -59,7 +59,7 @@ install (){
 	
 	if [[ $MSG == *"ci fullbuild"* ]]; then		
 		cd msi.gama.parent 
-		mvn clean install -T 20C
+		mvn clean install
 		cd -
 		return 0
 	fi
@@ -294,7 +294,7 @@ install (){
 	
 
 	cd msi.gama.parent 
-	mvn clean install -f tiny_pom.xml -T 20C
+	mvn clean install -f tiny_pom.xml 
 	cd -
 	
 	

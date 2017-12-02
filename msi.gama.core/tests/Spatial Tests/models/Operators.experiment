@@ -4,8 +4,12 @@
 * Description: Tests various spatial operators
 * Tags: spatial, operators, test
 */
+
 experiment OperatorsTest type: test {
 	test "add_point" {
+		
+		assert (geometry(nil) add_point {20,20}) = nil;
+		assert ({10,10} add_point point(nil)) = {10,10};
 		assert ({10,10} add_point {20,20}) = line([{10,10},{20,20}]);
 		assert (line([{10,10},{20,20}]) add_point {30,30}) = line([{10,10},{20,20},{30,30}]);
 		assert (line([{10,10},{20,20},{30,30}]) add_point {0,0}) = line([{0,0},{10,10},{20,20},{30,30}]);
@@ -14,6 +18,8 @@ experiment OperatorsTest type: test {
 		assert ((square(10) at_location {50,50}) add_point {50,50}) = polygon([{45,55}, {50,50}, {55,55},{55,45},{45,45}]);											
 	}
 	test "inter" {
+		assert geometry(nil) inter  {10,10} = nil;
+		assert {10,10} inter geometry(nil) = nil;
 		assert {10,10} inter {20,10} = nil;
 		assert {10,10} inter {10,10} = {10,10};
 		assert line([{10,10},{20,20}]) inter {10,10} = {10,10};
@@ -22,16 +28,18 @@ experiment OperatorsTest type: test {
 		assert line([{10,5},{10,20}]) inter line([{5,15},{30,15}]) distance_to {10,15} < 0.1;
 	}
 	test "minus" {
+		assert geometry(nil) -  {10,10} = nil;
+		assert {10,10} - geometry(nil) = {10,10};
+		
 		
 	}
 	test "union" {
-		
+		assert geometry(nil) union  {10,10} = {10,10} ;
+		assert {10,10} union geometry(nil) = {10,10} ;
 	}
 	test "masked_by" {
-		
 	}
 	test "split_at" {
 		
 	}
 }
-

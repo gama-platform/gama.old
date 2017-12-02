@@ -11,6 +11,7 @@ package msi.gama.kernel.batch;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
@@ -220,6 +221,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			population.addAll(mutatePop);
 			mutatePop = null;
 			computePopFitness(scope, population);
+			population = population.stream().distinct().collect(Collectors.toList());
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
 		}
