@@ -13,6 +13,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -142,6 +143,10 @@ public class Maths {
 					examples = { @example (
 							value = "abs (200 * -1 + 0.5)",
 							equals = "199.5") }) })
+	@test("abs(1.7) = 1.7")
+	@test("abs(-2.0) = 2.0")
+	@test("abs(0.0) = 0.0")
+	@test("abs(-0.0) = 0.0")
 	public static Double abs(final Double rv) {
 		return Math.abs(rv);
 	}
@@ -165,6 +170,10 @@ public class Maths {
 									value = "abs (-0)",
 									equals = "0",
 									isTestOnly = true) }) })
+	@test("abs(1) = 1")
+	@test("abs(-2) = 2")
+	@test("abs(0) = 0")
+	@test("abs(-0) = 0")
 	public static Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
@@ -183,6 +192,11 @@ public class Maths {
 					value = "acos (0)",
 					equals = "90.0"),
 			see = { "asin", "atan", "cos" })
+	@test("acos(0) = 90.0")
+	@test("acos(-1) = 180.0")
+	@test("acos(1) = 0.0")
+	@test("is_error(acos(-10))")
+	@test("is_error(acos(10))")
 	public static Double acos(final Double rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
