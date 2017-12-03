@@ -240,6 +240,9 @@ public class Maths {
 					value = "atan (1)",
 					equals = "45.0"),
 			see = { "acos", "asin", "tan" })
+	@test("atan(0) = 0.0")
+	@test("atan(-1) = -45.0")
+	@test("atan(1) = 45.0")
 	public static Double atan(final Double rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
