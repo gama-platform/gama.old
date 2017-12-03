@@ -5,5 +5,5 @@ cd msi.gama.processor
 mvn -q clean install
 cd - 
 cd msi.gama.parent 
-mvn -q clean install -T 24C
+mvn -q clean install
 cd -

@@ -1347,7 +1347,7 @@ public abstract class Spatial {
 						returnType = "geometry",
 						equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
 		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
-			if (p == null) { return g; }
+			if (p == null || g == null) { return g; }
 			final Coordinate point = (Coordinate) p;
 			final Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;

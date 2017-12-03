@@ -14,6 +14,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
@@ -34,6 +35,10 @@ public class Comparison {
 	@operator(value = "between", can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = { IConcept.COMPARISON })
 	@doc(value = "returns true the first integer operand is bigger than the second integer operand and smaller than the third integer operand",
 		examples = @example(value = "between(5, 1, 10)", equals = "true"))
+	@test("0 between(-2,4) = true")
+	@test("-12 between(-22,-10)")
+	@test("not(1 between(1,4))")
+	@test("not(2 between(4,1))")
 	public static
 		Boolean between(final Integer a, final Integer inf, final Integer sup) {
 		if ( inf > sup ) { return false; }
@@ -43,6 +48,10 @@ public class Comparison {
 	@operator(value = "between", can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
 	@doc(value = "returns true if the first float operand is bigger than the second float operand and smaller than the third float operand",
 		examples = @example(value = "between(5.0, 1.0, 10.0)", equals = "true"))
+	@test("0.0 between(-2,4)")
+	@test("-12.5 between(-22.0,-10.0)")
+	@test("not(1.0 between(1.0,4.0))")
+	@test("not(2.2 between(4.0,1.9))")
 	public static
 		Boolean between(final Double a, final Double inf, final Double sup) {
 		if ( inf > sup ) { return false; }

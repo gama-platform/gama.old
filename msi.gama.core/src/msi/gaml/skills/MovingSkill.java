@@ -660,6 +660,7 @@ public class MovingSkill extends Skill {
 			indexSegment = 0;
 			endIndexSegment = 0;
 			falseTarget = (GamaPoint) path.getEndVertex();
+			path.acceptVisitor(agent);
 
 		} else {
 			if (path.isVisitor(agent)) {
