@@ -20,6 +20,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.metamodel.agent.SavedAgent;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -61,7 +62,7 @@ public class SavedAgentConverter implements Converter {
 		writer.endNode();
 		writer.endNode();
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if (inPop.size() > 0) {
+		if ( (inPop != null) && (inPop.size() > 0)) {
 			writer.startNode("innerPopulations");
 			context.convertAnother(inPop);
 			writer.endNode();
@@ -90,17 +91,18 @@ public class SavedAgentConverter implements Converter {
 		for (int ii = 0; ii < keys.size(); ii++) {
 			localData.put(keys.get(ii), datas.get(ii));
 		}
+		
 		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = null;
 		if (reader.getNodeName().equals("innerPopulations")) {
-			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, Map.class);
+			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
 			reader.moveUp();
 			reader.moveDown();
 		}
 		final Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
 		reader.moveUp();
 
-		final SavedAgent agtToReturn = new SavedAgent(index, localData, null);
+		final SavedAgent agtToReturn = new SavedAgent(index, localData, inPop);
 
 		return agtToReturn;
 	}
