@@ -13,7 +13,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class ModelsLibraryFolder extends TopLevelFolder {
 
-	public ModelsLibraryFolder(final Object root, final String name) {
+	public ModelsLibraryFolder(final NavigatorRoot root, final String name) {
 		super(root, name, FOLDER_BUILTIN, "navigator/folder.status.library", "Models shipped with GAMA", BLUE,
 				WorkbenchHelper.BUILTIN_NATURE, Location.CoreModels);
 	}

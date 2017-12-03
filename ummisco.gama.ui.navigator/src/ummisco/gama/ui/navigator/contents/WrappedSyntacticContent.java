@@ -21,18 +21,20 @@ import org.eclipse.swt.graphics.Image;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
-public class WrappedSyntacticContent extends VirtualContent implements Comparable<WrappedSyntacticContent> {
+public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
+		implements Comparable<WrappedSyntacticContent> {
 
 	public final ISyntacticElement element;
 	final String uri;
 
-	WrappedSyntacticContent(final WrappedSyntacticContent parent, final ISyntacticElement e) {
+	private WrappedSyntacticContent(final WrappedSyntacticContent parent, final ISyntacticElement e) {
 		this(parent, e, GAMA.getGui().getGamlLabelProvider().getText(e));
 	}
 
-	public WrappedSyntacticContent(final Object root, final ISyntacticElement e, final String name) {
+	public WrappedSyntacticContent(final VirtualContent<?> root, final ISyntacticElement e, final String name) {
 		super(root, name == null ? GAMA.getGui().getGamlLabelProvider().getText(e) : name);
 		element = e;
 		uri = element == null || element.getElement() == null ? null
@@ -73,6 +75,12 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 			GAMA.getGui().runModel(getParent(), element.getName());
 		} else
 			GAMA.getGui().editModel(null, element.getElement());
+		return true;
+	}
+
+	@Override
+	public boolean handleSingleClick() {
+		GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
 
@@ -123,5 +131,20 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 	@Override
 	public VirtualContentType getType() {
 		return VirtualContentType.GAML_ELEMENT;
+	}
+
+	@Override
+	public String getStatusMessage() {
+		return getName();
+	}
+
+	@Override
+	public GamaUIColor getStatusColor() {
+		return IGamaColors.GRAY_LABEL;
+	}
+
+	@Override
+	public Image getStatusImage() {
+		return getImage();
 	}
 }

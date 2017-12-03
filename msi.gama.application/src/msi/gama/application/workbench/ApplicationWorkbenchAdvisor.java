@@ -74,9 +74,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") )
 			return;
 		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 		}
+
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {
@@ -179,6 +181,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();
 		}
+
 	}
 
 	@Override

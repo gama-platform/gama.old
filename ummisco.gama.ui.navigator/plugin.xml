@@ -678,6 +678,12 @@
          <service
                serviceClass="msi.gama.util.file.IFileMetaDataProvider"></service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.commands.RefreshServiceFactory">
+         <service
+               serviceClass="ummisco.gama.ui.interfaces.IRefreshHandler">
+         </service>
+      </serviceFactory>
    </extension>
    <extension
 point="org.eclipse.core.expressions.propertyTesters">

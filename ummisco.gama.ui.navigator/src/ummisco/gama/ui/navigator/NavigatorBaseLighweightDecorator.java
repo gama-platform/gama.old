@@ -13,10 +13,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import msi.gama.runtime.GAMA;
-import msi.gama.util.file.IGamaFileMetaData;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
-import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
@@ -29,25 +26,15 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 	private final StringBuilder sb = new StringBuilder();
 
-	void decorate(final IDecoration decoration, final StringBuilder sb) {
-		if (sb.length() > 0) {
-			decoration.addSuffix(" (");
-			decoration.addSuffix(sb.toString());
-			decoration.addSuffix(")");
-			sb.setLength(0);
-		}
-	}
-
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 		if (element instanceof VirtualContent) {
-			((VirtualContent) element).getSuffix(sb);
-			decorate(decoration, sb);
-		} else if (PreferencesHelper.NAVIGATOR_METADATA.getValue()) {
-			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(element, false, true);
-			if (data != null) {
-				data.appendSuffix(sb);
-				decorate(decoration, sb);
+			((VirtualContent<?>) element).getSuffix(sb);
+			if (sb.length() > 0) {
+				decoration.addSuffix(" (");
+				decoration.addSuffix(sb.toString());
+				decoration.addSuffix(")");
+				sb.setLength(0);
 			}
 		}
 	}

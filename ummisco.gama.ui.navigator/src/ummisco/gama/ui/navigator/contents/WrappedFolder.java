@@ -16,7 +16,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 	Font font;
 	boolean canBeDecorated;
 
-	public WrappedFolder(final Object root, final IFolder wrapped) {
+	public WrappedFolder(final WrappedContainer<?> root, final IFolder wrapped) {
 		super(root, wrapped);
 	}
 

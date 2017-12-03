@@ -60,11 +60,11 @@ public class NavigatorSearchControl {
 
 		@Override
 		public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-			return select((VirtualContent) element, true);
+			return select((VirtualContent<?>) element, true);
 		}
 
 		@SuppressWarnings ("unchecked")
-		private boolean select(final VirtualContent element, final boolean b) {
+		private boolean select(final VirtualContent<?> element, final boolean b) {
 			if (alreadySelected.contains(element))
 				return true;
 			if (internalSelect(element, b)) {
@@ -74,7 +74,7 @@ public class NavigatorSearchControl {
 			return false;
 		}
 
-		private boolean internalSelect(final VirtualContent element, final boolean considerVirtualContent) {
+		private boolean internalSelect(final VirtualContent<?> element, final boolean considerVirtualContent) {
 			if (pattern.isEmpty())
 				return true;
 			switch (element.getType()) {
@@ -91,7 +91,7 @@ public class NavigatorSearchControl {
 				default:
 					final Object[] children = element.getNavigatorChildren();
 					for (int i = 0; i < children.length; i++)
-						if (select((VirtualContent) children[i], false))
+						if (select((VirtualContent<?>) children[i], false))
 							return true;
 					return false;
 			}

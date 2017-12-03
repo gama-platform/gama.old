@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -20,38 +19,21 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.common.GamlFileExtension;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.resources.GamaFonts;
-import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 
 public class NavigatorLabelProvider extends CellLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
 
 	@Override
 	public String getText(final Object element) {
-		if (element instanceof VirtualContent) { return ((VirtualContent) element).getName(); }
+		if (element instanceof VirtualContent) { return ((VirtualContent<?>) element).getName(); }
 		return null;
 	}
 
 	@Override
 	public Image getImage(final Object element) {
-		if (element instanceof VirtualContent) { return ((VirtualContent) element).getImage(); }
-		if (element instanceof IFile) {
-			final IFile f = (IFile) element;
-			if (GamlFileExtension.isExperiment(f.getName())) { return GamaIcons.create("file.experiment2").image(); }
-			if (isHandled(f.getFileExtension())) {
-				if (FileMetaDataProvider.isShapeFileSupport(f)) {
-					return GamaIcons.create("file.shapesupport2").image();
-				} else {
-					return null;
-				}
-			} else {
-				return GamaIcons.create("file.text2").image();
-			}
-		}
+		if (element instanceof VirtualContent) { return ((VirtualContent<?>) element).getImage(); }
 		return null;
 	}
 
@@ -84,8 +66,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 	 */
 	@Override
 	public Font getFont(final Object element) {
-		if (element instanceof VirtualContent) { return ((VirtualContent) element).getFont(); }
-		if (element instanceof IFile) { return GamaFonts.getNavigFileFont(); }
+		if (element instanceof VirtualContent) { return ((VirtualContent<?>) element).getFont(); }
 		return GamaFonts.getNavigFolderFont();
 	}
 
@@ -96,8 +77,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 	 */
 	@Override
 	public Color getForeground(final Object element) {
-		if (element instanceof VirtualContent) { return ((VirtualContent) element).getColor(); }
-		if (!(element instanceof IFile)) { return IGamaColors.GRAY_LABEL.color(); }
+		if (element instanceof VirtualContent) { return ((VirtualContent<?>) element).getColor(); }
 		return null;
 	}
 

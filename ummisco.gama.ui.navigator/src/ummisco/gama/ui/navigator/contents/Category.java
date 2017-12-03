@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -33,7 +34,7 @@ import ummisco.gama.ui.resources.IGamaColors;
  * @since 5 févr. 2015
  *
  */
-public class Category extends VirtualContent {
+public class Category extends VirtualContent<WrappedFile> {
 
 	final Collection<String> fileNames;
 
@@ -41,7 +42,7 @@ public class Category extends VirtualContent {
 	 * @param root
 	 * @param name
 	 */
-	public Category(final IFile root, final Collection<String> object, final String name) {
+	public Category(final WrappedFile root, final Collection<String> object, final String name) {
 		super(root, name);
 		fileNames = object;
 	}
@@ -61,6 +62,11 @@ public class Category extends VirtualContent {
 		return GamaFonts.getSmallFont(); // by default
 	}
 
+	@Override
+	public WrappedFile getParent() {
+		return super.getParent();
+	}
+
 	/**
 	 * Method getNavigatorChildren()
 	 * 
@@ -70,7 +76,7 @@ public class Category extends VirtualContent {
 	public Object[] getNavigatorChildren() {
 		if (fileNames.isEmpty()) { return EMPTY; }
 		final List<LinkedFile> files = new ArrayList<>();
-		final IFile file = (IFile) getParent();
+		final IFile file = getParent().getResource();
 		final IPath filePath = file.getLocation();
 		final IPath projectPath = file.getProject().getLocation();
 		for (final String s : fileNames) {
@@ -134,6 +140,21 @@ public class Category extends VirtualContent {
 	@Override
 	public VirtualContentType getType() {
 		return VirtualContentType.CATEGORY;
+	}
+
+	@Override
+	public String getStatusMessage() {
+		return "Virtual Folder";
+	}
+
+	@Override
+	public GamaUIColor getStatusColor() {
+		return IGamaColors.GRAY_LABEL;
+	}
+
+	@Override
+	public Image getStatusImage() {
+		return getImage();
 	}
 
 }

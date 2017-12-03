@@ -177,4 +177,6 @@ public interface IGui {
 	 */
 	boolean toggleFullScreenMode();
 
+	void refreshNavigator();
+
 }

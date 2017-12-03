@@ -29,10 +29,10 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
-import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.commands.TestsRunner;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -129,13 +129,13 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		tb.button("build.all2", "", "Clean and validate all projects", e -> {
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			try {
-				GamlResourceIndexer.eraseIndex();
+				// GamlResourceIndexer.eraseIndex();
 				workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
 
 					@Override
 					public void done() {
 						super.done();
-						RefreshHandler.run(workspace.getRoot());
+						WorkbenchHelper.getService(IRefreshHandler.class).run(workspace.getRoot());
 
 					}
 

@@ -33,20 +33,19 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
-public class WrappedFile extends WrappedResource<IFile> {
+public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
-	WrappedResource<?> fileParent;
+	WrappedFile fileParent;
 	boolean isGamaFile;
 	boolean isExperiment;
 	boolean isShapeFile;
 	boolean isShapeFileSupport;
 	Image image;
 
-	public WrappedFile(final Object root, final IFile wrapped) {
+	public WrappedFile(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
 		computeFileType();
 		computeFileParent();
-		computeFileImage();
 	}
 
 	private void computeFileImage() {
@@ -77,14 +76,14 @@ public class WrappedFile extends WrappedResource<IFile> {
 		if (isShapeFileSupport) {
 			final IResource shape = shapeFileSupportedBy(getResource());
 			if (shape != null) {
-				fileParent = getMapper().findWrappedInstanceOf(shape);
+				fileParent = (WrappedFile) getMapper().findWrappedInstanceOf(shape);
 			}
 		}
 
 	}
 
 	@Override
-	public Object getParent() {
+	public WrappedResource<?, ?> getParent() {
 		if (fileParent != null)
 			return fileParent;
 		return super.getParent();
@@ -112,26 +111,25 @@ public class WrappedFile extends WrappedResource<IFile> {
 	}
 
 	public Object[] getGamlFileChildren() {
-		final IFile p = getResource();
-		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
+		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 		if (metaData instanceof GamlFileInfo) {
 			final GamlFileInfo info = (GamlFileInfo) metaData;
-			final List<VirtualContent> l = new ArrayList<>();
-			final String path = p.getFullPath().toOSString();
+			final List<VirtualContent<?>> l = new ArrayList<>();
+			final String path = getResource().getFullPath().toOSString();
 			final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
 			if (element != null) {
 				if (!GamlFileExtension.isExperiment(path)) {
-					l.add(new WrappedModelContent(p, element));
+					l.add(new WrappedModelContent(this, element));
 				}
-				element.visitExperiments(exp -> l.add(new WrappedExperimentContent(p, exp)));
+				element.visitExperiments(exp -> l.add(new WrappedExperimentContent(this, exp)));
 			}
 			if (!info.getImports().isEmpty()) {
-				final Category wf = new Category(p, info.getImports(), "Imports");
+				final Category wf = new Category(this, info.getImports(), "Imports");
 				if (wf.getNavigatorChildren().length > 0)
 					l.add(wf);
 			}
 			if (!info.getUses().isEmpty()) {
-				final Category wf = new Category(p, info.getUses(), "Uses");
+				final Category wf = new Category(this, info.getUses(), "Uses");
 				if (wf.getNavigatorChildren().length > 0)
 					l.add(wf);
 			}
@@ -164,6 +162,8 @@ public class WrappedFile extends WrappedResource<IFile> {
 
 	@Override
 	public Image getImage() {
+		if (image == null)
+			computeFileImage();
 		return image;
 	}
 

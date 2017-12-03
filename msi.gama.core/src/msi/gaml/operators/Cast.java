@@ -105,7 +105,7 @@ public class Cast {
 	public static IType asType(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		final Object value = expr.value(scope);
 		if (value instanceof String) {
-			final IModel m = scope.getSimulation().getModel();
+			final IModel m = scope.getModel();
 			return m.getDescription().getTypeNamed((String) value);
 		} else if (value instanceof ISpecies) {
 			return ((ISpecies) value).getDescription().getType();

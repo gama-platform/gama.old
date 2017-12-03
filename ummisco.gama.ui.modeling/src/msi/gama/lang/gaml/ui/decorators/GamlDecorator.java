@@ -37,7 +37,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(final Object element, final IDecoration deco) {
 		if (element instanceof VirtualContent) {
-			deco.addOverlay(((VirtualContent) element).getOverlay(), BOTTOM_LEFT);
+			deco.addOverlay(((VirtualContent<?>) element).getOverlay(), BOTTOM_LEFT);
 		} else if (element instanceof IFile) {
 			final IFile r = (IFile) element;
 			if (GamlFileExtension.isAny(r.getName()))

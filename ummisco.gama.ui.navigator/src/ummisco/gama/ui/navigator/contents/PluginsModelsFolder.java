@@ -13,7 +13,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class PluginsModelsFolder extends TopLevelFolder {
 
-	public PluginsModelsFolder(final Object root, final String name) {
+	public PluginsModelsFolder(final NavigatorRoot root, final String name) {
 		super(root, name, FOLDER_PLUGIN, "navigator/folder.status.plugin", "Models present in GAMA plugins", WARNING,
 				WorkbenchHelper.PLUGIN_NATURE, Location.Plugins);
 	}

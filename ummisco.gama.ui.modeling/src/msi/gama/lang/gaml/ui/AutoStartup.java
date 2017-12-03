@@ -27,7 +27,6 @@ import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
-import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class AutoStartup implements IStartup {
 
@@ -115,29 +114,6 @@ public class AutoStartup implements IStartup {
 									AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
 						}
 					});
-	// public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER =
-	// GamaPreferences
-	// .create("pref_editor_other_experiments", "Show other models' experiments in toolbar", false,
-	// IType.BOOL)
-	// .in(GamaPreferences.EDITOR).group("Toolbars")
-	// .addChangeListener(new IPreferenceChangeListener<Boolean>() {
-	//
-	// @Override
-	// public boolean beforeValueChange(final Boolean newValue) {
-	// return true;
-	// }
-	//
-	// @Override
-	// public void afterValueChange(final Boolean newValue) {
-	// final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
-	// for (final IEditorReference ed : eds) {
-	// final IEditorPart e = ed.getEditor(false);
-	// if (e instanceof GamlEditor) {
-	// ((GamlEditor) e).setShowOtherEnabled(newValue);
-	// }
-	// }
-	// }
-	// });
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()
@@ -158,7 +134,6 @@ public class AutoStartup implements IStartup {
 		GamlRuntimeModule.staticInitialize();
 		GamlEditorBindings.install();
 		GamlReferenceSearch.install();
-		FileMetaDataProvider.getInstance().startup();
 	}
 
 }

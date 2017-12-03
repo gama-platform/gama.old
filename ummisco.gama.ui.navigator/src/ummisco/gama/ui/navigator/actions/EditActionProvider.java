@@ -62,6 +62,7 @@ public class EditActionProvider extends CommonActionProvider {
 		deleteAction = new DeleteResourceAction(sp);
 		deleteAction.setImageDescriptor(GamaIcons.create("menu.delete2").descriptor());
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
+
 	}
 
 	@Override
@@ -125,5 +126,6 @@ public class EditActionProvider extends CommonActionProvider {
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
 		deleteAction.selectionChanged(selection);
+
 	}
 }

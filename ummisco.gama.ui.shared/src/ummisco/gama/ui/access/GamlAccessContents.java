@@ -61,9 +61,9 @@ public abstract class GamlAccessContents implements IPopupProvider {
 
 	private Popup2 popup;
 
-	public int maxProviderWidth;
+	public int maxProviderWidth = 145;
 
-	public int maxDefinitionWidth;
+	public int maxDefinitionWidth = 1000;
 
 	/**
 	 * Refreshes the contents of the quick access shell
@@ -354,34 +354,35 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		final Font boldFont = GamaFonts.getHelpFont();
 		table.setFont(boldFont);
 		textLayout.setText("Available categories");
-		if (maxProviderWidth == 0) {
-			maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
-			textLayout.setFont(boldFont);
-			for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
-				final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
-				textLayout.setText(provider.name);
-				final int width = (int) (textLayout.getBounds().width * 1.1);
-				if (width > maxProviderWidth) {
-					maxProviderWidth = width;
-				}
-			}
-		}
-		if (maxDefinitionWidth == 0) {
-			textLayout.setText("Available definitions");
-			maxDefinitionWidth = (int) (textLayout.getBounds().width * 1.1);
-			textLayout.setFont(boldFont);
-			for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
-				final GamlIdiomsProvider<? extends IGamlDescription> provider = GamlIdiomsProvider.PROVIDERS.get(i);
-				for (final IGamlDescription d : provider.getSortedElements()) {
-					textLayout.setText(d.getTitle());
-					final int width = (int) (textLayout.getBounds().width * 1.1);
-					if (width > maxDefinitionWidth) {
-						maxDefinitionWidth = width;
-					}
-				}
-			}
-
-		}
+		// if (maxProviderWidth == 0) {
+		// maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
+		// textLayout.setFont(boldFont);
+		// for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
+		// final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
+		// textLayout.setText(provider.name);
+		// final int width = (int) (textLayout.getBounds().width * 1.1);
+		// if (width > maxProviderWidth) {
+		// maxProviderWidth = width;
+		// }
+		// }
+		// }
+		// if (maxDefinitionWidth == 0) {
+		// textLayout.setText("Available definitions");
+		// maxDefinitionWidth = (int) (textLayout.getBounds().width * 1.1);
+		// textLayout.setFont(boldFont);
+		// for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
+		// final GamlIdiomsProvider<? extends IGamlDescription> provider = GamlIdiomsProvider.PROVIDERS.get(i);
+		// for (final IGamlDescription d : provider.getSortedElements()) {
+		// textLayout.setText(d.getTitle());
+		// final int width = (int) (textLayout.getBounds().width * 1.1);
+		// if (width > maxDefinitionWidth) {
+		// maxDefinitionWidth = width;
+		// }
+		// }
+		// }
+		// System.out.println("Provider: " + maxProviderWidth + " Definition:" + maxDefinitionWidth);
+		//
+		// }
 
 		final TableColumn c1 = new TableColumn(table, SWT.NONE);
 		final TableColumn c2 = new TableColumn(table, SWT.NONE);

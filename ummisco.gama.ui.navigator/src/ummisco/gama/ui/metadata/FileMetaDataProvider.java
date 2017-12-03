@@ -62,13 +62,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private static volatile Set<Object> processing = Collections.<Object> synchronizedSet(new HashSet<>());
 
 	/**
-	 * Adapt the specific object to the specified class, supporting the IAdaptable interface as well.
-	 */
-	public static <T> T adaptTo(final Object o, final Class<T> cl) {
-		return adaptTo(o, cl, cl);
-	}
-
-	/**
 	 * Adapt the specific object to the specified classes, supporting the IAdaptable interface as well.
 	 *
 	 * @param o
@@ -78,7 +71,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param adapterType
 	 *            the adapter type to check for.
 	 */
-	public static <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
+	private <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
 		if (actualType.isInstance(o)) {
 			return actualType.cast(o);
 		} else if (o instanceof IAdaptable) {
@@ -217,12 +210,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			};
 
 	ExecutorService executor = Executors.newCachedThreadPool();
+	volatile boolean started;
 
 	private FileMetaDataProvider() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(CACHE_KEY);
 	}
 
-	public IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
+	private IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
 		if (!project.isAccessible()) { return null; }
 		final String ct = "project";
 		final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
@@ -247,6 +241,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
 			final boolean immediately) {
+		startup();
 		if (processing.contains(element)) {
 
 			while (processing.contains(element)) {
@@ -336,16 +331,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 	}
 
-	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
+	private <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
 			final boolean includeOutdated) {
 		T result = null;
 		final long modificationStamp = file.getModificationStamp();
 		try {
-			// final String s = file.getPersistentProperty(CACHE_KEY);
 			final String s = (String) file.getSessionProperty(CACHE_KEY);
-			// final byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
-			// if (b != null) {
-			// final String s = new String(b, "UTF-8");
 			if (s != null)
 				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
 			if (!clazz.isInstance(result)) { return null; }
@@ -357,6 +348,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	@Override
 	public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
+		startup();
 		if (!file.isAccessible())
 			return;
 		try {
@@ -372,12 +364,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			final Runnable runnable = () -> {
 				try {
-					// file.setPersistentProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 					file.setSessionProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 					file.setSessionProperty(CHANGE_KEY, true);
-
-					// ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
-					// data == null ? null : data.toPropertyString().getBytes("UTF-8"));
 				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
@@ -386,25 +374,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			// WorkspaceModifyOperation
 			if (!immediately) {
 				executor.submit(runnable);
-				// WorkbenchHelper.asyncRun(runnable);
 			} else {
 				runnable.run();
-				// WorkbenchHelper.run(runnable);
-				// file.setPersistentProperty(CACHE_KEY, data == null ? null :
-				// data.toPropertyString());
 			}
-
-			// Decorate using current UI thread
-			// Display.getDefault().asyncExec(new Runnable() {
-			//
-			// @Override
-			// public void run() {
-			// // Fire a LabelProviderChangedEvent to notify eclipse views
-			// // that label provider has been changed for the resources
-			// System.out.println("Finally: updating the decorator manager");
-			// PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
-			// }
-			// });
 
 		} catch (final Exception ignore) {
 			ignore.printStackTrace();
@@ -415,16 +387,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	/**
 	 * @param file
 	 */
-	static GamlFileInfo createGamlFileMetaData(final IFile file) {
+	private GamlFileInfo createGamlFileMetaData(final IFile file) {
 		return GAML.getInfo(URI.createPlatformResourceURI(file.getFullPath().toOSString(), true),
 				file.getModificationStamp());
 	}
 
-	static GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
+	private GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
 		return new CSVInfo(file.getLocation().toOSString(), file.getModificationStamp(), null);
 	}
 
-	static ImageInfo createImageFileMetaData(final IFile file) {
+	private ImageInfo createImageFileMetaData(final IFile file) {
 		ImageInfo imageInfo = null;
 		ImageData imageData = null;
 
@@ -448,7 +420,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param file
 	 * @return
 	 */
-	static GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
+	private GamaShapeFile.ShapeInfo createShapeFileMetaData(final IFile file) {
 		ShapeInfo info = null;
 		try {
 			info = new ShapeInfo(null, file.getLocationURI().toURL(), file.getModificationStamp());
@@ -459,7 +431,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	static GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
+	private GamaOsmFile.OSMInfo createOSMMetaData(final IFile file) {
 		OSMInfo info = null;
 		try {
 			info = new OSMInfo(file.getLocationURI().toURL(), file.getModificationStamp());
@@ -470,7 +442,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	static GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
+	private GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
 		GenericFileInfo info = null;
 		final IResource r = shapeFileSupportedBy(file);
 		if (r == null) { return null; }
@@ -481,7 +453,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	}
 
-	static GenericFileInfo createGenericFileMetaData(final IFile file) {
+	private GenericFileInfo createGenericFileMetaData(final IFile file) {
 		String ext = file.getFileExtension();
 		if (ext == null)
 			return new GenericFileInfo(file.getModificationStamp(), "Generic file");
@@ -498,11 +470,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if (OSMExt.contains(ext)) { return OSM_CT_ID; }
 		if (longNames.containsKey(ext)) { return SHAPEFILE_SUPPORT_CT_ID; }
 		return "";
-	}
-
-	public static boolean isShapeFileSupport(final IFile p) {
-		final String ext = p.getFileExtension();
-		return longNames.containsKey(ext);
 	}
 
 	public static IResource shapeFileSupportedBy(final IFile r) {
@@ -527,8 +494,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return instance;
 	}
 
-	@Override
-	public void startup() {
+	private void startup() {
+		if (started)
+			return;
+		started = true;
 		System.out.print("Reading workspace metadata ");
 		final long ms = System.currentTimeMillis();
 		try {
@@ -549,7 +518,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 	}
 
-	public static ISaveParticipant getSaveParticipant() {
+	private ISaveParticipant getSaveParticipant() {
 		return new ISaveParticipant() {
 
 			@Override

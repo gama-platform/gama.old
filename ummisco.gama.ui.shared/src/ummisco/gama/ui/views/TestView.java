@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,6 +35,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.TestState;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.parameters.AbstractEditor;
@@ -92,7 +92,9 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		experiments.clear();
 		WorkbenchHelper.run(() -> {
 			if (toolbar != null)
-				toolbar.status(null, "Run experiment to see the tests results", null, IGamaColors.BLUE, SWT.LEFT);
+				toolbar.status(null, "Run experiment to see the tests results", e -> {
+					GAMA.startFrontmostExperiment();
+				}, IGamaColors.BLUE, SWT.LEFT);
 		});
 		super.reset();
 	}
@@ -104,35 +106,17 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	@Override
-	public void addTestResult(final CompoundSummary<?, ?> e) {
-		if (!experiments.contains(e)) {
-			experiments.add(e);
-		}
-		WorkbenchHelper.run(() -> {
-			if (toolbar != null)
-				toolbar.status(null, createTestsSummary(), null, IGamaColors.BLUE, SWT.LEFT);
-		});
-	}
-
-	protected String createTestsSummary() {
-		final Map<TestState, Integer> map = new TreeMap<>();
-		map.put(TestState.ABORTED, 0);
-		map.put(TestState.FAILED, 0);
-		map.put(TestState.NOT_RUN, 0);
-		map.put(TestState.PASSED, 0);
-		map.put(TestState.WARNING, 0);
-		final int[] size = { 0 };
-		experiments.forEach(t -> {
-			map.keySet().forEach(state -> map.put(state, map.get(state) + t.countTestsWith(state)));
-			size[0] += t.size();
-		});
-		String message = "" + size[0] + " tests";
-		for (final TestState s : map.keySet()) {
-			if (map.get(s) == 0)
-				continue;
-			message += ", " + map.get(s) + " " + s;
-		}
-		return message;
+	public void addTestResult(final CompoundSummary<?, ?> summary) {
+		if (summary instanceof TestExperimentSummary) {
+			if (!experiments.contains(summary)) {
+				experiments.add(summary);
+			}
+		} else
+			for (final AbstractSummary<?> s : summary.getSummaries().values()) {
+				if (!experiments.contains(s)) {
+					experiments.add(s);
+				}
+			}
 	}
 
 	@Override
@@ -150,19 +134,6 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 				GamaColors.get(getItemDisplayColor(experiment)));
 		return true;
 	}
-
-	// public void updateItem(final AbstractSummary<?> test) {
-	// // System.out.println("test " + test.testName + " is already present. Just updating it");
-	// final ParameterExpandItem item = getViewer().getItem(test);
-	// item.setText(this.getItemDisplayName(test, item.getText()));
-	// item.setColor(this.getItemDisplayColor(test));
-	// final Map<String, AssertEditor> inside = editorsByExperiment.get(test);
-	// final Map<String, AbstractSummary<?>> assertions = test.getSummaries();
-	// for (final Map.Entry<String, AbstractSummary<?>> assertion : assertions.entrySet()) {
-	// final AssertEditor ed = inside.get(assertion.getKey());
-	// ed.updateValueWith(assertion.getValue());
-	// }
-	// }
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -296,6 +267,9 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 				resortTests();
 				displayItems();
 				getParentComposite().layout(true, false);
+				if (toolbar != null)
+					toolbar.status(null, new CompoundSummary(experiments).getStringSummary(), null, IGamaColors.BLUE,
+							SWT.LEFT);
 			}
 		});
 

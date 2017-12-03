@@ -3,12 +3,14 @@ package ummisco.gama.ui.navigator.contents;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.statements.test.CompoundSummary;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -16,15 +18,12 @@ import ummisco.gama.ui.resources.IGamaIcons;
 
 public class WrappedProject extends WrappedContainer<IProject> implements IAdaptable {
 
-	final String plugin;
+	private String plugin;
+	final boolean isTest;
 
-	public WrappedProject(final Object parent, final IProject wrapped) {
+	public WrappedProject(final TopLevelFolder parent, final IProject wrapped) {
 		super(parent, wrapped);
-		final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
-		if (data != null) {
-			plugin = data.getSuffix();
-		} else
-			plugin = "";
+		isTest = parent instanceof TestModelsFolder;
 	}
 
 	@Override
@@ -76,14 +75,51 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 			sb.append("closed");
 			return;
 		}
-		if (plugin != null && !plugin.isEmpty())
-			sb.append(plugin).append(", ");
-		super.getSuffix(sb);
+
+		if (getPlugin() != null && !getPlugin().isEmpty())
+			sb.append(getPlugin()).append(", ");
+		if (isTestProject()) {
+			getTestSuffix(sb);
+		} else
+			super.getSuffix(sb);
+	}
+
+	private void getTestSuffix(final StringBuilder sb) {
+		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
+		if (summary == null)
+			super.getSuffix(sb);
+		else {
+			// final java.net.URI javaURI = URI.create(getResource().getLocation().toOSString());
+			final org.eclipse.emf.common.util.URI emfURI =
+					org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
+			final CompoundSummary list = summary.getSubSummariesBelongingTo(emfURI);
+			sb.append(list.getStringSummary());
+		}
+
+	}
+
+	private boolean isTestProject() {
+		return isTest;
 	}
 
 	@Override
 	public VirtualContentType getType() {
 		return VirtualContentType.PROJECT;
+	}
+
+	String getPlugin() {
+		if (plugin == null) {
+			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
+			if (data != null) {
+				setPlugin(data.getSuffix());
+			} else
+				setPlugin("");
+		}
+		return plugin;
+	}
+
+	void setPlugin(final String plugin) {
+		this.plugin = plugin;
 	}
 
 }

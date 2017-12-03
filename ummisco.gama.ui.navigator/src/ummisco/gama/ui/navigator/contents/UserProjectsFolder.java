@@ -11,7 +11,7 @@ package ummisco.gama.ui.navigator.contents;
 
 public class UserProjectsFolder extends TopLevelFolder {
 
-	public UserProjectsFolder(final Object root, final String name) {
+	public UserProjectsFolder(final NavigatorRoot root, final String name) {
 		super(root, name, FOLDER_USER, "navigator/folder.status.user", "User-defined models", OK, null, Location.Other);
 	}
 

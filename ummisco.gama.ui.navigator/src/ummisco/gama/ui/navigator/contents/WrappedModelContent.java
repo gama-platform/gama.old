@@ -1,6 +1,5 @@
 package ummisco.gama.ui.navigator.contents;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -12,10 +11,10 @@ public class WrappedModelContent extends WrappedSyntacticContent {
 
 	TObjectIntHashMap<String> uriProblems;
 
-	public WrappedModelContent(final IFile file, final ISyntacticElement e) {
+	public WrappedModelContent(final WrappedFile file, final ISyntacticElement e) {
 		super(file, e, "Contents");
 		try {
-			final IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+			final IMarker[] markers = file.getResource().findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 			for (final IMarker marker : markers) {
 				final String s = marker.getAttribute("URI_KEY", null);
 				final int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
