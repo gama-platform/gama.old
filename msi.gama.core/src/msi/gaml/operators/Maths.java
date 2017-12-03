@@ -160,11 +160,11 @@ public class Maths {
 					value = "acos (0)",
 					equals = "90.0"),
 			see = { "asin", "atan", "cos" })
-	@test("acos(0) = 90.0")
-	@test("acos(-1) = 180.0")
-	@test("acos(1) = 0.0")
-	@test("is_error(acos(-10))")
-	@test("is_error(acos(10))")
+	@test("acos(0.0) = 90.0")
+	@test("acos(-1.0) = 180.0")
+	@test("acos(1.0) = 0.0")
+	@test("is_error(acos(-10.0))")
+	@test("is_error(acos(10.0))")
 	public static Double acos(final Double rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -176,6 +176,11 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the arccos of the operand ")
+	@test("acos(0) = 90.0")
+	@test("acos(-1) = 180.0")
+	@test("acos(1) = 0.0")
+	@test("is_error(acos(-10))")
+	@test("is_error(acos(10))")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -193,6 +198,11 @@ public class Maths {
 					value = "asin (0)",
 					equals = "0.0"),
 			see = { "acos", "atan", "sin" })
+	@test("asin(0.0) = 0.0")
+	@test("asin(-1.0) = -90.0")
+	@test("asin(1.0) = 90.0")
+	@test("is_error(asin(-10.0))")
+	@test("is_error(asin(10.0))")
 	public static Double asin(final Double rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -209,6 +219,11 @@ public class Maths {
 					value = "asin (90)",
 					equals = "#nan"),
 			see = { "acos", "atan" })
+	@test("asin(0) = 0.0")
+	@test("asin(-1) = -90.0")
+	@test("asin(1) = 90.0")
+	@test("is_error(asin(-10))")
+	@test("is_error(asin(10))")
 	public static Double asin(final Integer rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
