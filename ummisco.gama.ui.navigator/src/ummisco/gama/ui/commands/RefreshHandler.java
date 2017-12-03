@@ -19,7 +19,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -68,43 +67,20 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 		final Display d = PlatformUI.getWorkbench().getDisplay();
 		if (d.isDisposed())
 			return;
-		final UIJob job = new UIJob("Refreshing navigator") {
+		final IResource r = resource == null ? ResourcesPlugin.getWorkspace().getRoot()
+				: resource.getType() == IResource.ROOT ? resource : resource.getParent();
+		final UIJob job = new UIJob("Refreshing " + r.getName()) {
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
+
 				final IWorkbenchPage page = WorkbenchHelper.getPage();
 				if (page == null)
 					return Status.OK_STATUS;
 				final IViewPart view = page.findView(IGui.NAVIGATOR_VIEW_ID);
 				if (view == null) { return Status.OK_STATUS; }
-				((GamaNavigator) view).safeRefresh(
-						resource == null ? ResourcesPlugin.getWorkspace().getRoot() : resource.getParent());
-				if (resource != null)
-					((GamaNavigator) view).selectReveal(new StructuredSelection(resource));
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-	}
-
-	public void run(final IResource resource, final IProgressMonitor monitor) {
-		final Display d = PlatformUI.getWorkbench().getDisplay();
-		if (d.isDisposed())
-			return;
-		final UIJob job = new UIJob("Refreshing navigator") {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final IWorkbenchPage page = WorkbenchHelper.getPage();
-				if (page == null)
-					return Status.OK_STATUS;
-				final IViewPart view = page.findView(IGui.NAVIGATOR_VIEW_ID);
-				if (view == null) { return Status.OK_STATUS; }
-				((GamaNavigator) view).safeRefresh(
-						resource == null ? ResourcesPlugin.getWorkspace().getRoot() : resource.getParent());
-				if (resource != null)
-					((GamaNavigator) view).selectReveal(new StructuredSelection(resource));
+				((GamaNavigator) view).safeRefresh(r.getParent());
+				((GamaNavigator) view).selectReveal(new StructuredSelection(r));
 				return Status.OK_STATUS;
 			}
 		};
@@ -157,20 +133,29 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 				try {
 					ResourceManager.block();
 					monitor.beginTask("Refreshing GAMA Workspace: updating the library of models", 100);
-
 					WorkspaceModelsManager.loadModelsLibrary();
-					monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", resources.size());
+					monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", 1000);
 					for (final IResource r : resources) {
-						r.accept(METADATA_DISCARDING_VISITOR, IResource.NONE);
-						monitor.worked(1);
+						r.accept(proxy -> {
+							final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
+							final IResource file = proxy.requestResource();
+							provider.storeMetaData(file, null, true);
+							provider.getMetaData(file, false, true);
+							monitor.worked(1);
+							return true;
+						}, IResource.NONE);
+
 					}
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing resources", resources.size());
 					op.run(monitor);
 					monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
-					NavigatorRoot.INSTANCE.initializeVirtualFolders(NavigatorRoot.INSTANCE.mapper);
+					NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
+					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					RefreshHandler.this.run(workspace.getRoot());
+					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
 					try {
-						final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
 						workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new ProgressMonitorWrapper(monitor) {
 
 							@Override
@@ -188,7 +173,8 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 				} catch (final Exception e) {
 					return Status.CANCEL_STATUS;
 				} finally {
-					ResourceManager.unblock();
+					ResourceManager.unblock(monitor);
+					monitor.done();
 				}
 				return errorStatus[0];
 			}
@@ -197,14 +183,6 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 		job.setUser(true);
 		job.schedule();
 	}
-
-	public static final IResourceProxyVisitor METADATA_DISCARDING_VISITOR = proxy -> {
-		final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
-		final IResource file = proxy.requestResource();
-		provider.storeMetaData(file, null, true);
-		provider.getMetaData(file, false, true);
-		return true;
-	};
 
 	void checkLocationDeleted(final IProject project) throws CoreException {
 		if (!project.exists()) { return; }
