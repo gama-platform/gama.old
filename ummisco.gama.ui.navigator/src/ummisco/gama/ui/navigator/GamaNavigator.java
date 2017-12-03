@@ -309,9 +309,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					} else {
 						localViewer.refresh(resource);
 					}
+					localViewer.getControl().setRedraw(true);
 				}
 			});
-			localViewer.getControl().setRedraw(true);
 			getCommonViewer().setExpandedElements(expanded);
 		});
 
