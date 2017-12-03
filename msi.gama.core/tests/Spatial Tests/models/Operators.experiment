@@ -7,7 +7,6 @@
 
 experiment OperatorsTest type: test {
 	test "add_point" {
-		
 		assert (geometry(nil) add_point {20,20}) = nil;
 		assert ({10,10} add_point point(nil)) = {10,10};
 		assert ({10,10} add_point {20,20}) = line([{10,10},{20,20}]);
@@ -29,17 +28,20 @@ experiment OperatorsTest type: test {
 	}
 	test "minus" {
 		assert geometry(nil) -  {10,10} = nil;
-		assert {10,10} - geometry(nil) = {10,10};
-		
-		
+		assert geometry({10,10}) - geometry(nil) = {10,10}; 
+		assert (square(10) - {10,10}).area = 100.0;
+		assert length((line([{0,10},{20,10}]) - line([{10,0},{10,25}])).geometries) = 2 ;
+		assert ((square(10) at_location {0,0}) - (square(10) at_location {5,0})) = polygon ([{-5,5},{0,5},{0,-5},{-5,-5}]);
 	}
 	test "union" {
-		assert geometry(nil) union  {10,10} = {10,10} ;
+		assert geometry(nil) union {10,10} = {10,10} ;
 		assert {10,10} union geometry(nil) = {10,10} ;
+		assert union([line([{0,10},{20,10}]) , line([{20,10},{30,10}])]).perimeter = 30.0 ;
 	}
 	test "masked_by" {
 	}
 	test "split_at" {
-		
+		 assert (line([{0,0},{100,0}]) split_at {50,0}) = [line([{0,0},{50,0}]), line([{50,0},{100,0}])]; 
 	}
 }
+ 
