@@ -61,7 +61,7 @@ public class SavedAgentConverter implements Converter {
 		writer.endNode();
 		writer.endNode();
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if (inPop.size() > 0) {
+		if ( (inPop != null) && (inPop.size() > 0)) {
 			writer.startNode("innerPopulations");
 			context.convertAnother(inPop);
 			writer.endNode();
