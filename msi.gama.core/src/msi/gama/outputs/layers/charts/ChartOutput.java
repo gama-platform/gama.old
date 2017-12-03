@@ -48,6 +48,8 @@ public abstract class ChartOutput {
 	ChartDataSet chartdataset;
 	int type = SERIES_CHART;
 	boolean reverse_axes = false;
+	boolean x_logscale = false;
+	boolean y_logscale = false;
 
 	ChartOutput chartOutput = null;
 	Color backgroundColor = GamaColor.WHITE;
@@ -590,6 +592,25 @@ public abstract class ChartOutput {
 	public void setReverseAxis(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		reverse_axes = asBool;
+	}
+
+	public void setX_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_logscale = asBool;
+	}
+
+	public void setY_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_logscale = asBool;
+	}
+	public boolean getX_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_logscale;
+	}
+
+	public boolean getY_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_logscale;
 	}
 
 }

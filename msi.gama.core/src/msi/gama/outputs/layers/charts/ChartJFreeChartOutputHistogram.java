@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.SubCategoryAxis;
@@ -56,6 +57,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 
 public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
@@ -341,7 +343,24 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
 			rangeAxis.setAutoRange(false);
 			for (int i = 0; i < CValues.size(); i++) {
-				serie.addValue(YValues.get(i), serieid, CValues.get(i));
+				if (getY_LogScale(scope)) 
+				{
+					double val=YValues.get(i);
+					if (val<=0)
+					{
+						throw GamaRuntimeException.warning("Log scale with <=0 value:"+val, scope);
+					}
+					else
+					{
+						serie.addValue(YValues.get(i), serieid, CValues.get(i));						
+					}
+					
+				}
+				else
+				{
+					serie.addValue(YValues.get(i), serieid, CValues.get(i));
+					
+				}
 				// ((ExtendedCategoryAxis)domainAxis).addSubLabel(CValues.get(i),
 				// serieid);;
 			}
@@ -358,7 +377,14 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	@Override
 	public void resetAxes(final IScope scope) {
 		final CategoryPlot pp= (CategoryPlot)this.chart.getPlot();
-		final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
+		 NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
+		if (getY_LogScale(scope)) 
+		{
+			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+		((CategoryPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+		rangeAxis=logAxis;
+		}
 
 		if (!useyrangeinterval && !useyrangeminmax) {
 			rangeAxis.setAutoRange(true);

@@ -101,6 +101,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
 				@facet (
+						name = ChartLayerStatement.X_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for X axis")),
+				@facet (
+						name = ChartLayerStatement.Y_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for Y axis")),
+				@facet (
 						name = IKeyword.AXES,
 						type = IType.COLOR,
 						optional = true,
@@ -265,6 +275,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String SERIES_LABEL_POSITION = "series_label_position";
 
+	public static final String X_LOGSCALE = "x_log_scale";
+	public static final String Y_LOGSCALE = "y_log_scale";
+
 	public static final String YTICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
 
@@ -379,6 +392,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		string1 = getFacet(IKeyword.REVERSE_AXIS);
 		if (string1 != null) {
 			chartoutput.setReverseAxis(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.X_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setX_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.Y_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setY_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
 		}
 
 		chartoutput.createChart(scope);
