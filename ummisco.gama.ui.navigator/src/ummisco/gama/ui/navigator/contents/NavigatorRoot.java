@@ -11,6 +11,7 @@ package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.internal.runtime.AdapterManager;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -64,12 +65,17 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 		return libraryFolder;
 	}
 
-	public void initializeVirtualFolders(final ResourceManager mapper) {
-		this.mapper = mapper;
+	public void resetVirtualFolders(final ResourceManager mapper) {
+		if (mapper != null)
+			this.mapper = mapper;
 		setUserFolder(null);
 		setPluginFolder(null);
 		setTestFolder(null);
 		setLibraryFolder(null);
+	}
+
+	public void recreateVirtualFolders() {
+		getFolders();
 	}
 
 	@Override
@@ -86,6 +92,10 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	@Override
 	public Object[] getNavigatorChildren() {
+		return getFolders();
+	}
+
+	public TopLevelFolder[] getFolders() {
 		return new TopLevelFolder[] { getLibraryFolder(), getPluginFolder(), getTestFolder(), getUserFolder() };
 	}
 
@@ -178,6 +188,14 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	public void setTestFolder(final TopLevelFolder testFolder) {
 		this.testFolder = testFolder;
+	}
+
+	public TopLevelFolder findFolderFor(final IProject project) {
+		for (final TopLevelFolder folder : getFolders()) {
+			if (folder.privateAccepts(project))
+				return folder;
+		}
+		return null;
 	}
 
 }

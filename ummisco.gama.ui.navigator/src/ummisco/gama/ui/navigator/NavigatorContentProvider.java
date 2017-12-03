@@ -75,7 +75,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider implement
 	public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
 		this.viewer = (CommonViewer) v;
 		mapper = new ResourceManager(this, viewer);
-		INSTANCE.initializeVirtualFolders(mapper);
+		INSTANCE.resetVirtualFolders(mapper);
 		getWorkspace().addResourceChangeListener(mapper, POST_CHANGE | PRE_DELETE);
 		super.inputChanged(viewer, oldInput, newInput);
 	}
