@@ -359,6 +359,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chartdataset;
 	}
 
+// What can not change at eery step
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		lastValues.clear();
@@ -381,8 +382,63 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		chartoutput.createChart(scope);
+		updateValues(scope);
 
-		string1 = getFacet(ChartLayerStatement.XLABEL);
+//
+		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
+		IExpression face = getFacet(MEMORIZE);
+		if (face != null) {
+			memorize = Cast.asBool(scope, face.value(scope));
+		}
+
+		chartoutput.initChart(scope, getName());
+		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
+		final boolean isPermanent = getDisplayOutput().isPermanent();
+		final boolean isBatchAndPermanent = isBatch && isPermanent;
+		chartdataset = new ChartDataSet(memorize, isBatchAndPermanent);
+		chartoutput.setChartdataset(chartdataset);
+		chartoutput.initdataset();
+
+		IExpression expr = getFacet(IKeyword.X_SERIE);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.X_SERIE).resolveAgainst(scope);
+			chartdataset.setXSource(scope, expval);
+			chartoutput.setUseXSource(scope, expval);
+		}
+
+		expr = getFacet(IKeyword.X_LABELS);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.X_LABELS).resolveAgainst(scope);
+			chartdataset.setXLabels(scope, expval);
+			chartoutput.setUseXLabels(scope, expval);
+		}
+
+		/*
+		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression expval =
+		 * getFacet(IKeyword.Y_SERIE).resolveAgainst(scope); chartdataset.setYSource(scope,expval);
+		 * chartoutput.setUseYSource(scope,expval); }
+		 */
+		// will be added with 3d charts
+
+		expr = getFacet(IKeyword.Y_LABELS);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.Y_LABELS).resolveAgainst(scope);
+			chartdataset.setYLabels(scope, expval);
+			chartoutput.setUseYLabels(scope, expval);
+		}
+
+		dataDeclaration.executeOn(scope);
+
+		chartoutput.initChart_post_data_init(scope);
+		chartoutput.updateOutput(scope);
+
+		return true;
+	}
+// what can be updated  at each step
+	public boolean updateValues(IScope scope)
+	{
+
+		IExpression string1 = getFacet(ChartLayerStatement.XLABEL);
 		if (string1 != null) {
 			chartoutput.setXLabel(scope, Cast.asString(scope, string1.value(scope)));
 		}
@@ -396,7 +452,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (string1 != null) {
 			chartoutput.setSeriesLabelPosition(scope, Cast.asString(scope, string1.value(scope)));
 		}
-
+		
 		IExpression expr = getFacet(XRANGE);
 		if (expr != null) {
 			final Object range = expr.value(scope);
@@ -424,7 +480,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
 			}
 		}
-
 		IExpression expr2 = getFacet(XTICKUNIT);
 		if (expr2 != null) {
 			final Object range = expr2.value(scope);
@@ -520,58 +575,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (face != null) {
 			chartoutput.setTitleFontStyle(scope, getLiteral(TITLEFONTSTYLE));
 		}
-		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
-		face = getFacet(MEMORIZE);
-		if (face != null) {
-			memorize = Cast.asBool(scope, face.value(scope));
-		}
-
-		chartoutput.initChart(scope, getName());
-		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
-		final boolean isPermanent = getDisplayOutput().isPermanent();
-		final boolean isBatchAndPermanent = isBatch && isPermanent;
-		chartdataset = new ChartDataSet(memorize, isBatchAndPermanent);
-		chartoutput.setChartdataset(chartdataset);
-		chartoutput.initdataset();
-
-		expr = getFacet(IKeyword.X_SERIE);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.X_SERIE).resolveAgainst(scope);
-			chartdataset.setXSource(scope, expval);
-			chartoutput.setUseXSource(scope, expval);
-		}
-
-		expr = getFacet(IKeyword.X_LABELS);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.X_LABELS).resolveAgainst(scope);
-			chartdataset.setXLabels(scope, expval);
-			chartoutput.setUseXLabels(scope, expval);
-		}
-
-		/*
-		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression expval =
-		 * getFacet(IKeyword.Y_SERIE).resolveAgainst(scope); chartdataset.setYSource(scope,expval);
-		 * chartoutput.setUseYSource(scope,expval); }
-		 */
-		// will be added with 3d charts
-
-		expr = getFacet(IKeyword.Y_LABELS);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.Y_LABELS).resolveAgainst(scope);
-			chartdataset.setYLabels(scope, expval);
-			chartoutput.setUseYLabels(scope, expval);
-		}
-
-		dataDeclaration.executeOn(scope);
-
-		chartoutput.initChart_post_data_init(scope);
-		chartoutput.updateOutput(scope);
 
 		return true;
 	}
-
+	
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
+		updateValues(scope);
+		
 		chartoutput.step(scope);
 
 		return true;
