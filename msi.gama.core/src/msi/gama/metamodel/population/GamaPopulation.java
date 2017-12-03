@@ -476,10 +476,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		} else if (species.isGraph()) {
 			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
-			final ISpecies edgeSpecies = scope.getSimulation().getModel().getSpecies(edgeName);
+			final ISpecies edgeSpecies = scope.getModel().getSpecies(edgeName);
 			final IType<?> edgeType = scope.getType(edgeName);
 			final IType<?> nodeType = getType().getContentType();
-			// TODO Specifier directed quelque part dans l'esp�ce
+			// TODO Specifier directed quelque part dans l'espece
 			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
