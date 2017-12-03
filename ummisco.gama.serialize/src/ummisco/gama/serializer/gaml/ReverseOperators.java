@@ -33,7 +33,7 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 public class ReverseOperators {
 
 	@operator(value = "serialize")
-	@doc(value = "It serializes any object, i.e. transform it into a string.", deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "It serializes any object, i.e. transform it into a string.") //, deprecated = "Still in alpha version, do not use it.")
 	public static String serialize(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");
 		return StreamConverter.convertObjectToStream(scope, o);
@@ -47,7 +47,7 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "serializeAgent")
-	@doc(value = "", deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
 
 		System.out.println("**** TODO list = Problème dans les displays");
@@ -58,8 +58,8 @@ public class ReverseOperators {
 		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
 	}
 
-	@operator(value = "unSerializeSimulation")
-	@doc(value = "", deprecated = "Still in alpha version, do not use it.")
+	@operator(value = "unSerializeSimulationFromFile")
+	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
 	public static int unSerializeSimulationFromFile(final IScope scope, final String pathname) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
@@ -113,8 +113,8 @@ public class ReverseOperators {
 		return 1;
 	}
 
-	// @operator(value = "unSerializeSimulation")
-	// @doc(value="", deprecated ="Still in alpha version, do not use it.")
+	@operator(value = "unSerializeSimulation")
+	@doc(value="unSerializeSimulation")//, deprecated ="Still in alpha version, do not use it.")
 	// TODO: to check ...
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
@@ -167,7 +167,7 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "saveSimulation")
-	@doc(value = "", deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgt = expAgt.getSimulation();
