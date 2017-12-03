@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -33,9 +34,10 @@ import com.google.common.cache.CacheBuilder;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.GamlFileExtension;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
-import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -54,16 +56,6 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	public static void setLastTestResults(final CompoundSummary<TestExperimentSummary, ?> last) {
 		NavigatorRoot.INSTANCE.getMapper().refreshResource(NavigatorRoot.INSTANCE.getTestFolder());
 	}
-
-	// public static AbstractSummary<?> getSummaryOf(final URI uri) {
-	// if (testResults != null) { return testResults.getSummaryOf(uri); }
-	// return null;
-	// }
-	//
-	// public static Collection<AbstractSummary<?>> getSummariesOf(final URI fileURI) {
-	// if (testResults != null) { return testResults.getSubSummariesBelongingTo(fileURI); }
-	// return Collections.EMPTY_LIST;
-	// }
 
 	public CompoundSummary<?, ?> getTestsSummary() {
 		return TestsRunner.LAST_RUN;
@@ -146,13 +138,18 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		BLOCKED = true;
 	}
 
-	public static void unblock() {
+	public static void unblock(final IProgressMonitor monitor) {
 		BLOCKED = false;
 		WorkbenchHelper.run(() -> {
+			monitor.beginTask("Processing additions to the workspace", BLOCKED_EVENTS.size());
 			try {
+				NavigatorRoot.INSTANCE.resetVirtualFolders(null);
+				NavigatorRoot.INSTANCE.recreateVirtualFolders();
 				IN_INITIALIZATION_PHASE = true;
-				for (final IResourceChangeEvent event : BLOCKED_EVENTS)
+				for (final IResourceChangeEvent event : BLOCKED_EVENTS) {
 					NavigatorRoot.INSTANCE.getMapper().resourceChanged(event);
+					monitor.worked(1);
+				}
 			} finally {
 				IN_INITIALIZATION_PHASE = false;
 			}
@@ -214,11 +211,10 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			case IResource.FOLDER:
 				folderAdded((IFolder) res);
 		}
-		try {
-			res.accept(RefreshHandler.METADATA_DISCARDING_VISITOR, IResource.NONE);
-		} catch (final CoreException e) {
-			DEBUG("Exception: " + e.getMessage());
-		}
+		final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
+		provider.storeMetaData(res, null, true);
+		provider.getMetaData(res, false, true);
+
 		return update;
 	}
 

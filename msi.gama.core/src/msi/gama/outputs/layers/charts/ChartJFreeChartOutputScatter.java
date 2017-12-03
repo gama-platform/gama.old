@@ -22,6 +22,8 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.LogAxis;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
@@ -406,9 +408,24 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
-		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		 NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		 NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
+		if (getX_LogScale(scope)) 
+		{
+		 LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+		((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
+		domainAxis=logAxis;
+		}
+		if (getY_LogScale(scope)) 
+		{
+			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+		((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+		rangeAxis=logAxis;
+		}
+		
 		if (!getUseXRangeInterval(scope) && !getUseXRangeMinMax(scope)) {
 			domainAxis.setAutoRange(true);
 		}

@@ -307,10 +307,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 								IGamlIssue.WRONG_TYPE, FROM);
 					}
 				}
-				Facets facets = cd.getPassedArgs();
-				for (String att: facets.keySet()) {
-					if (! species.hasAttribute(att)) {
-						cd.error("Attribute " + att + " is not defined is species "+ species.getName());
+				final Facets facets = cd.getPassedArgs();
+				for (final String att : facets.keySet()) {
+					if (!species.isExperiment() && !species.hasAttribute(att)) {
+						cd.error("Attribute " + att + " is not defined in species " + species.getName(),
+								IGamlIssue.UNKNOWN_VAR);
 					}
 				}
 			} else {
