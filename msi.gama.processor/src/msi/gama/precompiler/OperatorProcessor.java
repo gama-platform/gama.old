@@ -18,6 +18,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	@Override
 	protected void populateElement(final ProcessorContext context, final Element method, final Document doc,
 			final operator op, final org.w3c.dom.Element node) {
+
+		// context.emitWarning("Defining " + method.toString(), method);
+
 		final String names[] = op.value();
 		if (names == null) {
 			context.emitError("GAML operators need to have at least one name", method);
@@ -132,7 +135,6 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		node.setAttribute("static", String.valueOf(isStatic));
 		node.setAttribute("contextual", String.valueOf(scope));
 		node.setAttribute("names", arrayToString(names));
-
 	}
 
 	@Override
