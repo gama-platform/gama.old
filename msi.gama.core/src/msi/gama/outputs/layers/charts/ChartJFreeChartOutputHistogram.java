@@ -357,6 +357,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
+		final CategoryPlot pp= (CategoryPlot)this.chart.getPlot();
 		final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
 
 		if (!useyrangeinterval && !useyrangeminmax) {
@@ -375,8 +376,37 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		}
 
 		resetDomainAxis(scope);
+
 		final CategoryAxis domainAxis = ((CategoryPlot) this.chart.getPlot()).getDomainAxis();
 
+		pp.setDomainGridlinePaint(axesColor);
+		pp.setRangeGridlinePaint(axesColor);
+		pp.setRangeCrosshairVisible(true);
+		pp.getRangeAxis().setAxisLinePaint(axesColor);
+		pp.getRangeAxis().setLabelFont(getLabelFont());
+		pp.getRangeAxis().setTickLabelFont(getTickFont());
+		if (textColor != null) {
+			pp.getRangeAxis().setLabelPaint(textColor);
+			pp.getRangeAxis().setTickLabelPaint(textColor);
+		}
+		if (getYTickUnit(scope) > 0) {
+			((NumberAxis) pp.getRangeAxis()).setTickUnit(new NumberTickUnit(getYTickUnit(scope)));
+		}
+
+		if (getYLabel(scope) != null && !getYLabel(scope).isEmpty()) {
+			pp.getRangeAxis().setLabel(getYLabel(scope));
+		}
+		if (this.series_label_position.equals("yaxis")) {
+			pp.getRangeAxis().setLabel(this.getChartdataset().getDataSeriesIds(scope).iterator().next());
+			chart.getLegend().setVisible(false);
+		}
+
+		if (getXLabel(scope) != null && !getXLabel(scope).isEmpty()) {
+			pp.getDomainAxis().setLabel(getXLabel(scope));
+		}
+
+		
+		
 		if (this.useSubAxis) {
 			for (final String serieid : chartdataset.getDataSeriesIds(scope)) {
 				((SubCategoryAxis) domainAxis).addSubCategory(serieid);

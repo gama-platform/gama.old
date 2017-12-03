@@ -163,8 +163,8 @@ public class Maths {
 	@test("acos(0.0) = 90.0")
 	@test("acos(-1.0) = 180.0")
 	@test("acos(1.0) = 0.0")
-	@test("is_error(acos(-10.0))")
-	@test("is_error(acos(10.0))")
+	@test("not(is_number(acos(-10.0)))")
+	@test("not(is_number(acos(10.0)))")
 	public static Double acos(final Double rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -179,8 +179,8 @@ public class Maths {
 	@test("acos(0) = 90.0")
 	@test("acos(-1) = 180.0")
 	@test("acos(1) = 0.0")
-	@test("is_error(acos(-10))")
-	@test("is_error(acos(10))")
+	@test("not(is_number(acos(-10)))")
+	@test("not(is_number(acos(1)))")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -201,8 +201,8 @@ public class Maths {
 	@test("asin(0.0) = 0.0")
 	@test("asin(-1.0) = -90.0")
 	@test("asin(1.0) = 90.0")
-	@test("is_error(asin(-10.0))")
-	@test("is_error(asin(10.0))")
+	@test("not(is_number(asin(-10.0)))")
+	@test("not(is_number(asin(10.0)))")
 	public static Double asin(final Double rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -222,8 +222,8 @@ public class Maths {
 	@test("asin(0) = 0.0")
 	@test("asin(-1) = -90.0")
 	@test("asin(1) = 90.0")
-	@test("is_error(asin(-10))")
-	@test("is_error(asin(10))")
+	@test("not(is_number(asin(-10)))")
+	@test("not(is_number(asin(10)))")
 	public static Double asin(final Integer rv) {
 		return FastMath.asin(rv) * toDeg;
 	}

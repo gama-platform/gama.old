@@ -10,8 +10,6 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -20,10 +18,11 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -43,10 +42,10 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
-import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
+import ummisco.gama.ui.navigator.contents.WrappedFile;
+import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -55,7 +54,6 @@ import ummisco.gama.ui.views.toolbar.Selector;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
 
-	IResourceChangeListener listener;
 	IAction link;
 	ToolItem linkItem;
 	protected Composite parent;
@@ -76,7 +74,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				if (selection.size() > 1) {
 					message = "Multiple elements";
 				} else if (selection.getFirstElement() instanceof VirtualContent) {
-					message = ((VirtualContent) selection.getFirstElement()).getName();
+					message = ((VirtualContent<?>) selection.getFirstElement()).getName();
 				} else if (selection.getFirstElement() instanceof IResource) {
 					message = ((IResource) selection.getFirstElement()).getName();
 				}
@@ -144,22 +142,40 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	}
 
 	@Override
-	protected CommonViewer createCommonViewerObject(final Composite aParent) {
-		return new NavigatorCommonViewer(getViewSite().getId(), aParent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+	public void selectReveal(final ISelection selection) {
+		VirtualContent<?> current;
+		final Object o1 = getCommonViewer().getStructuredSelection().getFirstElement();
+		if (o1 instanceof IResource) {
+			current = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o1);
+		} else
+			current = (VirtualContent<?>) getCommonViewer().getStructuredSelection().getFirstElement();
+
+		StructuredSelection newSelection = new StructuredSelection();
+		if (selection instanceof StructuredSelection) {
+			newSelection = (StructuredSelection) selection;
+			Object o = ((StructuredSelection) selection).getFirstElement();
+			if (o instanceof IResource) {
+				o = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o);
+				if (o != null)
+					newSelection = new StructuredSelection(o);
+			}
+		}
+
+		if (current instanceof WrappedSyntacticContent) {
+			final Object o = newSelection.getFirstElement();
+			if (o instanceof WrappedFile) {
+				if (((VirtualContent<?>) current).isContainedIn((VirtualContent<?>) o))
+					getCommonViewer().setSelection(new StructuredSelection(current));
+				return;
+			}
+		}
+		if (!newSelection.isEmpty())
+			super.selectReveal(newSelection);
 	}
 
-	// @Override
-	// protected void initListeners(final TreeViewer viewer) {
-	// super.initListeners(viewer);
-	// }
-
 	@Override
-	public void dispose() {
-		super.dispose();
-		if (listener != null) {
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
-			listener = null;
-		}
+	protected CommonViewer createCommonViewerObject(final Composite aParent) {
+		return new NavigatorCommonViewer(getViewSite().getId(), aParent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
 	@Override
@@ -171,7 +187,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	protected void handleDoubleClick(final DoubleClickEvent anEvent) {
 		final IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 		final Object element = selection.getFirstElement();
-		if (element instanceof VirtualContent && ((VirtualContent) element).handleDoubleClick()) {
+		if (element instanceof VirtualContent && ((VirtualContent<?>) element).handleDoubleClick()) {
 			return;
 		} else {
 			super.handleDoubleClick(anEvent);
@@ -247,30 +263,30 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final IStructuredSelection currentSelection = (IStructuredSelection) event.getSelection();
-		String message = null;
-		String tooltip = null;
-		Image img = null;
-		Selector l = null;
-		GamaUIColor color = null;
+		final String message = null;
+		final String tooltip = null;
+		final Image img = null;
+		final Selector l = null;
+		final GamaUIColor color = null;
+		VirtualContent<?> element;
 		if (currentSelection == null || currentSelection.isEmpty()) {
-			message = NavigatorRoot.INSTANCE.getMessageForStatus();
-			color = IGamaColors.NEUTRAL;
-			tooltip = NavigatorRoot.INSTANCE.getTooltipForStatus();
-		} else if (currentSelection.getFirstElement() instanceof TopLevelFolder && currentSelection.size() == 1) {
-			final TopLevelFolder folder = (TopLevelFolder) currentSelection.getFirstElement();
-			message = folder.getMessageForStatus();
-			img = folder.getImageForStatus();
-			color = folder.getColorForStatus();
-			l = e -> properties.run();
+			element = NavigatorRoot.INSTANCE;
 		} else {
-			message = commonDescriptionProvider.getDescription(currentSelection);
-			img = ((ILabelProvider) getCommonViewer().getLabelProvider()).getImage(currentSelection.getFirstElement());
-			color = IGamaColors.GRAY_LABEL;
-			l = e -> properties.run();
+			element = (VirtualContent<?>) currentSelection.getFirstElement();
 		}
-		final ToolItem t = toolbar.status(img, message, l, color, SWT.LEFT);
-		if (tooltip != null)
-			t.getControl().setToolTipText(tooltip);
+		element.handleSingleClick();
+		showStatus(element);
+	}
+
+	private void showStatus(final VirtualContent<?> element) {
+		final String message = element.getStatusMessage();
+		final String tooltip = element.getStatusTooltip();
+		final Image image = element.getStatusImage();
+		final GamaUIColor color = element.getStatusColor();
+		final Selector l = e -> properties.run();
+
+		final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
+		t.getControl().setToolTipText(tooltip == null ? message : tooltip);
 	}
 
 	public void safeRefresh(final IResource resource) {

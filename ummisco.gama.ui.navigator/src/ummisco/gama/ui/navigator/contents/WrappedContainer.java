@@ -6,13 +6,13 @@ import org.eclipse.core.runtime.CoreException;
 
 import one.util.streamex.StreamEx;
 
-public abstract class WrappedContainer<C extends IContainer> extends WrappedResource<C> {
+public abstract class WrappedContainer<C extends IContainer> extends WrappedResource<VirtualContent<?>, C> {
 
 	int modelsCount = NOT_COMPUTED;
 	String suffix = null;
-	WrappedResource<?>[] children;
+	Object[] children;
 
-	public WrappedContainer(final Object root, final C wrapped) {
+	public WrappedContainer(final VirtualContent<?> root, final C wrapped) {
 		super(root, wrapped);
 		initializeChildren();
 	}
@@ -53,8 +53,8 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 			modelsCount = 0;
 			suffix = null;
 			if (isOpen()) {
-				for (final WrappedResource<?> c : children) {
-					modelsCount += ((WrappedResource<?>) c).countModels();
+				for (final Object c : children) {
+					modelsCount += ((WrappedResource<?, ?>) c).countModels();
 				}
 				if (modelsCount > 0) {
 					suffix = "" + modelsCount + " model" + (modelsCount > 1 ? "s" : "");

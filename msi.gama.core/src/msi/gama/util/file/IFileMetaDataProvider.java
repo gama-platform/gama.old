@@ -24,6 +24,4 @@ public interface IFileMetaDataProvider {
 
 	void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately);
 
-	void startup();
-
 }

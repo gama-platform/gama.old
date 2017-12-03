@@ -14,6 +14,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.utils.SwtGui;
@@ -21,9 +22,13 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class TestsRunner {
 
-	public static void start() {
+	public static CompoundSummary<TestExperimentSummary, ?> LAST_RUN;
+
+	public static CompoundSummary<TestExperimentSummary, ?> start() {
 		if (SwtGui.ALL_TESTS_RUNNING)
-			return;
+			return null;
+		final CompoundSummary<TestExperimentSummary, ?> summaries = new CompoundSummary<>();
+
 		final IGui gui = GAMA.getRegularGui();
 		final IScope scope = GAMA.getRuntimeScope();
 		try {
@@ -32,21 +37,24 @@ public class TestsRunner {
 			try {
 				testFiles = findTestModels();
 				gui.openTestView(scope, true);
-				// gui.displayTestsResults(scope, IndividualTestSummary.BEGINNING);
 				for (final IFile file : testFiles) {
-					final List<TestExperimentSummary> summaries = gui.runHeadlessTests(file);
-					if (summaries != null)
-						for (final TestExperimentSummary summary : summaries) {
-							gui.displayTestsResults(scope, summary);
-						}
+					final List<TestExperimentSummary> list = gui.runHeadlessTests(file);
+					if (list != null) {
+						summaries.addSummaries(list);
+					}
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		} finally {
+			LAST_RUN = summaries;
+			gui.displayTestsResults(scope, summaries);
 			SwtGui.ALL_TESTS_RUNNING = false;
 			gui.endTestDisplay();
+
 		}
+		return summaries;
+
 	}
 
 	private static List<IFile> findTestModels() throws CoreException {

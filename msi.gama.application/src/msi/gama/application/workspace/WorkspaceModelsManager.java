@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -47,7 +48,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -420,30 +420,13 @@ public class WorkspaceModelsManager {
 	}
 
 	public static void linkSampleModelsToWorkspace() {
-		final Job job = new Job("Updating the Built-in Models Library") {
+
+		final WorkspaceJob job = new WorkspaceJob("Updating the Built-in Models Library") {
 
 			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				// Nothing to do really. Maybe a later version will remove this
-				// command. See Issue 669
-				while (!GamaBundleLoader.LOADED) {
-					try {
-						Thread.sleep(100);
-					} catch (final InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
-				for ( final Bundle plugin : pluginsWithModels.keySet() ) {
-					for ( final String entry : pluginsWithModels.get(plugin) )
-						linkModelsToWorkspace(plugin, entry, false);
-				}
-				final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
-				for ( final Bundle plugin : pluginsWithTests.keySet() ) {
-					for ( final String entry : pluginsWithTests.get(plugin) )
-						linkModelsToWorkspace(plugin, entry, true);
-				}
+			public IStatus runInWorkspace(final IProgressMonitor monitor) {
+				System.out.println("Asynchronous link of models library...");
+				GAMA.getGui().refreshNavigator();
 				return Status.OK_STATUS;
 			}
 
@@ -453,11 +436,32 @@ public class WorkspaceModelsManager {
 
 	}
 
+	public static void loadModelsLibrary() {
+		while (!GamaBundleLoader.LOADED) {
+			try {
+				Thread.sleep(100);
+				System.out.println("Waiting for GAML subsystem to load...");
+			} catch (final InterruptedException e) {}
+		}
+		System.out.println("Synchronous link of models library...");
+		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
+		for ( final Bundle plugin : pluginsWithModels.keySet() ) {
+			for ( final String entry : pluginsWithModels.get(plugin) )
+				linkModelsToWorkspace(plugin, entry, false);
+		}
+		final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
+		for ( final Bundle plugin : pluginsWithTests.keySet() ) {
+			for ( final String entry : pluginsWithTests.get(plugin) )
+				linkModelsToWorkspace(plugin, entry, true);
+		}
+	}
+
 	/**
 	 * @param plugin
 	 */
 
 	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
+		System.out.println("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
 		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
 		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;

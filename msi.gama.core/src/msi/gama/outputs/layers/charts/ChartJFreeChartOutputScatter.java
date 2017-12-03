@@ -409,36 +409,53 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
 		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
-		if (!usexrangeinterval && !usexrangeminmax) {
+		if (!getUseXRangeInterval(scope) && !getUseXRangeMinMax(scope)) {
 			domainAxis.setAutoRange(true);
 		}
 
-		if (this.usexrangeinterval) {
-			domainAxis.setFixedAutoRange(xrangeinterval);
-			domainAxis.setAutoRangeMinimumSize(xrangeinterval);
+		if (this.getUseXRangeInterval(scope)) {
+			domainAxis.setFixedAutoRange(getXRangeInterval(scope));
+			domainAxis.setAutoRangeMinimumSize(getXRangeInterval(scope));
 			domainAxis.setAutoRange(true);
 
 		}
-		if (this.usexrangeminmax) {
-			domainAxis.setRange(xrangemin, xrangemax);
+		if (this.getUseXRangeMinMax(scope)) {
+			domainAxis.setRange(getXRangeMin(scope), getXRangeMax(scope));
 
 		}
 
-		if (!useyrangeinterval && !useyrangeminmax) {
+		if (getXTickUnit(scope) > 0) {
+			domainAxis.setTickUnit(new NumberTickUnit(getXTickUnit(scope)));
+			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(true);
+		} else
+			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+		
+		if (!getUseYRangeInterval(scope) && !getUseYRangeMinMax(scope)) {
 			rangeAxis.setAutoRange(true);
 		}
 
-		if (this.useyrangeinterval) {
-			rangeAxis.setFixedAutoRange(yrangeinterval);
-			rangeAxis.setAutoRangeMinimumSize(yrangeinterval);
+		if (this.getUseYRangeInterval(scope)) {
+			rangeAxis.setFixedAutoRange(getYRangeInterval(scope));
+			rangeAxis.setAutoRangeMinimumSize(getYRangeInterval(scope));
 			rangeAxis.setAutoRange(true);
+		}
+		if (this.getUseYRangeMinMax(scope)) {
+			rangeAxis.setRange(getYRangeMin(scope), getYRangeMax(scope));
 
 		}
-		if (this.useyrangeminmax) {
-			rangeAxis.setRange(yrangemin, yrangemax);
+		if (getYTickUnit(scope) > 0) {
+			rangeAxis.setTickUnit(new NumberTickUnit(getYTickUnit(scope)));
+			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(true);
+		} else
+			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+		
 
+		if (getXLabel(scope) != null && !getXLabel(scope).isEmpty()) {
+			domainAxis.setLabel(getXLabel(scope));
 		}
-
+		if (getYLabel(scope) != null && !getYLabel(scope).isEmpty()) {
+			rangeAxis.setLabel(getYLabel(scope));
+		}
 	}
 
 	@Override
@@ -584,11 +601,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
 		}
-		if (xtickunit > 0) {
-			((NumberAxis) pp.getDomainAxis()).setTickUnit(new NumberTickUnit(xtickunit));
-			pp.setDomainGridlinesVisible(true);
-		} else
-			pp.setDomainGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
 
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
@@ -611,12 +623,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (getType() == ChartOutput.XY_CHART) {}
 		if (getType() == ChartOutput.SCATTER_CHART) {}
-		if (xlabel != null && !xlabel.isEmpty()) {
-			pp.getDomainAxis().setLabel(xlabel);
-		}
-		if (ylabel != null && !ylabel.isEmpty()) {
-			pp.getRangeAxis().setLabel(ylabel);
-		}
 
 	}
 

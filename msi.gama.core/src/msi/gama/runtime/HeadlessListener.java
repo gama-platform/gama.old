@@ -246,12 +246,6 @@ public class HeadlessListener implements IGui {
 				};
 			}
 
-			@Override
-			public void startup() {
-				// TODO Auto-generated method stub
-
-			}
-
 		};
 	}
 
@@ -475,6 +469,12 @@ public class HeadlessListener implements IGui {
 	public boolean toggleFullScreenMode() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void refreshNavigator() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

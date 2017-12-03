@@ -18,10 +18,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
-public abstract class VirtualContent {
+public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public static enum VirtualContentType {
 		ROOT, VIRTUAL_FOLDER, PROJECT, FOLDER, FILE, FILE_REFERENCE, CATEGORY, GAML_ELEMENT
@@ -42,13 +44,13 @@ public abstract class VirtualContent {
 
 	public static final int NO_PROBLEM = -1;
 	public static final int CLOSED = -2;
-	public static WrappedResource<?>[] EMPTY = new WrappedResource<?>[0];
+	public static Object[] EMPTY = new Object[0];
 	public static WrappedProject[] EMPTY_PROJECTS = new WrappedProject[0];
 
-	private final Object root;
+	private final P root;
 	private final String name;
 
-	public VirtualContent(final Object root, final String name) {
+	public VirtualContent(final P root, final String name) {
 		this.root = root;
 		this.name = name;
 	}
@@ -69,11 +71,15 @@ public abstract class VirtualContent {
 		return false;
 	}
 
+	public boolean handleSingleClick() {
+		return false;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public Object getParent() {
+	public P getParent() {
 		return root;
 	}
 
@@ -98,8 +104,30 @@ public abstract class VirtualContent {
 	public TopLevelFolder getTopLevelFolder() {
 		final Object p = getParent();
 		if (p instanceof VirtualContent)
-			return ((VirtualContent) p).getTopLevelFolder();
+			return ((VirtualContent<?>) p).getTopLevelFolder();
 		return null;
+	}
+
+	public String getStatusMessage() {
+		return getName();
+	}
+
+	public String getStatusTooltip() {
+		return null;
+	}
+
+	public GamaUIColor getStatusColor() {
+		return IGamaColors.GRAY_LABEL;
+	}
+
+	public Image getStatusImage() {
+		return getImage();
+	}
+
+	public boolean isContainedIn(final VirtualContent<?> current) {
+		if (root == null)
+			return false;
+		return root == current || root.isContainedIn(current);
 	}
 
 }

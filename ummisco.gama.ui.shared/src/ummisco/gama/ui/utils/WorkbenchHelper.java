@@ -113,8 +113,12 @@ public class WorkbenchHelper {
 	}
 
 	public static IWorkbenchWindow getWindow() {
-		final IWorkbenchWindow w = getWorkbench().getActiveWorkbenchWindow();
-
+		IWorkbenchWindow w = null;
+		try {
+			w = getWorkbench().getActiveWorkbenchWindow();
+		} catch (final Exception e) {
+			System.out.println("SWT bug: Window not found ");
+		}
 		if (w == null) {
 			final IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
 			if (windows != null && windows.length > 0) { return windows[0]; }

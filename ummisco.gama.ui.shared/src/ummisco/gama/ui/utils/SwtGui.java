@@ -65,6 +65,7 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.interfaces.IOpenGLInitializer;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
 import ummisco.gama.ui.parameters.EditorsDialog;
@@ -161,6 +162,7 @@ public class SwtGui implements IGui {
 		if (v != null) {
 			v.finishTestSequence();
 		}
+		WorkbenchHelper.getService(IRefreshHandler.class).run(null);
 	}
 
 	@Override
@@ -619,6 +621,14 @@ public class SwtGui implements IGui {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void refreshNavigator() {
+		final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
+		if (refresh != null)
+			refresh.completeRefresh(null);
+
 	}
 
 }

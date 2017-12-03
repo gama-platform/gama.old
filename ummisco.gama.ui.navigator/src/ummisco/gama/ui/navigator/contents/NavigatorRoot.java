@@ -21,12 +21,17 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.GamlFileExtension;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
-	public TopLevelFolder[] virtualFolders;
-	public TopLevelFolder userFolder, testFolder, pluginFolder, libraryFolder;
+	private TopLevelFolder userFolder;
+	private TopLevelFolder testFolder;
+	private TopLevelFolder pluginFolder;
+	private TopLevelFolder libraryFolder;
 	public static NavigatorRoot INSTANCE;
 	public ResourceManager mapper;
 
@@ -36,57 +41,35 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	}
 
 	public TopLevelFolder getUserFolder() {
+		if (userFolder == null)
+			userFolder = new UserProjectsFolder(this, "User models");
 		return userFolder;
 	}
 
 	public TopLevelFolder getTestFolder() {
+		if (testFolder == null)
+			testFolder = new TestModelsFolder(this, "Test models");
 		return testFolder;
 	}
 
 	public TopLevelFolder getPluginFolder() {
+		if (pluginFolder == null)
+			pluginFolder = new PluginsModelsFolder(this, "Plugin models");
 		return pluginFolder;
 	}
 
 	public TopLevelFolder getLibraryFolder() {
+		if (libraryFolder == null)
+			libraryFolder = new ModelsLibraryFolder(this, "Library models");
 		return libraryFolder;
-	}
-
-	public String getMessageForStatus() {
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		try {
-			final int projectsCount = root.members().length;
-			int modelsCount = 0;
-			for (final IResource r : root.members()) {
-				final int modelCount[] = new int[1];
-				try {
-					if (r.isAccessible())
-						r.accept(proxy -> {
-							if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName()))
-								modelCount[0]++;
-							return true;
-						}, IResource.NONE);
-				} catch (final CoreException e) {
-					e.printStackTrace();
-				}
-				modelsCount += modelCount[0];
-			}
-			final String loc = root.getLocation().lastSegment();
-			return getName() + " " + loc + " (" + projectsCount + " projects, " + modelsCount + " models)";
-		} catch (final CoreException e) {}
-		return getName();
-	}
-
-	public String getTooltipForStatus() {
-		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 	}
 
 	public void initializeVirtualFolders(final ResourceManager mapper) {
 		this.mapper = mapper;
-		testFolder = new TestModelsFolder(this, "Test models");
-		userFolder = new UserProjectsFolder(this, "User models");
-		pluginFolder = new PluginsModelsFolder(this, "Plugin models");
-		libraryFolder = new ModelsLibraryFolder(this, "Library models");
-		virtualFolders = new TopLevelFolder[] { libraryFolder, pluginFolder, testFolder, userFolder, };
+		setUserFolder(null);
+		setPluginFolder(null);
+		setTestFolder(null);
+		setLibraryFolder(null);
 	}
 
 	@Override
@@ -103,7 +86,7 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	@Override
 	public Object[] getNavigatorChildren() {
-		return virtualFolders;
+		return new TopLevelFolder[] { getLibraryFolder(), getPluginFolder(), getTestFolder(), getUserFolder() };
 	}
 
 	@Override
@@ -131,12 +114,70 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	@Override
 	public TopLevelFolder getTopLevelFolder() {
-		return userFolder;
+		return getUserFolder();
 	}
 
 	@Override
 	public VirtualContentType getType() {
 		return VirtualContentType.ROOT;
+	}
+
+	@Override
+	public String getStatusMessage() {
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			final int projectsCount = root.members().length;
+			int modelsCount = 0;
+			for (final IResource r : root.members()) {
+				final int modelCount[] = new int[1];
+				try {
+					if (r.isAccessible())
+						r.accept(proxy -> {
+							if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName()))
+								modelCount[0]++;
+							return true;
+						}, IResource.NONE);
+				} catch (final CoreException e) {
+					e.printStackTrace();
+				}
+				modelsCount += modelCount[0];
+			}
+			final String loc = root.getLocation().lastSegment();
+			return getName() + " " + loc + " (" + projectsCount + " projects, " + modelsCount + " models)";
+		} catch (final CoreException e) {}
+		return getName();
+
+	}
+
+	@Override
+	public String getStatusTooltip() {
+		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+	}
+
+	@Override
+	public GamaUIColor getStatusColor() {
+		return IGamaColors.NEUTRAL;
+	}
+
+	@Override
+	public Image getStatusImage() {
+		return GamaIcons.create("menu.about2").image();
+	}
+
+	public void setLibraryFolder(final TopLevelFolder libraryFolder) {
+		this.libraryFolder = libraryFolder;
+	}
+
+	public void setPluginFolder(final TopLevelFolder pluginFolder) {
+		this.pluginFolder = pluginFolder;
+	}
+
+	public void setUserFolder(final TopLevelFolder userFolder) {
+		this.userFolder = userFolder;
+	}
+
+	public void setTestFolder(final TopLevelFolder testFolder) {
+		this.testFolder = testFolder;
 	}
 
 }

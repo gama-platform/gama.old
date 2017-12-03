@@ -75,6 +75,7 @@ public abstract class ChartOutput {
 
 	double xrangeinterval, xrangemin, xrangemax;
 	boolean usexrangeinterval = false, usexrangeminmax = false;
+
 	double yrangeinterval, yrangemin, yrangemax;
 	boolean useyrangeinterval = false, useyrangeminmax = false;
 
@@ -256,6 +257,10 @@ public abstract class ChartOutput {
 		axesColor = color;
 
 	}
+	public final Color getAxesColorValue(final IScope scope) {
+		return axesColor;
+
+	}
 
 	public void setBackgroundColorValue(final IScope scope, final GamaColor color) {
 		backgroundColor = color;
@@ -273,16 +278,27 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public String getTickFontFace(final IScope scope) {
+			return tickFontFace;
+	}
+
 	public void setLabelFontFace(final IScope scope, final String value) {
 		if (value != null) {
 			labelFontFace = value;
 		}
 	}
 
+	public String getLabelFontFace(final IScope scope) {
+		return	labelFontFace;
+	}
+
 	public void setLegendFontFace(final IScope scope, final String value) {
 		if (value != null) {
 			legendFontFace = value;
 		}
+	}
+	public String getLegendFontFace(final IScope scope) {
+		return	legendFontFace;
 	}
 
 	public void setTitleFontFace(final IScope scope, final String value) {
@@ -291,20 +307,40 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public String getTitleFontFace(final IScope scope) {
+		return	titleFontFace;
+	}
+
 	public void setTickFontSize(final IScope scope, final int value) {
 		tickFontSize = value;
+	}
+
+	public int getTickFontSize(final IScope scope) {
+		return  tickFontSize;
 	}
 
 	public void setLabelFontSize(final IScope scope, final int value) {
 		labelFontSize = value;
 	}
 
+	public int getLabelFontSize(final IScope scope) {
+		return labelFontSize;
+	}
+
 	public void setLegendFontSize(final IScope scope, final int value) {
 		legendFontSize = value;
 	}
 
+	public int getLegendFontSize(final IScope scope) {
+		return legendFontSize;
+	}
+
 	public void setTitleFontSize(final IScope scope, final int value) {
 		titleFontSize = value;
+	}
+
+	public int getTitleFontSize(final IScope scope) {
+		return  titleFontSize;
 	}
 
 	public void setTickFontStyle(final IScope scope, final String value) {
@@ -313,10 +349,18 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public int getTickFontStyle(final IScope scope) {
+			return tickFontStyle;
+	}
+
 	public void setLabelFontStyle(final IScope scope, final String value) {
 		if (value != null) {
 			labelFontStyle = toFontStyle(value);
 		}
+	}
+
+	public int getLabelFontStyle(final IScope scope) {
+			return labelFontStyle;
 	}
 
 	public void setLegendFontStyle(final IScope scope, final String value) {
@@ -325,15 +369,29 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public int getLegendFontStyle(final IScope scope) {
+			return legendFontStyle;
+	}
+
 	public void setTitleFontStyle(final IScope scope, final String value) {
 		if (value != null) {
 			titleFontStyle = toFontStyle(value);
 		}
 	}
 
+	public int getTitleFontStyle(final IScope scope) {
+			return titleFontStyle;
+	}
+
 	public void setXLabel(final IScope scope, final String asString) {
 		// TODO Auto-generated method stub
 		xlabel = asString;
+
+	}
+
+	public String getXLabel(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xlabel;
 
 	}
 
@@ -343,10 +401,53 @@ public abstract class ChartOutput {
 
 	}
 
+	public String getYLabel(final IScope scope) {
+		// TODO Auto-generated method stub
+		return ylabel;
+
+	}
+	public boolean getUseXRangeInterval(final IScope scope) {
+		return usexrangeinterval;
+	}
+
+	public void setUseXRangeInterval(final IScope scope, boolean usexrangeinterval) {
+		this.usexrangeinterval = usexrangeinterval;
+	}
+
+	public boolean getUseXRangeMinMax(final IScope scope ) {
+		return usexrangeminmax;
+	}
+
+	public void setUseXRangeMinMax(final IScope scope, boolean usexrangeminmax) {
+		this.usexrangeminmax = usexrangeminmax;
+	}
+
+	public boolean getUseYRangeInterval(final IScope scope ) {
+		return useyrangeinterval;
+	}
+
+	public void setUseYRangeInterval(final IScope scope, boolean useyrangeinterval) {
+		this.useyrangeinterval = useyrangeinterval;
+	}
+
+	public boolean getUseYRangeMinMax(final IScope scope ) {
+		return useyrangeminmax;
+	}
+
+	public void setUseYRangeMinMax(final IScope scope, boolean useyrangeminmax) {
+		this.useyrangeminmax = useyrangeminmax;
+	}
+
 	public void setXRangeInterval(final IScope scope, final double doubleValue) {
 		// TODO Auto-generated method stub
 		this.usexrangeinterval = true;
 		this.xrangeinterval = doubleValue;
+
+	}
+
+	public double getXRangeInterval(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangeinterval;
 
 	}
 
@@ -356,6 +457,28 @@ public abstract class ChartOutput {
 		this.xrangemin = minValue;
 		this.xrangemax = maxValue;
 
+	}
+
+	public double[] getXRangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={xrangemin,xrangemax};
+		return res;
+
+	}
+	public double getXRangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangemin;
+
+	}
+
+	public double getXRangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangemax;
+
+	}
+
+	public double getYRangeInterval(final IScope scope) {
+		return this.yrangeinterval;
 	}
 
 	public void setYRangeInterval(final IScope scope, final double doubleValue) {
@@ -372,10 +495,34 @@ public abstract class ChartOutput {
 		this.yrangemax = maxValue;
 
 	}
+	public double[] getYRangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={yrangemin,yrangemax};
+		return res;
+
+	}
+
+	public double getYRangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return yrangemin;
+
+	}
+
+	public double getYRangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return yrangemax;
+
+	}
+
 
 	public void setXTickUnit(final IScope scope, final double r) {
 		this.xtickunit = r;
 		// TODO Auto-generated method stub
+
+	}
+
+	public double getXTickUnit(final IScope scope) {
+		return xtickunit;
 
 	}
 
@@ -385,9 +532,20 @@ public abstract class ChartOutput {
 
 	}
 
+	public double getYTickUnit(final IScope scope) {
+		return ytickunit;
+		// TODO Auto-generated method stub
+
+	}
+
 	public void setGap(final IScope scope, final double range) {
 		// TODO Auto-generated method stub
 		this.gap = range;
+	}
+
+	public double getGap(final IScope scope) {
+		// TODO Auto-generated method stub
+		return this.gap;
 	}
 
 	public JFreeChart getJFChart() {

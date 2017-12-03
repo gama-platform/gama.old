@@ -10,9 +10,7 @@
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -37,17 +35,17 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 5 févr. 2015
  *
  */
-public class LinkedFile extends VirtualContent implements IAdaptable {
+public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
-	final IFile file;
+	final WrappedFile file;
 
 	/**
 	 * @param root
 	 * @param name
 	 */
-	public LinkedFile(final VirtualContent root, final IFile wrapped) {
+	public LinkedFile(final Category root, final IFile wrapped) {
 		super(root, wrapped.getName());
-		file = wrapped;
+		file = (WrappedFile) getMapper().findWrappedInstanceOf(wrapped);
 	}
 
 	/**
@@ -82,7 +80,7 @@ public class LinkedFile extends VirtualContent implements IAdaptable {
 	 */
 	@Override
 	public Image getImage() {
-		return DEFAULT_LABEL_PROVIDER.getImage(getFile());
+		return DEFAULT_LABEL_PROVIDER.getImage(file.getResource());
 	}
 
 	/**
@@ -107,7 +105,7 @@ public class LinkedFile extends VirtualContent implements IAdaptable {
 
 	@Override
 	public boolean handleDoubleClick() {
-		final IEditorInput editorInput = new FileEditorInput(file);
+		final IEditorInput editorInput = new FileEditorInput(file.getResource());
 		final IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
 		if (desc == null) { return false; }
 		final IWorkbenchPage page = WorkbenchHelper.getPage();
@@ -120,10 +118,6 @@ public class LinkedFile extends VirtualContent implements IAdaptable {
 		return true;
 	}
 
-	public IFile getFile() {
-		return file;
-	}
-
 	/**
 	 * Method getAdapter()
 	 * 
@@ -132,16 +126,12 @@ public class LinkedFile extends VirtualContent implements IAdaptable {
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(final Class adapter) {
-		return adapter == IResource.class || adapter == IFile.class ? file : null;
+		return adapter == IResource.class || adapter == IFile.class ? file.getResource() : null;
 	}
 
 	@Override
 	public int findMaxProblemSeverity() {
-		final IFile file = getFile();
-		try {
-			return file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-		} catch (final CoreException e) {}
-		return -1;
+		return file.findMaxProblemSeverity();
 	}
 
 	@Override

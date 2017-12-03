@@ -9,13 +9,26 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
+import msi.gaml.statements.test.CompoundSummary;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class TestModelsFolder extends TopLevelFolder {
 
-	public TestModelsFolder(final Object root, final String name) {
+	public TestModelsFolder(final NavigatorRoot root, final String name) {
 		super(root, name, FOLDER_TEST, "navigator/folder.status.test", "Built-in tests", NEUTRAL,
 				WorkbenchHelper.TEST_NATURE, Location.Tests);
+	}
+
+	@Override
+	public void getSuffix(final StringBuilder sb) {
+		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
+		if (summary != null)
+			sb.append(summary.getStringSummary());
+		else {
+			super.getSuffix(sb);
+			sb.append(", not yet run");
+		}
+
 	}
 
 }

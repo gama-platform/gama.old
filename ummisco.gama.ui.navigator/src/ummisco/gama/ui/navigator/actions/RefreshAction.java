@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -41,11 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
-import msi.gama.application.workspace.WorkspaceModelsManager;
-import msi.gama.runtime.GAMA;
-import msi.gama.util.file.IFileMetaDataProvider;
-import ummisco.gama.ui.commands.RefreshHandler;
-import ummisco.gama.ui.navigator.contents.NavigatorRoot;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -279,42 +274,18 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	public void run() {
-		final IStatus[] errorStatus = new IStatus[1];
-		errorStatus[0] = Status.OK_STATUS;
-		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
 		final WorkspaceJob job = new WorkspaceJob("Refreshing the GAMA Workspace") {
 
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				try {
-					monitor.setTaskName("Refreshing GAMA Workspace: updating the library of models");
-					WorkspaceModelsManager.linkSampleModelsToWorkspace();
-					monitor.setTaskName("Refreshing GAMA Workspace: deleting virtual folders caches");
-					NavigatorRoot.INSTANCE.initializeVirtualFolders(NavigatorRoot.INSTANCE.mapper);
-					monitor.setTaskName("Refreshing GAMA Workspace: recreating files metadata");
-					for (final IResource r : resources)
-						r.accept(METADATA_DISCARDING_VISITOR, IResource.NONE);
-					monitor.setTaskName("Refreshing GAMA Workspace: refreshing resources");
-					op.run(monitor);
-					monitor.setTaskName("Refreshing GAMA Workspace: refreshing the navigator");
-					RefreshHandler.run(null);
-				} catch (final Exception e) {
-					return Status.CANCEL_STATUS;
-				}
-				return errorStatus[0];
-			}
-
+				final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
+				if (refresh != null)
+					refresh.completeRefresh(resources);
+				return Status.OK_STATUS;
+			};
 		};
 		job.setUser(true);
 		job.schedule();
 	}
-
-	public static final IResourceProxyVisitor METADATA_DISCARDING_VISITOR = proxy -> {
-		final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
-		final IResource file = proxy.requestResource();
-		provider.storeMetaData(file, null, true);
-		provider.getMetaData(file, false, true);
-		return true;
-	};
 
 }

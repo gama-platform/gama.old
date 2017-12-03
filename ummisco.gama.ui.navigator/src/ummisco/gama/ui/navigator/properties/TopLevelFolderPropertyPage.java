@@ -103,7 +103,7 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 		addSeparator(composite);
 		addSecondSection(composite);
 		addThirdSection(composite);
-		setTitle(getFolder().getMessageForStatus());
+		setTitle(getFolder().getStatusMessage());
 		setImageDescriptor(ImageDescriptor.createFromImage(getFolder().getImage()));
 		getContainer().updateTitle();
 		return composite;

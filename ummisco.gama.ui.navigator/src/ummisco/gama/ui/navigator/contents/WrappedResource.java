@@ -6,12 +6,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-public abstract class WrappedResource<T extends IResource> extends VirtualContent implements IAdaptable {
+public abstract class WrappedResource<P extends VirtualContent<?>, T extends IResource> extends VirtualContent<P>
+		implements IAdaptable {
 	final static int NOT_COMPUTED = Integer.MAX_VALUE;
 	final T resource;
 	int severity = NOT_COMPUTED;
 
-	public WrappedResource(final Object root, final T wrapped) {
+	public WrappedResource(final P root, final T wrapped) {
 		super(root, wrapped.getName());
 		resource = wrapped;
 		findMaxProblemSeverity();

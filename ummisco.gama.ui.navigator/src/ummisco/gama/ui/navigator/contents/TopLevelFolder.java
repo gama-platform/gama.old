@@ -34,7 +34,6 @@ import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
-import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * Class TopLevelFolder.
@@ -43,7 +42,7 @@ import ummisco.gama.ui.views.toolbar.Selector;
  * @since 30 déc. 2015
  *
  */
-public class TopLevelFolder extends VirtualContent implements IGamaIcons, IGamaColors {
+public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGamaIcons, IGamaColors {
 
 	public enum Location {
 		CoreModels, Plugins, Other, Unknown, Tests
@@ -59,8 +58,9 @@ public class TopLevelFolder extends VirtualContent implements IGamaIcons, IGamaC
 	 * @param root
 	 * @param name
 	 */
-	public TopLevelFolder(final Object root, final String name, final String iconName, final String statusIconName,
-			final String statusMessage, final GamaUIColor statusColor, final String nature, final Location location) {
+	public TopLevelFolder(final NavigatorRoot root, final String name, final String iconName,
+			final String statusIconName, final String statusMessage, final GamaUIColor statusColor, final String nature,
+			final Location location) {
 		super(root, name);
 		this.statusColor = statusColor;
 		this.statusMessage = statusMessage;
@@ -156,15 +156,18 @@ public class TopLevelFolder extends VirtualContent implements IGamaIcons, IGamaC
 		return icon;
 	}
 
-	public Image getImageForStatus() {
+	@Override
+	public Image getStatusImage() {
 		return statusIcon;
 	}
 
-	public String getMessageForStatus() {
+	@Override
+	public String getStatusMessage() {
 		return statusMessage;
 	}
 
-	public GamaUIColor getColorForStatus() {
+	@Override
+	public GamaUIColor getStatusColor() {
 		return statusColor;
 	}
 
@@ -179,10 +182,6 @@ public class TopLevelFolder extends VirtualContent implements IGamaIcons, IGamaC
 		sb.append(projectCount).append(" project");
 		if (projectCount > 1)
 			sb.append("s");
-	}
-
-	public Selector getSelectionListenerForStatus() {
-		return null;
 	}
 
 	@Override

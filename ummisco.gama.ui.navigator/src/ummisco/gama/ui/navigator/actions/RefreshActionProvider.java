@@ -23,6 +23,8 @@ import ummisco.gama.ui.resources.GamaIcons;
 public class RefreshActionProvider extends CommonActionProvider {
 
 	private RefreshAction refreshAction;
+	private RunAllTestsAction runAllTestsAction;
+
 	private Shell shell;
 
 	@Override
@@ -42,6 +44,9 @@ public class RefreshActionProvider extends CommonActionProvider {
 	public void fillContextMenu(final IMenuManager menu) {
 		final IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		refreshAction.selectionChanged(selection);
+		runAllTestsAction.selectionChanged(selection);
+		if (runAllTestsAction.isEnabled())
+			menu.appendToGroup("group.refresh", runAllTestsAction);
 		menu.appendToGroup("group.refresh", refreshAction);
 	}
 
@@ -50,12 +55,16 @@ public class RefreshActionProvider extends CommonActionProvider {
 		refreshAction = new RefreshAction(sp);
 		refreshAction.setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());//$NON-NLS-1$
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
+		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
+		runAllTestsAction.setImageDescriptor(GamaIcons.create("test.run2").descriptor());
+
 	}
 
 	@Override
 	public void updateActionBars() {
 		final IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		refreshAction.selectionChanged(selection);
+		runAllTestsAction.selectionChanged(selection);
 	}
 
 }
