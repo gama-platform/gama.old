@@ -69,6 +69,7 @@ public class ChartDataSource {
 	boolean useMarker = true;
 	boolean fillMarker = true;
 	boolean showLine = true;
+	boolean useSecondYAxis = false;
 
 	boolean useSize = false;
 
@@ -1001,6 +1002,14 @@ public class ChartDataSource {
 
 	public void setFillMarker(final IScope scope, final boolean boolval) {
 		fillMarker = boolval;
+	}
+
+	public void setUseSecondYAxis(final IScope scope, final boolean boolval) {
+		useSecondYAxis=boolval;
+	}
+
+	public boolean getUseSecondYAxis(final IScope scope) {
+		return useSecondYAxis;
 	}
 
 	public void setShowLine(final IScope scope, final boolean boolval) {
