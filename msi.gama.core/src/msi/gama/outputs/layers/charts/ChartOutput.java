@@ -45,11 +45,14 @@ public abstract class ChartOutput {
 	String chname = "";
 	String xlabel = null;
 	String ylabel = null;
+	String y2label = null;
 	ChartDataSet chartdataset;
 	int type = SERIES_CHART;
 	boolean reverse_axes = false;
 	boolean x_logscale = false;
 	boolean y_logscale = false;
+	boolean y2_logscale = false;
+	boolean use_second_y_axis = false;
 
 	ChartOutput chartOutput = null;
 	Color backgroundColor = GamaColor.WHITE;
@@ -81,8 +84,12 @@ public abstract class ChartOutput {
 	double yrangeinterval, yrangemin, yrangemax;
 	boolean useyrangeinterval = false, useyrangeminmax = false;
 
+	double y2rangeinterval, y2rangemin, y2rangemax;
+	boolean usey2rangeinterval = false, usey2rangeminmax = false;
+
 	double xtickunit = -1;
 	double ytickunit = -1;
+	double y2tickunit = -1;
 
 	// copy from previous dataLayerStatement
 
@@ -408,6 +415,17 @@ public abstract class ChartOutput {
 		return ylabel;
 
 	}
+	public void setY2Label(final IScope scope, final String asString) {
+		// TODO Auto-generated method stub
+		y2label = asString;
+
+	}
+
+	public String getY2Label(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2label;
+
+	}
 	public boolean getUseXRangeInterval(final IScope scope) {
 		return usexrangeinterval;
 	}
@@ -438,6 +456,22 @@ public abstract class ChartOutput {
 
 	public void setUseYRangeMinMax(final IScope scope, boolean useyrangeminmax) {
 		this.useyrangeminmax = useyrangeminmax;
+	}
+
+	public boolean getUseY2RangeInterval(final IScope scope ) {
+		return usey2rangeinterval;
+	}
+
+	public void setUseY2RangeInterval(final IScope scope, boolean useyrangeinterval) {
+		this.usey2rangeinterval = useyrangeinterval;
+	}
+
+	public boolean getUseY2RangeMinMax(final IScope scope ) {
+		return usey2rangeminmax;
+	}
+
+	public void setUseY2RangeMinMax(final IScope scope, boolean useyrangeminmax) {
+		this.usey2rangeminmax = useyrangeminmax;
 	}
 
 	public void setXRangeInterval(final IScope scope, final double doubleValue) {
@@ -515,6 +549,42 @@ public abstract class ChartOutput {
 		return yrangemax;
 
 	}
+	public double getY2RangeInterval(final IScope scope) {
+		return this.y2rangeinterval;
+	}
+
+	public void setY2RangeInterval(final IScope scope, final double doubleValue) {
+		// TODO Auto-generated method stub
+		this.usey2rangeinterval = true;
+		this.y2rangeinterval = doubleValue;
+
+	}
+
+	public void setY2RangeMinMax(final IScope scope, final double minValue, final double maxValue) {
+		// TODO Auto-generated method stub
+		this.usey2rangeminmax = true;
+		this.y2rangemin = minValue;
+		this.y2rangemax = maxValue;
+
+	}
+	public double[] getY2RangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={y2rangemin,y2rangemax};
+		return res;
+
+	}
+
+	public double getY2RangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2rangemin;
+
+	}
+
+	public double getY2RangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2rangemax;
+
+	}
 
 
 	public void setXTickUnit(final IScope scope, final double r) {
@@ -536,6 +606,18 @@ public abstract class ChartOutput {
 
 	public double getYTickUnit(final IScope scope) {
 		return ytickunit;
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setY2TickUnit(final IScope scope, final double r) {
+		this.y2tickunit = r;
+		// TODO Auto-generated method stub
+
+	}
+
+	public double getY2TickUnit(final IScope scope) {
+		return y2tickunit;
 		// TODO Auto-generated method stub
 
 	}
@@ -611,6 +693,23 @@ public abstract class ChartOutput {
 	public boolean getY_LogScale(final IScope scope) {
 		// TODO Auto-generated method stub
 		return y_logscale;
+	}
+	public void setY2_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y2_logscale = asBool;
+	}
+	public boolean getY2_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2_logscale;
+	}
+	public void setUseSecondYAxis(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		use_second_y_axis = asBool;
+	}
+	public boolean getUseSecondYAxis(final IScope scope) {
+		// TODO Auto-generated method stub
+		return use_second_y_axis;
+//		return false;
 	}
 
 }

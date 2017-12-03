@@ -66,6 +66,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 				@facet (
+						name = ChartLayerStatement.Y2RANGE,
+						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
+						optional = true,
+						doc = @doc ("range of the second y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+				@facet (
 						name = IKeyword.POSITION,
 						type = IType.POINT,
 						optional = true,
@@ -111,6 +116,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("use Log Scale for Y axis")),
 				@facet (
+						name = ChartLayerStatement.Y2_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for second Y axis")),
+				@facet (
 						name = IKeyword.AXES,
 						type = IType.COLOR,
 						optional = true,
@@ -141,6 +151,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
 				@facet (
+						name = ChartLayerStatement.Y2TICKUNIT,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+				@facet (
 						name = ChartLayerStatement.XTICKUNIT,
 						type = IType.FLOAT,
 						optional = true,
@@ -160,6 +175,11 @@ import msi.gaml.types.IType;
 						type = IType.STRING,
 						optional = true,
 						doc = @doc ("the title for the Y axis")),
+				@facet (
+						name = ChartLayerStatement.Y2LABEL,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("the title for the second Y axis")),
 				@facet (
 						name = IKeyword.COLOR,
 						type = IType.COLOR,
@@ -268,17 +288,21 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
 	public static final String YRANGE = "y_range";
+	public static final String Y2RANGE = "y2_range";
 
 	public static final String XLABEL = "x_label";
 	public static final String YLABEL = "y_label";
+	public static final String Y2LABEL = "y2_label";
 	public static final String MEMORIZE = "memorize";
 
 	public static final String SERIES_LABEL_POSITION = "series_label_position";
 
 	public static final String X_LOGSCALE = "x_log_scale";
 	public static final String Y_LOGSCALE = "y_log_scale";
+	public static final String Y2_LOGSCALE = "y2_log_scale";
 
 	public static final String YTICKUNIT = "y_tick_unit";
+	public static final String Y2TICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
 
 	public static final String TICKFONTFACE = "tick_font";
@@ -402,6 +426,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			chartoutput.setY_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
 		}
 
+		string1 = getFacet(ChartLayerStatement.Y2_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setY2_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+
 		chartoutput.createChart(scope);
 		updateValues(scope);
 
@@ -469,6 +498,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			chartoutput.setYLabel(scope, Cast.asString(scope, string1.value(scope)));
 		}
 
+		string1 = getFacet(ChartLayerStatement.Y2LABEL);
+		if (string1 != null) {
+			chartoutput.setY2Label(scope, Cast.asString(scope, string1.value(scope)));
+		}
+
 		string1 = getFacet(ChartLayerStatement.SERIES_LABEL_POSITION);
 		if (string1 != null) {
 			chartoutput.setSeriesLabelPosition(scope, Cast.asString(scope, string1.value(scope)));
@@ -501,6 +535,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
 			}
 		}
+		expr = getFacet(Y2RANGE);
+		if (expr != null) {
+			final Object range = expr.value(scope);
+
+			if (range instanceof Number) {
+				chartoutput.setY2RangeInterval(scope, ((Number) range).doubleValue());
+			} else if (range instanceof GamaPoint) {
+				chartoutput.setY2RangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
+			} else if (range instanceof GamaList) {
+				chartoutput.setY2RangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
+						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
+			}
+		}
 		IExpression expr2 = getFacet(XTICKUNIT);
 		if (expr2 != null) {
 			final Object range = expr2.value(scope);
@@ -518,6 +565,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			if (range instanceof Number) {
 				final double r = ((Number) range).doubleValue();
 				chartoutput.setYTickUnit(scope, r);
+			}
+		}
+		expr2 = getFacet(Y2TICKUNIT);
+		if (expr2 != null) {
+			final Object range = expr2.value(scope);
+
+			if (range instanceof Number) {
+				final double r = ((Number) range).doubleValue();
+				chartoutput.setY2TickUnit(scope, r);
 			}
 		}
 		expr2 = getFacet(IKeyword.GAP);

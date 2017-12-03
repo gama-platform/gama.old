@@ -49,6 +49,11 @@ import msi.gaml.types.IType;
 						optional = false,
 						doc = @doc ("The legend of the chart")),
 				@facet (
+						name = ChartDataStatement.USE_SECOND_Y_AXIS,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Use second y axis for this serie")),
+				@facet (
 						name = ChartDataStatement.YERR_VALUES,
 						type = { IType.FLOAT, IType.LIST },
 						optional = true,
@@ -121,6 +126,7 @@ import msi.gaml.types.IType;
 public class ChartDataStatement extends AbstractStatement {
 
 	public static final String MARKER = "marker";
+	public static final String USE_SECOND_Y_AXIS = "use_second_y_axis";
 	public static final String MARKERSHAPE = "marker_shape";
 	public static final String MARKERSIZE = "marker_size";
 	public static final String FILL = "fill";
@@ -178,6 +184,8 @@ public class ChartDataStatement extends AbstractStatement {
 		data.setShowLine(scope, boolval);
 		boolval = getFacetValue(scope, ChartDataStatement.FILL, true);
 		data.setFillMarker(scope, boolval);
+		boolval = getFacetValue(scope, ChartDataStatement.USE_SECOND_Y_AXIS, false);
+		data.setUseSecondYAxis(scope, boolval);
 
 		stval = getFacetValue(scope, IKeyword.LEGEND, null);
 		data.setLegend(scope, stval);
