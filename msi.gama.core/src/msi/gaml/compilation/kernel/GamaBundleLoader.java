@@ -26,6 +26,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IEventLayerDelegate;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
@@ -50,6 +52,7 @@ public class GamaBundleLoader {
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
 	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
+	public static String EVENT_LAYER_EXTENSION = "gama.event_layer";
 	public static String MODELS_EXTENSION = "gama.models";
 	public static String REGULAR_MODELS_LAYOUT = "models";
 	public static String REGULAR_TESTS_LAYOUT = "tests";
@@ -109,6 +112,20 @@ public class GamaBundleLoader {
 				e1.printStackTrace();
 			}
 		}
+		
+
+		// We gather all the extensions to the `create` statement and add them
+		// as delegates to EventLayerStatement
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
+			try {
+				// TODO Add the defining plug-in
+				EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
+			} catch (final CoreException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		
 		// We gather all the GAMA_PLUGINS that explicitly declare models using
 		// the non-default scheme (plugin > models ...).
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {

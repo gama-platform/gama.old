@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
@@ -35,7 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  *
  */
-public abstract class AbstractLayer implements ILayer {
+public abstract class AbstractLayer implements ILayer{
 
 	@Override
 	public ILayerStatement getDefinition() {
@@ -59,7 +60,12 @@ public abstract class AbstractLayer implements ILayer {
 	private Envelope visibleModelRegion;
 	boolean hasBeenDrawnOnce;
 
-	protected AbstractLayer(final ILayerStatement layer) {
+	public AbstractLayer() {
+		sizeInPixels = new Point(0, 0);
+		positionInPixels = new Point(0, 0);
+	}
+	
+	public AbstractLayer(final ILayerStatement layer) {
 		definition = layer;
 		if (definition != null) {
 			setName(definition.getName());

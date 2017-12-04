@@ -10,7 +10,11 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -21,13 +25,16 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.IType;
 
 /**
  * Written by marilleau
  */
 
-public class EventLayer extends AbstractLayer {
+public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 
 	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
@@ -36,6 +43,9 @@ public class EventLayer extends AbstractLayer {
 
 	EventListener listener;
 	IScope executionScope;
+
+	public EventLayer() {
+	}
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
@@ -226,6 +236,29 @@ public class EventLayer extends AbstractLayer {
 			definition.getBox().compute(scope);
 			setPositionAndSize(definition.getBox(), g);
 		}
+	}
+
+	@Override
+	public boolean acceptSource(IScope scope, Object source) {
+		// TODO Auto-generated method stub
+		if(source.equals("default")) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean createFrom(IScope scope, List<Map<String, Object>> inits, Integer max, Object source, Arguments init,
+			EventLayerStatement statement) {
+		// TODO Auto-generated method stub
+		System.out.println("event layer delegate");
+		return false;
+	}
+
+	@Override
+	public IType<?> fromFacetType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
