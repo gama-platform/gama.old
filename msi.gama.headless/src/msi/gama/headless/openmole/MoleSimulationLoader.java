@@ -17,12 +17,13 @@ import java.util.List;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.model.IModel;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlCompilationError;
 
 public abstract class MoleSimulationLoader {
 
 	public static void loadGAMA() {
-		HeadlessSimulationLoader.preloadGAMA();
+		// Now done in the loader
 	}
 
 	/**
@@ -35,12 +36,18 @@ public abstract class MoleSimulationLoader {
 	 */
 	@Deprecated
 	public static IModel loadModel(final File modelPath) throws IOException, GamaHeadlessException {
-		return HeadlessSimulationLoader.loadModel(modelPath);
+		return loadModel(modelPath, null);
 	}
 
 	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors)
 			throws IOException, GamaHeadlessException {
-		return HeadlessSimulationLoader.loadModel(modelPath, errors);
+		return loadModel(modelPath, errors, null);
+	}
+
+	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors,
+			final GamlProperties metadata) throws IOException, GamaHeadlessException {
+		HeadlessSimulationLoader.preloadGAMA();
+		return HeadlessSimulationLoader.loadModel(modelPath, errors, metadata);
 	}
 
 	public static IMoleExperiment newExperiment(final IModel model) {
