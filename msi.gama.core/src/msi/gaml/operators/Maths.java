@@ -180,7 +180,7 @@ public class Maths {
 	@test("acos(-1) = 180.0")
 	@test("acos(1) = 0.0")
 	@test("not(is_number(acos(-10)))")
-	@test("not(is_number(acos(1)))")
+	@test("not(is_number(acos(10)))")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -712,6 +712,9 @@ public class Maths {
 							equals = "0.6") }) },
 			special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception",
 			see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.MULTIPLY })
+	@test("0/1=0")
+	@test("is_error(1/0)")
+	@test("3/5=0.6")
 	public static Double opDivide(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
@@ -725,6 +728,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("0.2/2=0.1")
+	@test("is_error(1.5/0)")
+	@test("0.0/5=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b.doubleValue();
@@ -738,6 +744,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("0.2/0.5=0.4")
+	@test("is_error(1.5/0.0)")
+	@test("0.0/1.0=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b;
@@ -751,6 +760,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("1/0.5=2.0")
+	@test("is_error(2/0.0)")
+	@test("0/0.3=0.0")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a.doubleValue() / b.doubleValue();
