@@ -192,6 +192,14 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
+
+		final Object source = getSource(scope);
+
+		for (final IEventLayerDelegate delegate : delegates) {
+			if (delegate.acceptSource(scope, source)) {
+				delegate.createFrom(scope,null,0, source, null, this);
+			}
+		}
 		return true;
 	}
 
@@ -213,13 +221,6 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	 */
 	@Override
 	protected boolean _step(final IScope scope) {
-		final Object source = getSource(scope);
-
-		for (final IEventLayerDelegate delegate : delegates) {
-			if (delegate.acceptSource(scope, source)) {
-				delegate.createFrom(scope,null,0, source, null, null);
-			}
-		}
 		return true;
 	}
 	
