@@ -12,7 +12,6 @@ package ummisco.gama.ui.navigator.contents;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
@@ -104,17 +103,13 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	}
 
-	public int decorationSeverity() {
-		return getURIProblem(uri);
-	}
-
 	public int getURIProblem(final String fragment) {
 		return ((WrappedSyntacticContent) getParent()).getURIProblem(fragment);
 	}
 
 	@Override
 	public int findMaxProblemSeverity() {
-		return IMarker.SEVERITY_ERROR;
+		return getURIProblem(uri);
 	}
 
 	@Override
@@ -122,7 +117,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public ImageDescriptor getOverlay() {
-		final int severity = decorationSeverity();
+		final int severity = getURIProblem(uri);
 		if (severity != -1)
 			return DESCRIPTORS.get(severity);
 		return null;
@@ -140,7 +135,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public GamaUIColor getStatusColor() {
-		return IGamaColors.GRAY_LABEL;
+		return IGamaColors.BLACK;
 	}
 
 	@Override
