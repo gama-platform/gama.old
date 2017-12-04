@@ -110,6 +110,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("list of colors, for heatmaps can be a list of [minColor,maxColor] or [minColor,medColor,maxColor]")),
 				@facet (
+						name = ChartDataStatement.THICKNESS,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("The thickness of the lines to draw")),
+				@facet (
 						name = IKeyword.STYLE,
 						type = IType.ID,
 						values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
@@ -229,6 +234,11 @@ public class ChartDataListStatement extends AbstractStatement {
 			expval = expval.resolveAgainst(scope);
 			data.setColorExp(scope, expval);
 
+		}
+		expval = getFacet(ChartDataStatement.THICKNESS);
+		if (expval != null) {
+			expval = expval.resolveAgainst(scope);
+			data.setLineThickness(Cast.asFloat(scope, expval.value(scope)));
 		}
 		boolean boolval = getFacetValue(scope, ChartDataStatement.MARKER, true);
 		data.setMarkerBool(scope, boolval);
