@@ -83,30 +83,26 @@ If the action doesn't have any operands, the syntax to use is `my_agent the_acti
 Note that due to the fact that actions are written by modelers, the general functional contract is not respected in that case: actions might perfectly have side effects on their operands (including the agent).
 	</xsl:text>
 
-		----
+----
 
-		## Table of Contents
+## Table of Contents
 
-		----
+----
 
-		## Operators by categories
-		<xsl:call-template name="buildOperatorsByCategories" />
+## Operators by categories
+<xsl:call-template name="buildOperatorsByCategories" />
 
-		----
+----
 
-		## Operators
-		<xsl:call-template name="buildOperators" />
+## Operators
+<xsl:call-template name="buildOperators" />
 
 	</xsl:template>
 
 	<xsl:template name="buildOperatorsByName">
 		<xsl:for-each select="/doc/operators/operator">
 			<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text>
-			<xsl:value-of select="@name" />
-			<xsl:text>](#</xsl:text>
-			<xsl:value-of select="translate(@name, $uppercase, $smallcase)" />
-			<xsl:text>), </xsl:text>
+			<xsl:text>[</xsl:text><xsl:value-of select="@name" /><xsl:text>](#</xsl:text><xsl:value-of select="translate(@name, $uppercase, $smallcase)" /><xsl:text>), </xsl:text>
 		</xsl:for-each>
 	</xsl:template>
 
@@ -118,7 +114,7 @@ Note that due to the fact that actions are written by modelers, the general func
 
 ----
 
-### </xsl:text>
+## </xsl:text>
 			<xsl:value-of select="@id" />
 			<xsl:text>
 </xsl:text>
@@ -129,11 +125,7 @@ Note that due to the fact that actions are written by modelers, the general func
 				<xsl:for-each select="operatorCategories/category">
 					<xsl:variable name="catItem" select="@id" />
 					<xsl:if test="$catItem = $categoryGlobal ">
-						<xsl:text>[</xsl:text>
-						<xsl:value-of select="$nameOp" />
-						<xsl:text>](#</xsl:text>
-						<xsl:value-of select="translate($nameOp, $uppercase, $smallcase)" />
-						<xsl:text>), </xsl:text>
+						<xsl:text>[</xsl:text><xsl:value-of select="$nameOp" /><xsl:text>](#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)" /><xsl:text>), </xsl:text>
 					</xsl:if>
 				</xsl:for-each>
 			</xsl:for-each>
@@ -145,292 +137,139 @@ Note that due to the fact that actions are written by modelers, the general func
 			<xsl:sort select="@name" />
 			<xsl:variable name="operatorName" select="@name" />
 
-			----
+----
+<xsl:call-template name="keyword">
+	<xsl:with-param name="category" select="'operator'" />
+	<xsl:with-param name="nameGAMLElement" select="@name" />
+</xsl:call-template>
+### <xsl:call-template name="checkName" />
+	<xsl:if test="@alternativeNameOf">
+<xsl:text>
+Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf" /><xsl:text>](#</xsl:text><xsl:value-of select="translate(@alternativeNameOf, $uppercase, $smallcase)" /><xsl:text>)</xsl:text>
+	</xsl:if>
 
-			<xsl:call-template name="keyword">
-				<xsl:with-param name="category" select="'operator'" />
-				<xsl:with-param name="nameGAMLElement" select="@name" />
-			</xsl:call-template>
-			###
-			<xsl:call-template name="checkName" />
-			<xsl:if test="@alternativeNameOf">
-				<xsl:text>
-Same signification as [</xsl:text>
-				<xsl:value-of select="@alternativeNameOf" />
-				<xsl:text>](#</xsl:text>
-				<xsl:value-of
-					select="translate(@alternativeNameOf, $uppercase, $smallcase)" />
-				<xsl:text>)</xsl:text>
-			</xsl:if>
+	<xsl:if test="combinaisonIO[node()]">
+		<xsl:call-template name="buildOperands">
+		<xsl:with-param name="operatorName" select="$operatorName" />
+		</xsl:call-template>
+	</xsl:if>
 
-			<xsl:if test="combinaisonIO[node()]">
-				<xsl:call-template name="buildOperands">
-					<xsl:with-param name="operatorName" select="$operatorName" />
-				</xsl:call-template>
-			</xsl:if>
+	<xsl:if test="documentation/result[text()]">
 
-			<xsl:if test="documentation/result[text()]">
+#### Result:
+<xsl:value-of select="documentation/result" />
+</xsl:if>
 
-				#### Result:
-				<xsl:value-of select="documentation/result" />
-			</xsl:if>
+	<xsl:if test="documentation/comment[text()]">
 
-			<xsl:if test="documentation/comment[text()]">
+#### Comment:
+<xsl:value-of select="documentation/comment" />
+</xsl:if>
 
-				#### Comment:
-				<xsl:value-of select="documentation/comment" />
-			</xsl:if>
+<xsl:if test="documentation/specialCases[node()] | documentation/usages[node()] | documentation/usagesNoExample[node()]">
+#### Special cases:</xsl:if>
+<xsl:if test="documentation/specialCases[node()]">
+<xsl:for-each select="documentation/specialCases/case">
+ * <xsl:value-of select="@item" /></xsl:for-each></xsl:if>
+<xsl:if test="documentation/usages[node()] | documentation/usagesNoExample[node()]">
+<xsl:for-each select="documentation/usagesNoExample/usage">
+ * <xsl:value-of select="@descUsageElt" /> </xsl:for-each>
+<xsl:for-each select="documentation/usages/usage">
+ * <xsl:value-of select="@descUsageElt" />
+ 
+```
+<xsl:call-template name="generateExamples" />
+```
+</xsl:for-each>
+ </xsl:if>
+ <xsl:if test="documentation/usagesExamples[node()]">
 
-			<xsl:if
-				test="documentation/specialCases[node()] | documentation/usages[node()] | documentation/usagesNoExample[node()]">
+#### Examples:
+```
+<xsl:for-each select="documentation/usagesExamples/usage">
+<xsl:call-template name="generateExamples" /></xsl:for-each>
 
-				#### Special cases:
-			</xsl:if>
-			<xsl:if test="documentation/specialCases[node()]">
-				<xsl:for-each select="documentation/specialCases/case">
-					*
-					<xsl:value-of select="@item" />
-				</xsl:for-each>
-			</xsl:if>
-			<xsl:if
-				test="documentation/usages[node()] | documentation/usagesNoExample[node()]">
-				<xsl:for-each select="documentation/usagesNoExample/usage">
-					*
-					<xsl:value-of select="@descUsageElt" />
-				</xsl:for-each>
-				<xsl:for-each select="documentation/usages/usage">
-					*
-					<xsl:value-of select="@descUsageElt" />
+```
+  </xsl:if>
+  <xsl:if test="documentation/seeAlso[node()]">
 
-					```
-					<xsl:call-template name="generateExamples" />
-					```
+#### See also:
 
-				</xsl:for-each>
-			</xsl:if>
+<xsl:for-each select="documentation/seeAlso/see">
+ <xsl:variable name="idOpSee" select="@id" />
+<xsl:text>[</xsl:text><xsl:value-of select="@id" /><xsl:text>](#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)" /><xsl:text>), </xsl:text></xsl:for-each>
+</xsl:if>
 
-			<xsl:if test="documentation/usagesExamples[node()]">
+<xsl:if test="documentation/examples[node()]">
+ <xsl:for-each select="documentation"><xsl:call-template name="generateExamples" /></xsl:for-each>
+</xsl:if>
+ </xsl:for-each>
+</xsl:template>
 
-				#### Examples:
-				```
-				<xsl:for-each select="documentation/usagesExamples/usage">
-					<xsl:call-template name="generateExamples" />
-				</xsl:for-each>
-				```
-			</xsl:if>
+<xsl:template name="buildOperands">
+ 	<xsl:param name="operatorName"/>
 
-			<xsl:if test="documentation/seeAlso[node()]">
+#### Possible use: <xsl:for-each select="combinaisonIO/operands"> <xsl:sort select="count(operand)"/> <xsl:call-template name="buildOperand"><xsl:with-param name="operatorName" select="$operatorName"/></xsl:call-template> </xsl:for-each>
+ </xsl:template> 
+ 
+ <xsl:template name="buildOperand">
+ 	<xsl:param name="operatorName"/>
+ 	<xsl:variable name="nbOperands" select="count(operand)"/>
+ 	
+	<xsl:choose>
+	<xsl:when test="count(operand) = 1">
+  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template> 
+	</xsl:when>
+	<xsl:when test="count(operand) = 2">
+  * <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>
+  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> , </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>		
+	</xsl:when>	
+	<xsl:otherwise>
+  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:for-each select="operand">
+		<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@type"/></xsl:with-param></xsl:call-template>
 
-				#### See also:
-				<xsl:for-each select="documentation/seeAlso/see">
-					<xsl:variable name="idOpSee" select="@id" />
-					<xsl:text>[</xsl:text>
-					<xsl:value-of select="@id" />
-					<xsl:text>](#</xsl:text>
-					<xsl:value-of select="translate(@id, $uppercase, $smallcase)" />
-					<xsl:text>), </xsl:text>
-				</xsl:for-each>
-			</xsl:if>
-
-			<xsl:if test="documentation/examples[node()]">
-
-				```
-				<xsl:for-each select="documentation">
-					<xsl:call-template name="generateExamples" />
-				</xsl:for-each>
-				```
-			</xsl:if>
-
-		</xsl:for-each>
-	</xsl:template>
-
-	<xsl:template name="buildOperands">
-		<xsl:param name="operatorName" />
-
-		#### Possible use:
-		<xsl:for-each select="combinaisonIO/operands">
-			<xsl:sort select="count(operand)" />
-			<xsl:call-template name="buildOperand">
-				<xsl:with-param name="operatorName" select="$operatorName" />
-			</xsl:call-template>
-		</xsl:for-each>
-	</xsl:template>
-
-	<xsl:template name="buildOperand">
-		<xsl:param name="operatorName" />
-		<xsl:variable name="nbOperands" select="count(operand)" />
-
-		<xsl:choose>
-			<xsl:when test="count(operand) = 1">
-				*
-				<xsl:text> **`</xsl:text>
-				<xsl:value-of select="$operatorName" />
-				<xsl:text>`** </xsl:text>
-				(
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="operand/@type" />
-					</xsl:with-param>
-				</xsl:call-template>
-				) --->
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="@returnType" />
-					</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:when test="count(operand) = 2">
-				*
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="operand[@position=0]/@type" />
-					</xsl:with-param>
-				</xsl:call-template>
-				<xsl:text> **`</xsl:text>
-				<xsl:value-of select="$operatorName" />
-				<xsl:text>`** </xsl:text>
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="operand[@position=1]/@type" />
-					</xsl:with-param>
-				</xsl:call-template>
-				--->
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="@returnType" />
-					</xsl:with-param>
-				</xsl:call-template>
-				*
-				<xsl:text> **`</xsl:text>
-				<xsl:value-of select="$operatorName" />
-				<xsl:text>`** </xsl:text>
-				(
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="operand[@position=0]/@type" />
-					</xsl:with-param>
-				</xsl:call-template>
-				<xsl:text> , </xsl:text>
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="operand[@position=1]/@type" />
-					</xsl:with-param>
-				</xsl:call-template>
-				) --->
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="@returnType" />
-					</xsl:with-param>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:otherwise>
-				*
-				<xsl:text> **`</xsl:text>
-				<xsl:value-of select="$operatorName" />
-				<xsl:text>`** </xsl:text>
-				(
-				<xsl:for-each select="operand">
-					<xsl:call-template name="checkType">
-						<xsl:with-param name="type">
-							<xsl:value-of select="@type" />
-						</xsl:with-param>
-					</xsl:call-template>
-
-					<xsl:choose>
-						<xsl:when test="@position = ($nbOperands - 1)">
-							)
-						</xsl:when>
-						<xsl:otherwise>
-							,
-						</xsl:otherwise>
-					</xsl:choose>
-
-				</xsl:for-each>
-				--->
-				<xsl:call-template name="checkType">
-					<xsl:with-param name="type">
-						<xsl:value-of select="@returnType" />
-					</xsl:with-param>
-				</xsl:call-template>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
+		<xsl:choose>		
+			<xsl:when test="@position = ($nbOperands - 1)">)</xsl:when>
+			<xsl:otherwise>, </xsl:otherwise>
+		</xsl:choose>		
+	
+	</xsl:for-each> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template> 
+	</xsl:otherwise>
+	</xsl:choose>
+ </xsl:template> 
 
 
-	<xsl:template name="checkType">
-		<xsl:param name="type" />
-		<xsl:choose>
-			<xsl:when test="$type = 'list&lt;list&gt;'">
-				<xsl:text>`list&lt;list&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;list&lt;point&gt;&gt;'">
-				<xsl:text>`list&lt;list&lt;point&gt;&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;list&lt;agent&gt;&gt;'">
-				<xsl:text>`list&lt;list&lt;agent&gt;&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;agent&gt;'">
-				<xsl:text>`list&lt;agent&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;geometry&gt;'">
-				<xsl:text>`list&lt;geometry&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;point&gt;'">
-				<xsl:text>`list&lt;point&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;path&gt;'">
-				<xsl:text>`list&lt;path&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;float&gt;'">
-				<xsl:text>`list&lt;float&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;rgb&gt;'">
-				<xsl:text>`list&lt;rgb&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'list&lt;KeyType&gt;'">
-				<xsl:text>`list&lt;KeyType&gt;`</xsl:text>
-			</xsl:when>
-
-			<xsl:when test="$type = 'container&lt;geometry&gt;'">
-				<xsl:text>`container&lt;geometry&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'container&lt;agent&gt;'">
-				<xsl:text>`container&lt;agent&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'container&lt;float&gt;'">
-				<xsl:text>`container&lt;float&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'container&lt;KeyType,ValueType&gt;'">
-				<xsl:text>`container&lt;KeyType,ValueType&gt;`</xsl:text>
-			</xsl:when>
-
-			<xsl:when test="$type = 'map&lt;string,unknown&gt;'">
-				<xsl:text>`map&lt;string,unknown&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'map&lt;string,list&gt;'">
-				<xsl:text>`map&lt;string,list&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'map&lt;point,float&gt;'">
-				<xsl:text>`map&lt;point,float&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'map&lt;agent,float&gt;'">
-				<xsl:text>`map&lt;agent,float&gt;`</xsl:text>
-			</xsl:when>
-
-			<xsl:when test="$type = 'matrix&lt;float&gt;'">
-				<xsl:text>`matrix&lt;float&gt;`</xsl:text>
-			</xsl:when>
-			<xsl:when test="$type = 'matrix&lt;int&gt;'">
-				<xsl:text>`matrix&lt;int&gt;`</xsl:text>
-			</xsl:when>
-
-
-
-			<xsl:otherwise>
-				`
-				<xsl:value-of select="$type" />
-				`
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
+	
+ <xsl:template name="checkType">
+  	<xsl:param name="type"/>
+	<xsl:choose> 
+ 		<xsl:when test="$type = 'list&lt;list&gt;'"><xsl:text>`list&lt;list&gt;`</xsl:text></xsl:when>
+  		<xsl:when test="$type = 'list&lt;list&lt;point&gt;&gt;'"><xsl:text>`list&lt;list&lt;point&gt;&gt;`</xsl:text></xsl:when>
+    	<xsl:when test="$type = 'list&lt;list&lt;agent&gt;&gt;'"><xsl:text>`list&lt;list&lt;agent&gt;&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;agent&gt;'"><xsl:text>`list&lt;agent&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;geometry&gt;'"><xsl:text>`list&lt;geometry&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;point&gt;'"><xsl:text>`list&lt;point&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;path&gt;'"><xsl:text>`list&lt;path&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;float&gt;'"><xsl:text>`list&lt;float&gt;`</xsl:text></xsl:when>
+ 		<xsl:when test="$type = 'list&lt;rgb&gt;'"><xsl:text>`list&lt;rgb&gt;`</xsl:text></xsl:when>
+  		<xsl:when test="$type = 'list&lt;KeyType&gt;'"><xsl:text>`list&lt;KeyType&gt;`</xsl:text></xsl:when>
+ 		
+ 		<xsl:when test="$type = 'container&lt;geometry&gt;'"><xsl:text>`container&lt;geometry&gt;`</xsl:text></xsl:when>
+  		<xsl:when test="$type = 'container&lt;agent&gt;'"><xsl:text>`container&lt;agent&gt;`</xsl:text></xsl:when>
+  		<xsl:when test="$type = 'container&lt;float&gt;'"><xsl:text>`container&lt;float&gt;`</xsl:text></xsl:when>  		
+  		<xsl:when test="$type = 'container&lt;KeyType,ValueType&gt;'"><xsl:text>`container&lt;KeyType,ValueType&gt;`</xsl:text></xsl:when>
+  		
+  		<xsl:when test="$type = 'map&lt;string,unknown&gt;'"><xsl:text>`map&lt;string,unknown&gt;`</xsl:text></xsl:when>	
+  		<xsl:when test="$type = 'map&lt;string,list&gt;'"><xsl:text>`map&lt;string,list&gt;`</xsl:text></xsl:when>	
+   		<xsl:when test="$type = 'map&lt;point,float&gt;'"><xsl:text>`map&lt;point,float&gt;`</xsl:text></xsl:when>	
+   		<xsl:when test="$type = 'map&lt;agent,float&gt;'"><xsl:text>`map&lt;agent,float&gt;`</xsl:text></xsl:when>	
+  		
+ 		<xsl:when test="$type = 'matrix&lt;float&gt;'"><xsl:text>`matrix&lt;float&gt;`</xsl:text></xsl:when>
+  		<xsl:when test="$type = 'matrix&lt;int&gt;'"><xsl:text>`matrix&lt;int&gt;`</xsl:text></xsl:when>
+  		
+  		
+ 		
+ 		<xsl:otherwise>`<xsl:value-of select="$type"/>`</xsl:otherwise>
+ 	</xsl:choose> 
+ </xsl:template>
 </xsl:stylesheet>

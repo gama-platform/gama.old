@@ -54,7 +54,6 @@ public class GamlModelBuilder {
 			final URI resolvedURI = URI.createURI(uri.toString());
 			return compile(resolvedURI, errors);
 		} catch (final URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

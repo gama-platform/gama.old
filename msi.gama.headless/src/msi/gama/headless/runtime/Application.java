@@ -38,6 +38,7 @@ import msi.gama.headless.batch.test.ModelLibraryTester;
 import msi.gama.headless.batch.validation.ModelLibraryValidator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
@@ -181,7 +182,7 @@ public class Application implements IApplication {
 	}
 
 	public void buildXML(final List<String> arg)
-			throws ParserConfigurationException, TransformerException, IOException {
+			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		verbose = arg.contains(VERBOSE_PARAMETER);
 		if (this.verbose) {
 			SystemLogger.activeDisplay();
@@ -215,7 +216,7 @@ public class Application implements IApplication {
 	}
 
 	public void buildXMLForModelLibrary(final ArrayList<File> modelPaths, final String outputPath)
-			throws ParserConfigurationException, TransformerException, IOException {
+			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		// "arg[]" are the paths to the different models
 		HeadlessSimulationLoader.preloadGAMA();
 		final ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();

@@ -9,8 +9,14 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -24,10 +30,14 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by Marilleau Modified on 16 novembre 2012
@@ -57,6 +67,11 @@ import msi.gaml.types.IType;
 						// values = { "mouse_up", "mouse_down", "mouse_drag" },
 						optional = false,
 						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character")),
+				@facet (
+						name = "type",
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Type of peripheric")),
 				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
@@ -148,12 +163,27 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	}
 
 	private final boolean executesInSimulation;
+	private final IExpression type;
+	private static List<IEventLayerDelegate> delegates = new ArrayList<>();
+	private static List<IType> delegateTypes = new ArrayList<>();
 
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final IEventLayerDelegate delegate) {
+		delegates.add(delegate);
+		final IType delegateType = delegate.fromFacetType();
+		if (delegateType != null && delegateType != Types.NO_TYPE) {
+			delegateTypes.add(delegate.fromFacetType());
+		}
+	}
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 		final String actionName = description.getLitteral(IKeyword.ACTION);
 		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
 		executesInSimulation = sd == null;
+
+		type = getFacet("type");
 	}
 
 	public boolean executesInSimulation() {
@@ -183,6 +213,24 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	 */
 	@Override
 	protected boolean _step(final IScope scope) {
+		final Object source = getSource(scope);
+
+		for (final IEventLayerDelegate delegate : delegates) {
+			if (delegate.acceptSource(scope, source)) {
+				delegate.createFrom(scope,null,0, source, null, null);
+			}
+		}
 		return true;
+	}
+	
+
+	private Object getSource(final IScope scope) {
+		Object source = type == null ? "default" : type.value(scope);
+//		if (source instanceof String) {
+//			source = Files.from(scope, (String) source);
+//		} else if (source instanceof GamaShape) {
+//			source = GamaListFactory.createWithoutCasting(Types.GEOMETRY, source);
+//		}
+		return source;
 	}
 }

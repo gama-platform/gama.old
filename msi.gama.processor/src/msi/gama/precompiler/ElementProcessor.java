@@ -1,7 +1,9 @@
 package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import javax.lang.model.element.Element;
@@ -23,6 +25,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	public static DocumentBuilder BUILDER = null;
 	public static Transformer TRANSFORMER = null;
 	public Document document = getBuilder().newDocument();
+	final Map<String, org.w3c.dom.Element> index = new HashMap<>();
 
 	protected static DocumentBuilder getBuilder() {
 		if (BUILDER == null)
@@ -37,14 +40,21 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		final Class<T> a = getAnnotationClass();
 		if (a == null)
 			return;
+
 		final Document doc = getDocument(context);
 		final List<? extends Element> elements = context.sortElements(a);
 		if (elements.isEmpty())
 			return;
 		for (final Element e : elements) {
+			final String key = e.getEnclosingElement().toString() + "#" + e.toString() + a.toString();
+			final org.w3c.dom.Element old = index.get(key);
+			if (old != null) {
+				old.getParentNode().removeChild(old);
+			}
 			final org.w3c.dom.Element node = doc.createElement(getElementName());
+			index.put(key, node);
 			populateElement(context, e, doc, e.getAnnotation(a), node);
-			appendChild(getRootNode(doc), node);
+			getRootNode(doc).appendChild(node);
 		}
 		// XML Files are not saved for the moment as they seem to be correctly kept in memory
 		// saveDocument(context, doc);

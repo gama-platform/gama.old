@@ -4,6 +4,7 @@
    <extension-point id="gaml.grammar.addition" name="Addition to the grammar of GAML" schema="schema/gaml.grammar.addition.exsd"/>
    <extension-point id="gama.display" name="Implementations of IDisplaySurface" schema="schema/gama.display.exsd"/>
    <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
+   <extension-point id="gama.event_layer" name="Implementations of IEventLayerDelegate" schema="schema/gama.event_layer.exsd"/>
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
    <extension-point id="gama.experiment" name="Implementations of IExperimentAgent" schema="schema/gama.experiment.exsd"/>
@@ -65,6 +66,12 @@
       <implementation
             class="msi.gama.kernel.experiment.BatchAgent"
             keyword="batch">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.event_layer">
+      <implementation
+            class="msi.gama.outputs.layers.EventLayer">
       </implementation>
    </extension>
 

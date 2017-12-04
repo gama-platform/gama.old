@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.runtime.Application;
 
 public class ModelLibraryGenerator {
@@ -235,7 +236,7 @@ public class ModelLibraryGenerator {
 		try {
 			// build the xml
 			headlessApplication.buildXMLForModelLibrary(gamlFilesForScreenshot, inputFileForHeadlessExecution);
-		} catch (ParserConfigurationException | TransformerException | IOException e1) {
+		} catch (ParserConfigurationException | TransformerException | IOException | GamaHeadlessException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

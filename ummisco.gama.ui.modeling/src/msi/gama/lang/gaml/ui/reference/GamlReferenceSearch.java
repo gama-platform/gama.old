@@ -46,7 +46,17 @@ public class GamlReferenceSearch {
 					for (final MTrimElement element : topTrim.getChildren()) {
 						if ("SearchField".equals(element.getElementId())) {
 							final Composite parent = ((Control) element.getWidget()).getParent();
-							((Control) element.getWidget()).dispose();
+							final Control old = (Control) element.getWidget();
+							final UIJob job = new UIJob("Disposing old search control") {
+
+								@Override
+								public IStatus runInUIThread(final IProgressMonitor monitor) {
+									old.dispose();
+									return Status.OK_STATUS;
+								}
+
+							};
+							job.schedule(1000);
 							element.setWidget(GamlSearchField.installOn(parent));
 							new EditorToolbar().fill(GamlSearchField.INSTANCE.getToolbar());
 							parent.layout(true, true);

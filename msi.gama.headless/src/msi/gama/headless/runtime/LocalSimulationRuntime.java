@@ -11,6 +11,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -122,7 +123,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		// System.out.println("model released ") ;
 	}
 
-	private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl) throws IOException {
+	private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl)
+			throws IOException, GamaHeadlessException {
 		IModel mm = null;
 		if (mdl != null) {
 			availableLoadedModels.get(key).add(mdl);
@@ -134,7 +136,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return mm;
 	}
 
-	public synchronized IModel lockModel(final File fl) throws IOException {
+	public synchronized IModel lockModel(final File fl) throws IOException, GamaHeadlessException {
 		IModel mdl;
 		final String key = fl.getAbsolutePath();
 		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
@@ -155,7 +157,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 
 	@Override
-	public synchronized IModel loadModel(final File fl) throws IOException {
+	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
 		// return lockUnLock( fl,null, null) ; //lockModel(fl); //
 		return HeadlessSimulationLoader.loadModel(fl); // lockModel(fl); //mdl.c;
 	}
@@ -201,6 +203,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 			} catch (final ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (final IOException e) {
+				e.printStackTrace();
+			} catch (final GamaHeadlessException e) {
 				e.printStackTrace();
 			}
 			si.playAndDispose();
