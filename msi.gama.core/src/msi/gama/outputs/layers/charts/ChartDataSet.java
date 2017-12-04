@@ -12,9 +12,12 @@ package msi.gama.outputs.layers.charts;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import com.sun.javafx.collections.MappingChange.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -267,6 +270,16 @@ public class ChartDataSet {
 			}
 		}
 		for (final ChartDataSource source : sourcestoremove) {
+			LinkedHashMap<String,ChartDataSeries> sourceseries=source.getSeries();
+			
+			for (String sn: sourceseries.keySet())
+			{
+				ChartDataSeries ser=sourceseries.get(sn);
+				if (ser.xvalues.size()<2)
+				{
+					this.removeserie(scope, sn);
+				}
+			}
 			sources.remove(source);
 		}
 		for (final ChartDataSource source : sourcestoadd) {

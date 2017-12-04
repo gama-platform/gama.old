@@ -16,6 +16,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;
 import msi.gaml.types.Types;
 
@@ -31,7 +32,19 @@ public class ChartDataSourceUnique extends ChartDataSource {
 				new GamaColor(Random.opRnd(scope, 255), Random.opRnd(scope, 255), Random.opRnd(scope, 255), 255);
 		final IExpression ncol = GAML.getExpressionFactory().createConst(col, Types.COLOR);
 		this.colorexp = ncol;
-		myname = ((ChartDataSourceUnique) source).myname + "*";
+		String previousname= ((ChartDataSourceUnique) source).myname;
+		myname = ((ChartDataSourceUnique) source).myname + "_1*";
+		if (previousname.endsWith("*"))
+		{
+			int index=previousname.lastIndexOf("_");
+			String nosim=previousname.substring(index+1, previousname.lastIndexOf("*"));
+			int nosimv=Cast.asInt(scope, nosim);
+			String basename=previousname.substring(0,index);
+			nosimv=nosimv+1;
+			myname = basename +"_"+nosimv +"*";
+		}
+		
+		
 		return res;
 	}
 
