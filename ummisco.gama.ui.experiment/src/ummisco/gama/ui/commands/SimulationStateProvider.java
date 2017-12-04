@@ -44,9 +44,17 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		final IExperimentPlan exp = GAMA.getExperiment();
 		final String type = exp == null ? IGui.NONE
 				: exp.isBatch() ? "BATCH" : exp.isMemorize() ? "MEMORIZE" : "REGULAR";
+		
+		String canStepBack = "CANNOT_STEP_BACK";
+		if (exp != null) {
+			if (exp.getAgent() != null) {
+				canStepBack = exp.getAgent().canStepBack() ? "CAN_STEP_BACK" : "CANNOT_STEP_BACK";
+			}
+		}		
+		
 		map.put(SIMULATION_RUNNING_STATE, state);
 		map.put(SIMULATION_TYPE, type);
-		map.put(SIMULATION_STEPBACK, "CANNOT_STEP_BACK");
+		map.put(SIMULATION_STEPBACK, canStepBack);
 		return map;
 	}
 

@@ -123,4 +123,9 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	public boolean canStepBack() {
 		return currentNode != null && currentNode.getParent() != null;
 	}
+	
+	@Override
+	public boolean isMemorize() {
+		return true;
+	}	
 }

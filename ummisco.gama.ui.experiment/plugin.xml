@@ -576,7 +576,7 @@
             commandId="msi.gama.application.commands.StepBackSimulation">
          <activeWhen>
             <with
-                  variable="msi.gama.application.commands.SimulationStepBack">
+                  variable="ummisco.gama.ui.experiment.SimulationStepBack">
                <equals
                      value="CAN_STEP_BACK">
                </equals>
@@ -584,7 +584,7 @@
          </activeWhen>
          <enabledWhen>
             <with
-                  variable="msi.gama.application.commands.SimulationStepBack">
+                  variable="ummisco.gama.ui.experiment.SimulationStepBack">
                <equals
                      value="CAN_STEP_BACK">
                </equals>

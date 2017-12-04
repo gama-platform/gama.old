@@ -18,6 +18,8 @@ import msi.gama.util.GamaList;
 
 import java.util.List;
 
+import org.apache.commons.lang.ClassUtils;
+
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
@@ -33,6 +35,12 @@ public class GamaAgentConverter implements Converter {
 	public boolean canConvert(final Class arg0) {
 		if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) || GamlAgent.class.equals(arg0.getSuperclass())){
 			return true;
+		}
+		
+		final List<Class<?>> allClassesApa = ClassUtils.getAllSuperclasses(arg0);
+		for (final Object c : allClassesApa) {
+			if (c.equals(GamlAgent.class))
+				return true;
 		}
 		
 		Class<?>[] allInterface=arg0.getInterfaces();
