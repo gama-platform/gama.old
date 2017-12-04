@@ -9,16 +9,17 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -30,7 +31,6 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import ummisco.gama.ui.commands.TestsRunner;
-import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -87,10 +87,8 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		@Override
 		public void afterValueChange(final Boolean newValue) {
 
-			try {
-				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-				view.checkActions();
-			} catch (final CoreException e) {}
+			build();
+			view.checkActions();
 
 		}
 	}
@@ -127,24 +125,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("build.all2", "", "Clean and validate all projects", e -> {
-			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			try {
-				// GamlResourceIndexer.eraseIndex();
-				workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
-
-					@Override
-					public void done() {
-						super.done();
-						WorkbenchHelper.getService(IRefreshHandler.class).run(workspace.getRoot());
-
-					}
-
-				});
-
-			} catch (final CoreException ex) {
-				ex.printStackTrace();
-			}
-
+			build();
 		}, SWT.RIGHT);
 
 		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
@@ -156,5 +137,36 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		ec.addVariable(ISources.ACTIVE_PART_NAME, this);
 		final ExecutionEvent ev = new ExecutionEvent(null, new HashMap<>(), this, ec);
 		new ConfigureContentsDialogHandler().execute(ev);
+	}
+
+	static private void doBuild(final IProgressMonitor monitor) {
+		try {
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+
+			// monitor.beginTask("Cleaning and building entire workspace", size);
+			// for (final IProject p : projects) {
+			// if (p.exists() && p.isAccessible()) {
+			// monitor.subTask("Building " + p.getName());
+			// p.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+			// monitor.worked(1);
+			// }
+			// }
+
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void build() {
+
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(WorkbenchHelper.getShell());
+		dialog.setBlockOnOpen(false);
+		dialog.setCancelable(false);
+		dialog.setOpenOnRun(true);
+		try {
+			dialog.run(true, false, monitor -> doBuild(monitor));
+		} catch (InvocationTargetException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 }
