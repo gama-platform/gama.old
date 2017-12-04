@@ -28,6 +28,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.IRichExperiment;
 import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
@@ -55,8 +56,6 @@ public class ExperimentJob implements IExperimentJob {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
 
-	
-	
 	public static class ListenedVariable {
 
 		String name;
@@ -92,6 +91,7 @@ public class ExperimentJob implements IExperimentJob {
 		public OutputType getType() {
 			return type;
 		}
+
 		public DataType getDataType() {
 			return dataType;
 		}
@@ -203,8 +203,8 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
-	public void loadAndBuild(final RuntimeContext rtx)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+	public void loadAndBuild(final RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, IOException, GamaHeadlessException {
 
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
@@ -236,8 +236,8 @@ public class ExperimentJob implements IExperimentJob {
 				"The until condition of the experiment should be a boolean", simulator.getSimulation().getScope()); }
 	}
 
-	public void load(final RuntimeContext ctx)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+	public void load(final RuntimeContext ctx) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final IModel mdl = ctx.loadModel(new File(this.sourcePath));
 		this.modelName = mdl.getName();
@@ -324,9 +324,10 @@ public class ExperimentJob implements IExperimentJob {
 					// .getCurrentSimulation().getScope(), g,
 					// shouldStopSimulation)
 				} else if (out.getValue() instanceof BufferedImage) {
-					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,out.getType());
+					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,
+							out.getType());
 				} else {
-					v.setValue(out.getValue(), out.getStep(),out.getType());
+					v.setValue(out.getValue(), out.getStep(), out.getType());
 				}
 
 			}

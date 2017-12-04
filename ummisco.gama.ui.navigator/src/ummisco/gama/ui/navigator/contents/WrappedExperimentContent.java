@@ -30,7 +30,6 @@ public class WrappedExperimentContent extends WrappedSyntacticContent {
 	public int getURIProblem(final String fragment) {
 		if (fragment == null)
 			return -1;
-		// final IFile file = (IFile) getParent();
 		if (uriProblems == null)
 			return -1;
 		final int[] severity = new int[] { -1 };

@@ -156,6 +156,7 @@ public class CleanupHelper {
 					}
 				}
 
+				// exploreMenus(w.getMenuBarManager(), "");
 				for (final String s2 : MENUS_TO_REMOVE) {
 					w.getMenuBarManager().remove(s2);
 					w.getMenuManager().remove(s2);
@@ -166,6 +167,15 @@ public class CleanupHelper {
 				w.getMenuBarManager().update(true);
 			});
 		}
+
+		// private void exploreMenus(final IMenuManager m, final String before) {
+		// for (final IContributionItem o : m.getItems()) {
+		// System.out.println(before + "Item " + o.getClass().getSimpleName() + " " + o.getId());
+		// if (o instanceof IMenuManager)
+		// exploreMenus((IMenuManager) o, "===");
+		// }
+		//
+		// }
 
 		@Override
 		public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
@@ -223,9 +233,10 @@ public class CleanupHelper {
 
 	static class RearrangeMenus {
 
-		public final static Set<String> MENU_ITEMS_TO_REMOVE =
-				new HashSet<>(Arrays.asList("openWorkspace", "helpSearch", "org.eclipse.search.OpenFileSearchPage",
-						"textSearchSubMenu", "reopenEditors", "converstLineDelimitersTo"));
+		public final static Set<String> MENU_ITEMS_TO_REMOVE = new HashSet<>(Arrays.asList("openWorkspace",
+				"helpSearch", "org.eclipse.search.OpenFileSearchPage", "textSearchSubMenu", "reopenEditors",
+				"converstLineDelimitersTo", "org.eclipse.equinox.p2.ui.sdk.update",
+				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails"));
 		public final static Map<String, String> MENU_IMAGES = new HashMap<String, String>() {
 			{
 				put("print", "menu.print2");

@@ -345,6 +345,15 @@
                 <objectClass
                       name="ummisco.gama.ui.navigator.contents.TopLevelFolder">
                 </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedModelContent">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedExperimentContent">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedSyntacticContent">
+                </objectClass>
              </or>
           </enablement>
        </decorator>

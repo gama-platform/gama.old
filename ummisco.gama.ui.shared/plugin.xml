@@ -21,10 +21,6 @@
             id="disabled3"
             name="Disable P2 activity">
       </activity>
-      <activityPatternBinding
-            activityId="disabled3"
-            pattern="org.eclipse.equinox.p2.ui.*/.*">
-      </activityPatternBinding>
       
             <activityPatternBinding
             activityId="disabled2"

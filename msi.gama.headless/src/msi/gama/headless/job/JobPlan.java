@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.model.IModel;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -65,7 +66,8 @@ public class JobPlan {
 		return this.originalJobs.get(name);
 	}
 
-	public JobPlanExperimentID[] loadModelAndCompileJob(final String modelPath) throws IOException {
+	public JobPlanExperimentID[] loadModelAndCompileJob(final String modelPath)
+			throws IOException, GamaHeadlessException {
 		model = HeadlessSimulationLoader.loadModel(new File(modelPath));
 		final List<IExperimentJob> jobs = JobPlan.loadAndBuildJobs(model);
 		final JobPlanExperimentID[] res = new JobPlanExperimentID[jobs.size()];
@@ -135,9 +137,8 @@ public class JobPlan {
 		final ModelDescription modelDescription = model.getDescription().getModelDescription();
 		final List<IExperimentJob> res = new ArrayList<IExperimentJob>();
 
-		@SuppressWarnings("unchecked")
-		final Collection<ExperimentDescription> experiments = (Collection<ExperimentDescription>) modelDescription
-				.getExperiments();
+		@SuppressWarnings ("unchecked") final Collection<ExperimentDescription> experiments =
+				(Collection<ExperimentDescription>) modelDescription.getExperiments();
 
 		for (final ExperimentDescription expD : experiments) {
 			if (!expD.getLitteral(IKeyword.TYPE).equals(IKeyword.BATCH)) {
