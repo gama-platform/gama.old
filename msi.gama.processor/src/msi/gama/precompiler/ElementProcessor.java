@@ -51,10 +51,15 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 			if (old != null) {
 				old.getParentNode().removeChild(old);
 			}
-			final org.w3c.dom.Element node = doc.createElement(getElementName());
-			index.put(key, node);
-			populateElement(context, e, doc, e.getAnnotation(a), node);
-			getRootNode(doc).appendChild(node);
+			try {
+				final org.w3c.dom.Element node = doc.createElement(getElementName());
+				populateElement(context, e, doc, e.getAnnotation(a), node);
+				index.put(key, node);
+				getRootNode(doc).appendChild(node);
+			} catch (final Exception exception) {
+				context.emitError("Exception in processor: " + exception.getMessage(), e);
+			}
+
 		}
 		// XML Files are not saved for the moment as they seem to be correctly kept in memory
 		// saveDocument(context, doc);
