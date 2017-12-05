@@ -14,7 +14,6 @@ package msi.gama.doc;
 import msi.gama.doc.transform.XmlToCatalog;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
-import msi.gama.precompiler.doc.utils.Constants;
 
 public class MainGenerateCatalog {
 
@@ -23,7 +22,7 @@ public class MainGenerateCatalog {
 			System.out.println("GENERATION OF THE CATALOG FROM JAVA CODE");
 			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 			System.out.print("Preparation of the folders................");
-			PrepareEnv.prepareDocumentation(Constants.ONLINE);
+			PrepareEnv.prepareDocumentation();
 			System.out.println("DONE");
 
 			System.out.print("Merge all the docGAMA.xml files................");

@@ -52,7 +52,7 @@ public class PrepareEnv {
 		testsModelsFolder.mkdir();
 	}
 
-	public static void prepareDocumentation(final boolean online) throws IOException {
+	public static void prepareDocumentation() throws IOException {
 		// - Deletes every generated folders
 		// - Creates every folders when they do not exist
 
@@ -69,15 +69,11 @@ public class PrepareEnv {
 		genFolder.mkdir();
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();
 		new File(Constants.XML2WIKI_FOLDER).mkdirs();
-		// new File(Constants.WIKI2WIKI_FOLDER).mkdirs();
-		// new File(Constants.HTML2XML_FOLDER).mkdirs();
 		new File(Constants.PDF_FOLDER).mkdirs();
 		new File(Constants.TEST_FOLDER).mkdirs();
 		new File(Constants.TOC_GEN_FOLDER).mkdir();
 		new File(Constants.XML_KEYWORD_GEN_FOLDER).mkdirs();
 		new File(Constants.CATALOG_GEN_FOLDER).mkdir();
-
-		// copyPythonTemplate();
 	}
 
 	static public boolean deleteDirectory(final File path) {
@@ -94,16 +90,11 @@ public class PrepareEnv {
 		return path.delete();
 	}
 
-	// private static void copyPythonTemplate() throws IOException{
-	// File pythonTemplate = new File(Constants.PYTHON_TEMPLATE_FOLDER);
-	// FileUtils.copyDirectory(pythonTemplate, new File(Constants.WIKI2WIKI_FOLDER));
-	// }
-
 	/**
 	 * @param args
 	 * @throws IOException
 	 */
 	public static void main(final String[] args) throws IOException {
-		prepareDocumentation(Constants.ONLINE);
+		prepareDocumentation();
 	}
 }

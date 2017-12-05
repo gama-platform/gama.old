@@ -14,8 +14,6 @@ package msi.gama.doc;
 import msi.gama.doc.util.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
-import msi.gama.precompiler.doc.utils.Constants;
-
 
 public class MainGeneratePDF {
 
@@ -30,16 +28,9 @@ public class MainGeneratePDF {
 		}
 
 			System.out.print("Preparation of the folders.......................");
-			PrepareEnv.prepareDocumentation(Constants.ONLINE);
+			PrepareEnv.prepareDocumentation();
 			System.out.println("DONE");
-			
-			if(Constants.ONLINE){
-				System.out.print("Checkout Wiki Files from GAMA SVN................PLEASE WAIT");	
-				// TODO faire un pull !!!
-				System.out.println("Checkout Wiki Files from GAMA SVN................DONE");	
-			} else {
-				System.out.println("NO CHECKOUT DONE  ...");
-			}
+
 			System.out.println("Generation of the PDF file .................");
 			ConvertToPDF.convert();
 			System.out.println("DONE");			
