@@ -15,7 +15,10 @@ import com.thoughtworks.xstream.XStream;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.ExperimentPlan.ExperimentPopulation;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -97,7 +100,6 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 					// Update of the simulation
 					final SimulationAgent currentSimAgt = getSimulation();
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG - current Simul : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
 					
 					currentSimAgt.updateWith(scope, agt);
 					
@@ -106,25 +108,20 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 					String rngName = currentSimAgt.getRandomGenerator().getRngName();
 					Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
 					
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG - read - ap updateRed : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG - rndUsage : " + rngUsage, scope.getRoot(), new GamaColor(0, 0, 0));
-
 					final IOutputManager outputs = getSimulation().getOutputManager();
 					if (outputs != null) {
 						outputs.step(scope);
 					}
-					
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG - rndUsage : " + rngUsage, scope.getRoot(), new GamaColor(0, 0, 0));
-					
+										
 					// Recreate the random generator and set it to the same state as the saved one
-					currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));
-					currentSimAgt.getRandomGenerator().setUsage(rngUsage);
-					
+					if( ((ExperimentPlan) this.getSpecies()).keepsSeed() ) {
+						currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));	
+						currentSimAgt.getRandomGenerator().setUsage(rngUsage);						
+					} else {
+						currentSimAgt.setRandomGenerator(new RandomUtils(super.random.next(), rngName));							
+					}
+
 					currentNode = currentNode.getParent();
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
-					//scope.getGui().getConsole(scope).informConsole("backward - RNG - read - ap updateRed : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
-					//scope.getGui().getConsole(scope).informConsole("=========", scope.getRoot(), new GamaColor(0, 0, 0));
-					
 				}
 			}
 		} finally {
