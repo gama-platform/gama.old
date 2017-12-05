@@ -654,7 +654,7 @@ public interface IUnits {
 	public final static Map<String, UnitConstantExpression> UNITS_EXPR = new HashMap<>();
 
 	@SuppressWarnings ("rawtypes")
-	static Object add(final String name, final Object value, final String doc, final String deprec,
+	public static Object add(final String name, final Object value, final String doc, final String deprec,
 			final boolean isTime, final String[] names) {
 		if (UNITS_EXPR.containsKey(name)) { return null; }
 		final IType t = Types.get(value.getClass());
