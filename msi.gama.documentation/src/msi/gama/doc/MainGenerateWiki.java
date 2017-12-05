@@ -32,7 +32,7 @@ public class MainGenerateWiki {
 			System.out.println("DONE");
 
 			System.out.print("Merge all the docGAMA.xml files................");
-			UnifyDoc.unify(false);
+			UnifyDoc.unify((args.length > 0) ? (args[0].equals("-online") ? false : true) : true);
 			System.out.println("DONE");
 
 			System.out.print(
