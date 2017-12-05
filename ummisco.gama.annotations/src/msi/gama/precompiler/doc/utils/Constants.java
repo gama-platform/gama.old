@@ -50,11 +50,14 @@ public class Constants {
 	public static String PDF_FOLDER = GEN_FOLDER + File.separator + "pdf";
 	public static String TOC_GEN_FOLDER = GEN_FOLDER + File.separator + "toc2pdf";
 	public static String XML_KEYWORD_GEN_FOLDER = GEN_FOLDER + File.separator + "xmlKeywords";
+	public static String CATALOG_GEN_FOLDER = GEN_FOLDER + File.separator + "catalog";
+	
 	public static String PATH_TO_KEYWORDS_XML = Constants.WIKI_FOLDER + File.separator + "keywords.xml";
 
 	// Inputs Folders
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2md";
+	public static String XSL_XML2CATALOG_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2catalog";	
 	public static String XSL_XML2TEST_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";
 	public static String XSL_XML2PDF_FILE =
 			INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf" + File.separator + "xhtml-to-xslfo.xsl";

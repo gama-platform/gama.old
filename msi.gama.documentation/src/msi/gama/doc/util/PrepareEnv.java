@@ -75,6 +75,7 @@ public class PrepareEnv {
 		new File(Constants.TEST_FOLDER).mkdirs();
 		new File(Constants.TOC_GEN_FOLDER).mkdir();
 		new File(Constants.XML_KEYWORD_GEN_FOLDER).mkdirs();
+		new File(Constants.CATALOG_GEN_FOLDER).mkdir();
 
 		// copyPythonTemplate();
 	}
