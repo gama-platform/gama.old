@@ -44,7 +44,7 @@ public class MainGenerateWiki {
 			System.out.println("DONE");
 
 			System.out.print("Merge all the docGAMA.xml files................");
-			UnifyDoc.unify();
+			UnifyDoc.unify(false);
 			System.out.println("DONE");
 
 			System.out.print(

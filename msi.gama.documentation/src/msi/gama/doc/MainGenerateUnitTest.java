@@ -24,7 +24,7 @@ public class MainGenerateUnitTest {
 
 		try {
 
-			final WorkspaceManager ws = new WorkspaceManager(".");
+			final WorkspaceManager ws = new WorkspaceManager(".", false);
 			final HashMap<String, File> hmFiles = ws.getAllDocFilesLocal();
 
 			for (final File docFile : hmFiles.values()) {

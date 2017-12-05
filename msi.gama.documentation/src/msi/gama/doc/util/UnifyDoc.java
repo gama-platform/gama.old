@@ -42,10 +42,10 @@ public class UnifyDoc {
 			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
 			XMLElements.CONCEPT_LIST };
 
-	public static void unify() {
+	public static void unify(boolean local) {
 		try {
 
-			WorkspaceManager ws = new WorkspaceManager(".");
+			WorkspaceManager ws = new WorkspaceManager(".",local);
 			HashMap<String, File> hmFiles = ws.getProductDocFiles();
 
 			Document doc = mergeFiles(hmFiles);
@@ -62,7 +62,7 @@ public class UnifyDoc {
 	public static void unifyAllProjects() {
 		try {
 
-			WorkspaceManager ws = new WorkspaceManager(".");
+			WorkspaceManager ws = new WorkspaceManager(".", false);
 			HashMap<String, File> hmFiles = ws.getAllDocFiles();
 
 			Document doc = mergeFiles(hmFiles);
@@ -138,7 +138,7 @@ public class UnifyDoc {
 
 	public static void main(final String[] args) {
 		try {
-			UnifyDoc.unify();
+			UnifyDoc.unify(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
