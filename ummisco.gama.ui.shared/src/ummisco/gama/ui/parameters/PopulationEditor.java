@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PopulationEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PopulationEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,12 +20,12 @@ import org.eclipse.swt.widgets.Text;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class PopulationEditor extends AbstractEditor<IContainer> {
 
 	Text populationDisplayer;
@@ -77,7 +76,7 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	@Override
 	protected void applyBrowse() {
 		if (currentValue instanceof Collection) {
-			InspectDisplayOutput.browse((Collection) currentValue);
+			ValuedDisplayOutputFactory.browse((Collection) currentValue);
 		}
 	}
 

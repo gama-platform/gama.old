@@ -31,7 +31,7 @@ import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.ExecutionResult;
@@ -90,7 +90,7 @@ public class AgentsMenu extends ContributionItem {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				InspectDisplayOutput.browse(pop);
+				ValuedDisplayOutputFactory.browse(pop);
 			}
 
 		});

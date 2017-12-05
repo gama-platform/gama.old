@@ -29,7 +29,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.file.CsvWriter;
@@ -89,21 +88,17 @@ import msi.gaml.types.Types;
 				examples = @example (
 						value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
 						isExecutable = false)) })
-public class MonitorOutput extends AbstractDisplayOutput {
+public class MonitorOutput extends AbstractValuedDisplayOutput {
 	private static String monitorFolder = "monitors";
-	protected String expressionText = "";
-	protected IExpression value;
 	protected IExpression colorExpression = null;
 	protected GamaColor color = null;
 	protected GamaColor constantColor = null;
-	protected Object lastValue = "";
 	protected List<Object> history;
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
-		setValue(getFacet(IKeyword.VALUE));
 		setColor(getFacet(IKeyword.COLOR));
-		expressionText = getValue() == null ? "" : getValue().serialize(false);
+
 	}
 
 	/**
@@ -126,10 +121,6 @@ public class MonitorOutput extends AbstractDisplayOutput {
 			setPaused(false);
 			open();
 		}
-	}
-
-	public Object getLastValue() {
-		return lastValue;
 	}
 
 	@Override
@@ -181,25 +172,9 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return constantColor == null ? color : constantColor;
 	}
 
-	public String getExpressionText() {
-		return expressionText == null ? "" : expressionText;
-	}
-
 	@Override
 	public boolean isUnique() {
 		return true;
-	}
-
-	public boolean setNewExpressionText(final String string) {
-		expressionText = string;
-		setValue(GAML.compileExpression(string, getScope().getSimulation(), true));
-		return getScope().step(this).passed();
-	}
-
-	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
-		expressionText = expr == null ? "" : expr.serialize(false);
-		setValue(expr);
-		getScope().step(this);
 	}
 
 	@Override
@@ -211,16 +186,13 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return result;
 	}
 
-	public IExpression getValue() {
-		return value;
-	}
-
+	@Override
 	protected void setValue(final IExpression value) {
 		if (history != null) {
 			history.clear();
 			history = null;
 		}
-		this.value = value;
+		super.setValue(value);
 		if (value != null) {
 			final IType<?> t = value.getType();
 			if (t.isNumber() || t.isContainer() && t.getContentType().isNumber()) {
