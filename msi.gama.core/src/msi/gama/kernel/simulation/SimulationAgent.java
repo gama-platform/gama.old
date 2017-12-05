@@ -178,7 +178,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold;
-	private final RandomUtils random;
+	private RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
 
@@ -664,6 +664,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public RandomUtils getRandomGenerator() {
 		return random;
+	}
+	
+	public void setRandomGenerator(RandomUtils rng){
+		random = rng;
 	}
 
 	public void prepareGuiForSimulation(final IScope s) {

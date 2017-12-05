@@ -13,6 +13,7 @@ package ummisco.gama.serializer.experiment;
 import com.thoughtworks.xstream.XStream;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -22,6 +23,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.TypeNode;
 import msi.gaml.types.TypeTree;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -65,7 +67,11 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
 
 		currentNode = currentNode.addChild(state);
+		
+		
+		scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
 
+		
 		return result;
 	}
 
@@ -74,15 +80,12 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		// TODO : to change
 		// clock.beginCycle();
 		final boolean result = true;
+		TypeNode<String> previousNode;
 
 		try {
-			final int currentCycle = getSimulation().getCycle(scope);
-			// TODO what is this executer ????
-			// executer.executeBeginActions();
-
 			if (canStepBack()) {
-				currentNode = currentNode.getParent();
-				final String previousState = currentNode.getData();
+				previousNode = currentNode.getParent();
+				final String previousState = previousNode.getData();
 
 				if (previousState != null) {
 					final ConverterScope cScope = new ConverterScope(scope);
@@ -90,21 +93,43 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 					// get the previous state
 					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
+					
 
 					// Update of the simulation
 					final SimulationAgent currentSimAgt = getSimulation();
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG - current Simul : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
+					
 					currentSimAgt.updateWith(scope, agt);
-
-					// executer.executeEndActions();
-					// executer.executeOneShotActions();
+					
+					// useful to recreate the random generator
+					int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
+					String rngName = currentSimAgt.getRandomGenerator().getRngName();
+					Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
+					
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG - read - ap updateRed : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG - rndUsage : " + rngUsage, scope.getRoot(), new GamaColor(0, 0, 0));
 
 					final IOutputManager outputs = getSimulation().getOutputManager();
 					if (outputs != null) {
 						outputs.step(scope);
 					}
+					
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG - rndUsage : " + rngUsage, scope.getRoot(), new GamaColor(0, 0, 0));
+					
+					// Recreate the random generator and set it to the same state as the saved one
+					currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));
+					currentSimAgt.getRandomGenerator().setUsage(rngUsage);
+					
+					currentNode = currentNode.getParent();
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
+					//scope.getGui().getConsole(scope).informConsole("backward - RNG - read - ap updateRed : " + currentSimAgt.getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
+					//scope.getGui().getConsole(scope).informConsole("=========", scope.getRoot(), new GamaColor(0, 0, 0));
+					
 				}
 			}
 		} finally {
+			informStatus();
+
 			// TODO a remettre
 			// clock.step(this.scope);
 			// final int nbThreads =
@@ -121,7 +146,10 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	@Override
 	public boolean canStepBack() {
-		return currentNode != null && currentNode.getParent() != null;
+		
+		int current_cycle = getSimulation().getCycle(this.getScope());
+		return (current_cycle > 0 ) ? true : false;
+	//	return currentNode != null && currentNode.getParent() != null;
 	}
 	
 	@Override
