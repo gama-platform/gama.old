@@ -9,7 +9,6 @@ commit_wiki_files() {
 	cd /home/travis/build/gama-platform/gama/msi.gama.documentation/
 	java -cp ".:libs/jdom-2.0.1.jar:target/classes:../ummisco.gama.annotations/target/classes"  msi.gama.doc.MainGenerateWiki	
 	
-	
 
 	cd /home/travis/build/gama-platform/gama.wiki
 	git remote rm origin
