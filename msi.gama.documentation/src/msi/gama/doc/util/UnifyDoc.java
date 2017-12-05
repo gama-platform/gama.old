@@ -35,7 +35,7 @@ public class UnifyDoc {
 			XMLElements.OPERATORS, XMLElements.SKILLS, XMLElements.ARCHITECTURES, XMLElements.SPECIESS,
 			XMLElements.STATEMENTS, XMLElements.CONSTANTS_CATEGORIES, XMLElements.CONSTANTS,
 			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
-			XMLElements.TYPES };
+			XMLElements.TYPES, XMLElements.FILES };
 	// among tebEltXML, categories do not need to have an additional projectName
 	// attribute
 	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
@@ -59,10 +59,10 @@ public class UnifyDoc {
 		}
 	}
 
-	public static void unifyAllProjects() {
+	public static void unifyAllProjects(boolean local) {
 		try {
 
-			WorkspaceManager ws = new WorkspaceManager(".", false);
+			WorkspaceManager ws = new WorkspaceManager(".", local);
 			HashMap<String, File> hmFiles = ws.getAllDocFiles();
 
 			Document doc = mergeFiles(hmFiles);
@@ -98,9 +98,9 @@ public class UnifyDoc {
 						for (Element e : docTemp.getRootElement().getChild(catXML).getChildren()) {
 							// Do not add the projectName for every kinds of
 							// categories
-							if (!Arrays.asList(tabCategoriesEltXML).contains(catXML)) {
+					//		if (!Arrays.asList(tabCategoriesEltXML).contains(catXML)) {
 								e.setAttribute("projectName", fileDoc.getKey());
-							}
+					//		}
 
 							// Test whether the element is already in the merged
 							// doc
