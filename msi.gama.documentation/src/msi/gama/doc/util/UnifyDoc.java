@@ -13,7 +13,6 @@ package msi.gama.doc.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -38,9 +37,9 @@ public class UnifyDoc {
 			XMLElements.TYPES, XMLElements.FILES };
 	// among tebEltXML, categories do not need to have an additional projectName
 	// attribute
-	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
-			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
-			XMLElements.CONCEPT_LIST };
+//	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
+//			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
+//			XMLElements.CONCEPT_LIST };
 
 	public static void unify(boolean local) {
 		try {
@@ -63,7 +62,7 @@ public class UnifyDoc {
 		try {
 
 			WorkspaceManager ws = new WorkspaceManager(".", local);
-			HashMap<String, File> hmFiles = ws.getAllDocFiles();
+	 		HashMap<String, File> hmFiles = local ? ws.getAllDocFilesLocal() : ws.getAllDocFiles();			
 
 			Document doc = mergeFiles(hmFiles);
 
