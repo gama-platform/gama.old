@@ -224,6 +224,12 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				scaleAxis.setLabelPaint(textColor);
 				scaleAxis.setTickLabelPaint(textColor);
 			}
+			if (!this.getXTickValueVisible(scope))
+			{
+				scaleAxis.setTickMarksVisible(false);
+				scaleAxis.setTickLabelsVisible(false);
+				
+			}
 
 			final PaintScaleLegend legend = new PaintScaleLegend(paintscale, scaleAxis);
 			legend.setAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
@@ -321,7 +327,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			if (!usexrangeinterval && !usexrangeminmax) 
 			{
 				domainAxis.setAutoRange(false);
-				domainAxis.setRange(0,XValues.size()+0.5);				
+				domainAxis.setRange(-0.5,XValues.size()+0.5);				
 			}
 			
 		}
@@ -331,7 +337,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			if (!useyrangeinterval && !useyrangeminmax) 
 			{
 				rangeAxis.setAutoRange(false);
-				rangeAxis.setRange(0,YValues.size()+0.5);				
+				rangeAxis.setRange(-0.5,YValues.size()+0.5);				
 			}
 			
 		}
@@ -341,6 +347,10 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		if (XValues.size() > 0) {
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
+				domainAxis.setTickLabelsVisible(this.getXTickValueVisible(scope));
+				domainAxis.setTickMarksVisible(this.getXTickValueVisible(scope));
+				rangeAxis.setTickLabelsVisible(this.getYTickValueVisible(scope));
+				rangeAxis.setTickMarksVisible(this.getYTickValueVisible(scope));
 			for (int i = 0; i < XValues.size(); i++) {
 
 				if (XValues.get(i)>domainAxis.getUpperBound())
@@ -348,7 +358,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 					if (!usexrangeinterval && !usexrangeminmax) 
 					{
 						domainAxis.setAutoRange(false);
-						domainAxis.setRange(0,YValues.get(i)+0.5);				
+						domainAxis.setRange(-0.5,YValues.get(i)+0.5);				
 					}
 					
 				}
@@ -357,7 +367,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 					if (!useyrangeinterval && !useyrangeminmax) 
 					{
 						rangeAxis.setAutoRange(false);
-						rangeAxis.setRange(0,YValues.get(i)+0.5);				
+						rangeAxis.setRange(-0.5,YValues.get(i)+0.5);				
 					}
 					
 				}
@@ -417,8 +427,20 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		}
 		if (this.series_label_position.equals("none")) 
 		{
+			if ((this.chart).getLegend()!=null)
 			(this.chart).getLegend().setVisible(false);
 		}
+		if (!this.getXTickLineVisible(scope))
+		{
+			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(false);
+			
+		}
+		if (!this.getYTickLineVisible(scope))
+		{
+			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(false);
+			
+		}
+		
 	}
 
 	@Override
@@ -510,6 +532,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		pp.setDomainGridlinesVisible(false);
 
 		pp.getDomainAxis().setAxisLinePaint(axesColor);
+
 		pp.getDomainAxis().setTickLabelFont(getTickFont());
 		pp.getDomainAxis().setLabelFont(getLabelFont());
 		if (textColor != null) {

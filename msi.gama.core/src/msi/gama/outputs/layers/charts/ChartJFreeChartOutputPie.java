@@ -54,6 +54,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 		} else {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
+			
 		}
 	}
 
@@ -95,11 +96,22 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		super.initChart(scope, chartname);
 
 		final PiePlot pp = (PiePlot) chart.getPlot();
+		pp.setShadowXOffset(0);
+		pp.setShadowYOffset(0);
+		if (!this.series_label_position.equals("none"))
+		{
 		pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
 		if (axesColor != null) {
 			pp.setLabelLinkPaint(axesColor);
 		}
 		pp.setLabelFont(getTickFont());
+		}
+		if (this.series_label_position.equals("none"))
+		{
+			pp.setLabelLinksVisible(false);
+			pp.setLabelGenerator(null);
+			
+		}
 		if (textColor != null) {
 			// pp.setLabelPaint(textColor);
 			// not for Pie since the label background is always yellow for

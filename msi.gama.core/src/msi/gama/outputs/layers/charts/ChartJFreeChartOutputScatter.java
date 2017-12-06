@@ -615,8 +615,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (!this.getXTickValueVisible(scope))
 		{
-			rangeAxis.setTickMarksVisible(false);
-			rangeAxis.setTickLabelsVisible(false);
+			domainAxis.setTickMarksVisible(false);
+			domainAxis.setTickLabelsVisible(false);
 			
 		}
 
@@ -783,6 +783,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (getType() == ChartOutput.XY_CHART) {}
 		if (getType() == ChartOutput.SCATTER_CHART) {}
+		if (!this.getXTickValueVisible(scope))
+		{
+			pp.getDomainAxis().setTickMarksVisible(false);
+			pp.getDomainAxis().setTickLabelsVisible(false);
+			
+		}
 
 	}
 
