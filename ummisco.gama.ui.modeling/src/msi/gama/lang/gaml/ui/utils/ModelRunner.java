@@ -48,6 +48,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.WithTestSummary;
 import ummisco.gama.ui.interfaces.IModelRunner;
+import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -127,6 +128,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	private IModel findModel(final Object object) {
 		if (object instanceof IModel)
 			return (IModel) object;
+		if (object instanceof WrappedGamaFile) { return findModel(((WrappedGamaFile) object).getResource()); }
 		if (object instanceof IFile) {
 			final IFile file = (IFile) object;
 			try {

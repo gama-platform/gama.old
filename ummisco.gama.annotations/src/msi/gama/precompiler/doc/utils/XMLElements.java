@@ -29,6 +29,10 @@ public interface XMLElements {
 	public static final String DOCUMENTATION = "documentation";
 	public static final String EXAMPLES = "examples";
 	public static final String EXAMPLE = "example";
+	public static final String EXTENSIONS = "extensions";
+	public static final String EXTENSION = "extension";
+	public static final String FILES = "files";
+	public static final String FILE = "file";	
 	public static final String FACETS = "facets";
 	public static final String FACET = "facet";
 	public static final String INSIDE = "inside";
@@ -70,12 +74,22 @@ public interface XMLElements {
 	public static final String ARCHITECTURES = "architectures";
 	public static final String ARCHITECTURE = "architecture";
 
+	
+	public static final String ATT_NAME = "name";	
+	
 	// Attributes of DOC element
 	public static final String ATT_DOC_PLUGINNAME = "plugin";
 
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
 
+	// Attributes of FILE element
+	public static final String ATT_FILE_NAME = "name";
+	public static final String ATT_FILE_BUFFER_TYPE = "buffer_type";
+	public static final String ATT_FILE_BUFFER_INDEX = "buffer_index";
+	public static final String ATT_FILE_BUFFER_CONTENT = "buffer_content";
+	
+	
 	// Attributes of OPERATOR element
 	// public static final String ATT_OP_CATEGORY = "category";
 	public static final String ATT_OP_NAME = "name";

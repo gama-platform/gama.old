@@ -12,6 +12,7 @@ package ummisco.gama.ui.navigator.contents;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
@@ -27,7 +28,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 		implements Comparable<WrappedSyntacticContent> {
 
 	public final ISyntacticElement element;
-	final String uri;
+	final URI uri;
 
 	private WrappedSyntacticContent(final WrappedSyntacticContent parent, final ISyntacticElement e) {
 		this(parent, e, GAMA.getGui().getGamlLabelProvider().getText(e));
@@ -36,15 +37,18 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	public WrappedSyntacticContent(final VirtualContent<?> root, final ISyntacticElement e, final String name) {
 		super(root, name == null ? GAMA.getGui().getGamlLabelProvider().getText(e) : name);
 		element = e;
-		uri = element == null || element.getElement() == null ? null
-				: EcoreUtil.getURI(element.getElement()).toString();
+		uri = element == null || element.getElement() == null ? null : EcoreUtil.getURI(element.getElement());
+	}
+
+	public WrappedGamaFile getFile() {
+		return ((WrappedSyntacticContent) getParent()).getFile();
 	}
 
 	@Override
 	public boolean hasChildren() {
 		if (!element.hasChildren())
 			return false;
-		if (element.isSpecies() || element.isExperiment())
+		if (element.isSpecies())
 			return true;
 		return false;
 	}
@@ -70,15 +74,13 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public boolean handleDoubleClick() {
-		if (element.isExperiment()) {
-			GAMA.getGui().runModel(getParent(), element.getName());
-		} else
-			GAMA.getGui().editModel(null, element.getElement());
+		GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
 
 	@Override
 	public boolean handleSingleClick() {
+
 		GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
@@ -103,8 +105,8 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	}
 
-	public int getURIProblem(final String fragment) {
-		return ((WrappedSyntacticContent) getParent()).getURIProblem(fragment);
+	public int getURIProblem(final URI fragment) {
+		return getFile().getURIProblem(fragment);
 	}
 
 	@Override
@@ -142,4 +144,5 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	public Image getStatusImage() {
 		return getImage();
 	}
+
 }

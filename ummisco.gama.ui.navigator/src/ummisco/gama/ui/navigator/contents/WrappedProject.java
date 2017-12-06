@@ -1,5 +1,8 @@
 package ummisco.gama.ui.navigator.contents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -10,6 +13,7 @@ import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -85,17 +89,24 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	}
 
 	private void getTestSuffix(final StringBuilder sb) {
-		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
-		if (summary == null)
+		final org.eclipse.emf.common.util.URI emfURI =
+				org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
+		final String result = getSuffixOfTestSummary(emfURI);
+		if (result.isEmpty())
 			super.getSuffix(sb);
 		else {
-			// final java.net.URI javaURI = URI.create(getResource().getLocation().toOSString());
-			final org.eclipse.emf.common.util.URI emfURI =
-					org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
-			final CompoundSummary list = summary.getSubSummariesBelongingTo(emfURI);
-			sb.append(list.getStringSummary());
+			sb.append(result);
 		}
+	}
 
+	public String getSuffixOfTestSummary(final org.eclipse.emf.common.util.URI uri) {
+		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
+		if (summary == null)
+			return "";
+		final List<AbstractSummary<?>> list = new ArrayList<>();
+		summary.getSubSummariesBelongingTo(uri, list);
+		final CompoundSummary<?, ?> result = new CompoundSummary<>(list);
+		return result.getStringSummary();
 	}
 
 	private boolean isTestProject() {
@@ -120,6 +131,11 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 
 	void setPlugin(final String plugin) {
 		this.plugin = plugin;
+	}
+
+	@Override
+	public WrappedProject getProject() {
+		return this;
 	}
 
 }

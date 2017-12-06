@@ -12,11 +12,11 @@ package msi.gama.outputs;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -83,9 +83,9 @@ import msi.gaml.types.Types;
 						doc = @doc ("the set of agents to inspect, could be a species, a list of agents or an agent")),
 				@facet (
 						name = IKeyword.ATTRIBUTES,
-						type = IType.LIST,
+						type = { IType.LIST },
 						optional = true,
-						doc = @doc ("the list of attributes to inspect")),
+						doc = @doc ("the list of attributes to inspect. A list that can contain strings or pair<string,type>, or a mix of them. These can be variables of the species, but also attributes present in the attributes table of the agent. The type is necessary in that case")),
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.ID,
@@ -104,7 +104,7 @@ import msi.gaml.types.Types;
 						value = "inspect \"my_inspector\" value: ant attributes: [\"name\", \"location\"];",
 						isExecutable = false) }) })
 @SuppressWarnings ({ "rawtypes" })
-public class InspectDisplayOutput extends MonitorOutput implements IStatement {
+public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements IStatement {
 
 	public static final short INSPECT_AGENT = 0;
 	public static final short INSPECT_TABLE = 3;
@@ -115,88 +115,8 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 
 	String type;
 	IExpression attributes;
-	private List<String> listOfAttributes;
+	private Map<String, String> listOfAttributes;
 	IMacroAgent rootAgent;
-
-	public static void browse(final Collection<? extends IAgent> agents) {
-		IPopulation pop = null;
-		IMacroAgent root = null;
-		if (agents instanceof IPopulation) {
-			pop = (IPopulation) agents;
-			root = pop.getHost();
-			browse(pop.getHost(), pop.getSpecies());
-		} else {
-			for (final IAgent agent : agents) {
-				final IPopulation agentPop = agent.getPopulation();
-				root = agentPop.getHost();
-				if (root != null)
-					break;
-			}
-			if (root == null)
-				return;
-			browse(root, agents);
-		}
-	}
-
-	public static void browse(final IMacroAgent root, final Collection<? extends IAgent> agents) {
-		final IMacroAgent realRoot = findRootOf(root, agents);
-		if (realRoot == null) {
-			GamaRuntimeException.error("Impossible to find a common host agent for " + agents, root.getScope());
-			return;
-		}
-		new InspectDisplayOutput(realRoot, agents).launch(realRoot.getScope());
-	}
-
-	private static IMacroAgent findRootOf(final IMacroAgent root, final Collection<? extends IAgent> agents) {
-		if (agents instanceof IPopulation) { return ((IPopulation) agents).getHost(); }
-		IMacroAgent result = null;
-		for (final IAgent a : agents) {
-			if (result == null) {
-				result = a.getHost();
-			} else {
-				if (a.getHost() != result)
-					return null;
-			}
-		}
-		return result;
-
-	}
-
-	public static void browse(final IMacroAgent root, final ISpecies species) {
-		if (!root.getSpecies().getMicroSpecies().contains(species)) {
-			if (root instanceof ExperimentAgent) {
-				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
-				browse(realRoot, species);
-			} else {
-				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species.getName(),
-						root.getScope());
-			}
-			return;
-		}
-		new InspectDisplayOutput(root, species).launch(root.getScope());
-	}
-
-	public static void browse(final IMacroAgent root, final IExpression expr) {
-		final SpeciesDescription species = expr.getType().isContainer() ? expr.getType().getContentType().getSpecies()
-				: expr.getType().getSpecies();
-		if (species == null) {
-			GamaRuntimeException.error("Expression '" + expr.serialize(true) + "' does not reference agents",
-					root.getScope());
-			return;
-		}
-		final ISpecies rootSpecies = root.getSpecies();
-		if (rootSpecies.getMicroSpecies(species.getName()) == null) {
-			if (root instanceof ExperimentAgent) {
-				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
-				browse(realRoot, expr);
-			} else {
-				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species.getName(),
-						root.getScope());
-			}
-			return;
-		}
-		new InspectDisplayOutput(root, expr).launch(root.getScope());
-	}
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -222,12 +142,11 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 			lastValue = getValue().value(getScope());
 		}
 		if (attributes != null) {
-			listOfAttributes = Cast.asList(getScope(), attributes.value(getScope()));
+			listOfAttributes = (Map<String, String>) Types.MAP.of(Types.STRING, Types.STRING).cast(getScope(),
+					attributes.value(getScope()), null, true);
 		}
 		if (rootAgent == null || rootAgent.dead()) {
 			rootAgent = getScope().getRoot();
-			// scope.getGui().debug("InspectDisplayOutput.init rootAgent = " +
-			// rootAgent);
 		}
 		return true;
 	}
@@ -243,7 +162,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		lastValue = a;
 	}
 
-	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
+	InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
 		this(DescriptionFactory
 				.create(IKeyword.INSPECT, GAML.getExperimentContext(rootAgent), IKeyword.NAME,
@@ -253,7 +172,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		this.rootAgent = rootAgent;
 	}
 
-	private InspectDisplayOutput(final IMacroAgent agent, final Collection<? extends IAgent> agents) {
+	InspectDisplayOutput(final IMacroAgent agent, final Collection<? extends IAgent> agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
 				StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
@@ -262,7 +181,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		this.rootAgent = agent;
 	}
 
-	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
+	InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
 				StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
@@ -300,7 +219,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 
 	@Override
 	public boolean isUnique() {
-		return /* target != INSPECT_DYNAMIC && */!type.equals(IKeyword.TABLE);
+		return !type.equals(IKeyword.TABLE);
 	}
 
 	@Override
@@ -346,7 +265,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		return rootAgent.getSpecies().getMicroSpecies(speciesName);
 	}
 
-	public List<String> getAttributes() {
+	public Map<String, String> getAttributes() {
 		return listOfAttributes;
 	}
 
@@ -367,7 +286,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		if (type.isAgentType()) {
 			GAMA.getGui().setSelectedAgent((IAgent) value.value(scope));
 		} else if (type.isContainer()) {
-			browse(scope.getRoot(), value);
+			ValuedDisplayOutputFactory.browse(scope.getRoot(), value);
 		}
 		return value.value(scope);
 	}

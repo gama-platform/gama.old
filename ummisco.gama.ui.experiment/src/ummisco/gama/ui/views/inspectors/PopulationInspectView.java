@@ -212,9 +212,9 @@ public class PopulationInspectView extends GamaViewPart
 
 		if (!selectedColumns.containsKey(name)) {
 			selectedColumns.put(name, new ArrayList<>());
-			final List<String> names = getOutput().getAttributes();
-			if (names != null) {
-				selectedColumns.get(name).addAll(names);
+			final Map<String, String> attributes = getOutput().getAttributes();
+			if (attributes != null) {
+				selectedColumns.get(name).addAll(attributes.keySet());
 			} else if (getOutput().getValue() != null) {
 				if (species == null) { return; }
 				selectedColumns.get(name).addAll(species.getVarNames());
@@ -368,7 +368,8 @@ public class PopulationInspectView extends GamaViewPart
 		final boolean hasPreviousSelection = selectedColumns.get(speciesName) != null;
 		final InspectDisplayOutput output = getOutput();
 		final ISpecies species = output.getSpecies();
-		final List<String> names = new ArrayList(species.getVarNames());
+		final List<String> names = new ArrayList(
+				getOutput().getAttributes() == null ? species.getVarNames() : getOutput().getAttributes().keySet());
 		Collections.sort(names);
 		for (final String name : names) {
 			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
@@ -470,7 +471,11 @@ public class PopulationInspectView extends GamaViewPart
 				final IAgent agent = (IAgent) element;
 				if (agent.dead() && !title.equals(ID_ATTRIBUTE)) { return "N/A"; }
 				if (title.equals(ID_ATTRIBUTE)) { return String.valueOf(agent.getIndex()); }
-				return Cast.toGaml(getScope().getAgentVarValue(agent, title));
+				final Object value;
+				if (agent.getSpecies().hasVar(title))
+					return Cast.toGaml(getScope().getAgentVarValue(agent, title));
+				else
+					return Cast.toGaml(agent.getAttribute(title));
 			}
 		};
 	}

@@ -178,7 +178,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold;
-	private final RandomUtils random;
+	private RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
 
@@ -665,6 +665,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public RandomUtils getRandomGenerator() {
 		return random;
 	}
+	
+	public void setRandomGenerator(RandomUtils rng){
+		random = rng;
+	}
 
 	public void prepareGuiForSimulation(final IScope s) {
 		s.getGui().clearErrors(s);
@@ -702,10 +706,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
-		// Update Clock
-		final Object cycle = sa.getAttributeValue("cycle");
-		clock.setCycle((Integer) cycle);
-
+		
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
 		for (final String name : attr.keySet()) {
@@ -713,6 +714,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			// this.setAttribute(name, attr.get(name));
 		}
 
+		// Update Clock
+		final Object cycle = sa.getAttributeValue("cycle");
+		clock.setCycle((Integer) cycle);
+		
 		// TODO
 		// Update GUI of the Experiment
 		// this.getExperiment().

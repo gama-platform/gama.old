@@ -212,7 +212,10 @@ public class TOCManager {
 
 
     static class PathResolutionException extends RuntimeException {
-        PathResolutionException(String msg) {
+
+		private static final long serialVersionUID = 1L;
+
+		PathResolutionException(String msg) {
             super(msg);
         }
     }

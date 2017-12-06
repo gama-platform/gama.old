@@ -59,6 +59,12 @@
                <objectClass
                      name="ummisco.gama.ui.navigator.contents.WrappedFile">
                </objectClass>
+               <objectClass
+                     name="ummisco.gama.ui.navigator.contents.WrappedGamaFile">
+               </objectClass>
+               <objectClass
+                     name="ummisco.gama.ui.navigator.contents.WrappedSyntacticContent">
+               </objectClass>
             </or>
          </enablement>
       </decorator>
@@ -734,9 +740,17 @@ type="java.lang.Object">
              </instanceof>
           </editorInputEnablement>
           <selectionEnablement>
-             <instanceof
-                   value="ummisco.gama.ui.navigator.contents.WrappedFile">
-             </instanceof>
+             <or>
+                <instanceof
+                      value="ummisco.gama.ui.navigator.contents.WrappedFile">
+                </instanceof>
+                <instanceof
+                      value="ummisco.gama.ui.navigator.contents.WrappedGamaFile">
+                </instanceof>
+                <adapt
+                      type="org.eclipse.core.resources.IFile">
+                </adapt>
+             </or>
           </selectionEnablement>
        </linkHelper>
     </extension>

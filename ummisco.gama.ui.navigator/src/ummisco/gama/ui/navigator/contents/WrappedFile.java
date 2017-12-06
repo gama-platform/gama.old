@@ -1,8 +1,5 @@
 package ummisco.gama.ui.navigator.contents;
 
-import static msi.gama.common.GamlFileExtension.isExperiment;
-import static msi.gama.common.GamlFileExtension.isGaml;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.GAML_CT_ID;
 import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_CT_ID;
 import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID;
 import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
@@ -16,17 +13,12 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GAML;
-import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
-import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaFonts;
@@ -36,8 +28,6 @@ import ummisco.gama.ui.utils.PreferencesHelper;
 public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	WrappedFile fileParent;
-	boolean isGamaFile;
-	boolean isExperiment;
 	boolean isShapeFile;
 	boolean isShapeFileSupport;
 	Image image;
@@ -48,11 +38,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		computeFileParent();
 	}
 
-	private void computeFileImage() {
+	protected void computeFileImage() {
 		final IFile f = getResource();
-		if (isExperiment) {
-			image = GamaIcons.create("file.experiment2").image();
-		} else if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
+		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
 				image = GamaIcons.create("file.shapesupport2").image();
 			} else {
@@ -64,10 +52,8 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	}
 
-	private void computeFileType() {
+	protected void computeFileType() {
 		final IFile f = getResource();
-		isExperiment = isExperiment(f.getName());
-		isGamaFile = isExperiment || GAML_CT_ID.equals(getContentTypeId(f)) || isGaml(f.getName());
 		isShapeFile = SHAPEFILE_CT_ID.equals(getContentTypeId(f));
 		isShapeFileSupport = SHAPEFILE_SUPPORT_CT_ID.equals(getContentTypeId(f));
 	}
@@ -79,7 +65,6 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 				fileParent = (WrappedFile) getMapper().findWrappedInstanceOf(shape);
 			}
 		}
-
 	}
 
 	@Override
@@ -91,54 +76,24 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	@Override
 	public boolean canBeDecorated() {
-		return isGamaFile;
+		return false;
 	}
 
 	@Override
 	public boolean hasChildren() {
-		return isGamaFile || isShapeFile;
+		return isShapeFile;
 	}
 
 	@Override
 	public Object[] getNavigatorChildren() {
 		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED) {
-			if (isGamaFile)
-				return getGamlFileChildren();
-			if (isShapeFile)
-				return getShapeFileChildren();
+			if (isGamaFile() || isShapeFile)
+				return getFileChildren();
 		}
 		return EMPTY;
 	}
 
-	public Object[] getGamlFileChildren() {
-		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
-		if (metaData instanceof GamlFileInfo) {
-			final GamlFileInfo info = (GamlFileInfo) metaData;
-			final List<VirtualContent<?>> l = new ArrayList<>();
-			final String path = getResource().getFullPath().toOSString();
-			final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
-			if (element != null) {
-				if (!GamlFileExtension.isExperiment(path)) {
-					l.add(new WrappedModelContent(this, element));
-				}
-				element.visitExperiments(exp -> l.add(new WrappedExperimentContent(this, exp)));
-			}
-			if (!info.getImports().isEmpty()) {
-				final Category wf = new Category(this, info.getImports(), "Imports");
-				if (wf.getNavigatorChildren().length > 0)
-					l.add(wf);
-			}
-			if (!info.getUses().isEmpty()) {
-				final Category wf = new Category(this, info.getUses(), "Uses");
-				if (wf.getNavigatorChildren().length > 0)
-					l.add(wf);
-			}
-			return l.toArray();
-		}
-		return VirtualContent.EMPTY;
-	}
-
-	public Object[] getShapeFileChildren() {
+	public Object[] getFileChildren() {
 		final IFile p = getResource();
 		try {
 			final IContainer folder = p.getParent();
@@ -184,11 +139,11 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	@Override
 	public int countModels() {
-		return isGamaFile ? 1 : 0;
+		return 0;
 	}
 
 	public boolean isGamaFile() {
-		return isGamaFile;
+		return false;
 	}
 
 	@Override

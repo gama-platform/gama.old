@@ -152,7 +152,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final int innerType, final int keyType, final int contentType, final String[] s) {
 		helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
-				clazz, helper, s);
+				clazz, helper, s, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		VARTYPE2KEYWORDS.put(ISymbolKind.Variable.CONTAINER, string + "_file");
 	}
 

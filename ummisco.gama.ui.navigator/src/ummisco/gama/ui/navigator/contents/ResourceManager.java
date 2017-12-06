@@ -3,6 +3,7 @@ package ummisco.gama.ui.navigator.contents;
 import static org.eclipse.core.resources.IResourceChangeEvent.POST_CHANGE;
 import static org.eclipse.core.resources.IResourceChangeEvent.PRE_CLOSE;
 import static org.eclipse.core.resources.IResourceChangeEvent.PRE_DELETE;
+import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
 import static ummisco.gama.ui.utils.WorkbenchHelper.BUILTIN_NATURE;
 import static ummisco.gama.ui.utils.WorkbenchHelper.PLUGIN_NATURE;
 import static ummisco.gama.ui.utils.WorkbenchHelper.TEST_NATURE;
@@ -39,6 +40,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.ui.commands.TestsRunner;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class ResourceManager implements IResourceChangeListener, IResourceDeltaVisitor, ISelectionChangedListener {
@@ -86,8 +88,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	static void DEBUG(final String s) {
-		if (DEBUG)
-			System.out.println(s);
+		System.out.println(s);
 	}
 
 	public ResourceManager(final IResourceChangeListener delegate, final CommonViewer navigator) {
@@ -164,7 +165,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			BLOCKED_EVENTS.add(event);
 			return;
 		}
-		DEBUG("========= New Event =========");
+		if (DEBUG)
+			DEBUG("========= New Event =========");
 		try {
 			// begin();
 			final int type = event.getType();
@@ -178,11 +180,13 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 					}
 					break;
 				case IResourceChangeEvent.PRE_REFRESH:
-					DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
+					if (DEBUG)
+						DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
 					break;
 				case PRE_CLOSE:
 				case PRE_DELETE:
-					DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
+					if (DEBUG)
+						DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
 					break;
 				default:
 
@@ -219,7 +223,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileAdded(final IFile file) {
-		DEBUG("File " + file.getName() + " has been added");
+		if (DEBUG)
+			DEBUG("File " + file.getName() + " has been added");
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
 		wrap(parent, file);
 		if (parent != null) {
@@ -244,7 +249,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void projectAdded(final IProject project) {
-		DEBUG("Project " + project.getName() + " has been added");
+		if (DEBUG)
+			DEBUG("Project " + project.getName() + " has been added");
 		if (!IN_INITIALIZATION_PHASE) {
 			final TopLevelFolder root = chooseFolderForPasting(project);
 			final String nature = root.getNature();
@@ -263,7 +269,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectOpened(final IProject res) {
-		DEBUG("Project " + res.getName() + " has been opened");
+		if (DEBUG)
+			DEBUG("Project " + res.getName() + " has been opened");
 		final WrappedProject p = findWrappedInstanceOf(res);
 		if (p == null) {
 			projectAdded(res);
@@ -275,7 +282,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectClosed(final IProject res) {
-		DEBUG("Project " + res.getName() + " has been closed");
+		if (DEBUG)
+			DEBUG("Project " + res.getName() + " has been closed");
 		final WrappedProject p = findWrappedInstanceOf(res);
 		p.initializeChildren();
 		p.invalidateModelsCount();
@@ -285,7 +293,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderAdded(final IFolder folder) {
-		DEBUG("Folder " + folder.getName() + " has been added");
+		if (DEBUG)
+			DEBUG("Folder " + folder.getName() + " has been added");
 		final WrappedContainer<?> parent = findWrappedInstanceOf(folder.getParent());
 		final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
 		parent.initializeChildren();
@@ -316,7 +325,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileRemoved(final IFile file) {
-		DEBUG("File " + file.getName() + " has been removed");
+		if (DEBUG)
+			DEBUG("File " + file.getName() + " has been removed");
 		cache.invalidate(file);
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
 		if (parent != null) {
@@ -326,7 +336,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderRemoved(final IFolder folder) {
-		DEBUG("Folder " + folder.getName() + " has been removed");
+		if (DEBUG)
+			DEBUG("Folder " + folder.getName() + " has been removed");
 		final WrappedFolder wc = (WrappedFolder) findWrappedInstanceOf(folder);
 		cache.invalidate(folder);
 		if (wc != null) {
@@ -336,7 +347,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void projectRemoved(final IProject project) {
-		DEBUG("Project " + project.getName() + " has been removed");
+		if (DEBUG)
+			DEBUG("Project " + project.getName() + " has been removed");
 		final WrappedProject wp = findWrappedInstanceOf(project);
 		cache.invalidate(project);
 		final TopLevelFolder tp = (TopLevelFolder) wp.getParent();
@@ -366,11 +378,14 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				if ((flags & IResourceDelta.MARKERS) != 0) {
 					update = processMarkersChanged(res);
 				} else if ((flags & IResourceDelta.TYPE) != 0) {
-					DEBUG("Resource type changed: " + res);
+					if (DEBUG)
+						DEBUG("Resource type changed: " + res);
 				} else if ((flags & IResourceDelta.CONTENT) != 0) {
-					DEBUG("Resource contents changed: " + res);
+					if (DEBUG)
+						DEBUG("Resource contents changed: " + res);
 				} else if ((flags & IResourceDelta.SYNC) != 0) {
-					DEBUG("Resource sync info changed: " + res);
+					if (DEBUG)
+						DEBUG("Resource sync info changed: " + res);
 				}
 				break;
 		}
@@ -381,11 +396,13 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean processMarkersChanged(final IResource res) {
-		DEBUG("File " + res.getName() + " markers have changed");
+		if (DEBUG)
+			DEBUG("File " + res.getName() + " markers have changed");
 		invalidateSeverityCache(res);
 		if (res.getType() == IResource.FILE) {
 			final WrappedFile file = (WrappedFile) findWrappedInstanceOf(res);
-			if (file != null && file.isGamaFile) {
+			if (file != null && file.isGamaFile()) {
+				((WrappedGamaFile) file).computeURIProblems();
 				refreshResource(file);
 			}
 		}
@@ -469,9 +486,12 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private static WrappedResource<?, ?> privateCreateWrapping(final VirtualContent<?> parent, final IResource child) {
-		DEBUG("Creation of the wrapped instance of " + child.getName());
+		if (DEBUG)
+			DEBUG("Creation of the wrapped instance of " + child.getName());
 		switch (child.getType()) {
 			case IResource.FILE:
+				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId(
+						(IFile) child))) { return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child); }
 				return new WrappedFile((WrappedContainer<?>) parent, (IFile) child);
 			case IResource.FOLDER:
 				return new WrappedFolder((WrappedContainer<?>) parent, (IFolder) child);

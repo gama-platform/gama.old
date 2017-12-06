@@ -327,6 +327,7 @@ public class SimulationClock {
 	public void setStartingDate(final GamaDate starting_date) {
 		this.startingDate = starting_date;
 		this.currentDate = starting_date;
+		this.cycle = 0;
 	}
 
 	public void setCurrentDate(final GamaDate date) {

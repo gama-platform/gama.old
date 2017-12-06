@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -33,6 +34,7 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * The class GamaBundleLoader.
@@ -42,6 +44,13 @@ import msi.gaml.types.Types;
  *
  */
 public class GamaBundleLoader {
+
+	private static final boolean DEBUG = true;
+
+	public static void LOG(final String s) {
+		if (DEBUG)
+			System.out.println(s);
+	}
 
 	public volatile static boolean LOADED = false;
 	public static Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
@@ -69,11 +78,14 @@ public class GamaBundleLoader {
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
 		final Set<IExtension> extensions = new HashSet<IExtension>();
-
-		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
-		extensions.addAll(Arrays.asList(p.getExtensions()));
-		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
-		extensions.addAll(Arrays.asList(p.getExtensions()));
+		try {
+			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
+			extensions.addAll(Arrays.asList(p.getExtensions()));
+			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+			extensions.addAll(Arrays.asList(p.getExtensions()));
+		} catch (final InvalidRegistryObjectException e) {
+			e.printStackTrace();
+		}
 
 		// We retrieve their contributor plugin and add them to the
 		// GAMA_PLUGINS. In addition, we verify if they declare a folder called
@@ -92,6 +104,10 @@ public class GamaBundleLoader {
 			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null)
 				TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
 		}
+		LOG(">GAMA plugins with language additions: "
+				+ StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
+		LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e -> e.getSymbolicName()).toSet());
+		LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e -> e.getSymbolicName()).toSet());
 
 		// We remove the core plugin, in order to build it first (important)
 		GAMA_PLUGINS.remove(CORE_PLUGIN);
@@ -112,7 +128,6 @@ public class GamaBundleLoader {
 				e1.printStackTrace();
 			}
 		}
-		
 
 		// We gather all the extensions to the `create` statement and add them
 		// as delegates to EventLayerStatement
@@ -124,8 +139,7 @@ public class GamaBundleLoader {
 				e1.printStackTrace();
 			}
 		}
-		
-		
+
 		// We gather all the GAMA_PLUGINS that explicitly declare models using
 		// the non-default scheme (plugin > models ...).
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
@@ -154,7 +168,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		System.out.println(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		LOG(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -178,30 +192,29 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
 		} catch (final ClassNotFoundException e1) {
-			System.out.println(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
+			LOG(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 			return;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (final InstantiationException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
+			LOG(">> Impossible to instantiate additions from " + bundle);
 			return;
 		} catch (final IllegalAccessException e) {
-			System.out.println(">> Impossible to access additions from " + bundle);
+			LOG(">> Impossible to access additions from " + bundle);
 			return;
 		}
 		try {
 			add.initialize();
 		} catch (final SecurityException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
+			LOG(">> Impossible to instantiate additions from " + bundle);
 			return;
 		} catch (final NoSuchMethodException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
+			LOG(">> Impossible to instantiate additions from " + bundle);
 			return;
 		}
-		System.out.println(
-				">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
+		LOG(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
 
 	}
 

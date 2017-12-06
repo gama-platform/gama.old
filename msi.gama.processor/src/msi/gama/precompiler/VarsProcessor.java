@@ -107,11 +107,16 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			if (setter != null && setter.value().equals(name)) {
 				final ExecutableElement ex = (ExecutableElement) m;
 				final List<? extends VariableElement> argParams = ex.getParameters();
-				final String[] args = new String[argParams.size()];
+				final int n = argParams.size();
+				if (n == 0) {
+					context.emitError("Setters must declare at least one argument (or 2 if the scope is passed", ex);
+					return;
+				}
+				final String[] args = new String[n];
 				for (int i = 0; i < args.length; i++) {
 					args[i] = rawNameOf(context, argParams.get(i));
 				}
-				final int n = args.length;
+
 				final boolean scope = n > 0 && args[0].contains("IScope");
 				final org.w3c.dom.Element child = doc.createElement("setter");
 				child.setAttribute("method", ex.getSimpleName().toString());

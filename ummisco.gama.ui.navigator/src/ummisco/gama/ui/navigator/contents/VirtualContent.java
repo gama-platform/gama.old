@@ -108,6 +108,12 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 		return null;
 	}
 
+	public WrappedProject getProject() {
+		final Object p = getParent();
+		if (p instanceof VirtualContent) { return ((VirtualContent<?>) p).getProject(); }
+		return null;
+	}
+
 	public String getStatusMessage() {
 		return getName();
 	}

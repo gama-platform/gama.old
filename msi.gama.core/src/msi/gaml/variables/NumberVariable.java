@@ -206,4 +206,9 @@ public class NumberVariable extends Variable {
 		return stepVal;
 	}
 
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		return min != null && max != null && step != null;
+	}
+
 }

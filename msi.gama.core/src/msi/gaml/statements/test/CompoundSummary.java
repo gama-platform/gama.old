@@ -1,6 +1,5 @@
 package msi.gaml.statements.test;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -135,14 +134,23 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		return StreamEx.ofValues(summaries).mapToInt(s -> s.countTestsWith(state)).sum();
 	}
 
-	public CompoundSummary<T, S> getSubSummariesBelongingTo(final URI fileURI) {
-		final List<AbstractSummary<?>> list = new ArrayList<>();
-		final String uri = fileURI.toString();
+	public void getSubSummariesBelongingTo(final URI fileURI, final List<AbstractSummary<?>> collector) {
 		getSummaries().values().forEach(s -> {
-			if (s.getURI() != null && s.getURI().toString().startsWith(uri))
-				list.add(s);
+			if (matches(s.getURI(), fileURI))
+				collector.add(s);
+			else if (s instanceof CompoundSummary) {
+				((CompoundSummary) s).getSubSummariesBelongingTo(fileURI, collector);
+			}
 		});
-		return new CompoundSummary(list);
+	}
+
+	private boolean matches(final URI summary, final URI query) {
+		if (summary == null)
+			return false;
+		final String s = summary.toString();
+		final String q = query.toString();
+		return s.startsWith(q);
+
 	}
 
 	public String getStringSummary() {
