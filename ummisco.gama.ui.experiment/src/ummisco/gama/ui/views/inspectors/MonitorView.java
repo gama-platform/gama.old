@@ -26,8 +26,8 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
+import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
@@ -290,7 +290,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 			});
 		} else if (type.isContainer() && type.getContentType().isAgentType()) {
 			menu.put("Browse", () -> {
-				InspectDisplayOutput.browse((Collection<? extends IAgent>) data.getLastValue());
+				ValuedDisplayOutputFactory.browse((Collection<? extends IAgent>) data.getLastValue());
 			});
 		}
 		return menu;

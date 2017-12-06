@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.util.StringUtils;
+import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -221,17 +222,23 @@ public abstract class AbstractEditor<T>
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 
 		IAgent a = agent;
-		if (a == null) {
-			final IExperimentPlan exp = GAMA.getExperiment();
-			if (exp != null) {
-				a = exp.getAgent();
+
+		if (param instanceof ExperimentParameter) {
+			if (a == null) {
+				final IExperimentPlan exp = GAMA.getExperiment();
+				if (exp != null) {
+					a = exp.getAgent();
+				}
 			}
-		}
-		if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
-			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
-		}
-		if (agent == null) {
-			param.setValue(a == null ? null : a.getScope(), newValue);
+			if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
+				GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
+			}
+		} else {
+			// param.setValue(a == null ? null : a.getScope(), newValue);
+			if (a == null) {
+				param.setValue(null, newValue);
+			} else
+				param.setValue(a.getScope(), newValue);
 		}
 	}
 
@@ -492,7 +499,7 @@ public abstract class AbstractEditor<T>
 	@SuppressWarnings ("unchecked")
 	protected T getParameterValue() throws GamaRuntimeException {
 		Object result;
-		if (agent == null) {
+		if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
 			result = param.value(scope);
 		} else {
 			result = scope.getAgentVarValue(getAgent(), param.getName());
