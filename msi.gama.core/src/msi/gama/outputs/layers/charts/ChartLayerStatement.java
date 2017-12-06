@@ -126,6 +126,21 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the axis color")),
 				@facet (
+						name = ChartLayerStatement.XTICKLINEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("X tick line visible")),
+				@facet (
+						name = ChartLayerStatement.YTICKLINEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Y tick line visible")),
+				@facet (
+						name = ChartLayerStatement.TICKLINECOLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("the tick lines color")),
+				@facet (
 						name = IKeyword.TYPE,
 						type = IType.ID,
 						values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
@@ -305,6 +320,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public static final String Y2TICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
 
+	public static final String XTICKLINEVISIBLE = "x_tick_line_visible";
+	public static final String YTICKLINEVISIBLE = "y_tick_line_visible";
+	public static final String TICKLINECOLOR = "tick_line_color";
+
 	public static final String TICKFONTFACE = "tick_font";
 	public static final String TICKFONTSIZE = "tick_font_size";
 	public static final String TICKFONTSTYLE = "tick_font_style";
@@ -402,6 +421,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		lastValues.clear();
 
 		// chartParameters.clear();
+		
+		
 
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		// chartParameters.put(IKeyword.TYPE, string1);
@@ -590,6 +611,21 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		chartoutput.setAxesColorValue(scope, colorvalue);
 
+		 colorvalue = new GamaColor(Color.black);
+		 color = getFacet(ChartLayerStatement.TICKLINECOLOR);
+		if (color != null) {
+			colorvalue = Cast.asColor(scope, color.value(scope));
+		}
+		chartoutput.setTickColorValue(scope, colorvalue);
+
+		string1 = getFacet(ChartLayerStatement.XTICKLINEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setXTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.YTICKLINEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setYTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
 		colorvalue = new GamaColor(Color.black);
 		color = getFacet(IKeyword.COLOR);
 		if (color != null) {
