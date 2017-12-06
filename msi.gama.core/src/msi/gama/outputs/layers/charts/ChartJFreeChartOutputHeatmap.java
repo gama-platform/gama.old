@@ -315,13 +315,53 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
+		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		if (XValues.size()==0)
+		{
+			if (!usexrangeinterval && !usexrangeminmax) 
+			{
+				domainAxis.setAutoRange(false);
+				domainAxis.setRange(0,XValues.size()+0.5);				
+			}
+			
+		}
+		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		if (YValues.size()==0)
+		{
+			if (!useyrangeinterval && !useyrangeminmax) 
+			{
+				rangeAxis.setAutoRange(false);
+				rangeAxis.setRange(0,YValues.size()+0.5);				
+			}
+			
+		}
+//		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+//		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
 		if (XValues.size() > 0) {
-			final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
 			for (int i = 0; i < XValues.size(); i++) {
+
+				if (XValues.get(i)>domainAxis.getUpperBound())
+				{
+					if (!usexrangeinterval && !usexrangeminmax) 
+					{
+						domainAxis.setAutoRange(false);
+						domainAxis.setRange(0,YValues.get(i)+0.5);				
+					}
+					
+				}
+				if (YValues.get(i)>rangeAxis.getUpperBound())
+				{
+					if (!useyrangeinterval && !useyrangeminmax) 
+					{
+						rangeAxis.setAutoRange(false);
+						rangeAxis.setRange(0,YValues.get(i)+0.5);				
+					}
+					
+				}
+
 				serie.update(YValues.get(i).intValue(), XValues.get(i).intValue(), SValues.get(i).doubleValue());
 			}
 		}
@@ -349,33 +389,31 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		rangeAxis=logAxis;
 		}
 		if (!usexrangeinterval && !usexrangeminmax) {
-			domainAxis.setAutoRange(true);
+//			domainAxis.setAutoRangeMinimumSize(0.5);
+//			domainAxis.setAutoRange(true);
 		}
 
 		if (this.usexrangeinterval) {
 			domainAxis.setFixedAutoRange(xrangeinterval);
 			domainAxis.setAutoRangeMinimumSize(xrangeinterval);
 			domainAxis.setAutoRange(true);
-
 		}
 		if (this.usexrangeminmax) {
 			domainAxis.setRange(xrangemin, xrangemax);
-
 		}
 
 		if (!useyrangeinterval && !useyrangeminmax) {
-			rangeAxis.setAutoRange(true);
+	//		rangeAxis.setAutoRangeMinimumSize(0.5);
+	//		rangeAxis.setAutoRange(true);
 		}
 
 		if (this.useyrangeinterval) {
 			rangeAxis.setFixedAutoRange(yrangeinterval);
 			rangeAxis.setAutoRangeMinimumSize(yrangeinterval);
 			rangeAxis.setAutoRange(true);
-
 		}
 		if (this.useyrangeminmax) {
 			rangeAxis.setRange(yrangemin, yrangemax);
-
 		}
 	}
 
