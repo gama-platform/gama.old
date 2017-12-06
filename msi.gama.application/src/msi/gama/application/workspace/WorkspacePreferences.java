@@ -13,8 +13,12 @@ package msi.gama.application.workspace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
@@ -29,7 +33,8 @@ public class WorkspacePreferences {
 	static String selectedWorkspaceRootLocation;
 	static boolean applyPrefs;
 	public static final String WS_IDENTIFIER = ".gama_application_workspace";
-	public static final String MODEL_IDENTIFIER = WorkspaceModelsManager.getCurrentGamaStampString();
+	public static final String MODEL_IDENTIFIER = getCurrentGamaStampString();
+	public static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
 
 	public static String getSelectedWorkspaceRootLocation() {
 		return selectedWorkspaceRootLocation;
@@ -37,6 +42,28 @@ public class WorkspacePreferences {
 
 	public static void setSelectedWorkspaceRootLocation(final String s) {
 		selectedWorkspaceRootLocation = s;
+	}
+
+	public static String getCurrentGamaStampString() {
+		String gamaStamp = null;
+		try {
+			final URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
+			final URL resolvedFileURL = FileLocator.toFileURL(tmpURL);
+			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+			final File modelsRep = new File(resolvedURI);
+
+			// loading file from URL Path is not a good idea. There are some bugs
+			// File modelsRep = new File(urlRep.getPath());
+
+			final long time = modelsRep.lastModified();
+			gamaStamp = ".built_in_models_" + time;
+			System.out.println(">GAMA version " + BUILTIN_VERSION + " loading...");
+			System.out.println(">GAMA models library version: " + gamaStamp);
+		} catch (final IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return gamaStamp;
 	}
 
 	public static IPreferenceFilter[] getPreferenceFilters() {

@@ -13,14 +13,17 @@ package msi.gama.application;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import msi.gama.application.workbench.ApplicationWorkbenchAdvisor;
 import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
@@ -29,11 +32,49 @@ import msi.gama.application.workspace.WorkspacePreferences;
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
+	public static OpenDocumentEventProcessor processor;
+
+	public static class OpenDocumentEventProcessor extends DelayedEventsProcessor {
+
+		private OpenDocumentEventProcessor(final Display display) {
+			super(display);
+		}
+
+		private final ArrayList<String> filesToOpen = new ArrayList<String>(1);
+
+		@Override
+		public void handleEvent(final Event event) {
+			if ( event.text != null ) {
+				filesToOpen.add(event.text);
+				// System.out.println("RECEIVED FILE TO OPEN: " + event.text);
+			}
+		}
+
+		@Override
+		public void catchUp(final Display display) {
+			if ( filesToOpen.isEmpty() ) { return; }
+
+			final String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
+			filesToOpen.clear();
+
+			for ( final String path : filePaths ) {
+				WorkspaceModelsManager.instance.openModelPassedAsArgument(path);
+			}
+		}
+	}
+
+	public static void createProcessor() {
+		final Display display = Display.getDefault();
+		if ( display == null )
+			return;
+		processor = new OpenDocumentEventProcessor(display);
+	}
+
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion("1.7.0");
-		WorkspaceModelsManager.createProcessor();
+		createProcessor();
 		if ( checkWorkspace() == EXIT_OK )
 			return EXIT_OK;
 		Display display = null;
