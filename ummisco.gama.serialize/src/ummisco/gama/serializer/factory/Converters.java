@@ -10,11 +10,8 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.factory;
 
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 
-import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
@@ -25,10 +22,7 @@ import ummisco.gama.serializer.gamaType.converters.GamaListConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMatrixConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
-import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPopulationConverter;
-import ummisco.gama.serializer.gamaType.converters.GamaScopeConverter;
-import ummisco.gama.serializer.gamaType.converters.GamaSimulationAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaSpeciesConverter;
 import ummisco.gama.serializer.gamaType.converters.LogConverter;
 import ummisco.gama.serializer.gamaType.converters.SavedAgentConverter;

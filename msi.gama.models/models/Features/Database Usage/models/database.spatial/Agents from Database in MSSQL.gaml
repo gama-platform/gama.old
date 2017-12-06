@@ -1,35 +1,35 @@
 /**
 * Name:  Agents from Database in MSSQL
-* Author: Benoit Gaudou
+* Author: Benoit Gaudou, Quang Truong
 * Description:  This model does SQl query commands and create agents using the results
 * Tags: database
   */
 model DB2agentMSSQL
 
 global {
-	map<string,string> BOUNDS <- [	//"srid"::"32648", // optional
-									"host"::"localhost",
+	map<string,string> BOUNDS <- [	"srid"::"32648", // optional
+									"host"::"123.30.143.203",  // server name
 									"dbtype"::"sqlserver",
-									"database"::"spatial_DB",
+									"database"::"GAMAMSSQL",
 									"port"::"1433",
-									"user"::"sa",
-									"passwd"::"tmt",
-								  	"select"::"SELECT GEOM.STAsBinary() as GEOM FROM bounds;" ];
-	map<string,string> PARAMS <- [	//"srid"::"32648", // optional
-									"host"::"localhost",
+									"user"::"gama_usr",
+									"passwd"::"123456",
+								  	"select"::"SELECT geom.STAsBinary() as geom FROM bounds;" ];
+	map<string,string> PARAMS <- [	"srid"::"32648", // optional
+									"host"::"123.30.143.203",
 									"dbtype"::"sqlserver",
-									"database"::"spatial_DB",
+									"database"::"GAMAMSSQL",
 									"port"::"1433",
-									"user"::"sa",
-									"passwd"::"tmt"];
+									"user"::"gama_usr",
+									"passwd"::"123456"];
 	
-	string QUERY <- "SELECT name, type, GEOM.STAsBinary() as GEOM FROM buildings ;";
+	string QUERY <- "SELECT nature, geom.STAsBinary() as geom FROM buildings;";
 	geometry shape <- envelope(BOUNDS);		  	
 	init {
-		write "This model will work only if the corresponding database is installed" color: #red;
+		//write "This model will work only if the corresponding database is installed" color: #red;
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ "name"::"name","type"::"type", "shape":: geometry("geom")];
+							 with:[ "type"::"nature","shape":: "geom"];
 		 }
 	}
 }

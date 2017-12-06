@@ -1,0 +1,51 @@
+/**
+* Name: overlapping
+* Author: Truong Chi Quang
+* Description: This wizard creates a new test experiment
+* Tags: Tag1, Tag2, TagN
+*/
+model TestOvelapping
+global {
+	geometry shape <- envelope(square(100));
+	init {
+		create polygon_square with: [location::location]  ;	
+		list<cell> ovelapped_cell <-cell overlapping (first(polygon_square)) ;
+	}
+}
+
+grid cell width: 5 height: 5{
+	float grid_value <-1.0;
+	rgb color<- #green;
+	rgb border<- #black;  
+}
+
+species polygon_square {
+	geometry shape<- square(50) ;
+	
+	aspect default {
+		draw shape color: #red border: #black ;
+	} 	
+}
+
+experiment overlapping type: test {
+	
+	/** Insert the global definitions, variables and actions here */
+	
+	test "test overlapping" {
+		list<cell> ovelapped_cell;
+		using topology(world) {
+			ovelapped_cell <-cell overlapping (first(polygon_square)) ;
+		}
+		assert length(ovelapped_cell)=9;
+	}
+}
+
+experiment with_visualization type: gui {
+	output {
+		display map {
+			
+			grid cell lines:#black;
+			species polygon_square;
+		}	
+	}	
+}

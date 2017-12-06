@@ -21,7 +21,7 @@ global {
 	
 	map<string,string> PARAMS <- ['srid'::'4326',
 				                  'host'::'localhost','dbtype'::'MySQL','database'::'spatial_DB',
-				                  'port'::'8889','user'::'root','passwd'::'root'];
+				                  'port'::'3306','user'::'gama_usr1','passwd'::'123456'];
 
 	init {
 		write "This model will work only if the corresponding database is installed";
