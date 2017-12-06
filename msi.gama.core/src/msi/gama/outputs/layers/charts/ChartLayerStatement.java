@@ -126,6 +126,21 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the axis color")),
 				@facet (
+						name = ChartLayerStatement.XTICKVALUEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("X tick values visible")),
+				@facet (
+						name = ChartLayerStatement.YTICKVALUEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Y tick values visible")),
+				@facet (
+						name = ChartLayerStatement.TITLEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("chart title visible")),
+				@facet (
 						name = ChartLayerStatement.XTICKLINEVISIBLE,
 						type = IType.BOOL,
 						optional = true,
@@ -324,6 +339,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public static final String YTICKLINEVISIBLE = "y_tick_line_visible";
 	public static final String TICKLINECOLOR = "tick_line_color";
 
+	public static final String TITLEVISIBLE = "title_visible";
+	public static final String XTICKVALUEVISIBLE = "x_tick_values_visible";
+	public static final String YTICKVALUEVISIBLE = "y_tick_values_visible";
+	
+	
 	public static final String TICKFONTFACE = "tick_font";
 	public static final String TICKFONTSIZE = "tick_font_size";
 	public static final String TICKFONTSTYLE = "tick_font_style";
@@ -617,6 +637,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 		}
 		chartoutput.setTickColorValue(scope, colorvalue);
+
+		string1 = getFacet(ChartLayerStatement.XTICKVALUEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setXTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.YTICKVALUEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setYTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.TITLEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setTitleVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
 
 		string1 = getFacet(ChartLayerStatement.XTICKLINEVISIBLE);
 		if (string1 != null) {

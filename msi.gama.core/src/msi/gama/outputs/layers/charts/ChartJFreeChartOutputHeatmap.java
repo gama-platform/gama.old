@@ -415,6 +415,10 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		if (this.useyrangeminmax) {
 			rangeAxis.setRange(yrangemin, yrangemax);
 		}
+		if (this.series_label_position.equals("none")) 
+		{
+			(this.chart).getLegend().setVisible(false);
+		}
 	}
 
 	@Override
