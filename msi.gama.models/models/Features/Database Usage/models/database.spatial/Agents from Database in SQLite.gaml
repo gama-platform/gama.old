@@ -22,7 +22,7 @@ global {
 								  'database'::'../../includes/spatialite.db'
 								  ];
 	
-	string QUERY <- "SELECT name, type, AsBinary(geom) as geom FROM buildings;";
+	string QUERY <- "SELECT name, type, AsBinary(geom) as geom FROM buildings ;";
 	geometry shape <- envelope(BOUNDS);		  	
 	  	
 	init {

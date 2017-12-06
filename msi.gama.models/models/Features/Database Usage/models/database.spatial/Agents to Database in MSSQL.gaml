@@ -1,6 +1,6 @@
 /**
 * Name:  Agents to Database in MSSQL
-* Author: Truong Minh Thai
+* Author: Truong Minh Thai, Quang Truong
 * Description:  This model shows how to Insert and Delete agents from a MSSQL DB
 * Tags: database
   */
@@ -12,12 +12,12 @@ global {
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	map<string,string> PARAMS <- [//'srid'::'4326', // optinal
-								  'host'::'127.0.0.1','dbtype'::'sqlserver','database'::'spatial_DB',
-								  'port'::'1433','user'::'sa','passwd'::'tmt'];
+								  'host'::'123.30.143.203','dbtype'::'sqlserver','database'::'GAMAMSSQL',
+								  'port'::'1433','user'::'gama_usr','passwd'::'123456'];
 
 	init {
 		write "This model will work only if the corresponding database is installed";
-		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
+		create buildings from: buildingsShp with: [type::string(read('NATURE'))];
 		create bounds from: boundsShp;
 		
 		create DB_Accessor 
@@ -58,8 +58,8 @@ species buildings {
 		write "begin"+ name;
 		ask DB_Accessor {
 			do insert params: PARAMS into: "buildings"
-					  columns: ["name", "type","geom"]
-					  values: [myself.name,myself.type,myself.shape];
+					  columns: [ "nature", "geom"]
+					  values: [myself.type,myself.shape];
 		}
 	    write "finish "+ name;
 	}	
