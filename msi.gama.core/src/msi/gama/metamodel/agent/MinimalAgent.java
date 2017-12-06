@@ -369,15 +369,4 @@ public class MinimalAgent extends AbstractAgent {
 	public boolean isMultiple() {
 		return geometry.isMultiple();
 	}
-
-	@Override
-	public void updateWith(final IScope scope, final SavedAgent sa) {
-		// Update attributes
-		final Map<String, Object> mapAttr = sa.getVariables();
-		for (final Entry<String, Object> attr : mapAttr.entrySet()) {
-			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());
-		}
-
-	}
-
 }

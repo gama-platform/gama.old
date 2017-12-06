@@ -12,6 +12,7 @@ package msi.gama.metamodel.agent;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Map.Entry;
 
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
@@ -602,11 +603,15 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public void updateWith(final IScope s, final SavedAgent sa) {
-		throw new RuntimeException(
-				"Method updateWith(final IScope s, final SavedAgent sa) has not been implemented for " + this);
-	}
+	public void updateWith(final IScope scope, final SavedAgent sa) {
+		// Update attributes
+		final Map<String, Object> mapAttr = sa.getVariables();
+		for (final Entry<String, Object> attr : mapAttr.entrySet()) {
+			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());
+		}
 
+	}	
+	
 	@Override
 	public boolean equals(final Object o) {
 		if (o == this)

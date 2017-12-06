@@ -11,10 +11,11 @@
 package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
-import msi.gama.util.GamaList;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.apache.commons.lang.ClassUtils;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
 
+@SuppressWarnings({ "rawtypes" })
 public class GamaAgentConverter implements Converter {
 
 	ConverterScope convertScope;
@@ -37,6 +39,9 @@ public class GamaAgentConverter implements Converter {
 			return true;
 		}
 		
+		if(MinimalGridAgent.class.equals(arg0)) {
+			return true;
+		}
 		final List<Class<?>> allClassesApa = ClassUtils.getAllSuperclasses(arg0);
 		for (final Object c : allClassesApa) {
 			if (c.equals(GamlAgent.class))
@@ -56,7 +61,8 @@ public class GamaAgentConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		MinimalAgent agt = (MinimalAgent) arg0;
+		// MinimalAgent agt = (MinimalAgent) arg0;
+		AbstractAgent agt = (AbstractAgent) arg0;
 		
 		writer.startNode("agentReference");
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
@@ -68,7 +74,7 @@ public class GamaAgentConverter implements Converter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-
+		// TODO manage MinimalAgent and MinimalGridAgent 
 		reader.moveDown();
 		SimulationAgent simAgt = convertScope.getSimulationAgent();
 		List<IAgent> lagt;

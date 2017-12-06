@@ -2000,8 +2000,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					return bd;
 				}
 				return bands.get(getIndex());
-			}
-
+			}	
 		}
 
 	}
