@@ -16,9 +16,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
-import msi.gama.kernel.experiment.ExperimentPlan.ExperimentPopulation;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -26,7 +24,6 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
 import msi.gaml.types.TypeNode;
 import msi.gaml.types.TypeTree;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -71,17 +68,13 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 		currentNode = currentNode.addChild(state);
 		
-		
-		scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
-
+//		scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
 		
 		return result;
 	}
 
 	@Override
 	public boolean backward(final IScope scope) {
-		// TODO : to change
-		// clock.beginCycle();
 		final boolean result = true;
 		TypeNode<String> previousNode;
 
@@ -128,7 +121,6 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 			informStatus();
 
 			// TODO a remettre
-			// clock.step(this.scope);
 			// final int nbThreads =
 			// this.getSimulationPopulation().getNumberOfActiveThreads();
 

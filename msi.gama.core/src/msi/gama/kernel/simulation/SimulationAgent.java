@@ -706,10 +706,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
-		// Update Clock
-		final Object cycle = sa.getAttributeValue("cycle");
-		clock.setCycle((Integer) cycle);
-
+		
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
 		for (final String name : attr.keySet()) {
@@ -717,6 +714,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			// this.setAttribute(name, attr.get(name));
 		}
 
+		// Update Clock
+		final Object cycle = sa.getAttributeValue("cycle");
+		clock.setCycle((Integer) cycle);
+		
 		// TODO
 		// Update GUI of the Experiment
 		// this.getExperiment().
