@@ -54,10 +54,14 @@ public abstract class ChartOutput {
 	boolean y2_logscale = false;
 	boolean use_second_y_axis = false;
 
+	boolean x_tick_line_visible=true;
+	boolean y_tick_line_visible=true;
+	
 	ChartOutput chartOutput = null;
 	Color backgroundColor = GamaColor.WHITE;
 	Color axesColor = null;
 	Color textColor = null;
+	Color tickColor = null;
 
 	String tickFontFace = Font.SANS_SERIF;
 	int tickFontSize = 10;
@@ -264,6 +268,10 @@ public abstract class ChartOutput {
 
 	public void setAxesColorValue(final IScope scope, final GamaColor color) {
 		axesColor = color;
+
+	}
+	public void setTickColorValue(final IScope scope, final GamaColor color) {
+		tickColor = color;
 
 	}
 	public final Color getAxesColorValue(final IScope scope) {
@@ -709,6 +717,24 @@ public abstract class ChartOutput {
 	public boolean getUseSecondYAxis(final IScope scope) {
 		// TODO Auto-generated method stub
 		return use_second_y_axis;
+//		return false;
+	}
+	public void setXTickLineVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_tick_line_visible = asBool;
+	}
+	public boolean getXTickLineVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_tick_line_visible;
+//		return false;
+	}
+	public void setYTickLineVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_tick_line_visible = asBool;
+	}
+	public boolean getYTickLineVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_tick_line_visible;
 //		return false;
 	}
 

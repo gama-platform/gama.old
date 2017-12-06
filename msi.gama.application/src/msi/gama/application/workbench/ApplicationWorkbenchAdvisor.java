@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGui;
@@ -38,7 +39,7 @@ import msi.gama.runtime.GAMA;
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	public ApplicationWorkbenchAdvisor() {
-		super(WorkspaceModelsManager.processor);
+		super(Application.processor);
 	}
 
 	@Override

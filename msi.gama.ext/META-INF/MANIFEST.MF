@@ -465,6 +465,7 @@ Export-Package: com.kitfox.svg;
    org.jfree.util,
    org.jfree.data.category,
    org.jfree.text",
+ org.jfree.chart.block,
  org.jfree.chart.editor,
  org.jfree.chart.entity,
  org.jfree.chart.labels;

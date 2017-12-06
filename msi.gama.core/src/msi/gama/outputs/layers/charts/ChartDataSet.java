@@ -393,7 +393,11 @@ public class ChartDataSet {
 			if (targetNb == -1 && !this.forceNoYAccumulate && commonYindex >= YSeriesValues.size())
 				targetNb = YSeriesValues.size() + 1;
 			while (YSeriesValues.size() < targetNb) {
-				addCommonYValue(scope, getYCycleOrPlusOneForBatch(scope, chartCycle));
+				double nvalue=getYCycleOrPlusOneForBatch(scope, chartCycle);
+				if (YSeriesValues.size()>0)
+					if (YSeriesValues.get(YSeriesValues.size()-1)>=nvalue)
+						nvalue=YSeriesValues.get(YSeriesValues.size()-1)+1;
+				addCommonYValue(scope, nvalue);
 			}
 
 		}
@@ -410,7 +414,11 @@ public class ChartDataSet {
 			return 1d;
 		// if (this.YSeriesValues.contains((double) chartcycle))
 		// return (int) YSeriesValues.get(YSeriesValues.size() - 1).doubleValue() + 1;
-		return Double.valueOf(chartcycle);
+		Double value=Double.valueOf(chartcycle);
+		if (YSeriesValues.size()>0)
+			if (YSeriesValues.get(YSeriesValues.size()-1)>=value)
+				value=YSeriesValues.get(YSeriesValues.size()-1)+1;
+		return Double.valueOf(value);
 	}
 
 	private void addCommonYValue(final IScope scope, final Double chartCycle) {
@@ -495,7 +503,11 @@ public class ChartDataSet {
 			if (targetNb == -1 && !this.forceNoXAccumulate && commonXindex >= XSeriesValues.size())
 				targetNb = XSeriesValues.size() + 1;
 			while (XSeriesValues.size() < targetNb) {
-				addCommonXValue(scope, getXCycleOrPlusOneForBatch(scope, chartCycle));
+				double nvalue=getXCycleOrPlusOneForBatch(scope, chartCycle);
+				if (XSeriesValues.size()>0)
+					if (XSeriesValues.get(XSeriesValues.size()-1)>=nvalue)
+						nvalue=XSeriesValues.get(XSeriesValues.size()-1)+1;
+				addCommonXValue(scope, nvalue);
 			}
 
 		}
@@ -512,7 +524,12 @@ public class ChartDataSet {
 			return 1d;
 		// if (this.XSeriesValues.contains(Double.valueOf(chartcycle)))
 		// return (int) XSeriesValues.get(XSeriesValues.size() - 1).doubleValue() + 1;
-		return Double.valueOf(chartcycle);
+		Double value=Double.valueOf(chartcycle);
+		if (XSeriesValues.size()>0)
+			if (XSeriesValues.get(XSeriesValues.size()-1)>=value)
+				value=XSeriesValues.get(XSeriesValues.size()-1)+1;
+		return Double.valueOf(value);
+//		return Double.valueOf(chartcycle);
 	}
 
 	private void addCommonXValue(final IScope scope, final Double chartCycle) {
