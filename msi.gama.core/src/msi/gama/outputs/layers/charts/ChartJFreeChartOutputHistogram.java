@@ -408,6 +408,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		pp.setDomainGridlinePaint(axesColor);
 		pp.setRangeGridlinePaint(axesColor);
 		pp.setRangeCrosshairVisible(true);
+
+		
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
 		pp.getRangeAxis().setTickLabelFont(getTickFont());
@@ -438,6 +440,23 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				((SubCategoryAxis) domainAxis).addSubCategory(serieid);
 			}
 
+		}
+		if (!this.getYTickLineVisible(scope))
+		{
+			pp.setDomainGridlinesVisible(false);
+		}
+
+			if (!this.getYTickLineVisible(scope))
+		{
+			pp.setRangeCrosshairVisible(false);
+			
+		}
+		
+		if (!this.getYTickValueVisible(scope))
+		{
+			pp.getRangeAxis().setTickMarksVisible(false);
+			pp.getRangeAxis().setTickLabelsVisible(false);
+			
 		}
 
 	}
@@ -470,6 +489,29 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			// pp.getDomainAxis().setTickLabelPaint(this.backgroundColor);
 			// pp.getDomainAxis().setLabelFont(new Font(labelFontFace,
 			// labelFontStyle, 1));
+		}
+		if (!this.getYTickLineVisible(scope))
+		{
+			pp.setDomainGridlinesVisible(false);
+		}
+
+			if (!this.getYTickLineVisible(scope))
+		{
+			pp.setRangeCrosshairVisible(false);
+			
+		}
+		
+		if (!this.getYTickValueVisible(scope))
+		{
+			pp.getRangeAxis().setTickMarksVisible(false);
+			pp.getRangeAxis().setTickLabelsVisible(false);
+			
+		}
+		if (!this.getXTickValueVisible(scope))
+		{
+			pp.getDomainAxis().setTickMarksVisible(false);
+			pp.getDomainAxis().setTickLabelsVisible(false);
+			
 		}
 
 	}
@@ -530,6 +572,14 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 		pp.setDomainGridlinePaint(axesColor);
 		pp.setRangeGridlinePaint(axesColor);
+		if (!this.getXTickLineVisible(scope))
+		{
+			pp.setDomainGridlinesVisible(false);
+		}
+		if (!this.getYTickLineVisible(scope))
+		{
+			pp.setRangeGridlinesVisible(false);
+		}
 		pp.setRangeCrosshairVisible(true);
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
