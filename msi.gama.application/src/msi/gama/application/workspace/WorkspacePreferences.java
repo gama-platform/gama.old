@@ -136,7 +136,7 @@ public class WorkspacePreferences {
 							workspaceLocation +
 								" does not exist. Would you like to create a new workspace here" + (cloning
 									? ", copy the projects and preferences of an existing workspace into it, " : "") +
-								" and restart the application ?");
+								" and proceeed ?");
 				if ( create ) {
 					try {
 						f.mkdirs();
@@ -200,8 +200,8 @@ public class WorkspacePreferences {
 		if ( !dotFile.exists() ) {
 			if ( fromDialog ) {
 				final boolean create = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-					"Outdated version of the models library",
-					"The workspace contains an old version of the models library. Do you want to proceed anyway ?");
+					"Different version of the models library",
+					"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
 				if ( create ) {
 					try {
 						dotFile.createNewFile();
