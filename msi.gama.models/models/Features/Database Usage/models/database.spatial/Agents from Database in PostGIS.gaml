@@ -31,7 +31,7 @@ global {
 //		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'nature'::"nature", 'shape'::"geom"];
+							 with:[ nature::"nature", shape::"geom"];
 		 }
 		 write "Building: "+length(buildings) ;
 	}

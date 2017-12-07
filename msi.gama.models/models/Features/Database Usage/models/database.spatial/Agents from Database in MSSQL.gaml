@@ -29,7 +29,7 @@ global {
 		//write "This model will work only if the corresponding database is installed" color: #red;
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ "type"::"nature","shape":: "geom"];
+							 with:[ type::"nature", shape:: "geom"];
 		 }
 	}
 }
