@@ -1,0 +1,31 @@
+/**
+* Name: MathTest
+* Author: Minh 
+* Description: This wizard creates a new test experiment
+* Tags: Tag1, Tag2, TagN
+*/
+
+experiment MathTest type: test autorun: true {
+	
+	/** Insert the global definitions, variables and actions here */
+		
+		
+		
+	setup {
+		/** Insert any initialization to run before each of the tests */
+	}
+	
+	test "My First Test" {
+	/** Insert here any assertion you need to test */
+		assert 10^0 = 1;
+		assert 10^1 = 10;
+		assert 10/0 = 10;
+		write (10/0);
+		assert abs(-0.5) = 0.5;
+		assert abs(-7)=7;
+		assert abs (-7.0)=7;		
+		assert 45 mod 10 = 5;
+		assert 45 div 10 = 4;
+		}
+	
+}

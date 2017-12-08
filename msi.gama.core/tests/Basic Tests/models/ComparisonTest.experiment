@@ -1,0 +1,43 @@
+/**
+* Name: TestOne
+* Author: MinhThu
+* Description: This wizard creates a new test experiment
+* Tags: Tag1, Tag2, TagN
+*/
+
+experiment TestOne type: test autorun: true {
+	
+	/** Insert the global definitions, variables and actions here */
+		
+		
+		
+	setup {
+		/** Insert any initialization to run before each of the tests */
+	}
+	
+	test "My First Test" {
+	/** Insert here any assertion you need to test */
+		assert 0 = 0;
+		assert 0 = 1 warning: true;
+		/**Comparison*/
+		assert 4.0>4;
+		assert 4<4.0;
+		assert 0.0987<0.11;
+		assert 5!=5.0;
+		assert 6.0!=6;
+		assert 6.0=6;
+		assert "abc"="bca";
+		assert "abd">="abc";
+		assert "abc"!="bde";
+		assert "bde" != "bde";
+		assert "bde"="bde";
+		assert {3,7}>{7,3};
+		assert {3,7}>{2,7};
+		assert {3,7}<{4,7};
+		assert{3,7}={3,7};
+		assert [3,4]!=[4,3];
+		assert [3,4]=[9];
+		
+	}
+	
+}

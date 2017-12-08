@@ -1,0 +1,108 @@
+/**
+* Name: GraphTest
+* Author: Minh Thu
+* Description: This wizard creates a new test experiment
+* Tags: Tag1, Tag2, TagN
+*/
+
+model classicgraphgeneration
+
+global {
+	graph the_graph ;
+	
+	init {
+		
+	int i<-0;
+	create node_agent number:7
+	{
+		location<-{i,-i};
+		i<-i+1;
+	}
+	the_graph <- as_distance_graph(node_agent, 100.0);
+		
+	}
+	
+	
+}
+
+species edge_agent {
+	aspect default {	
+		draw shape color: #black;
+	}
+}
+
+species node_agent {
+	aspect default {	
+		draw circle(1) color: #red;
+	}
+}
+
+experiment loadgraph type: gui {
+	
+	output {
+		display map type: opengl{
+			species edge_agent ;
+			species node_agent ;
+		}
+	}
+}
+
+experiment GraphTest type: test autorun: true {
+	
+	/** Insert the global definitions, variables and actions here */
+			
+	setup {
+		/** Insert any initialization to run before each of the tests */
+	}
+	
+	test "My Graph Test" {
+	/** Insert here any assertion you need to test */
+//	int i<-0;
+//	create node_agent number:5
+//	{
+//		location<-{i,-i};
+//		i<-i+1;
+//	}
+//	the_graph <- as_distance_graph(node_agent, 2.0);
+
+		write the_graph;
+//		write first(node_agent);
+
+		write (node_agent[2]);
+		write(the_graph in_degree_of (node_agent[2]));
+		write(the_graph out_degree_of (node_agent[2]));
+		write(the_graph degree_of (node_agent[2]));
+		assert the_graph out_degree_of (node_agent[2])=2;
+		//out_edges_of
+		write(the_graph out_edges_of (node_agent[2]));
+		write(the_graph in_edges_of (node_agent[2]));
+		assert the_graph out_edges_of (node_agent[2])=2;
+		//neighbors of node
+		write(the_graph neighbors_of(node_agent[2]));
+		assert length(the_graph neighbors_of(node_agent[2]))=4;
+		write(the_graph predecessors_of(node_agent[2]));
+		assert length(the_graph predecessors_of(node_agent[2]))=2;
+		write(the_graph successors_of(node_agent[2]));
+		assert length(the_graph successors_of(node_agent[2]))=2;
+	
+		point node8 <- {50.0,50.0};
+		write (the_graph add_node(node8));
+		write (node_agent[4] remove_node_from(the_graph));
+
+		write (the_graph contains_vertex(node_agent[2]));
+		assert the_graph contains_vertex(node_agent[2])=true;
+		write (the_graph contains_edge(link(node_agent[2],node_agent[5])));
+		assert the_graph contains_edge(link(node_agent[2],node_agent[5]))=true;
+		
+		write (the_graph contains_edge(link(node_agent[2],node_agent[4])));
+		assert the_graph contains_edge(link(node_agent[2],node_agent[4]))=true;
+		write (the_graph contains_vertex(node_agent[4]));
+		assert the_graph contains_vertex(node_agent[4])=true;
+		
+		write (the_graph source_of(link(node_agent[2],node_agent[5])));
+		assert the_graph source_of(link(node_agent[2],node_agent[5]))=node_agent[2];
+		assert the_graph source_of(link(node_agent[2],node_agent[5]))=node_agent[5];
+		
+	}
+	
+}

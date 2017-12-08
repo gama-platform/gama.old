@@ -196,6 +196,10 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
+		if (this.series_label_position.equals("none")) 
+		{
+			(this.chart).getLegend().setVisible(false);
+		}
 
 	}
 

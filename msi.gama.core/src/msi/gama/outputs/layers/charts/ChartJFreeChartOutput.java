@@ -140,6 +140,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		chart.setTitle(this.getName());
 		chart.getTitle().setVisible(true);
 		chart.getTitle().setFont(getTitleFont());
+		if (!this.getTitleVisible(scope))
+		{
+			chart.getTitle().setVisible(false);
+		}
 		if (textColor != null) {
 			chart.getTitle().setPaint(textColor);
 		}

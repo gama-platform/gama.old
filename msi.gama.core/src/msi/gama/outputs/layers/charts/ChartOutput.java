@@ -54,6 +54,9 @@ public abstract class ChartOutput {
 	boolean y2_logscale = false;
 	boolean use_second_y_axis = false;
 
+	boolean title_visible=true;
+	boolean x_tick_value_visible=true;
+	boolean y_tick_value_visible=true;
 	boolean x_tick_line_visible=true;
 	boolean y_tick_line_visible=true;
 	
@@ -717,6 +720,33 @@ public abstract class ChartOutput {
 	public boolean getUseSecondYAxis(final IScope scope) {
 		// TODO Auto-generated method stub
 		return use_second_y_axis;
+//		return false;
+	}
+	public void setXTickValueVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_tick_value_visible = asBool;
+	}
+	public boolean getXTickValueVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_tick_value_visible;
+//		return false;
+	}
+	public void setYTickValueVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_tick_value_visible = asBool;
+	}
+	public boolean getYTickValueVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_tick_value_visible;
+//		return false;
+	}
+	public void setTitleVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		title_visible = asBool;
+	}
+	public boolean getTitleVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return title_visible;
 //		return false;
 	}
 	public void setXTickLineVisible(final IScope scope, final Boolean asBool) {

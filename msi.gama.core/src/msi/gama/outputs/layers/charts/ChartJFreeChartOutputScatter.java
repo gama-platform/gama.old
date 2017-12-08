@@ -232,13 +232,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				newr = new XYBarRenderer();
 				break;
 			}
-			case IKeyword.STACK:
-			case IKeyword.RING:
-			case IKeyword.EXPLODED:
 			case IKeyword.THREE_D: {
 				newr = new XYLine3DRenderer();
 				break;
 			}
+			case IKeyword.STACK:
+			case IKeyword.RING:
+			case IKeyword.EXPLODED:
 			default: {
 				// newr = new FastXYItemRenderer();
 				newr = new myXYErrorRenderer();
@@ -437,13 +437,18 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				axis.setLabelPaint(textColor);
 				axis.setTickLabelPaint(textColor);
 			}
-
 		axis.setAxisLinePaint(axesColor);
 			axis.setLabelFont(getLabelFont());
 			axis.setTickLabelFont(getTickFont());
 			if (textColor != null) {
 				axis.setLabelPaint(textColor);
 				axis.setTickLabelPaint(textColor);
+			}
+		if (!this.getYTickValueVisible(scope))
+			{
+			axis.setTickMarksVisible(false);
+			axis.setTickLabelsVisible(false);
+				
 			}
 		return axis;
 		
@@ -604,6 +609,17 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			}
 			
 		}
+		if (this.series_label_position.equals("none")) 
+		{
+			(this.chart).getLegend().setVisible(false);
+		}
+		if (!this.getXTickValueVisible(scope))
+		{
+			domainAxis.setTickMarksVisible(false);
+			domainAxis.setTickLabelsVisible(false);
+			
+		}
+
 	}
 
 	@Override
@@ -767,6 +783,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (getType() == ChartOutput.XY_CHART) {}
 		if (getType() == ChartOutput.SCATTER_CHART) {}
+		if (!this.getXTickValueVisible(scope))
+		{
+			pp.getDomainAxis().setTickMarksVisible(false);
+			pp.getDomainAxis().setTickLabelsVisible(false);
+			
+		}
 
 	}
 

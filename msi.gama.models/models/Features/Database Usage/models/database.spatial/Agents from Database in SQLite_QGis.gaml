@@ -16,21 +16,21 @@ model Sqlite_QGis
 global { 
 	map BOUNDS <- [//'srid'::'4326', // optinal
 				  "dbtype"::"sqlite",
-				  "database"::"../../includes/spatialite.db"
-				  ,"select"::	"select geom  from bounds;" 
+				  "database"::"../../includes/building.sqlite"
+				  ,"select"::	"select geom  from building;" 
 														
 							  ]; 
 	map PARAMS <- [//'srid'::'4326', // optinal
 					"dbtype"::"sqlite",
-					"database"::"../../includes/bph.db"];
-	string QUERY <- "SELECT name, type, geom as geom FROM buildings ;";
+					"database"::"../../includes/building.sqlite"];
+	string QUERY <- "SELECT geom FROM building ;";
 	geometry shape <- envelope(BOUNDS);		  	
 		  	
 	init {
 		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
+							 with:[ name::"name", type::"type", shape:: "geom"];
 		 }
 	}
 }
