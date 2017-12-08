@@ -115,7 +115,8 @@ public class ReverseOperators {
 
 	@operator(value = "unSerializeSimulation")
 	@doc(value="unSerializeSimulation")//, deprecated ="Still in alpha version, do not use it.")
-	// TODO: to check ...
+	// TODO: this should not be an operator .... 
+	// TODO: should be check ....
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
