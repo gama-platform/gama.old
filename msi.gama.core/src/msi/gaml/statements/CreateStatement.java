@@ -363,6 +363,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		}
 	}
 
+	public static void removeDelegate(final ICreateDelegate cd) {
+		delegates.remove(cd);
+	}
+
 	public CreateStatement(final IDescription desc) {
 		super(desc);
 		returns = getLiteral(IKeyword.RETURNS);

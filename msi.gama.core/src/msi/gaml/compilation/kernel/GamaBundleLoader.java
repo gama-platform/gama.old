@@ -119,13 +119,17 @@ public class GamaBundleLoader {
 		}
 		CURRENT_PLUGIN_NAME = null;
 		// We gather all the extensions to the `create` statement and add them
-		// as delegates to CreateStatement
+		// as delegates to CreateStatement. If an exception occurs, we discard it
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
+			ICreateDelegate cd = null;
 			try {
 				// TODO Add the defining plug-in
-				CreateStatement.addDelegate((ICreateDelegate) e.createExecutableExtension("class"));
+				cd = (ICreateDelegate) e.createExecutableExtension("class");
+				if (cd != null)
+					CreateStatement.addDelegate(cd);
 			} catch (final CoreException e1) {
 				e1.printStackTrace();
+				CreateStatement.removeDelegate(cd);
 			}
 		}
 
