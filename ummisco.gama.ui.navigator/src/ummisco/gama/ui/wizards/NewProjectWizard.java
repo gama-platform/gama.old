@@ -68,7 +68,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		final boolean isTest = wizardPage.isTest();
 		final boolean createNewModel = wizardPage.createNewModel();
 		final IProject projectHandle = wizardPage.getProjectHandle();
-		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
+		final URI projectURI = /* !wizardPage.useDefaults() ? */ wizardPage.getLocationURI()/* : null */;
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription desc = workspace.newProjectDescription(projectHandle.getName());
 		desc.setLocationURI(projectURI);

@@ -19,8 +19,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea;
 import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter;
 
 /**
@@ -69,7 +68,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 	};
 
-	private ProjectContentsLocationArea locationArea;
+	// private ProjectContentsLocationArea locationArea;
 
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -92,18 +91,13 @@ public class NewProjectWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createProjectNameGroup(composite);
-		locationArea = new ProjectContentsLocationArea(getErrorReporter(), composite);
-		if (initialProjectFieldValue != null) {
-			locationArea.updateProjectName(initialProjectFieldValue);
-		}
-		// Scale the button based on the rest of the dialog
-		setButtonLayoutData(locationArea.getBrowseButton());
 		setPageComplete(validatePage());
 		// Show description on opening
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
+		getShell().setSize(500, 200);
 	}
 
 	/**
@@ -184,7 +178,6 @@ public class NewProjectWizardPage extends WizardPage {
 			projectNameField.setText(initialProjectFieldValue);
 		}
 		projectNameField.addListener(SWT.Modify, nameModifyListener);
-		BidiUtils.applyBidiProcessing(projectNameField, BidiUtils.BTD_DEFAULT);
 	}
 
 	/**
@@ -194,7 +187,8 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return the project location path or its anticipated initial value.
 	 */
 	public IPath getLocationPath() {
-		return new Path(locationArea.getProjectLocation());
+		return new Path(Platform.getLocation().toOSString());
+		// return new Path(locationArea.getProjectLocation());
 	}
 
 	public boolean isTest() {
@@ -213,7 +207,8 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @since 3.2
 	 */
 	public URI getLocationURI() {
-		return locationArea.getProjectLocationURI();
+		return URI.create(Platform.getLocation().append(getProjectName()).toOSString());
+		// return locationArea.getProjectLocationURI();
 	}
 
 	/**
@@ -270,9 +265,9 @@ public class NewProjectWizardPage extends WizardPage {
 			initialProjectFieldValue = null;
 		} else {
 			initialProjectFieldValue = name.trim();
-			if (locationArea != null) {
-				locationArea.updateProjectName(name.trim());
-			}
+			// if (locationArea != null) {
+			// locationArea.updateProjectName(name.trim());
+			// }
 		}
 	}
 
@@ -280,7 +275,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * Set the location to the default location if we are set to useDefaults.
 	 */
 	void setLocationForSelection() {
-		locationArea.updateProjectName(getProjectNameFieldValue());
+		// locationArea.updateProjectName(getProjectNameFieldValue());
 	}
 
 	/**
@@ -312,13 +307,13 @@ public class NewProjectWizardPage extends WizardPage {
 		}
 
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
-		locationArea.setExistingProject(project);
+		// locationArea.setExistingProject(project);
 
-		final String validLocationMessage = locationArea.checkValidLocation();
-		if (validLocationMessage != null) { // there is no destination location given
-			setErrorMessage(validLocationMessage);
-			return false;
-		}
+		// final String validLocationMessage = locationArea.checkValidLocation();
+		// if (validLocationMessage != null) { // there is no destination location given
+		// setErrorMessage(validLocationMessage);
+		// return false;
+		// }
 
 		setErrorMessage(null);
 		setMessage(null);
@@ -341,8 +336,8 @@ public class NewProjectWizardPage extends WizardPage {
 	 * 
 	 * @return boolean
 	 */
-	public boolean useDefaults() {
-		return locationArea.isDefault();
-	}
+	// public boolean useDefaults() {
+	// return locationArea.isDefault();
+	// }
 
 }

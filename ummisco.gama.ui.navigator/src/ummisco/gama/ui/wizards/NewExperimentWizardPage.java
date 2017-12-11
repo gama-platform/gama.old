@@ -19,7 +19,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -64,9 +63,6 @@ public class NewExperimentWizardPage extends NewModelWizardPage {
 		createNameSection(container);
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
 		createLabel(container, null);
-		final Composite middleComposite = new Composite(container, SWT.NULL);
-		final FillLayout fillLayout = new FillLayout();
-		middleComposite.setLayout(fillLayout);
 		/* Finished adding the custom control */
 		initialize();
 		dialogChanged();

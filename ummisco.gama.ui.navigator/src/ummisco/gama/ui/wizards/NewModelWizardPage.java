@@ -25,6 +25,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.resources.GamaFonts;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class NewModelWizardPage extends WizardPage {
 
@@ -50,6 +51,8 @@ public abstract class NewModelWizardPage extends WizardPage {
 	@Override
 	public void setVisible(final boolean b) {
 		super.setVisible(b);
+		if (containerText.getText().isEmpty())
+			WorkbenchHelper.asyncRun(() -> handleContainerBrowse());
 		if (b)
 			fileText.setFocus();
 	}
@@ -101,9 +104,12 @@ public abstract class NewModelWizardPage extends WizardPage {
 
 	protected void initialize() {
 		final IContainer container = findContainer();
-		if (container != null)
+		if (container != null) {
 			containerText.setText(container.getFullPath().toString());
-		fileText.setText(getInitialFileName());
+			fileText.setText(getInitialFileName());
+		} else
+			fileText.setText(getDefaultFileBody() + getExtension());
+
 	}
 
 	protected String getInitialFileName() {
@@ -116,16 +122,16 @@ public abstract class NewModelWizardPage extends WizardPage {
 			} while (modelfile.exists());
 			return modelfile.getName();
 		}
-		return getDefaultFileName();
+		return getDefaultFileBody() + getExtension();
 	}
 
 	protected String getInitialModelFileName(final int i) {
-		final String body = getDefaultFileName();
+		final String body = getDefaultFileBody();
 		final String extension = getExtension();
 		return body + (i == 0 ? "" : String.valueOf(i)) + extension;
 	}
 
-	protected String getDefaultFileName() {
+	protected String getDefaultFileBody() {
 		return "New " + gamlType();
 	}
 
