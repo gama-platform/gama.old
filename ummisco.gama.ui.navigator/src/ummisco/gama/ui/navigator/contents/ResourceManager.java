@@ -9,7 +9,9 @@ import static ummisco.gama.ui.utils.WorkbenchHelper.PLUGIN_NATURE;
 import static ummisco.gama.ui.utils.WorkbenchHelper.TEST_NATURE;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.resources.IContainer;
@@ -45,25 +47,68 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class ResourceManager implements IResourceChangeListener, IResourceDeltaVisitor, ISelectionChangedListener {
 
+	public static ResourceManager INSTANCE;
 	public final static Cache<IResource, WrappedResource<?, ?>> cache =
 			CacheBuilder.newBuilder().initialCapacity(1000).concurrencyLevel(4).build();
 	final CommonViewer viewer;
 	final IResourceChangeListener delegate;
-	final static boolean DEBUG = false;
+	public final static boolean DEBUG = true;
 	volatile static boolean BLOCKED = false;
 	private static volatile boolean IN_INITIALIZATION_PHASE = false;
 	private final List<Runnable> postEventActions = new ArrayList<>();
+	private final Set<VirtualContent<?>> toRefresh = new HashSet<>();
+	private final Set<VirtualContent<?>> toUpdate = new HashSet<>();
+	private volatile Object toReveal = null;
 	private static IStructuredSelection currentSelection;
 
+	public static void block() {
+		BLOCKED = true;
+	}
+
+	public static void unblock(final IProgressMonitor monitor) {
+		BLOCKED = false;
+		WorkbenchHelper.run(() -> {
+			monitor.beginTask("Processing additions to the workspace", BLOCKED_EVENTS.size());
+			try {
+				NavigatorRoot.INSTANCE.resetVirtualFolders(null);
+				NavigatorRoot.INSTANCE.recreateVirtualFolders();
+				IN_INITIALIZATION_PHASE = true;
+				for (final IResourceChangeEvent event : BLOCKED_EVENTS) {
+					INSTANCE.resourceChanged(event);
+					monitor.worked(1);
+				}
+			} finally {
+				IN_INITIALIZATION_PHASE = false;
+			}
+		});
+
+		BLOCKED_EVENTS.clear();
+	}
+
+	public static ResourceManager getInstance() {
+		return INSTANCE;
+	}
+
 	public static void setLastTestResults(final CompoundSummary<TestExperimentSummary, ?> last) {
-		NavigatorRoot.INSTANCE.getMapper().refreshResource(NavigatorRoot.INSTANCE.getTestFolder());
+		INSTANCE.refreshResource(NavigatorRoot.INSTANCE.getTestFolder());
+	}
+
+	public ResourceManager(final IResourceChangeListener delegate, final CommonViewer navigator) {
+		this.viewer = navigator;
+		viewer.addSelectionChangedListener(this);
+		this.delegate = delegate;
+		INSTANCE = this;
+	}
+
+	public void reveal(final Object r) {
+		toReveal = r;
 	}
 
 	public CompoundSummary<?, ?> getTestsSummary() {
 		return TestsRunner.LAST_RUN;
 	}
 
-	void post(final Runnable run) {
+	public void post(final Runnable run) {
 		postEventActions.add(run);
 	}
 
@@ -77,24 +122,37 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	void runPostEventActions() {
-		try {
-			for (final Runnable r : postEventActions)
-				WorkbenchHelper.asyncRun(r);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		} finally {
-			postEventActions.clear();
-		}
+		WorkbenchHelper.run(() -> {
+			try {
+				for (final Runnable r : postEventActions)
+					r.run();
+			} finally {
+				postEventActions.clear();
+			}
+			try {
+				for (final VirtualContent<?> r : toRefresh)
+					viewer.refresh(r);
+			} finally {
+				toRefresh.clear();
+			}
+			try {
+				for (final VirtualContent<?> r : toUpdate)
+					viewer.update(r, null);
+			} finally {
+				toUpdate.clear();
+			}
+			if (toReveal != null) {
+				final VirtualContent<?> vc = findWrappedInstanceOf(toReveal);
+				viewer.setSelection(new StructuredSelection(vc), true);
+				toReveal = null;
+			}
+		});
+
 	}
 
-	static void DEBUG(final String s) {
-		System.out.println(s);
-	}
-
-	public ResourceManager(final IResourceChangeListener delegate, final CommonViewer navigator) {
-		this.viewer = navigator;
-		viewer.addSelectionChangedListener(this);
-		this.delegate = delegate;
+	public static void DEBUG(final String s) {
+		if (DEBUG)
+			System.out.println(s);
 	}
 
 	public static IResource getResource(final Object target) {
@@ -129,35 +187,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		return getResource(target) != null;
 	}
 
-	void run(final Runnable r) {
-		WorkbenchHelper.run(r);
-	}
-
 	static final List<IResourceChangeEvent> BLOCKED_EVENTS = new ArrayList<>();
-
-	public static void block() {
-		BLOCKED = true;
-	}
-
-	public static void unblock(final IProgressMonitor monitor) {
-		BLOCKED = false;
-		WorkbenchHelper.run(() -> {
-			monitor.beginTask("Processing additions to the workspace", BLOCKED_EVENTS.size());
-			try {
-				NavigatorRoot.INSTANCE.resetVirtualFolders(null);
-				NavigatorRoot.INSTANCE.recreateVirtualFolders();
-				IN_INITIALIZATION_PHASE = true;
-				for (final IResourceChangeEvent event : BLOCKED_EVENTS) {
-					NavigatorRoot.INSTANCE.getMapper().resourceChanged(event);
-					monitor.worked(1);
-				}
-			} finally {
-				IN_INITIALIZATION_PHASE = false;
-			}
-		});
-
-		BLOCKED_EVENTS.clear();
-	}
 
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
@@ -256,14 +286,11 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			final String nature = root.getNature();
 			final WrappedProject p = (WrappedProject) wrap(root, project);
 			post(() -> {
-				try {
-					WorkspaceModelsManager.setValuesProjectDescription(project, nature == BUILTIN_NATURE,
-							nature == PLUGIN_NATURE, nature == TEST_NATURE, null);
-					root.initializeChildren();
-					refreshResource(root);
-				} catch (final Exception e) {
-					e.printStackTrace();
-				} finally {}
+				WorkspaceModelsManager.setValuesProjectDescription(project, nature == BUILTIN_NATURE,
+						nature == PLUGIN_NATURE, nature == TEST_NATURE, null);
+				root.initializeChildren();
+				refreshResource(root);
+				reveal(p);
 			});
 		}
 	}
@@ -278,6 +305,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		}
 		p.initializeChildren();
 		refreshResource(p);
+		updateResource(p);
 		return false;
 	}
 
@@ -289,6 +317,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		p.invalidateModelsCount();
 		p.invalidateSeverity();
 		refreshResource(p);
+		updateResource(p);
 		return false;
 	}
 
@@ -412,38 +441,21 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	private void updateResource(final IResource res) {
 		if (res == null)
 			return;
-		final Runnable r = () -> {
-			VirtualContent<?> resource = findWrappedInstanceOf(res);
-			while (resource != null) {
-				viewer.update(resource, null);
-				resource = resource.getParent();
-			}
-		};
-		run(r);
+		updateResource(findWrappedInstanceOf(res));
+	}
+
+	private void updateResource(final VirtualContent<?> res) {
+		if (res == null)
+			return;
+		VirtualContent<?> resource = res;
+		while (resource != null) {
+			toUpdate.add(resource);
+			resource = resource.getParent();
+		}
 	}
 
 	private void refreshResource(final VirtualContent<?> res) {
-		final Runnable r = () -> {
-			viewer.refresh(res, true);
-		};
-		run(r);
-	}
-
-	private void revealResource(final Object res) {
-		final Runnable r = () -> {
-			Object resource = res;
-			if (res instanceof IProject) {
-				resource = findWrappedInstanceOf((IProject) res);
-			} else if (res instanceof IFolder) {
-				resource = findWrappedInstanceOf((IFolder) res);
-			}
-			if (resource != null) {
-				viewer.setSelection(new StructuredSelection(resource));
-				viewer.reveal(resource);
-			}
-
-		};
-		run(r);
+		toRefresh.add(res);
 	}
 
 	private void invalidateSeverityCache(final IResource resource) {
@@ -465,14 +477,22 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public WrappedResource<?, ?> findWrappedInstanceOf(final Object resource) {
+		if (resource == null)
+			return null;
+		if (resource instanceof WrappedResource)
+			return (WrappedResource<?, ?>) resource;
 		return cache.getIfPresent(resource);
 	}
 
 	public WrappedContainer<?> findWrappedInstanceOf(final IContainer shape) {
+		if (shape == null)
+			return null;
 		return (WrappedContainer<?>) cache.getIfPresent(shape);
 	}
 
 	public WrappedProject findWrappedInstanceOf(final IProject parent) {
+		if (parent == null)
+			return null;
 		return (WrappedProject) cache.getIfPresent(parent);
 	}
 

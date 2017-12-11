@@ -97,10 +97,10 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile p = getResource();
 		try {
 			final IContainer folder = p.getParent();
-			final List<IResource> sub = new ArrayList<>();
+			final List<WrappedFile> sub = new ArrayList<>();
 			for (final IResource r : folder.members()) {
 				if (r instanceof IFile && isSupport(p, (IFile) r)) {
-					sub.add(r);
+					sub.add((WrappedFile) getMapper().findWrappedInstanceOf(r));
 				}
 			}
 			return sub.toArray();

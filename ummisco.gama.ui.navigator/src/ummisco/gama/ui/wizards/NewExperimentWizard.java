@@ -41,13 +41,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import ummisco.gama.ui.interfaces.IRefreshHandler;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
 
 /**
  * The role of this wizard is to create a new file resource in the provided container. If the container resource (a
  * folder or a project) is selected in the workspace when the wizard is opened, it will accept it as the target
- * container. The wizard creates one file with the extension "gaml" and open the registered editor.
+ * container. The wizard creates one file with the extension "experiment" and open the registered editor.
  */
 
 public class NewExperimentWizard extends Wizard implements INewWizard {
@@ -93,7 +92,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 			}
 		};
 		try {
-			getContainer().run(true, false, op);
+			getContainer().run(false, false, op);
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 			return false;
@@ -117,7 +116,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource container = root.findMember(new Path(containerName));
 
-		if (!container.exists()) {
+		if (container == null || !container.exists()) {
 			final boolean create = MessageDialog.openConfirm(getShell(), "Folder does not exist",
 					"Folder \"" + containerName + "\" does not exist. Create it automatically ?");
 			if (create) {
@@ -169,7 +168,7 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
-		WorkbenchHelper.getService(IRefreshHandler.class).run(file);
+		ResourceManager.getInstance().reveal(file);
 		getShell().getDisplay().asyncExec(() -> {
 			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			try {
@@ -205,18 +204,6 @@ public class NewExperimentWizard extends Wizard implements INewWizard {
 
 		return new ByteArrayInputStream(output.getBytes());
 	}
-
-	// /** Initialize an empty file contents */
-	// public InputStream openContentStreamEmptyModelFile() throws CoreException {
-	// String contents = fileHeader + "model {\n\t/** Insert your model definition here */\n}\n";
-	// return new ByteArrayInputStream(contents.getBytes());
-	// }
-
-	// private void throwCoreException(final String message) throws CoreException {
-	// IStatus status =
-	// new Status(IStatus.ERROR, "msi.gama.gui.wizards", IStatus.OK, message, null);
-	// throw new CoreException(status);
-	// }
 
 	/** We will accept the selection in the workbench to see if we can initialize from it. */
 	@Override

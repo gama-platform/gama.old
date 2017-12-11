@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -44,6 +45,13 @@ public abstract class NewModelWizardPage extends WizardPage {
 	/** Gets the file name of the new file */
 	public String getFileName() {
 		return fileText.getText();
+	}
+
+	@Override
+	public void setVisible(final boolean b) {
+		super.setVisible(b);
+		if (b)
+			fileText.setFocus();
 	}
 
 	/** Gets the author of the new file */
@@ -91,24 +99,54 @@ public abstract class NewModelWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-	protected void initialize(final String newFileName) {
+	protected void initialize() {
 		final IContainer container = findContainer();
 		if (container != null)
 			containerText.setText(container.getFullPath().toString());
-		fileText.setText(newFileName);
+		fileText.setText(getInitialFileName());
+	}
+
+	protected String getInitialFileName() {
+		final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		if (resource instanceof IContainer) {
+			IFile modelfile = null;
+			int i = 0;
+			do {
+				modelfile = ((IContainer) resource).getFile(new Path(getInitialModelFileName(i++)));
+			} while (modelfile.exists());
+			return modelfile.getName();
+		}
+		return getDefaultFileName();
+	}
+
+	protected String getInitialModelFileName(final int i) {
+		final String body = getDefaultFileName();
+		final String extension = getExtension();
+		return body + (i == 0 ? "" : String.valueOf(i)) + extension;
+	}
+
+	protected String getDefaultFileName() {
+		return "New " + gamlType();
 	}
 
 	private IContainer findContainer() {
 		Object obj = null;
 		if (selection instanceof IStructuredSelection && !selection.isEmpty())
 			obj = ((IStructuredSelection) selection).getFirstElement();
-		final IResource r = ResourceManager.getResource(obj);
+		IResource r = ResourceManager.getResource(obj);
 		if (r == null) { return null; }
+		if (r instanceof IProject) {
+			r = ((IProject) r).getFolder(getInnerDefaultFolder());
+		}
 		if (r instanceof IContainer) {
 			return (IContainer) r;
 		} else {
 			return r.getParent();
 		}
+	}
+
+	protected String getInnerDefaultFolder() {
+		return "models";
 	}
 
 	Label createLabel(final Composite c, final String t) {

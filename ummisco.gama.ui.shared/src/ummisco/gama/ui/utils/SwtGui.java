@@ -162,7 +162,7 @@ public class SwtGui implements IGui {
 		if (v != null) {
 			v.finishTestSequence();
 		}
-		WorkbenchHelper.getService(IRefreshHandler.class).run(null);
+		WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
 	}
 
 	@Override

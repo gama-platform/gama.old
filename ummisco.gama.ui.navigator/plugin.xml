@@ -281,21 +281,6 @@
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="msi.gama.category"
-            defaultHandler="ummisco.gama.ui.commands.RefreshHandler"
-            id="msi.gama.gui.gamaNavigator.commands.Refresh"
-            name="Refresh">
-      </command>
-      <command
-            categoryId="msi.gama.category"
-            defaultHandler="ummisco.gama.ui.commands.FileOpen"
-            id="msi.gama.application.commands.OpenFile"
-            name="Open File">
-      </command>
-   </extension>
-   <extension
          point="org.eclipse.ui.navigator.viewer">
       <viewer
             viewerId="msi.gama.gui.view.GamaNavigator">

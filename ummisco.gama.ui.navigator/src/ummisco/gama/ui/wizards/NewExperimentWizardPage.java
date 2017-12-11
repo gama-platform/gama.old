@@ -68,14 +68,14 @@ public class NewExperimentWizardPage extends NewModelWizardPage {
 		final FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
 		/* Finished adding the custom control */
-		initialize("New Experiment.experiment");
+		initialize();
 		dialogChanged();
 		setControl(container);
 	}
 
 	@Override
-	protected void initialize(final String newFileName) {
-		super.initialize(newFileName);
+	protected void initialize() {
+		super.initialize();
 		modelChooser.setText("");
 	}
 
@@ -111,7 +111,7 @@ public class NewExperimentWizardPage extends NewModelWizardPage {
 
 	@Override
 	public String gamlType() {
-		return "experiment";
+		return "Experiment";
 	}
 
 }

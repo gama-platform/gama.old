@@ -41,8 +41,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import ummisco.gama.ui.interfaces.IRefreshHandler;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
 
 /**
  * The role of this wizard is to create a new file resource in the provided container. If the container resource (a
@@ -88,11 +87,10 @@ public class NewTestExperimentWizard extends Wizard implements INewWizard {
 				throw new InvocationTargetException(e);
 			} finally {
 				monitor.done();
-				// RefreshHandler.run();
 			}
 		};
 		try {
-			getContainer().run(true, false, op);
+			getContainer().run(false, false, op);
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 			return false;
@@ -114,8 +112,7 @@ public class NewTestExperimentWizard extends Wizard implements INewWizard {
 		monitor.beginTask("Creating " + fileName, 2);
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource container = root.findMember(new Path(containerName));
-
-		if (!container.exists()) {
+		if (container == null || !container.exists()) {
 			final boolean create = MessageDialog.openConfirm(getShell(), "Folder does not exist",
 					"Folder \"" + containerName + "\" does not exist. Create it automatically ?");
 			if (create) {
@@ -164,7 +161,7 @@ public class NewTestExperimentWizard extends Wizard implements INewWizard {
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
-		WorkbenchHelper.getService(IRefreshHandler.class).run(file);
+		ResourceManager.getInstance().reveal(file);
 		getShell().getDisplay().asyncExec(() -> {
 			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			try {

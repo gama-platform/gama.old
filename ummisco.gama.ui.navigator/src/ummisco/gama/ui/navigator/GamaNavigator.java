@@ -11,7 +11,6 @@ package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -27,14 +26,12 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
-import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
@@ -231,7 +228,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
-		safeRefresh(null);
+		getCommonViewer().refresh();
 		FileFolderSorter.BY_DATE = enabled;
 
 	});
@@ -287,34 +284,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 		final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
 		t.getControl().setToolTipText(tooltip == null ? message : tooltip);
-	}
-
-	public void safeRefresh(final IResource resource) {
-
-		final CommonViewer localViewer = getCommonViewer();
-
-		if (localViewer == null || localViewer.getControl().isDisposed()) { return; }
-		final Display display = localViewer.getControl().getDisplay();
-		if (display.isDisposed()) { return; }
-		display.syncExec(() -> {
-			if (localViewer.getControl().isDisposed()) { return; }
-			final Object[] expanded = localViewer.getExpandedElements();
-			SafeRunner.run(new NavigatorSafeRunnable() {
-
-				@Override
-				public void run() throws Exception {
-					localViewer.getControl().setRedraw(false);
-					if (resource == null) {
-						localViewer.refresh();
-					} else {
-						localViewer.refresh(resource);
-					}
-					localViewer.getControl().setRedraw(true);
-				}
-			});
-			getCommonViewer().setExpandedElements(expanded);
-		});
-
 	}
 
 }

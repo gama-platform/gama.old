@@ -177,7 +177,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 						@Override
 						public void done() {
 							super.done();
-							WorkbenchHelper.getService(IRefreshHandler.class).run(workspace.getRoot());
+							WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
 
 						}
 

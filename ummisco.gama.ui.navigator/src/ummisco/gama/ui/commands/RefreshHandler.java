@@ -13,9 +13,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -32,17 +29,12 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
-import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
@@ -52,40 +44,31 @@ import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.navigator.GamaNavigator;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
+import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
+public class RefreshHandler implements IRefreshHandler {
 
-	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		run((IResource) null);
-		return null;
+	GamaNavigator navigator;
+
+	private GamaNavigator getNavigator() {
+		if (navigator == null) {
+			final IWorkbenchPage page = WorkbenchHelper.getPage();
+			if (page != null) {
+				navigator = (GamaNavigator) page.findView(IGui.NAVIGATOR_VIEW_ID);
+			}
+		}
+		return navigator;
+	}
+
+	private VirtualContent<?> getContent(final Object target) {
+		final VirtualContent<?> result = ResourceManager.getInstance().findWrappedInstanceOf(target);
+		return result;
 	}
 
 	@Override
-	public void run(final IResource resource) {
-		final Display d = PlatformUI.getWorkbench().getDisplay();
-		if (d.isDisposed())
-			return;
-		final IResource r = resource == null ? ResourcesPlugin.getWorkspace().getRoot()
-				: resource.getType() == IResource.ROOT ? resource : resource.getParent();
-		final UIJob job = new UIJob("Refreshing " + r.getName()) {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-
-				final IWorkbenchPage page = WorkbenchHelper.getPage();
-				if (page == null)
-					return Status.OK_STATUS;
-				final IViewPart view = page.findView(IGui.NAVIGATOR_VIEW_ID);
-				if (view == null) { return Status.OK_STATUS; }
-				((GamaNavigator) view).safeRefresh(r.getParent());
-				((GamaNavigator) view).selectReveal(new StructuredSelection(r));
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
+	public void refreshNavigator() {
+		getNavigator().getCommonViewer().refresh();
 	}
 
 	protected void refreshResource(final IResource resource, final IProgressMonitor monitor) throws CoreException {
@@ -152,7 +135,7 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 					NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					RefreshHandler.this.run(workspace.getRoot());
+					refreshNavigator();
 					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
 					try {
 
@@ -161,7 +144,7 @@ public class RefreshHandler extends AbstractHandler implements IRefreshHandler {
 							@Override
 							public void done() {
 								super.done();
-								RefreshHandler.this.run(workspace.getRoot());
+								refreshNavigator();
 
 							}
 

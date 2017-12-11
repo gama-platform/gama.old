@@ -35,7 +35,7 @@ public class NewTestExperimentWizardPage extends NewModelWizardPage {
 		final FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
 		/* Finished adding the custom control */
-		initialize("New Test.experiment");
+		initialize();
 		dialogChanged();
 		setControl(container);
 	}
@@ -46,8 +46,13 @@ public class NewTestExperimentWizardPage extends NewModelWizardPage {
 	}
 
 	@Override
+	protected String getInnerDefaultFolder() {
+		return "tests";
+	}
+
+	@Override
 	public String gamlType() {
-		return "Experiment";
+		return "Test Experiment";
 	}
 
 }

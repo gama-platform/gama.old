@@ -87,7 +87,7 @@ public class NewFileWizardPage extends NewModelWizardPage {
 			createLabel(container, null);
 		}
 
-		createLabel(container, "&Create a html template \nfor the model description ?");
+		createLabel(container, "&Create a html template \nfor the model documentation ?");
 
 		final Composite compo = new Composite(container, SWT.NULL);
 		fillLayout = new FillLayout();
@@ -107,7 +107,7 @@ public class NewFileWizardPage extends NewModelWizardPage {
 		});
 
 		/* Finished adding the custom control */
-		initialize("New Model.gaml");
+		initialize();
 		dialogChanged();
 		setControl(container);
 	}
