@@ -471,6 +471,15 @@ public class GamaPreferences {
 							@Override
 							public void afterValueChange(final Integer newValue) {}
 						});
+		
+		/**
+		 * GeoTools
+		 */
+		public static final String GEOMETRY =
+				"Geometry";
+		public static final Pref<Double> TOLERANCE_POINTS =
+				create("pref_geometry_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME, GEOMETRY);
+		
 
 		private static String getDefaultRPath() {
 			final String os = System.getProperty("os.name");

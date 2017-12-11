@@ -11,9 +11,11 @@ package msi.gama.metamodel.shape;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
@@ -274,9 +276,29 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof GamaPoint) { return equals3D((GamaPoint) o); }
+	
+		if (o instanceof GamaPoint) { 
+			if (GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) 
+				return equalsWithTolerance((GamaPoint) o,GamaPreferences.External.TOLERANCE_POINTS.getValue());
+			return equals3D((GamaPoint) o); }
 		return super.equals(o);
 	}
+	
+	
+	public boolean equalsWithTolerance(Coordinate c, double tolerance){
+	    if (tolerance == 0.0) return equals3D(c);
+	 	if (! NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) {
+	      return false;
+	    }
+	    if (! NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) {
+	      return false;
+	    }
+	    if (!Double.isNaN(z) && !Double.isNaN(c.z) && (! NumberUtil.equalsWithTolerance(this.z, c.z, tolerance)))
+	    	return false;
+	    
+	    return true;
+	  }
+
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)
