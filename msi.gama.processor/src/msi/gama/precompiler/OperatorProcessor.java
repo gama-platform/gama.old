@@ -68,11 +68,11 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 		}
 		final int n = args.length;
-		if (n == 0 && !isStatic) {
-			context.emitError("GAML: an operator needs to have at least one argument", method);
+		final boolean scope = n > 0 && args[0].contains("IScope");
+		if (n == 0 && !isStatic || isStatic && scope && n == 1) {
+			context.emitError("GAML: an operator needs to have at least one operand", method);
 			return;
 		}
-		final boolean scope = n > 0 && args[0].contains("IScope");
 		final int actual_args_number = n + (scope ? -1 : 0) + (!isStatic ? 1 : 0);
 		String methodName = method.getSimpleName().toString();
 		final String[] classes = new String[actual_args_number];

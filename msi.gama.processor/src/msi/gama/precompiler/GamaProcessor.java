@@ -85,8 +85,11 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 				writeJavaBody(sourceBuilder);
 				source.append(sourceBuilder);
 			}
+		} catch (final IOException io) {
+			context.emitWarning("An IO exception occured in the generation of Java files: " + io.getMessage(), null);
 		} catch (final Exception e) {
 			context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
+			throw e;
 		}
 	}
 
