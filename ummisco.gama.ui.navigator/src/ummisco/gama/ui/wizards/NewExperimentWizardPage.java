@@ -30,7 +30,7 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
  * accept file name without the extension OR with the extension that matches the expected one.
  */
 
-public class NewExperimentWizardPage extends NewModelWizardPage {
+public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 
 	private Text modelChooser;
 
@@ -96,7 +96,7 @@ public class NewExperimentWizardPage extends NewModelWizardPage {
 		}
 	}
 
-	public String getModelName() {
+	public String getExperimentedModelPath() {
 		return modelChooser.getText();
 	}
 
@@ -108,6 +108,16 @@ public class NewExperimentWizardPage extends NewModelWizardPage {
 	@Override
 	public String gamlType() {
 		return "Experiment";
+	}
+
+	@Override
+	public String getTemplateType() {
+		return AbstractNewModelWizard.EXPERIMENT;
+	}
+
+	@Override
+	public boolean createDoc() {
+		return false;
 	}
 
 }

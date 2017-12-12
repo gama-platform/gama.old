@@ -28,11 +28,11 @@ import msi.gaml.operators.Strings;
  * accept file name without the extension OR with the extension that matches the expected one.
  */
 
-public class NewFileWizardPage extends NewModelWizardPage {
+public class NewFileWizardPage extends AbstractNewModelWizardPage {
 
 	private Text descriptionText;
 	private Button yesButton;
-	private String typeOfModel = "Empty";
+	private String typeOfModel = AbstractNewModelWizard.EMPTY;
 
 	public NewFileWizardPage(final ISelection selection) {
 		super(selection);
@@ -49,23 +49,25 @@ public class NewFileWizardPage extends NewModelWizardPage {
 		final Composite middleComposite = new Composite(container, SWT.NULL);
 		FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
-		Arrays.asList("Empty", "Skeleton", "Test").forEach(s -> {
-			final Button b = new Button(middleComposite, SWT.RADIO);
-			b.setText(s);
-			if (s.equals("Empty"))
-				b.setSelection(true);
-			b.addSelectionListener(new SelectionAdapter() {
+		Arrays.asList(AbstractNewModelWizard.EMPTY, AbstractNewModelWizard.SKELETON, AbstractNewModelWizard.TEST)
+				.forEach(s -> {
+					final Button b = new Button(middleComposite, SWT.RADIO);
+					b.setText(s);
+					if (s.equals(AbstractNewModelWizard.EMPTY))
+						b.setSelection(true);
+					b.addSelectionListener(new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					typeOfModel = Strings.toLowerCase(((Button) e.widget).getText());
-					updateStatus(null);
-					dialogChanged();
-					descriptionText.setText(typeOfModel.equals("test") ? "A model dedicated to run unit tests" : "");
-				}
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							typeOfModel = Strings.toLowerCase(((Button) e.widget).getText());
+							updateStatus(null);
+							dialogChanged();
+							descriptionText.setText(typeOfModel.equals(AbstractNewModelWizard.TEST)
+									? "A model dedicated to run unit tests" : "");
+						}
 
-			});
-		});
+					});
+				});
 
 		createLabel(container, null);
 		createFileNameSection(container);
@@ -87,7 +89,7 @@ public class NewFileWizardPage extends NewModelWizardPage {
 			createLabel(container, null);
 		}
 
-		createLabel(container, "&Create a html template \nfor the model documentation ?");
+		createLabel(container, "&Create a documentation template ?");
 
 		final Composite compo = new Composite(container, SWT.NULL);
 		fillLayout = new FillLayout();
@@ -118,13 +120,15 @@ public class NewFileWizardPage extends NewModelWizardPage {
 		return descriptionText.getText();
 	}
 
-	/** Return true if the user wants a html template, and false otherwise */
-	public Boolean getValueHtmlTemplate() {
+	/** Return true if the user wants a html doc, and false otherwise */
+	@Override
+	public boolean createDoc() {
 		return yesButton.getSelection();
 	}
 
-	/** Return the type of model (empty, skeleton or example) */
-	public String getTypeOfModel() {
+	/** Return the type of model (empty, skeleton or test) */
+	@Override
+	public String getTemplateType() {
 		return typeOfModel;
 
 	}
