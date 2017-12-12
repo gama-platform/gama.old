@@ -278,8 +278,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public boolean equals(final Object o) {
 	
 		if (o instanceof GamaPoint) { 
-			if (GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) 
-				return equalsWithTolerance((GamaPoint) o,GamaPreferences.External.TOLERANCE_POINTS.getValue());
+			double tolerance = GamaPreferences.Runtime.TOLERANCE_POINTS.getValue();
+			if (tolerance > 0.0) 
+				return equalsWithTolerance((GamaPoint) o,tolerance);
 			return equals3D((GamaPoint) o); }
 		return super.equals(o);
 	}

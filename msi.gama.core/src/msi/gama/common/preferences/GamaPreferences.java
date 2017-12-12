@@ -267,6 +267,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Automatically optimize the at_distance operator", true, IType.BOOL)
 						.in(NAME, OPTIMIZATIONS);
+		public static final Pref<Double> TOLERANCE_POINTS =
+				create("point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME, OPTIMIZATIONS);
+	
 	}
 
 	public static class Displays {
@@ -472,15 +475,6 @@ public class GamaPreferences {
 							public void afterValueChange(final Integer newValue) {}
 						});
 		
-		/**
-		 * GeoTools
-		 */
-		public static final String GEOMETRY =
-				"Geometry";
-		public static final Pref<Double> TOLERANCE_POINTS =
-				create("pref_geometry_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME, GEOMETRY);
-		
-
 		private static String getDefaultRPath() {
 			final String os = System.getProperty("os.name");
 			final String osbit = System.getProperty("os.arch");
