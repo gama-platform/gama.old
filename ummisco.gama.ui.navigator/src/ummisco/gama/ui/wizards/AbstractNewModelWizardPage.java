@@ -27,21 +27,22 @@ import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-public abstract class NewModelWizardPage extends WizardPage {
+public abstract class AbstractNewModelWizardPage extends WizardPage {
 
 	protected final ISelection selection;
 	protected Text containerText, fileText, authorText, nameText;
 
-	protected NewModelWizardPage(final ISelection selection) {
+	protected AbstractNewModelWizardPage(final ISelection selection) {
 		super("wizardPage");
 		this.selection = selection;
 	}
 
 	/** Gets the container name of the new file */
 	public String getContainerName() {
-		// TODO user has to select a project otherwise it doesn't work
 		return containerText.getText();
 	}
+
+	public abstract String getTemplateType();
 
 	/** Gets the file name of the new file */
 	public String getFileName() {
@@ -63,7 +64,7 @@ public abstract class NewModelWizardPage extends WizardPage {
 	}
 
 	/** Gets the model name of the new file */
-	public String getTitleName() {
+	public String getModelName() {
 		return nameText.getText();
 	}
 
@@ -255,7 +256,7 @@ public abstract class NewModelWizardPage extends WizardPage {
 			return;
 		}
 
-		final String titleName = getTitleName();
+		final String titleName = getModelName();
 		if (titleName.length() == 0) {
 			updateStatus("The name of the " + gamlType() + " must be specified");
 			return;
@@ -279,4 +280,6 @@ public abstract class NewModelWizardPage extends WizardPage {
 	public abstract String getExtension();
 
 	public abstract String gamlType();
+
+	public abstract boolean createDoc();
 }

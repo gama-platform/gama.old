@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class NewTestExperimentWizardPage extends NewModelWizardPage {
+public class NewTestExperimentWizardPage extends AbstractNewModelWizardPage {
 
 	public NewTestExperimentWizardPage(final ISelection selection) {
 		super(selection);
@@ -37,6 +37,12 @@ public class NewTestExperimentWizardPage extends NewModelWizardPage {
 	}
 
 	@Override
+	public String getTemplateType() {
+		return AbstractNewModelWizard.TEST_EXP;
+
+	}
+
+	@Override
 	public String getExtension() {
 		return ".experiment";
 	}
@@ -49,6 +55,11 @@ public class NewTestExperimentWizardPage extends NewModelWizardPage {
 	@Override
 	public String gamlType() {
 		return "Test Experiment";
+	}
+
+	@Override
+	public boolean createDoc() {
+		return false;
 	}
 
 }
