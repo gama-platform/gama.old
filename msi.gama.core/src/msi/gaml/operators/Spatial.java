@@ -2393,6 +2393,33 @@ public abstract class Spatial {
 			}
 			return nwGeoms;
 		}
+		
+		@operator (
+				value = "split_lines",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries resulting after cutting the lines at their intersections. if the last boolean operand is set to true, the split lines will import the attributes of the initial lines",
+				examples = { @example (
+						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
+						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
+						test = false) })
+		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms, final boolean readAttributes)
+				throws GamaRuntimeException {
+			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
+			IList<IShape> split_lines = split_lines(scope,geoms);
+			if (readAttributes) {
+				for (IShape line : split_lines) {
+					IShape matchingGeom = geoms.stream(scope).findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry())).get();
+					for (String att : matchingGeom.getAttributes().keySet()) {
+						line.setAttribute(att, matchingGeom.getAttribute(att));
+					}
+				}
+			}
+			
+			return split_lines;
+		}
 
 		@operator (
 				value = "skeletonize",
