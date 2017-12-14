@@ -282,15 +282,15 @@ public class GamaIFCFile extends GamaGeometryFile {
 		if (depth == null || depth == 0.0)
 			depth = width / 10.0;
 		IShape box = Spatial.Creation.box(scope, width, depth, height);
+		box = Spatial.Transformations.translated_by(scope, box, new GamaPoint(width/2.0,0.0));
 		final IList<IShape> pts = GamaListFactory.create();
 		pts.add(new GamaPoint(-depth / 2.0, 0));
 		pts.add(new GamaPoint(depth / 2.0, 0.0));
 		final IShape line = Spatial.Creation.line(scope, pts);
 		box.setAttribute(IKeyword.NAME, d.getName().getDecodedValue());
-
 		box = Spatial.Transformations.translated_by(scope, box,
-				new GamaPoint(line.getLocation().getX() - line.getPoints().get(0).getX(),
-						line.getLocation().getY() - line.getPoints().get(0).getY()));
+				new GamaPoint(line.getLocation().getX() /*- line.getPoints().get(0).getX()*/,
+						line.getLocation().getY() /*- line.getPoints().get(0).getY()*/));
 
 		addAttribtutes(d, box);
 		newAxe.transform(box);
