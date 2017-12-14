@@ -22,6 +22,8 @@ import ifc2x3javatoolbox.ifc2x3tc1.IfcArbitraryClosedProfileDef;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcAxis2Placement;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcAxis2Placement2D;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcAxis2Placement3D;
+import ifc2x3javatoolbox.ifc2x3tc1.IfcBooleanClippingResult;
+import ifc2x3javatoolbox.ifc2x3tc1.IfcBooleanOperand;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcCartesianPoint;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcCurve;
 import ifc2x3javatoolbox.ifc2x3tc1.IfcDirection;
@@ -277,7 +279,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 		final double height = d.getOverallHeight().value;
 		final double width = d.getOverallWidth().value;
 		Double depth = defineDoorDepth(scope, d.getObjectPlacement(), depths);
-		if (depth == 0.0)
+		if (depth == null || depth == 0.0)
 			depth = width / 10.0;
 		IShape box = Spatial.Creation.box(scope, width, depth, height);
 		final IList<IShape> pts = GamaListFactory.create();
@@ -324,6 +326,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 	}
 
 	public IShape createWall(final IScope scope, final IfcWall w, final Map<IfcProduct, Double> depths) {
+		String name = w.getName().toString();
 		if (w.getObjectPlacement() == null)
 			return null;
 		final Axe newAxe = new Axe();
@@ -345,7 +348,13 @@ public class GamaIFCFile extends GamaGeometryFile {
 		final IShape line = Spatial.Creation.line(scope, linePts);
 		newAxe.transform(line);
 		for (final IfcRepresentation r : w.getRepresentation().getRepresentations()) {
-			for (final IfcRepresentationItem item : r.getItems()) {
+			for (final IfcRepresentationItem it : r.getItems()) {
+				IfcRepresentationItem item = it;
+				if (item instanceof IfcBooleanClippingResult) {
+					IfcBooleanClippingResult bdr = (IfcBooleanClippingResult) item;
+					IfcBooleanOperand op = bdr.getFirstOperand();
+					item = (IfcRepresentationItem) op;
+				}
 				if (!(item instanceof IfcExtrudedAreaSolid))
 					continue;
 				final IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
