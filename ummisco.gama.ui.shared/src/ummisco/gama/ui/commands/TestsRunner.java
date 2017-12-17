@@ -74,7 +74,7 @@ public class TestsRunner {
 		// If it is contained in one of the built-in tests projects, return true
 		if (p.getDescription().hasNature(WorkbenchHelper.TEST_NATURE))
 			return true;
-		if (GamaPreferences.Modeling.USER_TESTS.getValue()) {
+		if (GamaPreferences.Runtime.USER_TESTS.getValue()) {
 			// If it is not in user defined projects, return false
 			if (p.getDescription().hasNature(WorkbenchHelper.BUILTIN_NATURE))
 				return false;

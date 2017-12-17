@@ -9,8 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
-import static msi.gama.common.preferences.GamaPreferences.Modeling.FAILED_TESTS;
-import static msi.gama.common.preferences.GamaPreferences.Modeling.TESTS_SORTED;
+import static msi.gama.common.preferences.GamaPreferences.Runtime.FAILED_TESTS;
+import static msi.gama.common.preferences.GamaPreferences.Runtime.TESTS_SORTED;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -121,7 +121,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 
 	@Override
 	public boolean addItem(final AbstractSummary<?> experiment) {
-		final boolean onlyFailed = GamaPreferences.Modeling.FAILED_TESTS.getValue();
+		final boolean onlyFailed = GamaPreferences.Runtime.FAILED_TESTS.getValue();
 		ParameterExpandItem item = getViewer() == null ? null : getViewer().getItem(experiment);
 		if (item != null)
 			item.dispose();
@@ -183,7 +183,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 
 	public void createEditor(final Composite compo, final AbstractSummary<?> globalTest,
 			final AbstractSummary<?> subTest, final String name) {
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue()) {
+		if (GamaPreferences.Runtime.FAILED_TESTS.getValue()) {
 			final TestState state = subTest.getState();
 			if (state != TestState.FAILED && state != TestState.ABORTED)
 				return;

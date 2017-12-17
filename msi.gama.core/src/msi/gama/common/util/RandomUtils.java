@@ -59,12 +59,12 @@ public class RandomUtils {
 	}
 
 	public RandomUtils(final String rng) {
-		this(GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue() ? GamaPreferences.Simulations.CORE_SEED.getValue()
+		this(GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
 				: (Double) null, rng);
 	}
 
 	public RandomUtils() {
-		this(GamaPreferences.Simulations.CORE_RNG.getValue());
+		this(GamaPreferences.External.CORE_RNG.getValue());
 	}
 
 	public State getState() {
@@ -331,10 +331,10 @@ public class RandomUtils {
 		// the step
 		final double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
-		double valSup = FastMath.min(max,min + (nbStep + 1.0) * step);
-		double valMin = min + nbStep * step;
-		int precision = BigDecimal.valueOf(step).scale() + 5;
-		
+		final double valSup = FastMath.min(max, min + (nbStep + 1.0) * step);
+		final double valMin = min + nbStep * step;
+		final int precision = BigDecimal.valueOf(step).scale() + 5;
+
 		final double high = Maths.round(valSup, precision);
 		final double low = Maths.round(valMin, precision);
 		return val - low < high - val ? low : high;

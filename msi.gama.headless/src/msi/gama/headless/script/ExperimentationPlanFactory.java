@@ -79,15 +79,16 @@ public class ExperimentationPlanFactory {
 		out.close();
 
 	}
-
-	public static void analyseModelsDirectoryForValidation(final String modelFileName, final OutputStreamWriter output,
-			final OutputStreamWriter err) throws IOException, TransformerException {
-		final List<String> allFiles = ScriptFactory.getModelsInDirectory(modelFileName);
-		for (final String fPath : allFiles) {
-			analyseModelsDirectoryForValidation(modelFileName, output, err);
-		}
-
-	}
+	//
+	// public static void analyseModelsDirectoryForValidation(final String modelFileName, final OutputStreamWriter
+	// output,
+	// final OutputStreamWriter err) throws IOException, TransformerException {
+	// final List<String> allFiles = ScriptFactory.getModelsInDirectory(modelFileName);
+	// for (final String fPath : allFiles) {
+	// analyseModelsDirectoryForValidation(modelFileName, output, err);
+	// }
+	//
+	// }
 
 	public static void analyseModel(final String modelFileName, final OutputStreamWriter output,
 			final OutputStreamWriter err) throws IOException, TransformerException {

@@ -24,7 +24,7 @@ import msi.gama.common.preferences.IPreferenceChangeListener;
  */
 public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
-	static int FRAME_PER_SECOND = GamaPreferences.OpenGL.OPENGL_FPS.getValue();
+	static int FRAME_PER_SECOND = GamaPreferences.Displays.OPENGL_FPS.getValue();
 	protected int targetFPS = FRAME_PER_SECOND;
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
@@ -37,7 +37,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	protected int frames = 0;
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
-		GamaPreferences.OpenGL.OPENGL_FPS.addChangeListener(new IPreferenceChangeListener<Integer>() {
+		GamaPreferences.Displays.OPENGL_FPS.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 			@Override
 			public boolean beforeValueChange(final Integer newValue) {

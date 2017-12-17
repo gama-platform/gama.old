@@ -250,7 +250,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			initializer = true)
 	public GamaColor getColor() {
 		if (color == null) {
-			color = new GamaColor(GamaPreferences.Simulations.SIMULATION_COLORS[getIndex() % 5].getValue());
+			color = new GamaColor(GamaPreferences.Interface.SIMULATION_COLORS[getIndex() % 5].getValue());
 		}
 		return color;
 	}
@@ -547,7 +547,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public String buildPostfix() {
-		final boolean noName = !GamaPreferences.Simulations.CORE_SIMULATION_NAME.getValue();
+		final boolean noName = !GamaPreferences.Interface.CORE_SIMULATION_NAME.getValue();
 		if (noName) {
 			if (getPopulation().size() > 1) {
 				return " (S" + getIndex() + ")";
@@ -665,8 +665,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public RandomUtils getRandomGenerator() {
 		return random;
 	}
-	
-	public void setRandomGenerator(RandomUtils rng){
+
+	public void setRandomGenerator(final RandomUtils rng) {
 		random = rng;
 	}
 
@@ -706,7 +706,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
-		
+
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
 		for (final String name : attr.keySet()) {
@@ -717,7 +717,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
 		clock.setCycle((Integer) cycle);
-		
+
 		// TODO
 		// Update GUI of the Experiment
 		// this.getExperiment().

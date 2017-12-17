@@ -22,7 +22,7 @@ public class Startup implements IStartup {
 	public void earlyStartup() {
 		CleanupHelper.run();
 		GamaKeyBindings.install();
-		if (GamaPreferences.Modeling.START_TESTS.getValue()) {
+		if (GamaPreferences.Runtime.START_TESTS.getValue()) {
 			TestsRunner.start();
 		}
 

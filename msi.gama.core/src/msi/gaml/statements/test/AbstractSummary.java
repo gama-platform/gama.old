@@ -68,7 +68,7 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	@Override
 	public final String toString() {
 		final TestState state = getState();
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue() && state != TestState.FAILED && state != TestState.ABORTED)
+		if (GamaPreferences.Runtime.FAILED_TESTS.getValue() && state != TestState.FAILED && state != TestState.ABORTED)
 			return "";
 		final StringBuilder sb = new StringBuilder();
 		printHeader(sb);

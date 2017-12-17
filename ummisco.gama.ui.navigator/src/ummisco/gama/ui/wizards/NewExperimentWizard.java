@@ -16,14 +16,23 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.INewWizard;
 
+import msi.gaml.operators.Strings;
+
 public class NewExperimentWizard extends AbstractNewModelWizard implements INewWizard {
 
 	@Override
 	protected String getHeader(final IContainer folder, final String str, final String title) {
 		final IResource model =
 				ResourcesPlugin.getWorkspace().getRoot().findMember(getPage().getExperimentedModelPath());
-		final IPath pathToModel = model.getFullPath().makeRelativeTo(folder.getFullPath());
-		return super.getHeader(folder, str, title).replaceAll("\\$MODEL\\$", "'" + pathToModel + "'");
+		final IPath pathToModel;
+		if (model.getType() != IResource.FILE) {
+			pathToModel = null;
+		} else
+			pathToModel = model.getFullPath().makeRelativeTo(folder.getFullPath());
+		final String header = super.getHeader(folder, str, title);
+		final String result = pathToModel == null ? header.replace("model:$MODEL$", "")
+				: header.replaceAll("\\$MODEL\\$", "'" + pathToModel + "'");
+		return result.replaceAll("\\$TYPE\\$", Strings.toLowerCase(getPage().getType()));
 	}
 
 	@Override

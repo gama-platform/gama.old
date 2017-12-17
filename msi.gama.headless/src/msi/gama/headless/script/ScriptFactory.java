@@ -1,26 +1,17 @@
 package msi.gama.headless.script;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.headless.util.WorkspaceManager;
-import msi.gama.kernel.model.IModel;
-
 public abstract class ScriptFactory {
 
-	public static IModel loadAndBuildJobs(final String path) throws IOException, GamaHeadlessException {
-		final IModel model = HeadlessSimulationLoader.loadModel(new File(path));
-		return model;
-	}
+	// public static IModel loadAndBuildJobs(final String path) throws IOException, GamaHeadlessException {
+	// final IModel model = HeadlessSimulationLoader.loadModel(new File(path));
+	// return model;
+	// }
 
-	public static ArrayList<String> getModelsInDirectory(final String path) throws IOException {
-		final WorkspaceManager ws = new WorkspaceManager(path);
-		final ArrayList<String> allFiles = ws.getModelLibrary();
-		return allFiles;
-	}
+	// public static ArrayList<String> getModelsInDirectory(final String path) throws IOException {
+	// final WorkspaceManager ws = new WorkspaceManager(path);
+	// final ArrayList<String> allFiles = ws.getModelLibrary();
+	// return allFiles;
+	// }
 
 	/*
 	 * public static List<IExperimentJob> loadAndBuildJobs(IModel model) { ModelDescription modelDesc =

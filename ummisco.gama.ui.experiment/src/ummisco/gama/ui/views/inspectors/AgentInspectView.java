@@ -102,7 +102,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	@Override
 	protected Composite createItemContentsFor(final IAgent agent) {
 		final Composite attributes = super.createItemContentsFor(agent);
-		final Label l = AbstractEditor.createLeftLabel(attributes, "Actions");
+		final Label l = AbstractEditor.createLeftLabel(attributes, "Actions", false);
 		l.setFont(GamaFonts.getExpandfont());
 		final Composite composite = new Composite(attributes, SWT.NONE);
 		composite.setBackground(attributes.getBackground());

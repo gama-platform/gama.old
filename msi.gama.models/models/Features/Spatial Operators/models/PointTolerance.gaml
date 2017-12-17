@@ -11,14 +11,14 @@ global {
 	init {
 		point pt1 <- {50.0, 50.0};
 		point pt2 <- {50.0001, 49.9999};
-		float old <- gama.point_tolerance;
+		float old <- gama.pref_point_tolerance;
 		
-		write "Tolerance: " + gama.point_tolerance + ": " + pt1 + " = " + pt2 + " -> " + (pt1 = pt2) ;
+		write "Tolerance: " + gama.pref_point_tolerance + ": " + pt1 + " = " + pt2 + " -> " + (pt1 = pt2) ;
 		
-		gama.point_tolerance <- 0.001;
-		write "Tolerance: " + gama.point_tolerance + ": "  + pt1 + " = " + pt2 + " -> " + (pt1 = pt2);
+		gama.pref_point_tolerance <- 0.001;
+		write "Tolerance: " + gama.pref_point_tolerance + ": "  + pt1 + " = " + pt2 + " -> " + (pt1 = pt2);
 		
-		gama.point_tolerance <- old;
+		gama.pref_point_tolerance <- old;
 	}
 }
 

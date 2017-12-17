@@ -23,6 +23,7 @@ public class Pref<T> implements IParameter {
 
 	String key, title, tab, group, comment;
 	boolean disabled = false; // by default
+	boolean hidden = false; // by default;
 	T value, initial;
 	final int type;
 	List<T> values;
@@ -106,6 +107,7 @@ public class Pref<T> implements IParameter {
 
 	public Pref<T> named(final String t) {
 		this.title = t;
+		// this.title = t + " [" + key + "]";
 		return this;
 	}
 
@@ -279,6 +281,15 @@ public class Pref<T> implements IParameter {
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
 		return slider;
+	}
+
+	public Pref<T> hidden() {
+		hidden = true;
+		return this;
+	}
+
+	public boolean isHidden() {
+		return hidden;
 	}
 
 }

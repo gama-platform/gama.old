@@ -87,18 +87,20 @@ public class GraphTopology extends AbstractTopology {
 		final boolean targetNSame = isAgentVertex == target instanceof IAgent;
 		final boolean sourceNSame = isAgentVertex == source instanceof IAgent;
 		boolean sourceNode = graph.getVertexMap().containsKey(source);
-		
-		if (sourceNode && GamaPreferences.Runtime.TOLERANCE_POINTS.getValue() > 0.0) {
-			for (IShape v : graph.getVertexMap().keySet()) {
+
+		if (sourceNode && GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) {
+			for (final IShape v : graph.getVertexMap().keySet()) {
 				if (v.equals(source)) {
-					sourceN = v; break;
+					sourceN = v;
+					break;
 				}
 			}
 		}
-		if (targetNode && GamaPreferences.Runtime.TOLERANCE_POINTS.getValue() > 0.0) {
-			for (IShape v : graph.getVertexMap().keySet()) {
+		if (targetNode && GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) {
+			for (final IShape v : graph.getVertexMap().keySet()) {
 				if (v.equals(target)) {
-					targetN = v; break;
+					targetN = v;
+					break;
 				}
 			}
 		}

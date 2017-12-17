@@ -43,35 +43,33 @@ import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class PreferencesHelper {
 
-	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
-			.create("pref_shapefile_background_color", "Default shapefile viewer fill color",
-					GamaColor.getNamed("lightgray"), IType.COLOR)
-			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
-
-	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL =
 			GamaPreferences
-					.create("pref_shapefile_line_color", "Default shapefile viewer line color",
-							GamaColor.getNamed("black"), IType.COLOR)
+					.create("pref_shapefile_background_color", "Shapefile viewer fill color",
+							GamaColor.getNamed("lightgray"), IType.COLOR)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
+			.create("pref_shapefile_line_color", "Shapefile viewer line color", GamaColor.getNamed("black"),
+					IType.COLOR)
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
+
 	public static final Pref<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
-			.create("pref_error_text_color", "Text color of errors in error view",
+			.create("pref_error_text_color", "Text color of errors",
 					GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	public static final Pref<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
-			.create("pref_warning_text_color", "Text color of warnings in error view",
+			.create("pref_warning_text_color", "Text color of warnings",
 					GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
-	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND =
-			GamaPreferences
-					.create("pref_image_background_color", "Default image viewer background color",
-							GamaColor.getNamed("white"), IType.COLOR)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
+	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND = GamaPreferences.create("pref_image_background_color",
+			"Image viewer background color", GamaColor.getNamed("white"), IType.COLOR)
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaFont> BASE_BUTTON_FONT = GamaPreferences
-			.create("pref_button_font", "Font of buttons and dialogs (applies to new buttons)",
+			.create("pref_button_font", "Font of buttons and dialogs",
 					new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
 			.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
@@ -144,35 +142,33 @@ public class PreferencesHelper {
 							// GamaColorMenu.instance.reset();
 						}
 					});
-	public static final Pref<Boolean> NAVIGATOR_METADATA = GamaPreferences
-			.create("pref_navigator_display_metadata", "Display metadata of data and GAML files in navigator", true,
-					IType.BOOL)
-			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
-			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+	public static final Pref<Boolean> NAVIGATOR_METADATA =
+			GamaPreferences.create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
+					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-				@Override
-				public boolean beforeValueChange(final Boolean newValue) {
-					return true;
-				}
+						@Override
+						public boolean beforeValueChange(final Boolean newValue) {
+							return true;
+						}
 
-				@Override
-				public void afterValueChange(final Boolean newValue) {
-					final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-					try {
-						mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
-					} catch (final CoreException e) {
-						e.printStackTrace();
-					}
+						@Override
+						public void afterValueChange(final Boolean newValue) {
+							final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+							try {
+								mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
+							} catch (final CoreException e) {
+								e.printStackTrace();
+							}
 
-				}
-			});
+						}
+					});
 
 	public static void initialize() {
 		final int memory = readMaxMemoryInMegabytes();
 		if (memory > 0) {
 			final Pref<Integer> p = GamaPreferences
-					.create("pref_memory_max",
-							"Maximum memory allocated to GAMA in megabytes (restart to enable changes)", memory, 1)
+					.create("pref_memory_max", "Maximum memory allocated in Mb (requires restart)", memory, 1)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
 			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
 

@@ -55,9 +55,9 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		this.parent = parent;
 		internalModification = true;
 		if (!isSubParameter) {
-			titleLabel = createLeftLabel(parent, name);
+			titleLabel = createLeftLabel(parent, name, isSubParameter);
 		} else {
-			createLeftLabel(parent, " ");
+			createLeftLabel(parent, " ", isSubParameter);
 		}
 		currentValue = getOriginalValue();
 		composite = new Composite(parent, SWT.NONE);
@@ -70,7 +70,7 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		composite.setLayout(layout);
 		createEditorControl(composite);
 		if (isSubParameter) {
-			titleLabel = createLeftLabel(composite, name);
+			titleLabel = createLeftLabel(composite, name, isSubParameter);
 			titleLabel.setFont(GamaFonts.getNavigFolderFont());
 			final GridData d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
 			titleLabel.setLayoutData(d);

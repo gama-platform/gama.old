@@ -62,8 +62,8 @@ public class HeadlessSimulationLoader {
 			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
 		}
 		// SEED HACK // WARNING AD : Why ?
-		GamaPreferences.Simulations.CORE_SEED_DEFINED.set(true);
-		GamaPreferences.Simulations.CORE_SEED.set(1.0);
+		GamaPreferences.External.CORE_SEED_DEFINED.set(true);
+		GamaPreferences.External.CORE_SEED.set(1.0);
 		// SEED HACK
 	}
 

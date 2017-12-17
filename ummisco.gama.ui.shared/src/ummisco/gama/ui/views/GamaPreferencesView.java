@@ -9,17 +9,20 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -32,6 +35,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
@@ -39,8 +44,10 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
+import msi.gaml.types.IType;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.dialogs.Messages;
@@ -51,6 +58,7 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * Class GamaPreferencesView.
@@ -62,9 +70,16 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferencesView {
 
-	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();
-	static Map<String, String> preferenceNames = new LinkedHashMap();
+	static Pref<GamaPoint> DIALOG_LOCATION = GamaPreferences.create("dialog_location",
+			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT).hidden();
+	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences
+			.create("dialog_size", "Size of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT)
+			.hidden();
+	static Pref<Integer> DIALOG_TAB =
+			GamaPreferences.create("dialog_tab", "Tab selected in the preferences dialog", -1, IType.INT).hidden();
+
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
+	public static int NB_DIVISIONS = 2;
 
 	static GamaPreferencesView instance;
 	private static boolean restartRequired;
@@ -81,23 +96,30 @@ public class GamaPreferencesView {
 	}
 
 	static {
-		preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
-		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
-		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
+		// preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
+		// preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
+		// preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
 		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
 		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
 		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create("prefs.simulations2").image());
 		// prefs_images.put(GamaPreferences.Experiments.NAME, GamaIcons.create("prefs.simulations2").image());
 		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create("prefs.runtime2").image());
 		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create("prefs.ui2").image());
-		prefs_images.put(GamaPreferences.OpenGL.NAME, GamaIcons.create("prefs.opengl2").image());
+		// prefs_images.put(GamaPreferences.OpenGL.NAME, GamaIcons.create("prefs.opengl2").image());
 		prefs_images.put(GamaPreferences.External.NAME, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
 
 	}
 
+	static class Group {
+		Composite compo;
+		int nb_divisions;
+	}
+
 	Shell parentShell, shell;
 	CTabFolder tabFolder;
+	List<ParameterExpandBar> contents = new ArrayList();
 	final Map<String, IParameterEditor> editors = new LinkedHashMap();
+	final Map<IParameterEditor, Composite> groups = new HashMap();
 	final Map<String, Object> modelValues = new LinkedHashMap();
 
 	private GamaPreferencesView(final Shell parent) {
@@ -107,59 +129,16 @@ public class GamaPreferencesView {
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
-		final PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
-
-		// We clean the default preference manager to remove useless preferences
-		for (final Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER)) {
-			if (elem instanceof IPreferenceNode) {
-				final String id = ((IPreferenceNode) elem).getId();
-				if (preferenceNames.containsKey(id)) {
-					preferencePages.put(preferenceNames.get(id), (IPreferenceNode) elem);
-				}
-				if (id.contains("debug.ui") || id.contains("help.ui") || id.contains("search")
-						|| id.contains("Spelling") || id.contains("Linked") || id.contains("Perspectives")
-						|| id.contains("Content")) {
-					preferenceManager.remove((IPreferenceNode) elem);
-				}
-				// scope.getGui().debug(((IPreferenceNode) elem).getId());
-				// preferenceManager.remove((IPreferenceNode) elem);
-			}
-		}
-
 		buildContents();
 	}
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final org.eclipse.swt.events.SelectionEvent event) {
-				tabFolder.layout(true);
-				// tabFolder.update();
-				final Point p = tabFolder.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				// final Monitor primary =
-				// SwtGui.getDisplay().getPrimaryMonitor();
-				final Rectangle bounds = shell.getBounds();
-				final int width = Math.min(p.x, bounds.width - 26);
-				final int height = Math.min(p.y, bounds.height - 81);
-
-				// tabFolder.pack();
-
-				// tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT,
-				// SWT.DEFAULT, true));
-				tabFolder.setSize(width, height);
-				tabFolder.update();
-
-			}
-		});
 		tabFolder.setBorderVisible(true);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		final Label sep = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Map<String, Map<String, List<Pref>>> prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
@@ -169,59 +148,29 @@ public class GamaPreferencesView {
 			item.setShowClose(false);
 			buildContentsFor(item, prefs.get(tabName));
 		}
-
-		// Aborted attempt to put Eclipse pages within this view. The problem is
-		// that the preference store seems to be
-		// not set for some preferences pages (Editors in particular).
-
-		// for ( String tabName : preferencePages.keySet() ) {
-		// CTabItem item = new CTabItem(tabFolder, SWT.None);
-		// item.setText(tabName);
-		// item.setImage(tabImages.get(tabName));
-		// item.setShowClose(false);
-		// Composite c = new Composite(tabFolder, SWT.None);
-		// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// c.setLayoutData(data);
-		// FillLayout layout = new FillLayout();
-		// layout.marginHeight = 5;
-		// layout.marginWidth = 5;
-		// c.setLayout(layout);
-		// IPreferenceNode node = preferencePages.get(tabName);
-		// node.disposeResources();
-		// node.createPage();
-		// node.getPage().createControl(c);
-		// c.layout();
-		// item.setControl(c);
-		// }
-
 		buildButtons();
-
+		shell.layout();
 	}
 
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
 		final ParameterExpandBar viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
+		contents.add(viewer);
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
 		//
-		viewer.setSpacing(10);
+		viewer.setSpacing(5);
 		tab.setControl(viewer);
 		for (final String groupName : entries.keySet()) {
 			final ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			item.setColor(new GamaColor(230, 230, 230, 255));
 			final Composite compo = new Composite(viewer, SWT.NONE);
-			final GridLayout layout = new GridLayout(2, false);
-			layout.marginHeight = 0;
-			layout.verticalSpacing = 0;
-			compo.setLayout(layout);
 			compo.setBackground(viewer.getBackground());
-			buildGroupContents(compo, entries.get(groupName));
-
+			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			// item.setImage(GamaIcons.menu_action);
 			item.setExpanded(true);
 		}
 
@@ -260,8 +209,18 @@ public class GamaPreferencesView {
 		}
 	}
 
-	private void buildGroupContents(final Composite compo, final List<Pref> list) {
+	private void buildGroupContents(final Composite compo, final List<Pref> list, final int nbColumns) {
+		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(0, 0).equalWidth(true).applyTo(compo);
+		final Composite[] comps = new Composite[nbColumns];
+		for (int i = 0; i < nbColumns; i++) {
+			comps[i] = new Composite(compo, SWT.BORDER);
+			comps[i].setBackground(compo.getBackground());
+			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
+		}
+		final int compositeIndex = 0;
 
+		int i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
@@ -285,12 +244,17 @@ public class GamaPreferencesView {
 				}
 			});
 			final boolean isSubParameter = activations.containsKey(e.getKey());
-
-			final AbstractEditor ed = EditorFactory.create(null, compo, e, isSubParameter, true);
+			final AbstractEditor ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))],
+					e, isSubParameter, true);
 			if (e.isDisabled())
 				ed.setActive(false);
-			// ed.acceptPopup(false);
+			else {
+				final Menu m = getMenuFor(e, ed);
+				final Label l = ed.getLabel();
+				l.setMenu(m);
+			}
 			editors.put(e.getKey(), ed);
+			i++;
 		}
 
 		// Initial activations of editors
@@ -305,6 +269,37 @@ public class GamaPreferencesView {
 		compo.pack(true);
 	}
 
+	private Menu getMenuFor(final Pref e, final AbstractEditor ed) {
+		final Menu m = new Menu(ed.getLabel());
+		final MenuItem title = new MenuItem(m, SWT.PUSH);
+		title.setEnabled(false);
+		title.setText(e.getKey());
+		@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
+		final MenuItem i = new MenuItem(m, SWT.PUSH);
+		i.setText("Copy name to clipboard");
+		i.addSelectionListener(new Selector() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent se) {
+				WorkbenchHelper.copy(e.getKey());
+
+			}
+
+		});
+		final MenuItem i2 = new MenuItem(m, SWT.PUSH);
+		i2.setText("Revert to default value");
+		i2.addSelectionListener(new Selector() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent se) {
+				e.set(e.getInitialValue(GAMA.getRuntimeScope()));
+				ed.forceUpdateValueAsynchronously();
+			}
+
+		});
+		return m;
+	}
+
 	/**
 	 * @param string
 	 */
@@ -314,6 +309,12 @@ public class GamaPreferencesView {
 	}
 
 	private void buildButtons() {
+		final Label doc = new Label(shell, SWT.NONE);
+		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+		doc.setFont(GamaFonts.boldHelpFont);
+		doc.setText(
+				"Preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
+
 		final Composite group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
 		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
@@ -351,7 +352,7 @@ public class GamaPreferencesView {
 
 		final Button buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonExport.setText("Export...");
-		buttonExport.setToolTipText("Export preferences to a file...");
+		buttonExport.setToolTipText("Export preferences to a model that can be run to restore or share them...");
 		buttonExport.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -380,8 +381,7 @@ public class GamaPreferencesView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				// shell.close();
-				shell.setVisible(false);
+				close();
 			}
 
 		});
@@ -392,20 +392,16 @@ public class GamaPreferencesView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				// for ( IPreferenceNode pn : preferencePages.values() ) {
-				// pn.getPage().performOk();
-				// }
-				// shell.close();
-
 				GamaPreferences.setNewPreferences(modelValues);
 				if (restartRequired) {
 					restartRequired = false;
 					final boolean restart = Messages.confirm("Restart ?", "Restart GAMA now ?");
 					if (restart) {
+						close();
 						PlatformUI.getWorkbench().restart(true);
 					}
 				} else
-					shell.setVisible(false);
+					close();
 			}
 
 		});
@@ -420,6 +416,7 @@ public class GamaPreferencesView {
 				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue(true);
 				}
+
 			}
 
 		});
@@ -428,11 +425,7 @@ public class GamaPreferencesView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				shell.setVisible(false);
-				// for ( IPreferenceNode pn : preferencePages.values() ) {
-				// pn.disposeResources();
-				// pn.createPage();
-				// }
+				close();
 				WorkbenchHelper.asyncRun(() -> {
 					final PreferenceDialog pd = WorkbenchPreferenceDialog.createDialogOn(parentShell, null);
 					pd.open();
@@ -443,26 +436,82 @@ public class GamaPreferencesView {
 
 		});
 
+		shell.addDisposeListener(e -> {
+			saveDialogProperties();
+		});
+
+		shell.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				for (final IParameterEditor ed : editors.values()) {
+					((AbstractEditor) ed).resizeLabel(shell.getSize().x / (NB_DIVISIONS * 2));
+					((AbstractEditor) ed).getLabel().update();
+				}
+				for (final ParameterExpandBar bar : contents) {
+					for (final ParameterExpandItem item : bar.getItems()) {
+						item.setHeight(item.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+					}
+
+					bar.redraw();
+				}
+				shell.layout(true, true);
+			}
+
+			@Override
+			public void controlMoved(final ControlEvent e) {}
+		});
+
+	}
+
+	private void close() {
+		shell.setVisible(false);
+	}
+
+	private void saveLocation() {
+		final Point p = shell.getLocation();
+		DIALOG_LOCATION.set(new GamaPoint(p.x, p.y)).save();
+	}
+
+	private void saveSize() {
+		final Point s = shell.getSize();
+		DIALOG_SIZE.set(new GamaPoint(s.x, s.y)).save();
+	}
+
+	private void saveTab() {
+		final int index = tabFolder.getSelectionIndex();
+		DIALOG_TAB.set(index).save();
+	}
+
+	private void saveDialogProperties() {
+		if (shell.isDisposed())
+			return;
+		saveLocation();
+		saveSize();
+		saveTab();
 	}
 
 	public void open() {
-		shell.layout(true, true);
-		// shell.pack();
-		final Point p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
-		final Rectangle bounds = WorkbenchHelper.getDisplay().getBounds();
-		final int width = Math.min(p.x, bounds.width - 100);
-		final int height = Math.min(p.y, bounds.height - 100);
+		final GamaPoint loc = DIALOG_LOCATION.getValue();
+		final GamaPoint size = DIALOG_SIZE.getValue();
+		final int tab = DIALOG_TAB.getValue();
+		int x = (int) loc.x;
+		int y = (int) loc.y;
+		int width = (int) size.x;
+		int height = (int) size.y;
+		if (loc.x == -1 || loc.y == -1 || size.x == -1 || size.y == -1) {
+			final Point p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			final Rectangle bounds = WorkbenchHelper.getDisplay().getBounds();
+			width = Math.min(p.x, bounds.width - 200);
+			height = Math.min(p.y, bounds.height - 200);
+			x = (bounds.width - width) / 2;
+			y = (bounds.height - height) / 2;
+		}
 
-		shell.pack();
-
-		shell.open();
-		shell.setSize(width, height);
-		shell.update();
-		final int x = (bounds.width - width) / 2;
-		final int y = (bounds.height - height) / 2;
-
+		tabFolder.setSelection(tab);
 		shell.setLocation(x, y);
+		shell.setSize(width, height);
+		shell.open();
 
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
 			if (!this.shell.getDisplay().readAndDispatch()) {
@@ -470,75 +519,13 @@ public class GamaPreferencesView {
 			}
 		}
 
+		saveDialogProperties();
+
 	}
 
 	public static void setRestartRequired() {
 		restartRequired = true;
 
 	}
-
-	// /**
-	// * Method openPage()
-	// * @see
-	// org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#openPage(java.lang.String,
-	// java.lang.Object)
-	// */
-	// @Override
-	// public boolean openPage(final String preferencePageId, final Object data)
-	// {
-	// return false;
-	// }
-	//
-	// /**
-	// * Method getWorkingCopyManager()
-	// * @see
-	// org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#getWorkingCopyManager()
-	// */
-	// @Override
-	// public IWorkingCopyManager getWorkingCopyManager() {
-	// return new WorkingCopyManager();
-	// }
-	//
-	// /**
-	// * Method registerUpdateJob()
-	// * @see
-	// org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#registerUpdateJob(org.eclipse.core.runtime.jobs.Job)
-	// */
-	// @Override
-	// public void registerUpdateJob(final Job job) {}
-	//
-	// /**
-	// * Method getPreferenceStore()
-	// * @see
-	// org.eclipse.jface.preference.IPreferencePageContainer#getPreferenceStore()
-	// */
-	// @Override
-	// public IPreferenceStore getPreferenceStore() {
-	// return PlatformUI.getPreferenceStore();
-	// }
-	//
-	// /**
-	// * Method updateButtons()
-	// * @see
-	// org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
-	// */
-	// @Override
-	// public void updateButtons() {}
-	//
-	// /**
-	// * Method updateMessage()
-	// * @see
-	// org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
-	// */
-	// @Override
-	// public void updateMessage() {}
-	//
-	// /**
-	// * Method updateTitle()
-	// * @see
-	// org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
-	// */
-	// @Override
-	// public void updateTitle() {}
 
 }

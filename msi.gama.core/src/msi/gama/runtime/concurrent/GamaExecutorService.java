@@ -39,35 +39,36 @@ public abstract class GamaExecutorService {
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
-			create("pref_parallel_simulations", "Allow experiments to run multiple simulations in parallel", true,
-					IType.BOOL).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL)
+					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Boolean> CONCURRENCY_GRID =
-			create("pref_parallel_grids", "Make grids schedule their agents in parallel by default", false, IType.BOOL)
+			create("pref_parallel_grids", "Make grids schedule their agents in parallel", false, IType.BOOL)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Boolean> CONCURRENCY_SPECIES =
-			create("pref_parallel_species", "Make regular species schedule their agents in parallel by default", false,
-					IType.BOOL).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+			create("pref_parallel_species", "Make species schedule their agents in parallel", false, IType.BOOL)
+					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Integer> CONCURRENCY_THRESHOLD =
-			create("pref_parallel_threshold", "Number under which agents will always be executed sequentially", 20,
-					IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
-	public static final Pref<Integer> CONCURRENCY_THREADS_NUMBER = create("pref_parallel_threads",
-			"Max. number of threads to use for parallel operations (available processors: "
-					+ Runtime.getRuntime().availableProcessors() + ")",
-			4, IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
-					.addChangeListener(new IPreferenceChangeListener<Integer>() {
+			create("pref_parallel_threshold", "Number under which agents are executed sequentially", 20, IType.INT)
+					.between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Integer> CONCURRENCY_THREADS_NUMBER =
+			create("pref_parallel_threads",
+					"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors()
+							+ ")",
+					4, IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
+							.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
-						@Override
-						public boolean beforeValueChange(final Integer newValue) {
-							return true;
-						}
+								@Override
+								public boolean beforeValueChange(final Integer newValue) {
+									return true;
+								}
 
-						@Override
-						public void afterValueChange(final Integer newValue) {
-							setConcurrencyLevel(newValue);
-							System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
-									String.valueOf(newValue));
-						}
-					});
+								@Override
+								public void afterValueChange(final Integer newValue) {
+									setConcurrencyLevel(newValue);
+									System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
+											String.valueOf(newValue));
+								}
+							});
 
 	public static void startUp() {
 		// Called by the activator to init the preferences and executor services

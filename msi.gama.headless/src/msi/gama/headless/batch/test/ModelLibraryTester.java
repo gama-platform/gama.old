@@ -41,9 +41,9 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
-		final boolean oldPref = GamaPreferences.Modeling.FAILED_TESTS.getValue();
+		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
 		try {
-			GamaPreferences.Modeling.FAILED_TESTS.set(onlyFailed);
+			GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
 			final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
 			for (final Bundle bundle : plugins.keySet()) {
 				for (final String entry : plugins.get(bundle)) {
@@ -63,7 +63,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			GamaPreferences.Modeling.FAILED_TESTS.set(oldPref);
+			GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 			log("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		}
 		return code[0];

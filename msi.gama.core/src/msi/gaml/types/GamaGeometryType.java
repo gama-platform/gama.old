@@ -363,7 +363,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildHexagon(final double size, final ILocation location) {
-		return buildHexagon(size, size,location);
+		return buildHexagon(size, size, location);
 	}
 
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {
@@ -401,7 +401,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if (yRadius <= 0) { return new GamaShape(location); }
 		}
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
-		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
 																						// Maybe add a
 		// parameter and/or preference ?
 		factory.setCentre(location);
@@ -420,7 +420,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
 		if (xRadius <= 0) { return new GamaShape(location); }
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
-		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
 																						// Maybe add a
 		// parameter and/or preference ?
 		factory.setCentre(location);
@@ -451,7 +451,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			final boolean filled, final GamaPoint location) {
 		if (amplitude <= 0 || xRadius <= 0) { return new GamaShape(location); }
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
-		factory.setNumPoints(GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
+		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
 																						// Maybe add a
 		// parameter and/or preference ?
 		factory.setCentre(location);

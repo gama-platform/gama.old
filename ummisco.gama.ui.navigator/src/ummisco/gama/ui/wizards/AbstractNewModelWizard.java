@@ -54,6 +54,8 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 	public static final String EMPTY = "empty";
 	public static final String SKELETON = "skeleton";
 	public static final String TEST = "test";
+	public static final String GUI = "GUI";
+	public static final String HEADLESS = "Headless";
 	public static final String EXPERIMENT = "experiment";
 	public static final String TEST_EXP = "test_experiment";
 	private static final Map<String, String> TEMPLATES = new HashMap<String, String>() {
@@ -170,6 +172,7 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 			streamModel = addFileHeader(folder, streamModel, title, desc);
 
 			try {
+				ResourceManager.getInstance().reveal(file);
 				file.create(streamModel, true, monitor);
 				if (createDoc) {
 					final IFile htmlFile = project.getFile(new Path("doc/" + title + ".html"));
@@ -186,7 +189,6 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
-		ResourceManager.getInstance().reveal(file);
 		GAMA.getGui().editModel(null, file);
 		monitor.worked(1);
 	}

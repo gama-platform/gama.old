@@ -27,7 +27,7 @@ public class BinaryOperator extends NAryOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.Runtime.CONSTANT_OPTIMIZATION.getValue()) {
+		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e =
 					GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
 			return e;

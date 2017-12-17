@@ -399,4 +399,8 @@ public class ParameterExpandItem extends Item {
 		onExpandBlock = r;
 	}
 
+	public Control getControl() {
+		return control;
+	}
+
 }

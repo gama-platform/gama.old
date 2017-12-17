@@ -354,7 +354,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	 * @return
 	 */
 	public static float getLineWidth() {
-		return GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue().floatValue();
+		return GamaPreferences.Displays.CORE_LINE_WIDTH.getValue().floatValue();
 	}
 
 	@Override

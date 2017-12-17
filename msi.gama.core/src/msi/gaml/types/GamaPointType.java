@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,11 @@ public class GamaPointType extends GamaType<ILocation> {
 			final double y = Cast.asFloat(scope, m.get("y"));
 			final double z = Cast.asFloat(scope, m.get("z"));
 			return new GamaPoint(x, y, z);
+		}
+		// Decodes the stringValue() of GamaPoint
+		if (obj instanceof String) {
+			final String s = ((String) obj).replace("{", "").replace("}", "").trim();
+			return staticCast(scope, Arrays.asList(s.split(",")), false);
 		}
 		if (obj instanceof GamaPair) { return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
 				Cast.asFloat(scope, ((GamaPair) obj).last())); }

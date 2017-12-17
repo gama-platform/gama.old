@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.wizards;
 
+import java.util.Arrays;
+
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -19,6 +21,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -33,6 +36,7 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 
 	private Text modelChooser;
+	private String typeOfExperiment = AbstractNewModelWizard.GUI;
 
 	public NewExperimentWizardPage(final ISelection selection) {
 		super(selection);
@@ -63,6 +67,32 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		createNameSection(container);
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
 		createLabel(container, null);
+		createLabel(container, "&Type of Experiment:");
+
+		final Composite middleComposite = new Composite(container, SWT.NULL);
+		final FillLayout fillLayout = new FillLayout();
+		middleComposite.setLayout(fillLayout);
+		Arrays.asList(AbstractNewModelWizard.GUI, AbstractNewModelWizard.HEADLESS).forEach(s -> {
+			final Button b = new Button(middleComposite, SWT.RADIO);
+			b.setText(s);
+			if (s.equals(AbstractNewModelWizard.GUI))
+				b.setSelection(true);
+			b.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(final SelectionEvent e) {
+					typeOfExperiment = ((Button) e.widget).getText();
+					updateStatus(null);
+					dialogChanged();
+					setDescription(typeOfExperiment.equals(AbstractNewModelWizard.GUI)
+							? "Creates a new experiment with a graphical user interface"
+							: "Creates a new experiment intended to be used in headless runs");
+
+				}
+
+			});
+		});
+
 		/* Finished adding the custom control */
 		initialize();
 		dialogChanged();
@@ -73,6 +103,10 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 	protected void initialize() {
 		super.initialize();
 		modelChooser.setText("");
+	}
+
+	String getType() {
+		return typeOfExperiment;
 	}
 
 	private FilteredResourcesSelectionDialog dialog;

@@ -77,7 +77,7 @@ public abstract class CmnFastMath {
 	 * FastMath
 	 */
 
-	static boolean FM_USE_JDK_MATH = !GamaPreferences.Runtime.MATH_OPTIMIZATION.getValue();
+	static boolean FM_USE_JDK_MATH = !GamaPreferences.External.MATH_OPTIMIZATION.getValue();
 
 	/**
 	 * Set it to true if FastMath.sqrt(double) is slow (more tables, but less calls to FastMath.sqrt(double)).

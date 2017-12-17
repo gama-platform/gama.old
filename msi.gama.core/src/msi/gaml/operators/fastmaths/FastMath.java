@@ -65,10 +65,10 @@ import msi.gama.common.preferences.IPreferenceChangeListener;
  */
 public final class FastMath extends CmnFastMath {
 
-	private static boolean USE_JDK_MATH = !GamaPreferences.Runtime.MATH_OPTIMIZATION.getValue();
+	private static boolean USE_JDK_MATH = !GamaPreferences.External.MATH_OPTIMIZATION.getValue();
 
 	static {
-		GamaPreferences.Runtime.MATH_OPTIMIZATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		GamaPreferences.External.MATH_OPTIMIZATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
 			public boolean beforeValueChange(final Boolean newValue) {

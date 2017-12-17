@@ -89,7 +89,7 @@ public class OpenGL {
 
 	static {
 		AWTTextureIO.addTextureProvider(new PGMTextureProvider());
-		GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
 			public boolean beforeValueChange(final Boolean newValue) {
@@ -101,7 +101,7 @@ public class OpenGL {
 				AWTTextureIO.setTexRectEnabled(newValue);
 			}
 		});
-		AWTTextureIO.setTexRectEnabled(GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.getValue());
+		AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
 	}
 
 	// The real openGL context
@@ -150,7 +150,7 @@ public class OpenGL {
 	final GamaPoint textureCoords = new GamaPoint();
 	private double currentZIncrement, currentZTranslation, maxZ, savedZTranslation;
 	private volatile boolean ZTranslationSuspended;
-	private final boolean useJTSTriangulation = !GamaPreferences.OpenGL.OPENGL_TRIANGULATOR.getValue();
+	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
 	private final Rotation3D tempRotation = Rotation3D.identity();
 	private GLUquadricImpl quadric;
 	private int originalViewHeight;
@@ -741,7 +741,7 @@ public class OpenGL {
 
 	public static BufferedImage correctImage(final BufferedImage image, final boolean force) {
 		BufferedImage corrected = image;
-		if (GamaPreferences.OpenGL.DISPLAY_POWER_OF_TWO.getValue() || force) {
+		if (GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() || force) {
 			if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {
 				final int width = getClosestPow(image.getWidth());
 				final int height = getClosestPow(image.getHeight());
@@ -996,7 +996,7 @@ public class OpenGL {
 	}
 
 	public void initializeShapeCache() {
-		final int slices = GamaPreferences.OpenGL.DISPLAY_SLICE_NUMBER.getValue();
+		final int slices = GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
 		textured = true;
 		geometryCache.put(SPHERE, BuiltInGeometry.assemble().faces(compileAsList(() -> {

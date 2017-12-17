@@ -276,30 +276,27 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-	
-		if (o instanceof GamaPoint) { 
-			double tolerance = GamaPreferences.Runtime.TOLERANCE_POINTS.getValue();
-			if (tolerance > 0.0) 
-				return equalsWithTolerance((GamaPoint) o,tolerance);
-			return equals3D((GamaPoint) o); }
+
+		if (o instanceof GamaPoint) {
+			final double tolerance = GamaPreferences.External.TOLERANCE_POINTS.getValue();
+			if (tolerance > 0.0)
+				return equalsWithTolerance((GamaPoint) o, tolerance);
+			return equals3D((GamaPoint) o);
+		}
 		return super.equals(o);
 	}
-	
-	
-	public boolean equalsWithTolerance(Coordinate c, double tolerance){
-	    if (tolerance == 0.0) return equals3D(c);
-	 	if (! NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) {
-	      return false;
-	    }
-	    if (! NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) {
-	      return false;
-	    }
-	    if (!Double.isNaN(z) && !Double.isNaN(c.z) && (! NumberUtil.equalsWithTolerance(this.z, c.z, tolerance)))
-	    	return false;
-	    
-	    return true;
-	  }
 
+	@Override
+	public boolean equalsWithTolerance(final Coordinate c, final double tolerance) {
+		if (tolerance == 0.0)
+			return equals3D(c);
+		if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) { return false; }
+		if (!NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) { return false; }
+		if (!Double.isNaN(z) && !Double.isNaN(c.z) && !NumberUtil.equalsWithTolerance(this.z, c.z, tolerance))
+			return false;
+
+		return true;
+	}
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)

@@ -52,7 +52,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			CacheBuilder.newBuilder().initialCapacity(1000).concurrencyLevel(4).build();
 	final CommonViewer viewer;
 	final IResourceChangeListener delegate;
-	public final static boolean DEBUG = true;
+	public final static boolean DEBUG = false;
 	volatile static boolean BLOCKED = false;
 	private static volatile boolean IN_INITIALIZATION_PHASE = false;
 	private final List<Runnable> postEventActions = new ArrayList<>();
