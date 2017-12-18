@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'EventLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'EventLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -10,11 +9,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.List;
-import java.util.Map;
-
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -25,16 +20,13 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Arguments;
-import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.IExecutable;
-import msi.gaml.types.IType;
 
 /**
  * Written by marilleau
  */
 
-public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
+public class EventLayer extends AbstractLayer {
 
 	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
@@ -44,8 +36,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 	EventListener listener;
 	IScope executionScope;
 
-	public EventLayer() {
-	}
+	public EventLayer() {}
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
@@ -129,24 +120,12 @@ public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 		}
 
 		public int getListeningEvent(final String eventTypeName) {
-			if (eventTypeName.equals(IKeyword.MOUSE_DOWN)) {
-				return MOUSE_PRESS;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_UP)) {
-				return MOUSE_RELEASED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_CLICKED)) {
-				return MOUSE_CLICKED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_MOVED)) {
-				return MOUSE_MOVED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_ENTERED)) {
-				return MOUSE_ENTERED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_EXITED)) {
-				return MOUSE_EXITED;
-			}
+			if (eventTypeName.equals(IKeyword.MOUSE_DOWN)) { return MOUSE_PRESS; }
+			if (eventTypeName.equals(IKeyword.MOUSE_UP)) { return MOUSE_RELEASED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_CLICKED)) { return MOUSE_CLICKED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_MOVED)) { return MOUSE_MOVED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_ENTERED)) { return MOUSE_ENTERED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_EXITED)) { return MOUSE_EXITED; }
 			return KEY_PRESSED;
 		}
 
@@ -196,18 +175,12 @@ public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 			final IAgent agent = ((EventLayerStatement) definition).executesInSimulation()
 					? executionScope.getSimulation() : executionScope.getExperiment();
 			final IExecutable executer = agent == null ? null : agent.getSpecies().getAction(actionName);
-			if (executer == null) {
-				return;
-			}
+			if (executer == null) { return; }
 			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
-			if (pp == null) {
-				return;
-			}
+			if (pp == null) { return; }
 			if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
 					|| pp.getY() >= surface.getEnvHeight()) {
-				if (MOUSE_EXITED != listenedEvent) {
-					return;
-				}
+				if (MOUSE_EXITED != listenedEvent) { return; }
 			}
 			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 
@@ -227,8 +200,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 	}
 
 	@Override
-	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-	}
+	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {}
 
 	@Override
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
@@ -236,29 +208,6 @@ public class EventLayer extends AbstractLayer implements IEventLayerDelegate  {
 			definition.getBox().compute(scope);
 			setPositionAndSize(definition.getBox(), g);
 		}
-	}
-
-	@Override
-	public boolean acceptSource(IScope scope, Object source) {
-		// TODO Auto-generated method stub
-		if(source.equals("default")) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean createFrom(IScope scope, List<Map<String, Object>> inits, Integer max, Object source, Arguments init,
-			EventLayerStatement statement) {
-		// TODO Auto-generated method stub
-		System.out.println("event layer delegate");
-		return false;
-	}
-
-	@Override
-	public IType<?> fromFacetType() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

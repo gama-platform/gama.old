@@ -71,7 +71,7 @@
    <extension
          point="gama.event_layer">
       <implementation
-            class="msi.gama.outputs.layers.EventLayer">
+            class="msi.gama.outputs.layers.EventLayerStatement.DefaultDelegate">
       </implementation>
    </extension>
 

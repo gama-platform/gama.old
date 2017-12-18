@@ -6,7 +6,7 @@
          <meta.schema plugin="msi.gama.core" id="gama.event_layer" name="Implementations of IEventLayerDelegate"/>
       </appinfo>
       <documentation>
-         Allows plug-in developers to add new implementations of ICreateDelegate, so that the &quot;create&quot; statement can be extended.
+         Allows plug-in developers to add new implementations of IEventLayerDelegate, so that the &quot;event&quot; layer can be extended with new inputs
       </documentation>
    </annotation>
 
@@ -52,17 +52,17 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class that implements ICreateDelegate in the plugin
+                  Class that implements IEventLayerDelegate in the plugin
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":msi.gama.common.interfaces.ICreateDelegate"/>
+                  <meta.attribute kind="java" basedOn=":msi.gama.common.interfaces.IEventLayerDelegate"/>
                </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A description of the source that this ICreateDelegate accepts
+                  A description of the source that this IEventLayerDelegate accepts
                </documentation>
             </annotation>
          </attribute>
@@ -74,7 +74,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         GAMA 1.7
       </documentation>
    </annotation>
 

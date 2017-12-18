@@ -11,12 +11,11 @@ package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -30,14 +29,11 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * Written by Marilleau Modified on 16 novembre 2012
@@ -68,10 +64,10 @@ import msi.gaml.types.Types;
 						optional = false,
 						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character")),
 				@facet (
-						name = "type",
+						name = IKeyword.TYPE,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("Type of peripheric")),
+						doc = @doc ("Type of peripheric used to generate events. Defaults to 'default', which encompasses keyboard and mouse")),
 				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
@@ -138,6 +134,20 @@ import msi.gaml.types.Types;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
+	public static class DefaultDelegate implements IEventLayerDelegate {
+
+		@Override
+		public boolean acceptSource(final IScope scope, final Object source) {
+			return Objects.equals(source, IKeyword.DEFAULT);
+		}
+
+		@Override
+		public boolean createFrom(final IScope scope, final Object source, final EventLayerStatement statement) {
+			return true;
+		}
+
+	}
+
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -165,25 +175,20 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	private final boolean executesInSimulation;
 	private final IExpression type;
 	private static List<IEventLayerDelegate> delegates = new ArrayList<>();
-	private static List<IType> delegateTypes = new ArrayList<>();
 
 	/**
 	 * @param createExecutableExtension
 	 */
 	public static void addDelegate(final IEventLayerDelegate delegate) {
 		delegates.add(delegate);
-		final IType delegateType = delegate.fromFacetType();
-		if (delegateType != null && delegateType != Types.NO_TYPE) {
-			delegateTypes.add(delegate.fromFacetType());
-		}
 	}
+
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 		final String actionName = description.getLitteral(IKeyword.ACTION);
 		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
 		executesInSimulation = sd == null;
-
-		type = getFacet("type");
+		type = getFacet(IKeyword.TYPE);
 	}
 
 	public boolean executesInSimulation() {
@@ -197,7 +202,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 		for (final IEventLayerDelegate delegate : delegates) {
 			if (delegate.acceptSource(scope, source)) {
-				delegate.createFrom(scope,null,0, source, null, this);
+				delegate.createFrom(scope, source, this);
 			}
 		}
 		return true;
@@ -210,7 +215,6 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public String toString() {
-		// StringBuffer sb = new StringBuffer();
 		return "Event layer: " + this.getFacet(IKeyword.NAME).literalValue();
 	}
 
@@ -223,15 +227,9 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	protected boolean _step(final IScope scope) {
 		return true;
 	}
-	
 
 	private Object getSource(final IScope scope) {
-		Object source = type == null ? "default" : type.value(scope);
-//		if (source instanceof String) {
-//			source = Files.from(scope, (String) source);
-//		} else if (source instanceof GamaShape) {
-//			source = GamaListFactory.createWithoutCasting(Types.GEOMETRY, source);
-//		}
+		final Object source = type == null ? IKeyword.DEFAULT : type.value(scope);
 		return source;
 	}
 }
