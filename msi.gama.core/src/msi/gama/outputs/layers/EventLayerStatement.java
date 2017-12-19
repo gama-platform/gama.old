@@ -11,7 +11,6 @@ package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -134,19 +133,7 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
-	public static class DefaultDelegate implements IEventLayerDelegate {
-
-		@Override
-		public boolean acceptSource(final IScope scope, final Object source) {
-			return Objects.equals(source, IKeyword.DEFAULT);
-		}
-
-		@Override
-		public boolean createFrom(final IScope scope, final Object source, final EventLayerStatement statement) {
-			return true;
-		}
-
-	}
+	public static String[] MOUSE_EVENTS = { "mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit" };
 
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
@@ -209,8 +196,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		return EVENT;
+	public LayerType getType() {
+		return LayerType.EVENT;
 	}
 
 	@Override

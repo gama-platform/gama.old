@@ -175,8 +175,8 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.OVERLAY;
+	public LayerType getType() {
+		return LayerType.OVERLAY;
 	}
 
 	@Override

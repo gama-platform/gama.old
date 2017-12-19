@@ -40,16 +40,6 @@ public class AgentLayer extends AbstractLayer {
 		super(layer);
 	}
 
-	@Override
-	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		if (geometry instanceof IAgent) {
-			final Rectangle2D r = shapes.get(geometry);
-			if (r != null)
-				return r;
-		}
-		return super.focusOn(geometry, s);
-	}
-
 	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap<>();
 
 	@Override
@@ -65,9 +55,6 @@ public class AgentLayer extends AbstractLayer {
 				if (a != null/* && !scope.interrupted() */ ) {
 					if (a == scope.getGui().getHighlightedAgent()) {
 						aspect = a.getSpecies().getAspect("highlighted");
-						// if ( aspect == null ) {
-						// aspect = AspectStatement.HIGHLIGHTED_ASPECT;
-						// }
 					} else {
 						aspect = ((AgentLayerStatement) definition).getAspect();
 						if (aspect == null) {
@@ -90,12 +77,11 @@ public class AgentLayer extends AbstractLayer {
 			final GridLayerStatement gls = (GridLayerStatement) definition;
 			final IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
 			AspectStatement.borderColor = gls.getLineColor();
-			
+
 			for (final IAgent a : getAgentsToDisplay()) {
 				if (a != null/* && !scope.interrupted() */ ) {
 					final ExecutionResult result = scope.execute(aspect, a, null);
 					final Rectangle2D r = (Rectangle2D) result.getValue();
-					// final Rectangle2D r = aspect.draw(scope, a);
 					if (r != null) {
 						shapes.put(a, r);
 					}
@@ -132,6 +118,16 @@ public class AgentLayer extends AbstractLayer {
 		}
 
 		return selectedAgents;
+	}
+
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		if (geometry instanceof IAgent) {
+			final Rectangle2D r = shapes.get(geometry);
+			if (r != null)
+				return r;
+		}
+		return super.focusOn(geometry, s);
 	}
 
 	@Override

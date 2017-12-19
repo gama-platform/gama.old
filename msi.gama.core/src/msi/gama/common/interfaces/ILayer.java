@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -31,109 +32,158 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface ILayer extends INamed, Comparable<ILayer> {
 
-	String getMenuName();
+	ILayerStatement getDefinition();
 
-	void drawDisplay(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
+	void setVisibleRegion(Envelope e);
 
-	Set<IAgent> collectAgentsAt(int x, int y, IDisplaySurface g);
-
-	ILocation getModelCoordinatesFrom(int x, int y, IDisplaySurface g);
-
-	Point getScreenCoordinatesFrom(double x, double y, IDisplaySurface g);
-
-	public boolean containsScreenPoint(final int x, final int y);
-
-	void dispose();
+	Envelope getVisibleRegion();
 
 	Point getPositionInPixels();
 
 	Point getSizeInPixels();
 
-	void setTransparency(Double value);
+	default String getMenuName() {
+		return getType() + ItemList.SEPARATION_CODE + getName();
+	}
 
-	void setElevation(Double value);
+	void drawDisplay(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
 
-	void setOrder(Integer i);
+	void dispose();
 
-	Integer getOrder();
+	default Integer getOrder() {
+		return getDefinition().getOrder();
+	}
 
 	public abstract boolean stayProportional();
 
-	void reloadOn(IDisplaySurface surface);
-
-	void firstLaunchOn(IDisplaySurface surface);
-
-	ILocation getExtent();
-
-	boolean isDynamic();
+	default void reloadOn(final IDisplaySurface surface) {
+		forceRedrawingOnce();
+	}
 
 	public abstract String getType();
 
-	void enableOn(IDisplaySurface surface);
+	default void firstLaunchOn(final IDisplaySurface surface) {}
 
-	void disableOn(IDisplaySurface surface);
+	default void enableOn(final IDisplaySurface surface) {}
 
-	ILocation getPosition();
+	default void disableOn(final IDisplaySurface surface) {
+		forceRedrawingOnce();
+	}
 
-	Integer getTrace();
+	default void setOrder(final Integer o) {
+		getDefinition().setOrder(o);
+	}
 
-	Boolean getFading();
+	default void setTransparency(final Double transparency) {
+		getDefinition().setTransparency(transparency);
+	}
+
+	default void setPosition(final ILocation p) {
+		getDefinition().getBox().setPosition(p);
+	}
+
+	default ILocation getPosition() {
+		return getDefinition().getBox().getPosition();
+	}
+
+	default void setExtent(final ILocation p) {
+		getDefinition().getBox().setSize(p);
+	}
+
+	default ILocation getExtent() {
+		return getDefinition().getBox().getSize();
+	}
+
+	default void setElevation(final Double elevation) {
+		final ILocation original = getDefinition().getBox().getPosition();
+		getDefinition().getBox().setPosition(original.getX(), original.getY(), elevation);
+	}
 
 	Rectangle2D focusOn(IShape geometry, IDisplaySurface s);
 
-	/**
-	 * @return
-	 */
-	ILayerStatement getDefinition();
+	default Collection<IAgent> getAgentsForMenu(final IScope scope) {
+		return Collections.EMPTY_LIST; // by default
+	}
 
-	/**
-	 * @param newValue
-	 */
-	void setPosition(ILocation newValue);
+	default boolean isProvidingCoordinates() {
+		return true; // by default
+	}
 
-	/**
-	 * @param newValue
-	 */
-	void setExtent(ILocation newValue);
+	default boolean isProvidingWorldCoordinates() {
+		return true; // by default
+	}
 
-	public Collection<IAgent> getAgentsForMenu(final IScope scope);
+	default boolean containsScreenPoint(final int x, final int y) {
+		final Point p = getPositionInPixels();
+		final Point s = getSizeInPixels();
+		return x >= p.x && y >= p.y && x <= p.x + s.x && y <= p.y + s.y;
+	}
 
-	/**
-	 * @return
-	 */
-	Boolean isSelectable();
+	default ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen, getSizeInPixels(), getPositionInPixels());
+	}
 
-	/**
-	 * @param e
-	 */
-	void setVisibleRegion(Envelope e);
+	default Point getScreenCoordinatesFrom(final double x, final double y, final IDisplaySurface g) {
+		final double xFactor = x / g.getEnvWidth();
+		final double yFactor = y / g.getEnvHeight();
+		final Point s = getSizeInPixels();
+		final int xOnDisplay = (int) (xFactor * s.x);
+		final int yOnDisplay = (int) (yFactor * s.y);
+		return new Point(xOnDisplay, yOnDisplay);
 
-	Envelope getVisibleRegion();
+	}
 
-	/**
-	 * @param xc
-	 * @param yc
-	 * @param java2dDisplaySurface
-	 * @return
-	 */
-	void getModelCoordinatesInfo(int xc, int yc, IDisplaySurface java2dDisplaySurface, StringBuilder sb);
+	default boolean isDynamic() {
+		return getDefinition().getRefresh() == null || getDefinition().getRefresh();
+	}
 
-	boolean isProvidingCoordinates();
+	default void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final StringBuilder sb) {
+		// By default, returns the coordinates in the world. Redefined for
+		// charts
+		final ILocation point = getModelCoordinatesFrom(xOnScreen, yOnScreen, g);
+		final String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
+		final String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
+		sb.append(String.format("X%10s | Y%10s", x, y));
+	}
 
-	boolean isProvidingWorldCoordinates();
+	default Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
+		// Nothing to do by default
+		return Collections.EMPTY_SET;
+	}
 
 	void addElevation(double d);
 
 	double getAddedElevation();
 
-	void forceRedrawingOnce();
+	public void forceRedrawingOnce();
 
 	default boolean isOverlay() {
 		return false;
 	}
 
-	default void recomputeBounds(final IGraphics g, final IScope scope) {
+	@Override
+	default String serialize(final boolean includingBuiltIn) {
+		return getDefinition().serialize(includingBuiltIn);
+	}
 
+	default void recomputeBounds(final IGraphics g, final IScope scope) {}
+
+	@Override
+	default int compareTo(final ILayer o) {
+		return getDefinition().compareTo(o.getDefinition());
+	}
+
+	default Integer getTrace() {
+		return getDefinition().getBox().getTrace();
+	}
+
+	default Boolean getFading() {
+		return getDefinition().getBox().getFading();
+	}
+
+	default Boolean isSelectable() {
+		return getDefinition().getBox().isSelectable();
 	}
 
 }

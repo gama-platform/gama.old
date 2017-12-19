@@ -68,12 +68,9 @@ public class SpeciesLayer extends AgentLayer {
 		if (aspect == null) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
-		// IAgent[] _agents = null;
-		// _agents = Iterators.toArray(population.iterator(), IAgent.class);
-
 		// draw the population. A copy of the population is made to avoid
 		// concurrent modification exceptions
-		for (final IAgent a : /* population.iterable(scope) */population.toArray()) {
+		for (final IAgent a : population.toArray()) {
 			if (a == null || a.dead()) {
 				continue;
 			}
@@ -96,19 +93,18 @@ public class SpeciesLayer extends AgentLayer {
 			}
 			IPopulation<? extends IAgent> microPop;
 			// draw grids first...
-			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
-			for (final GridLayerStatement gl : gridLayers) {
-				// a.acquireLock();
-				if (a.dead() /* || scope.interrupted() */ ) {
-					continue;
-				}
-				microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
-				if (microPop != null && microPop.size() > 0) {
-					// FIXME Needs to be entirely redefined using the new
-					// interfaces
-					// drawGridPopulation(a, gl, microPop, scope, g);
-				}
-			}
+			// final List<GridLayerStatement> gridLayers = layer.getGridLayers();
+			// for (final GridLayerStatement gl : gridLayers) {
+			// if (a.dead()) {
+			// continue;
+			// }
+			// microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
+			// if (microPop != null && microPop.size() > 0) {
+			// // FIXME Needs to be entirely redefined using the new
+			// // interfaces
+			// // drawGridPopulation(a, gl, microPop, scope, g);
+			// }
+			// }
 
 			// then recursively draw the micro-populations
 			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
@@ -126,31 +122,5 @@ public class SpeciesLayer extends AgentLayer {
 		}
 
 	}
-
-	// private void drawGridPopulation(final IAgent host, final
-	// GridLayerStatement layer, final IPopulation population,
-	// final IScope scope, final IGraphics g) throws GamaRuntimeException {
-	// GamaSpatialMatrix gridAgentStorage = (GamaSpatialMatrix)
-	// population.getTopology().getPlaces();
-	// gridAgentStorage.refreshDisplayData(scope);
-	//
-	// // MUST cache this image as GridDisplayLayer does to increase performance
-	// BufferedImage supportImage =
-	// ImageUtils.createCompatibleImage(gridAgentStorage.numCols,
-	// gridAgentStorage.numRows);
-	// supportImage.setRGB(0, 0, gridAgentStorage.numCols,
-	// gridAgentStorage.numRows,
-	// gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
-	//
-	// IShape hostShape = host.getGeometry();
-	// Envelope hostEnv = hostShape.getEnvelope();
-	// g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(),
-	// hostEnv.getMinY() * g.getYScale());
-	// g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale()),
-	// (int) (gridAgentStorage.numCols * g.getYScale()));
-	// g.setOpacity(layer.getTransparency());
-	// g.drawImage(scope, supportImage, null, 0.0f, true);
-	//
-	// }
 
 }

@@ -174,9 +174,9 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		if (gisExpression == null) { return ILayerStatement.IMAGE; }
-		return ILayerStatement.GIS;
+	public LayerType getType() {
+		if (gisExpression == null) { return LayerType.IMAGE; }
+		return LayerType.GIS;
 	}
 
 	public String getImageFileName() {

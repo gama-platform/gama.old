@@ -228,8 +228,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.SPECIES;
+	public LayerType getType() {
+		return LayerType.SPECIES;
 	}
 
 	public List<String> getAspects() {

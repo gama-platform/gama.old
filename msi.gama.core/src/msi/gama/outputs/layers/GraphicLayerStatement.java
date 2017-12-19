@@ -116,8 +116,8 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.GRAPHICS;
+	public LayerType getType() {
+		return LayerType.GRAPHICS;
 	}
 
 	@Override

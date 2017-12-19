@@ -28,15 +28,8 @@ import msi.gaml.statements.IExecutable;
 
 public class EventLayer extends AbstractLayer {
 
-	@Override
-	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
-		super.setPositionAndSize(box, g);
-	}
-
 	EventListener listener;
 	IScope executionScope;
-
-	public EventLayer() {}
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
@@ -119,7 +112,7 @@ public class EventLayer extends AbstractLayer {
 			surface.removeListener(this);
 		}
 
-		public int getListeningEvent(final String eventTypeName) {
+		private int getListeningEvent(final String eventTypeName) {
 			if (eventTypeName.equals(IKeyword.MOUSE_DOWN)) { return MOUSE_PRESS; }
 			if (eventTypeName.equals(IKeyword.MOUSE_UP)) { return MOUSE_RELEASED; }
 			if (eventTypeName.equals(IKeyword.MOUSE_CLICKED)) { return MOUSE_CLICKED; }

@@ -19,7 +19,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.AbstractLayerStatement;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -342,8 +341,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public static final String TITLEVISIBLE = "title_visible";
 	public static final String XTICKVALUEVISIBLE = "x_tick_values_visible";
 	public static final String YTICKVALUEVISIBLE = "y_tick_values_visible";
-	
-	
+
 	public static final String TICKFONTFACE = "tick_font";
 	public static final String TICKFONTSIZE = "tick_font_size";
 	public static final String TICKFONTSTYLE = "tick_font_style";
@@ -435,14 +433,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chartdataset;
 	}
 
-// What can not change at eery step
+	// What can not change at eery step
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		lastValues.clear();
 
 		// chartParameters.clear();
-		
-		
 
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		// chartParameters.put(IKeyword.TYPE, string1);
@@ -475,9 +471,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		chartoutput.createChart(scope);
 		updateValues(scope);
 
-//
+		//
 		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
-		IExpression face = getFacet(MEMORIZE);
+		final IExpression face = getFacet(MEMORIZE);
 		if (face != null) {
 			memorize = Cast.asBool(scope, face.value(scope));
 		}
@@ -525,9 +521,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 		return true;
 	}
-// what can be updated  at each step
-	public boolean updateValues(IScope scope)
-	{
+
+	// what can be updated at each step
+	public boolean updateValues(final IScope scope) {
 
 		IExpression string1 = getFacet(ChartLayerStatement.XLABEL);
 		if (string1 != null) {
@@ -548,7 +544,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (string1 != null) {
 			chartoutput.setSeriesLabelPosition(scope, Cast.asString(scope, string1.value(scope)));
 		}
-		
+
 		IExpression expr = getFacet(XRANGE);
 		if (expr != null) {
 			final Object range = expr.value(scope);
@@ -631,8 +627,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		chartoutput.setAxesColorValue(scope, colorvalue);
 
-		 colorvalue = new GamaColor(Color.black);
-		 color = getFacet(ChartLayerStatement.TICKLINECOLOR);
+		colorvalue = new GamaColor(Color.black);
+		color = getFacet(ChartLayerStatement.TICKLINECOLOR);
 		if (color != null) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 		}
@@ -724,19 +720,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 		return true;
 	}
-	
+
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		updateValues(scope);
-		
+
 		chartoutput.step(scope);
 
 		return true;
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.CHART;
+	public LayerType getType() {
+		return LayerType.CHART;
 	}
 
 	@Override

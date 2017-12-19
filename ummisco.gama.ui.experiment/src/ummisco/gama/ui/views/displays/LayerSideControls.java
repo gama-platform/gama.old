@@ -420,7 +420,7 @@ public class LayerSideControls {
 
 		switch (definition.getType()) {
 
-			case ILayerStatement.GRID: {
+			case GRID: {
 				EditorFactory.create(container.getScope(), compo, "Draw grid:",
 						((GridLayerStatement) definition).drawLines(), (EditorListener<Boolean>) newValue -> {
 							((GridLayer) layer).setDrawLines(newValue);
@@ -428,7 +428,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.AGENTS: {
+			case AGENTS: {
 				IExpression expr = null;
 				if (definition instanceof AgentLayerStatement) {
 					expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
@@ -441,7 +441,7 @@ public class LayerSideControls {
 				}
 				break;
 			}
-			case ILayerStatement.SPECIES: {
+			case SPECIES: {
 				EditorFactory.choose(container.getScope(), compo, "Aspect:",
 						((SpeciesLayerStatement) definition).getAspectName(), true,
 						((SpeciesLayerStatement) definition).getAspects(), newValue -> {
@@ -450,7 +450,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.IMAGE: {
+			case IMAGE: {
 				if (definition instanceof ImageLayerStatement) {
 					EditorFactory.create(container.getScope(), compo, "Image:",
 							((ImageLayerStatement) definition).getImageFileName(), false, newValue -> {
@@ -461,7 +461,7 @@ public class LayerSideControls {
 				break;
 
 			}
-			case ILayerStatement.GIS: {
+			case GIS: {
 				EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
 						((ImageLayerStatement) definition).getImageFileName(), newValue -> {
 							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
@@ -470,7 +470,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.CHART: {
+			case CHART: {
 				final Button b = new Button(compo, SWT.PUSH);
 				b.setText("Properties");
 				b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
@@ -506,6 +506,8 @@ public class LayerSideControls {
 					});
 				break;
 			}
+			default:
+				break;
 
 		}
 

@@ -239,9 +239,9 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		if (grid.isHexagon()) { return ILayerStatement.AGENTS; }
-		return ILayerStatement.GRID;
+	public LayerType getType() {
+		if (grid.isHexagon()) { return LayerType.AGENTS; }
+		return LayerType.GRID;
 	}
 
 	public GamaColor getLineColor() {
