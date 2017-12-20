@@ -9,9 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -201,20 +198,18 @@ public class WorkbenchHelper {
 	 * @todo find a more robust way to find the view (maybe with the control ?)
 	 * @return
 	 */
-	public static IViewPart findGamaViewUnderMouse() {
+	public static IViewPart findFrontmostGamaViewUnderMouse() {
 		final IWorkbenchPage page = getPage();
 		if (page == null) { return null; }
 		final Point p = getDisplay().getCursorLocation();
-		final java.awt.geom.Point2D p2D = new Point2D.Double(p.x, p.y);
 		for (final IViewPart part : page.getViews()) {
-			if (part instanceof IGamaView) {
-				final Rectangle2D r = ((IGamaView) part).getBounds();
-				if (r.contains(p2D))
+			if (part instanceof IGamaView.Display) {
+				final IGamaView.Display display = (IGamaView.Display) part;
+				if (display.isFullScreen())
 					return part;
-				else if (part instanceof IGamaView.Display) {
-					if (((IGamaView.Display) part).isFullScreen())
-						return part;
-				}
+				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y))
+					return part;
+
 			}
 		}
 		return null;

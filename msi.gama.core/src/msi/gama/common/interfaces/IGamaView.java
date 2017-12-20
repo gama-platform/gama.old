@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.awt.geom.Rectangle2D;
-
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -35,6 +33,9 @@ public interface IGamaView {
 	}
 
 	public interface Display {
+
+		public boolean containsPoint(int x, int y);
+
 		IDisplaySurface getDisplaySurface();
 
 		/**
@@ -97,7 +98,5 @@ public interface IGamaView {
 	public void setName(String name);
 
 	public void updateToolbarState();
-
-	public Rectangle2D getBounds();
 
 }
