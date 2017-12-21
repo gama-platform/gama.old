@@ -233,6 +233,10 @@ public abstract class AbstractEditor<T>
 			if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
 				GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 			}
+			// Introduced to deal with #2306
+			if (agent == null) {
+				param.setValue(a == null ? null : a.getScope(), newValue);
+			}
 		} else {
 			// param.setValue(a == null ? null : a.getScope(), newValue);
 			if (a == null) {
