@@ -26,6 +26,7 @@ import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 
 /**
@@ -323,6 +324,9 @@ public class GAMA {
 	}
 
 	public static IScope getRuntimeScope() {
+		// If GAMA has not yet been loaded, we return null
+		if (!GamaBundleLoader.LOADED)
+			return null;
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null) { return getPlatformAgent().getScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();

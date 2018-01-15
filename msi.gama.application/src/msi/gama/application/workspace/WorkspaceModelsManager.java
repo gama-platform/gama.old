@@ -115,8 +115,8 @@ public class WorkspaceModelsManager {
 				while (GAMA.getRegularGui() == null) {
 					try {
 						Thread.sleep(100);
-						// System.out.println(Thread.currentThread().getName() +
-						// ": waiting for the modeling and simulation environments to be available");
+						System.out
+							.println(Thread.currentThread().getName() + ": waiting for the GUI to become available");
 					} catch (final InterruptedException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -387,7 +387,7 @@ public class WorkspaceModelsManager {
 			public IStatus runInWorkspace(final IProgressMonitor monitor) {
 				System.out.println("Asynchronous link of models library...");
 				GAMA.getGui().refreshNavigator();
-				return Status.OK_STATUS;
+				return GamaBundleLoader.ERRORED ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
 
 		};
@@ -397,11 +397,15 @@ public class WorkspaceModelsManager {
 	}
 
 	public static void loadModelsLibrary() {
-		while (!GamaBundleLoader.LOADED) {
+		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
 			try {
 				Thread.sleep(100);
 				System.out.println("Waiting for GAML subsystem to load...");
 			} catch (final InterruptedException e) {}
+		}
+		if ( GamaBundleLoader.ERRORED ) {
+			GAMA.getGui().tell("Error in loading GAML language subsystem. Please consult the logs");
+			return;
 		}
 		System.out.println("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
