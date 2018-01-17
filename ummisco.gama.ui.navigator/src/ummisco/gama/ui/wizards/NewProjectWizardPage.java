@@ -16,9 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -180,16 +178,17 @@ public class NewProjectWizardPage extends WizardPage {
 		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 
-	/**
-	 * Returns the current project location path as entered by the user, or its anticipated initial value. Note that if
-	 * the default has been returned the path in a project description used to create a project should not be set.
-	 *
-	 * @return the project location path or its anticipated initial value.
-	 */
-	public IPath getLocationPath() {
-		return new Path(Platform.getLocation().toOSString());
-		// return new Path(locationArea.getProjectLocation());
-	}
+	// /**
+	// * Returns the current project location path as entered by the user, or its anticipated initial value. Note that
+	// if
+	// * the default has been returned the path in a project description used to create a project should not be set.
+	// *
+	// * @return the project location path or its anticipated initial value.
+	// */
+	// public IPath getLocationPath() {
+	// return new Path(Platform.getLocation().toOSString());
+	// // return new Path(locationArea.getProjectLocation());
+	// }
 
 	public boolean isTest() {
 		return isTest;
@@ -207,7 +206,14 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @since 3.2
 	 */
 	public URI getLocationURI() {
-		return URI.create(Platform.getLocation().append(getProjectName()).toOSString());
+		final URI u = Platform.getLocation().addTrailingSeparator().append(getProjectName()).toFile().toURI();
+		return u;
+		// System.out.println("PATH: " + s);
+		// final URI uri = URI.create(s);
+		// System.out.println("URI: " + uri);
+		// return uri;
+
+		// return URI.create(Platform.getLocation().append(getProjectName()).toOSString());
 		// return locationArea.getProjectLocationURI();
 	}
 
