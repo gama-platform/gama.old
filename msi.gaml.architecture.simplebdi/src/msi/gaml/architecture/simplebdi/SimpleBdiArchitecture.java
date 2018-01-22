@@ -116,6 +116,11 @@ import msi.gaml.types.Types;
 				of = MentalStateType.id,
 				init = "[]"),
 		@var (
+				name = SimpleBdiArchitecture.OBLIGATION_BASE,
+				type = IType.LIST,
+				of = MentalStateType.id,
+				init = "[]"),
+		@var (
 				name = SimpleBdiArchitecture.UNCERTAINTY_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
@@ -185,6 +190,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String IDEAL_BASE = "ideal_base";
 	public static final String REMOVE_DESIRE_AND_INTENTION = "desire_also";
 	public static final String DESIRE_BASE = "desire_base";
+	public static final String OBLIGATION_BASE = "obligation_base";
 	public static final String INTENTION_BASE = "intention_base";
 	public static final String EMOTION_BASE = "emotion_base";
 	public static final String SOCIALLINK_BASE = "social_link_base";
@@ -4205,7 +4211,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						optional = true,
 						doc = @doc ("predicate to add as an ideal")) ,
 					@arg (
-						name = "praiseworthyness",
+						name = "praiseworthiness",
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the praiseworthiness value of the ideal")),
@@ -4248,7 +4254,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						optional = true,
 						doc = @doc ("mental state to add as an ideal")),
 					@arg (
-						name = "praiseworthyness",
+						name = "praiseworthiness",
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the praiseworthiness value of the ideal")),
@@ -4291,7 +4297,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						optional = true,
 						doc = @doc ("emotion to add as an ideal")),
 					@arg (
-						name = "praiseworthyness",
+						name = "praiseworthiness",
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the praiseworthiness value of the ideal")),
@@ -4462,6 +4468,135 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					examples = { @example ("") }))
 	public Boolean primClearIdeal(final IScope scope) {
 		getBase(scope, IDEAL_BASE).clear();
+		return true;
+	}
+	
+	public static Boolean addObligation(final IScope scope, final MentalState predicate) {
+		predicate.setOwner(scope.getAgent());
+		return addToBase(scope, predicate, OBLIGATION_BASE);
+	}
+
+	@action (
+			name = "add_obligation",
+			args = { @arg (
+						name = PREDICATE,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("predicate to add as an obligation")) ,
+					@arg (
+						name = "strength",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the strength value of the obligation")),
+					@arg (
+							name = "lifetime",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("the lifetime of the obligation"))},
+			doc = @doc (
+					value = "add a predicate in the ideal base.",
+					returns = "true it works.",
+					examples = { @example ("") }))
+	public Boolean primAddObligation(final IScope scope) throws GamaRuntimeException {
+		final Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		final Double stre =
+				(Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
+		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
+		MentalState temp;
+		if(predicateDirect!=null){
+			temp = new MentalState("Ideal",predicateDirect);
+		} else {
+			temp = new MentalState();
+		}
+		if(stre!=null){
+			temp.setStrength(stre);
+		}
+		if(life>0){
+			temp.setLifeTime(life);
+		}
+		temp.setOwner(scope.getAgent());
+		return addObligation(scope, temp);
+	}
+	
+	@action (
+			name = "get_obligation",
+			args = { @arg (
+					name = PREDICATE,
+					type = PredicateType.id,
+					optional = false,
+					doc = @doc ("predicate to return")) },
+			doc = @doc (
+					value = "get the predicates in the obligation base (if several, returns the first one).",
+					returns = "the obligation if it is in the base.",
+					examples = { @example ("get_obligation(new_predicate(\"has_water\", true))") }))
+	public MentalState getObligation(final IScope scope) throws GamaRuntimeException {
+		final Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		if (predicateDirect != null) {
+			for (final MentalState pred : getBase(scope, OBLIGATION_BASE)) {
+				if (pred.getPredicate() != null && predicateDirect.equals(pred.getPredicate())) { return pred; }
+			}
+		}
+		return null;
+	}
+	
+
+	public static Boolean hasObligation(final IScope scope, final MentalState predicateDirect) {
+		return getBase(scope, OBLIGATION_BASE).contains(predicateDirect);
+	}
+
+	@action (
+			name = "has_obligation",
+			args = { @arg (
+					name = PREDICATE,
+					type = PredicateType.id,
+					optional = true,
+					doc = @doc ("predicate to check")) },
+			doc = @doc (
+					value = "check if the predicates is in the obligation base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestObligation(final IScope scope) throws GamaRuntimeException {
+		final Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		MentalState temp = new MentalState("Obligation",predicateDirect);
+		if (predicateDirect != null) { return hasObligation(scope, temp); }
+		return false;
+	}
+
+	public static Boolean removeObligation(final IScope scope, final MentalState pred) {
+		return getBase(scope, OBLIGATION_BASE).remove(pred);
+	}
+
+	@action (
+			name = "remove_obligation",
+			args = { @arg (
+					name = PREDICATE,
+					type = PredicateType.id,
+					optional = true,
+					doc = @doc ("predicate to remove")) },
+			doc = @doc (
+					value = "removes the predicates from the obligation base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveObligation(final IScope scope) throws GamaRuntimeException {
+		final Predicate predicateDirect =
+				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		MentalState temp = new MentalState("Obligation",predicateDirect);
+		if (predicateDirect != null) { return removeObligation(scope, temp); }
+		return false;
+	}
+	
+	
+	@action (
+			name = "clear_obligations",
+			doc = @doc (
+					value = "clear the obligation base",
+					returns = "true if the base is cleared correctly",
+					examples = { @example ("") }))
+	public Boolean primClearObligation(final IScope scope) {
+		getBase(scope, OBLIGATION_BASE).clear();
 		return true;
 	}
 	
