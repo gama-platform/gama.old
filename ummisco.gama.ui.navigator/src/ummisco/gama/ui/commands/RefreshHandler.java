@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
+import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
@@ -68,7 +69,18 @@ public class RefreshHandler implements IRefreshHandler {
 
 	@Override
 	public void refreshNavigator() {
-		getNavigator().getCommonViewer().refresh();
+		
+		final UIJob job = new UIJob("Refreshing Navigator") {
+
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				getNavigator().getCommonViewer().refresh();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		job.schedule();
+		
 	}
 
 	protected void refreshResource(final IResource resource, final IProgressMonitor monitor) throws CoreException {
@@ -135,7 +147,7 @@ public class RefreshHandler implements IRefreshHandler {
 					NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					refreshNavigator();
+//					refreshNavigator();
 					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
 					try {
 
@@ -154,6 +166,7 @@ public class RefreshHandler implements IRefreshHandler {
 						ex.printStackTrace();
 					}
 				} catch (final Exception e) {
+					e.printStackTrace();
 					return Status.CANCEL_STATUS;
 				} finally {
 					ResourceManager.unblock(monitor);
