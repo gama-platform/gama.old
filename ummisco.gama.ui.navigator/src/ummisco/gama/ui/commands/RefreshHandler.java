@@ -145,9 +145,7 @@ public class RefreshHandler implements IRefreshHandler {
 					op.run(monitor);
 					monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
 					NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
-					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//					refreshNavigator();
 					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
 					try {
 
@@ -156,8 +154,6 @@ public class RefreshHandler implements IRefreshHandler {
 							@Override
 							public void done() {
 								super.done();
-								refreshNavigator();
-
 							}
 
 						});
@@ -169,6 +165,8 @@ public class RefreshHandler implements IRefreshHandler {
 					e.printStackTrace();
 					return Status.CANCEL_STATUS;
 				} finally {
+					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
+					refreshNavigator();
 					ResourceManager.unblock(monitor);
 					monitor.done();
 				}
