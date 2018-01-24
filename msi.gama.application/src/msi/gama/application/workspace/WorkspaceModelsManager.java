@@ -437,7 +437,7 @@ public class WorkspaceModelsManager {
 
 		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
-		} catch (final IOException e1) {
+		} catch (final Exception e1) {
 			e1.printStackTrace();
 		}
 
