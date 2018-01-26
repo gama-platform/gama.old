@@ -39,6 +39,8 @@ public final class NBAStarPathfinder<V, E> {
 	private final Map<V, Double> DISTANCEB = new HashMap<>();
 	private final Set<V> CLOSED = new HashSet<>();
 	private final Map<V, _Vertex<V, E>> vertices = new IdentityHashMap<>();
+	
+	private boolean stopWhenPathFound = false;
 
 
 	private double fA;
@@ -51,9 +53,10 @@ public final class NBAStarPathfinder<V, E> {
 	protected GamaGraph<V, E> graph;
 	protected boolean isSpatialGraph;
 
-	public NBAStarPathfinder(GamaGraph<V, E> graph) {
+	public NBAStarPathfinder(GamaGraph<V, E> graph, boolean stopWhenPathFound) {
 		this.graph = graph;
 		isSpatialGraph = graph instanceof GamaSpatialGraph;
+		this.stopWhenPathFound = stopWhenPathFound;
 	}
 
 	public IList<E> search(V sourceNode, V targetNode) {
@@ -121,6 +124,7 @@ public final class NBAStarPathfinder<V, E> {
 						if (bestPathLength > pathLength) {
 							bestPathLength = pathLength;
 							touchNode = childNode;
+							if (stopWhenPathFound) return;
 						}
 					}
 				}
@@ -177,6 +181,8 @@ public final class NBAStarPathfinder<V, E> {
 						if (bestPathLength > pathLength) {
 							bestPathLength = pathLength;
 							touchNode = parentNode;
+
+							if (stopWhenPathFound) return;
 						}
 					}
 				}
