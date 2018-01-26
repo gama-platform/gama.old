@@ -12,7 +12,7 @@ import msi.gaml.types.Types;
 @vars ({ @var (
 		name = "name",
 		type = IType.STRING,
-		doc = @doc ("The name of this norm")),
+		doc = @doc ("The name of this BDI plan")),
 		@var (
 				name = SimpleBdiPlanStatement.INTENTION,
 				type = IType.NONE,
@@ -34,11 +34,10 @@ import msi.gaml.types.Types;
 		// type = IType.LIST),
 		// @var(name = "on_hold_until", type = IType.NONE)
 })
+//classe définissant le type sanction, sur le plan de la définition des types plans ou des normes
+public class Sanction implements IValue{
 
-//Classe qui permet de définir les normes comme type, contenant le norm statement, sur l'exemple des plans
-public class Norm implements IValue{
-
-	private NormStatement normStatement;
+	private SanctionStatement sanctionStatement;
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
@@ -48,7 +47,7 @@ public class Norm implements IValue{
 
 	@Override
 	public IType<?> getType() {
-		return Types.get(NormType.id);
+		return Types.get(SanctionType.id);
 //		return null;
 	}
 

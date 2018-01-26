@@ -25,7 +25,7 @@ import msi.gaml.types.IType;
 		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 
 
-//Statement ppour définir une norme ssur le même principe qu'un plan
+//Statement pour définir une norme ssur le même principe qu'un plan
 public class NormStatement extends AbstractStatementSequence{
 
 	public static final String NORM = "norm";

@@ -64,6 +64,14 @@ import msi.gaml.types.Types;
 				type = IType.BOOL,
 				init = "false"),
 		@var (
+				name = SimpleBdiArchitecture.USE_NORMS,
+				type = IType.BOOL,
+				init = "false"),
+		@var (
+				name = SimpleBdiArchitecture.OBEDIENCE,
+				type = IType.FLOAT,
+				init = "1.0"),
+		@var (
 				name = SimpleBdiArchitecture.CHARISMA,
 				type = IType.FLOAT,
 				init = "1.0"),
@@ -158,6 +166,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
 	public static final String USE_SOCIAL_ARCHITECTURE = "use_social_architecture";
 	public static final String USE_PERSONALITY = "use_personality";
+	public static final String USE_NORMS = "use_norms";
+	public static final String OBEDIENCE = "obedience";
 	public static final String CHARISMA = "charisma";
 	public static final String RECEPTIVITY = "receptivity";
 	public static final String OPENNESS = "openness";

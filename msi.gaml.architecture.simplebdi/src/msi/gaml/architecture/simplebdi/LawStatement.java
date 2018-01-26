@@ -38,16 +38,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The mandatory beliefs")),
 				@facet (
-						name = LawStatement.NEW_DESIRE,
+						name = LawStatement.NEW_OBLIGATION,
 						type = PredicateType.id,
 						optional = true,
-						doc = @doc ("The desire that will be added")),
+						doc = @doc ("The predicate that will be added as an obligation")),
 				@facet (
-						name = LawStatement.NEW_DESIRES,
+						name = LawStatement.NEW_OBLIGATIONS,
 						type = IType.LIST,
 						of = PredicateType.id,
 						optional = true,
-						doc = @doc ("The desire that will be added")),
+						doc = @doc ("The list of predicates that will be added as obligations")),
 				@facet (
 						name = IKeyword.WHEN,
 						type = IType.BOOL,
@@ -86,8 +86,8 @@ public class LawStatement extends AbstractStatement{
 	public static final String LAW = "law";
 	public static final String BELIEF = "belief";
 	public static final String BELIEFS = "beliefs";
-	public static final String NEW_DESIRE = "new_desire";
-	public static final String NEW_DESIRES = "new_desires";
+	public static final String NEW_OBLIGATION = "new_obligation";
+	public static final String NEW_OBLIGATIONS = "new_obligations";
 	public static final String STRENGTH = "strength";
 	public static final String LIFETIME = "lifetime";
 
@@ -95,8 +95,8 @@ public class LawStatement extends AbstractStatement{
 	final IExpression parallel;
 	final IExpression belief;
 	final IExpression beliefs;
-	final IExpression newDesire;
-	final IExpression newDesires;
+	final IExpression newObligation;
+	final IExpression newObligations;
 	final IExpression strength;
 	final IExpression lifetime;
 	
@@ -105,8 +105,8 @@ public class LawStatement extends AbstractStatement{
 		when = getFacet(IKeyword.WHEN);
 		belief = getFacet(LawStatement.BELIEF);
 		beliefs = getFacet(LawStatement.BELIEFS);
-		newDesire = getFacet(LawStatement.NEW_DESIRE);
-		newDesires = getFacet(LawStatement.NEW_DESIRES);
+		newObligation = getFacet(LawStatement.NEW_OBLIGATION);
+		newObligations = getFacet(LawStatement.NEW_OBLIGATIONS);
 		strength = getFacet(LawStatement.STRENGTH);
 		lifetime = getFacet("lifetime");
 		parallel = getFacet(IKeyword.PARALLEL);

@@ -15,19 +15,19 @@ public class NormType extends GamaType<Norm>{
 
 	@Override
 	public boolean canCastToConst() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public Norm cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		if (obj instanceof Norm) {
+			return (Norm) obj;
+		}
 		return null;
 	}
 
 	@Override
 	public Norm getDefault() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
