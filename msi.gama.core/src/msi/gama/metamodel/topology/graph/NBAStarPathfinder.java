@@ -1,6 +1,7 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -93,7 +94,13 @@ public final class NBAStarPathfinder<V, E> {
 			// Reject the 'currentNode'.
 		} else {
 			// Stabilize the 'currentNode'.
-			Set<Object> edges = graph.isDirected() ? cv.getOutEdges() : cv.getEdges();
+			Collection<Object> edges = null;
+			if (graph.isDirected())
+				edges = cv.getOutEdges();
+			else {
+				edges = new ArrayList<>(cv.getOutEdges());
+				edges.addAll(cv.getInEdges());
+			}
 			for (Object edge :edges) {
 				final _Edge<V, E> eg = graph.getEdge(edge);
 				final V childNode =  (V)(graph.isDirected() ? eg.getTarget() : ((eg.getTarget().equals(currentNode) ? eg.getSource() : eg.getTarget())));
@@ -142,11 +149,16 @@ public final class NBAStarPathfinder<V, E> {
 						- estimateDistanceBetween(currentNode, targetNode) >= bestPathLength) {
 			// Reject the node 'currentNode'.
 		} else {
-			Set<Object> edges = graph.isDirected() ? cv.getInEdges() : cv.getEdges();
+			Collection<Object> edges = null;
+			if (graph.isDirected())
+				edges = cv.getInEdges();
+			else {
+				edges = new ArrayList<>(cv.getInEdges());
+				edges.addAll(cv.getOutEdges());
+			}
 			for (Object edge :edges) {
 				final _Edge<V, E> eg = graph.getEdge(edge);
 				final V parentNode = (V)(graph.isDirected() ? eg.getSource(): ( (eg.getSource().equals(currentNode) ? eg.getTarget() : eg.getSource())));
-				
 				if (CLOSED.contains(parentNode)) {
 					continue;
 				}

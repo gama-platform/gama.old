@@ -93,14 +93,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public final static int FloydWarshall = 2;
 	public final static int BellmannFord = 3;
-	public final static int Djikstra = 1;
+	public final static int Dijkstra = 1;
 	public final static int AStar = 4;
 	public final static int NBAStar = 5;
 
 	protected boolean saveComputedShortestPaths = true;
 
 	protected ISpecies edgeSpecies;
-	protected int optimizerType = Djikstra;
+	protected int optimizerType = NBAStar;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
 
 	private Object linkedGraph = null;
@@ -724,7 +724,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		} else if ("Bellmann".equals(s)) {
 			optimizerType = BellmannFord;
 		} else {
-			optimizerType = 1;
+			optimizerType = Dijkstra;
 		}
 	}
 
@@ -771,7 +771,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
 				}
 				return spl1;
-		} else if (optimizerType == Djikstra) {
+		} else if (optimizerType == Dijkstra) {
 				IList<IList<E>> sp2 = null;
 				if (saveComputedShortestPaths) {
 					sp2 = shortestPathComputed.get(new Pair<V, V>(source, target));
@@ -1256,7 +1256,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new ConcurrentHashMap<Pair<V, V>, IList<IList<E>>>();
 		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
-		if (optimizerType == 1) {
+		if (optimizerType == FloydWarshall) {
 			optimizer = new FloydWarshallShortestPathsGAMA(this, mat);
 
 			return;
@@ -1420,7 +1420,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 			}
 		} else {
-			if (optimizerType == 1) {
+			if (optimizerType == FloydWarshall) {
 				optimizer = new FloydWarshallShortestPathsGAMA(this);
 				optimizer.lazyCalculateMatrix();
 				for (int i = 0; i < vertexMap.size(); i++) {

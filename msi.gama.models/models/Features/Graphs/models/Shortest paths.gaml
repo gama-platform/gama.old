@@ -18,12 +18,13 @@ global {
 	bool memorize_shortest_paths <- true;
 	
 	/*4 type of optimizer can be used for the shortest path computation:
-	 *    - Djikstra: the default one - ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
+	 *    - Dijkstra: ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
 	 * 	  - Bellmann: ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
 	 * 	  - AStar: do not ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
-	 *    - Floyd Warshall: ensure to find the best shortest path - compute all the shortest pathes at the same time (and keep them in memory)
+	 *    - NBAStar : the default one - ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
+	 *    - Floyd Warshall: ensure to find the best shortest path - compute all the shortest paths at the same time (and keep them in memory)
 	 */
-	string optimizer_type <- "Djikstra";
+	string optimizer_type <- "NBAStar" among: ["NBAStar", "Dijkstra", "AStar", "Bellmann", "Floyd Warshall"];
 	int nb_people <- 100;
 	init {    
 		create road from: shape_file_in ;
@@ -82,7 +83,7 @@ species people skills: [moving] {
 
 
 experiment goto_network type: gui {
-	parameter "Type of optimizer" var: optimizer_type among: ["Djikstra", "AStar", "Bellmann", "Floyd Warshall"];
+	parameter "Type of optimizer" var: optimizer_type ;
 	parameter "Number of people" var: nb_people min: 1 max: 1000000;
 	parameter "Computed all the shortest paths and save the results" var: save_shortest_paths;
 	parameter "Load the shortest paths from the file" var: load_shortest_paths;
