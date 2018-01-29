@@ -10,6 +10,7 @@
 package msi.gaml.operators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1263,7 +1264,11 @@ public class Graphs {
 					isExecutable = false),
 			see = "set_verbose")
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
-		graph.setOptimizerType(optimizerType);
+		List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream().map(a -> a.toString()).collect(Collectors.toList());
+		if (existingOptimizer.contains(optimizerType))
+			graph.setOptimizerType(optimizerType);
+		else 
+			throw GamaRuntimeException.error("The Optimizer type "+ optimizerType + " does not exist. Possible optimizer types: " + existingOptimizer, scope);
 		return graph;
 	}
 

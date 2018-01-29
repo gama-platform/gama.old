@@ -718,11 +718,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void setOptimizerType(final String s) {
-		try {
 		pathFindingAlgo = shortestPathAlgorithm.valueOf(s);
-		} catch (IllegalArgumentException e) { 
-			pathFindingAlgo = shortestPathAlgorithm.NBAStar;
-		}
 	}
 
 	// protected IPath<V,E> pathFromEdges(final Object source, final Object
