@@ -217,10 +217,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	protected final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
 	protected final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
+	protected final List<LawStatement> _laws = new ArrayList<LawStatement>();
 	protected int _plansNumber = 0;
 	protected int _perceptionNumber = 0;
 	protected boolean iscurrentplaninstantaneous = false;
-
+	protected int _lawsNumber = 0;
 	protected int _rulesNumber = 0;
 
 	@Override
@@ -229,6 +230,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		_plans.clear();
 		_rules.clear();
 		_perceptions.clear();
+		_laws.clear();
 	}
 
 	@Override
@@ -253,6 +255,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_rules.add((RuleStatement) c);
 			_rulesNumber++;
+		} else if (c instanceof LawStatement) {
+			// final String statementKeyword = c.getDescription().getKeyword();
+			_laws.add((LawStatement) c);
+			_lawsNumber++;
 		} else {
 			super.addBehavior(c);
 		}
@@ -283,6 +289,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (_rulesNumber > 0) {
 			for (int i = 0; i < _rulesNumber; i++) {
 				_rules.get(i).executeOn(scope);
+				if (agent.dead()) { return null; }
+			}
+		}
+		if (_lawsNumber > 0) {
+			for (int i = 0; i < _lawsNumber; i++) {
+				_laws.get(i).executeOn(scope);
 				if (agent.dead()) { return null; }
 			}
 		}
@@ -366,7 +378,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 
 				}
-
+				//TEST
+				if(currentIntention(scope)==null){
+					addThoughts(scope, "I want nothing...");
+					// update the lifetime of beliefs
+					updateLifeTimePredicates(scope);
+					updateEmotionsIntensity(scope);
+					return null;
+				}
 				// choose a plan for the current intention
 				if (_persistentTask == null && currentIntention(scope)!=null && currentIntention(scope).getPredicate() == null) {
 					selectDesireWithHighestPriority(scope);
@@ -625,6 +644,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
 			mental.isUpdated = false;
 		}
+		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {
+			mental.isUpdated = false;
+		}
 		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
 			mental.updateLifetime();
 		}
@@ -648,6 +670,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		for (final MentalState mental : listUncertaintyLifeTimeNull(scope)) {
 			removeUncertainty(scope, mental);
+		}
+		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {
+			mental.updateLifetime();
+		}
+		for (final MentalState mental : listObligationLifeTimeNull(scope)) {
+			removeObligation(scope, mental);
 		}
 	}
 
@@ -684,6 +712,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private List<MentalState> listUncertaintyLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<MentalState>();
 		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
+			if (mental.getLifeTime() == 0) {
+				tempPred.add(mental);
+			}
+		}
+		return tempPred;
+	}
+	
+	private List<MentalState> listObligationLifeTimeNull(final IScope scope) {
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {
 			if (mental.getLifeTime() == 0) {
 				tempPred.add(mental);
 			}
@@ -936,22 +974,30 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	public static boolean addToBase(final IScope scope, final MentalState mentalItem,
 			final GamaList<MentalState> factBase) {
-
-		factBase.remove(mentalItem);
+		if(!factBase.contains(mentalItem)){
+//		factBase.remove(mentalItem);
 
 //		mentalItem.setDate(scope.getClock().getTimeElapsedInSeconds());
 		return factBase.add(mentalItem);
+		}
+		return false;
 	}
 
 	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
-		factBase.remove(predicateItem);
-		return factBase.add(predicateItem);
+//		factBase.remove(predicateItem);
+		if(!factBase.contains(predicateItem)){
+			return factBase.add(predicateItem);
+		}
+		return false;
 	}
 
 	public static boolean addToBase(final IScope scope, final SocialLink socialItem,
 			final GamaList<SocialLink> factBase) {
-		factBase.remove(socialItem);
-		return factBase.add(socialItem);
+//		factBase.remove(socialItem);
+		if(!factBase.contains(socialItem)){
+			return factBase.add(socialItem);
+		}
+		return false;
 	}
 
 	//le add belief crée les émotion joie, sadness, satisfaction, disapointment, relief, fear_confirmed, pride, shame, admiration, reproach
@@ -4515,7 +4561,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
 		MentalState temp;
 		if(predicateDirect!=null){
-			temp = new MentalState("Ideal",predicateDirect);
+			temp = new MentalState("Obligation",predicateDirect);
 		} else {
 			temp = new MentalState();
 		}

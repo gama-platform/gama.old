@@ -1,5 +1,7 @@
 package msi.gaml.architecture.simplebdi;
 
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -13,6 +15,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
@@ -70,6 +73,12 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the lifetime value of the mental state created")),
 				@facet (
+						name = RuleStatement.THRESHOLD,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("Threshold linked to the obedience value.")),
+				
+				@facet (
 						name = IKeyword.NAME,
 						type = IType.ID,
 						optional = true,
@@ -90,6 +99,8 @@ public class LawStatement extends AbstractStatement{
 	public static final String NEW_OBLIGATIONS = "new_obligations";
 	public static final String STRENGTH = "strength";
 	public static final String LIFETIME = "lifetime";
+	public static final String THRESHOLD = "threshold";
+	
 
 	final IExpression when;
 	final IExpression parallel;
@@ -99,6 +110,7 @@ public class LawStatement extends AbstractStatement{
 	final IExpression newObligations;
 	final IExpression strength;
 	final IExpression lifetime;
+	final IExpression threshold;
 	
 	public LawStatement(IDescription desc) {
 		super(desc);
@@ -109,13 +121,68 @@ public class LawStatement extends AbstractStatement{
 		newObligations = getFacet(LawStatement.NEW_OBLIGATIONS);
 		strength = getFacet(LawStatement.STRENGTH);
 		lifetime = getFacet("lifetime");
+		threshold = getFacet(LawStatement.THRESHOLD);
 		parallel = getFacet(IKeyword.PARALLEL);
 	}
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		if (newObligation == null && newObligations == null)
+			return null;
+		if (when == null || Cast.asBool(scope, when.value(scope))) {
+			final MentalState tempBelief = new MentalState("Belief");
+			Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
+			if (belief != null) {
+				tempBelief.setPredicate((Predicate) belief.value(scope));
+			}
+			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief)) {				
+				if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
+					if (threshold == null || obedienceValue>= (Double) threshold.value(scope)) {
+						if (newObligation != null) {
+							final Predicate newObl = (Predicate) newObligation.value(scope);
+							final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+							if (strength != null) {
+								tempNewObligation.setStrength(
+								Cast.asFloat(scope, strength.value(scope)));
+							}
+							if (lifetime != null) {
+								tempNewObligation
+									.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+							}
+							SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+						}
+						if (newObligations != null) {
+							final List<Predicate> newObls =
+								(List<Predicate>) newObligations.value(scope);
+							for (final Predicate newDes : newObls) {
+								final MentalState tempDesires =
+									new MentalState("Obligation", newDes);
+								if (strength != null) {
+									tempDesires.setStrength(
+										Cast.asFloat(scope, strength.value(scope)));
+								}
+								if (lifetime != null) {
+									tempDesires.setLifeTime(
+											Cast.asInt(scope, lifetime.value(scope)));
+								}
+						SimpleBdiArchitecture.addObligation(scope, tempDesires);
+							}
+						}
+					}
+				}
+			}
+		}	
 		return null;
 	}
+
+
+private boolean hasBeliefs(final IScope scope, final List<Predicate> predicates) {
+	for (final Predicate p : predicates) {
+		final MentalState temp = new MentalState("Belief", p);
+		if (!SimpleBdiArchitecture.hasBelief(scope, temp))
+			return false;
+	}
+	return true;
+}
 
 }
