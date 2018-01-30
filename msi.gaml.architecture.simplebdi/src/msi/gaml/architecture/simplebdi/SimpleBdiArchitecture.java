@@ -984,20 +984,20 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
-//		factBase.remove(predicateItem);
-		if(!factBase.contains(predicateItem)){
+		factBase.remove(predicateItem);
+//		if(!factBase.contains(predicateItem)){
 			return factBase.add(predicateItem);
-		}
-		return false;
+//		}
+//		return false;
 	}
 
 	public static boolean addToBase(final IScope scope, final SocialLink socialItem,
 			final GamaList<SocialLink> factBase) {
-//		factBase.remove(socialItem);
-		if(!factBase.contains(socialItem)){
+		factBase.remove(socialItem);
+//		if(!factBase.contains(socialItem)){
 			return factBase.add(socialItem);
-		}
-		return false;
+//		}
+//		return false;
 	}
 
 	//le add belief crée les émotion joie, sadness, satisfaction, disapointment, relief, fear_confirmed, pride, shame, admiration, reproach
