@@ -144,6 +144,11 @@ import msi.gaml.types.Types;
 				of = BDIPlanType.id,
 				init = "[]"),
 		@var (
+				name = SimpleBdiArchitecture.NORM_BASE,
+				type = IType.LIST,
+				of = NormType.id,
+				init = "[]"),
+		@var (
 				name = SimpleBdiArchitecture.SOCIALLINK_BASE,
 				type = IType.LIST,
 				of = SocialLinkType.id,
@@ -206,6 +211,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String SOCIALLINK_BASE = "social_link_base";
 	public static final String EVERY_VALUE = "every_possible_value";
 	public static final String PLAN_BASE = "plan_base";
+	public static final String NORM_BASE = "norm_base";
 	public static final String CURRENT_PLAN = "current_plan";
 	public static final String UNCERTAINTY_BASE = "uncertainty_base";
 
