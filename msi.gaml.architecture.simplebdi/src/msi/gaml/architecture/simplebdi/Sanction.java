@@ -2,6 +2,7 @@ package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
@@ -13,16 +14,16 @@ import msi.gaml.types.Types;
 		name = "name",
 		type = IType.STRING,
 		doc = @doc ("The name of this BDI plan")),
-		@var (
-				name = SimpleBdiPlanStatement.INTENTION,
-				type = IType.NONE,
-				doc = @doc ("A string representing the current intention of this BDI plan")),
-		@var (
-				name = SimpleBdiArchitecture.FINISHEDWHEN,
-				type = IType.STRING),
-		@var (
-				name = SimpleBdiArchitecture.INSTANTANEAOUS,
-				type = IType.STRING)
+//		@var (
+//				name = SimpleBdiPlanStatement.INTENTION,
+//				type = IType.NONE,
+//				doc = @doc ("A string representing the current intention of this BDI plan")),
+//		@var (
+//				name = SimpleBdiArchitecture.FINISHEDWHEN,
+//				type = IType.STRING),
+//		@var (
+//				name = SimpleBdiArchitecture.INSTANTANEAOUS,
+//				type = IType.STRING)
 		/*
 		 * @var(name = "value", type = IType.NONE),
 		 * 
@@ -38,6 +39,31 @@ import msi.gaml.types.Types;
 public class Sanction implements IValue{
 
 	private SanctionStatement sanctionStatement;
+	
+	@getter ("name")
+	public String getName() {
+		return this.sanctionStatement.getName();
+	}
+	
+	public Sanction(){
+		super();
+	}
+	
+	public Sanction(final SanctionStatement statement) {
+		super();
+		this.sanctionStatement = statement;
+	}
+	
+	public boolean equals(final Object obj) {
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		final Sanction other = (Sanction) obj;
+		if (sanctionStatement == null) {
+			if (other.sanctionStatement != null) { return false; }
+		} else if (!sanctionStatement.equals(other.sanctionStatement)) { return false; }
+		return true;
+	}
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
