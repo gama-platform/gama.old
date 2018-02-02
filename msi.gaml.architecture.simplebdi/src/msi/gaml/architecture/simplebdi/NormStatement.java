@@ -25,6 +25,7 @@ import msi.gaml.types.IType;
 		@facet(name = NormStatement.INTENTION, type = PredicateType.id, optional = true),
 		@facet(name = NormStatement.OBLIGATION, type = PredicateType.id, optional = true),
 		@facet(name = NormStatement.THRESHOLD, type = IType.FLOAT, optional = true),
+		@facet(name = NormStatement.LIFETIME, type = IType.INT, optional = true),
 		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 
 
@@ -35,6 +36,7 @@ public class NormStatement extends AbstractStatementSequence{
 	public static final String INTENTION = "intention";
 	public static final String OBLIGATION = "obligation";
 	public static final String THRESHOLD = "threshold";
+	public static final String LIFETIME = "lifetime";
 	
 	final IExpression _when;
 	final IExpression _priority;
@@ -43,6 +45,8 @@ public class NormStatement extends AbstractStatementSequence{
 	final IExpression _intention;
 	final IExpression _obligation;
 	final IExpression _threshold;
+	final IExpression _lifetime;
+	
 	
 	public NormStatement(IDescription desc) {
 		super(desc);
@@ -53,6 +57,7 @@ public class NormStatement extends AbstractStatementSequence{
 		_intention = getFacet(NormStatement.INTENTION);
 		_obligation = getFacet(NormStatement.OBLIGATION);
 		_threshold = getFacet(NormStatement.THRESHOLD);
+		_lifetime = getFacet(NormStatement.LIFETIME);
 		setName(desc.getName());
 	}
 

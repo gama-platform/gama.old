@@ -149,13 +149,21 @@ import msi.gaml.types.Types;
 				of = NormType.id,
 				init = "[]"),
 		@var (
+				name = SimpleBdiArchitecture.SANCTION_BASE,
+				type = IType.LIST,
+				of = SanctionType.id,
+				init = "[]"),
+		@var (
 				name = SimpleBdiArchitecture.SOCIALLINK_BASE,
 				type = IType.LIST,
 				of = SocialLinkType.id,
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.CURRENT_PLAN,
-				type = IType.NONE) })
+				type = IType.NONE),
+		@var (
+				name = SimpleBdiArchitecture.CURRENT_NORM,
+				type = IType.NONE)})
 @skill (
 		name = SimpleBdiArchitecture.SIMPLE_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
@@ -212,7 +220,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String EVERY_VALUE = "every_possible_value";
 	public static final String PLAN_BASE = "plan_base";
 	public static final String NORM_BASE = "norm_base";
+	public static final String SANCTION_BASE = "sanction_base";
 	public static final String CURRENT_PLAN = "current_plan";
+	public static final String CURRENT_NORM = "current_norm";
 	public static final String UNCERTAINTY_BASE = "uncertainty_base";
 
 	// WARNING
@@ -224,11 +234,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
 	protected final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
 	protected final List<LawStatement> _laws = new ArrayList<LawStatement>();
+	protected final List<Norm> _norms = new ArrayList<Norm>();
+	protected final List<Sanction> _sanctions = new ArrayList<Sanction>();
 	protected int _plansNumber = 0;
 	protected int _perceptionNumber = 0;
 	protected boolean iscurrentplaninstantaneous = false;
 	protected int _lawsNumber = 0;
 	protected int _rulesNumber = 0;
+	protected int _normNumber = 0;
+	protected int _sanctionNumber = 0;
 
 	@Override
 	protected void clearBehaviors() {
@@ -237,6 +251,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		_rules.clear();
 		_perceptions.clear();
 		_laws.clear();
+		_norms.clear();
+		_sanctions.clear();
 	}
 
 	@Override
@@ -265,6 +281,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_laws.add((LawStatement) c);
 			_lawsNumber++;
+		} else if (c instanceof NormStatement) {
+			// final String statementKeyword = c.getDescription().getKeyword();
+			_norms.add(new Norm((NormStatement) c));
+			_normNumber++;
+		} else if (c instanceof SanctionStatement) {
+			// final String statementKeyword = c.getDescription().getKeyword();
+			_sanctions.add(new Sanction((SanctionStatement) c));
+			_sanctionNumber++;
 		} else {
 			super.addBehavior(c);
 		}
@@ -324,6 +348,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
 				agent.setAttribute(PLAN_BASE, _plans);
+				//Faire la même chose qu'au dessus pour la base des normes et la base des sanctions
 				final GamaList<MentalState> intentionBase = (GamaList<MentalState>) (scope.hasArg(INTENTION_BASE)
 						? scope.getListArg(INTENTION_BASE) : (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
 				final Double persistenceCoefficientPlans =
@@ -384,7 +409,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 
 				}
-				//TEST
 				if(currentIntention(scope)==null){
 					addThoughts(scope, "I want nothing...");
 					// update the lifetime of beliefs
@@ -933,6 +957,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return result;
 	}
 
+	public static List<Norm> getNorms(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		return (List<Norm>) (scope.hasArg(NORM_BASE) ? scope.getListArg(NORM_BASE)
+				: (List<Norm>) agent.getAttribute(NORM_BASE));
+	}
+	
+	public static List<Sanction> getSanctions(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		return (List<Sanction>) (scope.hasArg(SANCTION_BASE) ? scope.getListArg(SANCTION_BASE)
+				: (List<Norm>) agent.getAttribute(SANCTION_BASE));
+	}
+	
 	public static GamaList<MentalState> getBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
 		return (GamaList<MentalState>) (scope.hasArg(basename) ? scope.getListArg(basename)
@@ -2523,6 +2559,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	public static Boolean clearIntention(final IScope scope) {
+		getBase(scope, INTENTION_BASE).clear();
+		scope.getAgent().setAttribute(CURRENT_PLAN, null);
+		return true;
+	}
+	
 	@action (
 			name = "remove_all_beliefs",
 			args = { @arg (

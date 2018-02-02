@@ -17,13 +17,21 @@ import msi.gaml.types.Types;
 		@var (
 				name = NormStatement.INTENTION,
 				type = IType.NONE,
-				doc = @doc ("A string representing the current intention of this BDI plan")),
+				doc = @doc ("A string representing the current intention of this Norm")),
+		@var (
+				name = NormStatement.OBLIGATION,
+				type = IType.NONE,
+				doc = @doc ("A string representing the current obligation of this Norm")),
 		@var (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
 				type = IType.STRING),
 		@var (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
-				type = IType.STRING)
+				type = IType.STRING),
+		@var (
+				name = NormStatement.LIFETIME,
+				type = IType.INT)
+//				doc = @doc ("A string representing the current intention of this BDI plan"))
 		/*
 		 * @var(name = "value", type = IType.NONE),
 		 * 
@@ -41,10 +49,17 @@ public class Norm implements IValue{
 
 	private NormStatement normStatement;
 	private Boolean isViolated;
+	private Integer lifetimeViolation;
+	private Boolean noLifetime;
 	
 	@getter ("name")
 	public String getName() {
 		return this.normStatement.getName();
+	}
+	
+	@getter (NormStatement.LIFETIME)
+	public Integer getLifetime(final IScope scope) {
+		return this.lifetimeViolation;
 	}
 	
 	@getter ("when")
@@ -57,6 +72,21 @@ public class Norm implements IValue{
 		return (Predicate) this.normStatement._intention.value(scope);
 	}
 	
+	@getter (NormStatement.OBLIGATION)
+	public Predicate getObligation(final IScope scope) {
+		return (Predicate) this.normStatement._obligation.value(scope);
+	}
+	
+	@getter (SimpleBdiArchitecture.FINISHEDWHEN)
+	public String getFinishedWhen() {
+		return this.normStatement._executedwhen.serialize(true);
+	}
+	
+	@getter (SimpleBdiArchitecture.INSTANTANEAOUS)
+	public String getInstantaneous() {
+		return this.normStatement._instantaneous.serialize(true);
+	}
+	
 	public NormStatement getNormStatement() {
 		return this.normStatement;
 	}
@@ -67,17 +97,43 @@ public class Norm implements IValue{
 	
 	public Norm(){
 		super();
-		isViolated = false;
+		this.isViolated = false;
+		this.lifetimeViolation = -1;
+		this.noLifetime = true;
 	}
 	
 	public Norm(final NormStatement statement) {
 		super();
 		this.normStatement = statement;
-		isViolated = false;
+		this.lifetimeViolation = -1;
+		this.isViolated = false;
+		this.noLifetime = true;
+	}
+	
+	public Norm(final NormStatement statement, final IScope scope) {
+		super();
+		this.normStatement = statement;
+		this.lifetimeViolation = (Integer) statement._lifetime.value(scope);
+		this.isViolated = false;
+		this.noLifetime = false;
 	}
 	
 	public void setViolation(final Boolean violation){
 		this.isViolated = violation;
+	}
+	
+	public void violated(final IScope scope){
+		this.isViolated = true;
+		this.lifetimeViolation = (Integer) this.normStatement._lifetime.value(scope);
+	}
+	
+	public void updateLifeime(){
+		if(!noLifetime && isViolated){
+			this.lifetimeViolation --;
+		}
+		if(this.lifetimeViolation<0){
+			isViolated = false;
+		}
 	}
 	
 	@Override

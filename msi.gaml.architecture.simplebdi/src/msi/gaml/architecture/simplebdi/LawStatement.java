@@ -3,6 +3,7 @@ package msi.gaml.architecture.simplebdi;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -125,6 +126,7 @@ public class LawStatement extends AbstractStatement{
 		parallel = getFacet(IKeyword.PARALLEL);
 	}
 
+
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 		if (newObligation == null && newObligations == null)
@@ -150,6 +152,9 @@ public class LawStatement extends AbstractStatement{
 									.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 							}
 							SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+							SimpleBdiArchitecture.clearIntention(scope);
+							final IAgent agent = scope.getAgent();
+							agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
 						}
 						if (newObligations != null) {
 							final List<Predicate> newObls =
@@ -165,7 +170,10 @@ public class LawStatement extends AbstractStatement{
 									tempDesires.setLifeTime(
 											Cast.asInt(scope, lifetime.value(scope)));
 								}
-						SimpleBdiArchitecture.addObligation(scope, tempDesires);
+								SimpleBdiArchitecture.addObligation(scope, tempDesires);
+								SimpleBdiArchitecture.clearIntention(scope);
+								final IAgent agent = scope.getAgent();
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
 							}
 						}
 					}

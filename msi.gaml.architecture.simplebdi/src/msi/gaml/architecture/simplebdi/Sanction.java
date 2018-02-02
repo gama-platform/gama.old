@@ -45,6 +45,10 @@ public class Sanction implements IValue{
 		return this.sanctionStatement.getName();
 	}
 	
+	public SanctionStatement getSanctionStatement() {
+		return this.sanctionStatement;
+	}
+	
 	public Sanction(){
 		super();
 	}
