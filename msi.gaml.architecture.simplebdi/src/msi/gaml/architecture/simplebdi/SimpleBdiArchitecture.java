@@ -307,8 +307,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
 			scope.getAgent().setAttribute(CHARISMA, expressivity);
 			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
-			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
-			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, Maths.sqrt(scope, conscience));
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, Maths.sqrt(scope, conscience));
+			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, conscience));
 		}
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
@@ -322,6 +323,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agent.dead()) { return null; }
 			}
 		}
+		cleanObligation(scope);
 		if (_lawsNumber > 0) {
 			for (int i = 0; i < _lawsNumber; i++) {
 				_laws.get(i).executeOn(scope);
@@ -780,6 +782,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return plans;
 	}
 
+	private void cleanObligation(IScope scope){
+		final List<MentalState> tempPred = new ArrayList<MentalState>();
+		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {
+			if (mental.getLifeTime() <= 0) {
+				tempPred.add(mental);
+			}
+		}
+		for (final MentalState mental : tempPred) {
+			removeObligation(scope, mental);
+		}
+	}
+	
 	public GamaList<String> getThoughts(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final GamaList<String> thoughts = (GamaList<String>) agent.getAttribute(LAST_THOUGHTS);
