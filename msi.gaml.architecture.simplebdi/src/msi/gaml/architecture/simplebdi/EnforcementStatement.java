@@ -77,6 +77,7 @@ public class EnforcementStatement extends AbstractStatement{
 
 	@Override
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
+		Object retour = null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			final IAgent[] stack = scope.getAgentsStack();
 			final IAgent mySelfAgent = stack[stack.length - 2];
@@ -104,7 +105,8 @@ public class EnforcementStatement extends AbstractStatement{
 						}
 					}
 					//Ici, la sanction est exécutée dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
-					return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+//					return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+					retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 				} else if(!normToTest.getViolated() && reward!=null){
 					//on applique le reward
 					Sanction rewardToExecute = null;
@@ -115,17 +117,46 @@ public class EnforcementStatement extends AbstractStatement{
 						}
 					}
 					//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
-					return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+//					return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+					retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 				}
 			}
 			if(obligation!=null){
-				//on regarde si la base des obligations de l'autre est vide, si non, on regarde s'il a appliqué une norme portant sur une obligation
+				//on regarde si la base des obligations de l'autre est vide, si non, on regarde s'il a appliqué une norme portant sur l'obligation à vérifiée.
 				//Les sanctions et rewards seront ici appliquées dans le cadre de l'agent controlé car directe
-				
+				MentalState tempObligation = new MentalState("obligation",(Predicate)obligation.value(scope));
+				if(SimpleBdiArchitecture.hasObligation(scope,tempObligation)){
+					//si ma norme en cours répond à l'iobligation , reward, sinon punition.
+					Norm tempNorm = new Norm ((NormStatement)scope.getAgent().getAttribute("current_norm"));
+					if(reward!=null && tempNorm!=null && tempNorm.getObligation(scope)!=null && tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
+						Sanction rewardToExecute = null;
+						//Améliorable en temps de calcul
+						for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+							if(tempReward.getName().equals(reward.value(scopeMySelf))){
+								rewardToExecute = tempReward;
+							}
+						}
+						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
+//						return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+					}
+					if(sanction!=null && tempNorm!=null && tempNorm.getObligation(scope)!=null && !tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
+						Sanction sanctionToExecute = null;
+						//Améliorable en temps de calcul
+						for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+							if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
+								sanctionToExecute = tempSanction;
+							}
+						}
+						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
+//						return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+					}
+				}
 			}
 			GAMA.releaseScope(scopeMySelf);
 		}
-		return null;
+		return retour;
 	}
 
 }
