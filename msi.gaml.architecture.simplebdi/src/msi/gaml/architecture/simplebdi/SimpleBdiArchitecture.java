@@ -92,7 +92,7 @@ import msi.gaml.types.Types;
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
-				name = SimpleBdiArchitecture.AMICABILITY,
+				name = SimpleBdiArchitecture.AGREEABLENESS,
 				type = IType.FLOAT,
 				init = "0.5"),
 		@var (
@@ -186,7 +186,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String OPENNESS = "openness";
 	public static final String CONSCIENTIOUSNESS = "conscientiousness";
 	public static final String EXTRAVERSION = "extraversion";
-	public static final String AMICABILITY = "amicability";
+	public static final String AGREEABLENESS = "agreeableness";
 	public static final String NEUROTISM = "neurotism";
 
 	// TODO: Not implemented yet
@@ -305,11 +305,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			Double expressivity = (Double) scope.getAgent().getAttribute(EXTRAVERSION);
 			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
+			Double agreeableness = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 			scope.getAgent().setAttribute(CHARISMA, expressivity);
 			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, Maths.sqrt(scope, conscience));
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, Maths.sqrt(scope, conscience));
-			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, conscience));
+			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, (conscience+agreeableness)*0.5));
 		}
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
@@ -3358,7 +3359,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
-											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											Double amicability = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
 											if(intensity>1.0){
 												intensity=1.0;
@@ -3378,7 +3379,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
-											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											Double amicability = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
 											if(intensity>1.0){
 												intensity=1.0;
@@ -3407,7 +3408,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
-											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											Double amicability = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 											intensity = emo.getIntensity() * temp.getLiking() * (1-(0.5-amicability));
 											if(intensity>1.0){
 												intensity=1.0;
@@ -3427,7 +3428,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 										Double decay = 0.0;
 										if(use_personality){
 											Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
-											Double amicability = (Double) scope.getAgent().getAttribute(AMICABILITY);
+											Double amicability = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 											intensity = emo.getIntensity() * -temp.getLiking() * (1+(0.5-amicability));
 											if(intensity>1.0){
 												intensity=1.0;
