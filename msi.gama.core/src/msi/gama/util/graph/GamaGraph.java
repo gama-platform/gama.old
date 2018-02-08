@@ -748,22 +748,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				final GraphPath<V, E> path = optimizer.getShortestPath(source, target);
 				if (path == null) { return GamaListFactory.create(getType().getContentType()); }
 				return GamaListFactory.create(scope, getType().getContentType(), path.getEdgeList());
-		} else if (pathFindingAlgo == shortestPathAlgorithm.NBAStar) {
-				IList<IList<E>> sp1 = null;
-				if (saveComputedShortestPaths) {
-					sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
-				}
-				IList<E> spl1 = null;
-				if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
-					final NBAStarPathfinder<V, E> p1 = new NBAStarPathfinder<>(this, false);
-					spl1 = p1.search(source, target);
-					if (saveComputedShortestPaths) {
-						saveShortestPaths(spl1, source, target);
-					}
-				} else {
-					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
-				}
-				return spl1;
 		}else if (pathFindingAlgo == shortestPathAlgorithm.NBAStarApprox) {
 			IList<IList<E>> sp1 = null;
 			if (saveComputedShortestPaths) {
@@ -868,8 +852,23 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
 			}
 			return spl1;
+		} else { //default
+				IList<IList<E>> sp1 = null;
+				if (saveComputedShortestPaths) {
+					sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+				}
+				IList<E> spl1 = null;
+				if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
+					final NBAStarPathfinder<V, E> p1 = new NBAStarPathfinder<>(this, false);
+					spl1 = p1.search(source, target);
+					if (saveComputedShortestPaths) {
+						saveShortestPaths(spl1, source, target);
+					}
+				} else {
+					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+				}
+				return spl1;
 		}
-		return GamaListFactory.create(getType().getContentType());
 
 	}
 
