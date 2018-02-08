@@ -82,7 +82,7 @@ else
 		commit_wiki_files
 		commit_io_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]]; then	
+	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
 		release 
 	fi	
 fi
