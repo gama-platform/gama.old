@@ -312,6 +312,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, Maths.sqrt(scope, conscience));
 			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, (conscience+agreeableness)*0.5));
 		}
+		if(_sanctionNumber>0){
+			scope.getAgent().setAttribute(SANCTION_BASE, _sanctions);
+		}
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
 				_perceptions.get(i).executeOn(scope);
@@ -345,12 +348,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final Object executePlans(final IScope scope) {
 		Object result = null;
-		if (_plansNumber > 0) {
+		if (_plansNumber > 0 || _normNumber>0) {
 			boolean loop_instantaneous_plans = true;
 			while (loop_instantaneous_plans) {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
 				agent.setAttribute(PLAN_BASE, _plans);
+				agent.setAttribute(NORM_BASE, _norms);
 				//Faire la même chose qu'au dessus pour la base des normes et la base des sanctions
 				final GamaList<MentalState> intentionBase = (GamaList<MentalState>) (scope.hasArg(INTENTION_BASE)
 						? scope.getListArg(INTENTION_BASE) : (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
@@ -362,6 +366,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
 				SimpleBdiPlanStatement _persistentTask = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
+				NormStatement _persistantNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
 				// RANDOMLY REMOVE (last)INTENTION
 				Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
 				while (!flipResultintention && intentionBase.size() > 0) {
@@ -374,9 +379,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						addThoughts(scope, think);
 						_persistentTask = null;
 						agent.setAttribute(CURRENT_PLAN, _persistentTask);
+						_persistantNorm = null;
+						agent.setAttribute(CURRENT_NORM, _persistantNorm);
 					}
 				}
-				// If current intention has no plan or is on hold, choose a new
+				// If current intention has no plan/norm or is on hold, choose a new
 				// Desire
 				MentalState intentionTemp;
 				if(currentIntention(scope)!=null){
@@ -596,6 +603,135 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	protected final Boolean selectObligationWithHighestPriority(final IScope scope) {
+		final IAgent agent = getCurrentAgent(scope);
+		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
+				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
+		final List<Norm> listNorm = getNorms(scope);
+		if (is_probabilistic_choice) {
+			final List<MentalState> obligationBaseTest = GamaListFactory.create();/*= getBase(scope, DESIRE_BASE)*/;
+			for(MentalState tempObligation : getBase(scope, OBLIGATION_BASE)){
+				for(Norm tempNorm : listNorm){
+					NormStatement tempPlanStatement = tempNorm.getNormStatement();
+					if(((Predicate) tempPlanStatement.getObligationExpression().value(scope))
+							.equalsIntentionPlan(tempObligation.getPredicate())){
+						obligationBaseTest.add(tempObligation);
+					}
+				}
+			}
+			final GamaList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
+			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+			if (obligationBase.size() > 0) {
+				MentalState newIntention = obligationBase.get(0)/*.anyValue(scope)*/;
+				double newIntStrength;
+				final double priority_list[] = new double[obligationBaseTest.size()/*.length(scope)*/];
+				for (int i = 0; i < obligationBaseTest.size()/*.length(scope)*/; i++) {
+					priority_list[i] = obligationBaseTest.get(i).getStrength();
+				}
+				final IList priorities = GamaListFactory.create(scope, Types.FLOAT, priority_list);
+				final int index_choice = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+				newIntention = obligationBaseTest.get(index_choice);
+				newIntStrength = obligationBaseTest.get(index_choice).getStrength();
+				if (obligationBaseTest.size() > intentionBase.size()) {
+					while (intentionBase.contains(newIntention)) {
+						final int index_choice2 = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+						newIntention = obligationBaseTest.get(index_choice2);
+						newIntStrength = obligationBaseTest.get(index_choice2).getStrength();
+					}
+				}
+				MentalState newIntentionState = null;
+				if(newIntention.getPredicate()!=null){
+					newIntentionState = new MentalState("Intention", newIntention.getPredicate(), newIntStrength, newIntention.getLifeTime(),scope.getAgent());
+				}
+				if(newIntention.getMentalState()!=null){
+					newIntentionState = new MentalState("Intention", newIntention.getMentalState(), newIntStrength, newIntention.getLifeTime(),scope.getAgent());
+				}
+				if (newIntention.getPredicate()!=null && newIntention.getPredicate().getSubintentions() == null) {
+					if (!intentionBase.contains(newIntentionState)) {
+						intentionBase.addValue(scope, newIntentionState);
+						return true;
+					}
+				} else {
+					if(newIntention.getPredicate()!=null){
+						for (int i = 0; i < newIntention.getPredicate().getSubintentions().size(); i++) {
+							if (!obligationBase.contains(newIntention.getPredicate().getSubintentions().get(i))) {
+								obligationBase.addValue(scope, newIntention.getPredicate().getSubintentions().get(i));
+							}
+						}
+						newIntention.getPredicate().setOnHoldUntil(newIntention.getPredicate().getSubintentions());
+						if (!intentionBase.contains(newIntentionState)) {
+							intentionBase.addValue(scope, newIntentionState);
+							return true;
+						}
+					}
+				}
+			}
+		} else {
+			final List<MentalState> obligationBaseTest = GamaListFactory.create();
+			for(MentalState tempObligation : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
+					.shuffle(getBase(scope, OBLIGATION_BASE))){
+				for(Norm tempNorm : listNorm){
+					if (tempNorm == null) continue;
+					NormStatement tempNormStatement = tempNorm.getNormStatement();
+					if (tempNorm.getNormStatement() == null) continue;
+					if ((tempNorm.getNormStatement().getIntentionExpression() == null) || (tempNorm.getNormStatement().getIntentionExpression().value(scope) == null)){
+						obligationBaseTest.add(tempObligation);
+						continue;
+					}
+					if(((Predicate) tempNormStatement.getObligationExpression().value(scope))
+							.equalsIntentionPlan(tempObligation.getPredicate())){
+						obligationBaseTest.add(tempObligation);
+					}
+				}
+			}
+			final GamaList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
+			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+			double maxpriority = Double.MIN_VALUE;
+			if (obligationBaseTest.size() > 0 && intentionBase != null) {
+				MentalState newIntention = null;// desireBase.anyValue(scope);
+				for (final MentalState oblig : obligationBaseTest) {
+
+					if (oblig.getStrength() > maxpriority) {
+						if (!intentionBase.contains(oblig)) {
+							maxpriority = oblig.getStrength();
+							newIntention = oblig;
+						}
+					}
+				}
+				if(newIntention!=null){
+				MentalState newIntentionState = null;
+				if(newIntention.getPredicate()!=null){
+					newIntentionState = new MentalState("Intention", newIntention.getPredicate(), maxpriority, newIntention.getLifeTime(),scope.getAgent());
+				}
+				if(newIntention.getMentalState()!=null){
+					newIntentionState = new MentalState("Intention", newIntention.getMentalState(), maxpriority, newIntention.getLifeTime(),scope.getAgent());
+				}
+				if (newIntention.getPredicate()!=null && newIntention.getPredicate().getSubintentions() == null) {
+					if (!intentionBase.contains(newIntentionState)) {
+						intentionBase.addValue(scope, newIntentionState);
+						return true;
+					}
+				} else {
+					if(newIntention.getPredicate()!=null){
+						for (int i = 0; i < newIntention.getPredicate().getSubintentions().size(); i++) {
+							if (!obligationBase.contains(newIntention.getPredicate().getSubintentions().get(i))) {
+								obligationBase.addValue(scope, newIntention.getPredicate().getSubintentions().get(i));
+							}
+						}
+						newIntention.getPredicate().setOnHoldUntil(newIntention.getPredicate().getSubintentions());
+						if (!intentionBase.contains(newIntentionState)) {
+							intentionBase.addValue(scope, newIntentionState);
+							return true;
+						}
+					}
+				}
+				}
+			}
+		}
+		return false;
+	}
+	
+	//Faire la même chose pour choisir la norm à appliquer, en l'appelant avant.
 	protected final SimpleBdiPlanStatement selectExecutablePlanWithHighestPriority(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
@@ -664,6 +800,92 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return resultStatement;
 	}
 
+	protected final NormStatement selectExecutableNormWithHighestPriority(final IScope scope) {
+		//Doit sélectionner une norme sociale ou une norme obligatoire
+		final IAgent agent = getCurrentAgent(scope);
+		Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
+		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
+				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
+
+		NormStatement resultStatement = null;
+
+		double highestPriority = Double.MIN_VALUE;
+		final List<NormStatement> temp_norm = new ArrayList<NormStatement>();
+		final IList priorities = GamaListFactory.create(Types.FLOAT);
+		for (final Object Normstatement : scope.getSimulation().getRandomGenerator()
+				.shuffle(new ArrayList(_norms))) {
+			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
+			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
+					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
+			final boolean isIntentionConditionSatisfied = statement.getIntentionExpression() == null
+					|| statement.getIntentionExpression().value(scope) == null || ((Predicate) statement.getIntentionExpression().value(scope))
+							.equalsIntentionPlan(currentIntention(scope).getPredicate());
+			final boolean isObligationConditionSatisfied = statement.getObligationExpression() == null
+					|| statement.getObligationExpression().value(scope) == null || ((Predicate) statement.getObligationExpression().value(scope))
+							.equalsIntentionPlan(currentIntention(scope).getPredicate());
+			final boolean thresholdSatisfied = statement.getThreshold() == null
+					|| obedienceValue >= (Double) statement.getThreshold().value(scope);
+			
+			if(isContextConditionSatisfied && isObligationConditionSatisfied){
+				if (is_probabilistic_choice) {
+					temp_norm.add(statement);
+				} else {
+					double currentPriority = 1.0;
+					if (statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null) {
+						currentPriority =
+								msi.gaml.operators.Cast.asFloat(scope, statement.getPriorityExpression().value(scope));
+					}
+
+					if (highestPriority < currentPriority) {
+						highestPriority = currentPriority;
+						resultStatement = statement;
+					}
+				}
+			}
+					
+			if (isContextConditionSatisfied && isIntentionConditionSatisfied && thresholdSatisfied) {
+				if (is_probabilistic_choice) {
+					temp_norm.add(statement);
+				} else {
+					double currentPriority = 1.0;
+					if (statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null) {
+						currentPriority =
+								msi.gaml.operators.Cast.asFloat(scope, statement.getPriorityExpression().value(scope));
+					}
+
+					if (highestPriority < currentPriority) {
+						highestPriority = currentPriority;
+						resultStatement = statement;
+					}
+				}
+			}
+		}
+		if (is_probabilistic_choice) {
+			if (!temp_norm.isEmpty()) {
+				for (final Object statement : temp_norm) {
+					if (((NormStatement) statement).hasFacet(PRIORITY)) {
+						priorities.add(msi.gaml.operators.Cast.asFloat(scope,
+								((SimpleBdiPlanStatement) statement).getPriorityExpression().value(scope)));
+					} else {
+						priorities.add(1.0);
+					}
+				}
+				final int index_plan = msi.gaml.operators.Random.opRndChoice(scope, priorities);
+				resultStatement = temp_norm.get(index_plan);
+			}
+		}
+
+		iscurrentplaninstantaneous = false;
+		if (resultStatement != null) {
+			if (resultStatement.getFacet(SimpleBdiArchitecture.INSTANTANEAOUS) != null) {
+				iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope,
+						resultStatement.getInstantaneousExpression().value(scope));
+			}
+		}
+
+		return resultStatement;
+	}
+	
 	protected void updateLifeTimePredicates(final IScope scope) {
 		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
 			mental.isUpdated = false;
@@ -763,7 +985,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
-		final IAgent agent = getCurrentAgent(scope);
 		final List<SimpleBdiPlanStatement> plans = new ArrayList<SimpleBdiPlanStatement>();
 		for (final Object BDIPlanstatement : scope.getRandom().shuffle(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
@@ -772,17 +993,44 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {
 				continue;
 			}
-			if(currentIntention(scope)!=null){
-				if (statement.getIntentionExpression() == null || ((Predicate) statement.getIntentionExpression().value(scope)) == null
-						|| ((Predicate) statement.getIntentionExpression().value(scope))
-								.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
-					plans.add(statement);
+				if(currentIntention(scope)!=null){
+					if (statement.getIntentionExpression() == null || ((Predicate) statement.getIntentionExpression().value(scope)) == null
+							|| ((Predicate) statement.getIntentionExpression().value(scope))
+									.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
+						plans.add(statement);
+					}
 				}
-			}
+//			}
 		}
 		return plans;
 	}
 
+	protected final List<NormStatement> listExecutableNorms(final IScope scope) {
+		final List<NormStatement> norms = new ArrayList<NormStatement>();
+		for (final Object Normstatement : scope.getRandom().shuffle(new ArrayList(_norms))) {
+			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
+
+			if (statement.getContextExpression() != null
+					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {
+//				continue;
+//			}
+				if(currentIntention(scope)!=null){
+					if (statement.getIntentionExpression() != null && ((Predicate) statement.getIntentionExpression().value(scope)) != null
+							&& ((Predicate) statement.getIntentionExpression().value(scope))
+									.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
+						norms.add(statement);
+					}
+					if (statement.getObligationExpression() != null && ((Predicate) statement.getObligationExpression().value(scope)) != null
+							&& ((Predicate) statement.getObligationExpression().value(scope))
+									.equalsIntentionPlan(currentIntention(scope).getPredicate())) {
+						norms.add(statement);
+					}
+				}
+			}
+		}
+		return norms;
+	}
+	
 	private void cleanObligation(IScope scope){
 		final List<MentalState> tempPred = new ArrayList<MentalState>();
 		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {

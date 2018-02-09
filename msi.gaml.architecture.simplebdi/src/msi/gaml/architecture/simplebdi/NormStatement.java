@@ -47,6 +47,29 @@ public class NormStatement extends AbstractStatementSequence{
 	final IExpression _threshold;
 	final IExpression _lifetime;
 	
+	public IExpression getContextExpression() {
+		return _when;
+	}
+	
+	public IExpression getIntentionExpression() {
+		return _intention;
+	}
+	
+	public IExpression getObligationExpression() {
+		return _obligation;
+	}
+	
+	public IExpression getInstantaneousExpression() {
+		return _instantaneous;
+	}
+	
+	public IExpression getThreshold() {
+		return _threshold;
+	}
+	
+	public IExpression getPriorityExpression() {
+		return _priority;
+	}
 	
 	public NormStatement(IDescription desc) {
 		super(desc);
