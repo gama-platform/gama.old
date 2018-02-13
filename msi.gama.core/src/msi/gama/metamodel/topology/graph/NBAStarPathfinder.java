@@ -87,6 +87,10 @@ public final class NBAStarPathfinder<V, E> {
 			return;
 		}
 		_Vertex<V, E> cv = graph.getVertex(currentNode);
+		if(cv == null){
+			// TODO: add a "node not found in graph" log message 
+			return;
+		}
 		vertices.put(currentNode, cv);
 		CLOSED.add(currentNode);
 
@@ -143,6 +147,10 @@ public final class NBAStarPathfinder<V, E> {
 			return;
 		}
 		_Vertex<V, E> cv = graph.getVertex(currentNode);
+		if(cv == null){
+			// TODO: add a "node not found in graph" log message 
+			return;
+		}
 		vertices.put(currentNode, cv);
 		
 		CLOSED.add(currentNode);
