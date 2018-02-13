@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamlFileInfo.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamlFileInfo.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -56,10 +55,10 @@ public class GamlFileInfo extends GamaFileMetaData {
 		this.imports = imports == null || imports.isEmpty() || imports.contains(null) ? null : imports;
 		final List<String> uses = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
 		this.uses = uses == null || uses.isEmpty() || uses.contains(null) ? null : uses;
-		final List<String> experiments = Arrays
-				.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
-		this.experiments = experiments == null || experiments.isEmpty() || experiments.contains(null) ? null
-				: experiments;
+		final List<String> experiments =
+				Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
+		this.experiments =
+				experiments == null || experiments.isEmpty() || experiments.contains(null) ? null : experiments;
 		invalid = values[4].equals("TRUE");
 	}
 
@@ -73,11 +72,24 @@ public class GamlFileInfo extends GamaFileMetaData {
 		if (invalid)
 			return ERRORS;
 		final int expCount = experiments == null ? 0 : experiments.size();
-		if (expCount > 0) {
-			return "" + (expCount == 1 ? "1 experiment" : expCount + " experiments");
-		}
+		if (expCount > 0) { return "" + (expCount == 1 ? "1 experiment" : expCount + " experiments"); }
 
 		return "no experiment";
+	}
+
+	@Override
+	public void appendSuffix(final StringBuilder sb) {
+		if (invalid) {
+			sb.append(ERRORS);
+			return;
+		}
+		final int expCount = experiments == null ? 0 : experiments.size();
+		if (expCount > 0) {
+			sb.append(expCount).append(" experiment");
+			if (expCount > 1)
+				sb.append("s");
+		} else
+			sb.append("no experiment");
 	}
 
 	@Override

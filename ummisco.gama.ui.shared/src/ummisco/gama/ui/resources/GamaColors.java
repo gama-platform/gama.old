@@ -266,6 +266,12 @@ public class GamaColors {
 		return new GamaColor(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
+	public static GamaColor toGamaColor(final RGB color) {
+		if (color == null)
+			return GamaColor.getInt(0);
+		return new GamaColor(color.red, color.green, color.blue);
+	}
+
 	/**
 	 * @param background
 	 * @return

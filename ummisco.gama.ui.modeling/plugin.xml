@@ -160,21 +160,6 @@
 			</command>
 		</menuContribution>
   <menuContribution
-        locationURI="popup:#TextEditorContext?after=group.edit">
-     <command
-           commandId="msi.gama.lang.gaml.Gaml.validate"
-           icon="platform:/plugin/ummisco.gama.ui.shared/icons/editor.validate2.png"
-           style="push"
-           tooltip="Trigger expensive validation">
-        <visibleWhen
-              checkEnabled="false">
-           <reference
-                 definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
-           </reference>
-        </visibleWhen>
-     </command>
-  </menuContribution>
-  <menuContribution
         locationURI="popup:#TextEditorContext?after=group.open">
      <command
            commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
@@ -200,13 +185,6 @@
                  definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
            </reference>
         </visibleWhen>
-     </command>
-  </menuContribution>
-  <menuContribution
-        locationURI="menu:org.eclipse.search.menu?after=dialogGroup">
-     <command
-           commandId="org.eclipse.xtext.ui.shared.OpenXtextElementCommand"
-           label="Elements in models...">
      </command>
   </menuContribution>
   <menuContribution
@@ -239,6 +217,10 @@
             class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="gaml">
         </resourceServiceProvider>
+        <resourceServiceProvider
+              class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+              uriExtension="experiment">
+        </resourceServiceProvider>
     </extension>
     
     <extension
@@ -248,12 +230,6 @@
 			type="experiment">
 		</parser>
 	</extension>
-	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
-        <resourceServiceProvider
-            class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="experiment">
-        </resourceServiceProvider>
-    </extension>
 
     <!-- marker definitions for msi.gama.lang.gaml.Gaml -->
     <extension
@@ -358,10 +334,25 @@
           <enablement>
              <or>
                 <objectClass
-                      name="org.eclipse.core.resources.IResource">
+                      name="org.eclipse.core.resources.IFile">
                 </objectClass>
                 <objectClass
-                      name="ummisco.gama.ui.navigator.VirtualContent">
+                      name="ummisco.gama.ui.navigator.contents.WrappedProject">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedFolder">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.TopLevelFolder">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedModelContent">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedExperimentContent">
+                </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedSyntacticContent">
                 </objectClass>
              </or>
           </enablement>
@@ -625,12 +616,13 @@
           point="org.eclipse.ui.actionSets">
        <actionSet
              id="msi.gama.lang.gaml.ui.actionSet1"
-             label="label"
+             label="Search Gaml Elements"
              visible="true">
           <action
                 class="msi.gama.lang.gaml.ui.editor.DelegateForAllElements"
+                icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchtext2.png"
                 id="msi.gama.application.action1"
-                label="All Elements…"
+                label="GAML elements in models..."
                 menubarPath="org.eclipse.search.menu/extraSearchGroup"
                 style="push"
                 tooltip="Search for any element defined in the GAML models present in the workspace">

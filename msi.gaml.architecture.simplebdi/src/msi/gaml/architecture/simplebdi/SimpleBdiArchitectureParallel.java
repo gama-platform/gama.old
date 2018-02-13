@@ -42,7 +42,7 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 		}
 
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-			computeEmotions(scope);
+//			computeEmotions(scope);
 			return null;
 		}
 		
@@ -123,6 +123,17 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 	
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
+				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+		if(use_personality){
+			Double expressivity = (Double) scope.getAgent().getAttribute(EXTRAVERSION);
+			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
+			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
+			scope.getAgent().setAttribute(CHARISMA, expressivity);
+			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
+		}
 		return executePlans(scope);
 	}
 

@@ -23,8 +23,6 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -254,13 +252,9 @@ public class InteractiveConsoleView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.ACTION_CLEAR, "Clear", "Clear the console", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				msgConsole.clearConsole();
-				showPrompt();
-			}
+		tb.button(IGamaIcons.ACTION_CLEAR, "Clear", "Clear the console", e -> {
+			msgConsole.clearConsole();
+			showPrompt();
 		}, SWT.RIGHT);
 
 	}

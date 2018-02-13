@@ -27,7 +27,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
 
-	private final boolean isDrawingRotateHelper = GamaPreferences.OpenGL.DRAW_ROTATE_HELPER.getValue();
+	private final boolean isDrawingRotateHelper = GamaPreferences.Displays.DRAW_ROTATE_HELPER.getValue();
 
 	public CameraArcBall(final Abstract3DRenderer renderer) {
 		super(renderer);
@@ -195,12 +195,9 @@ public class CameraArcBall extends AbstractCamera {
 		if (initialPosition == null) {
 			if (data.isCameraPosDefined()) {
 				updatePosition();
-				if(data.isCameraLookAtDefined())
-				{
+				if (data.isCameraLookAtDefined()) {
 					updateTarget();
-				}
-				else
-				{
+				} else {
 					final double envWidth = data.getEnvWidth();
 					final double envHeight = data.getEnvHeight();
 					radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
@@ -208,8 +205,7 @@ public class CameraArcBall extends AbstractCamera {
 					phi = 0;
 					theta = -90.00;
 				}
-				if(data.isCameraUpVectorDefined())
-				{
+				if (data.isCameraUpVectorDefined()) {
 					updateOrientation();
 				}
 				updateSphericalCoordinatesFromLocations();
@@ -367,7 +363,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoom(final boolean in) {
 		if (keystoneMode)
 			return;
-		final double step = radius != 0d ? radius / 10d * GamaPreferences.OpenGL.OPENGL_ZOOM.getValue() : 0.1d;
+		final double step = radius != 0d ? radius / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
 		radius = radius + (in ? -step : step);
 		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}

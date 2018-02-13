@@ -28,3 +28,4 @@ release/*
 /*/gaml/
 /*/bin/
 msi.gama.ext/lib/
+.__*

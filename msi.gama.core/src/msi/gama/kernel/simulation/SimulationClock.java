@@ -101,7 +101,8 @@ public class SimulationClock {
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	public void setCycle(final int i) throws GamaRuntimeException {
 		if (i < 0) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", scope); }
-		if (i < cycle) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards",
+		//TODO check backward
+		if ( (i < cycle) && (!scope.getExperiment().canStepBack())) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards",
 				scope); }
 		final int previous = cycle;
 		cycle = i;
@@ -326,6 +327,7 @@ public class SimulationClock {
 	public void setStartingDate(final GamaDate starting_date) {
 		this.startingDate = starting_date;
 		this.currentDate = starting_date;
+		this.cycle = 0;
 	}
 
 	public void setCurrentDate(final GamaDate date) {

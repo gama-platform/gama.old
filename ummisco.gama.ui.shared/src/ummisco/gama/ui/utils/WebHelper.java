@@ -27,11 +27,20 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 
+import msi.gama.application.workbench.IWebHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Html;
 import msi.gama.common.preferences.GamaPreferences;
 
-public class WebHelper {
+public class WebHelper implements IWebHelper {
+
+	private static WebHelper instance = new WebHelper();
+
+	public static WebHelper getInstance() {
+		return instance;
+	}
+
+	private WebHelper() {}
 
 	private static URL HOME_URL;
 
@@ -112,6 +121,23 @@ public class WebHelper {
 		} catch (final PartInitException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void showWelcome() {
+		openWelcomePage(false);
+
+	}
+
+	@Override
+	public void showPage(final String url) {
+		openPage(url);
+	}
+
+	@Override
+	public void showURL(final URL url) {
+		showWeb2Editor(url);
+
 	}
 
 }

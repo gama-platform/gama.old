@@ -243,8 +243,8 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.AGENTS;
+	public LayerType getType() {
+		return LayerType.AGENTS;
 	}
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {

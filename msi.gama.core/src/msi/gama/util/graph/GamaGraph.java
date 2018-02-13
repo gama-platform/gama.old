@@ -45,6 +45,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
+import msi.gama.metamodel.topology.graph.NBAStarPathfinder;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -90,15 +91,19 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected Map<Pair<V, V>, IList<IList<E>>> shortestPathComputed = null;
 	protected VertexRelationship vertexRelation;
 
-	public static int FloydWarshall = 1;
-	public static int BellmannFord = 2;
-	public static int Djikstra = 3;
-	public static int AStar = 4;
+	public enum shortestPathAlgorithm {
+		FloydWarshall,
+		BellmannFord,
+		Dijkstra,
+		AStar,
+		NBAStar,
+		NBAStarApprox;
+	}
 
 	protected boolean saveComputedShortestPaths = true;
 
 	protected ISpecies edgeSpecies;
-	protected int optimizerType = Djikstra;
+	protected shortestPathAlgorithm pathFindingAlgo = shortestPathAlgorithm.NBAStar;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
 
 	private Object linkedGraph = null;
@@ -713,15 +718,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void setOptimizerType(final String s) {
-		if ("AStar".equals(s)) {
-			optimizerType = 4;
-		} else if ("Dijkstra".equals(s)) {
-			optimizerType = 3;
-		} else if ("Bellmann".equals(s)) {
-			optimizerType = 2;
-		} else {
-			optimizerType = 1;
-		}
+		pathFindingAlgo = shortestPathAlgorithm.valueOf(s);
 	}
 
 	// protected IPath<V,E> pathFromEdges(final Object source, final Object
@@ -743,8 +740,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public IList<E> computeBestRouteBetween(final IScope scope, final V source, final V target) {
 		if (source.equals(target))
 			return GamaListFactory.create(getType().getContentType());
-		switch (optimizerType) {
-			case 1:
+		if (pathFindingAlgo == shortestPathAlgorithm.FloydWarshall) {
 				if (optimizer == null) {
 					optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
 					// optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
@@ -752,34 +748,23 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				final GraphPath<V, E> path = optimizer.getShortestPath(source, target);
 				if (path == null) { return GamaListFactory.create(getType().getContentType()); }
 				return GamaListFactory.create(scope, getType().getContentType(), path.getEdgeList());
-			case 2:
-				IList<IList<E>> sp1 = null;
+		}else if (pathFindingAlgo == shortestPathAlgorithm.NBAStarApprox) {
+			IList<IList<E>> sp1 = null;
+			if (saveComputedShortestPaths) {
+				sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+			}
+			IList<E> spl1 = null;
+			if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
+				final NBAStarPathfinder<V, E> p1 = new NBAStarPathfinder<>(this, true);
+				spl1 = p1.search(source, target);
 				if (saveComputedShortestPaths) {
-					sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+					saveShortestPaths(spl1, source, target);
 				}
-				IList<E> spl1 = null;
-				if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
-					spl1 = GamaListFactory.create(getType().getContentType());
-					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph());
-					final GraphPath ph = p1.getPath(source, target);
-					if (ph == null) {
-						spl1 = GamaListFactory.create(getType().getContentType());
-					} else {
-						final List<E> re = ph.getEdgeList();
-						if (re == null) {
-							spl1 = GamaListFactory.create(getType().getContentType());
-						} else {
-							spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
-						}
-					}
-					if (saveComputedShortestPaths) {
-						saveShortestPaths(spl1, source, target);
-					}
-				} else {
-					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
-				}
-				return spl1;
-			case 3:
+			} else {
+				spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+			}
+			return spl1;
+		} else if (pathFindingAlgo == shortestPathAlgorithm.Dijkstra) {
 				IList<IList<E>> sp2 = null;
 				if (saveComputedShortestPaths) {
 					sp2 = shortestPathComputed.get(new Pair<V, V>(source, target));
@@ -812,7 +797,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					spl2 = GamaListFactory.create(scope, getType().getContentType(), sp2.get(0));
 				}
 				return spl2;
-			case 4:
+		} else if (pathFindingAlgo == shortestPathAlgorithm.AStar) {
 				
 				IList<IList<E>> sp3 = null;
 				if (saveComputedShortestPaths) {
@@ -838,12 +823,52 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					spl3 = GamaListFactory.create(scope, getType().getContentType(), sp3.get(0));
 				}
 
-				// java.lang.System.out.println("ASTAR : " +
-				// (java.lang.System.currentTimeMillis() - t1 ));
 				return spl3;
 
+		} else if (pathFindingAlgo == shortestPathAlgorithm.BellmannFord) {
+			IList<IList<E>> sp1 = null;
+			if (saveComputedShortestPaths) {
+				sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+			}
+			IList<E> spl1 = null;
+			if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
+				spl1 = GamaListFactory.create(getType().getContentType());
+				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph());
+				final GraphPath ph = p1.getPath(source, target);
+				if (ph == null) {
+					spl1 = GamaListFactory.create(getType().getContentType());
+				} else {
+					final List<E> re = ph.getEdgeList();
+					if (re == null) {
+						spl1 = GamaListFactory.create(getType().getContentType());
+					} else {
+						spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
+					}
+				}
+				if (saveComputedShortestPaths) {
+					saveShortestPaths(spl1, source, target);
+				}
+			} else {
+				spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+			}
+			return spl1;
+		} else { //default
+				IList<IList<E>> sp1 = null;
+				if (saveComputedShortestPaths) {
+					sp1 = shortestPathComputed.get(new Pair<V, V>(source, target));
+				}
+				IList<E> spl1 = null;
+				if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
+					final NBAStarPathfinder<V, E> p1 = new NBAStarPathfinder<>(this, false);
+					spl1 = p1.search(source, target);
+					if (saveComputedShortestPaths) {
+						saveShortestPaths(spl1, source, target);
+					}
+				} else {
+					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+				}
+				return spl1;
 		}
-		return GamaListFactory.create(getType().getContentType());
 
 	}
 
@@ -1239,7 +1264,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new ConcurrentHashMap<Pair<V, V>, IList<IList<E>>>();
 		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
-		if (optimizerType == 1) {
+		if (pathFindingAlgo == shortestPathAlgorithm.FloydWarshall) {
 			optimizer = new FloydWarshallShortestPathsGAMA(this, mat);
 
 			return;
@@ -1403,7 +1428,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				}
 			}
 		} else {
-			if (optimizerType == 1) {
+			if (pathFindingAlgo.equals(shortestPathAlgorithm.FloydWarshall)) {
 				optimizer = new FloydWarshallShortestPathsGAMA(this);
 				optimizer.lazyCalculateMatrix();
 				for (int i = 0; i < vertexMap.size(); i++) {

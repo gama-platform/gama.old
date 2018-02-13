@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BooleanEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BooleanEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -56,6 +55,39 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	}
 
 	@Override
+	protected void hideToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
+		this.getEditor().setBackground(getNormalBackground());
+		super.hideToolbar();
+	}
+
+	@Override
+	protected void showToolbar() {
+		if (toolbar == null || toolbar.isDisposed())
+			return;
+		// Because of the special properties of the switch button, showToolbar requires to be redefined
+		this.getEditor().setBackground(HOVERED_BACKGROUND);
+		super.showToolbar();
+
+		// AD 26/12/15 Commented for the moment to not force the focus (see
+		// Issues #1339 and #1248)
+		// if ( combo != null ) {
+		// combo.forceFocus();
+		// } else {
+		// Control c = getEditorControl();
+		// if ( c != null ) {
+		// c.forceFocus();
+		// }
+		// }
+	}
+
+	@Override
+	protected Control createEditorControl(final Composite composite) {
+		return super.createEditorControl(composite);
+	}
+
+	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		button = new SwitchButton(comp, SWT.CHECK);
 		button.addSelectionListener(this);
@@ -69,7 +101,6 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 		if (b == null) {
 			b = false;
 		}
-		// button.setText(b ? "true" : "false");
 		button.setSelection(b);
 		internalModification = false;
 

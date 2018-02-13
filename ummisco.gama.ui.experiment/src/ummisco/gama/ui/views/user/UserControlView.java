@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UserControlView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UserControlView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -66,8 +64,8 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 			body = null;
 		}
 
-		ownCreatePartControl(parent);
-		parent.layout();
+		ownCreatePartControl(getParentComposite());
+		getParentComposite().layout();
 	}
 
 	private void deactivate(final Composite parent) {
@@ -83,9 +81,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		parent.setBackground(IGamaColors.WHITE.color());
-		if (scope == null) {
-			return;
-		}
+		if (scope == null) { return; }
 		inspectItem.setEnabled(true);
 		continueItem.setEnabled(true);
 		setPartName(
@@ -146,7 +142,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 	protected void doContinue() {
 		scope.setOnUserHold(false);
-		deactivate(parent);
+		deactivate(getParentComposite());
 		WorkbenchHelper.hideView(this);
 	}
 
@@ -183,28 +179,10 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 
-		inspectItem = tb.button(IGamaIcons.PANEL_INSPECT, "Inspect", "Inspect", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				scope.getGui().setSelectedAgent(scope.getAgent());
-			}
-
-		}, SWT.RIGHT);
+		inspectItem = tb.button(IGamaIcons.PANEL_INSPECT, "Inspect", "Inspect",
+				e -> scope.getGui().setSelectedAgent(scope.getAgent()), SWT.RIGHT);
 		inspectItem.setEnabled(false);
-		continueItem = tb.button(IGamaIcons.PANEL_CONTINUE, "Continue", "Continue", new SelectionListener() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				doContinue();
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-				widgetSelected(e);
-			}
-
-		}, SWT.RIGHT);
+		continueItem = tb.button(IGamaIcons.PANEL_CONTINUE, "Continue", "Continue", e -> doContinue(), SWT.RIGHT);
 		continueItem.setEnabled(false);
 
 	}

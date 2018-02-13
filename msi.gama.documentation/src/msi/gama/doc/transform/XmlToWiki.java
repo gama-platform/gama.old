@@ -144,7 +144,7 @@ public class XmlToWiki {
 	
 	public static void createExtentionsWiki() 
 			throws IOException, ParserConfigurationException, SAXException, TransformerException{
-		WorkspaceManager ws = new WorkspaceManager(".");
+		WorkspaceManager ws = new WorkspaceManager(".", false);
 		HashMap<String, File> hmExt = ws.getExtensionsDocFiles();
 		
 		// Create the G__Extensions.md file as a toc to each G__extensions_plugin.md files

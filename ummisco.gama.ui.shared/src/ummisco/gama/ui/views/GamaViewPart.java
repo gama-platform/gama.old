@@ -12,7 +12,6 @@ package ummisco.gama.ui.views;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -51,7 +51,7 @@ public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	protected final List<IDisplayOutput> outputs = new ArrayList<>();
-	protected Composite parent;
+	private Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 	private StateListener toolbarUpdater;
@@ -173,11 +173,10 @@ public abstract class GamaViewPart extends ViewPart
 		return true;
 	}
 
-	@Override
-	public Rectangle2D getBounds() {
+	public boolean containsPoint(final int x, final int y) {
 		final Point o = rootComposite.toDisplay(0, 0);
 		final Point s = rootComposite.getSize();
-		return new Rectangle2D.Double(o.x, o.y, s.x, s.y);
+		return new Rectangle(o.x, o.y, s.x, s.y).contains(x, y);
 	}
 
 	@Override
@@ -186,8 +185,8 @@ public abstract class GamaViewPart extends ViewPart
 		composite.addDisposeListener(this);
 		if (needsOutput() && getOutput() == null)
 			return;
-		this.parent = GamaToolbarFactory.createToolbars(this, composite);
-		ownCreatePartControl(parent);
+		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
+		ownCreatePartControl(getParentComposite());
 		// activateContext();
 		// toggle.run();
 	}
@@ -318,6 +317,14 @@ public abstract class GamaViewPart extends ViewPart
 	public void setName(final String name) {
 		super.setPartName(name);
 
+	}
+
+	public Composite getParentComposite() {
+		return parent;
+	}
+
+	public void setParentComposite(final Composite parent) {
+		this.parent = parent;
 	}
 
 }

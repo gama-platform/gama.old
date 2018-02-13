@@ -13,6 +13,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -41,50 +42,18 @@ public class Maths {
 							value = "Various examples of power",
 							examples = { @example (
 									value = "2 ^ 3",
-									equals = "8.0"),
-									@example (
-											value = "4.0^2",
-											equals = "16.0",
-											isTestOnly = true),
-									@example (
-											value = "4.0^0.5",
-											equals = "2.0",
-											isTestOnly = true),
-									@example (
-											value = "8^0",
-											equals = "1.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^0",
-											equals = "1.0",
-											isTestOnly = true),
-									@example (
-											value = "8^1",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^1",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8^1.0",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "8.0^1.0",
-											equals = "8.0",
-											isTestOnly = true),
-									@example (
-											value = "2^0.5",
-											equals = "sqrt(2)",
-											isTestOnly = true),
-									@example (
-											value = "16.81^0.5",
-											equals = "sqrt(16.81)",
-											isTestOnly = true),
-							//		@example (value = "(10^(-9) = 0)", equals= "false", isTestOnly = true) 
+									equals = "8.0")
 							}) },
 			see = { "*", "sqrt" })
+	@test("4.0^2 = 16.0")
+	@test("4.0^0.5 = 2.0")
+	@test("8^0 = 1.0")
+	@test("8.0^0 = 1.0")
+	@test("8.0^1 = 8.0")
+	@test("8^1.0 = 8.0")
+	@test("2^0.5 = sqrt(2)")
+	@test("8.0^1.0 = 8.0")
+	@test("16.81^0.5 = sqrt(16.81)")
 	public static Double pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
@@ -142,6 +111,10 @@ public class Maths {
 					examples = { @example (
 							value = "abs (200 * -1 + 0.5)",
 							equals = "199.5") }) })
+	@test("abs(1.7) = 1.7")
+	@test("abs(-2.0) = 2.0")
+	@test("abs(0.0) = 0.0")
+	@test("abs(-0.0) = 0.0")
 	public static Double abs(final Double rv) {
 		return Math.abs(rv);
 	}
@@ -165,6 +138,10 @@ public class Maths {
 									value = "abs (-0)",
 									equals = "0",
 									isTestOnly = true) }) })
+	@test("abs(1) = 1")
+	@test("abs(-2) = 2")
+	@test("abs(0) = 0")
+	@test("abs(-0) = 0")
 	public static Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
@@ -183,6 +160,11 @@ public class Maths {
 					value = "acos (0)",
 					equals = "90.0"),
 			see = { "asin", "atan", "cos" })
+	@test("acos(0.0) = 90.0")
+	@test("acos(-1.0) = 180.0")
+	@test("acos(1.0) = 0.0")
+	@test("not(is_number(acos(-10.0)))")
+	@test("not(is_number(acos(10.0)))")
 	public static Double acos(final Double rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -194,6 +176,11 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the arccos of the operand ")
+	@test("acos(0) = 90.0")
+	@test("acos(-1) = 180.0")
+	@test("acos(1) = 0.0")
+	@test("not(is_number(acos(-10)))")
+	@test("not(is_number(acos(10)))")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -211,6 +198,11 @@ public class Maths {
 					value = "asin (0)",
 					equals = "0.0"),
 			see = { "acos", "atan", "sin" })
+	@test("asin(0.0) = 0.0")
+	@test("asin(-1.0) = -90.0")
+	@test("asin(1.0) = 90.0")
+	@test("not(is_number(asin(-10.0)))")
+	@test("not(is_number(asin(10.0)))")
 	public static Double asin(final Double rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -227,6 +219,11 @@ public class Maths {
 					value = "asin (90)",
 					equals = "#nan"),
 			see = { "acos", "atan" })
+	@test("asin(0) = 0.0")
+	@test("asin(-1) = -90.0")
+	@test("asin(1) = 90.0")
+	@test("not(is_number(asin(-10)))")
+	@test("not(is_number(asin(10)))")
 	public static Double asin(final Integer rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -243,6 +240,9 @@ public class Maths {
 					value = "atan (1)",
 					equals = "45.0"),
 			see = { "acos", "asin", "tan" })
+	@test("atan(0) = 0.0")
+	@test("atan(-1) = -45.0")
+	@test("atan(1) = 45.0")
 	public static Double atan(final Double rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
@@ -712,6 +712,9 @@ public class Maths {
 							equals = "0.6") }) },
 			special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception",
 			see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.MULTIPLY })
+	@test("0/1=0")
+	@test("is_error(1/0)")
+	@test("3/5=0.6")
 	public static Double opDivide(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
@@ -725,6 +728,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("0.2/2=0.1")
+	@test("is_error(1.5/0)")
+	@test("0.0/5=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b.doubleValue();
@@ -738,6 +744,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("0.2/0.5=0.4")
+	@test("is_error(1.5/0.0)")
+	@test("0.0/1.0=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b;
@@ -751,6 +760,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
+	@test("1/0.5=2.0")
+	@test("is_error(2/0.0)")
+	@test("0/0.3=0.0")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a.doubleValue() / b.doubleValue();

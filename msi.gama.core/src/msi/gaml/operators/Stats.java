@@ -677,7 +677,7 @@ public class Stats {
 					"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
 			examples = { @example (
 					value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])",
-					equals = "5.0") },
+					equals = "4.5") },
 			see = { "mean" })
 	public static Object opMedian(final IScope scope, final IContainer values) {
 

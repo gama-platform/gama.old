@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.runtime.RuntimeContext;
 
 public interface IExperimentJob {
@@ -40,8 +41,8 @@ public interface IExperimentJob {
 
 	public void setFinalStep(long step);
 
-	public void loadAndBuild(RuntimeContext rtx)
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
+	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, IOException, GamaHeadlessException;
 
 	public Element asXMLDocument(Document doc);
 

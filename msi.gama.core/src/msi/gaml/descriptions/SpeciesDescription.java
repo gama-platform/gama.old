@@ -307,7 +307,7 @@ public class SpeciesDescription extends TypeDescription {
 		if (parent != null && parent != this && !getParent().useMinimalAgents())
 			return false;
 		if (!hasFacet("use_regular_agents"))
-			return GamaPreferences.Runtime.AGENT_OPTIMIZATION.getValue();
+			return GamaPreferences.External.AGENT_OPTIMIZATION.getValue();
 		return FALSE.equals(getLitteral("use_regular_agents"));
 	}
 

@@ -181,10 +181,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		@Override
 		public void validate(final IDescription desc) {
 			final String type = desc.getLitteral(TYPE);
-			if (type.equals(MEMORIZE)) {
-				desc.warning("The memorize experiment is still in development. It should not be used.",
-						IGamlIssue.DEPRECATED);
-			}
+//			if (type.equals(MEMORIZE)) {
+//				desc.warning("The memorize experiment is still in development. It should not be used.",
+//						IGamlIssue.DEPRECATED);
+//			}
 			if (!type.equals(BATCH)) {
 				if (desc.getChildWithKeyword(METHOD) != null) {
 					desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,

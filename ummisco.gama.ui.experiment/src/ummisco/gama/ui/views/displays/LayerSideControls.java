@@ -12,9 +12,6 @@ package ummisco.gama.ui.views.displays;
 import java.awt.Color;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -243,14 +240,11 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
 				String text = IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().serialize(false);
 				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
 						+ cameraTarget.getCurrentValue().yNegated().serialize(false);
 				text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
-
+				WorkbenchHelper.copy(text);
 			}
 
 		});
@@ -302,12 +296,10 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final Clipboard cb = new Clipboard(WorkbenchHelper.getDisplay());
 				final IList<GamaPoint> pp =
 						GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
 				final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
-				final TextTransfer textTransfer = TextTransfer.getInstance();
-				cb.setContents(new Object[] { text }, new Transfer[] { textTransfer });
+				WorkbenchHelper.copy(text);
 			}
 
 		});
@@ -428,7 +420,7 @@ public class LayerSideControls {
 
 		switch (definition.getType()) {
 
-			case ILayerStatement.GRID: {
+			case GRID: {
 				EditorFactory.create(container.getScope(), compo, "Draw grid:",
 						((GridLayerStatement) definition).drawLines(), (EditorListener<Boolean>) newValue -> {
 							((GridLayer) layer).setDrawLines(newValue);
@@ -436,7 +428,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.AGENTS: {
+			case AGENTS: {
 				IExpression expr = null;
 				if (definition instanceof AgentLayerStatement) {
 					expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
@@ -449,7 +441,7 @@ public class LayerSideControls {
 				}
 				break;
 			}
-			case ILayerStatement.SPECIES: {
+			case SPECIES: {
 				EditorFactory.choose(container.getScope(), compo, "Aspect:",
 						((SpeciesLayerStatement) definition).getAspectName(), true,
 						((SpeciesLayerStatement) definition).getAspects(), newValue -> {
@@ -458,7 +450,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.IMAGE: {
+			case IMAGE: {
 				if (definition instanceof ImageLayerStatement) {
 					EditorFactory.create(container.getScope(), compo, "Image:",
 							((ImageLayerStatement) definition).getImageFileName(), false, newValue -> {
@@ -469,7 +461,7 @@ public class LayerSideControls {
 				break;
 
 			}
-			case ILayerStatement.GIS: {
+			case GIS: {
 				EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
 						((ImageLayerStatement) definition).getImageFileName(), newValue -> {
 							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
@@ -478,7 +470,7 @@ public class LayerSideControls {
 						});
 				break;
 			}
-			case ILayerStatement.CHART: {
+			case CHART: {
 				final Button b = new Button(compo, SWT.PUSH);
 				b.setText("Properties");
 				b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
@@ -514,6 +506,8 @@ public class LayerSideControls {
 					});
 				break;
 			}
+			default:
+				break;
 
 		}
 

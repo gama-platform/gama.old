@@ -1,5 +1,8 @@
 package msi.gaml.statements.test;
 
+import java.util.Collections;
+import java.util.Map;
+
 import msi.gaml.operators.Strings;
 
 /**
@@ -10,9 +13,11 @@ import msi.gaml.operators.Strings;
  */
 public class AssertionSummary extends AbstractSummary<AssertStatement> {
 	private TestState state = TestState.NOT_RUN;
+	public final long timeStamp;
 
 	public AssertionSummary(final AssertStatement a) {
 		super(a);
+		timeStamp = System.currentTimeMillis();
 	}
 
 	@Override
@@ -34,6 +39,26 @@ public class AssertionSummary extends AbstractSummary<AssertStatement> {
 	@Override
 	protected void printFooter(final StringBuilder sb) {
 		sb.append(Strings.LN);
+	}
+
+	@Override
+	public Map<String, ? extends AbstractSummary<?>> getSummaries() {
+		return Collections.EMPTY_MAP;
+	}
+
+	@Override
+	public int countTestsWith(final TestState state) {
+		return 0;
+	}
+
+	@Override
+	public int size() {
+		return 0;
+	}
+
+	@Override
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
 }

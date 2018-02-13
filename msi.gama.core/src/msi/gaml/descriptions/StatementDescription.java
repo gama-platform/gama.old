@@ -292,6 +292,12 @@ public class StatementDescription extends SymbolDescription {
 							initType = expr.getType();
 						}
 						if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
+							if (getKeyword().equals(IKeyword.CREATE)) {
+								final boolean isDB = getFacet(FROM) != null
+										&& getFacet(FROM).getExpression().getType().isAssignableFrom(Types.LIST);
+								if (isDB && initType.equals(Types.STRING))
+									return true;
+							}
 							warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
 									exp.getTarget(), varType.toString());
 						}

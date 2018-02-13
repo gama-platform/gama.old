@@ -9,22 +9,16 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
-import static msi.gama.common.preferences.GamaPreferences.Modeling.FAILED_TESTS;
-import static msi.gama.common.preferences.GamaPreferences.Modeling.TESTS_SORTED;
+import static msi.gama.common.preferences.GamaPreferences.Runtime.FAILED_TESTS;
+import static msi.gama.common.preferences.GamaPreferences.Runtime.TESTS_SORTED;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
@@ -41,6 +35,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
+import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.TestState;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.parameters.AbstractEditor;
@@ -97,7 +92,9 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		experiments.clear();
 		WorkbenchHelper.run(() -> {
 			if (toolbar != null)
-				toolbar.status(null, "Run experiment to see the tests results", null, IGamaColors.BLUE, SWT.LEFT);
+				toolbar.status(null, "Run experiment to see the tests results", e -> {
+					GAMA.startFrontmostExperiment();
+				}, IGamaColors.BLUE, SWT.LEFT);
 		});
 		super.reset();
 	}
@@ -109,40 +106,22 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	@Override
-	public void addTestResult(final CompoundSummary<?, ?> e) {
-		if (!experiments.contains(e)) {
-			experiments.add(e);
-		}
-		WorkbenchHelper.run(() -> {
-			if (toolbar != null)
-				toolbar.status(null, createTestsSummary(), null, IGamaColors.BLUE, SWT.LEFT);
-		});
-	}
-
-	protected String createTestsSummary() {
-		final Map<TestState, Integer> map = new TreeMap<>();
-		map.put(TestState.ABORTED, 0);
-		map.put(TestState.FAILED, 0);
-		map.put(TestState.NOT_RUN, 0);
-		map.put(TestState.PASSED, 0);
-		map.put(TestState.WARNING, 0);
-		final int[] size = { 0 };
-		experiments.forEach(t -> {
-			map.keySet().forEach(state -> map.put(state, map.get(state) + t.countTestsWith(state)));
-			size[0] += t.size();
-		});
-		String message = "" + size[0] + " tests";
-		for (final TestState s : map.keySet()) {
-			if (map.get(s) == 0)
-				continue;
-			message += ", " + map.get(s) + " " + s;
-		}
-		return message;
+	public void addTestResult(final CompoundSummary<?, ?> summary) {
+		if (summary instanceof TestExperimentSummary) {
+			if (!experiments.contains(summary)) {
+				experiments.add(summary);
+			}
+		} else
+			for (final AbstractSummary<?> s : summary.getSummaries().values()) {
+				if (!experiments.contains(s)) {
+					experiments.add(s);
+				}
+			}
 	}
 
 	@Override
 	public boolean addItem(final AbstractSummary<?> experiment) {
-		final boolean onlyFailed = GamaPreferences.Modeling.FAILED_TESTS.getValue();
+		final boolean onlyFailed = GamaPreferences.Runtime.FAILED_TESTS.getValue();
 		ParameterExpandItem item = getViewer() == null ? null : getViewer().getItem(experiment);
 		if (item != null)
 			item.dispose();
@@ -151,22 +130,10 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 			if (state != TestState.FAILED && state != TestState.ABORTED)
 				return false;
 		}
-		item = createItem(parent, experiment, !runningAllTests, GamaColors.get(getItemDisplayColor(experiment)));
+		item = createItem(getParentComposite(), experiment, !runningAllTests,
+				GamaColors.get(getItemDisplayColor(experiment)));
 		return true;
 	}
-
-	// public void updateItem(final AbstractSummary<?> test) {
-	// // System.out.println("test " + test.testName + " is already present. Just updating it");
-	// final ParameterExpandItem item = getViewer().getItem(test);
-	// item.setText(this.getItemDisplayName(test, item.getText()));
-	// item.setColor(this.getItemDisplayColor(test));
-	// final Map<String, AssertEditor> inside = editorsByExperiment.get(test);
-	// final Map<String, AbstractSummary<?>> assertions = test.getSummaries();
-	// for (final Map.Entry<String, AbstractSummary<?>> assertion : assertions.entrySet()) {
-	// final AssertEditor ed = inside.get(assertion.getKey());
-	// ed.updateValueWith(assertion.getValue());
-	// }
-	// }
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -216,7 +183,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 
 	public void createEditor(final Composite compo, final AbstractSummary<?> globalTest,
 			final AbstractSummary<?> subTest, final String name) {
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue()) {
+		if (GamaPreferences.Runtime.FAILED_TESTS.getValue()) {
 			final TestState state = subTest.getState();
 			if (state != TestState.FAILED && state != TestState.ABORTED)
 				return;
@@ -233,29 +200,19 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		FAILED_TESTS.removeChangeListeners();
 		final ToolItem t = tb.check(GamaIcons.create("test.sort2").getCode(), "Sort by severity",
 				"When checked, sort the tests by their decreasing state severity (i.e. errored > failed > warning > passed > not run). Otherwise they are sorted by their order of execution.",
-				new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						TESTS_SORTED.set(!TESTS_SORTED.getValue());
-						TestView.super.reset();
-						reset();
-					}
-
+				e -> {
+					TESTS_SORTED.set(!TESTS_SORTED.getValue());
+					TestView.super.reset();
+					reset();
 				}, SWT.RIGHT);
 		t.setSelection(TESTS_SORTED.getValue());
 		TESTS_SORTED.onChange(v -> t.setSelection(v));
 
 		final ToolItem t2 = tb.check(GamaIcons.create("test.filter2").getCode(), "Filter tests",
-				"When checked, show only errored and failed tests and assertions", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						FAILED_TESTS.set(!FAILED_TESTS.getValue());
-						TestView.super.reset();
-						reset();
-					}
-
+				"When checked, show only errored and failed tests and assertions", e -> {
+					FAILED_TESTS.set(!FAILED_TESTS.getValue());
+					TestView.super.reset();
+					reset();
 				}, SWT.RIGHT);
 		t2.setSelection(FAILED_TESTS.getValue());
 		FAILED_TESTS.onChange(v -> t2.setSelection(v));
@@ -306,10 +263,13 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	@Override
 	public void reset() {
 		WorkbenchHelper.run(() -> {
-			if (!parent.isDisposed()) {
+			if (!getParentComposite().isDisposed()) {
 				resortTests();
 				displayItems();
-				parent.layout(true, false);
+				getParentComposite().layout(true, false);
+				if (toolbar != null)
+					toolbar.status(null, new CompoundSummary(experiments).getStringSummary(), null, IGamaColors.BLUE,
+							SWT.LEFT);
 			}
 		});
 
@@ -324,10 +284,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	public Map<String, Runnable> handleMenu(final AbstractSummary<?> item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
 		result.put("Copy summary to clipboard", () -> {
-			final Clipboard clipboard = new Clipboard(parent.getDisplay());
-			final String data = item.toString();
-			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-			clipboard.dispose();
+			WorkbenchHelper.copy(item.toString());
 		});
 		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getURI()));
 		return result;

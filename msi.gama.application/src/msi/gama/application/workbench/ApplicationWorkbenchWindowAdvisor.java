@@ -20,6 +20,8 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.application.ActionBarAdvisor;
+import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import org.osgi.framework.Bundle;
@@ -27,6 +29,11 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
+
+	@Override
+	public ActionBarAdvisor createActionBarAdvisor(final IActionBarConfigurer configurer) {
+		return new GamaActionBarAdvisor(configurer);
+	}
 
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {

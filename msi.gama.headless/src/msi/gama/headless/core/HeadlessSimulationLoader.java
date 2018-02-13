@@ -12,7 +12,6 @@ package msi.gama.headless.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,16 +21,21 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.HeadlessListener;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
+import one.util.streamex.StreamEx;
 
 public class HeadlessSimulationLoader {
 
+	private static void LOG(final String message) {
+		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(message);
+	}
+
 	/**
-	 *
-	 * load in headless mode a specified model and create an experiment
+	 * Load in headless mode a specified model and create an experiment
 	 * 
 	 * @param fileName
 	 *            model to load
@@ -47,7 +51,7 @@ public class HeadlessSimulationLoader {
 	}
 
 	public static void preloadGAMA() {
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA configuring and loading...");
+		LOG("GAMA configuring and loading...");
 		configureHeadLessSimulation();
 		GAMA.setHeadlessGui(new HeadlessListener());
 
@@ -55,39 +59,81 @@ public class HeadlessSimulationLoader {
 			// We initialize XText and Gaml.
 			GamlStandaloneSetup.doSetup();
 		} catch (final Exception e1) {
-			throw GamaRuntimeException.create(e1, null);
+			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
 		}
 		// SEED HACK // WARNING AD : Why ?
-		GamaPreferences.Simulations.CORE_SEED_DEFINED.set(true);
-		GamaPreferences.Simulations.CORE_SEED.set(1.0);
+		GamaPreferences.External.CORE_SEED_DEFINED.set(true);
+		GamaPreferences.External.CORE_SEED.set(1.0);
 		// SEED HACK
 	}
 
-	public static synchronized IModel loadModel(final File myFile) throws IOException {
+	/**
+	 * Compiles a file to a GAMA model ready to be experimented
+	 * 
+	 * @param myFile
+	 *            the main model file
+	 * @return a compiled model
+	 * @throws IOException
+	 *             in case the file is null or not found
+	 * @throws GamaHeadlessException
+	 *             in case the compilation ends in error
+	 * @deprecated use loadModel(File, List<GamlCompilationError>) instead
+	 */
+	@Deprecated
+	public static synchronized IModel loadModel(final File myFile) throws IOException, GamaHeadlessException {
+		return loadModel(myFile, null);
+	}
+
+	/**
+	 * Compiles a file to a GAMA model ready to be experimented
+	 * 
+	 * @param myFile
+	 *            the main model file
+	 * @param errors
+	 *            a list that will be filled with compilation errors / warnings (can be null)
+	 * @return a compiled model
+	 * @throws IOException
+	 *             in case the file is null or not found
+	 * @throws GamaHeadlessException
+	 *             in case the compilation ends in error
+	 */
+	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors)
+			throws IOException, GamaHeadlessException {
+		return loadModel(myFile, errors, null);
+	}
+
+	/**
+	 * Compiles a file to a GAMA model ready to be experimented
+	 * 
+	 * @param myFile
+	 *            the main model file
+	 * @param errors
+	 *            a list that will be filled with compilation errors / warnings (can be null)
+	 * @param metaProperties
+	 *            an instance of GamlProperties that will be filled with the sylmbolic names of bundles required to run
+	 *            the model (can be null) and other informations (skills, operators, statements, ...).
+	 * @return a compiled model
+	 * @throws IOException
+	 *             in case the file is null or not found
+	 * @throws GamaHeadlessException
+	 *             in case the compilation ends in error
+	 */
+	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors,
+			final GamlProperties metaProperties) throws IOException, GamaHeadlessException {
+		if (myFile == null)
+			throw new IOException("Model file is null");
 		final String fileName = myFile.getAbsolutePath();
 		if (!myFile.exists())
 			throw new IOException("Model file does not exist: " + fileName);
-
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
-		try {
-			final List<GamlCompilationError> errors = new ArrayList<>();
-			final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
-			if (model == null) {
-				{
-					String errorData = "\n";
-					for (final GamlCompilationError line : errors)
-						errorData += line.toString() + "\n";
-					throw new GamaHeadlessException("Compilation errors: " + errorData);
-				}
-
-			}
-			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Experiment created ");
-			return model;
-
-		} catch (final Exception e1) {
-			throw new RuntimeException(e1);
-		}
-
+		LOG(fileName + " model is being compiled...");
+		final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
+		if (model == null)
+			throw new GamaHeadlessException("Model cannot be compiled. See list of attached errors");
+		if (metaProperties != null)
+			model.getDescription().collectMetaInformation(metaProperties);
+		LOG("Model compiled with following indications: \n"
+				+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));
+		return model;
 	}
 
 }

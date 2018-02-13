@@ -31,6 +31,7 @@ public class AStar<V, E> {
 	protected V target;
 	protected Map<V, ASNode> openMap = new TOrderedHashMap<V, ASNode>();
 	protected Map<V, ASNode> closedMap = new TOrderedHashMap<V, ASNode>();
+	
 	protected List<E> result;
 	protected boolean isSpatialGraph;
 	protected boolean isPathFound = false;
@@ -144,7 +145,7 @@ public class AStar<V, E> {
 				final double h = heuristic(next, targetNode);
 				final double g = current.g + eg.getWeight();
 				final ASNode openNode = openMap.get(next);
-				if (openNode == null)
+				if (openNode == null || g < openNode.g)
 					openMap.put(next, new ASNode(next, edge, current, g, h));
 				else if (g >= openNode.rank) {
 					continue;

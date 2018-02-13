@@ -266,9 +266,10 @@ public class Emotion implements IValue {
 		}
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
+		 */
+		 /*if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
 			return false;
-		}
+		}*/
 		 if(owner!=null && other.owner!=null && !owner.equals(other.owner)){
 			 return false;
 		 }

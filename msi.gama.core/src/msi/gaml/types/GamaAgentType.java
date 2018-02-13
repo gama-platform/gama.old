@@ -108,7 +108,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		final boolean b = super.canBeTypeOf(scope, obj);
 		if (b) { return true; }
 		if (obj instanceof IAgent) {
-			final ISpecies s = scope.getSimulation().getModel().getSpecies(getSpeciesName());
+			final ISpecies s = scope.getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
 		}
 		return false;

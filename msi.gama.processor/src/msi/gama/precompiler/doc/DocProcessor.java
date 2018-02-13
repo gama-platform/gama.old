@@ -131,13 +131,15 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
-		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperatorsCategories =
+		@SuppressWarnings ("unchecked") 
+		final Set<? extends ExecutableElement> setOperatorsCategories =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
-		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperators =
+		@SuppressWarnings ("unchecked") 
+		final Set<? extends ExecutableElement> setOperators =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLOperators(setOperators));
 
@@ -181,13 +183,20 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files to get operators
-		final Set<? extends Element> setFiles = context.getElementsAnnotatedWith(file.class);
-		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFiles);
+		final Set<? extends Element> setFilesOperators = context.getElementsAnnotatedWith(file.class);
+		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFilesOperators);
 
 		for (final org.w3c.dom.Element eltOp : listEltOperatorsFromFiles) {
 			eltOperators.appendChild(eltOp);
 		}
 
+		// ////////////////////////////////////////////////
+		// /// Parsing of Files
+		
+		// TODO : manage to get the documentation...
+		final Set<? extends Element> setFiles = context.getElementsAnnotatedWith(file.class);
+		root.appendChild(this.processDocXMLTypes(setFiles));	
+		
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types
 		final Set<? extends Element> setTypes = context.getElementsAnnotatedWith(type.class);
@@ -282,6 +291,54 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		return eltOpFromTypes;
 	}
+	
+	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setFiles) {
+		final org.w3c.dom.Element files = document.createElement(XMLElements.FILES);
+
+/*@file (
+		name = "csv",
+		extensions = { "csv", "tsv" },
+		buffer_type = IType.MATRIX,
+		buffer_index = IType.POINT,
+		concept = { IConcept.CSV, IConcept.FILE },
+		doc = @doc ("A type of text file that contains comma-separated values"))
+*/		
+		
+		for (final Element e : setFiles) {
+			if (e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) {
+				// Just omit it
+			} else {
+				final org.w3c.dom.Element file = document.createElement(XMLElements.FILE);
+				file.setAttribute(XMLElements.ATT_FILE_NAME, e.getAnnotation(file.class).name());
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_TYPE, tc.getProperType(""+e.getAnnotation(file.class).buffer_type()));
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_INDEX, tc.getProperType(""+e.getAnnotation(file.class).buffer_index()));
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_CONTENT, tc.getProperType(""+e.getAnnotation(file.class).buffer_content()));
+				
+				// Parsing extensions
+				org.w3c.dom.Element extensions = document.createElement(XMLElements.EXTENSIONS);
+				for(final String ext : e.getAnnotation(file.class).extensions()) {
+					final org.w3c.dom.Element extElt = document.createElement(XMLElements.EXTENSION);
+					extElt.setAttribute(XMLElements.ATT_NAME, ext);
+					extensions.appendChild(extElt);					
+				}
+				file.appendChild(extensions);
+				
+				
+				// Parsing of concept
+				org.w3c.dom.Element conceptsElt;
+				if (file.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
+					conceptsElt = getConcepts(e, document, document.createElement(XMLElements.CONCEPTS), tc);
+				} else {
+					conceptsElt = getConcepts(e, document,
+							(org.w3c.dom.Element) file.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
+				}
+				file.appendChild(conceptsElt);
+				
+				files.appendChild(file);
+			}
+		}
+		return files;
+	}	
 
 	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(final Set<? extends Element> set) {
 

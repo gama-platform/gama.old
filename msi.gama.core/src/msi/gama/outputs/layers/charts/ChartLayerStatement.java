@@ -19,7 +19,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.AbstractLayerStatement;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -66,6 +65,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 				@facet (
+						name = ChartLayerStatement.Y2RANGE,
+						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
+						optional = true,
+						doc = @doc ("range of the second y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+				@facet (
 						name = IKeyword.POSITION,
 						type = IType.POINT,
 						optional = true,
@@ -101,10 +105,55 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
 				@facet (
+						name = ChartLayerStatement.X_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for X axis")),
+				@facet (
+						name = ChartLayerStatement.Y_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for Y axis")),
+				@facet (
+						name = ChartLayerStatement.Y2_LOGSCALE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("use Log Scale for second Y axis")),
+				@facet (
 						name = IKeyword.AXES,
 						type = IType.COLOR,
 						optional = true,
 						doc = @doc ("the axis color")),
+				@facet (
+						name = ChartLayerStatement.XTICKVALUEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("X tick values visible")),
+				@facet (
+						name = ChartLayerStatement.YTICKVALUEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Y tick values visible")),
+				@facet (
+						name = ChartLayerStatement.TITLEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("chart title visible")),
+				@facet (
+						name = ChartLayerStatement.XTICKLINEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("X tick line visible")),
+				@facet (
+						name = ChartLayerStatement.YTICKLINEVISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Y tick line visible")),
+				@facet (
+						name = ChartLayerStatement.TICKLINECOLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("the tick lines color")),
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.ID,
@@ -131,6 +180,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
 				@facet (
+						name = ChartLayerStatement.Y2TICKUNIT,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+				@facet (
 						name = ChartLayerStatement.XTICKUNIT,
 						type = IType.FLOAT,
 						optional = true,
@@ -150,6 +204,11 @@ import msi.gaml.types.IType;
 						type = IType.STRING,
 						optional = true,
 						doc = @doc ("the title for the Y axis")),
+				@facet (
+						name = ChartLayerStatement.Y2LABEL,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("the title for the second Y axis")),
 				@facet (
 						name = IKeyword.COLOR,
 						type = IType.COLOR,
@@ -258,15 +317,30 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
 	public static final String YRANGE = "y_range";
+	public static final String Y2RANGE = "y2_range";
 
 	public static final String XLABEL = "x_label";
 	public static final String YLABEL = "y_label";
+	public static final String Y2LABEL = "y2_label";
 	public static final String MEMORIZE = "memorize";
 
 	public static final String SERIES_LABEL_POSITION = "series_label_position";
 
+	public static final String X_LOGSCALE = "x_log_scale";
+	public static final String Y_LOGSCALE = "y_log_scale";
+	public static final String Y2_LOGSCALE = "y2_log_scale";
+
 	public static final String YTICKUNIT = "y_tick_unit";
+	public static final String Y2TICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
+
+	public static final String XTICKLINEVISIBLE = "x_tick_line_visible";
+	public static final String YTICKLINEVISIBLE = "y_tick_line_visible";
+	public static final String TICKLINECOLOR = "tick_line_color";
+
+	public static final String TITLEVISIBLE = "title_visible";
+	public static final String XTICKVALUEVISIBLE = "x_tick_values_visible";
+	public static final String YTICKVALUEVISIBLE = "y_tick_values_visible";
 
 	public static final String TICKFONTFACE = "tick_font";
 	public static final String TICKFONTSIZE = "tick_font_size";
@@ -359,6 +433,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chartdataset;
 	}
 
+	// What can not change at eery step
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		lastValues.clear();
@@ -379,10 +454,78 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (string1 != null) {
 			chartoutput.setReverseAxis(scope, Cast.asBool(scope, string1.value(scope)));
 		}
+		string1 = getFacet(ChartLayerStatement.X_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setX_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.Y_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setY_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+
+		string1 = getFacet(ChartLayerStatement.Y2_LOGSCALE);
+		if (string1 != null) {
+			chartoutput.setY2_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
+		}
 
 		chartoutput.createChart(scope);
+		updateValues(scope);
 
-		string1 = getFacet(ChartLayerStatement.XLABEL);
+		//
+		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
+		final IExpression face = getFacet(MEMORIZE);
+		if (face != null) {
+			memorize = Cast.asBool(scope, face.value(scope));
+		}
+
+		chartoutput.initChart(scope, getName());
+		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
+		final boolean isPermanent = getDisplayOutput().isPermanent();
+		final boolean isBatchAndPermanent = isBatch && isPermanent;
+		chartdataset = new ChartDataSet(memorize, isBatchAndPermanent);
+		chartoutput.setChartdataset(chartdataset);
+		chartoutput.initdataset();
+
+		IExpression expr = getFacet(IKeyword.X_SERIE);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.X_SERIE).resolveAgainst(scope);
+			chartdataset.setXSource(scope, expval);
+			chartoutput.setUseXSource(scope, expval);
+		}
+
+		expr = getFacet(IKeyword.X_LABELS);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.X_LABELS).resolveAgainst(scope);
+			chartdataset.setXLabels(scope, expval);
+			chartoutput.setUseXLabels(scope, expval);
+		}
+
+		/*
+		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression expval =
+		 * getFacet(IKeyword.Y_SERIE).resolveAgainst(scope); chartdataset.setYSource(scope,expval);
+		 * chartoutput.setUseYSource(scope,expval); }
+		 */
+		// will be added with 3d charts
+
+		expr = getFacet(IKeyword.Y_LABELS);
+		if (expr != null) {
+			final IExpression expval = getFacet(IKeyword.Y_LABELS).resolveAgainst(scope);
+			chartdataset.setYLabels(scope, expval);
+			chartoutput.setUseYLabels(scope, expval);
+		}
+
+		dataDeclaration.executeOn(scope);
+
+		chartoutput.initChart_post_data_init(scope);
+		chartoutput.updateOutput(scope);
+
+		return true;
+	}
+
+	// what can be updated at each step
+	public boolean updateValues(final IScope scope) {
+
+		IExpression string1 = getFacet(ChartLayerStatement.XLABEL);
 		if (string1 != null) {
 			chartoutput.setXLabel(scope, Cast.asString(scope, string1.value(scope)));
 		}
@@ -390,6 +533,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		string1 = getFacet(ChartLayerStatement.YLABEL);
 		if (string1 != null) {
 			chartoutput.setYLabel(scope, Cast.asString(scope, string1.value(scope)));
+		}
+
+		string1 = getFacet(ChartLayerStatement.Y2LABEL);
+		if (string1 != null) {
+			chartoutput.setY2Label(scope, Cast.asString(scope, string1.value(scope)));
 		}
 
 		string1 = getFacet(ChartLayerStatement.SERIES_LABEL_POSITION);
@@ -424,7 +572,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
 			}
 		}
+		expr = getFacet(Y2RANGE);
+		if (expr != null) {
+			final Object range = expr.value(scope);
 
+			if (range instanceof Number) {
+				chartoutput.setY2RangeInterval(scope, ((Number) range).doubleValue());
+			} else if (range instanceof GamaPoint) {
+				chartoutput.setY2RangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
+			} else if (range instanceof GamaList) {
+				chartoutput.setY2RangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
+						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
+			}
+		}
 		IExpression expr2 = getFacet(XTICKUNIT);
 		if (expr2 != null) {
 			final Object range = expr2.value(scope);
@@ -444,6 +604,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				chartoutput.setYTickUnit(scope, r);
 			}
 		}
+		expr2 = getFacet(Y2TICKUNIT);
+		if (expr2 != null) {
+			final Object range = expr2.value(scope);
+
+			if (range instanceof Number) {
+				final double r = ((Number) range).doubleValue();
+				chartoutput.setY2TickUnit(scope, r);
+			}
+		}
 		expr2 = getFacet(IKeyword.GAP);
 		if (expr2 != null) {
 			final Double range = Cast.asFloat(scope, expr2.value(scope));
@@ -458,6 +627,34 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		chartoutput.setAxesColorValue(scope, colorvalue);
 
+		colorvalue = new GamaColor(Color.black);
+		color = getFacet(ChartLayerStatement.TICKLINECOLOR);
+		if (color != null) {
+			colorvalue = Cast.asColor(scope, color.value(scope));
+		}
+		chartoutput.setTickColorValue(scope, colorvalue);
+
+		string1 = getFacet(ChartLayerStatement.XTICKVALUEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setXTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.YTICKVALUEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setYTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.TITLEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setTitleVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+
+		string1 = getFacet(ChartLayerStatement.XTICKLINEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setXTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
+		string1 = getFacet(ChartLayerStatement.YTICKLINEVISIBLE);
+		if (string1 != null) {
+			chartoutput.setYTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
+		}
 		colorvalue = new GamaColor(Color.black);
 		color = getFacet(IKeyword.COLOR);
 		if (color != null) {
@@ -520,66 +717,22 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (face != null) {
 			chartoutput.setTitleFontStyle(scope, getLiteral(TITLEFONTSTYLE));
 		}
-		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
-		face = getFacet(MEMORIZE);
-		if (face != null) {
-			memorize = Cast.asBool(scope, face.value(scope));
-		}
-
-		chartoutput.initChart(scope, getName());
-		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
-		final boolean isPermanent = getDisplayOutput().isPermanent();
-		final boolean isBatchAndPermanent = isBatch && isPermanent;
-		chartdataset = new ChartDataSet(memorize, isBatchAndPermanent);
-		chartoutput.setChartdataset(chartdataset);
-		chartoutput.initdataset();
-
-		expr = getFacet(IKeyword.X_SERIE);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.X_SERIE).resolveAgainst(scope);
-			chartdataset.setXSource(scope, expval);
-			chartoutput.setUseXSource(scope, expval);
-		}
-
-		expr = getFacet(IKeyword.X_LABELS);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.X_LABELS).resolveAgainst(scope);
-			chartdataset.setXLabels(scope, expval);
-			chartoutput.setUseXLabels(scope, expval);
-		}
-
-		/*
-		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression expval =
-		 * getFacet(IKeyword.Y_SERIE).resolveAgainst(scope); chartdataset.setYSource(scope,expval);
-		 * chartoutput.setUseYSource(scope,expval); }
-		 */
-		// will be added with 3d charts
-
-		expr = getFacet(IKeyword.Y_LABELS);
-		if (expr != null) {
-			final IExpression expval = getFacet(IKeyword.Y_LABELS).resolveAgainst(scope);
-			chartdataset.setYLabels(scope, expval);
-			chartoutput.setUseYLabels(scope, expval);
-		}
-
-		dataDeclaration.executeOn(scope);
-
-		chartoutput.initChart_post_data_init(scope);
-		chartoutput.updateOutput(scope);
 
 		return true;
 	}
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
+		updateValues(scope);
+
 		chartoutput.step(scope);
 
 		return true;
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.CHART;
+	public LayerType getType() {
+		return LayerType.CHART;
 	}
 
 	@Override

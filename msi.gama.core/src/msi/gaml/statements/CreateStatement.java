@@ -307,7 +307,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 								IGamlIssue.WRONG_TYPE, FROM);
 					}
 				}
-
+				final Facets facets = cd.getPassedArgs();
+				for (final String att : facets.keySet()) {
+					if (!species.isExperiment() && !species.hasAttribute(att)) {
+						cd.error("Attribute " + att + " is not defined in species " + species.getName(),
+								IGamlIssue.UNKNOWN_VAR);
+					}
+				}
 			} else {
 				cd.error("Species cannot be determined");
 			}
@@ -355,6 +361,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if (delegateType != null && delegateType != Types.NO_TYPE) {
 			delegateTypes.add(delegate.fromFacetType());
 		}
+	}
+
+	public static void removeDelegate(final ICreateDelegate cd) {
+		delegates.remove(cd);
 	}
 
 	public CreateStatement(final IDescription desc) {

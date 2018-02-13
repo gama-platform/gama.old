@@ -48,7 +48,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -165,9 +164,21 @@ public class GamaShapeFile extends GamaGisFile {
 		 */
 		@Override
 		public String getSuffix() {
-			final String CRS = crs == null ? "Unknown CRS" : crs.getName().getCode();
-			return "" + itemNumber + " objects | " + CRS + " | " + FastMath.round(width) + "m x "
-					+ FastMath.round(height) + "m";
+			final StringBuilder sb = new StringBuilder();
+			appendSuffix(sb);
+			return sb.toString();
+		}
+
+		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			sb.append(itemNumber).append(" object");
+			if (itemNumber > 1)
+				sb.append("s");
+			sb.append(SUFFIX_DEL);
+			sb.append(crs == null ? "Unknown CRS" : crs.getName().getCode());
+			sb.append(SUFFIX_DEL);
+			sb.append(Math.round(width)).append("m x ");
+			sb.append(Math.round(height)).append("m");
 		}
 
 		@Override
@@ -175,8 +186,7 @@ public class GamaShapeFile extends GamaGisFile {
 			final StringBuilder sb = new StringBuilder();
 			sb.append("Shapefile").append(Strings.LN);
 			sb.append(itemNumber).append(" objects").append(Strings.LN);
-			sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
-					.append(Strings.LN);
+			sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m").append(Strings.LN);
 			sb.append("Coordinate Reference System: ").append(crs == null ? "Unknown CRS" : crs.getName().getCode())
 					.append(Strings.LN);
 			if (!attributes.isEmpty()) {

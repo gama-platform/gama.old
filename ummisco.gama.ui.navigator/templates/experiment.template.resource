@@ -1,4 +1,4 @@
-experiment $TITLE$ model:$MODEL$ {
+experiment $TITLE$ model:$MODEL$ type:$TYPE$ {
 	/** Insert here the definition of the inputs and outputs of the model */
 	
 	/** Parameters can be used to input values to the model **/

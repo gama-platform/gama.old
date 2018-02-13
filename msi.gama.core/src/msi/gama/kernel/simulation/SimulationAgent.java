@@ -178,7 +178,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold;
-	private final RandomUtils random;
+	private RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
 
@@ -250,7 +250,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			initializer = true)
 	public GamaColor getColor() {
 		if (color == null) {
-			color = new GamaColor(GamaPreferences.Simulations.SIMULATION_COLORS[getIndex() % 5].getValue());
+			color = new GamaColor(GamaPreferences.Interface.SIMULATION_COLORS[getIndex() % 5].getValue());
 		}
 		return color;
 	}
@@ -547,7 +547,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public String buildPostfix() {
-		final boolean noName = !GamaPreferences.Simulations.CORE_SIMULATION_NAME.getValue();
+		final boolean noName = !GamaPreferences.Interface.CORE_SIMULATION_NAME.getValue();
 		if (noName) {
 			if (getPopulation().size() > 1) {
 				return " (S" + getIndex() + ")";
@@ -666,6 +666,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return random;
 	}
 
+	public void setRandomGenerator(final RandomUtils rng) {
+		random = rng;
+	}
+
 	public void prepareGuiForSimulation(final IScope s) {
 		s.getGui().clearErrors(s);
 	}
@@ -702,9 +706,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
-		// Update Clock
-		final Object cycle = sa.getAttributeValue("cycle");
-		clock.setCycle((Integer) cycle);
 
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
@@ -712,6 +713,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			this.setDirectVarValue(scope, name, attr.get(name));
 			// this.setAttribute(name, attr.get(name));
 		}
+
+		// Update Clock
+		final Object cycle = sa.getAttributeValue("cycle");
+		clock.setCycle((Integer) cycle);
 
 		// TODO
 		// Update GUI of the Experiment

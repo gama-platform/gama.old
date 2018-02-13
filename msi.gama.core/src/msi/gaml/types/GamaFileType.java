@@ -65,7 +65,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 */
 	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
 			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?>> builder,
-			final String[] extensions) {
+			final String[] extensions, final String plugin) {
 		// Added to ensure that extensions do not begin with a "." or contain
 		// blank characters
 		for (final String ext : extensions) {
@@ -79,6 +79,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		// classToExtensions.put(clazz, exts);
 		final ParametricFileType t =
 				new ParametricFileType(alias + "_file", clazz, builder, bufferType, keyType, contentType);
+		t.setDefiningPlugin(plugin);
 		aliasesToFullType.put(alias, t);
 		for (final String s : aliasesToExtensions.get(alias)) {
 			extensionsToFullType.put(s, t);

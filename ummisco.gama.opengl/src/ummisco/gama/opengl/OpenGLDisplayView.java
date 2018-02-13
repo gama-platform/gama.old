@@ -25,8 +25,6 @@ import ummisco.gama.ui.views.displays.SWTDisplayView;
  */
 public class OpenGLDisplayView extends SWTDisplayView {
 
-	boolean isOverlayTemporaryVisible;
-
 	public static String ID = "msi.gama.application.view.OpenGLDisplayView";
 
 	@Override
@@ -43,22 +41,9 @@ public class OpenGLDisplayView extends SWTDisplayView {
 	}
 
 	@Override
-	protected void updateOverlay() {
+	public boolean forceOverlayVisibility() {
 		final SWTOpenGLDisplaySurface surface = getDisplaySurface();
-		if (surface == null)
-			return;
-		if (surface.getROIDimensions() != null) {
-			if (!overlay.isVisible()) {
-				isOverlayTemporaryVisible = true;
-				overlay.setVisible(true);
-			}
-		} else {
-			if (isOverlayTemporaryVisible) {
-				isOverlayTemporaryVisible = false;
-				overlay.setVisible(false);
-			}
-		}
-		overlay.update();
+		return surface != null && surface.getROIDimensions() != null;
 	}
 
 	@Override

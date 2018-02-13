@@ -16,6 +16,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -33,7 +37,6 @@ import com.google.inject.Singleton;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
@@ -46,6 +49,14 @@ import msi.gama.util.TOrderedHashMap;
 public class GamlResourceIndexer {
 
 	private static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
+
+	static {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.addResourceChangeListener(event -> {
+			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD)
+				eraseIndex();
+		}, IResourceChangeEvent.PRE_BUILD);
+	}
 
 	protected final static TOrderedHashMap EMPTY_MAP = new TOrderedHashMap();
 
@@ -70,7 +81,7 @@ public class GamlResourceIndexer {
 
 	protected static TOrderedHashMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI,
 			final ExperimentFileStructure m) {
-		TOrderedHashMap<URI, String> result  = new TOrderedHashMap();
+		final TOrderedHashMap<URI, String> result = new TOrderedHashMap();
 		final String u = m.getExp().getImportURI();
 		if (u != null) {
 			URI uri = URI.createURI(u, true);
@@ -134,7 +145,8 @@ public class GamlResourceIndexer {
 		if (r.getContents().isEmpty())
 			return null;
 		final EObject contents = r.getContents().get(0);
-		if (contents == null) return null;
+		if (contents == null)
+			return null;
 		final boolean isModel = contents instanceof Model;
 		final boolean isExpe = contents instanceof ExperimentFileStructure;
 		final TOrderedHashMap<URI, String> added;
@@ -142,7 +154,8 @@ public class GamlResourceIndexer {
 			added = getImportsAsAbsoluteURIS(baseURI, (Model) contents);
 		else if (isExpe)
 			added = getImportsAsAbsoluteURIS(baseURI, (ExperimentFileStructure) contents);
-		else return null;
+		else
+			return null;
 		final EObject[] faulty = new EObject[1];
 		if (added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
 
@@ -292,6 +305,7 @@ public class GamlResourceIndexer {
 	}
 
 	public static void eraseIndex() {
+		System.out.println("Erasing GAML indexer index");
 		index = new SimpleDirectedGraph(Edge.class);
 	}
 

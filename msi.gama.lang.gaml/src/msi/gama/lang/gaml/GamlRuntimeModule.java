@@ -51,10 +51,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	private static boolean initialized;
 
+	// Disabled for the moment
 	public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
 			.create("pref_optimize_fast_compilation",
 					"Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.VALIDATION);
+			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).hidden();
 
 	public static void staticInitialize() {
 		if (!initialized) {

@@ -1347,7 +1347,7 @@ public abstract class Spatial {
 						returnType = "geometry",
 						equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
 		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
-			if (p == null) { return g; }
+			if (p == null || g == null) { return g; }
 			final Coordinate point = (Coordinate) p;
 			final Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;
@@ -1424,10 +1424,10 @@ public abstract class Spatial {
 			Geometry simpleMinGeom = null;
 			double complexMinLength = Double.MAX_VALUE;
 			Geometry complexMinGeom = null;
-			int nbPts = ((Polygon)geometry).getExteriorRing().getCoordinates().length;
-			for (int index = 0; index <= nbPts ; index++) {
+			final int nbPts = ((Polygon) geometry).getExteriorRing().getCoordinates().length;
+			for (int index = 0; index <= nbPts; index++) {
 				final Coordinate[] coord = new Coordinate[nbPts + 1];
-				for (int i = 0; i < index ; i++) {
+				for (int i = 0; i < index; i++) {
 					coord[i] = geometry.getCoordinates()[i];
 				}
 				coord[index] = point;
@@ -1438,21 +1438,22 @@ public abstract class Spatial {
 				for (int i = 0; i < lrs.length; i++) {
 					lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
 				}
-				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord),
-						lrs);
+				final Geometry g = GeometryUtils.GEOMETRY_FACTORY
+						.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord), lrs);
 				if (g.isValid()) {
 					if (simpleMinLength > g.getArea()) {
 						simpleMinLength = g.getArea();
 						simpleMinGeom = g;
 					}
-				}else {
+				} else {
 					if (complexMinLength > g.getArea()) {
 						complexMinLength = g.getArea();
 						complexMinGeom = g;
 					}
 				}
 			}
-			if (simpleMinGeom != null) return simpleMinGeom;
+			if (simpleMinGeom != null)
+				return simpleMinGeom;
 			return complexMinGeom;
 		}
 
@@ -1461,29 +1462,30 @@ public abstract class Spatial {
 			Geometry simpleMinGeom = null;
 			double complexMinLength = Double.MAX_VALUE;
 			Geometry complexMinGeom = null;
-			for (int index = 0; index <= geometry.getCoordinates().length ; index++) {
+			for (int index = 0; index <= geometry.getCoordinates().length; index++) {
 				final Coordinate[] coord = new Coordinate[geometry.getCoordinates().length + 1];
-				for (int i = 0; i < index ; i++) {
+				for (int i = 0; i < index; i++) {
 					coord[i] = geometry.getCoordinates()[i];
 				}
-				coord[index ] = point;
+				coord[index] = point;
 				for (int i = index + 1; i < coord.length; i++) {
 					coord[i] = geometry.getCoordinates()[i - 1];
 				}
-				Geometry g = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
+				final Geometry g = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
 				if (g.isValid()) {
 					if (simpleMinLength > g.getLength()) {
 						simpleMinLength = g.getLength();
 						simpleMinGeom = g;
 					}
-				}else {
+				} else {
 					if (complexMinLength > g.getLength()) {
 						complexMinLength = g.getLength();
 						complexMinGeom = g;
 					}
 				}
 			}
-			if (simpleMinGeom != null) return simpleMinGeom;
+			if (simpleMinGeom != null)
+				return simpleMinGeom;
 			return complexMinGeom;
 		}
 
@@ -2395,6 +2397,34 @@ public abstract class Spatial {
 		}
 
 		@operator (
+				value = "split_lines",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries resulting after cutting the lines at their intersections. if the last boolean operand is set to true, the split lines will import the attributes of the initial lines",
+				examples = { @example (
+						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
+						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
+						test = false) })
+		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
+				final boolean readAttributes) throws GamaRuntimeException {
+			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
+			final IList<IShape> split_lines = split_lines(scope, geoms);
+			if (readAttributes) {
+				for (final IShape line : split_lines) {
+					final IShape matchingGeom = geoms.stream(scope)
+							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry())).get();
+					for (final String att : matchingGeom.getAttributes().keySet()) {
+						line.setAttribute(att, matchingGeom.getAttribute(att));
+					}
+				}
+			}
+
+			return split_lines;
+		}
+
+		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
@@ -2592,8 +2622,7 @@ public abstract class Spatial {
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) { return PathFactory.newInstance(scope, scope.getTopology(), source, source,
-					GamaListFactory.<IShape> create(Types.GEOMETRY));
-			}
+					GamaListFactory.<IShape> create(Types.GEOMETRY)); }
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) { return topo.pathBetween(scope, source, target); }
 			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
@@ -2601,14 +2630,14 @@ public abstract class Spatial {
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
 					// TODO Take the case of ILocation
-					GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
+					final GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
 					if (path != null && path.getEdgeList() != null)
 						edges.addAll(path.getEdgeList());
 				}
 				previous = gg;
 			}
-			
-			GamaSpatialPath path = PathFactory.newInstance(scope, topo, source, target, edges);
+
+			final GamaSpatialPath path = PathFactory.newInstance(scope, topo, source, target, edges);
 			path.setWeight(path.getVertexList().size());
 			return path;
 		}
@@ -2644,7 +2673,7 @@ public abstract class Spatial {
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) {
 				if (topo instanceof GridTopology) {
-					GamaSpatialPath path =  ((GridTopology) topo).pathBetween(scope, source, target, cells);
+					final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, source, target, cells);
 					return path;
 				} else {
 					return scope.getTopology().pathBetween(scope, source, target);
@@ -2656,7 +2685,7 @@ public abstract class Spatial {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					if (topo instanceof GridTopology) {
-						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
 					} else {
 						edges.addAll(scope.getTopology().pathBetween(scope, previous, gg).getEdgeList());
@@ -2664,7 +2693,8 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			final GamaSpatialPath path = PathFactory.newInstance(scope,
+					topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
 			path.setWeight(path.getVertexList().size());
 			return path;
 		}
@@ -2712,7 +2742,7 @@ public abstract class Spatial {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					if (topo instanceof GridTopology) {
-						GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
 						weight += path.getWeight();
 					} else {
@@ -2721,7 +2751,8 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			GamaSpatialPath path = PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
+			final GamaSpatialPath path = PathFactory.newInstance(scope,
+					topo instanceof GridTopology ? topo : scope.getTopology(), source, target, edges);
 			path.setWeight(topo instanceof GridTopology ? weight : path.getVertexList().size());
 			return path;
 		}
@@ -3403,7 +3434,7 @@ public abstract class Spatial {
 						"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final Double distance) {
-			if (GamaPreferences.Runtime.AT_DISTANCE_OPTIMIZATION.getValue()) {
+			if (GamaPreferences.External.AT_DISTANCE_OPTIMIZATION.getValue()) {
 				if (scope.getAgent().isPoint()) {
 					final ITopology topo = scope.getTopology();
 					if (topo.isContinuous() && !topo.isTorus()) {

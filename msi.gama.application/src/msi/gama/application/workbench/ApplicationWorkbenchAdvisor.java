@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGui;
@@ -38,7 +39,7 @@ import msi.gama.runtime.GAMA;
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	public ApplicationWorkbenchAdvisor() {
-		super(WorkspaceModelsManager.processor);
+		super(Application.processor);
 	}
 
 	@Override
@@ -49,10 +50,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
 		ResourcesPlugin.getPlugin().getStateLocation();
-		super.initialize(configurer);
-		IDE.registerAdapters();
-		configurer.setSaveAndRestore(true);
 		try {
+			super.initialize(configurer);
+			IDE.registerAdapters();
+			configurer.setSaveAndRestore(true);
+
 			final IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
 			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
@@ -61,7 +63,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
 			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
 		} catch (final CoreException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}
@@ -73,9 +75,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") )
 			return;
 		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 		}
+
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {
@@ -178,6 +182,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( checkCopyOfBuiltInModels() ) {
 			WorkspaceModelsManager.linkSampleModelsToWorkspace();
 		}
+
 	}
 
 	@Override

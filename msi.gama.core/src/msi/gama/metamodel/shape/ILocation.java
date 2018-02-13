@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -68,5 +70,7 @@ public interface ILocation extends IShape, Comparable {
 	public abstract GamaPoint toGamaPoint();
 
 	public abstract ILocation yNegated();
+	
+	public boolean equalsWithTolerance(Coordinate c, double tolerance);
 
 }

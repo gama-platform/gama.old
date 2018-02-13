@@ -1,0 +1,31 @@
+/**
+* Name: operatortest
+* Author: Truong Chi Quang
+* Description: This wizard creates a new test experiment
+* Tags: Tag1, Tag2, TagN
+*/
+
+model testLength
+
+grid cell width: 5 height: 5{
+	float grid_value <-1.0;
+}
+experiment length type: test {
+	
+	setup {
+		/** Insert any initialization to run before each of the tests */
+		 
+	}
+	
+	test "length" {
+		list<int> vList<- [12,13];
+//		write cell collect(each.grid_value);
+		assert length([1,2,3,4.4])=4;
+		assert length(vList)=2;
+		assert length(cell)=25; 
+		assert length(cell where (each.grid_value=1.0))=25;
+	}
+
+	
+	
+}

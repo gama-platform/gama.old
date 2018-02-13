@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -47,14 +48,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
@@ -75,47 +73,9 @@ public class WorkspaceModelsManager {
 	public final static String TEST_NATURE = "msi.gama.application.testNature";
 	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
-	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
-	public static OpenDocumentEventProcessor processor;
-
-	public static void createProcessor() {
-		final Display display = Display.getDefault();
-		if ( display == null )
-			return;
-		processor = new OpenDocumentEventProcessor(display);
-	}
-
-	public static class OpenDocumentEventProcessor extends DelayedEventsProcessor {
-
-		private OpenDocumentEventProcessor(final Display display) {
-			super(display);
-		}
-
-		private final ArrayList<String> filesToOpen = new ArrayList<String>(1);
-
-		@Override
-		public void handleEvent(final Event event) {
-			if ( event.text != null ) {
-				filesToOpen.add(event.text);
-				// System.out.println("RECEIVED FILE TO OPEN: " + event.text);
-			}
-		}
-
-		@Override
-		public void catchUp(final Display display) {
-			if ( filesToOpen.isEmpty() ) { return; }
-
-			final String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
-			filesToOpen.clear();
-
-			for ( final String path : filePaths ) {
-				instance.openModelPassedAsArgument(path);
-			}
-		}
-	}
-
 	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
-	public static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
+
+	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 
 	public void openModelPassedAsArgument(final String modelPath) {
 
@@ -155,8 +115,8 @@ public class WorkspaceModelsManager {
 				while (GAMA.getRegularGui() == null) {
 					try {
 						Thread.sleep(100);
-						// System.out.println(Thread.currentThread().getName() +
-						// ": waiting for the modeling and simulation environments to be available");
+						System.out
+							.println(Thread.currentThread().getName() + ": waiting for the GUI to become available");
 					} catch (final InterruptedException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
@@ -420,31 +380,14 @@ public class WorkspaceModelsManager {
 	}
 
 	public static void linkSampleModelsToWorkspace() {
-		final Job job = new Job("Updating the Built-in Models Library") {
+
+		final WorkspaceJob job = new WorkspaceJob("Updating the Built-in Models Library") {
 
 			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				// Nothing to do really. Maybe a later version will remove this
-				// command. See Issue 669
-				while (!GamaBundleLoader.LOADED) {
-					try {
-						Thread.sleep(100);
-					} catch (final InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
-				for ( final Bundle plugin : pluginsWithModels.keySet() ) {
-					for ( final String entry : pluginsWithModels.get(plugin) )
-						linkModelsToWorkspace(plugin, entry, false);
-				}
-				final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
-				for ( final Bundle plugin : pluginsWithTests.keySet() ) {
-					for ( final String entry : pluginsWithTests.get(plugin) )
-						linkModelsToWorkspace(plugin, entry, true);
-				}
-				return Status.OK_STATUS;
+			public IStatus runInWorkspace(final IProgressMonitor monitor) {
+				System.out.println("Asynchronous link of models library...");
+				GAMA.getGui().refreshNavigator();
+				return GamaBundleLoader.ERRORED ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
 
 		};
@@ -453,11 +396,36 @@ public class WorkspaceModelsManager {
 
 	}
 
+	public static void loadModelsLibrary() {
+		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
+			try {
+				Thread.sleep(100);
+				System.out.println("Waiting for GAML subsystem to load...");
+			} catch (final InterruptedException e) {}
+		}
+		if ( GamaBundleLoader.ERRORED ) {
+			GAMA.getGui().tell("Error in loading GAML language subsystem. Please consult the logs");
+			return;
+		}
+		System.out.println("Synchronous link of models library...");
+		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
+		for ( final Bundle plugin : pluginsWithModels.keySet() ) {
+			for ( final String entry : pluginsWithModels.get(plugin) )
+				linkModelsToWorkspace(plugin, entry, false);
+		}
+		final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
+		for ( final Bundle plugin : pluginsWithTests.keySet() ) {
+			for ( final String entry : pluginsWithTests.get(plugin) )
+				linkModelsToWorkspace(plugin, entry, true);
+		}
+	}
+
 	/**
 	 * @param plugin
 	 */
 
 	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
+		System.out.println("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
 		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
 		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;
@@ -469,7 +437,7 @@ public class WorkspaceModelsManager {
 
 		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
-		} catch (final IOException e1) {
+		} catch (final Exception e1) {
 			e1.printStackTrace();
 		}
 
@@ -606,7 +574,7 @@ public class WorkspaceModelsManager {
 			proj.setDescription(desc, IResource.FORCE, null);
 			// Addition of a special persistent property to indicate that the project is built-in
 			if ( builtin ) {
-				proj.setPersistentProperty(BUILTIN_PROPERTY, BUILTIN_VERSION);
+				proj.setPersistentProperty(BUILTIN_PROPERTY, WorkspacePreferences.BUILTIN_VERSION);
 			}
 		} catch (final CoreException e) {
 			e.printStackTrace();
@@ -623,7 +591,7 @@ public class WorkspaceModelsManager {
 	public static void stampWorkspaceFromModels() {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		try {
-			final String stamp = getCurrentGamaStampString();
+			final String stamp = WorkspacePreferences.getCurrentGamaStampString();
 			final IWorkspaceRoot root = workspace.getRoot();
 			final String oldStamp = root.getPersistentProperty(BUILTIN_PROPERTY);
 			if ( oldStamp != null ) {
@@ -644,28 +612,6 @@ public class WorkspaceModelsManager {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static String getCurrentGamaStampString() {
-		String gamaStamp = null;
-		try {
-			final URL tmpURL = new URL("platform:/plugin/msi.gama.models/models/");
-			final URL resolvedFileURL = FileLocator.toFileURL(tmpURL);
-			// We need to use the 3-arg constructor of URI in order to properly escape file system chars
-			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
-			final File modelsRep = new File(resolvedURI);
-
-			// loading file from URL Path is not a good idea. There are some bugs
-			// File modelsRep = new File(urlRep.getPath());
-
-			final long time = modelsRep.lastModified();
-			gamaStamp = ".built_in_models_" + time;
-			System.out.println(">GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
-			System.out.println(">GAMA models library version: " + gamaStamp);
-		} catch (final IOException | URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return gamaStamp;
 	}
 
 	public boolean isGamaProject(final File f) throws CoreException {

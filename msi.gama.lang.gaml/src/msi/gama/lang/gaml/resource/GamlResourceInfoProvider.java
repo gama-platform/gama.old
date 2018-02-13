@@ -40,7 +40,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();
 
-	private final XtextResourceSet resourceSet = new SynchronizedXtextResourceSet();
+	private XtextResourceSet resourceSet;
 
 	public GamlFileInfo getInfo(final Resource r, final long stamp) {
 
@@ -103,20 +103,20 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 	public GamlFileInfo getInfo(final URI uri, final long stamp) {
 		try {
 
-			final GamlResource r = (GamlResource) resourceSet.getResource(uri, true);
+			final GamlResource r = (GamlResource) getResourceSet().getResource(uri, true);
 			return getInfo(r, stamp);
 		} finally {
-			clearResourceSet(resourceSet);
+			clearResourceSet(getResourceSet());
 		}
 	}
 
 	@Override
 	public ISyntacticElement getContents(final URI uri) {
 		try {
-			final GamlResource r = (GamlResource) resourceSet.getResource(uri, true);
+			final GamlResource r = (GamlResource) getResourceSet().getResource(uri, true);
 			return GamlResourceServices.buildSyntacticContents(r);
 		} finally {
-			clearResourceSet(resourceSet);
+			clearResourceSet(getResourceSet());
 		}
 	}
 
@@ -130,6 +130,12 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		finally {
 			resourceSet.eSetDeliver(wasDeliver);
 		}
+	}
+
+	private XtextResourceSet getResourceSet() {
+		if (resourceSet == null)
+			resourceSet = new SynchronizedXtextResourceSet();
+		return resourceSet;
 	}
 
 }

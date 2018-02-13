@@ -45,14 +45,26 @@ public abstract class ChartOutput {
 	String chname = "";
 	String xlabel = null;
 	String ylabel = null;
+	String y2label = null;
 	ChartDataSet chartdataset;
 	int type = SERIES_CHART;
 	boolean reverse_axes = false;
+	boolean x_logscale = false;
+	boolean y_logscale = false;
+	boolean y2_logscale = false;
+	boolean use_second_y_axis = false;
 
+	boolean title_visible=true;
+	boolean x_tick_value_visible=true;
+	boolean y_tick_value_visible=true;
+	boolean x_tick_line_visible=true;
+	boolean y_tick_line_visible=true;
+	
 	ChartOutput chartOutput = null;
 	Color backgroundColor = GamaColor.WHITE;
 	Color axesColor = null;
 	Color textColor = null;
+	Color tickColor = null;
 
 	String tickFontFace = Font.SANS_SERIF;
 	int tickFontSize = 10;
@@ -75,11 +87,16 @@ public abstract class ChartOutput {
 
 	double xrangeinterval, xrangemin, xrangemax;
 	boolean usexrangeinterval = false, usexrangeminmax = false;
+
 	double yrangeinterval, yrangemin, yrangemax;
 	boolean useyrangeinterval = false, useyrangeminmax = false;
 
+	double y2rangeinterval, y2rangemin, y2rangemax;
+	boolean usey2rangeinterval = false, usey2rangeminmax = false;
+
 	double xtickunit = -1;
 	double ytickunit = -1;
+	double y2tickunit = -1;
 
 	// copy from previous dataLayerStatement
 
@@ -256,6 +273,14 @@ public abstract class ChartOutput {
 		axesColor = color;
 
 	}
+	public void setTickColorValue(final IScope scope, final GamaColor color) {
+		tickColor = color;
+
+	}
+	public final Color getAxesColorValue(final IScope scope) {
+		return axesColor;
+
+	}
 
 	public void setBackgroundColorValue(final IScope scope, final GamaColor color) {
 		backgroundColor = color;
@@ -273,16 +298,27 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public String getTickFontFace(final IScope scope) {
+			return tickFontFace;
+	}
+
 	public void setLabelFontFace(final IScope scope, final String value) {
 		if (value != null) {
 			labelFontFace = value;
 		}
 	}
 
+	public String getLabelFontFace(final IScope scope) {
+		return	labelFontFace;
+	}
+
 	public void setLegendFontFace(final IScope scope, final String value) {
 		if (value != null) {
 			legendFontFace = value;
 		}
+	}
+	public String getLegendFontFace(final IScope scope) {
+		return	legendFontFace;
 	}
 
 	public void setTitleFontFace(final IScope scope, final String value) {
@@ -291,20 +327,40 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public String getTitleFontFace(final IScope scope) {
+		return	titleFontFace;
+	}
+
 	public void setTickFontSize(final IScope scope, final int value) {
 		tickFontSize = value;
+	}
+
+	public int getTickFontSize(final IScope scope) {
+		return  tickFontSize;
 	}
 
 	public void setLabelFontSize(final IScope scope, final int value) {
 		labelFontSize = value;
 	}
 
+	public int getLabelFontSize(final IScope scope) {
+		return labelFontSize;
+	}
+
 	public void setLegendFontSize(final IScope scope, final int value) {
 		legendFontSize = value;
 	}
 
+	public int getLegendFontSize(final IScope scope) {
+		return legendFontSize;
+	}
+
 	public void setTitleFontSize(final IScope scope, final int value) {
 		titleFontSize = value;
+	}
+
+	public int getTitleFontSize(final IScope scope) {
+		return  titleFontSize;
 	}
 
 	public void setTickFontStyle(final IScope scope, final String value) {
@@ -313,10 +369,18 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public int getTickFontStyle(final IScope scope) {
+			return tickFontStyle;
+	}
+
 	public void setLabelFontStyle(final IScope scope, final String value) {
 		if (value != null) {
 			labelFontStyle = toFontStyle(value);
 		}
+	}
+
+	public int getLabelFontStyle(final IScope scope) {
+			return labelFontStyle;
 	}
 
 	public void setLegendFontStyle(final IScope scope, final String value) {
@@ -325,15 +389,29 @@ public abstract class ChartOutput {
 		}
 	}
 
+	public int getLegendFontStyle(final IScope scope) {
+			return legendFontStyle;
+	}
+
 	public void setTitleFontStyle(final IScope scope, final String value) {
 		if (value != null) {
 			titleFontStyle = toFontStyle(value);
 		}
 	}
 
+	public int getTitleFontStyle(final IScope scope) {
+			return titleFontStyle;
+	}
+
 	public void setXLabel(final IScope scope, final String asString) {
 		// TODO Auto-generated method stub
 		xlabel = asString;
+
+	}
+
+	public String getXLabel(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xlabel;
 
 	}
 
@@ -343,10 +421,80 @@ public abstract class ChartOutput {
 
 	}
 
+	public String getYLabel(final IScope scope) {
+		// TODO Auto-generated method stub
+		return ylabel;
+
+	}
+	public void setY2Label(final IScope scope, final String asString) {
+		// TODO Auto-generated method stub
+		y2label = asString;
+
+	}
+
+	public String getY2Label(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2label;
+
+	}
+	public boolean getUseXRangeInterval(final IScope scope) {
+		return usexrangeinterval;
+	}
+
+	public void setUseXRangeInterval(final IScope scope, boolean usexrangeinterval) {
+		this.usexrangeinterval = usexrangeinterval;
+	}
+
+	public boolean getUseXRangeMinMax(final IScope scope ) {
+		return usexrangeminmax;
+	}
+
+	public void setUseXRangeMinMax(final IScope scope, boolean usexrangeminmax) {
+		this.usexrangeminmax = usexrangeminmax;
+	}
+
+	public boolean getUseYRangeInterval(final IScope scope ) {
+		return useyrangeinterval;
+	}
+
+	public void setUseYRangeInterval(final IScope scope, boolean useyrangeinterval) {
+		this.useyrangeinterval = useyrangeinterval;
+	}
+
+	public boolean getUseYRangeMinMax(final IScope scope ) {
+		return useyrangeminmax;
+	}
+
+	public void setUseYRangeMinMax(final IScope scope, boolean useyrangeminmax) {
+		this.useyrangeminmax = useyrangeminmax;
+	}
+
+	public boolean getUseY2RangeInterval(final IScope scope ) {
+		return usey2rangeinterval;
+	}
+
+	public void setUseY2RangeInterval(final IScope scope, boolean useyrangeinterval) {
+		this.usey2rangeinterval = useyrangeinterval;
+	}
+
+	public boolean getUseY2RangeMinMax(final IScope scope ) {
+		return usey2rangeminmax;
+	}
+
+	public void setUseY2RangeMinMax(final IScope scope, boolean useyrangeminmax) {
+		this.usey2rangeminmax = useyrangeminmax;
+	}
+
 	public void setXRangeInterval(final IScope scope, final double doubleValue) {
 		// TODO Auto-generated method stub
 		this.usexrangeinterval = true;
 		this.xrangeinterval = doubleValue;
+
+	}
+
+	public double getXRangeInterval(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangeinterval;
 
 	}
 
@@ -356,6 +504,28 @@ public abstract class ChartOutput {
 		this.xrangemin = minValue;
 		this.xrangemax = maxValue;
 
+	}
+
+	public double[] getXRangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={xrangemin,xrangemax};
+		return res;
+
+	}
+	public double getXRangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangemin;
+
+	}
+
+	public double getXRangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return xrangemax;
+
+	}
+
+	public double getYRangeInterval(final IScope scope) {
+		return this.yrangeinterval;
 	}
 
 	public void setYRangeInterval(final IScope scope, final double doubleValue) {
@@ -372,10 +542,70 @@ public abstract class ChartOutput {
 		this.yrangemax = maxValue;
 
 	}
+	public double[] getYRangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={yrangemin,yrangemax};
+		return res;
+
+	}
+
+	public double getYRangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return yrangemin;
+
+	}
+
+	public double getYRangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return yrangemax;
+
+	}
+	public double getY2RangeInterval(final IScope scope) {
+		return this.y2rangeinterval;
+	}
+
+	public void setY2RangeInterval(final IScope scope, final double doubleValue) {
+		// TODO Auto-generated method stub
+		this.usey2rangeinterval = true;
+		this.y2rangeinterval = doubleValue;
+
+	}
+
+	public void setY2RangeMinMax(final IScope scope, final double minValue, final double maxValue) {
+		// TODO Auto-generated method stub
+		this.usey2rangeminmax = true;
+		this.y2rangemin = minValue;
+		this.y2rangemax = maxValue;
+
+	}
+	public double[] getY2RangeMinMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		double[] res={y2rangemin,y2rangemax};
+		return res;
+
+	}
+
+	public double getY2RangeMin(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2rangemin;
+
+	}
+
+	public double getY2RangeMax(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2rangemax;
+
+	}
+
 
 	public void setXTickUnit(final IScope scope, final double r) {
 		this.xtickunit = r;
 		// TODO Auto-generated method stub
+
+	}
+
+	public double getXTickUnit(final IScope scope) {
+		return xtickunit;
 
 	}
 
@@ -385,9 +615,32 @@ public abstract class ChartOutput {
 
 	}
 
+	public double getYTickUnit(final IScope scope) {
+		return ytickunit;
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setY2TickUnit(final IScope scope, final double r) {
+		this.y2tickunit = r;
+		// TODO Auto-generated method stub
+
+	}
+
+	public double getY2TickUnit(final IScope scope) {
+		return y2tickunit;
+		// TODO Auto-generated method stub
+
+	}
+
 	public void setGap(final IScope scope, final double range) {
 		// TODO Auto-generated method stub
 		this.gap = range;
+	}
+
+	public double getGap(final IScope scope) {
+		// TODO Auto-generated method stub
+		return this.gap;
 	}
 
 	public JFreeChart getJFChart() {
@@ -432,6 +685,87 @@ public abstract class ChartOutput {
 	public void setReverseAxis(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		reverse_axes = asBool;
+	}
+
+	public void setX_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_logscale = asBool;
+	}
+
+	public void setY_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_logscale = asBool;
+	}
+	public boolean getX_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_logscale;
+	}
+
+	public boolean getY_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_logscale;
+	}
+	public void setY2_LogScale(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y2_logscale = asBool;
+	}
+	public boolean getY2_LogScale(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y2_logscale;
+	}
+	public void setUseSecondYAxis(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		use_second_y_axis = asBool;
+	}
+	public boolean getUseSecondYAxis(final IScope scope) {
+		// TODO Auto-generated method stub
+		return use_second_y_axis;
+//		return false;
+	}
+	public void setXTickValueVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_tick_value_visible = asBool;
+	}
+	public boolean getXTickValueVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_tick_value_visible;
+//		return false;
+	}
+	public void setYTickValueVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_tick_value_visible = asBool;
+	}
+	public boolean getYTickValueVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_tick_value_visible;
+//		return false;
+	}
+	public void setTitleVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		title_visible = asBool;
+	}
+	public boolean getTitleVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return title_visible;
+//		return false;
+	}
+	public void setXTickLineVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		x_tick_line_visible = asBool;
+	}
+	public boolean getXTickLineVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return x_tick_line_visible;
+//		return false;
+	}
+	public void setYTickLineVisible(final IScope scope, final Boolean asBool) {
+		// TODO Auto-generated method stub
+		y_tick_line_visible = asBool;
+	}
+	public boolean getYTickLineVisible(final IScope scope) {
+		// TODO Auto-generated method stub
+		return y_tick_line_visible;
+//		return false;
 	}
 
 }

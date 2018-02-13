@@ -174,7 +174,7 @@ public class DrawingData {
 		}, Types.LIST, null);
 		this.material = create(materialExp, Types.MATERIAL, null);
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
-		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue());
+		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		ATTRIBUTES = new Attribute[] { size, location, depth, colors, rotation, empty, border, font, texture, material,
 				perspective, lineWidth };
 	}

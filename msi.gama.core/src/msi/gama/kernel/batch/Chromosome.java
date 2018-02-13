@@ -118,7 +118,6 @@ public class Chromosome implements Comparable<Chromosome> {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Arrays.hashCode(genes);
-		result = prime * result + Arrays.hashCode(phenotype);
 		return result;
 	}
 
@@ -133,10 +132,9 @@ public class Chromosome implements Comparable<Chromosome> {
 		Chromosome other = (Chromosome) obj;
 		if (!Arrays.equals(genes, other.genes))
 			return false;
-		if (!Arrays.equals(phenotype, other.phenotype))
-			return false;
 		return true;
 	}
+
 	
 	
 

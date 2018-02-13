@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LightStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LightStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -37,30 +36,85 @@ import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@symbol(name = "light", kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.LIGHT, IConcept.THREED })
-@inside(symbols = IKeyword.DISPLAY)
-@validator(LightStatementValidator.class)
-@facets(omissible = IKeyword.ID, value = {
-		@facet(name = IKeyword.ID, type = IType.INT, optional = false, doc = @doc("a number from 1 to 7 to specify which light we are using")),
-		@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("the position of the light (only for point and spot light). (default value : {0,0,1})")),
-		@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true, doc = @doc("the type of light to create. A value among {point, direction, spot}. (default value : direction)")),
-		@facet(name = IKeyword.DIRECTION, type = IType.POINT, optional = true, doc = @doc("the direction of the light (only for direction and spot light). (default value : {0.5,0.5,-1})")),
-		@facet(name = IKeyword.SPOT_ANGLE, type = IType.FLOAT, optional = true, doc = @doc("the angle of the spot light in degree (only for spot light). (default value : 45)")),
-		@facet(name = IKeyword.LINEAR_ATTENUATION, type = IType.FLOAT, optional = true, doc = @doc("the linear attenuation of the positionnal light. (default value : 0)")),
-		@facet(name = IKeyword.QUADRATIC_ATTENUATION, type = IType.FLOAT, optional = true, doc = @doc("the linear attenuation of the positionnal light. (default value : 0)")),
-		@facet(name = "active", type = IType.BOOL, optional = true, doc = @doc("a boolean expression telling if you want this light to be switch on or not. (default value : true)")),
-		@facet(name = IKeyword.COLOR, type = { IType.INT,
-				IType.COLOR }, optional = true, doc = @doc("an int / rgb / rgba value to specify the color and the intensity of the light. (default value : (127,127,127,255) ).")),
-		@facet(name = IKeyword.DRAW_LIGHT, type = {
-				IType.BOOL }, optional = true, doc = @doc("draw or not the light. (default value : false).")),
-		@facet(name = IKeyword.UPDATE, type = {
-				IType.BOOL }, optional = true, doc = @doc("specify if the light has to be updated. (default value : true).")) })
-@doc(value = "`light` allows to define diffusion lights in your 3D display.", usages = {
-		@usage(value = "The general syntax is:", examples = {
-				@example(value = "light 1 type:point position:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false", isExecutable = false),
-				@example(value = "light 2 type:spot position:{20,20,20} direction:{0,0,-1} color:255 spot_angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false", isExecutable = false),
-				@example(value = "light 3 type:point direction:{1,1,-1} color:255 draw_light:true update:false", isExecutable = false) }) }, see = {
-						IKeyword.DISPLAY })
+@symbol (
+		name = "light",
+		kind = ISymbolKind.LAYER,
+		with_sequence = true,
+		concept = { IConcept.LIGHT, IConcept.THREED })
+@inside (
+		symbols = IKeyword.DISPLAY)
+@validator (LightStatementValidator.class)
+@facets (
+		omissible = IKeyword.ID,
+		value = { @facet (
+				name = IKeyword.ID,
+				type = IType.INT,
+				optional = false,
+				doc = @doc ("a number from 1 to 7 to specify which light we are using")),
+				@facet (
+						name = IKeyword.POSITION,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("the position of the light (only for point and spot light). (default value : {0,0,1})")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.LABEL,
+						optional = true,
+						doc = @doc ("the type of light to create. A value among {point, direction, spot}. (default value : direction)")),
+				@facet (
+						name = IKeyword.DIRECTION,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("the direction of the light (only for direction and spot light). (default value : {0.5,0.5,-1})")),
+				@facet (
+						name = IKeyword.SPOT_ANGLE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the angle of the spot light in degree (only for spot light). (default value : 45)")),
+				@facet (
+						name = IKeyword.LINEAR_ATTENUATION,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the linear attenuation of the positionnal light. (default value : 0)")),
+				@facet (
+						name = IKeyword.QUADRATIC_ATTENUATION,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the linear attenuation of the positionnal light. (default value : 0)")),
+				@facet (
+						name = "active",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("a boolean expression telling if you want this light to be switch on or not. (default value : true)")),
+				@facet (
+						name = IKeyword.COLOR,
+						type = { IType.INT, IType.COLOR },
+						optional = true,
+						doc = @doc ("an int / rgb / rgba value to specify the color and the intensity of the light. (default value : (127,127,127,255) ).")),
+				@facet (
+						name = IKeyword.DRAW_LIGHT,
+						type = { IType.BOOL },
+						optional = true,
+						doc = @doc ("draw or not the light. (default value : false).")),
+				@facet (
+						name = IKeyword.UPDATE,
+						type = { IType.BOOL },
+						optional = true,
+						doc = @doc ("specify if the light has to be updated. (default value : true).")) })
+@doc (
+		value = "`light` allows to define diffusion lights in your 3D display.",
+		usages = { @usage (
+				value = "The general syntax is:",
+				examples = { @example (
+						value = "light 1 type:point position:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false",
+						isExecutable = false),
+						@example (
+								value = "light 2 type:spot position:{20,20,20} direction:{0,0,-1} color:255 spot_angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false",
+								isExecutable = false),
+						@example (
+								value = "light 3 type:point direction:{1,1,-1} color:255 draw_light:true update:false",
+								isExecutable = false) }) },
+		see = { IKeyword.DISPLAY })
 public class LightStatement extends AbstractLayerStatement {
 
 	public static class LightStatementValidator implements IDescriptionValidator<IDescription> {
@@ -105,8 +159,7 @@ public class LightStatement extends AbstractLayerStatement {
 					}
 				}
 				// light type spot
-				else if (typeString.compareTo("spot") == 0) {
-				}
+				else if (typeString.compareTo("spot") == 0) {}
 				// light type point
 				else {
 					if (direction != null) {
@@ -146,9 +199,8 @@ public class LightStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
+	public LayerType getType() {
+		return LayerType.LIGHT;
 	}
 
 	@Override

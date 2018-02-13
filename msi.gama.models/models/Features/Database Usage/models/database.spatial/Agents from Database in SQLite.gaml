@@ -22,14 +22,14 @@ global {
 								  'database'::'../../includes/spatialite.db'
 								  ];
 	
-	string QUERY <- "SELECT name, type, AsBinary(geom) as geom FROM buildings;";
+	string QUERY <- "SELECT name, type, AsBinary(geom) as geom FROM buildings ;";
 	geometry shape <- envelope(BOUNDS);		  	
 	  	
 	init {
 		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
+							 with:[ name::"name", type::"type", shape:: "geom"];
 		 }
 	}
 }

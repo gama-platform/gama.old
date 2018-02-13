@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.util.StringUtils;
+import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -221,17 +222,27 @@ public abstract class AbstractEditor<T>
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 
 		IAgent a = agent;
-		if (a == null) {
-			final IExperimentPlan exp = GAMA.getExperiment();
-			if (exp != null) {
-				a = exp.getAgent();
+
+		if (param instanceof ExperimentParameter) {
+			if (a == null) {
+				final IExperimentPlan exp = GAMA.getExperiment();
+				if (exp != null) {
+					a = exp.getAgent();
+				}
 			}
-		}
-		if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
-			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
-		}
-		if (agent == null) {
-			param.setValue(a == null ? null : a.getScope(), newValue);
+			if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
+				GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
+			}
+			// Introduced to deal with #2306
+			if (agent == null) {
+				param.setValue(a == null ? null : a.getScope(), newValue);
+			}
+		} else {
+			// param.setValue(a == null ? null : a.getScope(), newValue);
+			if (a == null) {
+				param.setValue(null, newValue);
+			} else
+				param.setValue(a.getScope(), newValue);
 		}
 	}
 
@@ -280,27 +291,33 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected Color getNormalBackground() {
-		return /* NORMAL_BACKGROUND */parent.getBackground();
+		return parent.getBackground();
 	}
 
-	public static Label createLeftLabel(final Composite parent, final String title) {
-		final Label label = new Label(parent, SWT.NONE | SWT.WRAP);
+	public static Label createLeftLabel(final Composite parent, final String title, final boolean isSubParameter) {
+		final Label label = new Label(parent, SWT.WRAP | SWT.RIGHT);
 		label.setBackground(parent.getBackground());
 		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		// d.widthHint = 200;
+		// d.minimumWidth = SWT.DEFAULT;
+		if (isSubParameter)
+			d.horizontalIndent = 30;
 		label.setLayoutData(d);
 		label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		return label;
 	}
 
+	public void resizeLabel(final int width) {
+		final Label l = getLabel();
+		if (l != null)
+			((GridData) l.getLayoutData()).widthHint = width;
+	}
+
 	public void createComposite(final Composite parent) {
 		this.parent = parent;
 		internalModification = true;
-		if (!isSubParameter) {
-			titleLabel = createLeftLabel(parent, name);
-		} else {
-			createLeftLabel(parent, " ");
-		}
+		titleLabel = createLeftLabel(parent, name, isSubParameter);
 		try {
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {
@@ -314,19 +331,19 @@ public abstract class AbstractEditor<T>
 		data.minimumWidth = 150;
 		composite.setLayoutData(data);
 
-		final GridLayout layout = new GridLayout(isSubParameter ? 3 : 2, false);
+		final GridLayout layout = new GridLayout(2, false);
 		// layout.verticalSpacing = 8;
 		// layout.marginHeight = 5;
 		layout.marginWidth = 5;
 
 		composite.setLayout(layout);
-		if (isSubParameter) {
-			titleLabel = createLeftLabel(composite, name);
-			titleLabel.setFont(GamaFonts.getNavigFolderFont());
-			final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-			d.grabExcessHorizontalSpace = false;
-			titleLabel.setLayoutData(d);
-		}
+		// if (isSubParameter) {
+		// titleLabel = createLeftLabel(composite, name, false);
+		// titleLabel.setFont(GamaFonts.getNavigFolderFont());
+		// final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		// d.grabExcessHorizontalSpace = false;
+		// titleLabel.setLayoutData(d);
+		// }
 		createEditorControl(composite);
 		toolbar = createToolbar();
 
@@ -369,7 +386,8 @@ public abstract class AbstractEditor<T>
 		d.exclude = true;
 		toolbar.setVisible(false);
 		composite.setBackground(getNormalBackground());
-		composite.layout();
+		composite.layout(true, true);
+		composite.update();
 	}
 
 	protected void showToolbar() {
@@ -380,8 +398,8 @@ public abstract class AbstractEditor<T>
 		d.exclude = false;
 		toolbar.setVisible(true);
 		composite.setBackground(HOVERED_BACKGROUND);
-		composite.layout();
-
+		composite.layout(true, true);
+		composite.update();
 		// AD 26/12/15 Commented for the moment to not force the focus (see
 		// Issues #1339 and #1248)
 		// if ( combo != null ) {
@@ -422,9 +440,8 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected ToolBar createToolbar() {
-		final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.RIGHT | SWT.HORIZONTAL | SWT.WRAP);
-		final GridData d = this.getParameterGridData();
-		d.grabExcessHorizontalSpace = false;
+		final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.LEFT | SWT.HORIZONTAL | SWT.WRAP);
+		final GridData d = new GridData(SWT.FILL, SWT.TOP, false, false);
 		t.setLayoutData(d);
 		final String unitText = computeUnitLabel();
 		if (!unitText.isEmpty()) {
@@ -492,7 +509,7 @@ public abstract class AbstractEditor<T>
 	@SuppressWarnings ("unchecked")
 	protected T getParameterValue() throws GamaRuntimeException {
 		Object result;
-		if (agent == null) {
+		if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
 			result = param.value(scope);
 		} else {
 			result = scope.getAgentVarValue(getAgent(), param.getName());
@@ -526,9 +543,7 @@ public abstract class AbstractEditor<T>
 
 	protected GridData getParameterGridData() {
 		final GridData d = new GridData(SWT.FILL, SWT.TOP, true, false);
-
-		d.minimumWidth = 70;
-		// d.widthHint = 100; // SWT.DEFAULT
+		d.minimumWidth = 100;
 		return d;
 	}
 

@@ -1,7 +1,6 @@
 package msi.gama.doc.util;
 
 import msi.gama.doc.transform.XmlToCategoryXML;
-import msi.gama.precompiler.doc.utils.Constants;
 
 public class GenerateCategoryXML {
 
@@ -11,11 +10,11 @@ public class GenerateCategoryXML {
 			System.out.println("GENERATION OF THE XML CATEGORY FILES FROM XML docGAMA.xml");
 			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 			System.out.print("Preparation of the folders................");
-			PrepareEnv.prepareDocumentation(Constants.ONLINE);
+			PrepareEnv.prepareDocumentation();
 			System.out.println("DONE");
 
 			System.out.print("Merge all the docGAMA.xml filess................");
-			UnifyDoc.unifyAllProjects();
+			UnifyDoc.unifyAllProjects(false);
 			System.out.println("DONE");
 
 			System.out.print("Transform the docGAMA.xml file into the XML category file ................");

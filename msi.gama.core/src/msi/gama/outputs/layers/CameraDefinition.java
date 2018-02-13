@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CameraDefinition.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CameraDefinition.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -26,17 +25,40 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeyword.CAMERA, kind = ISymbolKind.LAYER, with_sequence = false, unique_in_context = false, concept = {
-		IConcept.CAMERA, IConcept.DISPLAY, IConcept.THREED })
-@inside(symbols = IKeyword.DISPLAY)
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.STRING, optional = false, doc = @doc("The name of the camera")),
-		@facet(name = IKeyword.LOCATION, type = IType.POINT, optional = true, doc = @doc("The location of the camera in the world")),
-		@facet(name = IKeyword.LOOK_AT, type = IType.POINT, optional = true, doc = @doc("The location that the camera is looking")),
-		@facet(name = IKeyword.UP_VECTOR, type = IType.POINT, optional = true, doc = @doc("The up-vector of the camera.")) }, omissible = IKeyword.NAME)
-@doc(value = "`" + IKeyword.CAMERA
-		+ "` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. ", see = {
-				IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
+@symbol (
+		name = IKeyword.CAMERA,
+		kind = ISymbolKind.LAYER,
+		with_sequence = false,
+		unique_in_context = false,
+		concept = { IConcept.CAMERA, IConcept.DISPLAY, IConcept.THREED })
+@inside (
+		symbols = IKeyword.DISPLAY)
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.STRING,
+				optional = false,
+				doc = @doc ("The name of the camera")),
+				@facet (
+						name = IKeyword.LOCATION,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("The location of the camera in the world")),
+				@facet (
+						name = IKeyword.LOOK_AT,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("The location that the camera is looking")),
+				@facet (
+						name = IKeyword.UP_VECTOR,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("The up-vector of the camera.")) },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "`" + IKeyword.CAMERA
+				+ "` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. ",
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 				IKeyword.IMAGE, IKeyword.POPULATION, })
 public class CameraDefinition extends AbstractLayerStatement {
 
@@ -51,8 +73,8 @@ public class CameraDefinition extends AbstractLayerStatement {
 	}
 
 	@Override
-	public short getType() {
-		return ILayerStatement.OVERLAY;
+	public LayerType getType() {
+		return LayerType.OVERLAY;
 	}
 
 	@Override

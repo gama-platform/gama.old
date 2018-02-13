@@ -15,9 +15,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -50,7 +47,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		intermediate.setLayout(parentLayout);
 		view.pack();
 		view.layout();
-		parent = intermediate;
+		setParentComposite(intermediate);
 	}
 
 	@Override
@@ -109,36 +106,21 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
-				"Revert parameters to their initial values", new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						final EditorsList<?> eds = editors;
-						if (eds != null) {
-							eds.revertToDefaultValue();
-						}
+				"Revert parameters to their initial values", e -> {
+					final EditorsList<?> eds = editors;
+					if (eds != null) {
+						eds.revertToDefaultValue();
 					}
-
 				}, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
-				"Add a new simulation (with the current parameters) to this experiment", new SelectionListener() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					}
-
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e) {
-						widgetSelected(e);
-					}
-				}, SWT.RIGHT);
+				"Add a new simulation (with the current parameters) to this experiment",
+				e -> GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true), SWT.RIGHT);
 
 	}
 
 	@Override
 	public boolean addItem(final String object) {
-		createItem(parent, object, true, null);
+		createItem(getParentComposite(), object, true, null);
 		return true;
 	}
 

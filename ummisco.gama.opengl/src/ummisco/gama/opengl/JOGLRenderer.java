@@ -103,7 +103,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
 		// Whether face culling is enabled or not
-		if (GamaPreferences.OpenGL.ONLY_VISIBLE_FACES.getValue()) {
+		if (GamaPreferences.Displays.ONLY_VISIBLE_FACES.getValue()) {
 			gl.glEnable(GL.GL_CULL_FACE);
 			gl.glCullFace(GL.GL_BACK);
 		}

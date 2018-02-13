@@ -30,6 +30,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certain condition")),
 		@facet(name = ConsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 		@facet(name = ConsciousContagionStatement.DECAY, type = IType.FLOAT, optional = true, doc = @doc("The decay value of the emotion added to the agent")),
+		@facet(name = ConsciousContagionStatement.INTENSITY, type = IType.FLOAT, optional = true, doc = @doc("The intensity value of the emotion added to the agent")),
 		@facet(name = ConsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add an emotion of a perceived specie if the perceived agent ges a patricular emotion.", examples = {
 		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed;"),
@@ -44,6 +45,7 @@ public class ConsciousContagionStatement extends AbstractStatement {
 	public static final String RECEPTIVITY = "receptivity";
 	public static final String THRESHOLD = "threshold";
 	public static final String DECAY = "decay";
+	public static final String INTENSITY = "intensity";
 
 	final IExpression name;
 	final IExpression emotionDetected;
@@ -53,6 +55,7 @@ public class ConsciousContagionStatement extends AbstractStatement {
 	final IExpression receptivity;
 	final IExpression threshold;
 	final IExpression decay;
+	final IExpression intensity;
 
 	public ConsciousContagionStatement(final IDescription desc) {
 		super(desc);
@@ -64,6 +67,7 @@ public class ConsciousContagionStatement extends AbstractStatement {
 		receptivity = getFacet(ConsciousContagionStatement.RECEPTIVITY);
 		threshold = getFacet(ConsciousContagionStatement.THRESHOLD);
 		decay = getFacet(ConsciousContagionStatement.DECAY);
+		intensity = getFacet(ConsciousContagionStatement.INTENSITY);
 	}
 
 	@Override
@@ -74,6 +78,7 @@ public class ConsciousContagionStatement extends AbstractStatement {
 		Double receptivityValue = 1.0;
 		Double thresholdValue = 0.25;
 		Double decayValue = 0.0;
+		Double intensityValue = 0.0;
 		IScope scopeMySelf = null;
 		if (mySelfAgent != null) {
 			scopeMySelf = mySelfAgent.getScope().copy("of ConsciousContagionStatement");
@@ -109,6 +114,16 @@ public class ConsciousContagionStatement extends AbstractStatement {
 							}
 						}
 						tempEmo.setDecay(decayValue);
+						if(intensity!=null){
+							intensityValue = (Double) intensity.value(scopeMySelf);
+							if(intensityValue>1.0){
+								intensityValue = 1.0;
+							}
+							if(intensityValue<0.0){
+								intensityValue = 0.0;
+							}
+						}
+						tempEmo.setIntensity(intensityValue);
 						SimpleBdiArchitecture.addEmotion(scopeMySelf, tempEmo);
 					}
 				}

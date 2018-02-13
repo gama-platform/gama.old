@@ -18,6 +18,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.views.toolbar.GamaCommand;
+
 /**
  * The class GamaMenu.
  * 
@@ -34,13 +37,31 @@ public abstract class GamaMenu {
 		return string;
 	}
 
+	public static MenuItem action(final Menu parent, final GamaCommand command) {
+		final MenuItem m = new MenuItem(parent, SWT.PUSH);
+		m.setText(command.getText());
+		m.setImage(GamaIcons.create(command.getImage()).image());
+		m.setToolTipText(command.getTooltip());
+		m.addSelectionListener(command.getListener());
+		return m;
+	}
+
+	public static MenuItem check(final Menu parent, final GamaCommand command) {
+		final MenuItem m = new MenuItem(parent, SWT.CHECK);
+		m.setText(command.getText());
+		m.setImage(GamaIcons.create(command.getImage()).image());
+		m.setToolTipText(command.getTooltip());
+		m.addSelectionListener(command.getListener());
+		return m;
+	}
+
 	public static MenuItem separate(final Menu parent) {
 		return new MenuItem(parent, SWT.SEPARATOR);
 	}
 
 	protected Menu mainMenu;
 
-	protected MenuItem createItem(final Menu m, final int style) {
+	public static MenuItem createItem(final Menu m, final int style) {
 		return new MenuItem(m, style);
 	}
 
@@ -84,7 +105,7 @@ public abstract class GamaMenu {
 		return action(m, s, listener, null);
 	}
 
-	protected final MenuItem action(final Menu m, final String s, final SelectionListener listener, final Image image) {
+	public static MenuItem action(final Menu m, final String s, final SelectionListener listener, final Image image) {
 		final MenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
 		action.addSelectionListener(listener);
@@ -108,8 +129,8 @@ public abstract class GamaMenu {
 		return check(m, s, select, listener, null);
 	}
 
-	protected final MenuItem check(final Menu m, final String s, final boolean select, final SelectionListener listener,
-			final Image image) {
+	public static final MenuItem check(final Menu m, final String s, final boolean select,
+			final SelectionListener listener, final Image image) {
 		final MenuItem action = createItem(m, SWT.CHECK);
 		action.setText(s);
 		action.setSelection(select);
@@ -128,7 +149,7 @@ public abstract class GamaMenu {
 		return sub(parent, s, null);
 	}
 
-	protected final Menu sub(final Menu parent, final String s, final String t) {
+	public static Menu sub(final Menu parent, final String s, final String t) {
 		final MenuItem item = createItem(parent, SWT.CASCADE);
 		item.setText(s);
 		if (t != null) {

@@ -9,19 +9,18 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
@@ -31,10 +30,9 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener;
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
-import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -89,10 +87,8 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		@Override
 		public void afterValueChange(final Boolean newValue) {
 
-			try {
-				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-				view.checkActions();
-			} catch (final CoreException e) {}
+			build();
+			view.checkActions();
 
 		}
 	}
@@ -108,75 +104,31 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 
 	@Override
 	protected void setContentDescription(final String description) {
-		toolbar.status((Image) null, description, new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				openFilterDialog();
-			}
-
-		}, IGamaColors.BLUE, SWT.LEFT);
+		toolbar.status((Image) null, description, e -> openFilterDialog(), IGamaColors.BLUE, SWT.LEFT);
 	}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 
-		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
-			}
+		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", e -> {
+			final boolean b = ((ToolItem) e.widget).getSelection();
+			GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
 
-		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final boolean b = ((ToolItem) e.widget).getSelection();
-				GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
-			}
+		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", e -> {
+			final boolean b = ((ToolItem) e.widget).getSelection();
+			GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("build.all2", "", "Clean and validate all projects", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				try {
-					GamlResourceIndexer.eraseIndex();
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
-
-						@Override
-						public void done() {
-							super.done();
-							RefreshHandler.run(workspace.getRoot());
-
-						}
-
-					});
-
-				} catch (final CoreException ex) {
-					ex.printStackTrace();
-				}
-
-			}
-
+		tb.button("build.all2", "", "Clean and validate all projects", e -> {
+			build();
 		}, SWT.RIGHT);
 
-		tb.button("test.run2", "", "Run all tests", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				TestsRunner.start();
-			}
-
-		}, SWT.RIGHT);
+		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}
 
@@ -185,5 +137,36 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		ec.addVariable(ISources.ACTIVE_PART_NAME, this);
 		final ExecutionEvent ev = new ExecutionEvent(null, new HashMap<>(), this, ec);
 		new ConfigureContentsDialogHandler().execute(ev);
+	}
+
+	static private void doBuild(final IProgressMonitor monitor) {
+		try {
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+
+			// monitor.beginTask("Cleaning and building entire workspace", size);
+			// for (final IProject p : projects) {
+			// if (p.exists() && p.isAccessible()) {
+			// monitor.subTask("Building " + p.getName());
+			// p.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+			// monitor.worked(1);
+			// }
+			// }
+
+		} catch (final CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static void build() {
+
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(WorkbenchHelper.getShell());
+		dialog.setBlockOnOpen(false);
+		dialog.setCancelable(false);
+		dialog.setOpenOnRun(true);
+		try {
+			dialog.run(true, false, monitor -> doBuild(monitor));
+		} catch (InvocationTargetException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 }

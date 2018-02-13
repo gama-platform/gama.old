@@ -16,23 +16,11 @@ import msi.gama.doc.util.CheckConcepts;
 import msi.gama.doc.util.GenerateCategoryXML;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
-import msi.gama.precompiler.doc.utils.Constants;
 
 public class MainGenerateWiki {
 
 	public static void main(final String[] args) {
 		try {
-			//Get the System Classloader
-//	        ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
-//	 
-//	        //Get the URLs
-//	        URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
-//	 
-//	        for(int i=0; i< urls.length; i++)
-//	        {
-//	            System.out.println(urls[i].getFile());
-//	        }       
-	        
 			// build the file keywords.xml
 			GenerateCategoryXML.GenerateKeywordsXML();
 
@@ -40,11 +28,11 @@ public class MainGenerateWiki {
 			System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
 			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 			System.out.print("Preparation of the folders................");
-			PrepareEnv.prepareDocumentation(Constants.ONLINE);
+			PrepareEnv.prepareDocumentation();
 			System.out.println("DONE");
 
 			System.out.print("Merge all the docGAMA.xml files................");
-			UnifyDoc.unify();
+			UnifyDoc.unify((args.length > 0) ? (args[0].equals("-online") ? false : true) : true);
 			System.out.println("DONE");
 
 			System.out.print(

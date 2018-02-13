@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ImageViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ImageViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,10 +44,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -72,6 +67,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
 import msi.gama.runtime.GAMA;
+import msi.gama.util.file.IGamaFileMetaData;
 import ummisco.gama.ui.metadata.ImageDataLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -101,8 +97,8 @@ public class ImageViewer extends EditorPart
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		// we need either an IStorage or an input that can return an ImageData
-		if (!(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null) {
-			throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
+		if (!(input instanceof IStorageEditorInput) && input
+				.getAdapter(ImageData.class) == null) { throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
 		}
 		setSite(site);
 		setInput(input, false);
@@ -154,8 +150,7 @@ public class ImageViewer extends EditorPart
 	}
 
 	/**
-	 * Get the IFile corresponding to the specified editor input, or null for
-	 * none.
+	 * Get the IFile corresponding to the specified editor input, or null for none.
 	 */
 	private IFile getFileFor(final IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
@@ -163,9 +158,7 @@ public class ImageViewer extends EditorPart
 		} else if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage = ((IStorageEditorInput) input).getStorage();
-				if (storage instanceof IFile) {
-					return (IFile) storage;
-				}
+				if (storage instanceof IFile) { return (IFile) storage; }
 			} catch (final CoreException ignore) {
 				// intentionally blank
 			}
@@ -175,15 +168,12 @@ public class ImageViewer extends EditorPart
 
 	private void displayInfoString() {
 		final GamaUIColor color = IGamaColors.OK;
-		final String result = GAMA.getGui().getMetaDataProvider().getDecoratorSuffix(getFileFor(getEditorInput()));
-		toolbar.button(color, result, new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run();
-			}
-		}, SWT.LEFT);
-
+		final IGamaFileMetaData md =
+				GAMA.getGui().getMetaDataProvider().getMetaData(getFileFor(getEditorInput()), false, true);
+		final String result = md == null ? "" : md.getSuffix();
+		toolbar.button(color, result,
+				e -> getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run(),
+				SWT.LEFT);
 		toolbar.refresh(true);
 	}
 
@@ -255,21 +245,17 @@ public class ImageViewer extends EditorPart
 		scroll.setContent(intermediate);
 		// imageCanvas.setSize(0, 0);
 		// make the canvas paint the image, if we have one
-		imageCanvas.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(final PaintEvent e) {
-				final Rectangle bounds = imageCanvas.getBounds();
-				// showImage() should be setting the imageCanvas bounds to the
-				// zoomed size
-				e.gc.setBackground(getColor(0).color());
-				e.gc.fillRectangle(bounds);
-				// System.out.println("Painting image at size " + bounds.width +
-				// "x" + bounds.height);
-				if (image != null) {
-					final Rectangle imBounds = image.getBounds();
-					e.gc.drawImage(image, 0, 0, imBounds.width, imBounds.height, 0, 0, bounds.width, bounds.height);
-				}
+		imageCanvas.addPaintListener(e -> {
+			final Rectangle bounds = imageCanvas.getBounds();
+			// showImage() should be setting the imageCanvas bounds to the
+			// zoomed size
+			e.gc.setBackground(getColor(0).color());
+			e.gc.fillRectangle(bounds);
+			// System.out.println("Painting image at size " + bounds.width +
+			// "x" + bounds.height);
+			if (image != null) {
+				final Rectangle imBounds = image.getBounds();
+				e.gc.drawImage(image, 0, 0, imBounds.width, imBounds.height, 0, 0, bounds.width, bounds.height);
 			}
 		});
 
@@ -300,27 +286,20 @@ public class ImageViewer extends EditorPart
 	}
 
 	/**
-	 * This will start a job to load the image for the current editor input.
-	 * This can be started from any thread.
+	 * This will start a job to load the image for the current editor input. This can be started from any thread.
 	 */
 	private void startImageLoad() {
 		// skip if the UI hasn't been initialized yet, because
 		// createPartControl() will do this
-		if (imageCanvas == null) {
-			return;
-		}
+		if (imageCanvas == null) { return; }
 		// clear out the current image
-		final Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				if (image != null) {
-					image.dispose();
-					imageData = null;
-					image = null;
-					imageCanvas.setSize(0, 0);
-					scroll.redraw();
-				}
+		final Runnable r = () -> {
+			if (image != null) {
+				image.dispose();
+				imageData = null;
+				image = null;
+				imageCanvas.setSize(0, 0);
+				scroll.redraw();
 			}
 		};
 		WorkbenchHelper.asyncRun(r);
@@ -335,13 +314,9 @@ public class ImageViewer extends EditorPart
 					loadImageData();
 
 					// show the image on the next SWT exec
-					final Runnable r = new Runnable() {
-
-						@Override
-						public void run() {
-							showImage(true);
-							displayInfoString();
-						}
+					final Runnable r = () -> {
+						showImage(true);
+						displayInfoString();
 					};
 					WorkbenchHelper.asyncRun(r);
 
@@ -360,8 +335,8 @@ public class ImageViewer extends EditorPart
 	}
 
 	/**
-	 * Load the image data from the current editor input. This operation can
-	 * take time and should not be called on the ui thread.
+	 * Load the image data from the current editor input. This operation can take time and should not be called on the
+	 * ui thread.
 	 */
 	private void loadImageData() throws CoreException {
 		final IEditorInput input = getEditorInput();
@@ -377,12 +352,10 @@ public class ImageViewer extends EditorPart
 	}
 
 	/**
-	 * Refresh the ui to display the current image. This needs to be run in the
-	 * SWT thread.
+	 * Refresh the ui to display the current image. This needs to be run in the SWT thread.
 	 *
 	 * @param createImage
-	 *            true to (re)create the image object from the imageData, false
-	 *            to reuse.
+	 *            true to (re)create the image object from the imageData, false to reuse.
 	 */
 	private void showImage(final boolean createImage) {
 		if (imageData != null) {
@@ -397,8 +370,8 @@ public class ImageViewer extends EditorPart
 					image = new Image(imageCanvas.getDisplay(), imageData);
 				}
 				final Rectangle imageSize = image.getBounds();
-				final Point newSize = new Point((int) (imageSize.width * zoomFactor),
-						(int) (imageSize.height * zoomFactor));
+				final Point newSize =
+						new Point((int) (imageSize.width * zoomFactor), (int) (imageSize.height * zoomFactor));
 				resizeCanvas(newSize);
 				scroll.redraw();
 			} finally {
@@ -434,8 +407,7 @@ public class ImageViewer extends EditorPart
 	}
 
 	@Override
-	public void doSave(final IProgressMonitor monitor) {
-	}
+	public void doSave(final IProgressMonitor monitor) {}
 
 	@Override
 	public void doSaveAs() {
@@ -457,24 +429,18 @@ public class ImageViewer extends EditorPart
 			d.setOriginalName(initialFileName.toPortableString(), origImageType);
 		}
 		d.create();
-		if (d.open() != Window.OK) {
-			return;
-		}
+		if (d.open() != Window.OK) { return; }
 
 		// get the selected file path
 		IPath path = d.getResult();
-		if (path == null) {
-			return;
-		}
+		if (path == null) { return; }
 		// add a file extension if there isn't one
 		if (path.getFileExtension() == null) {
 			path = path.addFileExtension(d.getSaveAsImageExt());
 		}
 
 		final IFile dest = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		if (dest == null || origFile != null && dest.equals(origFile)) {
-			return;
-		}
+		if (dest == null || origFile != null && dest.equals(origFile)) { return; }
 		final int imageType = d.getSaveAsImageType();
 
 		// create a scheduling rule for the file edit/creation
@@ -500,9 +466,8 @@ public class ImageViewer extends EditorPart
 					throws CoreException, InvocationTargetException, InterruptedException {
 				try {
 					if (dest.exists()) {
-						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK()) {
-							return;
-						}
+						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell())
+								.isOK()) { return; }
 					}
 					saveTo(imageData, dest, imageType, monitor);
 				} catch (final IOException ex) {
@@ -547,9 +512,7 @@ public class ImageViewer extends EditorPart
 			if (!dest.getParent().exists()) {
 				final ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
 				gen.generateContainer(new SubProgressMonitor(monitor, 500));
-				if (monitor.isCanceled()) {
-					throw new InterruptedException();
-				}
+				if (monitor.isCanceled()) { throw new InterruptedException(); }
 			}
 			final ImageLoader loader = new ImageLoader();
 			loader.data = new ImageData[] { imageData };
@@ -581,14 +544,9 @@ public class ImageViewer extends EditorPart
 					// always do our own error dialog
 					if (!status.isOK()) {
 						final IStatus fstatus = status;
-						getSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-							@Override
-							public void run() {
-								ErrorDialog.openError(getSite().getShell(), "Error Saving",
-										MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus);
-							}
-						});
+						getSite().getShell().getDisplay()
+								.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), "Error Saving",
+										MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus));
 					}
 					return Status.OK_STATUS;
 				}
@@ -636,9 +594,7 @@ public class ImageViewer extends EditorPart
 	 * @return { SWT.IMAGE_* type, width, height } or null for no image
 	 */
 	public int[] getCurrentImageInformation() {
-		if (imageData != null) {
-			return new int[] { imageData.type, imageData.width, imageData.height };
-		}
+		if (imageData != null) { return new int[] { imageData.type, imageData.width, imageData.height }; }
 		return null;
 	}
 
@@ -662,10 +618,9 @@ public class ImageViewer extends EditorPart
 	}
 
 	/**
-	 * Update the zoom factor. This can safely called from any thread. It will
-	 * trigger an image redraw is needed. If the passed in value is larger than
-	 * the {@link #getMaxZoomFactor() max zoom factor}, the max zoom factor will
-	 * used instead.
+	 * Update the zoom factor. This can safely called from any thread. It will trigger an image redraw is needed. If the
+	 * passed in value is larger than the {@link #getMaxZoomFactor() max zoom factor}, the max zoom factor will used
+	 * instead.
 	 */
 	public void setZoomFactor(double newZoom) {
 		// don't go bigger than the maz zoom
@@ -675,13 +630,7 @@ public class ImageViewer extends EditorPart
 			this.zoomFactor = newZoom;
 			// redraw the image
 			if (imageCanvas != null) {
-				final Runnable r = new Runnable() {
-
-					@Override
-					public void run() {
-						showImage(false);
-					}
-				};
+				final Runnable r = () -> showImage(false);
 				WorkbenchHelper.run(r);
 			}
 		}
@@ -742,14 +691,7 @@ public class ImageViewer extends EditorPart
 			if (delta != null) {
 				// file deleted -- close the editor
 				if (delta.getKind() == IResourceDelta.REMOVED) {
-					final Runnable r = new Runnable() {
-
-						@Override
-						public void run() {
-							// this needs to be run in the SWT thread
-							getSite().getPage().closeEditor(ImageViewer.this, false);
-						}
-					};
+					final Runnable r = () -> getSite().getPage().closeEditor(ImageViewer.this, false);
 					getSite().getShell().getDisplay().asyncExec(r);
 				}
 				// file changed -- reload image
@@ -773,13 +715,7 @@ public class ImageViewer extends EditorPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as...", "Save as...", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				doSaveAs();
-			}
-		}, SWT.RIGHT);
+		tb.button("menu.saveas2", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 
@@ -812,13 +748,9 @@ public class ImageViewer extends EditorPart
 	@Override
 	public void setColor(final int index, final GamaUIColor c) {
 		if (imageCanvas != null) {
-			final Runnable rr = new Runnable() {
-
-				@Override
-				public void run() {
-					intermediate.setBackground(c.color());
-					showImage(false);
-				}
+			final Runnable rr = () -> {
+				intermediate.setBackground(c.color());
+				showImage(false);
 			};
 			WorkbenchHelper.run(rr);
 		}

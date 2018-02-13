@@ -15,7 +15,9 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import msi.gama.common.interfaces.IKeyword;
-import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
+import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
+import ummisco.gama.ui.navigator.contents.Category;
+import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 
 public class NavigatorSorter extends ViewerSorter {
 
@@ -28,7 +30,7 @@ public class NavigatorSorter extends ViewerSorter {
 
 	@Override
 	public int category(final Object e2) {
-		if (e2 instanceof WrappedFolder)
+		if (e2 instanceof Category)
 			return -1;
 		if (e2 instanceof WrappedExperimentContent)
 			return 100;

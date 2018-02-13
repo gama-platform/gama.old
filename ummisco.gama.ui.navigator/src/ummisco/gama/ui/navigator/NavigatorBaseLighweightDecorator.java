@@ -9,17 +9,11 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import msi.gama.common.GamlFileExtension;
-import msi.gama.runtime.GAMA;
-import msi.gama.util.file.IGamaFileMetaData;
-import ummisco.gama.ui.utils.PreferencesHelper;
+import ummisco.gama.ui.navigator.contents.VirtualContent;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
@@ -30,43 +24,19 @@ import ummisco.gama.ui.utils.PreferencesHelper;
  */
 public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecorator {
 
+	private final StringBuilder sb = new StringBuilder();
+
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
-		String suffix = "";
-		if (PreferencesHelper.NAVIGATOR_METADATA.getValue()) {
-			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(element, false, false);
-			if (data != null) {
-				suffix = data.getSuffix();
+		if (element instanceof VirtualContent) {
+			((VirtualContent<?>) element).getSuffix(sb);
+			if (sb.length() > 0) {
+				decoration.addSuffix(" (");
+				decoration.addSuffix(sb.toString());
+				decoration.addSuffix(")");
+				sb.setLength(0);
 			}
 		}
-
-		if (element instanceof IContainer) {
-			final int modelCount = countModels((IResource) element);
-			if (modelCount > 0) {
-				if (suffix != null && !suffix.isEmpty())
-					suffix += ", ";
-				suffix += modelCount + (modelCount == 1 ? " model" : " models");
-			}
-		} else if (element instanceof TopLevelFolder) {
-			suffix = ((TopLevelFolder) element).getSuffix();
-		}
-
-		//
-		if (suffix != null && !suffix.isEmpty()) {
-			decoration.addSuffix(" (" + suffix + ")");
-		}
-	}
-
-	public static int countModels(final IResource element) {
-		final int modelCount[] = new int[1];
-		try {
-			element.accept(proxy -> {
-				if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName()))
-					modelCount[0]++;
-				return true;
-			}, IResource.NONE);
-		} catch (final CoreException e) {}
-		return modelCount[0];
 	}
 
 	@Override

@@ -15,15 +15,17 @@ global {
 	bool save_shortest_paths <- false;
 	bool load_shortest_paths <- false;
 	string shortest_paths_file <- "../includes/shortest_paths.csv";
-	bool memorize_shortest_paths <- true;
+	bool memorize_shortest_paths <- false; //true by default
 	
-	/*4 type of optimizer can be used for the shortest path computation:
-	 *    - Djikstra: the default one - ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
-	 * 	  - Bellmann: ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
-	 * 	  - AStar: do not ensure to find the best shortest path - compute one shortest path at a time (by default, memorise the shortest path found)
-	 *    - Floyd Warshall: ensure to find the best shortest path - compute all the shortest pathes at the same time (and keep them in memory)
+	/*6 types of optimizer (algorithms) can be used for the shortest path computation:
+	 *    - Dijkstra: ensure to find the best shortest path - compute one shortest path at a time: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+	 * 	  - BellmannFord: ensure to find the best shortest path - compute one shortest path at a time: https://en.wikipedia.org/wiki/Bellman-Ford_algorithm
+	 * 	  - AStar: ensure to find the best shortest path - compute one shortest path at a time: https://en.wikipedia.org/wiki/A*_search_algorithm
+	 *    - NBAStar: the default one - ensure to find the best shortest path - compute one shortest path at a time: http://repub.eur.nl/pub/16100/ei2009-10.pdf
+	 *    - NBAStarApprox : does not ensure to find the best shortest path - compute one shortest path at a time: http://repub.eur.nl/pub/16100/ei2009-10.pdf
+	 *    - FloydWarshall: ensure to find the best shortest path - compute all the shortest paths at the same time (and keep them in memory): https://en.wikipedia.org/wiki/Floyd-Warshall_algorithm
 	 */
-	string optimizer_type <- "Djikstra";
+	string optimizer_type <- "NBAStar" among: ["NBAStar", "NBAStarApprox", "Dijkstra", "AStar", "BellmannFord", "FloydWarshall"];
 	int nb_people <- 100;
 	init {    
 		create road from: shape_file_in ;
@@ -82,7 +84,7 @@ species people skills: [moving] {
 
 
 experiment goto_network type: gui {
-	parameter "Type of optimizer" var: optimizer_type among: ["Djikstra", "AStar", "Bellmann", "Floyd Warshall"];
+	parameter "Type of optimizer" var: optimizer_type ;
 	parameter "Number of people" var: nb_people min: 1 max: 1000000;
 	parameter "Computed all the shortest paths and save the results" var: save_shortest_paths;
 	parameter "Load the shortest paths from the file" var: load_shortest_paths;

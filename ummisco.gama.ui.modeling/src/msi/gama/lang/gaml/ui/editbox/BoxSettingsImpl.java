@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BoxSettingsImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BoxSettingsImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
@@ -539,9 +538,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return -1;
 		if (!circulateLevelColors && boxColors != null && boxColors.length <= level && boxColors.length > 0)
 			return boxColors.length - 1;
-		if (boxColors != null && boxColors.length > 0 && level > -1) {
-			return getNColor0(level);
-		}
+		if (boxColors != null && boxColors.length > 0 && level > -1) { return getNColor0(level); }
 		return -1;
 	}
 
@@ -691,7 +688,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 		private Properties loadProperties(final String s) throws IOException {
 			final Properties p = new Properties();
-			p.load(new StringBufferInputStream(s));
+			p.load(new StringReader(s));
 			return p;
 		}
 
@@ -834,16 +831,16 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	private int swtLineStyle(final int index) {
 		switch (index) {
-		case 0:
-			return SWT.LINE_SOLID;
-		case 1:
-			return SWT.LINE_DOT;
-		case 2:
-			return SWT.LINE_DASH;
-		case 3:
-			return SWT.LINE_DASHDOT;
-		case 4:
-			return SWT.LINE_DASHDOTDOT;
+			case 0:
+				return SWT.LINE_SOLID;
+			case 1:
+				return SWT.LINE_DOT;
+			case 2:
+				return SWT.LINE_DASH;
+			case 3:
+				return SWT.LINE_DASHDOT;
+			case 4:
+				return SWT.LINE_DASHDOTDOT;
 		}
 		return 0;
 	}

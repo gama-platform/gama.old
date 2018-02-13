@@ -1,12 +1,12 @@
 package msi.gaml.statements.test;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
+import one.util.streamex.StreamEx;
 
 public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	private static int COUNT = 0;
@@ -45,6 +45,8 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 		return title;
 	}
 
+	public abstract long getTimeStamp();
+
 	public GamaColor getColor() {
 		return getState().getColor();
 	}
@@ -57,22 +59,16 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 		error = null;
 	}
 
-	public Map<String, ? extends AbstractSummary<?>> getSummaries() {
-		return Collections.EMPTY_MAP;
-	}
+	public abstract Map<String, ? extends AbstractSummary<?>> getSummaries();
 
-	public int countTestsWith(final TestState state) {
-		return 0;
-	}
+	public abstract int countTestsWith(final TestState state);
 
-	public int size() {
-		return 0;
-	}
+	public abstract int size();
 
 	@Override
 	public final String toString() {
 		final TestState state = getState();
-		if (GamaPreferences.Modeling.FAILED_TESTS.getValue() && state != TestState.FAILED && state != TestState.ABORTED)
+		if (GamaPreferences.Runtime.FAILED_TESTS.getValue() && state != TestState.FAILED && state != TestState.ABORTED)
 			return "";
 		final StringBuilder sb = new StringBuilder();
 		printHeader(sb);
@@ -92,5 +88,13 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	protected void printFooter(final StringBuilder sb) {}
 
 	protected void printHeader(final StringBuilder sb) {}
+
+	public AbstractSummary<?> getSummaryOf(final URI uri) {
+		if (this.uri != null)
+			System.out.println("Comparing " + this.uri + " to " + uri);
+		if (uri.equals(this.uri))
+			return this;
+		return StreamEx.ofValues(getSummaries()).findFirst(s -> s.getSummaryOf(uri) != null).orElse(null);
+	}
 
 }

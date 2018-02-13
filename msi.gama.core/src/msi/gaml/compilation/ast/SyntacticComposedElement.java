@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SyntacticComposedElement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SyntacticComposedElement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
 
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
 /**
@@ -34,10 +34,15 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	}
 
 	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		visitAllChildren(c -> sb.append(Strings.LN).append(Strings.TAB).append(c.toString()));
+		return super.toString() + sb;
+	}
+
+	@Override
 	public void addChild(final ISyntacticElement e) {
-		if (e == null) {
-			return;
-		}
+		if (e == null) { return; }
 		if (children == null)
 			children = new ISyntacticElement[] { e };
 		else {

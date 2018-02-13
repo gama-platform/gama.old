@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlHighlightingConfiguration.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlHighlightingConfiguration.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,23 +9,56 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
+
 /**
- * Written by drogoul
- * Modified on 16 nov. 2011
+ * Written by drogoul Modified on 16 nov. 2011
  *
  * @todo Description
  *
  */
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.GamaPreferences.Modeling;
+import msi.gama.util.GamaFont;
+import msi.gaml.types.IType;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
+
+	public static final String NAME = "Syntax coloring";
+
+	public static GamaFont getDefaultFont() {
+		final FontData fd = PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(),
+				JFaceResources.TEXT_FONT);
+		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
+	}
+
+	public static GamaFont get(final FontData fd) {
+		return fd == null ? getDefaultFont() : new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
+	}
+
+	static {
+		final GamlHighlightingConfiguration c = new GamlHighlightingConfiguration();
+		c.configure((id, name, style) -> {
+			final FontData[] fd = style.getFontData();
+			final FontData f = fd == null ? null : fd[0];
+			GamaPreferences.create("pref_" + id + "_font", name + " font", get(f), IType.FONT).in(Modeling.NAME, NAME);
+		});
+		c.configure((id, name, style) -> GamaPreferences
+				.create("pref_" + id + "_color", name + " color", GamaColors.toGamaColor(style.getColor()), IType.COLOR)
+				.in(Modeling.NAME, NAME));
+	}
 
 	public static final String OPERATOR_ID = "binary";
 	public static final String RESERVED_ID = "reserved";

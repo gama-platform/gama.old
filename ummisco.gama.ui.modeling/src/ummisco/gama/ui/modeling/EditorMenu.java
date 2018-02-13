@@ -51,7 +51,7 @@ import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.access.ModelsFinder;
-import ummisco.gama.ui.commands.RefreshHandler;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -177,7 +177,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 						@Override
 						public void done() {
 							super.done();
-							RefreshHandler.run(workspace.getRoot());
+							WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
 
 						}
 
@@ -259,7 +259,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				final IProject proj = myFile.getProject();
 				// AD Addresses Issue 796 by passing null to the "without"
 				// parameter
-				final List<URI> resources = ModelsFinder.getAllGamaFilesInProject(proj, null);
+				final List<URI> resources = ModelsFinder.getAllGamaURIsInProject(proj);
 				final ResourceSet rs = editor.resourceSetProvider.get(proj);
 				for (final URI uri : resources) {
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);

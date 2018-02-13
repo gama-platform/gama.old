@@ -29,22 +29,23 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
-import ummisco.gama.ui.commands.RefreshHandler;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
-	/**
-	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse framework.
-	 */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
 	private NewProjectWizardPage wizardPage;
-	// private IConfigurationElement config;
 	private IProject project;
 
 	public NewProjectWizard() {
@@ -65,8 +66,9 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		if (project != null) { return true; }
 
 		final boolean isTest = wizardPage.isTest();
+		final boolean createNewModel = wizardPage.createNewModel();
 		final IProject projectHandle = wizardPage.getProjectHandle();
-		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
+		final URI projectURI = /* !wizardPage.useDefaults() ? */ wizardPage.getLocationURI()/* : null */;
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription desc = workspace.newProjectDescription(projectHandle.getName());
 		desc.setLocationURI(projectURI);
@@ -91,8 +93,21 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
-
 		project = projectHandle;
+		if (createNewModel) {
+			final UIJob job = new UIJob("New Model File") {
+
+				@Override
+				public IStatus runInUIThread(final IProgressMonitor monitor) {
+					final IWorkbenchWizard w = isTest ? new NewTestExperimentWizard() : new NewFileWizard();
+					w.init(WorkbenchHelper.getWorkbench(), new StructuredSelection(project));
+					final WizardDialog wd = new WizardDialog(getShell(), w);
+					wd.open();
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule(100);
+		}
 		return true;
 
 	}
@@ -122,14 +137,6 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			 * We now have the project and we can do more things with it before updating the perspective.
 			 */
 			final IContainer container = proj;
-			//
-			// /* Add the doc folder */
-			// final IFolder libFolder = container.getFolder(new Path("doc"));
-			// libFolder.create(true, true, monitor);
-			//
-			// /* Add the snapshots folder in the doc folder */
-			// final IFolder snapshotsFolder = libFolder.getFolder(new Path("snapshots"));
-			// snapshotsFolder.create(true, true, monitor);
 
 			/* Add the models folder */
 			final IFolder modelFolder = container.getFolder(new Path("models"));
@@ -140,10 +147,10 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			incFolder.create(true, true, monitor);
 
 			/* Add the images folder */
-			final IFolder imFolder = container.getFolder(new Path("tests"));
-			imFolder.create(true, true, monitor);
-
-			RefreshHandler.run(modelFolder);
+			if (isTest) {
+				final IFolder imFolder = container.getFolder(new Path("tests"));
+				imFolder.create(true, true, monitor);
+			}
 
 		} catch (final CoreException ioe) {
 			final IStatus status =
@@ -151,25 +158,14 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			throw new CoreException(status);
 		} finally {
 			monitor.done();
-			// RefreshHandler.run();
+			ResourceManager.getInstance().reveal(proj.getFolder(isTest ? "tests" : "models"));
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
-	 * org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
-	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-		// snipped...
-	}
+	public void init(final IWorkbench workbench, final IStructuredSelection selection) {}
 
-	/** Sets the initialization data for the wizard. */
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data)
-			throws CoreException {
-		// snipped...
-	}
+			throws CoreException {}
 }

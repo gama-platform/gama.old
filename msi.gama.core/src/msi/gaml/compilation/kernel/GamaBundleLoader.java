@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
@@ -26,6 +27,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IEventLayerDelegate;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
@@ -41,7 +44,22 @@ import msi.gaml.types.Types;
  */
 public class GamaBundleLoader {
 
+	private static final boolean DEBUG = true;
+
+	public static void LOG(final String s) {
+		if (DEBUG)
+			System.out.println(s);
+	}
+
+	public static void ERROR(final Exception e) {
+		ERRORED = true;
+		LAST_EXCEPTION = e;
+		e.printStackTrace();
+	}
+
 	public volatile static boolean LOADED = false;
+	public volatile static boolean ERRORED = false;
+	public volatile static Exception LAST_EXCEPTION = null;
 	public static Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
 	public static Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
 	public static String CORE_TESTS = "tests";
@@ -50,6 +68,7 @@ public class GamaBundleLoader {
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
 	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
+	public static String EVENT_LAYER_EXTENSION = "gama.event_layer";
 	public static String MODELS_EXTENSION = "gama.models";
 	public static String REGULAR_MODELS_LAYOUT = "models";
 	public static String REGULAR_TESTS_LAYOUT = "tests";
@@ -66,11 +85,14 @@ public class GamaBundleLoader {
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
 		final Set<IExtension> extensions = new HashSet<IExtension>();
-
-		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
-		extensions.addAll(Arrays.asList(p.getExtensions()));
-		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
-		extensions.addAll(Arrays.asList(p.getExtensions()));
+		try {
+			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
+			extensions.addAll(Arrays.asList(p.getExtensions()));
+			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+			extensions.addAll(Arrays.asList(p.getExtensions()));
+		} catch (final InvalidRegistryObjectException e) {
+			ERROR(e);
+		}
 
 		// We retrieve their contributor plugin and add them to the
 		// GAMA_PLUGINS. In addition, we verify if they declare a folder called
@@ -89,26 +111,61 @@ public class GamaBundleLoader {
 			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null)
 				TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
 		}
+		// LOG(">GAMA plugins with language additions: "
+		// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
+		// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e ->
+		// e.getSymbolicName()).toSet());
+		// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e -> e.getSymbolicName()).toSet());
 
 		// We remove the core plugin, in order to build it first (important)
 		GAMA_PLUGINS.remove(CORE_PLUGIN);
-		preBuild(CORE_PLUGIN);
+		try {
+			preBuild(CORE_PLUGIN);
+		} catch (final Exception e2) {
+			LOG("Error in loading plugin " + CORE_PLUGIN.getSymbolicName());
+			ERROR(e2);
+			return;
+		}
 		// We then build the other extensions to the language
 		for (final Bundle addition : GAMA_PLUGINS) {
 			CURRENT_PLUGIN_NAME = addition.getSymbolicName();
-			preBuild(addition);
+			try {
+				preBuild(addition);
+			} catch (final Exception e1) {
+				LOG("Error in loading plugin " + addition.getSymbolicName());
+				ERROR(e1);
+				return;
+			}
 		}
 		CURRENT_PLUGIN_NAME = null;
 		// We gather all the extensions to the `create` statement and add them
-		// as delegates to CreateStatement
+		// as delegates to CreateStatement. If an exception occurs, we discard it
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
+			ICreateDelegate cd = null;
 			try {
 				// TODO Add the defining plug-in
-				CreateStatement.addDelegate((ICreateDelegate) e.createExecutableExtension("class"));
+				cd = (ICreateDelegate) e.createExecutableExtension("class");
+				if (cd != null)
+					CreateStatement.addDelegate(cd);
 			} catch (final CoreException e1) {
-				e1.printStackTrace();
+				CreateStatement.removeDelegate(cd);
+				ERROR(e1);
+				return;
 			}
 		}
+
+		// We gather all the extensions to the `create` statement and add them
+		// as delegates to EventLayerStatement
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
+			try {
+				// TODO Add the defining plug-in
+				EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
+			} catch (final CoreException e1) {
+				ERROR(e1);
+				return;
+			}
+		}
+
 		// We gather all the GAMA_PLUGINS that explicitly declare models using
 		// the non-default scheme (plugin > models ...).
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
@@ -137,7 +194,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		System.out.println(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		LOG(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -153,7 +210,7 @@ public class GamaBundleLoader {
 	}
 
 	@SuppressWarnings ("unchecked")
-	public static void preBuild(final Bundle bundle) {
+	public static void preBuild(final Bundle bundle) throws Exception {
 		GamaClassLoader.getInstance().addBundle(bundle);
 
 		final long start = System.currentTimeMillis();
@@ -161,30 +218,29 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
 		} catch (final ClassNotFoundException e1) {
-			System.out.println(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
-			return;
+			LOG(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
+			throw e1;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (final InstantiationException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
-			return;
+			LOG(">> Impossible to instantiate additions from " + bundle);
+			throw e;
 		} catch (final IllegalAccessException e) {
-			System.out.println(">> Impossible to access additions from " + bundle);
-			return;
+			LOG(">> Impossible to access additions from " + bundle);
+			throw e;
 		}
 		try {
 			add.initialize();
 		} catch (final SecurityException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
-			return;
+			LOG(">> Impossible to instantiate additions from " + bundle);
+			throw e;
 		} catch (final NoSuchMethodException e) {
-			System.out.println(">> Impossible to instantiate additions from " + bundle);
-			return;
+			LOG(">> Impossible to instantiate additions from " + bundle);
+			throw e;
 		}
-		System.out.println(
-				">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
+		LOG(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
 
 	}
 

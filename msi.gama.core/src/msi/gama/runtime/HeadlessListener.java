@@ -10,7 +10,6 @@
 package msi.gama.runtime;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 import msi.gama.common.interfaces.IConsoleDisplayer;
@@ -203,15 +201,7 @@ public class HeadlessListener implements IGui {
 		return new IFileMetaDataProvider() {
 
 			@Override
-			public void storeMetadata(final IResource file, final IGamaFileMetaData data, final boolean immediately) {}
-
-			@Override
-			public void storeMetadata(final File f, final IGamaFileMetaData data) {}
-
-			@Override
-			public boolean isGAML(final IFile resource) {
-				return false;
-			}
+			public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {}
 
 			@Override
 			public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
@@ -242,6 +232,9 @@ public class HeadlessListener implements IGui {
 					}
 
 					@Override
+					public void appendSuffix(final StringBuilder sb) {}
+
+					@Override
 					public long getModificationStamp() {
 						return 0;
 					}
@@ -253,10 +246,6 @@ public class HeadlessListener implements IGui {
 				};
 			}
 
-			@Override
-			public String getDecoratorSuffix(final Object element) {
-				return "";
-			}
 		};
 	}
 
@@ -480,6 +469,12 @@ public class HeadlessListener implements IGui {
 	public boolean toggleFullScreenMode() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void refreshNavigator() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

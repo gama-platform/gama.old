@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
+import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_SHOW_FPS;
+
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,12 +41,16 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 
+import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterTarget;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
+import msi.gaml.operators.Maths;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -77,7 +83,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			WorkbenchHelper.asyncRun(() -> {
 				if (!zoom.isDisposed()) {
 					text.setLength(0);
-					getView().getOverlayZoomInfo(text);
+					getOverlayZoomInfo(text);
 					zoom.setText(text.toString());
 				}
 			});
@@ -228,7 +234,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	private String getScaleRight() {
-		final double real = getView().getValueOfOnePixelInModelUnits() * 100;
+		final double real = getValueOfOnePixelInModelUnits() * 100;
 		// System.out.println("GetScaleRight " + real);
 		if (real > 1000) {
 			return String.format("%.1fkm", real / 1000d);
@@ -319,7 +325,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if (!coord.isDisposed()) {
 				try {
 					text.setLength(0);
-					getView().getOverlayCoordInfo(text);
+					getOverlayCoordInfo(text);
 					coord.setText(text.toString());
 				} catch (final Exception e) {
 					coord.setText("Not initialized yet");
@@ -328,7 +334,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if (!zoom.isDisposed()) {
 				try {
 					text.setLength(0);
-					getView().getOverlayZoomInfo(text);
+					getOverlayZoomInfo(text);
 					zoom.setText(text.toString());
 				} catch (final Exception e) {
 					GAMA.getGui().debug("Error in updating overlay: " + e.getMessage());
@@ -533,6 +539,57 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public void dispose() {
 		popup.dispose();
 
+	}
+
+	public double getValueOfOnePixelInModelUnits() {
+		final IDisplaySurface s = view.getDisplaySurface();
+		if (s == null) { return 1; }
+		final double displayWidth = s.getDisplayWidth();
+		final double envWidth = s.getEnvWidth();
+		return envWidth / displayWidth;
+	}
+
+	public void getOverlayCoordInfo(final StringBuilder sb) {
+		final LayeredDisplayOutput output = view.getOutput();
+		if (output == null) { return; }
+		final boolean paused = output.isPaused();
+		final boolean synced = output.getData().isSynchronized();
+		final IDisplaySurface surface = view.getDisplaySurface();
+		if (surface != null)
+			surface.getModelCoordinatesInfo(sb);
+		if (paused)
+			sb.append(" | Paused");
+		if (synced)
+			sb.append(" | Synchronized");
+	}
+
+	public void getOverlayZoomInfo(final StringBuilder sb) {
+		final IDisplaySurface surface = view.getDisplaySurface();
+		if (surface == null) { return; }
+		if (CORE_SHOW_FPS.getValue()) {
+			sb.append(surface.getFPS());
+			sb.append(" fps | ");
+		}
+		int zl = 0;
+		if (view.getOutput() != null) {
+			final Double dataZoom = view.getOutput().getData().getZoomLevel();
+			if (dataZoom == null) {
+				zl = 1;
+			} else {
+				zl = (int) (dataZoom * 100);
+			}
+		}
+		sb.append("Zoom ").append(zl).append("%");
+		if (view.isOpenGL()) {
+			final Envelope3D roi = ((IDisplaySurface.OpenGL) surface).getROIDimensions();
+			if (roi != null) {
+				sb.append(" ROI [");
+				sb.append(Maths.round(roi.getWidth(), 2));
+				sb.append(" x ");
+				sb.append(Maths.round(roi.getHeight(), 2));
+				sb.append("]");
+			}
+		}
 	}
 
 }

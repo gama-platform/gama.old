@@ -54,6 +54,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 				@facet (
+						name = ChartDataStatement.USE_SECOND_Y_AXIS,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Use second y axis for this serie")),
+				@facet (
 						name = ChartDataStatement.YMINMAX_VALUES,
 						type = IType.LIST,
 						optional = true,
@@ -105,6 +110,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("list of colors, for heatmaps can be a list of [minColor,maxColor] or [minColor,medColor,maxColor]")),
 				@facet (
+						name = ChartDataStatement.THICKNESS,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("The thickness of the lines to draw")),
+				@facet (
 						name = IKeyword.STYLE,
 						type = IType.ID,
 						values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
@@ -131,6 +141,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		Object lastvalue;
 		String name;
 		int previoussize = 0;
+		boolean useSecondYAxis = false;
 
 	}
 
@@ -224,8 +235,15 @@ public class ChartDataListStatement extends AbstractStatement {
 			data.setColorExp(scope, expval);
 
 		}
+		expval = getFacet(ChartDataStatement.THICKNESS);
+		if (expval != null) {
+			expval = expval.resolveAgainst(scope);
+			data.setLineThickness(Cast.asFloat(scope, expval.value(scope)));
+		}
 		boolean boolval = getFacetValue(scope, ChartDataStatement.MARKER, true);
 		data.setMarkerBool(scope, boolval);
+		boolval = getFacetValue(scope, ChartDataStatement.USE_SECOND_Y_AXIS, false);
+		data.setUseSecondYAxis(scope, boolval);
 
 		boolval = getFacetValue(scope, ChartDataStatement.LINE_VISIBLE, true);
 		data.setShowLine(scope, boolval);

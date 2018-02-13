@@ -239,19 +239,6 @@
                id="viewMenu"
                label="Views">
             <command
-                  commandId="msi.gama.application.preferences"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.preferences2.png"
-                  label="Preferences"
-                  style="push"
-                  tooltip="Open preferences">
-            </command>
-            <command
-                  commandId="msi.gama.application.command.web"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.web2.png"
-                  label="Welcome page"
-                  style="push">
-            </command>
-            <command
                   commandId="msi.gama.application.command.interactive"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive.png"
                   label="Interactive Console"
@@ -589,7 +576,7 @@
             commandId="msi.gama.application.commands.StepBackSimulation">
          <activeWhen>
             <with
-                  variable="msi.gama.application.commands.SimulationStepBack">
+                  variable="ummisco.gama.ui.experiment.SimulationStepBack">
                <equals
                      value="CAN_STEP_BACK">
                </equals>
@@ -597,7 +584,7 @@
          </activeWhen>
          <enabledWhen>
             <with
-                  variable="msi.gama.application.commands.SimulationStepBack">
+                  variable="ummisco.gama.ui.experiment.SimulationStepBack">
                <equals
                      value="CAN_STEP_BACK">
                </equals>
@@ -1010,10 +997,6 @@
             defaultHandler="ummisco.gama.ui.commands.ShowInteractiveConsole"
             id="msi.gama.application.command.interactive"
             name="Show Interactive Console">
-      </command>
-      <command
-            id="ummisco.gama.ui.experiment.command1"
-            name="name">
       </command>
    </extension>
    <extension

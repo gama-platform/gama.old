@@ -175,7 +175,7 @@ public abstract class DrawingAttributes {
 	}
 
 	public Double getLineWidth() {
-		return GamaPreferences.OpenGL.CORE_LINE_WIDTH.getValue();
+		return GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
 	}
 
 	public void setTexture(final Object o) {

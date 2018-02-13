@@ -20,6 +20,7 @@ import java.util.Collections;
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
@@ -223,6 +224,12 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				scaleAxis.setLabelPaint(textColor);
 				scaleAxis.setTickLabelPaint(textColor);
 			}
+			if (!this.getXTickValueVisible(scope))
+			{
+				scaleAxis.setTickMarksVisible(false);
+				scaleAxis.setTickLabelsVisible(false);
+				
+			}
 
 			final PaintScaleLegend legend = new PaintScaleLegend(paintscale, scaleAxis);
 			legend.setAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
@@ -314,13 +321,57 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
+		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		if (XValues.size()==0)
+		{
+			if (!usexrangeinterval && !usexrangeminmax) 
+			{
+				domainAxis.setAutoRange(false);
+				domainAxis.setRange(-0.5,XValues.size()+0.5);				
+			}
+			
+		}
+		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		if (YValues.size()==0)
+		{
+			if (!useyrangeinterval && !useyrangeminmax) 
+			{
+				rangeAxis.setAutoRange(false);
+				rangeAxis.setRange(-0.5,YValues.size()+0.5);				
+			}
+			
+		}
+//		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+//		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
 		if (XValues.size() > 0) {
-			final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
+				domainAxis.setTickLabelsVisible(this.getXTickValueVisible(scope));
+				domainAxis.setTickMarksVisible(this.getXTickValueVisible(scope));
+				rangeAxis.setTickLabelsVisible(this.getYTickValueVisible(scope));
+				rangeAxis.setTickMarksVisible(this.getYTickValueVisible(scope));
 			for (int i = 0; i < XValues.size(); i++) {
+
+				if (XValues.get(i)>domainAxis.getUpperBound())
+				{
+					if (!usexrangeinterval && !usexrangeminmax) 
+					{
+						domainAxis.setAutoRange(false);
+						domainAxis.setRange(-0.5,YValues.get(i)+0.5);				
+					}
+					
+				}
+				if (YValues.get(i)>rangeAxis.getUpperBound())
+				{
+					if (!useyrangeinterval && !useyrangeminmax) 
+					{
+						rangeAxis.setAutoRange(false);
+						rangeAxis.setRange(-0.5,YValues.get(i)+0.5);				
+					}
+					
+				}
+
 				serie.update(YValues.get(i).intValue(), XValues.get(i).intValue(), SValues.get(i).doubleValue());
 			}
 		}
@@ -330,38 +381,66 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
-		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		 NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		 NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
+		if (getX_LogScale(scope)) 
+		{
+		 LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+		((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
+		domainAxis=logAxis;
+		}
+		if (getY_LogScale(scope)) 
+		{
+			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+		((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+		rangeAxis=logAxis;
+		}
 		if (!usexrangeinterval && !usexrangeminmax) {
-			domainAxis.setAutoRange(true);
+//			domainAxis.setAutoRangeMinimumSize(0.5);
+//			domainAxis.setAutoRange(true);
 		}
 
 		if (this.usexrangeinterval) {
 			domainAxis.setFixedAutoRange(xrangeinterval);
 			domainAxis.setAutoRangeMinimumSize(xrangeinterval);
 			domainAxis.setAutoRange(true);
-
 		}
 		if (this.usexrangeminmax) {
 			domainAxis.setRange(xrangemin, xrangemax);
-
 		}
 
 		if (!useyrangeinterval && !useyrangeminmax) {
-			rangeAxis.setAutoRange(true);
+	//		rangeAxis.setAutoRangeMinimumSize(0.5);
+	//		rangeAxis.setAutoRange(true);
 		}
 
 		if (this.useyrangeinterval) {
 			rangeAxis.setFixedAutoRange(yrangeinterval);
 			rangeAxis.setAutoRangeMinimumSize(yrangeinterval);
 			rangeAxis.setAutoRange(true);
-
 		}
 		if (this.useyrangeminmax) {
 			rangeAxis.setRange(yrangemin, yrangemax);
-
 		}
+		if (this.series_label_position.equals("none")) 
+		{
+			if ((this.chart).getLegend()!=null)
+			(this.chart).getLegend().setVisible(false);
+		}
+		if (!this.getXTickLineVisible(scope))
+		{
+			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(false);
+			
+		}
+		if (!this.getYTickLineVisible(scope))
+		{
+			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(false);
+			
+		}
+		
 	}
 
 	@Override
@@ -453,6 +532,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		pp.setDomainGridlinesVisible(false);
 
 		pp.getDomainAxis().setAxisLinePaint(axesColor);
+
 		pp.getDomainAxis().setTickLabelFont(getTickFont());
 		pp.getDomainAxis().setLabelFont(getLabelFont());
 		if (textColor != null) {

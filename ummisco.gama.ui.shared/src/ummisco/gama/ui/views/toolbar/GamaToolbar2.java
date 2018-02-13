@@ -103,7 +103,7 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public ToolItem status(final Image image, final String s, final SelectionListener l, final GamaUIColor color,
+	public ToolItem status(final Image image, final String s, final Selector l, final GamaUIColor color,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
 		final ToolItem item = button(color, s, image, side);
@@ -146,18 +146,25 @@ public class GamaToolbar2 extends Composite {
 		return t;
 	}
 
-	public ToolItem check(final String image, final String text, final String tip, final SelectionListener listener,
+	public ToolItem check(final String image, final String text, final String tip, final Selector listener,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return create(image, text, tip, listener, SWT.CHECK, false, null, side);
 	}
 
-	public ToolItem button(final String image, final String text, final String tip, final SelectionListener listener,
+	public ToolItem check(final GamaCommand command, final int side) {
+		return check(command.getImage(), command.getText(), command.getTooltip(), command.getListener(), side);
+	}
+
+	public ToolItem button(final String image, final String text, final String tip, final Selector listener,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return create(image, text, tip, listener, SWT.PUSH, false, null, side);
 	}
 
-	public ToolItem button(final GamaUIColor color, final String text, final SelectionListener listener,
-			final int side) {
+	public ToolItem button(final GamaCommand command, final int side) {
+		return button(command.getImage(), command.getText(), command.getTooltip(), command.getListener(), side);
+	}
+
+	public ToolItem button(final GamaUIColor color, final String text, final Selector listener, final int side) {
 		final FlatButton button = FlatButton.button(side == SWT.LEFT ? left : right, color, text, null);
 		button.addSelectionListener(listener);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
@@ -168,8 +175,8 @@ public class GamaToolbar2 extends Composite {
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
 	}
 
-	public ToolItem button(final GamaUIColor color, final String text, final Image image,
-			final SelectionListener listener, final int side) {
+	public ToolItem button(final GamaUIColor color, final String text, final Image image, final Selector listener,
+			final int side) {
 		final FlatButton button = FlatButton.button(side == SWT.LEFT ? left : right, color, text, image);
 		button.addSelectionListener(listener);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
@@ -185,9 +192,13 @@ public class GamaToolbar2 extends Composite {
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
 	}
 
-	public ToolItem menu(final String image, final String text, final String tip, final SelectionListener listener,
+	public ToolItem menu(final String image, final String text, final String tip, final Selector listener,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return create(image, text, tip, listener, SWT.DROP_DOWN, false, null, side);
+	}
+
+	public ToolItem menu(final GamaCommand command, final int side) {
+		return menu(command.getImage(), command.getText(), command.getTooltip(), command.getListener(), side);
 	}
 
 	public ToolItem control(final Control c, final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {

@@ -61,6 +61,8 @@ public class ChartLayer extends AbstractLayer {
 			if (!dg.is2D()) {
 				x = (int) (Math.min(x, y) * 0.80);
 				y = x;
+//				x = (int) (x* 0.80);
+//				y = (int) (y* 0.80);
 			}
 			final BufferedImage im = getChart().getImage(scope, x, y, dg.getSurface().getData().isAntialias());
 			final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);

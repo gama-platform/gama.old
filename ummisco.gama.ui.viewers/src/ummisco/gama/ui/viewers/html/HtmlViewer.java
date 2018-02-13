@@ -16,8 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
@@ -143,50 +141,21 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 
-		back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				browser.back();
-				checkButtons();
-			}
-
+		back = tb.button("browser/back", "Back", "Go to previous page in history", e -> {
+			browser.back();
+			checkButtons();
 		}, SWT.RIGHT);
-		home = tb.button("browser/home", "Home", "Go back to the welcome page", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				browser.setUrl(WebHelper.getWelcomePageURL().toString());
-				checkButtons();
-			}
-
+		home = tb.button("browser/home", "Home", "Go back to the welcome page", e -> {
+			browser.setUrl(WebHelper.getWelcomePageURL().toString());
+			checkButtons();
 		}, SWT.RIGHT);
-		forward = tb.button("browser/forward", "Forward", "Go to next page in history", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				browser.forward();
-				checkButtons();
-			}
-
+		forward = tb.button("browser/forward", "Forward", "Go to next page in history", e -> {
+			browser.forward();
+			checkButtons();
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("browser/refresh", "Refresh", "Refresh current page", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				browser.refresh();
-			}
-
-		}, SWT.RIGHT);
-		tb.button("browser/stop", "Stop", "Stop loading page", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				browser.stop();
-			}
-
-		}, SWT.RIGHT);
+		tb.button("browser/refresh", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
+		tb.button("browser/stop", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
 
 	}
 

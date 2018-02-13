@@ -118,7 +118,7 @@ public class LayeredDisplayData {
 	private boolean ortho = false;
 	private boolean disableCameraInteraction = false; // "fixed_camera" facet
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
-	private boolean isDrawingEnvironment = GamaPreferences.OpenGL.CORE_DRAW_ENV.getValue();
+	private boolean isDrawingEnvironment = GamaPreferences.Displays.CORE_DRAW_ENV.getValue();
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
 	private GamaPoint cameraPos = null;
 	private GamaPoint cameraLookPos = null;

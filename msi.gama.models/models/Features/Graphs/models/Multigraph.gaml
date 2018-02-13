@@ -16,7 +16,7 @@ global {
 	//spatial graph representing the road network
 	graph road_graph; 
 	
-	//social graph (not spatial) representing the frienship links between people
+	//social graph (not spatial) representing the friendship links between people
 	graph friendship_graph <- graph([]);
 	
 	init {

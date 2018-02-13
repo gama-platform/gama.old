@@ -12,17 +12,17 @@ global {
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
-									'port'::'8889',
-									'user'::'root',
-									'passwd'::'root',
+									'port'::'3306',
+									'user'::'gama_usr1',
+									'passwd'::'123456',
 								  	"select"::"SELECT geom FROM bounds;" ];
 	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
 									'host'::'localhost',
 									'dbtype'::'MySQL',
 									'database'::'spatial_DB',
-									'port'::'8889',
-									'user'::'root',
-									'passwd'::'root'];
+									'port'::'3306',
+									'user'::'gama_usr1',
+									'passwd'::'123456'];
 	
 	string QUERY <- "SELECT name, type, geom FROM buildings ;";
 	geometry shape <- envelope(BOUNDS);		  	
@@ -31,7 +31,7 @@ global {
 		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
+							 with:[ type::"type", shape:: "geom"];
 		 }
 	}
 }
@@ -46,7 +46,7 @@ species buildings {
 	}	
 }	
 
-experiment DB2agentSQLite type: gui {
+experiment DB2agentMySQL type: gui {
 	output {
 		display fullView {
 			species buildings aspect: default;

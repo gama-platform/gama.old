@@ -26,6 +26,7 @@ public interface IGamaFileMetaData {
 	final static public String DELIMITER = "_!_";
 	final static public String SUB_DELIMITER = "@%@";
 	public final static String FAILED = "failed";
+	public final static String SUFFIX_DEL = " | ";
 
 	long getModificationStamp();
 
@@ -42,6 +43,8 @@ public interface IGamaFileMetaData {
 	 * @return the suffix to use for decorating files in the navigator
 	 */
 	String getSuffix();
+
+	void appendSuffix(StringBuilder sb);
 
 	/**
 	 * Returns a thumbnail (imageDescriptor or anything else) or null if no image are provided

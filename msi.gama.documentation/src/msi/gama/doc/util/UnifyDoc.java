@@ -13,7 +13,6 @@ package msi.gama.doc.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -35,17 +34,17 @@ public class UnifyDoc {
 			XMLElements.OPERATORS, XMLElements.SKILLS, XMLElements.ARCHITECTURES, XMLElements.SPECIESS,
 			XMLElements.STATEMENTS, XMLElements.CONSTANTS_CATEGORIES, XMLElements.CONSTANTS,
 			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
-			XMLElements.TYPES };
+			XMLElements.TYPES, XMLElements.FILES };
 	// among tebEltXML, categories do not need to have an additional projectName
 	// attribute
-	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
-			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
-			XMLElements.CONCEPT_LIST };
+//	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
+//			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
+//			XMLElements.CONCEPT_LIST };
 
-	public static void unify() {
+	public static void unify(boolean local) {
 		try {
 
-			WorkspaceManager ws = new WorkspaceManager(".");
+			WorkspaceManager ws = new WorkspaceManager(".",local);
 			HashMap<String, File> hmFiles = ws.getProductDocFiles();
 
 			Document doc = mergeFiles(hmFiles);
@@ -59,11 +58,11 @@ public class UnifyDoc {
 		}
 	}
 
-	public static void unifyAllProjects() {
+	public static void unifyAllProjects(boolean local) {
 		try {
 
-			WorkspaceManager ws = new WorkspaceManager(".");
-			HashMap<String, File> hmFiles = ws.getAllDocFiles();
+			WorkspaceManager ws = new WorkspaceManager(".", local);
+	 		HashMap<String, File> hmFiles = local ? ws.getAllDocFilesLocal() : ws.getAllDocFiles();			
 
 			Document doc = mergeFiles(hmFiles);
 
@@ -98,9 +97,9 @@ public class UnifyDoc {
 						for (Element e : docTemp.getRootElement().getChild(catXML).getChildren()) {
 							// Do not add the projectName for every kinds of
 							// categories
-							if (!Arrays.asList(tabCategoriesEltXML).contains(catXML)) {
+					//		if (!Arrays.asList(tabCategoriesEltXML).contains(catXML)) {
 								e.setAttribute("projectName", fileDoc.getKey());
-							}
+					//		}
 
 							// Test whether the element is already in the merged
 							// doc
@@ -138,7 +137,7 @@ public class UnifyDoc {
 
 	public static void main(final String[] args) {
 		try {
-			UnifyDoc.unify();
+			UnifyDoc.unify(true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

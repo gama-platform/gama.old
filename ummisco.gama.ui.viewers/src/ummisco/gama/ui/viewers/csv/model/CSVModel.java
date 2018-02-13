@@ -491,7 +491,7 @@ public class CSVModel implements IRowChangesListener {
 	public void saveMetaData() {
 		// System.out.println("Saving the following metadata: " +
 		// getInfo().getSuffix());
-		GAMA.getGui().getMetaDataProvider().storeMetadata(file, getInfo(), true);
+		GAMA.getGui().getMetaDataProvider().storeMetaData(file, getInfo(), true);
 	}
 
 	/**
@@ -514,7 +514,7 @@ public class CSVModel implements IRowChangesListener {
 			if (metaData instanceof CSVInfo) {
 				currentInfo = (CSVInfo) metaData;
 			} else {
-				GAMA.getGui().getMetaDataProvider().storeMetadata(file, null, true);
+				GAMA.getGui().getMetaDataProvider().storeMetaData(file, null, true);
 				currentInfo = (CSVInfo) GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 			}
 		}

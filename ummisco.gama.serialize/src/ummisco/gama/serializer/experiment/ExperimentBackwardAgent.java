@@ -13,7 +13,9 @@ package ummisco.gama.serializer.experiment;
 import com.thoughtworks.xstream.XStream;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
@@ -65,24 +67,21 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
 
 		currentNode = currentNode.addChild(state);
-
+		
+//		scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
+		
 		return result;
 	}
 
 	@Override
 	public boolean backward(final IScope scope) {
-		// TODO : to change
-		// clock.beginCycle();
 		final boolean result = true;
+		TypeNode<String> previousNode;
 
 		try {
-			final int currentCycle = getSimulation().getCycle(scope);
-			// TODO what is this executer ????
-			// executer.executeBeginActions();
-
 			if (canStepBack()) {
-				currentNode = currentNode.getParent();
-				final String previousState = currentNode.getData();
+				previousNode = currentNode.getParent();
+				final String previousState = previousNode.getData();
 
 				if (previousState != null) {
 					final ConverterScope cScope = new ConverterScope(scope);
@@ -90,23 +89,38 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 					// get the previous state
 					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
+					
 
 					// Update of the simulation
 					final SimulationAgent currentSimAgt = getSimulation();
+					
 					currentSimAgt.updateWith(scope, agt);
-
-					// executer.executeEndActions();
-					// executer.executeOneShotActions();
-
+					
+					// useful to recreate the random generator
+					int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
+					String rngName = currentSimAgt.getRandomGenerator().getRngName();
+					Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
+					
 					final IOutputManager outputs = getSimulation().getOutputManager();
 					if (outputs != null) {
 						outputs.step(scope);
 					}
+										
+					// Recreate the random generator and set it to the same state as the saved one
+					if( ((ExperimentPlan) this.getSpecies()).keepsSeed() ) {
+						currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));	
+						currentSimAgt.getRandomGenerator().setUsage(rngUsage);						
+					} else {
+						currentSimAgt.setRandomGenerator(new RandomUtils(super.random.next(), rngName));							
+					}
+
+					currentNode = currentNode.getParent();
 				}
 			}
 		} finally {
+			informStatus();
+
 			// TODO a remettre
-			// clock.step(this.scope);
 			// final int nbThreads =
 			// this.getSimulationPopulation().getNumberOfActiveThreads();
 
@@ -121,6 +135,14 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	@Override
 	public boolean canStepBack() {
-		return currentNode != null && currentNode.getParent() != null;
+		
+		int current_cycle = getSimulation().getCycle(this.getScope());
+		return (current_cycle > 0 ) ? true : false;
+	//	return currentNode != null && currentNode.getParent() != null;
 	}
+	
+	@Override
+	public boolean isMemorize() {
+		return true;
+	}	
 }

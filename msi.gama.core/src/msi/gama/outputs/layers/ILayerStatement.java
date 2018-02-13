@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gaml.compilation.ISymbol;
@@ -22,20 +23,42 @@ import msi.gaml.compilation.ISymbol;
  */
 public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerStatement> {
 
-	public final static short GRID = 1;
-	public final static short AGENTS = 2;
-	public final static short SPECIES = 3;
-	public final static short TEXT = 4;
-	public final static short IMAGE = 5;
-	public final static short GIS = 6;
-	public final static short CHART = 7;
-	public final static short QUADTREE = 8;
-	public final static short EVENT = 9;
-	public final static short GRAPHICS = 10;
-	public final static short OVERLAY = 11;
-	public final static short CAMERA = 12;
+	public static enum LayerType {
 
-	public abstract short getType();
+		GRID(IKeyword.GRID),
+		AGENTS(IKeyword.AGENTS),
+		SPECIES(IKeyword.SPECIES),
+		IMAGE(IKeyword.IMAGE),
+		GIS(IKeyword.GIS),
+		CHART(IKeyword.CHART),
+		EVENT(IKeyword.EVENT),
+		GRAPHICS(IKeyword.GRAPHICS),
+		OVERLAY(IKeyword.OVERLAY),
+		CAMERA(IKeyword.CAMERA),
+		LIGHT("light");
+
+		private final String name;
+
+		LayerType(final String s) {
+			name = s;
+		}
+
+		static LayerType get(final String s) {
+			for (final LayerType lt : values()) {
+				if (lt.name.equals(s))
+					return lt;
+			}
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+	}
+
+	public abstract LayerType getType();
 
 	public abstract Double getTransparency();
 

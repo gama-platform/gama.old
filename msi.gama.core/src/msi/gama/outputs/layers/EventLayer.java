@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'EventLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'EventLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -28,11 +27,6 @@ import msi.gaml.statements.IExecutable;
  */
 
 public class EventLayer extends AbstractLayer {
-
-	@Override
-	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
-		super.setPositionAndSize(box, g);
-	}
 
 	EventListener listener;
 	IScope executionScope;
@@ -118,25 +112,13 @@ public class EventLayer extends AbstractLayer {
 			surface.removeListener(this);
 		}
 
-		public int getListeningEvent(final String eventTypeName) {
-			if (eventTypeName.equals(IKeyword.MOUSE_DOWN)) {
-				return MOUSE_PRESS;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_UP)) {
-				return MOUSE_RELEASED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_CLICKED)) {
-				return MOUSE_CLICKED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_MOVED)) {
-				return MOUSE_MOVED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_ENTERED)) {
-				return MOUSE_ENTERED;
-			}
-			if (eventTypeName.equals(IKeyword.MOUSE_EXITED)) {
-				return MOUSE_EXITED;
-			}
+		private int getListeningEvent(final String eventTypeName) {
+			if (eventTypeName.equals(IKeyword.MOUSE_DOWN)) { return MOUSE_PRESS; }
+			if (eventTypeName.equals(IKeyword.MOUSE_UP)) { return MOUSE_RELEASED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_CLICKED)) { return MOUSE_CLICKED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_MOVED)) { return MOUSE_MOVED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_ENTERED)) { return MOUSE_ENTERED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_EXITED)) { return MOUSE_EXITED; }
 			return KEY_PRESSED;
 		}
 
@@ -186,18 +168,12 @@ public class EventLayer extends AbstractLayer {
 			final IAgent agent = ((EventLayerStatement) definition).executesInSimulation()
 					? executionScope.getSimulation() : executionScope.getExperiment();
 			final IExecutable executer = agent == null ? null : agent.getSpecies().getAction(actionName);
-			if (executer == null) {
-				return;
-			}
+			if (executer == null) { return; }
 			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
-			if (pp == null) {
-				return;
-			}
+			if (pp == null) { return; }
 			if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
 					|| pp.getY() >= surface.getEnvHeight()) {
-				if (MOUSE_EXITED != listenedEvent) {
-					return;
-				}
+				if (MOUSE_EXITED != listenedEvent) { return; }
 			}
 			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 
@@ -217,8 +193,7 @@ public class EventLayer extends AbstractLayer {
 	}
 
 	@Override
-	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-	}
+	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {}
 
 	@Override
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {

@@ -69,6 +69,7 @@ public interface IConcept {
 	public static final String GLOBAL					= "global";
 	public static final String GRAPH					= "graph";
 	public static final String GRAPH_WEIGHT				= "graph_weight";
+	public static final String GML						= "gml";
 	public static final String GRID						= "grid";
 	public static final String GRAPHIC					= "graphic";
 	public static final String GRAPHIC_UNIT				= "graphic_unit";

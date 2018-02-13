@@ -39,8 +39,7 @@ import msi.gama.util.GamaFont;
 public class GamaFontType extends GamaType<GamaFont> {
 
 	public static Pref<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
-			.create("pref_display_default_font",
-					"Default font to use in text layers or draw statements when none is specified",
+			.create("pref_display_default_font", "Default font to use in 'draw'",
 					new GamaFont("Helvetica", Font.PLAIN, 12), IType.FONT)
 			.in(GamaPreferences.Displays.NAME, GamaPreferences.Displays.DRAWING);
 

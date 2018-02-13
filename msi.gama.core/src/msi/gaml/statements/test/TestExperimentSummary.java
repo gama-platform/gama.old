@@ -16,13 +16,6 @@ public class TestExperimentSummary extends CompoundSummary<IndividualTestSummary
 	}
 
 	@Override
-	public int countTestsWith(final TestState state) {
-		final int[] result = { 0 };
-		summaries.values().forEach(s -> result[0] += s.countTestsWith(state));
-		return result[0];
-	}
-
-	@Override
 	protected void printFooter(final StringBuilder sb) {
 		sb.append(Strings.LN);
 		sb.append("----------------------------------------------------------------");

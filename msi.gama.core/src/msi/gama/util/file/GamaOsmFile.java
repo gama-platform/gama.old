@@ -182,6 +182,20 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 
 		@Override
+		public void appendSuffix(final StringBuilder sb) {
+			if (hasFailed) {
+				sb.append("error: decompress the file to a .osm file");
+				return;
+			}
+			sb.append(itemNumber).append(" object");
+			if (itemNumber > 1)
+				sb.append("s");
+			sb.append(SUFFIX_DEL);
+			sb.append(Math.round(width)).append("m x ");
+			sb.append(Math.round(height)).append("m");
+		}
+
+		@Override
 		public String getDocumentation() {
 			final StringBuilder sb = new StringBuilder();
 			if (hasFailed)

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -91,6 +92,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import msi.gama.common.GamlFileExtension;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxDecoratorPartListener;
@@ -122,6 +124,7 @@ import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /*
  * The class GamlEditor.
@@ -467,6 +470,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected void handleCursorPositionChanged() {
+		/// AAAAA
 		super.handleCursorPositionChanged();
 		this.markInNavigationHistory();
 	}
@@ -494,14 +498,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				toolbar.wipe(SWT.LEFT, true);
 
 				final GamaUIColor c = state.getColor();
-				final String msg = state.getStatus();
+				String msg = state.getStatus();
 
-				SelectionListener listener = null;
+				Selector listener = null;
 				String imageName = null;
 
 				if (msg == GamlEditorState.NO_EXP_DEFINED) {
-					listener = new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT));
-					imageName = "small.dropdown";
+					// listener = new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT));
+					// imageName = "small.dropdown";
+					msg = null;
 				} else if (newState.hasImportedErrors) {
 					listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,
 							toolbar.getToolbar(SWT.LEFT));
@@ -524,9 +529,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 					int i = 0;
 					for (final String e : state.abbreviations) {
 						enableButton(i++, e, listener);
-					}
 
+					}
 				}
+				if (!GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName()))
+					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", GamaIcons.create("small.plus").image(),
+							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
+							SWT.LEFT);
 
 				toolbar.refresh(true);
 
@@ -713,10 +722,22 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 */
 
 	public void applyTemplateAtTheEnd(final Template t) {
-		selectAndReveal(this.getStyledText().getCharCount() + 1, 0);
-		insertText("\n");
-		applyTemplate(t);
-		selectAndReveal(this.getStyledText().getCharCount() + 1, 0);
+
+		try {
+			final IDocument doc = getDocument();
+			int offset = doc.getLineOffset(doc.getNumberOfLines() - 1);
+			doc.replace(offset, 0, "\n\n");
+			offset += 2;
+			final int length = 0;
+			final Position pos = new Position(offset, length);
+			final XtextTemplateContextType ct = new XtextTemplateContextType();
+			final DocumentTemplateContext dtc = new DocumentTemplateContext(ct, doc, pos);
+			final IRegion r = new Region(offset, length);
+			final TemplateProposal tp = new TemplateProposal(t, dtc, r, null);
+			tp.apply(getInternalSourceViewer(), (char) 0, 0, offset);
+		} catch (final BadLocationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void applyTemplate(final Template t) {

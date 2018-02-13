@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AttributesEditorsView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AttributesEditorsView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,9 +44,11 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 		public void addEditor(final AbstractEditor<?> editor) {
 			editor.createComposite(this);
 			final Label label = editor.getLabel();
-			// ((GridData) label.getLayoutData()).heightHint = 36;
-			labels.add(label);
-			label.addDisposeListener(e -> labels.remove(label));
+			if (label != null) {
+				// ((GridData) label.getLayoutData()).heightHint = 36;
+				labels.add(label);
+				label.addDisposeListener(e -> labels.remove(label));
+			}
 		}
 
 	}
@@ -56,13 +57,11 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 
 	@Override
 	public String getItemDisplayName(final T obj, final String previousName) {
-		if (editors == null) {
-			return "";
-		}
+		if (editors == null) { return ""; }
 		return editors.getItemDisplayName(obj, previousName);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	protected Composite createItemContentsFor(final T data) {
 		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(data);
@@ -87,41 +86,31 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 
 	@Override
 	public void removeItem(final T obj) {
-		if (editors == null) {
-			return;
-		}
+		if (editors == null) { return; }
 		editors.removeItem(obj);
 	}
 
 	@Override
 	public void pauseItem(final T obj) {
-		if (editors == null) {
-			return;
-		}
+		if (editors == null) { return; }
 		editors.pauseItem(obj);
 	}
 
 	@Override
 	public void resumeItem(final T obj) {
-		if (editors == null) {
-			return;
-		}
+		if (editors == null) { return; }
 		editors.resumeItem(obj);
 	}
 
 	@Override
 	public void focusItem(final T obj) {
-		if (editors == null) {
-			return;
-		}
+		if (editors == null) { return; }
 		editors.focusItem(obj);
 	}
 
 	@Override
 	public List<T> getItems() {
-		if (editors == null) {
-			return Collections.EMPTY_LIST;
-		}
+		if (editors == null) { return Collections.EMPTY_LIST; }
 		return editors.getItems();
 	}
 

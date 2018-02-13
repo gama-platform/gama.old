@@ -12,11 +12,11 @@ package msi.gama.lang.gaml.ui.editor.toolbar;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The class CreateExperimentSelectionListener.
@@ -25,7 +25,7 @@ import ummisco.gama.ui.menus.GamaMenu;
  * @since 27 août 2016
  *
  */
-public class CreateExperimentSelectionListener implements SelectionListener {
+public class CreateExperimentSelectionListener implements Selector {
 
 	GamlEditor editor;
 	Control control;
@@ -66,11 +66,5 @@ public class CreateExperimentSelectionListener implements SelectionListener {
 		menu.open(control, e, 32);
 
 	}
-
-	/**
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
-	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 }

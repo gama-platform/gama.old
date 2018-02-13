@@ -65,6 +65,7 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.interfaces.IOpenGLInitializer;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
 import ummisco.gama.ui.parameters.EditorsDialog;
@@ -120,7 +121,7 @@ public class SwtGui implements IGui {
 		if (g.isReported())
 			return;
 		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return; }
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		if (!handler.isRunning())
 			handler.start();
 		handler.offer(g);
@@ -161,11 +162,12 @@ public class SwtGui implements IGui {
 		if (v != null) {
 			v.finishTestSequence();
 		}
+		WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
 	}
 
 	@Override
 	public void clearErrors(final IScope scope) {
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.clearErrors();
 	}
 
@@ -339,9 +341,13 @@ public class SwtGui implements IGui {
 		highlightedAgent = a;
 	}
 
+	private IModelRunner getModelRunner() {
+		return WorkbenchHelper.getService(IModelRunner.class);
+	}
+
 	@Override
 	public void editModel(final IScope scope, final Object eObject) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return;
 		modelRunner.editModel(eObject);
@@ -349,7 +355,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public List<TestExperimentSummary> runHeadlessTests(final Object model) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return null;
 		return modelRunner.runHeadlessTests(model);
@@ -429,13 +435,17 @@ public class SwtGui implements IGui {
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null)
 			icv.reset();
-		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
+	}
+
+	private IRuntimeExceptionHandler getRuntimeExceptionHandler() {
+		return WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 	}
 
 	@Override
 	public void runModel(final Object object, final String exp) {
-		final IModelRunner modelRunner = WorkbenchHelper.getService(IModelRunner.class);
+		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null)
 			return;
 		modelRunner.runModel(object, exp);
@@ -537,9 +547,12 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
-		final IViewPart part = WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
-		if (part != null && part instanceof IGamaView)
-			WorkbenchHelper.run(() -> ((IGamaView) part).changePartNameWithSimulation(agent));
+		WorkbenchHelper.run(() -> {
+			final IViewPart part =
+					WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
+			if (part != null && part instanceof IGamaView)
+				((IGamaView) part).changePartNameWithSimulation(agent);
+		});
 
 	}
 
@@ -605,13 +618,20 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean toggleFullScreenMode() {
-
-		final IWorkbenchPart part = WorkbenchHelper.findGamaViewUnderMouse();
+		final IViewPart part = WorkbenchHelper.findFrontmostGamaViewUnderMouse();
 		if (part instanceof IGamaView.Display) {
 			((IGamaView.Display) part).toggleFullScreen();
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void refreshNavigator() {
+		final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
+		if (refresh != null)
+			refresh.completeRefresh(null);
+
 	}
 
 }

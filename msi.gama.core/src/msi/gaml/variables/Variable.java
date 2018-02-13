@@ -612,7 +612,8 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
 		// No facets are available to describe whether or not a slider should be
-		// defined.
+		// defined. AD change: if we are int or float and max, min and step are defined, we accept it for number
+		// variables;
 
 		return false;
 	}

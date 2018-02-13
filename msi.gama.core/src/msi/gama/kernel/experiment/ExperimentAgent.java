@@ -185,20 +185,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public String getDefinedRng() {
-		if (GamaPreferences.Simulations.CORE_RND_EDITABLE
+		if (GamaPreferences.External.CORE_RND_EDITABLE
 				.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG)
 						.value(null); }
-		return GamaPreferences.Simulations.CORE_RNG.getValue();
+		return GamaPreferences.External.CORE_RNG.getValue();
 	}
 
 	public Double getDefinedSeed() {
-		if (GamaPreferences.Simulations.CORE_RND_EDITABLE.getValue()) {
+		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
 			final Double result = p.isDefined() ? (Double) p.value(null) : null;
 			return result;
 		}
-		return GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue()
-				? GamaPreferences.Simulations.CORE_SEED.getValue() : (Double) null;
+		return GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
+				: (Double) null;
 	}
 
 	@Override
@@ -354,7 +354,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!GamaPreferences.Simulations.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
+		if (!GamaPreferences.External.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
@@ -370,7 +370,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				return getSeed();
 			}
 		};
-		p.setDefined(GamaPreferences.Simulations.CORE_SEED_DEFINED.getValue());
+		p.setDefined(GamaPreferences.External.CORE_SEED_DEFINED.getValue());
 		params.add(p);
 		return params;
 	}

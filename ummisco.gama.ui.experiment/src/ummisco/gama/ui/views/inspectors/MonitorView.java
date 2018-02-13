@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,8 +26,8 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
+import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
@@ -83,7 +82,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public boolean addItem(final MonitorOutput output) {
 		if (output != null) {
-			createItem(parent, output, output.getValue() == null,
+			createItem(getParentComposite(), output, output.getValue() == null,
 					output.getColor() == null ? null : GamaColors.get(output.getColor()));
 			// getViewer().setSize(getViewer().computeSize(SWT.DEFAULT,
 			// SWT.DEFAULT, true));
@@ -240,14 +239,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				createNewMonitor(getOutput().getScope());
-			}
-
-		}, SWT.RIGHT);
+		tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor",
+				e -> createNewMonitor(getOutput().getScope()), SWT.RIGHT);
 	}
 
 	// @Override
@@ -297,7 +290,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 			});
 		} else if (type.isContainer() && type.getContentType().isAgentType()) {
 			menu.put("Browse", () -> {
-				InspectDisplayOutput.browse((Collection<? extends IAgent>) data.getLastValue());
+				ValuedDisplayOutputFactory.browse((Collection<? extends IAgent>) data.getLastValue());
 			});
 		}
 		return menu;

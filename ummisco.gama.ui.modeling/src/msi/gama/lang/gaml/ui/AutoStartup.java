@@ -49,33 +49,30 @@ public class AutoStartup implements IStartup {
 							// }
 						}
 					});
-	public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
-			.create("pref_editor_close_curly", "Automatically close curly brackets ( { )", true, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
-			.create("pref_editor_close_square", "Automatically close square brackets ( [ )", true, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
+	public static final Pref<Boolean> CORE_CLOSE_CURLY =
+			GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL)
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
+	public static final Pref<Boolean> CORE_CLOSE_SQUARE =
+			GamaPreferences.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL)
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
 	public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
-			GamaPreferences.create("pref_editor_close_parentheses", "Automatically close parentheses", true, IType.BOOL)
+			GamaPreferences.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
 	public static final Pref<Boolean> EDITOR_CLEAN_UP =
-			GamaPreferences.create("pref_editor_save_format", "Apply formatting to models on save", false, IType.BOOL)
+			GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
-	public static final Pref<Boolean> EDITOR_SAVE =
-			GamaPreferences
-					.create("pref_editor_save_all", "Save all model files before lauching an experiment", true,
-							IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS)
-					.activates("pref_editor_ask_save");
+	public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
+			.create("pref_editor_save_all", "Save files before lauching an experiment", true, IType.BOOL)
+			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 	public static final Pref<Boolean> EDITOR_SAVE_ASK =
 			GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
-	public static final Pref<Boolean> EDITBOX_ENABLED = GamaPreferences
-			.create("pref_editor_editbox_on", "Turn on colorization of code sections by default", false, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
+	public static final Pref<Boolean> EDITBOX_ENABLED =
+			GamaPreferences.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL)
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
 	public static final Pref<Boolean> EDITOR_SHOW_TOOLBAR =
 			GamaPreferences.create("pref_editor_show_toolbar", "Show edition toolbar by default", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).hidden();
 	static final Pref<GamaFont> EDITOR_BASE_FONT =
 			GamaPreferences.create("pref_editor_font", "Font of editors", getDefaultFontData(), IType.FONT)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
@@ -114,29 +111,6 @@ public class AutoStartup implements IStartup {
 									AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
 						}
 					});
-	// public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER =
-	// GamaPreferences
-	// .create("pref_editor_other_experiments", "Show other models' experiments in toolbar", false,
-	// IType.BOOL)
-	// .in(GamaPreferences.EDITOR).group("Toolbars")
-	// .addChangeListener(new IPreferenceChangeListener<Boolean>() {
-	//
-	// @Override
-	// public boolean beforeValueChange(final Boolean newValue) {
-	// return true;
-	// }
-	//
-	// @Override
-	// public void afterValueChange(final Boolean newValue) {
-	// final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
-	// for (final IEditorReference ed : eds) {
-	// final IEditorPart e = ed.getEditor(false);
-	// if (e instanceof GamlEditor) {
-	// ((GamlEditor) e).setShowOtherEnabled(newValue);
-	// }
-	// }
-	// }
-	// });
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()

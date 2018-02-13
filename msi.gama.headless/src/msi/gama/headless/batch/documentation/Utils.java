@@ -36,48 +36,6 @@ public class Utils {
 		return result;
 	}
 
-	public static String getModelName(final File file) throws IOException {
-		// returns the name of the model
-		String result = "";
-
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-		String line = null;
-
-		while ((line = br.readLine()) != null) {
-			result = findAndReturnRegex(line, "^model (\\w+)");
-			if (result != "") {
-				break;
-			}
-		}
-		br.close();
-
-		return result;
-	}
-
-	public static ArrayList<String> getExpeNames(final File file) throws IOException {
-		// returns the list of experiments
-		final ArrayList<String> result = new ArrayList<String>();
-		String expeName = "";
-
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-		String line = null;
-
-		while ((line = br.readLine()) != null) {
-			expeName = Utils.findAndReturnRegex(line, "^experiment (\\w+)");
-			if (expeName != "") {
-				result.add(expeName);
-				expeName = "";
-			}
-		}
-		br.close();
-
-		return result;
-	}
-
 	public static ArrayList<String> getConceptKeywords(final File file) throws IOException {
 		// returns the list of concept keywords
 		final ArrayList<String> result = new ArrayList<String>();
@@ -128,22 +86,4 @@ public class Utils {
 		return;
 	}
 
-	public static String getUrlFromName(String str) {
-		String result = "";
-		str = str.toLowerCase();
-		str = str.replace("-", " ");
-		str = str.replace(".", " ");
-		str = str.replace(",", " ");
-		final String[] list = str.split(" ");
-		if (list.length == 0) {
-			result = String.valueOf(str.charAt(0)).toUpperCase() + str.substring(1);
-		} else {
-			for (final String word : list) {
-				if (word.length() > 0) {
-					result += String.valueOf(word.charAt(0)).toUpperCase() + word.substring(1);
-				}
-			}
-		}
-		return result;
-	}
 }

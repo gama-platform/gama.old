@@ -46,6 +46,10 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 
 	@Inject protected GamlHyperlinkDetector detector;
 
+	public String getOnlyComment(final EObject o) {
+		return super.getDocumentation(o);
+	}
+
 	@Override
 	public String getDocumentation(final EObject o) {
 		if (o instanceof Import) { return "ctrl-click or cmd-click on the path to open this model in a new editor"; }

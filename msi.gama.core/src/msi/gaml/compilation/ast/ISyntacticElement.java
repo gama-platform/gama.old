@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ISyntacticElement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ISyntacticElement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -37,8 +36,8 @@ public interface ISyntacticElement {
 
 	public static final SyntacticVisitor DISPOSE_VISITOR = each -> each.dispose();
 
-	public static final Predicate<ISyntacticElement> SPECIES_FILTER = each -> each.isSpecies()
-			&& !IKeyword.GRID.equals(each.getKeyword());
+	public static final Predicate<ISyntacticElement> SPECIES_FILTER =
+			each -> each.isSpecies() && !IKeyword.GRID.equals(each.getKeyword());
 
 	public static final Predicate<ISyntacticElement> GRID_FILTER = each -> IKeyword.GRID.equals(each.getKeyword());
 
@@ -61,10 +60,6 @@ public interface ISyntacticElement {
 	public abstract Facets copyFacets(SymbolProto sp);
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
-
-	// public abstract void setDependencies(final Set<String> strings);
-
-	// public Set<String> getDependencies();
 
 	public abstract void visitFacets(FacetVisitor visitor);
 

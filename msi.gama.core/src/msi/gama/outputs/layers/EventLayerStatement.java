@@ -9,6 +9,10 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
@@ -27,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
@@ -57,6 +62,11 @@ import msi.gaml.types.IType;
 						// values = { "mouse_up", "mouse_down", "mouse_drag" },
 						optional = false,
 						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Type of peripheric used to generate events. Defaults to 'default', which encompasses keyboard and mouse")),
 				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
@@ -123,6 +133,8 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
+	public static String[] MOUSE_EVENTS = { "mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit" };
+
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -148,12 +160,22 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	}
 
 	private final boolean executesInSimulation;
+	private final IExpression type;
+	private static List<IEventLayerDelegate> delegates = new ArrayList<>();
+
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final IEventLayerDelegate delegate) {
+		delegates.add(delegate);
+	}
 
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 		final String actionName = description.getLitteral(IKeyword.ACTION);
 		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
 		executesInSimulation = sd == null;
+		type = getFacet(IKeyword.TYPE);
 	}
 
 	public boolean executesInSimulation() {
@@ -162,17 +184,24 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
+
+		final Object source = getSource(scope);
+
+		for (final IEventLayerDelegate delegate : delegates) {
+			if (delegate.acceptSource(scope, source)) {
+				delegate.createFrom(scope, source, this);
+			}
+		}
 		return true;
 	}
 
 	@Override
-	public short getType() {
-		return EVENT;
+	public LayerType getType() {
+		return LayerType.EVENT;
 	}
 
 	@Override
 	public String toString() {
-		// StringBuffer sb = new StringBuffer();
 		return "Event layer: " + this.getFacet(IKeyword.NAME).literalValue();
 	}
 
@@ -184,5 +213,10 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	@Override
 	protected boolean _step(final IScope scope) {
 		return true;
+	}
+
+	private Object getSource(final IScope scope) {
+		final Object source = type == null ? IKeyword.DEFAULT : type.value(scope);
+		return source;
 	}
 }

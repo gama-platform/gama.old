@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.block.*;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
@@ -133,10 +134,16 @@ public class ChartJFreeChartOutput extends ChartOutput {
 
 		initRenderer(scope);
 		final Plot plot = chart.getPlot();
-
+		
+		chart.setBorderVisible(false);
+		plot.setOutlineVisible(false);
 		chart.setTitle(this.getName());
 		chart.getTitle().setVisible(true);
 		chart.getTitle().setFont(getTitleFont());
+		if (!this.getTitleVisible(scope))
+		{
+			chart.getTitle().setVisible(false);
+		}
 		if (textColor != null) {
 			chart.getTitle().setPaint(textColor);
 		}
@@ -159,6 +166,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		}
 		if (chart.getLegend() != null) {
 			chart.getLegend().setItemFont(getLegendFont());
+			chart.getLegend().setFrame(BlockBorder.NONE);
 			if (textColor != null) {
 				chart.getLegend().setItemPaint(textColor);
 			}

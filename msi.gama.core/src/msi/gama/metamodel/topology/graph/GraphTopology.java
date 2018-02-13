@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -86,6 +87,23 @@ public class GraphTopology extends AbstractTopology {
 		final boolean targetNSame = isAgentVertex == target instanceof IAgent;
 		final boolean sourceNSame = isAgentVertex == source instanceof IAgent;
 		boolean sourceNode = graph.getVertexMap().containsKey(source);
+
+		if (sourceNode && GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) {
+			for (final IShape v : graph.getVertexMap().keySet()) {
+				if (v.equals(source)) {
+					sourceN = v;
+					break;
+				}
+			}
+		}
+		if (targetNode && GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) {
+			for (final IShape v : graph.getVertexMap().keySet()) {
+				if (v.equals(target)) {
+					targetN = v;
+					break;
+				}
+			}
+		}
 		if (!sourceNSame && !sourceNode || !targetNSame && !targetNode) {
 			for (final Object ed : graph.getVertices()) {
 				if (((IShape) ed).getLocation().equals(source.getLocation())) {
