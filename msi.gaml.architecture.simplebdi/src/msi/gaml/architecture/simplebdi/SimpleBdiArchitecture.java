@@ -355,7 +355,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				final IAgent agent = getCurrentAgent(scope);
 				agent.setAttribute(PLAN_BASE, _plans);
 				agent.setAttribute(NORM_BASE, _norms);
-				//Faire la même chose qu'au dessus pour la base des normes et la base des sanctions
+				agent.setAttribute(SANCTION_BASE, _sanctions);
 				final GamaList<MentalState> intentionBase = (GamaList<MentalState>) (scope.hasArg(INTENTION_BASE)
 						? scope.getListArg(INTENTION_BASE) : (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
 				final Double persistenceCoefficientPlans =
@@ -384,18 +384,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 				// If current intention has no plan/norm or is on hold, choose a new
-				// Desire
+				// Desire/Obligation
 				MentalState intentionTemp;
 				if(currentIntention(scope)!=null){
 					intentionTemp= new MentalState("Intention",currentIntention(scope).getPredicate());
 				}else{
 					intentionTemp= new MentalState("Intention",currentIntention(scope));
 				}
-				if (testOnHold(scope, intentionTemp) || listExecutablePlans(scope).isEmpty()) {
-					selectDesireWithHighestPriority(scope);
+				if (testOnHold(scope, intentionTemp) || (listExecutablePlans(scope).isEmpty() && listExecutableNorms(scope).isEmpty())) {
+					if(!selectObligationWithHighestPriority(scope)){
+						selectDesireWithHighestPriority(scope);
+					}
 					_persistentTask = null;
 					agent.setAttribute(CURRENT_PLAN, _persistentTask);
-
+					_persistantNorm = null;
+					agent.setAttribute(CURRENT_NORM, _persistantNorm);
 				}
 
 				_persistentTask = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
@@ -1012,8 +1015,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			if (statement.getContextExpression() != null
 					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {
-//				continue;
-//			}
+				continue;
+			}
 				if(currentIntention(scope)!=null){
 					if (statement.getIntentionExpression() != null && ((Predicate) statement.getIntentionExpression().value(scope)) != null
 							&& ((Predicate) statement.getIntentionExpression().value(scope))
@@ -1027,7 +1030,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
-		}
+		
 		return norms;
 	}
 	
@@ -1331,6 +1334,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
+			}
+			if (getBase(scope, SimpleBdiArchitecture.OBLIGATION_BASE).contains(predicateDirect)) {
+				removeFromBase(scope, predicateDirect, OBLIGATION_BASE);
 			}
 			for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
 				if (predTest.getPredicate()!=null && predicateDirect.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicateDirect.getPredicate())) {
