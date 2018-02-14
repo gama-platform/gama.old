@@ -51,6 +51,10 @@ public class NormStatement extends AbstractStatementSequence{
 		return _when;
 	}
 	
+	public IExpression getExecutedExpression() {
+		return _executedwhen;
+	}
+	
 	public IExpression getIntentionExpression() {
 		return _intention;
 	}
