@@ -115,7 +115,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id != rootIndex) { return firstAtDistance(scope, source, f, id); }
+		if (id != null) { return firstAtDistance(scope, source, f, id); }
 		return firstAtDistance(scope, source, f);
 	}
 
