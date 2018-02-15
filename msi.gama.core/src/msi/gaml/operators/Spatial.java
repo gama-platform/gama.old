@@ -900,12 +900,7 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient) {
-			if (P0 == null || P1 == null ) { return null; }
-			GamaPoint P01 = new GamaPoint((P0.x + P1.x)/2.0,(P0.y + P1.y)/2.0,(P0.z + P1.z)/2.0);
-			double val = coefficient * P0.euclidianDistanceTo(P1);
-			int heading = Relations.towards(scope, P0, P1) ;
-			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90) * val, P01.y + Maths.sin(heading + 90) * val, P01.z);
-			return BezierCurve(scope,P0,P01,P1);
+			return  BezierCurve(scope, P0, P1,coefficient, true, 10, 0.5);
 		}
 		
 		@operator (
@@ -924,12 +919,7 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right) {
-			if (P0 == null || P1 == null ) { return null; }
-			GamaPoint P01 = new GamaPoint((P0.x + P1.x)/2.0,(P0.y + P1.y)/2.0,(P0.z + P1.z)/2.0);
-			double val = coefficient * P0.euclidianDistanceTo(P1);
-			int heading = Relations.towards(scope, P0, P1) ;
-			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
-			return BezierCurve(scope,P0,P01,P1);
+			return  BezierCurve(scope, P0, P1,coefficient, right, 10, 0.5);
 		}
 		
 		@operator (
@@ -938,24 +928,42 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
 		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the last boolean is used to specified if it is the right side.",
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side.",
 				usages = { @usage (
 						value = "if the operand is nil, returns nil") },
 				examples = { @example (
-						value = "curve({0,0},{10,10}, 0.5, false)",
-						equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p1 at the left side.",
+						value = "curve({0,0},{10,10}, 0.5, false, 100)",
+						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right, final int nbPoints) {
+			return  BezierCurve(scope, P0, P1,coefficient, right, nbPoints, 0.5);
+		}
+
+		@operator (
+				value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side and the last value to indicate where is the inflection point (between 0.0 and 1.0 - default 0.5).",
+				usages = { @usage (
+						value = "if the operand is nil, returns nil") },
+				examples = { @example (
+						value = "curve({0,0},{10,10}, 0.5, false, 100, 0.8)",
+						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
+						test = false) },
+				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						"triangle", "line" })
+	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
 			if (P0 == null || P1 == null ) { return null; }
-			GamaPoint P01 = new GamaPoint((P0.x + P1.x)/2.0,(P0.y + P1.y)/2.0,(P0.z + P1.z)/2.0);
+			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x)*proportion,P0.y + (P1.y - P0.y)*proportion,P0.z + (P1.z - P0.z)*proportion);
 			double val = coefficient * P0.euclidianDistanceTo(P1);
 			int heading = Relations.towards(scope, P0, P1) ;
 			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
 			return BezierCurve(scope,P0,P01,P1,nbPoints);
 		}
-
 
 		@operator (
 				value = { "curve" },
