@@ -12,7 +12,8 @@ import msi.gaml.types.Types;
 
 @vars({ /* @var(name = "name", type = IType.STRING), */@var(name = "agent", type = IType.AGENT),
 		@var(name = "liking", type = IType.FLOAT), @var(name = "dominance", type = IType.FLOAT),
-		@var(name = "solidarity", type = IType.FLOAT), @var(name = "familiarity", type = IType.FLOAT) })
+		@var(name = "solidarity", type = IType.FLOAT), @var(name = "familiarity", type = IType.FLOAT),
+		@var(name = "trust", type = IType.FLOAT)})
 
 public class SocialLink implements IValue {
 
@@ -21,10 +22,12 @@ public class SocialLink implements IValue {
 	Double dominance = 0.0;
 	Double solidarity = 0.0;
 	Double familiarity = 0.0;
+	Double trust = 0.0;
 	private Boolean noLiking = true;
 	private Boolean noDominance = true;
 	private Boolean noSolidarity = true;
 	private Boolean noFamiliarity = true;
+	private Boolean noTrust = true;
 
 	@getter("agent")
 	public IAgent getAgent() {
@@ -50,6 +53,11 @@ public class SocialLink implements IValue {
 	public Double getFamiliarity() {
 		return familiarity;
 	}
+	
+	@getter("trust")
+	public Double getTrust() {
+		return trust;
+	}
 
 	public Boolean getNoLiking() {
 		return noLiking;
@@ -65,6 +73,10 @@ public class SocialLink implements IValue {
 
 	public Boolean getNoFamiliarity() {
 		return noFamiliarity;
+	}
+	
+	public Boolean getNoTrust() {
+		return noTrust;
 	}
 
 	public void setAgent(final IAgent ag) {
@@ -90,6 +102,11 @@ public class SocialLink implements IValue {
 		this.familiarity = fami;
 		this.noFamiliarity = false;
 	}
+	
+	public void setTrust(final Double tru) {
+		this.trust = tru;
+		this.noTrust = false;
+	}
 
 	public SocialLink() {
 		this.agent = null;
@@ -111,6 +128,20 @@ public class SocialLink implements IValue {
 		this.noFamiliarity = false;
 	}
 
+	public SocialLink(final IAgent ag, final Double appre, final Double domi, final Double solid, final Double fami, final Double tru) {
+		this.agent = ag;
+		this.liking = appre;
+		this.noLiking = false;
+		this.dominance = domi;
+		this.noDominance = false;
+		this.solidarity = solid;
+		this.noDominance = false;
+		this.familiarity = fami;
+		this.noFamiliarity = false;
+		this.trust = tru;
+		this.noTrust = false;
+	}
+	
 	@Override
 	public String toString() {
 		return serialize(true);
@@ -173,6 +204,11 @@ public class SocialLink implements IValue {
 				return false;
 			}
 		}
+		if (!noTrust && !other.getNoTrust()) {
+			if (!trust.equals(other.getTrust())) {
+				return false;
+			}
+		}		
 		return true;
 	}
 

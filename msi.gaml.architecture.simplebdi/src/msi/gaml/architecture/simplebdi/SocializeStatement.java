@@ -29,6 +29,7 @@ import msi.gaml.types.IType;
 		@facet(name = SocializeStatement.DOMINANCE, type = IType.FLOAT, optional = true, doc = @doc("the dominance value of the created social link")),
 		@facet(name = SocializeStatement.SOLIDARITY, type = IType.FLOAT, optional = true, doc = @doc("the solidarity value of the created social link")),
 		@facet(name = SocializeStatement.FAMILIARITY, type = IType.FLOAT, optional = true, doc = @doc("the familiarity value of the created social link")),
+		@facet(name = SocializeStatement.TRUST, type = IType.FLOAT, optional = true, doc = @doc("the trust value of the created social link")),
 		@facet(name = SocializeStatement.AGENT, type = IType.AGENT, optional = true, doc = @doc("the agent value of the created social link")),
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to socialize only with a certain condition"))
 }, omissible = IKeyword.NAME)
@@ -41,6 +42,7 @@ public class SocializeStatement extends AbstractStatement{
 	public static final String DOMINANCE = "dominance";
 	public static final String SOLIDARITY = "solidarity";
 	public static final String FAMILIARITY = "familiarity";
+	public static final String TRUST = "trust";
 	public static final String AGENT = "agent";
 	
 	final IExpression name;
@@ -49,6 +51,7 @@ public class SocializeStatement extends AbstractStatement{
 	final IExpression when;
 	final IExpression solidarity;
 	final IExpression familiarity;
+	final IExpression trust;
 	final IExpression agent;
 	
 	public SocializeStatement(IDescription desc) {
@@ -59,6 +62,7 @@ public class SocializeStatement extends AbstractStatement{
 		when = getFacet(IKeyword.WHEN);
 		solidarity = getFacet(SocializeStatement.SOLIDARITY);
 		familiarity = getFacet(SocializeStatement.FAMILIARITY);
+		trust = getFacet(SocializeStatement.TRUST);
 		agent = getFacet(SocializeStatement.AGENT);
 	}
 
@@ -86,6 +90,9 @@ public class SocializeStatement extends AbstractStatement{
 					}
 					if (familiarity != null){
 						tempSocial.setFamiliarity(Cast.asFloat(scopeMySelf, familiarity.value(scopeMySelf)));
+					}
+					if (trust != null){
+						tempSocial.setTrust(Cast.asFloat(scopeMySelf, trust.value(scopeMySelf)));
 					}
 					if (agent != null){
 						tempSocial.setAgent((IAgent)agent.value(scopeMySelf));

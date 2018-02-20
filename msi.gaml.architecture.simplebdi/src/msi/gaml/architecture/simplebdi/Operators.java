@@ -918,6 +918,24 @@ public class Operators {
 		}
 		return social;
 	}
+	
+	@operator (
+			value = "set_trust",
+			can_be_const = true,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "change the trust value of the given social link",
+			examples = @example (
+					value = "social_link set_familiarity 0.4",
+					test = false))
+	public static SocialLink setTrust(final SocialLink social, final Double trust)
+			throws GamaRuntimeException {
+		if (trust >= -1.0 && trust <= 1.0) {
+			social.setTrust(trust);
+		}
+		return social;
+	}
 
 	@operator (
 			value = "get_agent",
@@ -993,6 +1011,24 @@ public class Operators {
 
 	@operator (
 			value = "get_familiarity",
+			can_be_const = true,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the familiarity value of the given social link",
+			examples = @example (
+					value = "get_familiarity(social_link1)",
+					test = false))
+	public static Double getTrust(final SocialLink social) {
+		if (social != null) {
+			return social.getTrust();
+		} else {
+			return null;
+		}
+	}
+	
+	@operator (
+			value = "get_trust",
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })

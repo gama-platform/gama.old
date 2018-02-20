@@ -51,6 +51,7 @@ public class Norm implements IValue{
 	private Boolean isViolated;
 	private Integer lifetimeViolation;
 	private Boolean noLifetime;
+	private Boolean isApplied;
 	
 	@getter ("name")
 	public String getName() {
@@ -95,9 +96,14 @@ public class Norm implements IValue{
 		return this.isViolated;
 	}
 	
+	public Boolean getApplied(){
+		return this.isApplied;
+	}
+	
 	public Norm(){
 		super();
 		this.isViolated = false;
+		this.isApplied = false;
 		this.lifetimeViolation = -1;
 		this.noLifetime = true;
 	}
@@ -108,23 +114,44 @@ public class Norm implements IValue{
 		this.lifetimeViolation = -1;
 		this.isViolated = false;
 		this.noLifetime = true;
+		this.isApplied = false;
 	}
 	
 	public Norm(final NormStatement statement, final IScope scope) {
 		super();
 		this.normStatement = statement;
-		this.lifetimeViolation = (Integer) statement._lifetime.value(scope);
 		this.isViolated = false;
-		this.noLifetime = false;
+		this.isApplied = false;
+		if(statement._lifetime!=null){
+			this.lifetimeViolation = (Integer) statement._lifetime.value(scope);
+			this.noLifetime = false;
+		} else {
+			this.lifetimeViolation = -1;
+			this.noLifetime = true;
+		}
 	}
 	
 	public void setViolation(final Boolean violation){
 		this.isViolated = violation;
+		this.isApplied = !violation;
 	}
 	
 	public void violated(final IScope scope){
 		this.isViolated = true;
-		this.lifetimeViolation = (Integer) this.normStatement._lifetime.value(scope);
+		this.isApplied = false;
+		if(this.normStatement._lifetime!=null){
+			this.lifetimeViolation = (Integer) this.normStatement._lifetime.value(scope);
+		} else {
+			this.lifetimeViolation = 1;
+		}
+		this.noLifetime=false;
+	}
+	
+	public void applied(final IScope scope){
+		this.isApplied = true;
+		this.isViolated = false;
+		this.lifetimeViolation=-1;
+		this.noLifetime=false;
 	}
 	
 	public void updateLifeime(){
@@ -133,6 +160,7 @@ public class Norm implements IValue{
 		}
 		if(this.lifetimeViolation<0){
 			isViolated = false;
+			noLifetime=true;
 		}
 	}
 	

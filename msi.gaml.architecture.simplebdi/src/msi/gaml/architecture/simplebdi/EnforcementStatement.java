@@ -46,7 +46,7 @@ import msi.gaml.types.IType;
 				optional = true,
 				doc = @doc ("The positive sanction to apply if the norm has been followed"))}
 		)
-@doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
+@doc(value = "applay a sanction if the norm specified is violated, or a reward if the norm is applied by the perceived agent", examples = {
 		@example("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
 
 //statement servant à controler les normes pour appliquer des sanctions, sur le moodèle du focus
@@ -95,30 +95,32 @@ public class EnforcementStatement extends AbstractStatement{
 						normToTest = tempNorm;
 					}
 				}
-				if(normToTest.getViolated() && sanction!=null){
-					//On applique la sanction
-					Sanction sanctionToExecute = null;
-					//Améliorable en temps de calcul
-					for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
-						if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
-							sanctionToExecute = tempSanction;
+				if(normToTest!=null){
+					if(normToTest.getViolated() && sanction!=null){
+						//On applique la sanction
+						Sanction sanctionToExecute = null;
+						//Améliorable en temps de calcul
+						for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+							if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
+								sanctionToExecute = tempSanction;
+							}
 						}
-					}
-					//Ici, la sanction est exécutée dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
-//					return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
-					retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
-				} else if(!normToTest.getViolated() && reward!=null){
-					//on applique le reward
-					Sanction rewardToExecute = null;
-					//Améliorable en temps de calcul
-					for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
-						if(tempReward.getName().equals(reward.value(scopeMySelf))){
-							rewardToExecute = tempReward;
+						//Ici, la sanction est exécutée dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
+	//					return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+					} else if(normToTest.getApplied() && reward!=null){
+						//on applique le reward
+						Sanction rewardToExecute = null;
+						//Améliorable en temps de calcul
+						for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+							if(tempReward.getName().equals(reward.value(scopeMySelf))){
+								rewardToExecute = tempReward;
+							}
 						}
+						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
+	//					return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 					}
-					//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
-//					return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
-					retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 				}
 			}
 			if(obligation!=null){
@@ -127,8 +129,13 @@ public class EnforcementStatement extends AbstractStatement{
 				MentalState tempObligation = new MentalState("obligation",(Predicate)obligation.value(scope));
 				if(SimpleBdiArchitecture.hasObligation(scope,tempObligation)){
 					//si ma norme en cours répond à l'iobligation , reward, sinon punition.
-					Norm tempNorm = new Norm ((NormStatement)scope.getAgent().getAttribute("current_norm"));
-					if(reward!=null && tempNorm!=null && tempNorm.getObligation(scope)!=null && tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
+					Norm tempNorm = null;//new Norm ((NormStatement)scope.getAgent().getAttribute("CURRENT_NORM"));
+					for(Norm testNorm : SimpleBdiArchitecture.getNorms(scope)){
+						if(testNorm.getObligation(scope)!=null && testNorm.getObligation(scope).equals(tempObligation.getPredicate())){
+							tempNorm = testNorm;
+						}
+					}
+					if(reward!=null && tempNorm!=null && tempNorm.getApplied()){//&& tempNorm.getNormStatement()!=null && tempNorm.getObligation(scope)!=null && tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
 						Sanction rewardToExecute = null;
 						//Améliorable en temps de calcul
 						for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
@@ -139,18 +146,19 @@ public class EnforcementStatement extends AbstractStatement{
 						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
 //						return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 						retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
-					}
-					if(sanction!=null && tempNorm!=null && tempNorm.getObligation(scope)!=null && !tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
-						Sanction sanctionToExecute = null;
-						//Améliorable en temps de calcul
-						for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
-							if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
-								sanctionToExecute = tempSanction;
+					} else { 
+						if((sanction!=null && tempNorm!=null /*&& tempNorm.getNormStatement()==null)*/ || (sanction!=null && tempNorm!=null && tempNorm.getViolated()))){//&& tempNorm.getNormStatement()!=null && tempNorm.getObligation(scope)!=null && !tempNorm.getObligation(scope).equals(tempObligation.getPredicate()))){
+							Sanction sanctionToExecute = null;
+							//Améliorable en temps de calcul
+							for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+								if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
+									sanctionToExecute = tempSanction;
+								}
 							}
+							//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
+	//						return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 						}
-						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
-//						return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
-						retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 					}
 				}
 			}

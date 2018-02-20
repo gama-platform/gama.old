@@ -327,7 +327,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agent.dead()) { return null; }
 			}
 		}
-		cleanObligation(scope);
+//		cleanObligation(scope);
 		if (_lawsNumber > 0) {
 			for (int i = 0; i < _lawsNumber; i++) {
 				_laws.get(i).executeOn(scope);
@@ -337,6 +337,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		//computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
+		//Activer la violation des normes
+		updateNormViolation(scope);
+		//Mettre à jour le temps de vie des normes
+		updateNormLifetime(scope);
+		
 //		if (!agent.dead()) {
 			// Part that manage the lifetime of predicates
 		if(result!=null){
@@ -530,15 +535,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
 		final List<BDIPlan> listPlans = getPlans(scope);
 		final List<Norm> listNorm = getNorms(scope);
-		if(listPlans!=null){
+		
 		if (is_probabilistic_choice) {
 			final List<MentalState> desireBaseTest = GamaListFactory.create();/*= getBase(scope, DESIRE_BASE)*/;
 			for(MentalState tempDesire : getBase(scope, DESIRE_BASE)){
-				for(BDIPlan tempPlan : listPlans){
-					SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
-					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
-							.equalsIntentionPlan(tempDesire.getPredicate())){
-						desireBaseTest.add(tempDesire);
+				if(listPlans!=null){
+					for(BDIPlan tempPlan : listPlans){
+						SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
+						if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
+								.equalsIntentionPlan(tempDesire.getPredicate())){
+							desireBaseTest.add(tempDesire);
+						}
 					}
 				}
 				for(Norm tempNorm : listNorm){
@@ -600,17 +607,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final List<MentalState> desireBaseTest = GamaListFactory.create();
 			for(MentalState tempDesire : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE))){
-				for(BDIPlan tempPlan : listPlans){
-					if (tempPlan == null) continue;
-					SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
-					if (tempPlan.getPlanStatement() == null) continue;
-					if ((tempPlan.getPlanStatement().getIntentionExpression() == null) || (tempPlan.getPlanStatement().getIntentionExpression().value(scope) == null)){
-						desireBaseTest.add(tempDesire);
-						continue;
-					}
-					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
-							.equalsIntentionPlan(tempDesire.getPredicate())){
-						desireBaseTest.add(tempDesire);
+				if(listPlans!=null){
+					for(BDIPlan tempPlan : listPlans){
+						if (tempPlan == null) continue;
+						SimpleBdiPlanStatement tempPlanStatement = tempPlan.getPlanStatement();
+						if (tempPlan.getPlanStatement() == null) continue;
+						if ((tempPlan.getPlanStatement().getIntentionExpression() == null) || (tempPlan.getPlanStatement().getIntentionExpression().value(scope) == null)){
+							desireBaseTest.add(tempDesire);
+							continue;
+						}
+						if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
+								.equalsIntentionPlan(tempDesire.getPredicate())){
+							desireBaseTest.add(tempDesire);
+						}
 					}
 				}
 				for(Norm tempNorm : listNorm){
@@ -665,7 +674,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		}
+		
 		return false;
 	}
 
@@ -896,7 +905,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final boolean thresholdSatisfied = statement.getThreshold() == null
 					|| obedienceValue >= (Double) statement.getThreshold().value(scope);
 			
-			if(isContextConditionSatisfied && isObligationConditionSatisfied){
+			if(isContextConditionSatisfied && isObligationConditionSatisfied  && thresholdSatisfied){
 				if (is_probabilistic_choice) {
 					temp_norm.add(statement);
 				} else {
@@ -4913,6 +4922,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	
 	public static Boolean addObligation(final IScope scope, final MentalState predicate) {
 		predicate.setOwner(scope.getAgent());
+		clearIntention(scope);
+		final IAgent agent = scope.getAgent();
+		agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
 		return addToBase(scope, predicate, OBLIGATION_BASE);
 	}
 
@@ -5407,6 +5419,49 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		social.setFamiliarity(familiarityModif);
 	}
 
+	private void updateNormViolation(IScope scope){
+		final IAgent agent = getCurrentAgent(scope);
+		NormStatement _persistentNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
+//		Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
+		
+		for(Norm tempNorm : getNorms(scope)){
+			// si la norme est activable mais n'est pas activée, alors elle est violée (non prise en compte des obligations)
+			final NormStatement statement = tempNorm.getNormStatement();
+			if(statement!=null){
+				final boolean isContextConditionSatisfied = statement.getContextExpression() == null
+						|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
+				boolean isIntentionConditionSatisfied = false;
+				if(currentIntention(scope)==null || statement.getIntentionExpression() == null
+						|| statement.getIntentionExpression().value(scope) == null || ((Predicate) statement.getIntentionExpression().value(scope))
+								.equalsIntentionPlan(currentIntention(scope).getPredicate())){
+					isIntentionConditionSatisfied = true;
+				}
+				boolean isObligationConditionSatisfied = false;
+				if(statement.getObligationExpression() != null && statement.getObligationExpression().value(scope) != null){
+						isObligationConditionSatisfied = ((Predicate) statement.getObligationExpression().value(scope))
+								.equalsIntentionPlan(currentIntention(scope).getPredicate());
+				}
+	//			final boolean thresholdSatisfied = statement.getThreshold() == null
+	//					|| obedienceValue >= (Double) statement.getThreshold().value(scope);
+				if ((isContextConditionSatisfied && isIntentionConditionSatisfied) || (isContextConditionSatisfied && isObligationConditionSatisfied) /* && thresholdSatisfied*/) {
+					if(_persistentNorm==null || !statement.equals(_persistentNorm)){
+						tempNorm.violated(scope);
+					} else if(statement.equals(_persistentNorm)){
+						tempNorm.applied(scope);
+					}
+				}
+			}
+		}
+	}
+	
+	private void updateNormLifetime(IScope scope){
+		for(Norm tempNorm : getNorms(scope)){
+			if(tempNorm!=null){
+				tempNorm.updateLifeime();
+			}
+		}
+	}
+	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
