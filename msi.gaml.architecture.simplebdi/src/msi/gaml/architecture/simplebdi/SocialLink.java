@@ -149,7 +149,7 @@ public class SocialLink implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "(" + agent + "," + liking + "," + dominance + "," + solidarity + "," + familiarity + ")";
+		return "(" + agent + "," + liking + "," + dominance + "," + solidarity + "," + familiarity + "," + trust + ")";
 	}
 
 	@Override

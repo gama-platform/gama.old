@@ -5090,13 +5090,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					optional = false,
 					doc = @doc ("social link to check")) },
 			doc = @doc (
-					value = "get the social linke (if several, returns the first one).",
+					value = "get the social link (if several, returns the first one).",
 					returns = "the social link if it is in the base.",
 					examples = { @example ("get_social_link(new_social_link(agentA))") }))
 	public SocialLink getSocialLink(final IScope scope) throws GamaRuntimeException {
 		final SocialLink socialDirect =
 				(SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
 		if (socialDirect != null) { return getSocialLink(scope, socialDirect); }
+		return null;
+	}
+	
+	@action (
+			name = "get_social_link_with_agent",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = false,
+					doc = @doc ("an agent with who I get a social link")) },
+			doc = @doc (
+					value = "get the social link with the agent concerned (if several, returns the first one).",
+					returns = "the social link if it is in the base.",
+					examples = { @example ("get_social_link_with_agent(agentA)") }))
+	public SocialLink getSocialLinkWithAgent(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		if (agentDirect != null) { return getSocialLink(scope,new SocialLink(agentDirect)); }
 		return null;
 	}
 
@@ -5123,13 +5141,31 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "check if the social link base.",
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
-	public Boolean primTestSocial(final IScope scope) throws GamaRuntimeException {
+	public Boolean primTestSocialWithAgent(final IScope scope) throws GamaRuntimeException {
 		final SocialLink socialDirect =
 				(SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
 		if (socialDirect != null) { return hasSocialLink(scope, socialDirect); }
 		return false;
 	}
 
+	@action (
+			name = "has_social_link_with_agent",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I want to check if I have a social link")) },
+			doc = @doc (
+					value = "check if the social link base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primTestSocial(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		if (agentDirect != null) { return hasSocialLink(scope, new SocialLink(agentDirect)); }
+		return false;
+	}
+	
 	public static Boolean removeSocialLink(final IScope scope, final SocialLink socialDirect) {
 		return getSocialBase(scope, SOCIALLINK_BASE).remove(socialDirect);
 	}
@@ -5145,10 +5181,28 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					value = "removes the social link from the social relation base.",
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
-	public Boolean primRemoveSocialLink(final IScope scope) throws GamaRuntimeException {
+	public Boolean primRemoveSocialLinkWithAgent(final IScope scope) throws GamaRuntimeException {
 		final SocialLink socialDirect =
 				(SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
 		if (socialDirect != null) { return removeSocialLink(scope, socialDirect); }
+		return false;
+	}
+	
+	@action (
+			name = "remove_social_link_with_agent",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get the social link to remove")) },
+			doc = @doc (
+					value = "removes the social link from the social relation base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("") }))
+	public Boolean primRemoveSocialLink(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		if (agentDirect != null) { return removeSocialLink(scope, new SocialLink(agentDirect)); }
 		return false;
 	}
 	
@@ -5163,6 +5217,186 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 	
+	
+	@action (
+			name = "change_liking",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get a social link")),
+					@arg (
+							name = "liking",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("a value to change the liking value"))},
+					doc = @doc (
+							value = "changes the liking value of the social relation with the agent specified.",
+							returns = "true if it worked.",
+							examples = { @example ("") })
+			)
+	public Boolean primChangeLiking(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		final Double likingDirect =
+				(Double) (scope.hasArg("liking") ? scope.getArg("liking", IType.FLOAT) : 0.0);
+		if (agentDirect != null) { 
+			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			tempSocial.setLiking(tempSocial.getLiking()+likingDirect);
+			if(tempSocial.getLiking()>1.0){
+				tempSocial.setLiking(1.0);
+			}
+			if(tempSocial.getLiking()<-1.0){
+				tempSocial.setLiking(-1.0);
+			}
+			return true;
+			}
+		return false;
+	}
+	
+	@action (
+			name = "change_dominance",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get a social link")),
+					@arg (
+							name = "dominance",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("a value to change the dominance value"))},
+					doc = @doc (
+							value = "changes the dominance value of the social relation with the agent specified.",
+							returns = "true if it worked.",
+							examples = { @example ("") })
+			)
+	public Boolean primChangeDominance(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		final Double dominanceDirect =
+				(Double) (scope.hasArg("dominance") ? scope.getArg("dominance", IType.FLOAT) : 0.0);
+		if (agentDirect != null) { 
+			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			tempSocial.setDominance(tempSocial.getDominance()+dominanceDirect);
+			if(tempSocial.getDominance()>1.0){
+				tempSocial.setDominance(1.0);
+			}
+			if(tempSocial.getDominance()<-1.0){
+				tempSocial.setDominance(-1.0);
+			}
+			return true;
+			}
+		return false;
+	}
+	
+	@action (
+			name = "change_solidarity",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get a social link")),
+					@arg (
+							name = "solidarity",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("a value to change the solidarity value"))},
+					doc = @doc (
+							value = "changes the solidarity value of the social relation with the agent specified.",
+							returns = "true if it worked.",
+							examples = { @example ("") })
+			)
+	public Boolean primChangeSolidarity(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		final Double solidarityDirect =
+				(Double) (scope.hasArg("solidarity") ? scope.getArg("solidarity", IType.FLOAT) : 0.0);
+		if (agentDirect != null) { 
+			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			tempSocial.setSolidarity(tempSocial.getSolidarity()+solidarityDirect);
+			if(tempSocial.getSolidarity()>1.0){
+				tempSocial.setSolidarity(1.0);
+			}
+			if(tempSocial.getSolidarity()<0.0){
+				tempSocial.setSolidarity(-1.0);
+			}
+			return true;
+			}
+		return false;
+	}
+	
+	@action (
+			name = "change_familiarity",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get a social link")),
+					@arg (
+							name = "familiarity",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("a value to change the familiarity value"))},
+					doc = @doc (
+							value = "changes the familiarity value of the social relation with the agent specified.",
+							returns = "true if it worked.",
+							examples = { @example ("") })
+			)
+	public Boolean primChangeFamiliarity(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		final Double familiarityDirect =
+				(Double) (scope.hasArg("familiarity") ? scope.getArg("familiarity", IType.FLOAT) : 0.0);
+		if (agentDirect != null) { 
+			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			tempSocial.setFamiliarity(tempSocial.getFamiliarity()+familiarityDirect);
+			if(tempSocial.getFamiliarity()>1.0){
+				tempSocial.setFamiliarity(1.0);
+			}
+			if(tempSocial.getFamiliarity()<0.0){
+				tempSocial.setFamiliarity(0.0);
+			}
+			return true;
+			}
+		return false;
+	}
+	
+	@action (
+			name = "change_trust",
+			args = { @arg (
+					name = "agent",
+					type = IType.AGENT,
+					optional = true,
+					doc = @doc ("an agent with who I get a social link")),
+					@arg (
+							name = "trust",
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("a value to change the trust value"))},
+					doc = @doc (
+							value = "changes the trust value of the social relation with the agent specified.",
+							returns = "true if it worked.",
+							examples = { @example ("") })
+			)
+	public Boolean primChangeTrust(final IScope scope) throws GamaRuntimeException {
+		final IAgent agentDirect =
+				(IAgent) (scope.hasArg("agent") ? scope.getArg("agent", IType.AGENT) : null);
+		final Double trustDirect =
+				(Double) (scope.hasArg("trust") ? scope.getArg("trust", IType.FLOAT) : 0.0);
+		if (agentDirect != null) { 
+			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			tempSocial.setTrust(tempSocial.getTrust()+trustDirect);
+			if(tempSocial.getTrust()>1.0){
+				tempSocial.setLiking(1.0);
+			}
+			if(tempSocial.getTrust()<-1.0){
+				tempSocial.setLiking(-1.0);
+			}
+			return true;
+			}
+		return false;
+	}
 	
 	private List<SocialLink> listSocialAgentDead(final IScope scope) {
 		final List<SocialLink> tempPred = new ArrayList<SocialLink>();
