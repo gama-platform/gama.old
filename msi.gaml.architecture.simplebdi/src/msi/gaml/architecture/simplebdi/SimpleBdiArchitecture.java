@@ -139,6 +139,11 @@ import msi.gaml.types.Types;
 				of = MentalStateType.id,
 				init = "[]"),
 		@var (
+				name = SimpleBdiArchitecture.LAW_BASE,
+				type = IType.LIST,
+				of = IType.NONE,
+				init = "[]"),
+		@var (
 				name = SimpleBdiArchitecture.PLAN_BASE,
 				type = IType.LIST,
 				of = BDIPlanType.id,
@@ -224,6 +229,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String CURRENT_PLAN = "current_plan";
 	public static final String CURRENT_NORM = "current_norm";
 	public static final String UNCERTAINTY_BASE = "uncertainty_base";
+	public static final String LAW_BASE = "law_base";
 
 	// WARNING
 	// AD: These values depend on the scope (i.e. the agent)
@@ -358,6 +364,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			while (loop_instantaneous_plans) {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
+				agent.setAttribute(LAW_BASE, _laws);
 				agent.setAttribute(PLAN_BASE, _plans);
 				agent.setAttribute(NORM_BASE, _norms);
 				agent.setAttribute(SANCTION_BASE, _sanctions);
@@ -624,7 +631,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				for(Norm tempNorm : listNorm){
 					NormStatement tempPlanStatement = tempNorm.getNormStatement();
-					if(((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
+					if(tempPlanStatement.getIntentionExpression()!=null && ((Predicate) tempPlanStatement.getIntentionExpression().value(scope))
 							.equalsIntentionPlan(tempDesire.getPredicate())){
 						desireBaseTest.add(tempDesire);
 					}
@@ -1299,6 +1306,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return result;
 	}
 
+	public static List<LawStatement> getLaws(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		return (List<LawStatement>) (scope.hasArg(LAW_BASE) ? scope.getListArg(LAW_BASE)
+				: (List<LawStatement>) agent.getAttribute(LAW_BASE));
+	}
+	
 	public static List<Norm> getNorms(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		return (List<Norm>) (scope.hasArg(NORM_BASE) ? scope.getListArg(NORM_BASE)
@@ -5671,7 +5684,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					isIntentionConditionSatisfied = true;
 				}
 				boolean isObligationConditionSatisfied = false;
-				if(statement.getObligationExpression() != null && statement.getObligationExpression().value(scope) != null){
+				if(currentIntention(scope)!=null && statement.getObligationExpression() != null && statement.getObligationExpression().value(scope) != null){
 						isObligationConditionSatisfied = ((Predicate) statement.getObligationExpression().value(scope))
 								.equalsIntentionPlan(currentIntention(scope).getPredicate());
 				}

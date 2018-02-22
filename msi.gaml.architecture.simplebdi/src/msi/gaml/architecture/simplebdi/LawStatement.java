@@ -83,7 +83,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.NAME,
 						type = IType.ID,
 						optional = true,
-						doc = @doc ("The name of the rule")) },
+						doc = @doc ("The name of the law")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.",
@@ -113,6 +113,18 @@ public class LawStatement extends AbstractStatement{
 	final IExpression lifetime;
 	final IExpression threshold;
 	
+	public IExpression getContextExpression() {
+		return when;
+	}
+	
+	public IExpression getBeliefExpression() {
+		return belief;
+	}
+	
+	public IExpression getObligationExpression() {
+		return newObligation;
+	}
+	
 	public LawStatement(IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);
@@ -124,6 +136,7 @@ public class LawStatement extends AbstractStatement{
 		lifetime = getFacet("lifetime");
 		threshold = getFacet(LawStatement.THRESHOLD);
 		parallel = getFacet(IKeyword.PARALLEL);
+		setName(desc.getName());
 	}
 
 

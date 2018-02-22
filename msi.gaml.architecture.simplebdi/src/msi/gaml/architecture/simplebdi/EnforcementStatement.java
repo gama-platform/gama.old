@@ -36,6 +36,11 @@ import msi.gaml.types.IType;
 				optional = true,
 				doc = @doc ("The obligation to enforce")),
 		@facet (
+				name = EnforcementStatement.LAW,
+				type = IType.STRING,
+				optional = true,
+				doc = @doc ("The law to enforce")),
+		@facet (
 				name = EnforcementStatement.SANCTION,
 				type = IType.STRING,
 				optional = true,
@@ -57,6 +62,7 @@ public class EnforcementStatement extends AbstractStatement{
 	public static final String SANCTION = "sanction";
 	public static final String REWARD = "reward";
 	public static final String OBLIGATION = "obligation";
+	public static final String LAW = "law";
 
 	final IExpression name;
 	final IExpression when;
@@ -64,6 +70,7 @@ public class EnforcementStatement extends AbstractStatement{
 	final IExpression sanction;
 	final IExpression reward;
 	final IExpression obligation;
+	final IExpression law;
 	
 	public EnforcementStatement(IDescription desc) {
 	super(desc);
@@ -73,6 +80,7 @@ public class EnforcementStatement extends AbstractStatement{
 	sanction = getFacet(EnforcementStatement.SANCTION);
 	reward = getFacet(EnforcementStatement.REWARD);
 	obligation = getFacet(EnforcementStatement.OBLIGATION);
+	law = getFacet(EnforcementStatement.LAW);
 	}
 
 	@Override
@@ -161,6 +169,44 @@ public class EnforcementStatement extends AbstractStatement{
 						}
 					}
 				}
+			}
+			if(law!=null){
+				//on recherche la norme avec le même nom chez l'autre et on regarde si elle est violée
+				LawStatement lawToTest = null;
+				//Améliorable en temps de calcul
+				for(LawStatement tempLaw : SimpleBdiArchitecture.getLaws(scope)){
+					if(tempLaw.getName().equals(law.value(scopeMySelf))){
+						lawToTest = tempLaw;
+					}
+				}
+				if(lawToTest!=null){
+					if(lawToTest.getContextExpression()== null
+							|| msi.gaml.operators.Cast.asBool(scope, lawToTest.getContextExpression().value(scope))){
+						if(lawToTest.getBeliefExpression() == null
+					|| lawToTest.getBeliefExpression().value(scope) == null || SimpleBdiArchitecture.hasBelief(scope, new MentalState("Belief",((Predicate) lawToTest.getBeliefExpression().value(scope))))){
+							if(lawToTest.getObligationExpression() == null
+								|| lawToTest.getObligationExpression().value(scope) == null || SimpleBdiArchitecture.hasObligation(scope, new MentalState("Obligation",((Predicate) lawToTest.getObligationExpression().value(scope))))){
+								Sanction rewardToExecute = null;
+								//Améliorable en temps de calcul
+								for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+									if(tempReward.getName().equals(reward.value(scopeMySelf))){
+										rewardToExecute = tempReward;
+									}
+								}
+								retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							} else {
+								Sanction sanctionToExecute = null;
+								//Améliorable en temps de calcul
+								for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+									if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
+										sanctionToExecute = tempSanction;
+									}
+								}
+								retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							}
+						}
+					}
+				}		
 			}
 			GAMA.releaseScope(scopeMySelf);
 		}
