@@ -52,6 +52,7 @@ public class Norm implements IValue{
 	private Integer lifetimeViolation;
 	private Boolean noLifetime;
 	private Boolean isApplied;
+	private Boolean isSanctioned;
 	
 	@getter ("name")
 	public String getName() {
@@ -100,12 +101,17 @@ public class Norm implements IValue{
 		return this.isApplied;
 	}
 	
+	public Boolean getSanctioned(){
+		return this.isSanctioned;
+	}
+	
 	public Norm(){
 		super();
 		this.isViolated = false;
 		this.isApplied = false;
 		this.lifetimeViolation = -1;
 		this.noLifetime = true;
+		this.isSanctioned = false;
 	}
 	
 	public Norm(final NormStatement statement) {
@@ -115,6 +121,7 @@ public class Norm implements IValue{
 		this.isViolated = false;
 		this.noLifetime = true;
 		this.isApplied = false;
+		this.isSanctioned = false;
 	}
 	
 	public Norm(final NormStatement statement, final IScope scope) {
@@ -122,6 +129,7 @@ public class Norm implements IValue{
 		this.normStatement = statement;
 		this.isViolated = false;
 		this.isApplied = false;
+		this.isSanctioned = false;
 		if(statement._lifetime!=null){
 			this.lifetimeViolation = (Integer) statement._lifetime.value(scope);
 			this.noLifetime = false;
@@ -134,6 +142,10 @@ public class Norm implements IValue{
 	public void setViolation(final Boolean violation){
 		this.isViolated = violation;
 		this.isApplied = !violation;
+	}
+	
+	public void sanctioned(){
+		this.isSanctioned = true;
 	}
 	
 	public void violated(final IScope scope){
@@ -158,8 +170,9 @@ public class Norm implements IValue{
 		if(!noLifetime && isViolated){
 			this.lifetimeViolation --;
 		}
-		if(this.lifetimeViolation<0){
+		if(this.lifetimeViolation<0 && !noLifetime){
 			isViolated = false;
+			isSanctioned = false;
 			noLifetime=true;
 		}
 	}
