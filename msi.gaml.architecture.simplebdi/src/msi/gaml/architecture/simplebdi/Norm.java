@@ -71,22 +71,38 @@ public class Norm implements IValue{
 	
 	@getter (NormStatement.INTENTION)
 	public Predicate getIntention(final IScope scope) {
-		return (Predicate) this.normStatement._intention.value(scope);
+		if(this.normStatement!=null && this.normStatement._intention!=null){
+			return (Predicate) this.normStatement._intention.value(scope);
+		} else {
+			return null;
+		}
 	}
 	
 	@getter (NormStatement.OBLIGATION)
 	public Predicate getObligation(final IScope scope) {
-		return (Predicate) this.normStatement._obligation.value(scope);
+		if(this.normStatement!=null && this.normStatement._obligation!=null){
+			return (Predicate) this.normStatement._obligation.value(scope);
+		} else {
+			return null;
+		}
 	}
 	
 	@getter (SimpleBdiArchitecture.FINISHEDWHEN)
 	public String getFinishedWhen() {
-		return this.normStatement._executedwhen.serialize(true);
+		if(this.normStatement!=null && this.normStatement._executedwhen!=null){
+			return this.normStatement._executedwhen.serialize(true);
+		} else {
+			return null;
+		}
 	}
 	
 	@getter (SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
-		return this.normStatement._instantaneous.serialize(true);
+		if(this.normStatement!=null && this.normStatement._instantaneous!=null){
+			return this.normStatement._instantaneous.serialize(true);
+		} else {
+			return null;
+		}
 	}
 	
 	public NormStatement getNormStatement() {
@@ -142,6 +158,10 @@ public class Norm implements IValue{
 	public void setViolation(final Boolean violation){
 		this.isViolated = violation;
 		this.isApplied = !violation;
+	}
+	
+	public void setSanctioned(final Boolean sanction){
+		this.isSanctioned = sanction;
 	}
 	
 	public void sanctioned(){

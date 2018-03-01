@@ -190,23 +190,27 @@ public class EnforcementStatement extends AbstractStatement{
 					|| lawToTest.getBeliefExpression().value(scope) == null || SimpleBdiArchitecture.hasBelief(scope, new MentalState("Belief",((Predicate) lawToTest.getBeliefExpression().value(scope))))){
 							if(lawToTest.getObligationExpression() == null
 								|| lawToTest.getObligationExpression().value(scope) == null || SimpleBdiArchitecture.hasObligation(scope, new MentalState("Obligation",((Predicate) lawToTest.getObligationExpression().value(scope))))){
-								Sanction rewardToExecute = null;
-								//Améliorable en temps de calcul
-								for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
-									if(tempReward.getName().equals(reward.value(scopeMySelf))){
-										rewardToExecute = tempReward;
+								if(reward!=null){
+									Sanction rewardToExecute = null;
+									//Améliorable en temps de calcul
+									for(Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+										if(tempReward.getName().equals(reward.value(scopeMySelf))){
+											rewardToExecute = tempReward;
+										}
 									}
+									retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								}
-								retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 							} else {
-								Sanction sanctionToExecute = null;
-								//Améliorable en temps de calcul
-								for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
-									if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
-										sanctionToExecute = tempSanction;
+								if(sanction!=null){
+									Sanction sanctionToExecute = null;
+									//Améliorable en temps de calcul
+									for(Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)){
+										if(tempSanction.getName().equals(sanction.value(scopeMySelf))){
+											sanctionToExecute = tempSanction;
+										}
 									}
+									retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								}
-								retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 							}
 						}
 					}

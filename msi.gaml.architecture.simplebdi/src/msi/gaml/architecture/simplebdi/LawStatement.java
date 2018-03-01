@@ -164,10 +164,14 @@ public class LawStatement extends AbstractStatement{
 								tempNewObligation
 									.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 							}
-							SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
-							SimpleBdiArchitecture.clearIntention(scope);
-							final IAgent agent = scope.getAgent();
-							agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+							//ne faire ces actions que si on n'a pas déjà l'obligation
+							if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
+								SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+								SimpleBdiArchitecture.clearIntention(scope);
+								final IAgent agent = scope.getAgent();
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+							}
 						}
 						if (newObligations != null) {
 							final List<Predicate> newObls =
@@ -183,10 +187,13 @@ public class LawStatement extends AbstractStatement{
 									tempDesires.setLifeTime(
 											Cast.asInt(scope, lifetime.value(scope)));
 								}
-								SimpleBdiArchitecture.addObligation(scope, tempDesires);
-								SimpleBdiArchitecture.clearIntention(scope);
-								final IAgent agent = scope.getAgent();
-								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+								if(!SimpleBdiArchitecture.hasObligation(scope, tempDesires)){
+									SimpleBdiArchitecture.addObligation(scope, tempDesires);
+									SimpleBdiArchitecture.clearIntention(scope);
+									final IAgent agent = scope.getAgent();
+									agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+									agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+								}
 							}
 						}
 					}
