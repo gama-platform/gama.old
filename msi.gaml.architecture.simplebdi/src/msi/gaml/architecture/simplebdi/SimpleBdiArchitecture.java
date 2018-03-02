@@ -1457,6 +1457,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, DESIRE_BASE);
 				removeFromBase(scope, predicateDirect, INTENTION_BASE);
+				scope.getAgent().setAttribute(CURRENT_PLAN, null);
+				scope.getAgent().setAttribute(CURRENT_NORM, null);
 			}
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
@@ -2863,6 +2865,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 			if (predicateDirect.equals(currentIntention(scope)))
 				scope.getAgent().setAttribute(CURRENT_PLAN, null);
+				scope.getAgent().setAttribute(CURRENT_NORM, null);
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 				if(((MentalState) statement).getPredicate()!=null){
 					final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
