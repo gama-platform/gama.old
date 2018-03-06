@@ -68,8 +68,11 @@ public class GamaPointType extends GamaType<ILocation> {
 		}
 		// Decodes the stringValue() of GamaPoint
 		if (obj instanceof String) {
-			final String s = ((String) obj).replace("{", "").replace("}", "").trim();
-			return staticCast(scope, Arrays.asList(s.split(",")), false);
+			String s = ((String) obj).trim();
+			if (s.startsWith("{") && s.endsWith("}")) {
+				s = s.replace("{", "").replace("}", "").trim();
+			    return staticCast(scope, Arrays.asList(s.split(",")), false);
+			}
 		}
 		if (obj instanceof GamaPair) { return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
 				Cast.asFloat(scope, ((GamaPair) obj).last())); }
