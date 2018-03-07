@@ -257,7 +257,8 @@ public class AgentsMenu extends ContributionItem {
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
-				actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
+				if (ma != null)
+					actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
 			}
 		}
 		final Collection<UserCommandStatement> commands = agent.getSpecies().getUserCommands();
