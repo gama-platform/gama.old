@@ -46,7 +46,12 @@ public class StringUtils {
 		if (s == null) { return null; }
 		final StringBuilder sb = new StringBuilder(s.length());
 		sb.append('\'');
-		sb.append(StringEscapeUtils.escapeJava(s));
+		sb.append(s
+				.replace("\\", "\\\\")
+				.replace("'", "\\'")
+				.replace("\"", "\\\"")
+				.replace("/", "\\/")
+				);
 		sb.append('\'');
 		return sb.toString();
 	}
