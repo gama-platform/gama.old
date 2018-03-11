@@ -15,7 +15,7 @@ global {
 	reflex save_bug_attribute when: cycle = 100{
 		ask bug {
 			// save the values of the variables name, speed and size to the csv file; the rewrite facet is set to true to continue to write in the same file
-			save [name,speed, size] to: "../results/bug.csv" type:"csv" rewrite: true;
+			save [name,speed, size] to: "../results/bug.csv" type:"csv" rewrite: false;
 		}
 		//Pause the model as the data are saved
 		do pause;
