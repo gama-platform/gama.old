@@ -120,7 +120,7 @@ public class Application implements IApplication {
 		}
 
 		if (mustContainOutFile) {
-			final int outIndex = size - 1;
+			final int outIndex = args.size() - 1;
 			Globals.OUTPUT_PATH = args.get(outIndex);
 			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
 			final File output = new File(Globals.OUTPUT_PATH);
@@ -132,7 +132,7 @@ public class Application implements IApplication {
 		}
 
 		if (mustContainInFile) {
-			final int inIndex = mustContainOutFile ? size - 2 : size - 1;
+			final int inIndex = mustContainOutFile ?  args.size() - 2 :  args.size() - 1;
 			final File input = new File(args.get(inIndex));
 			if (!input.exists()) {
 				showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args.get(inIndex));
@@ -152,7 +152,7 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		// SystemLogger.removeDisplay();
+		SystemLogger.removeDisplay();
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 		if (args.contains(HELP_PARAMETER)) {
@@ -278,7 +278,7 @@ public class Application implements IApplication {
 		if (this.verbose && !this.tunnelingMode) {
 			SystemLogger.activeDisplay();
 		}
-
+	
 		if (this.consoleMode) {
 			in = new Reader(ConsoleReader.readOnConsole());
 		} else {
