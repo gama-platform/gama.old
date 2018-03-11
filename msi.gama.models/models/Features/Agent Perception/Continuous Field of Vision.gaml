@@ -87,7 +87,7 @@ species people skills: [moving]{
 experiment fieldofvision type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display view{
+		display view synchronized: true{
 			species obstacle;
 			species people aspect: perception transparency: 0.5;
 			species people aspect: body;
