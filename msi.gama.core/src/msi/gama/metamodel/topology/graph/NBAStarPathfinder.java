@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -259,7 +260,16 @@ public final class NBAStarPathfinder<V, E> {
 		V cn = path.get(0);
 		for (int i = 1; i < path.size(); i ++) {
 			V tn = path.get(i);
-			List<E> edges = new ArrayList<>(vertices.get(cn).edgesTo(tn)) ;
+			_Vertex<V, E> vcn = vertices.get(cn);
+			if (vcn == null) {
+				final V cn2 = cn;
+				Optional<V> ocn = vertices.keySet().stream().filter(a -> a.equals(cn2)).findFirst();
+				if (ocn.isPresent()) {
+					 vcn = vertices.get(ocn.get());
+				} else 
+					return edgePath;
+			}
+			List<E> edges = new ArrayList<>(vcn.edgesTo(tn)) ;
 			if (!graph.isDirected()) edges.addAll(vertices.get(tn).edgesTo(cn));
 			if (edges.size() == 1 ) {
 				edgePath.add(edges.get(0));

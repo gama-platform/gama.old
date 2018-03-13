@@ -24,7 +24,7 @@ species countries {
 	}
 	aspect default {
 		draw shape color: color depth: 10;
-		draw name font: font("Helvetica", 6 + #zoom, #bold) color: text_color at: location + {0,0,12};
+		draw name font: font("Helvetica", 12 + #zoom, #bold) color: #black at: location + {0,0,12} perspective:false;
 	}
 }
 
