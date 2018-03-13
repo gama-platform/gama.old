@@ -75,6 +75,8 @@ public class SavedAgentConverter implements Converter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+		
+		System.out.println("read saved agent");
 		reader.moveDown();
 		final String indexStr = reader.getValue();
 		final Integer index = Integer.parseInt(indexStr);

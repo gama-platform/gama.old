@@ -188,7 +188,7 @@ public class ReverseOperators {
 	@doc(value = "[For network purpose]", deprecated = "Still in alpha version, do not use it.")
 	public static Object unserializeNetwork(final IScope scope, final String s) {
 		System.out.println("**** unSerialize Object ****");
-		return StreamConverter.convertStreamToObject(scope, s);
+		return StreamConverter.convertNetworkStreamToObject(scope, s);
 	}
 	// END TODO
 

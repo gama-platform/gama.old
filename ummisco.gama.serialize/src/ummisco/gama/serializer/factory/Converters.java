@@ -19,6 +19,7 @@ import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaGraphConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaListConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaListConverterNetwork;
 import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMatrixConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
@@ -65,7 +66,7 @@ public abstract class Converters {
 		Converter[] converters= new Converter[12];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
-		converters[2]=new GamaListConverter(cs);
+		converters[2]=new GamaListConverterNetwork(cs);
 		converters[3]=new GamaMapConverter(cs);
 		converters[4]=new GamaPairConverter();
 		converters[5]=new GamaMatrixConverter(cs);

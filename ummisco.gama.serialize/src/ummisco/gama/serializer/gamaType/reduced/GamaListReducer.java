@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.IContainer;
 import msi.gaml.types.IType;
 
 @SuppressWarnings({ "rawtypes" })
@@ -24,13 +25,27 @@ public class GamaListReducer {
 
 	public GamaListReducer(final GamaList l) {
 		contentTypeListReducer = l.getType().getContentType();
-
+		
 		for (final Object p : l) {
 			valuesListReducer.add(p);
 		}
 	}
 
 	public GamaList constructObject(final IScope scope) {
+		System.out.println("read "+contentTypeListReducer+ " "+valuesListReducer );
+	//	scope.getAgent().getPopulationFor(speciesName)
+	//	(microSpeciesName)getMicroSpecies(contentTypeListReducer);
 		return (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
 	}
+
+	public ArrayList<Object> getValuesListReducer() {
+		return valuesListReducer;
+	}
+
+	public IType getContentTypeListReducer() {
+		return contentTypeListReducer;
+	}
+	
+	
+	
 }

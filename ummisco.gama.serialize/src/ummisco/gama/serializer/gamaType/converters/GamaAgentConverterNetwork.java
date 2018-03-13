@@ -57,10 +57,10 @@ public class GamaAgentConverterNetwork implements Converter {
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		
-		System.out.println("lecture d'un save agent");
-		//reader.moveDown();
 		final SavedAgent rmt = (SavedAgent) arg1.convertAnother(null, SavedAgent.class);
 		//reader.moveUp();
+		System.out.println("lecture d'un save agent " + rmt.getName()+" " +rmt.values());
+		
 		return rmt;
 	}
 
