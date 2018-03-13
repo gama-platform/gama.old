@@ -4,9 +4,8 @@
 * Description: Model presenting a 3D display of people and buildings moving on a road network imported thanks to shapefiles. 
 * 
 * 
-*       Three experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back 
-* 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer). The last one increases 
-* 	the Z location of the buildings and the people according to the time simulated (road_traffic_flying_off).
+*       Two experiments are proposed : one showing people represented by a yellow sphere moving from a living 3D building to a working 3D building and coming back 
+* 	using a road network (road_traffic). The second experiment distinguish the species by using different layers for species (road_traffic_multi_layer).
 * Tags: 3d, shapefile, gis
 */
 model tutorial_gis_city_traffic
@@ -24,7 +23,7 @@ global
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
 	geometry shape <- envelope(shape_file_bounds);
-	int nb_people <- 5000;
+	int nb_people <- 1000;
 	int day_time update: cycle mod 144;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
@@ -41,11 +40,10 @@ global
 	{
 		create building from: shape_file_buildings with: [type:: string(read('NATURE'))]
 		{
-			if type = 'Industrial'
+			if type = "Industrial"
 			{
 				color <- # blue;
 			}
-
 			height <- 10 + rnd(90);
 		}
 
@@ -65,7 +63,7 @@ species building
 	int height;
 	aspect base
 	{
-		draw shape color: color depth: 100; // texture:[roof_texture,texture];
+		draw shape color: color depth: height; // texture:[roof_texture,texture];
 	}
 
 }
@@ -120,7 +118,7 @@ species people skills: [moving]
 
 	aspect base
 	{
-		draw sphere(10) color: color;
+		draw sphere(3) color: color;
 	}
 
 }
@@ -130,26 +128,6 @@ experiment road_traffic type: gui
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS';
 	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS';
-	parameter 'Number of people agents' var: nb_people category: 'People' min: 0 max: 1000 on_change:
-	{
-		int nb <- length(people);
-		ask simulation
-		{
-			if (nb_people > nb)
-			{
-				create people number: nb_people - nb;
-			} else
-			{
-				ask (nb - nb_people) among people
-				{
-					do die;
-				}
-
-			}
-
-		}
-
-	};
 	parameter 'Earliest hour to start work' var: min_work_start category: 'People';
 	parameter 'Latest hour to start work' var: max_work_start category: 'People';
 	parameter 'Earliest hour to end work' var: min_work_end category: 'People';
@@ -164,14 +142,6 @@ experiment road_traffic type: gui
 			species road aspect: base ;
 			species people aspect: base;
 		}
-//
-//		display city_display2
-//		{
-//			species building aspect: base;
-//			species road aspect: base;
-//			species people aspect: base;
-//		}
-
 	}
 
 }
@@ -188,6 +158,23 @@ experiment road_traffic_multi_layer type: gui
 	parameter 'Latest hour to end work' var: max_work_end category: 'People';
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
+	parameter 'Number of people agents' var: nb_people category: 'People' min: 0 max: 1000 on_change:
+	{
+		int nb <- length(people);
+		ask simulation
+		{
+			if (nb_people > nb)
+			{
+				create people number: nb_people - nb;
+			} else
+			{
+				ask (nb - nb_people) among people
+				{
+					do die;
+				}
+			}
+		}
+	};
 	output
 	{
 		display city_display type: opengl
@@ -196,22 +183,5 @@ experiment road_traffic_multi_layer type: gui
 			species building aspect: base position: { 0, 0, 0.25 };
 			species people aspect: base position: { 0, 0, 0.5 };
 		}
-
 	}
-
-}
-
-experiment road_traffic_flying_off type: gui
-{
-	output
-	{
-		display flyingOffAgents type: opengl 
-		{
-			species road aspect: base;
-			species building aspect: base position: { 0, 0, (time * 2) / 1000 };
-			species people aspect: base position: { 0, 0, (time * 4) / 1000 };
-		}
-
-	}
-
 }
