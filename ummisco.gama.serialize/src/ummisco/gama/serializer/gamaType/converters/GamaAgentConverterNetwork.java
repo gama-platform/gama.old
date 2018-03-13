@@ -59,7 +59,7 @@ public class GamaAgentConverterNetwork implements Converter {
 		
 		final SavedAgent rmt = (SavedAgent) arg1.convertAnother(null, SavedAgent.class);
 		//reader.moveUp();
-		System.out.println("lecture d'un save agent " + rmt.getName()+" " +rmt.values());
+	//	System.out.println("lecture d'un save agent " + rmt.getName()+" " +rmt.values());
 		
 		return rmt;
 	}
