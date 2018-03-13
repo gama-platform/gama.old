@@ -71,24 +71,28 @@ experiment SpaceTimeCube type: gui {
 	}
 }
 
+
+
 experiment MultipleView type: gui {
 	float minimum_cycle_duration <- 0.03;
 	output {
 		display RealBoids   type:opengl {
 			image 'background' file:'../images/sky.jpg';
-			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
+			species boids{
+			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:4 ;	
+			}
 			species boids_goal transparency:0.2 position:{0,0,0.25};
-			species obstacle ;
-			species boids  aspect: image transparency:0.2 position:{0,0,0.24};		
+			species obstacle ;	
 		}
 		//The facet camera_pos is the position of the camera in the 3D display and the facet camera_look_pos is the position where the camera is looking
+		
 		display ThirdPersonn  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),250} 
 		camera_look_pos:{int(first(boids).location.x),(first(boids).location.y),0} camera_up_vector:{0.0,-1.0,0.0} {
 		
 			image 'background' file:'../images/sky.jpg';
 			species obstacle;
 			species boids{
-			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
+			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:4 ;	
 			}
 			species boids_goal{
 				draw sphere(10) color: #yellow;
@@ -103,7 +107,7 @@ experiment MultipleView type: gui {
 			image 'background' file:'../images/sky.jpg';
 			species obstacle ;
 			species boids{
-			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
+			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:4 ;	
 			}
 			species boids_goal{
 				draw sphere(10) color: #yellow;
@@ -111,3 +115,5 @@ experiment MultipleView type: gui {
 		}
 	}
 }
+
+
