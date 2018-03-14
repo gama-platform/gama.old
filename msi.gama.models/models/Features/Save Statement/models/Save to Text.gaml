@@ -17,7 +17,7 @@ global {
 	//Reflex saving the agents every 10 steps. 
 	reflex save_data when: every(10#cycles){
 		//save the following text into the given text file. Note that each time the save statement is used, a new line is added at the end of the file.
-		save ("cycle:" + cycle + ", mean size: " + mean(bug collect each.size)) to: "../results/data.txt";
+		save ("cycle:" + cycle + ", mean size: " + mean(bug collect each.size)) to: "../results/data.txt" rewrite: false;
 	}
 	//Reflex that will pause the simulation when the number of cycles reach 100.
 	reflex end_simulation when: cycle = 100 {
