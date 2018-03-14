@@ -97,7 +97,7 @@ public class Logic {
 					value = "[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')",
 					returnType = "list<string>",
 					equals = "['below', 'below', 'above', 'below', 'below', 'above']"),
-					@example ("rgb color <- (flip(0.3) ? #red : (flip(0.9) ? #blue : #green));") },
+					@example ("rgb col <- (flip(0.3) ? #red : (flip(0.9) ? #blue : #green));") },
 			see = ":")
 	public static Object iff(final IScope scope, final Boolean left, final IExpression right)
 			throws GamaRuntimeException {
