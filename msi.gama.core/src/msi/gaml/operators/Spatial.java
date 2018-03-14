@@ -3897,7 +3897,6 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "hierarchical_clustering" },
-				content_type = ITypeProvider.FIRST_TYPE,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL,
 						IOperatorCategory.STATISTICAL },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION,
@@ -3913,7 +3912,7 @@ public abstract class Spatial {
 		public static IList hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents,
 				final Double distance) {
 			final int nb = agents.length(scope);
-			final IList<IList> groups = GamaListFactory.create(Types.LIST.of(Types.LIST));
+			final IList<IList> groups = GamaListFactory.create();
 
 			if (nb == 0) {
 				// scope.setStatus(ExecutionStatus.failure);
@@ -3952,7 +3951,9 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				IList<IList> fusionL = GamaListFactory.create(scope, Types.LIST.of(Types.LIST), minFusion);
+				
+				IList<IList> fusionL = GamaListFactory.create();
+				fusionL.addAll(minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
 				final IList<IAgent> g2 = fusionL.get(1);
 				distances.remove(minFusion);

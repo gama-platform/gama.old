@@ -9,14 +9,14 @@ model simpleGMLfileLoading
 
 
 global {
-	file shape_file_roads <- file("../includes/road.gml");
+	file gml_file_roads <- gml_file("../includes/road.gml", "EPSG:2154" );
 	
 	//definition of the geometry of the world agent (environment) as the envelope of the gml file
-	geometry shape <- envelope(shape_file_roads);
+	geometry shape <- envelope(gml_file_roads);
 	
 	init {
 		//creation of the road agents from the gml file: the name and type attributes of the road agents are initialized according to the NOM and TYPE attributes of the gml file
-		create road from: shape_file_roads with:[name::string(get("NOM")), type::string(get("TYPE"))] ;
+		create road from: gml_file_roads with:[name::string(get("NOM")), type::string(get("TYPE"))] ;
 	}
 }
 
