@@ -19,7 +19,7 @@ global {
 	geometry shape <- envelope(shape_file_bounds) + 50.0;
 	
 	graph road_network;  
-	int nb_people <- simple_data ? 20 : 500;
+	int nb_people <- simple_data ? 20 : 200;
 	 
 	init {  
 		//create the intersection and check if there are traffic lights or not by looking the values inside the type column of the shapefile and linking
@@ -58,8 +58,8 @@ global {
 		}
 		
 		create people number: nb_people { 
-			max_speed <- 160 °km/°h;
-			vehicle_length <- 5.0 °m;
+			max_speed <- 160 #km/#h;
+			vehicle_length <- 5.0 #m;
 			right_side_driving <- true;
 			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
 			proba_lane_change_down <- 0.5+ (rnd(500) / 500);
@@ -71,7 +71,7 @@ global {
 			proba_use_linked_road <- 0.0;
 			max_acceleration <- 5/3.6;
 			speed_coeff <- 1.2 - (rnd(400) / 1000);
-			threshold_stucked <-int ( (1 + rnd(5))°mn);
+			threshold_stucked <-int ( (1 + rnd(5))#mn);
 			proba_breakdown <- 0.00001;
 			
 		}	
@@ -172,7 +172,7 @@ species road skills: [skill_road] {
 
 //People species that will move on the graph of roads to a target and using the skill advanced_driving
 species people skills: [advanced_driving] { 
-	rgb color <- rgb(rnd(255), rnd(255), rnd(255)) ;
+	rgb color <- rnd_color(255) ;
 	int counter_stucked <- 0;
 	int threshold_stucked;
 	bool breakdown <- false;
@@ -181,10 +181,11 @@ species people skills: [advanced_driving] {
 	
 	reflex breakdown when: flip(proba_breakdown){
 		breakdown <- true;
-		max_speed <- 1 °km/°h;
+		max_speed <- 1 #km/#h;
 	}
 	
 	reflex time_to_go when: final_target = nil {
+			
 		target <- one_of(intersection where not each.is_traffic_signal);
 		current_path <- compute_path(graph: road_network, target: target );
 		if (current_path = nil ) {
@@ -193,7 +194,10 @@ species people skills: [advanced_driving] {
 	}
 	reflex move when: current_path != nil and final_target != nil {
 		do drive;
-		if real_speed < 5°km/°h {
+		if (location = final_target) {
+			final_target <- nil;
+		}
+		if real_speed < 5#km/#h {
 			counter_stucked<- counter_stucked + 1;
 			if (counter_stucked mod threshold_stucked = 0) {
 				proba_use_linked_road <- min([1.0,proba_use_linked_road + 0.1]);
@@ -248,7 +252,7 @@ experiment experiment_2D type: gui {
 experiment experiment_3D type: gui {
 	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS" ;
 	output {
-		display carte_principale type: opengl {
+		display carte_principale type: opengl synchronized: true{
 			species road aspect: base3D refresh: true;
 			species intersection aspect: base3D;
 			species people aspect: base3D ; 
