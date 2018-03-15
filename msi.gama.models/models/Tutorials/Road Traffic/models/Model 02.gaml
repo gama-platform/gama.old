@@ -49,7 +49,7 @@ species people {
 	rgb color <- #yellow ;
 	
 	aspect base {
-		draw circle(10) color: color;
+		draw circle(10) color: color border: #black;
 	}
 }
 

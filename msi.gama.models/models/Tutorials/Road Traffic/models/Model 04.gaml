@@ -94,7 +94,7 @@ species people skills:[moving] {
 	}
 	
 	aspect base {
-		draw circle(10) color: color;
+		draw circle(10) color: color border: #black;
 	}
 }
 
