@@ -94,6 +94,9 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
 				final int val = colNames.indexOf(columnName);
+				if(val == -1) {
+					throw GamaRuntimeException.error("Create from DB: " + columnName + " is not a correct column name in the DB query results", scope);
+				}
 				if (((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE)) {
 					final Geometry geom = (Geometry) rowList.get(val);
 					values.put(f.getKey(), new GamaShape(geom));
