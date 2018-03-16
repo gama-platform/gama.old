@@ -80,6 +80,10 @@ public class AgentDB extends GamlAgent {
 		} catch (final SQLException e) {
 			// e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString(), scope);
+		} catch (final NullPointerException npe) {
+			if(conn == null) {
+				throw GamaRuntimeException.error("AgentDB.close error: cannot close a database connection that does not exist." , scope);				
+			}
 		}
 		return null;
 
