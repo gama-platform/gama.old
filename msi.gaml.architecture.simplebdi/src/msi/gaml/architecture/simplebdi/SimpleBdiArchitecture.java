@@ -348,16 +348,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		//computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
-		//Activer la violation des normes
-		updateNormViolation(scope);
-		//Mettre à jour le temps de vie des normes
-		updateNormLifetime(scope);
-		
-//		if (!agent.dead()) {
-			// Part that manage the lifetime of predicates
-		if(result!=null){
-			updateLifeTimePredicates(scope);
-			updateEmotionsIntensity(scope);
+		if(!scope.getAgent().dead()){
+			//Activer la violation des normes
+			updateNormViolation(scope);
+			//Mettre à jour le temps de vie des normes
+			updateNormLifetime(scope);
+			
+	//		if (!agent.dead()) {
+				// Part that manage the lifetime of predicates
+			if(result!=null){
+				updateLifeTimePredicates(scope);
+				updateEmotionsIntensity(scope);
+			}
 		}
 		return result;
 	}
