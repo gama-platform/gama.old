@@ -543,7 +543,6 @@ public abstract class SqlConnection {
 			}
 
 		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
@@ -612,7 +611,6 @@ public abstract class SqlConnection {
 			}
 
 		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}

@@ -213,7 +213,6 @@ public class AgentDB extends GamlAgent {
 			// repRequest); }
 			return repRequest;
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.select: " + e.toString(), scope);
 		}
@@ -263,7 +262,6 @@ public class AgentDB extends GamlAgent {
 			}
 
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
