@@ -52,6 +52,9 @@ species DB_Accessor skills: [SQLSKILL] {
 	reflex select {
 		list<list> t <- list<list> (self select [params::PARAMS, select::"SELECT * FROM registration"]);
 		write "Select before updated " + t;
+		write "    Metadata (column names): " + t[0];
+		write "    Metadata (column types): " + t[1];
+		write "    Data                   : " + t[2]; 
 	}
 
 	reflex update {

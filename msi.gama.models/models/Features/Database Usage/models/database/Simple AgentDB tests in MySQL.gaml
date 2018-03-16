@@ -31,16 +31,17 @@
  * - Drop table 
  * 
  * 
- *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
+ *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (testDB here)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
 * Tags: database
  */
 model simpleSQL_DBSpecies_MySQL
 
 global {
-	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'meteo_DB', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
+	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'testDB', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	init {
-		write "This model will work only if the corresponding database is installed" color: #red;
+		write "This model will work only if MySQL database server is installed and launched," color: #red;
+		write "and if the database testDB has been created." color: #red;
 
 		create DB_Accessor number: 1 {
 			if (self testConnection (params::PARAMS) = false) {
@@ -60,10 +61,12 @@ global {
 
 			do pause;
 		} else {
-			write "" + first(DB_Accessor) getParameter ();
+			write "  with parameters: " + first(DB_Accessor) getParameter ();
+			write "";
 		}
 
 		ask (DB_Accessor) {
+			do executeUpdate updateComm: "DROP TABLE IF EXISTS registration";
 			do executeUpdate updateComm: "CREATE TABLE registration" + "(id INTEGER PRIMARY KEY, " + " first TEXT NOT NULL, " + " last TEXT NOT NULL, " + " age INTEGER);";
 			write "REGISTRATION table has been created.";
 			do executeUpdate updateComm: "INSERT INTO registration " + "VALUES(100, 'Zara', 'Ali', 18);";
