@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.database.sql;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -92,7 +93,6 @@ public class SqliteConnection extends SqlConnection {
 	@Override
 	public Connection connectDB()
 			throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-		// TODO Auto-generated method stub
 		Connection conn = null;
 		try {
 			if (vender.equalsIgnoreCase(SQLITE)) {
@@ -101,7 +101,7 @@ public class SqliteConnection extends SqlConnection {
 				config.enableLoadExtension(true);
 				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName, config.toProperties());
 				// load Spatialite extension library
-				if (extension != null) {
+				if ( (extension != null) && (new File(extension)).exists() ) {
 					// Statement stmt = conn.createStatement();
 					// stmt.setQueryTimeout(30); // set timeout to 30 sec.
 					// stmt.execute("SELECT load_extension('"+extension+"')");
@@ -119,15 +119,12 @@ public class SqliteConnection extends SqlConnection {
 			e.printStackTrace();
 			throw new ClassNotFoundException(e.toString());
 		} catch (final InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new InstantiationException(e.toString());
 		} catch (final IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new IllegalAccessException(e.toString());
 		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new SQLException(e.toString());
 		}
@@ -137,7 +134,6 @@ public class SqliteConnection extends SqlConnection {
 
 	@Override
 	protected IList<IList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
-		// TODO Auto-generated method stub
 		// convert Geometry in SQL to Geometry type in GeoTool
 
 		final IList<IList<Object>> repRequest = GamaListFactory
@@ -145,7 +141,7 @@ public class SqliteConnection extends SqlConnection {
 		try {
 			final List<Integer> geoColumn = getGeometryColumns(rsmd);
 			final int nbCol = rsmd.getColumnCount();
-			int i = 1;
+//			int i = 1;
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of col:" + nbCol);
 			// }
@@ -176,7 +172,7 @@ public class SqliteConnection extends SqlConnection {
 					}
 				}
 				repRequest.add(rowList);
-				i++;
+//				i++;
 			}
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of row:" + i);
@@ -190,7 +186,6 @@ public class SqliteConnection extends SqlConnection {
 
 	@Override
 	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
-		// TODO Auto-generated method stub
 		final int numberOfColumns = rsmd.getColumnCount();
 		final List<Integer> geoColumn = new ArrayList<Integer>();
 		for (int i = 1; i <= numberOfColumns; i++) {
@@ -223,7 +218,6 @@ public class SqliteConnection extends SqlConnection {
 
 	@Override
 	protected IList<Object> getColumnTypeName(final ResultSetMetaData rsmd) throws SQLException {
-		// TODO Auto-generated method stub
 		final int numberOfColumns = rsmd.getColumnCount();
 		final IList<Object> columnType = GamaListFactory.create();
 		for (int i = 1; i <= numberOfColumns; i++) {
@@ -254,7 +248,6 @@ public class SqliteConnection extends SqlConnection {
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
 			final IList<Object> cols, final IList<Object> values) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 		final int col_no = cols.size();
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
@@ -353,11 +346,9 @@ public class SqliteConnection extends SqlConnection {
 			}
 
 		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString(), scope);
 		} catch (final ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString(), scope);
 		}
@@ -368,7 +359,6 @@ public class SqliteConnection extends SqlConnection {
 	@Override
 	protected String getInsertString(final IScope scope, final Connection conn, final String table_name,
 			final IList<Object> values) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 		String insertStr = "INSERT INTO ";
 		String selectStr = "SELECT ";
 		String colStr = "";
@@ -468,11 +458,9 @@ public class SqliteConnection extends SqlConnection {
 			}
 
 		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString(), scope);
 		} catch (final ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString(), scope);
 		}
