@@ -150,7 +150,9 @@ public class SimulationClock {
 	 * @return a positive double
 	 */
 	public double getTimeElapsedInSeconds() {
-		return getStartingDate().until(getCurrentDate(), ChronoUnit.SECONDS);
+		// BG 16/03/2018 : to fix the issue that time != cycle * step, when step is not an integer number.
+		//return getStartingDate().until(getCurrentDate(), ChronoUnit.SECONDS);
+		return getStartingDate().until(getCurrentDate(), ChronoUnit.MILLIS) / 1000.0;
 	}
 
 	/**
