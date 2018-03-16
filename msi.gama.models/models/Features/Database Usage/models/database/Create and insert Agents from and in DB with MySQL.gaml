@@ -23,10 +23,13 @@ global {
 	string SQLquery_idPoint <- "SELECT `idPointgrille`, AVG(`RRmm`) AS RR, AVG(`Tmin`) AS Tmin, AVG(`Tmax`) AS Tmax, AVG(`Rglot`) AS Rglot, AVG(`ETPmm`) AS ETPmm
     			FROM meteo_table GROUP BY `idPointgrille`";
 	init {
-		write "This model will work only if the corresponding database is installed" color: #red;
-
+		write "This model will work only if the MySQL database server is installed." color: #red;
+		write "In addition, the database \"meteo_db\" should have be created and the data imported inside. The SQL queries are available in the file ../../includes/meteo_DB_dump.sql.";
+		write "";
+		
 		create DB_accessor;
 		ask DB_accessor {
+			do executeUpdate params: PARAMS updateComm: "DROP TABLE IF EXISTS `result_DB`";
 			do executeUpdate params: PARAMS updateComm: "CREATE TABLE `result_DB` (
 										  `idPoint` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 										  `valRnd` float NOT NULL DEFAULT '0',
@@ -34,8 +37,10 @@ global {
 										) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 		}
 
-		create idPoint from: list(first(DB_accessor) select [params::PARAMS, select::SQLquery_idPoint]) with:
-		[name:: "idPointgrille", RRmm::float("RR"), Tmin::float("Tmin"), Tmax::float("Tmax"), Rglot::float("Rglot"), ETPmm::float("ETPmm")];
+		write first(DB_accessor) select [params::PARAMS, select::SQLquery_idPoint];
+
+		create idPoint from: first(DB_accessor) select [params::PARAMS, select::SQLquery_idPoint] 
+		with: [name:: "idPointgrille", RRmm::"RR", Tmin::"Tmin", Tmax::"Tmax", Rglot::"Rglot", ETPmm::"ETPmm"];
 	}
 
 	reflex endSimu when: (cycle = 10) {
@@ -57,25 +62,25 @@ species idPoint {
 	float Rglot;
 	float ETPmm;
 	float valRnd;
+	
 	reflex compute_new_random_value {
 		valRnd <- float(rnd(RRmm + Tmin + Tmax + Rglot + ETPmm));
 	}
 
 	reflex store_valRnd {
-		write " " + self + " inserts value " + valRnd;
 		ask (first(DB_accessor)) {
 			do executeUpdate params: PARAMS updateComm: "INSERT INTO " + res_DB + " VALUES(?, ?, ?);" values: [myself.name, myself.valRnd, cycle];
 		}
 
 		write " " + self + " inserts value " + valRnd;
 	}
-
 }
 
 species DB_accessor skills: [SQLSKILL] {
 	list listRes <- [];
+	
 	init {
-	// Test of the connection to the database
+		// Test of the connection to the database
 		if (not (self testConnection [params::PARAMS])) {
 			write "Connection impossible";
 			ask (world) {
