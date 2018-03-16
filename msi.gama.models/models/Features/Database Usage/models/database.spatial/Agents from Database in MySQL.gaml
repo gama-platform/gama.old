@@ -8,29 +8,34 @@
 model DB2agentMySQL
 
 global {
-	map<string,string> BOUNDS <- [	//'srid'::'32648', // optinal
+	map<string,string> BOUNDS <- [	//'srid'::'32648', // optional
 									'host'::'localhost',
 									'dbtype'::'MySQL',
-									'database'::'spatial_DB',
-									'port'::'3306',
-									'user'::'gama_usr1',
-									'passwd'::'123456',
+									'database'::'spatial_DB_GAMA',
+									'port'::'8889',
+									'user'::'root',
+									'passwd'::'root',
 								  	"select"::"SELECT geom FROM bounds;" ];
-	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
+	map<string,string> PARAMS <- [	//'srid'::'32648', // optional
 									'host'::'localhost',
 									'dbtype'::'MySQL',
-									'database'::'spatial_DB',
-									'port'::'3306',
-									'user'::'gama_usr1',
-									'passwd'::'123456'];
+									'database'::'spatial_DB_GAMA',
+									'port'::'8889',
+									'user'::'root',
+									'passwd'::'root'];
 	
 	string QUERY <- "SELECT name, type, geom FROM buildings ;";
 	geometry shape <- envelope(BOUNDS);		  	
 	 	
 	init {
-		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed and contains proper data." color: #red;
+		write "To this purpose, the following models can run first: ";
+		write "     - \"Agents to Database in MySQL.gaml\" to create the database,";
+		write "     - \"Create Spatial Table in MySQL.gaml\" to insert data inthe database.";
+		write "";
+		
 		create DB_accessor {
-			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
+			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
 							 with:[ type::"type", shape:: "geom"];
 		 }
 	}

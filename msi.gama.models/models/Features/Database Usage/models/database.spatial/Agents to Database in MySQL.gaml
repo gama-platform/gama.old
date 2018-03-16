@@ -7,7 +7,7 @@
 * 
 * transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
 * 
-* NOTE: You should have imported the database (spatial_DB.sql) into the MySQL server 
+* NOTE: You should have created a database 'spatial_DB_GAMA' into the MySQL server 
 *  in order that the model can run properly.
 * Tags: database
 */
@@ -20,11 +20,13 @@ global {
 	geometry shape <- envelope(boundsShp);
 	
 	map<string,string> PARAMS <- ['srid'::'4326',
-				                  'host'::'localhost','dbtype'::'MySQL','database'::'spatial_DB',
-				                  'port'::'3306','user'::'gama_usr1','passwd'::'123456'];
+				                  'host'::'localhost','dbtype'::'MySQL','database'::'spatial_DB_GAMA',
+				                  'port'::'8889','user'::'root','passwd'::'root'];
 
 	init {
-		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed" color: #red;
+		write "The model \"Create Spatial Table in MySQL.gaml\" can be run previously to create the table.";
+		
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		
@@ -45,13 +47,13 @@ species bounds {
 	}
 	
 	reflex savetosql{  // save data into MySQL
-		write "begin"+ name;
+		write "begin save of: "+ name;
 		ask DB_Accessor {
 			do insert params: PARAMS into: "bounds"
 					  columns: ["geom"]
 					  values: [myself.shape];
 		}
-	    write "finish "+ name;
+	    write "finished save of: "+ name;
 	}		
 }
 
@@ -63,13 +65,13 @@ species buildings {
 	}
 	
 	reflex savetosql{  // save data into MySQL
-		write "begin"+ name;
+		write "begin save of: "+ name;
 		ask DB_Accessor {
 			do insert params: PARAMS into: "buildings"
 					  columns: ["name", "type","geom"]
 					  values: [myself.name,myself.type,myself.shape];
 		}
-	    write "finish "+ name;
+	    write "finished save of: "+ name;
 	}	
 	
 	aspect default {
