@@ -10,7 +10,7 @@ global {
 	map<string, string> SQLSERVER <- ['host'::'localhost', 'dbtype'::'sqlserver', 'database'::'', 'port'::'1433', 'user'::'sa', 'passwd'::'tmt'];
 	map<string, string> MySQL <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	map<string, string> ORACLE <- ['host'::'localhost', 'dbtype'::'Oracle', 'database'::'', 'port'::'1433', 'user'::'sa', 'passwd'::'tmt'];
-	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'Postgres', 'database'::'bgaudou', 'port'::'5432', 'user'::'bgaudou', 'passwd'::''];
+	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'Postgres', 'database'::'postgres', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
 	map<string, string> SQLITE <- ['dbtype'::'sqlite', 'database'::'../../includes/meteo.db'];
 	init {
 		write "This model will work only if the corresponding database is installed" color: #red;
