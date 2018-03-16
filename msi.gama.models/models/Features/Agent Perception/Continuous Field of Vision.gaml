@@ -22,7 +22,7 @@ global {
 	init {
 		create obstacle number:nb_obstacles {
 			shape <- rectangle(2+rnd(20), 2+rnd(20));
-			free_space <- free_space - (shape + 2);
+			free_space <- free_space - shape;
 		}
 		
 		create people  {
@@ -45,19 +45,19 @@ species people skills: [moving]{
 	
 	reflex move {
 		if (target = nil ) {
-			if (perceived_area = nil) {
-				//if the agent has no target and if the perceived area is empty, it moves randomly inside the free_space
+			if (perceived_area = nil) or (perceived_area.area < 2.0) {
+				//if the agent has no target and if the perceived area is empty (or too small), it moves randomly inside the free_space
 				do wander bounds: free_space;
 			} else {
-				//otherwise, it computes a new target inside the perceived_area (we intersect with the free_space to limit its proximity to obstacles).
-				target <- any_location_in(perceived_area inter free_space);
+				//otherwise, it computes a new target inside the perceived_area .
+				target <- any_location_in(perceived_area);
 			}
 		} else {
 			//if it has a target, it moves towards this target
 			do goto target: target;
 			
 			//if it reaches its target, it sets it to nil (to choose a new target)
-			if (location = target) {
+			if (location = target)  {
 				target <- nil;
 			}
 		}
@@ -70,6 +70,7 @@ species people skills: [moving]{
 		//if the perceived area is not nil, we use the masked_by operator to compute the visible area from the perceived area according to the obstacles
 		if (perceived_area != nil) {
 			perceived_area <- perceived_area masked_by (obstacle,precision);
+
 		}
 	}
 	
