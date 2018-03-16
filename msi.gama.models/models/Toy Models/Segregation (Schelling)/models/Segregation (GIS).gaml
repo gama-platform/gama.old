@@ -74,7 +74,7 @@ species people parent: base {
 	}
 
 	aspect simple {
-		draw circle(5) color: color;
+		draw circle(5) color: color border: #black;
 	}
 }
 
