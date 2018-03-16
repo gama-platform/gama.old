@@ -11,29 +11,34 @@ global {
 	map<string,string> BOUNDS <- [	//'srid'::'32648', // optinal
 	 								'host'::'localhost',
 									'dbtype'::'postgis',
-									'database'::'GAMA_POSTGIS',
+									'database'::'spatial_db',
 									'port'::'5432',
 									'user'::'postgres',
-									'passwd'::'123456',
-								  	'select'::'SELECT ST_AsEWKB(geom) as geom FROM buildings;' ];
+									'passwd'::'',
+								  	'select'::'SELECT ST_AsEWKB(geom) as geom FROM bounds;' ];
 	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
 									'host'::'localhost',
 									'dbtype'::'postgis',
-									'database'::'GAMA_POSTGIS',
+									'database'::'spatial_db',
 									'port'::'5432',
 									'user'::'postgres',
-									'passwd'::'123456'];
+									'passwd'::''];
 	
-	string QUERY <- "SELECT nature, ST_AsEWKB(geom) as geom FROM buildings;";
+	string QUERY <- "SELECT type, ST_AsEWKB(geom) as geom FROM buildings;";
 	geometry shape <- envelope(BOUNDS);		  	
 		  	
 	init {
-//		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed and initialized." color:#red;
+		write "To this purpose, the following models can run first: ";
+		write "     - \"Create Spatial Table in PostGIS.gaml\" to create the database,";		
+		write "     - \"Agents to Database in PostGIS.gaml\" to insert data in the database.";
+		write "";		
+		
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ nature::"nature", shape::"geom"];
+							 with:[ nature::"type", shape::"geom"];
 		 }
-		 write "Building: "+length(buildings) ;
+		 write "Buildings created: "+length(buildings) ;
 	}
 }
 

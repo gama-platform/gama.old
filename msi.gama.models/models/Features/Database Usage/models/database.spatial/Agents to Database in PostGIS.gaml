@@ -8,8 +8,6 @@
 * 
 * transform= true because you need to transform geometry data from Absolute(GAMA) to Gis
 * 
-* NOTE: You should have imported the database (spatial_DB.sql) into the MySQL server in order that the model can run properly.
-* 
 * Tags: database
 */
 
@@ -20,12 +18,14 @@ global {
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	 
-	map<string,string> PARAMS <-  [//'srid'::'4326', // optinal
-								   'host'::'localhost','dbtype'::'Postgres','database'::'spatial_DB',
-								   'port'::'5433','user'::'postgres','passwd'::'tmt'];
+	map<string,string> PARAMS <-  [//'srid'::'4326', // optional
+								   'host'::'localhost','dbtype'::'Postgres','database'::'spatial_db',
+								   'port'::'5432','user'::'postgres','passwd'::''];
 
 	init {
-		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed" color:#red; 
+		write "The model \"Create Spatial Table in PostGIS.gaml\" can be run previously to create the database and tables.";
+		
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		
