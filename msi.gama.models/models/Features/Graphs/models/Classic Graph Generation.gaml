@@ -10,8 +10,8 @@ model classicgraphgeneration
 global {
 	graph the_graph ;
 	string graph_type <- "small-world";
-	int nb_nodes <- 500;
-	float p <- 0.0;
+	int nb_nodes <- 30;
+	float p <- 0.2;
 	int k <- 4;
 	int m <- 4;
 	int radius <- 20;
