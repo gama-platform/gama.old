@@ -35,10 +35,7 @@ global {
 		write "beta_index: " + beta_index(the_graph);
 		write "gamma_index: " + gamma_index(the_graph);
 		write "connectivity_index: " + connectivity_index(the_graph);
-		write "connected_components_of: " + length(connected_components_of(the_graph));
-		
-		write "connected_components_of: " + length(connected_components_of(the_graph));
-		
+		write "connected_components_of: " + length(connected_components_of(the_graph));		
 		write "maximal_cliques_of:" + (maximal_cliques_of(the_graph) collect (length(each)));
 		write "biggest_cliques_of:" + (biggest_cliques_of(the_graph) collect (length(each)));
 	}
