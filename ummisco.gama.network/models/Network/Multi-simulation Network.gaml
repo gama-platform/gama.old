@@ -12,24 +12,26 @@ global skills:[network]{
 
 	init {
 		if(simulationName = "sender"){
-		  do connect to:"localhost" with_name:"sender";
+		  do connect to:"localhost" with_name:"sender" protocol:"tcp_client" port:3001;
 		  create NetworkingAgent number:10{	
 		    color <- rnd_color(255);	
 			shape <-circle(5);	
 		  }
 		}
-		if(simulationName = "reciever"){
-		  do connect to:"localhost" with_name:"reciever";
+		if(simulationName = "receiver"){
+		  do connect to:"localhost" with_name:"receiver" protocol:"tcp_server" port:3001;
 		}
 	}
 	
 	reflex updateSimulation{
 		if(simulationName = "sender"){
-		  do send to:"reciever" contents:9 among NetworkingAgent;	
+			write "Sender simulation has sent a message.";
+		  	do send to:"receiver" contents: "hello"; //9 among NetworkingAgent;	
 		}
-		if(simulationName = "reciever"){
+		if(simulationName = "receiver"){
 		  if(has_more_message()){
 		      message mess <- fetch_message();
+		      write " Received messages: " + mess;
 		   }	
 		}
 	}
@@ -53,7 +55,7 @@ experiment main type: gui {
 	//we define a init block to create new simulations
 	init {
 		//we create a second simulation (the first simulation is always created by default) with the given parameters
-		create simulation with: [simulationName::"reciever"];
+		create simulation with: [simulationName::"receiver"];
 		
 	}
 	output {
