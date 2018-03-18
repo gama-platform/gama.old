@@ -9,7 +9,11 @@ model MQQT_HelloWorld_SendAgent
 
 global skills:[network]{	
 	init
-	{   do connect to:"localhost" with_name:"sender";
+	{   
+		write "A MQTT server should run." color: #red;
+		write "Another instance of GAMA should run the model Example_MQTT_Receive_Agent.gaml, too show how agents receive messages.";
+		
+		do connect to:"localhost" with_name:"sender";
 		create NetworkingAgent number:10{	
 			color <- rnd_color(255);	
 			shape <-sphere(5);	
@@ -17,7 +21,7 @@ global skills:[network]{
 	}
 	reflex sendAgent{
 		write "send agent on the network";
-		do send to:"reciever" contents:(9 among NetworkingAgent);	
+		do send to:"receiver" contents:(9 among NetworkingAgent);	
 	}
 }
 

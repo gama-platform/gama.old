@@ -5,12 +5,14 @@
 * Tags: Network, MQQT
 */
 
-model MQQT_HelloWorld_Recieve
+model MQQT_HelloWorld_Receive
 
-global skills:[network]{	
-	init
-	{   do connect to:"localhost" with_name:"reciever";
+global skills:[network] {	
+	init {   
+		write "A MQTT server should run." color: #red;
+		write "Another instance of GAMA should run the model Example_MQTT_Send_Agent.gaml, too show how agents can send messages.";
 		
+		do connect to:"localhost" with_name:"receiver";
 	}
 	reflex recieveAgent when:has_more_message(){
 		write "fetch agent on the network";
