@@ -5,10 +5,10 @@
 * Tags: Network, MQQT
 */
 
-model MQQT_HelloWorld_Recieve
+model MQQT_HelloWorld_Receive
 
 global {	
-	list<string> clients <-["send","recieve"];
+	list<string> clients <-["send","receive"];
 	init
 	{
 		create NetworkingAgent number:1{

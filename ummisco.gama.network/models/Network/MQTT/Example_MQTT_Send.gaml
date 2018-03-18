@@ -8,7 +8,7 @@
 model MQQT_HelloWorld_Send
 
 global {	
-	list<string> clients <-["send","recieve"];
+	list<string> clients <-["send","receive"];
 	init
 	{
 		int i <- 0;
@@ -27,21 +27,24 @@ species NetworkingAgent skills:[network]{
 	string dest;
 	reflex send when: cycle mod 10  = 3
 	{
-		write "sending message ";
+		write "sending message: " + "This message a string" + name;
 		do send to:"send" contents:"This message a string" + name;
+		do send to:"receive" contents:"This message a string" + name;		
 	}
 	reflex send2 when: cycle mod 10  = 5
 	{
-		write "sending message ";
-		int a <- 0;
+		int a <- 0;		
+		write "sending message: " + a;
 		do send to:"send" contents:a;
+		do send to:"receive" contents:a;		
 	}
 	
 
 	reflex send3 when: cycle mod 10  = 8
 	{
-		write "sending message ";
+		write "sending message: " + self;
 		do send to:"send" contents:self;
+		do send to:"receive" contents:self;
 	}
 	
 	reflex receive
