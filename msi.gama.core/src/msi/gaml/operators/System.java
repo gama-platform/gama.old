@@ -219,12 +219,12 @@ public class System {
 			examples = {
 					@example ("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 					@example (
-							value = "(values at \"Number\")",
+							value = "(values at \"Number\") as int",
 							equals = "100",
 							returnType = "int",
 							isTestOnly = true),
 					@example (
-							value = " (values at \"Location\")", equals = "{10,10}",
+							value = " (values at \"Location\") as point", equals = "{10,10}",
 							returnType = "point",
 							isTestOnly = true),
 					@example (
