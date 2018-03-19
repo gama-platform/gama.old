@@ -1678,6 +1678,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action (
+			name = "has_belief_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the predicate to check")) },
+			doc = @doc (
+					value = "check if the predicate is in the belief base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("has_belief_with_name(\"has_water\")") }))
+	public Boolean hasBeliefName(final IScope scope) throws GamaRuntimeException {
+		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (predicateName != null) {
+			MentalState tempState = new MentalState("Belief",new Predicate(predicateName));
+			return hasBelief(scope, tempState); 
+		}
+		return null;
+	}
+	
+	@action (
 			name = "has_belief_mental_state",
 			args = { @arg (
 					name = "mental_state",
@@ -1958,6 +1978,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return getBase(scope, DESIRE_BASE).contains(temp);
 		}
 		return false;
+	}
+	
+	@action (
+			name = "has_desire_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the predicate to check")) },
+			doc = @doc (
+					value = "check if the prediate is in the desire base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("has_desire_with_name(\"has_water\")") }))
+	public Boolean hasDesireName(final IScope scope) throws GamaRuntimeException {
+		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (predicateName != null) {
+			MentalState tempState = new MentalState("Desire",new Predicate(predicateName));
+			return hasDesire(scope, tempState); 
+		}
+		return null;
 	}
 	
 	@action (
@@ -4361,6 +4401,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action (
+			name = "has_emotion_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the emotion to check")) },
+			doc = @doc (
+					value = "check if the emotion is in the emotion base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("has_belief_with_name(\"has_water\")") }))
+	public Boolean hasEmotionName(final IScope scope) throws GamaRuntimeException {
+		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (predicateName != null) {
+			Emotion tempEmo = new Emotion(predicateName);
+			return hasEmotion(scope, tempEmo); 
+		}
+		return null;
+	}
+	
 	public static Boolean hasEmotion(final IScope scope, final Emotion emo) {
 		return getEmotionBase(scope, EMOTION_BASE).contains(emo);
 	}
@@ -4386,6 +4446,27 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	@action (
+			name = "get_emotion_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the emotion to check")) },
+			doc = @doc (
+					value = "get the emotion is in the emotion base (if several, returns the first one).",
+					returns = "the emotion if it is in the base.",
+					examples = { @example ("get_emotion_with_name(\"fear\")") }))
+	public Emotion getEmotionName(final IScope scope) throws GamaRuntimeException {
+		final String emotionName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (emotionName != null) {
+			for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
+				if (emotionName.equals(emo.getName())) { return emo; }
+			}
+		}
+		return null;
+	}
+	
 	public static Emotion getEmotion(final IScope scope, final Emotion emotionDirect) {
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emotionDirect.equals(emo)) { return emo; }
@@ -4629,6 +4710,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action (
+			name = "has_uncertainty_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the uncertainty to check")) },
+			doc = @doc (
+					value = "check if the predicate is in the uncertainty base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("has_uncertainty_with_name(\"has_water\")") }))
+	public Boolean hasUncertaintyName(final IScope scope) throws GamaRuntimeException {
+		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (predicateName != null) {
+			MentalState tempState = new MentalState("Uncertainty",new Predicate(predicateName));
+			return hasUncertainty(scope, tempState); 
+		}
+		return null;
+	}
+	
 	@action (
 			name = "has_uncertainty_mental_state",
 			args = { @arg (
@@ -4902,6 +5003,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		MentalState temp = new MentalState("Ideal",predicateDirect);
 		if (predicateDirect != null) { return hasIdeal(scope, temp); }
 		return false;
+	}
+	
+	@action (
+			name = "has_ideal_with_name",
+			args = { @arg (
+					name = "name",
+					type = IType.STRING,
+					optional = false,
+					doc = @doc ("name of the predicate to check")) },
+			doc = @doc (
+					value = "check if the predicate is in the ideal base.",
+					returns = "true if it is in the base.",
+					examples = { @example ("has_belief_with_name(\"has_water\")") }))
+	public Boolean hasiDEALName(final IScope scope) throws GamaRuntimeException {
+		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
+		if (predicateName != null) {
+			MentalState tempState = new MentalState("Ideal",new Predicate(predicateName));
+			return hasIdeal(scope, tempState); 
+		}
+		return null;
 	}
 	
 	@action (
