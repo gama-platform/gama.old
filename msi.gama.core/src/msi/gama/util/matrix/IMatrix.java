@@ -307,6 +307,7 @@ public interface IMatrix<T>
 
 	@operator (
 			value = "eigenvalues",
+			content_type = IType.FLOAT,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -334,7 +335,8 @@ public interface IMatrix<T>
 	@operator (
 			value = "inverse",
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = IType.FLOAT,
+		//	ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
