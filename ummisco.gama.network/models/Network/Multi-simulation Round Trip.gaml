@@ -24,8 +24,8 @@ global skills:[network]{
 			shape <-cube(5);
 		  }*/
 		}
-		if(simulationName = "reciever"){
-		  do connect to:"localhost" with_name:"reciever";
+		if(simulationName = "receiver"){
+		  do connect to:"localhost" with_name:"receiver";
 		}
 	}
 	
@@ -48,14 +48,14 @@ species NetworkingAgent skills:[moving]{
    rgb color;
    reflex updateState when:every(10#cycle){
    	if(simulationName = "sender"){
-   			write "teleportation from sender to reciever";
+   			write "teleportation from sender to receiver";
    			ask world{
-	          do teletransportation(myself,"reciever");	
+	          do teletransportation(myself,"receiver");	
 	        } 
 	        do die;	
    	}
    	else{
-   			write "teleportation from reciever to sender";
+   			write "teleportation from receiver to sender";
    			ask world{
 	          do teletransportation(myself,"sender");	
 	        } 
@@ -86,7 +86,7 @@ experiment main type: gui {
 	//we define a init block to create new simulations
 	init {
 		//we create a second simulation (the first simulation is always created by default) with the given parameters
-		create simulation with: [simulationName::"reciever"];
+		create simulation with: [simulationName::"receiver"];
 	}
 	output {
 		display map type:opengl {

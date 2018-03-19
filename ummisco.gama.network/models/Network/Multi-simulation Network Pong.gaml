@@ -13,7 +13,7 @@ global skills:[network]{
 	point targetright <-{100,50};
 	init {
 		if(simulationName = "sender"){
-		  do connect to:"localhost" with_name:"sender";
+		  do connect to:"localhost" with_name:"sender" protocol:"tcp_client" port:3001;
 		  create NetworkingAgent number:1{	
 		    location <-targetleft ;
 		    target_loc <- targetright;
@@ -24,8 +24,8 @@ global skills:[network]{
 			is_arrived<-false;
 		  }
 		}
-		if(simulationName = "reciever"){
-		  do connect to:"localhost" with_name:"reciever";
+		if(simulationName = "receiver"){
+		  do connect to:"localhost" with_name:"receiver" protocol:"tcp_server" port:3001;
 		}
 	}
 	
@@ -56,7 +56,7 @@ species NetworkingAgent skills:[moving]{
    			senderSim<-false;
    			goforward<-true;
    			ask world{
-	          do teletransportation(myself,"reciever");	
+	          do teletransportation(myself,"receiver");	
 	        } 
 	        do die;
    		}
@@ -67,7 +67,7 @@ species NetworkingAgent skills:[moving]{
    			goforward<-false;
    		}
    		if(location = targetleft and goforward =false){
-   			write "teleportation from reciever to sender";
+   			write "teleportation from receiver to sender";
    			location <- targetright;
    			target_loc<-targetleft;
    			senderSim<-true;
@@ -96,7 +96,7 @@ experiment main type: gui {
 	//we define a init block to create new simulations
 	init {
 		//we create a second simulation (the first simulation is always created by default) with the given parameters
-		create simulation with: [simulationName::"reciever"];
+		create simulation with: [simulationName::"receiver"];
 	}
 	output {
 		display map type:opengl {
