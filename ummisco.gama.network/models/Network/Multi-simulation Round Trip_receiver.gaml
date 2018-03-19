@@ -9,7 +9,7 @@ model multi_simulation_Network_Round_Trip
 
 global skills:[network]{
 	init {
-		  do connect to:"localhost" with_name:"reciever";
+		  do connect to:"localhost" with_name:"receiver";
 	}
 	
 	reflex updateSimulation when:has_more_message(){
@@ -26,7 +26,7 @@ global skills:[network]{
 species NetworkingAgent skills:[moving]{
    rgb color;
    reflex updateState when:every(10#cycles){
-   			write "teleportation from reciever to sender";
+   			write "teleportation from receiver to sender";
    			ask world{
 	          do teletransportation(myself,"sender");	
 	        } 
