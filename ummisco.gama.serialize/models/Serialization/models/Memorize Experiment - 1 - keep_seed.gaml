@@ -42,7 +42,7 @@ species toto {
 	}
 }
 
-experiment Model4 type: memorize keep_seed: false {
+experiment Model4_not_keep_seed type: memorize keep_seed: false {
 
 	output {
 		display d {
