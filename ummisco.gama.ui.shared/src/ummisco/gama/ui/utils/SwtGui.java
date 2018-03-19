@@ -534,10 +534,11 @@ public class SwtGui implements IGui {
 		if (stateProvider != null) {
 			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
 		}
-
+/*
 		WorkbenchHelper.run(() -> {
 			WorkbenchHelper.getWindow().getShell().forceActive();
 		});
+*/
 	}
 
 	@Override
