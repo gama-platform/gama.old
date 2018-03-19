@@ -1033,7 +1033,7 @@ public class Stats {
 	@operator (
 			value = "dtw",
 			can_be_const = false,
-			type = IType.LIST,
+		//	type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
@@ -1088,7 +1088,7 @@ public class Stats {
 	@operator (
 			value = "dtw",
 			can_be_const = false,
-			type = IType.LIST,
+		//	type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
@@ -1153,7 +1153,7 @@ public class Stats {
 	@operator (
 			value = "skewness",
 			can_be_const = false,
-			type = IType.LIST,
+		//	type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
@@ -1172,7 +1172,7 @@ public class Stats {
 	@operator (
 			value = "kurtosis",
 			can_be_const = false,
-			type = IType.LIST,
+		//	type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
