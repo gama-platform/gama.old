@@ -36,6 +36,7 @@ public class UDPConnector extends Connector {
 	public static String _UDP_SERVER = "__udp_server";
 	public static String _UDP_SOCKET = "__udp_socket";
 	public static String _UDP_CLIENT = "__udp_client";
+	public static Integer _UDP_SO_TIMEOUT = 10000;
 
 	private boolean is_server = false;
 	private final IScope myScope;
@@ -115,7 +116,7 @@ public class UDPConnector extends Connector {
 		if (agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port) == null) {
 			try {
 				final DatagramSocket sersock = new DatagramSocket(port);
-				sersock.setSoTimeout(10);
+				sersock.setSoTimeout(_UDP_SO_TIMEOUT);
 				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 				ssThread.start();
 				agent.getScope().getSimulation().setAttribute(_UDP_SERVER + port, ssThread);
@@ -142,7 +143,7 @@ public class UDPConnector extends Connector {
 
 			try {
 				final DatagramSocket sersock = new DatagramSocket();
-				sersock.setSoTimeout(10);
+				sersock.setSoTimeout(_UDP_SO_TIMEOUT);
 				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 				ssThread.OnServer = false;
 				ssThread.start();
@@ -209,22 +210,21 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
-	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
+	protected void sendMessage(final IAgent sender, final String receiver, String content) throws GamaNetworkException {
+		content = content.replaceAll("\b\r", "@b@@r@");
+		content = content.replaceAll("\n", "@n@");
 		if (is_server) {
-			sendToClient(sender, receiver, content.getContents(myScope));
+			sendToClient(sender, receiver, content);
 		} else {
-			sendToServer(sender, content.getContents(myScope));
+			sendToServer(sender, content);
 		}
+		// if(is_server){
+		// primSendToClient(sender, receiver, content);
+		// }else{
+		// primSendToServer(sender, content);
+		// }
 	}
-
-	public void sendMessage(final IAgent agent, final String dest, final Object data) {
-		if (is_server) {
-
-		} else {
-
-		}
-	}
-
+	
 	@Override
 	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
@@ -251,13 +251,6 @@ public class UDPConnector extends Connector {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-	}
-
-	@Override
-	protected void sendMessage(final IAgent sender, final String receiver, final String content)
-			throws GamaNetworkException {
-		// TODO Auto-generated method stub
-
 	}
 
 }
