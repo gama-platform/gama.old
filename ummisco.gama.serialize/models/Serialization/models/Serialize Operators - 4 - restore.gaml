@@ -14,9 +14,11 @@ global {
 	init {
 		create people number: 1;
 		create toto number: 2;
+		write "init model";
 	}
 	
 	reflex t {
+		write toot;
 		toot <- toot +10;
 	}
 }
@@ -44,20 +46,16 @@ species toto {
 
 experiment Model4 type: gui {
 
-	list<string> history <- [];
+	string save_step <- "";
 
-	reflex store { //when: (cycle < 5){	
-		write "================ store " + self + " - " + cycle;
-		string serial <- serializeAgent(self.simulation);
-		add serial to: history;
-		write "================ END store " + self + " - " + cycle;			
+	init {
+		save_step <- serializeAgent(self.simulation);
 	}
 	
-	reflex restore when: (cycle > 4) {
+	reflex restore when: (cycle = 4) {
 		write "================ restore " + self + " - " + cycle;
-		int serial <- unSerializeSimulation(history[0]);
+		int serial <- unSerializeSimulation(save_step);
 		write "================ END restore " + self + " - " + cycle;			
-		
 	}
 
 	output {
