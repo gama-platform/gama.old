@@ -18,11 +18,13 @@ global {
 	geometry shape <- envelope(districtShp);
 	 
 	map<string,string> PARAMS <-  ['srid'::'32846', // 32648 represents for the WGS 84 - Zone 48 Northern.
-								   'host'::'localhost','dbtype'::'postgres','database'::'GAMA_POSTGIS',
-								   'port'::'5432','user'::'postgres','passwd'::'123456'];
+								   'host'::'localhost','dbtype'::'postgres','database'::'spatial_db3d',
+								   'port'::'5432','user'::'postgres','passwd'::''];
 
 	init {
-		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed" color:#red;
+		write "The model \"Create Spatial Table in PostGIS.gaml\" can be run previously to create the database and tables. The model should be modified to create the database spatial_db3d.";
+		
 		create district from: districtShp with: [ward_name::string(read ('Ward_name'))];
 		write "Click on <<Step>> button to save data of agents to DB";
 		

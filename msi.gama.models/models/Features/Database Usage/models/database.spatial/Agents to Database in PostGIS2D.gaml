@@ -18,16 +18,18 @@ global {
 	geometry shape <- envelope(buildingsShp);
 	 
 	map<string,string> PARAMS <-  ['srid'::'4326', // optinal postgis
-								   'host'::'localhost','dbtype'::'postgres','database'::'GAMA_POSTGIS',
-								   'port'::'5432','user'::'postgres','passwd'::'123456'];
+								   'host'::'localhost','dbtype'::'postgres','database'::'spatial_db2d',
+								   'port'::'5432','user'::'postgres','passwd'::''];
 
 	init {
-		write "This model will work only if the corresponding database is installed";
+		write "This model will work only if the corresponding database is installed" color: #red;
+		write "The model \"Create Spatial Table in PostGIS.gaml\" can be run previously to create the database and tables. The model should be modified to create the database spatial_db2d.";
+		
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		
 		create DB_Accessor
 		{ 			
-			do executeUpdate params: PARAMS updateComm: "DELETE FROM district";	
+			do executeUpdate params: PARAMS updateComm: "DELETE FROM buildings";	
 		} 
 	}
 }   
@@ -44,7 +46,7 @@ species buildings {
 	reflex savetosql{  // save data into Postgres
 		write "begin"+ name;
 	    ask (DB_Accessor) {
-			do executeUpdate params: PARAMS updateComm: "INSERT INTO buildings(NATURE,geom) VALUES('" + myself.type + "',ST_Multi(ST_GeomFromText('" + myself.shape +"',4326)))";
+			do executeUpdate params: PARAMS updateComm: "INSERT INTO buildings(type,geom) VALUES('" + myself.type + "',ST_Multi(ST_GeomFromText('" + myself.shape +"',4326)))";
 		}	
 	}	
 	
