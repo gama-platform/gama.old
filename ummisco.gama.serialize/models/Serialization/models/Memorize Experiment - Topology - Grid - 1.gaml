@@ -15,18 +15,6 @@ grid vegetation_cell width: 2 height: 2 neighbors: 4 {
 }
 
 experiment prey_predator type: memorize keep_seed: true {
-	
-	list<string> history <- [];
-
-	reflex store { //when: (cycle < 5){	
-		write "================ store " + self + " - " + cycle;
-		string serial <- serializeAgent(self.simulation);
-		add serial to: history;
-		write serial;
-		write "================ END store " + self + " - " + cycle;		
-		//write serializeSimulation(cycle);
-	}
-	
 	output {
 		display main_display {
 			grid vegetation_cell lines: #black ;
