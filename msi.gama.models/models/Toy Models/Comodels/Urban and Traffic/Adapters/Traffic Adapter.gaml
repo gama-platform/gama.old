@@ -9,6 +9,28 @@ model traffic_adapter
 import "../../../../Toy Models/Traffic/models/Simple traffic model.gaml"
 experiment "Adapter" type: gui
 {
+	point centroid <- { 15200, 1580 };
+	action transform{		
+		loop t over:list(road){			
+			t.shape <- (t.shape * 20 );
+			t.location <- (t.location * 20) + centroid;
+			t.buffer<-100;
+		}
+		loop t over: list(building)
+		{
+			t.shape <- t.shape * 20;
+			t.location <- (t.location * 20) + centroid;
+		}
+
+		loop t over: list(people)
+		{
+			t.speed <- t.speed / 50;
+			t.shape <- t.shape * 40;
+			t.location <- any_location_in(one_of(building));
+			t.target <- any_location_in(one_of(building));
+		}
+		
+	}
 	list<building> get_building
 	{
 		return list(building);

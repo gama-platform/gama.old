@@ -44,6 +44,7 @@ global {
 }
 //Species to represent the people using the skill moving
 species people skills: [moving]{
+	geometry shape<- circle(5);
 	//Target point of the agent
 	point target;
 	//Probability of leaving the building
@@ -64,7 +65,7 @@ species people skills: [moving]{
 	}
 	
 	aspect default {
-		draw circle(5) color: color;
+		draw shape color: color;
 	}
 }
 //Species to represent the buildings
@@ -81,9 +82,9 @@ species road {
 	int nb_people <- 0 update: length(people at_distance 1);
 	//Speed coefficient computed using the number of people on the road and the capicity of the road
 	float speed_coeff <- 1.0 update:  exp(-nb_people/capacity) min: 0.1;
-	
+	int buffer<-3;
 	aspect default {
-		draw (shape + 3 * speed_coeff) color: #red;
+		draw (shape + buffer * speed_coeff) color: #red;
 	}
 }
 experiment traffic type: gui {

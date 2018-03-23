@@ -15,20 +15,20 @@ import "Adapters/Urban Adapter.gaml" as Urbanization
 global
 {
 //set the bound of the world
-	geometry shape <- envelope(shape_file("../../../Toy Models/Traffic/includes/roads.shp"));
+//	geometry shape <- envelope(shape_file("../../../Toy Models/Traffic/includes/roads.shp"));
+	geometry shape<-envelope(grid_file("../../../../Toy Models/Urban Growth/includes/cantho_1999_v6.asc"));
 	float step<-#day;
 	float road_develop_speed <- 1.1;
-	int threshold_number_people<-300;
+	int threshold_number_people<-50;
 
 	init
 	{
 		//create Traffic micro-model's experiment
-		create Traffic."Adapter";
-		//create Urban micro-model;s experiment
-		create Urbanization."Adapter"
-		{
+		create Traffic."Adapter"{
 			do transform;
 		}
+		//create Urban micro-model;s experiment
+		create Urbanization."Adapter" ;
 
 	}
 
@@ -40,8 +40,13 @@ global
 			do _step_;
 		}
 
-		// tell the urban to evolve and interract with the traffic every 365 step = 1 year
-		if(cycle mod 365 = 0 ){			
+		// tell the urban to evolve and interract with the traffic every 30 step = 1 month
+		if(cycle mod 30 = 0 ){			
+//			// tell the urban to grow up 
+			ask Urbanization."Adapter" collect each.simulation
+			{
+				do _step_;
+			}
 			loop r over: Traffic."Adapter"[0].simulation.road
 			{
 				// compute the cell overlaps the road, which means the size of population
@@ -60,16 +65,7 @@ global
 	
 			}
 			
-			ask Traffic."Adapter"[0].simulation
-			{
-				road_network <- as_edge_graph(road);
-			}
 			
-			// tell the urban to grow up 
-			ask Urbanization."Adapter" collect each.simulation
-			{
-				do _step_;
-			}
 		}
 		
 
@@ -123,13 +119,16 @@ global
 
 		loop ee over: nr
 		{
+			if(ee!=nil){
+				
 			ask Traffic."Adapter"[0].simulation
 			{
 				create road from: list(ee)
 				{
+					buffer<-100;
 					shape <- ee; //scaled_by 0.7;
 				}
-
+			}
 			}
 
 		}
@@ -143,18 +142,11 @@ experiment main type: gui
 	{
 		display "Comodel Display"
 		{
-			graphics "Plotgrid"
-			{
-				loop p over: Urbanization."Adapter"[0].simulation.plot
-				{
-					draw square(20) color: p.color at: p.location;
-				}
+			agents "cell" value: (Urbanization."Adapter"[0]).get_plot() transparency:0.75;
 
-			}
-
+			agents "road" 		value: Traffic."Adapter"[0].get_road();
 			agents "building" 	value: Traffic."Adapter"[0].get_building();
 			agents "people" 	value: Traffic."Adapter"[0].get_people();
-			agents "road" 		value: Traffic."Adapter"[0].get_road();
 		}
 
 	}
