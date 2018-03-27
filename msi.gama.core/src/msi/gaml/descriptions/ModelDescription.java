@@ -61,8 +61,9 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ModelDescription getMicroModel(final String name) {
-		if (microModels == null)
+		if (microModels == null) {
 			return null;
+		}
 		return microModels.get(name);
 	}
 
@@ -151,23 +152,26 @@ public class ModelDescription extends SpeciesDescription {
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
 			return;
 		}
-		if (existingResource != null)
+		if (existingResource != null) {
 			newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file "
 					+ existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
+		}
 	}
 
 	@Override
 	public String getDocumentationWithoutMeta() {
 		final StringBuilder sb = new StringBuilder(200);
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
-		if (!parentName.equals(IKeyword.MODEL))
+		if (!parentName.equals(IKeyword.MODEL)) {
 			sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
+		}
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills))
+		if (!Iterables.isEmpty(skills)) {
 			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
+		}
 		sb.append("<br>")
-				.append("The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
-				.append("<br>");
+		.append("The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
+		.append("<br>");
 		sb.append(getAttributeDocumentation());
 		sb.append("<br/>");
 		sb.append(getActionDocumentation());
@@ -244,13 +248,15 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		if (child == null)
+		if (child == null) {
 			return null;
+		}
 
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
-			if (microModels == null)
+			if (microModels == null) {
 				microModels = new THashMap();
+			}
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
 
@@ -280,13 +286,16 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public boolean hasExperiment(final String nameOrTitle) {
-		if (experiments == null)
+		if (experiments == null) {
 			return false;
-		if (experiments.containsKey(nameOrTitle))
+		}
+		if (experiments.containsKey(nameOrTitle)) {
 			return true;
+		}
 		for (final ExperimentDescription exp : experiments.values()) {
-			if (exp.getExperimentTitleFacet().equals(nameOrTitle))
+			if (exp.getExperimentTitleFacet().equals(nameOrTitle)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -298,16 +307,19 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (spec.equals(getName()))
+		if (spec.equals(getName())) {
 			return this;
+		}
 		if (importedModelNames != null && importedModelNames.contains(spec)) { return this; }
 		if (getTypesManager() == null) {
-			if (hasMicroSpecies())
+			if (hasMicroSpecies()) {
 				return getMicroSpecies().get(spec);
-			else
+			} else {
 				return null;
-		} else
+			}
+		} else {
 			return getTypesManager().get(spec).getSpecies();
+		}
 	}
 
 	@Override
@@ -326,8 +338,9 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentNames() {
-		if (experiments == null)
+		if (experiments == null) {
 			return Collections.EMPTY_SET;
+		}
 		return new TLinkedHashSet(experiments.keySet());
 	}
 
@@ -335,8 +348,9 @@ public class ModelDescription extends SpeciesDescription {
 		final Set<String> strings = new TLinkedHashSet();
 		if (experiments != null) {
 			experiments.forEachEntry((a, b) -> {
-				if (b.getOriginName().equals(getName()))
+				if (b.getOriginName().equals(getName())) {
 					strings.add(b.getExperimentTitleFacet());
+				}
 				return true;
 			});
 		}
@@ -349,13 +363,15 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ExperimentDescription getExperiment(final String name) {
-		if (experiments == null)
+		if (experiments == null) {
 			return null;
+		}
 		final ExperimentDescription desc = experiments.get(name);
 		if (desc == null) {
 			for (final ExperimentDescription ed : experiments.values()) {
-				if (ed.getExperimentTitleFacet().equals(name))
+				if (ed.getExperimentTitleFacet().equals(name)) {
 					return ed;
+				}
 			}
 		}
 		return desc;
@@ -364,24 +380,28 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
 		boolean result = super.visitChildren(visitor);
-		if (result && experiments != null)
+		if (result && experiments != null) {
 			result &= experiments.forEachValue(visitor);
+		}
 		return result;
 	}
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (!super.visitOwnChildren(visitor))
+		if (!super.visitOwnChildren(visitor)) {
 			return false;
-		if (experiments != null)
-			if (!experiments.forEachValue(visitor))
+		}
+		if (experiments != null) {
+			if (!experiments.forEachValue(visitor)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	@Override
 	public boolean finalizeDescription() {
-		final VariableDescription vd = getAttribute(SHAPE);
+		//		final VariableDescription vd = getAttribute(SHAPE);
 
 		// if (!isBuiltIn() && !vd.hasFacet(INIT)) {
 		// final Facets f = new Facets(NAME, SHAPE);
@@ -394,24 +414,27 @@ public class ModelDescription extends SpeciesDescription {
 		// null);
 		// addChild(vd);
 		// }
-		if (!super.finalizeDescription())
+		if (!super.finalizeDescription()) {
 			return false;
-		if (actions != null)
+		}
+		if (actions != null) {
 			for (final ActionDescription action : actions.values()) {
 				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
 						.equals(getUnderlyingElement(null).eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
-							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
+					+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
 					return false;
 				}
 			}
+		}
 		return true;
 	}
 
 	@Override
 	public IDescription validate() {
-		if (validated)
+		if (validated) {
 			return this;
+		}
 		return validate(false);
 	}
 
@@ -426,8 +449,9 @@ public class ModelDescription extends SpeciesDescription {
 	 * @return
 	 */
 	public Collection<? extends ExperimentDescription> getExperiments() {
-		if (experiments == null)
+		if (experiments == null) {
 			return Collections.EMPTY_LIST;
+		}
 		return experiments.values();
 	}
 
@@ -450,8 +474,9 @@ public class ModelDescription extends SpeciesDescription {
 				visitor.visit(desc);
 				return desc.visitMicroSpecies(this);
 			}
-		}))
+		})) {
 			return;
+		}
 		if (experiments != null) {
 			experiments.forEachValue(visitor);
 		}

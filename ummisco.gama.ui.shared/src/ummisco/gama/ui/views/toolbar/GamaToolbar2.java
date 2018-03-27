@@ -272,7 +272,7 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	private void normalizeToolbars() {
-		final int n = right.getItemCount();
+		// final int n = right.getItemCount();
 		int size = 0;
 		for (final ToolItem t : right.getItems()) {
 			size += t.getWidth();

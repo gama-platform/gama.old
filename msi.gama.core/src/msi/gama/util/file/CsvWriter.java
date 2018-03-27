@@ -247,7 +247,8 @@ public class CsvWriter {
 	 * @exception IOException
 	 *                Thrown if an error occurs while writing data to the destination stream.
 	 */
-	public void write(String content, final boolean changeDelimiter) throws IOException {
+	public void write(final String c, final boolean changeDelimiter) throws IOException {
+		String content = c;
 		checkClosed();
 
 		checkInit();
@@ -269,7 +270,7 @@ public class CsvWriter {
 		if (!textQualify && userSettings.UseTextQualifier
 				&& (content.indexOf(userSettings.TextQualifier) > -1 || content.indexOf(userSettings.Delimiter) > -1
 						|| !useCustomRecordDelimiter
-								&& (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1)
+						&& (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1)
 						|| useCustomRecordDelimiter && content.indexOf(userSettings.RecordDelimiter) > -1
 						|| firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ||
 						// check for empty first column, which if on its own
@@ -381,8 +382,8 @@ public class CsvWriter {
 	 */
 	public void writeRecord(final String[] values, final boolean changeDelimiter) throws IOException {
 		if (values != null && values.length > 0) {
-			for (int i = 0; i < values.length; i++) {
-				write(values[i], changeDelimiter);
+			for (final String value : values) {
+				write(value, changeDelimiter);
 			}
 
 			endRecord();

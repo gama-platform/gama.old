@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
@@ -110,8 +110,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		final Iterator<?> resources = getSelectedResources().iterator();
 		while (resources.hasNext()) {
 			final IProject project = (IProject) resources.next();
-			if (!project.isOpen())
+			if (!project.isOpen()) {
 				closedInSelection++;
+			}
 		}
 		// there are other closed projects if the selection does
 		// not contain all closed projects in the workspace
@@ -157,8 +158,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			final IResourceDelta delta = event.getDelta();
 			if (delta != null) {
 				final IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-				for (int i = 0; i < projDeltas.length; ++i) {
-					final IResourceDelta projDelta = projDeltas[i];
+				for (final IResourceDelta projDelta : projDeltas) {
 					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
 						if (sel.contains(projDelta.getResource())) {
 							selectionChanged(getStructuredSelection());
@@ -195,7 +195,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			private void doOpenWithReferences(final IProject project, final IProgressMonitor monitor)
 					throws CoreException {
 				if (!project.exists() || project.isOpen()) { return; }
-				project.open(new SubProgressMonitor(monitor, 1000));
+				project.open(SubMonitor.convert(monitor, 1000));
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
@@ -215,13 +215,14 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 							// remember that we have prompted to avoid repeating the analysis
 							hasPrompted = true;
 						});
-						if (canceled)
+						if (canceled) {
 							throw new OperationCanceledException();
+						}
 					}
 				}
 				if (openProjectReferences) {
-					for (int i = 0; i < references.length; i++) {
-						doOpenWithReferences(references[i], monitor);
+					for (final IProject reference : references) {
+						doOpenWithReferences(reference, monitor);
 					}
 				}
 			}
@@ -232,8 +233,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					// at most we can only open all projects currently closed
 					monitor.beginTask("", countClosedProjects() * 1000); //$NON-NLS-1$
 					monitor.setTaskName(getOperationMessage());
-					for (final Iterator<?> it = resources.iterator(); it.hasNext();) {
-						doOpenWithReferences((IProject) it.next(), monitor);
+					for (final Object name2 : resources) {
+						doOpenWithReferences((IProject) name2, monitor);
 					}
 				} finally {
 					monitor.done();

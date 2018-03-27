@@ -557,7 +557,7 @@ public class Containers {
 					@usage (
 							value = "if an operand is a matrix, it will be transformed into the set of the lines",
 							examples = @example (
-									value = "matrix([[1,2,3],[4,5,4]]) inter [3,4]",
+									value = "matrix([[3,2,1],[4,5,4]]) inter [3,4]",
 									equals = "[3,4]")) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6] inter [2,4]",
@@ -1585,7 +1585,7 @@ public class Containers {
 					equals = "['a'::1,'b'::2,'c'::3]"),
 					@example (
 							value = "['a'::1,'b'::2] + [5::3.0]",
-							equals = "['a'::1.0,'b'::2.0,5::3.0]") },
+							equals = "['a'::1,'b'::2,5::3.0]") },
 			see = { "" + IKeyword.MINUS })
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
 		final IType type = GamaType.findCommonType(notNull(scope, m1).getType(), notNull(scope, m2).getType());

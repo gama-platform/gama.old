@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -88,7 +89,7 @@ abstract class AbstractTransformer {
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
 
-		this.depth = Objects.firstNonNull(object.getHeight(), 0.0);
+		this.depth = MoreObjects.firstNonNull(object.getHeight(), 0.0);
 		this.pickingId = object.getIndex();
 		final Color c = object.getColor();
 		if (c != null)

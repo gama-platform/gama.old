@@ -49,8 +49,9 @@ public class WorkbenchHelper {
 				@Override
 				public Object load(final Class<?> key) throws Exception {
 					final Object o = getWorkbench().getService(key);
-					if (o == null)
+					if (o == null) {
 						return NULL;
+					}
 					return o;
 				}
 			});
@@ -68,16 +69,22 @@ public class WorkbenchHelper {
 		final Display d = getDisplay();
 		if (d != null && !d.isDisposed()) {
 			d.asyncExec(r);
-		} else
+		} else {
 			r.run();
+		}
 	}
 
 	public static void run(final Runnable r) {
 		final Display d = getDisplay();
 		if (d != null && !d.isDisposed()) {
-			d.syncExec(r);
-		} else
+			if (d.getThread() == Thread.currentThread()) {
+				r.run();
+			} else {
+				d.syncExec(r);
+			}
+		} else {
 			r.run();
+		}
 	}
 
 	public static Display getDisplay() {
@@ -127,8 +134,9 @@ public class WorkbenchHelper {
 		final IWorkbenchPage page = getPage();
 		if (page != null) {
 			final IEditorPart editor = page.getActiveEditor();
-			if (editor instanceof IGamlEditor)
+			if (editor instanceof IGamlEditor) {
 				return (IGamlEditor) editor;
+			}
 		}
 		return null;
 	}
@@ -154,8 +162,9 @@ public class WorkbenchHelper {
 
 	public static void setWorkbenchWindowTitle(final String title) {
 		run(() -> {
-			if (WorkbenchHelper.getShell() != null)
+			if (WorkbenchHelper.getShell() != null) {
 				WorkbenchHelper.getShell().setText(title);
+			}
 		});
 
 	}
@@ -202,26 +211,32 @@ public class WorkbenchHelper {
 		final IWorkbenchPage page = getPage();
 		if (page == null) { return null; }
 		final Point p = getDisplay().getCursorLocation();
-		for (final IViewPart part : page.getViews()) {
+		for (final IViewReference ref : page.getViewReferences()) {
+			final IViewPart part = ref.getView(false);
 			if (part instanceof IGamaView.Display) {
-				final IGamaView.Display display = (IGamaView.Display) part;
-				if (display.isFullScreen())
+				final IGamaView.Display display = (IGamaView.Display) ref.getView(true);
+				if (display.isFullScreen()) {
+					return (IViewPart) display;
+				}
+				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y)) {
 					return part;
-				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y))
-					return part;
+				}
 
 			}
 		}
+
 		return null;
 	}
 
-	public static Shell obtainFullScreenShell(int monitorId) {
+	public static Shell obtainFullScreenShell(final int id) {
 		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
-
-		if (monitorId < 0)
+		int monitorId = id;
+		if (monitorId < 0) {
 			monitorId = 0;
-		if (monitorId > monitors.length - 1)
+		}
+		if (monitorId > monitors.length - 1) {
 			monitorId = monitors.length - 1;
+		}
 		final Rectangle bounds = monitors[monitorId].getBounds();
 
 		Shell fullScreenShell =

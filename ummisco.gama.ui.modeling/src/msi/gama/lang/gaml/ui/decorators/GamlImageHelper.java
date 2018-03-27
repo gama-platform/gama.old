@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlImageHelper.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlImageHelper.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -64,9 +63,7 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public ImageDescriptor getImageDescriptor(final Image image) {
 		for (final Map.Entry<ImageDescriptor, Image> entry : registry.entrySet()) {
-			if (entry.getValue().equals(image)) {
-				return entry.getKey();
-			}
+			if (entry.getValue().equals(image)) { return entry.getKey(); }
 		}
 		final ImageDescriptor newDescriptor = ImageDescriptor.createFromImage(image);
 		registry.put(newDescriptor, image);
@@ -94,15 +91,14 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	 * @see org.eclipse.xtext.ui.IImageHelper#getImage(org.eclipse.jface.resource.ImageDescriptor)
 	 */
 	@Override
-	public Image getImage(ImageDescriptor descriptor) {
+	public Image getImage(final ImageDescriptor d) {
+		ImageDescriptor descriptor = d;
 		if (descriptor == null) {
 			descriptor = ImageDescriptor.getMissingImageDescriptor();
 		}
 
 		Image result = registry.get(descriptor);
-		if (result != null) {
-			return result;
-		}
+		if (result != null) { return result; }
 		result = descriptor.createImage();
 		if (result != null) {
 			registry.put(descriptor, result);

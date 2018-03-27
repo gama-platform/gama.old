@@ -17,7 +17,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.generator.IFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IGenerator2;
+import org.eclipse.xtext.generator.IGeneratorContext;
 
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
@@ -29,7 +32,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
  * @since 4 janv. 2016
  *
  */
-public class GamlGenerator implements IGenerator {
+public class GamlGenerator implements IGenerator2 {
 
 	/**
 	 *
@@ -43,8 +46,8 @@ public class GamlGenerator implements IGenerator {
 	 * @see org.eclipse.xtext.generator.IGenerator#doGenerate(org.eclipse.emf.ecore.resource.Resource,
 	 *      org.eclipse.xtext.generator.IFileSystemAccess)
 	 */
-	@Override
-	public void doGenerate(final Resource input, final IFileSystemAccess fsa) {
+//	@Override
+//	public void doGenerate(final Resource input, final IFileSystemAccess fsa) {
 		// TODO: Deactivated for the moment [DEACTIVATION OF
 		// META_INFORMATION]
 		// final GamlResource resource = (GamlResource) input;
@@ -52,7 +55,7 @@ public class GamlGenerator implements IGenerator {
 		// final String contents = getContentsFor(resource);
 		// fsa.generateFile(fileName, GamlOutputConfigurationProvider.META,
 		// contents);
-	}
+//	}
 
 	/**
 	 * @param input
@@ -77,6 +80,24 @@ public class GamlGenerator implements IGenerator {
 		path = file.getProjectRelativePath();
 		final String s = path.toString();
 		return s + ".meta";
+	}
+
+	@Override
+	public void doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

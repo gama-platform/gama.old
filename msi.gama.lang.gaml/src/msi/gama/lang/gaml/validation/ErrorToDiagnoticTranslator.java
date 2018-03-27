@@ -46,8 +46,9 @@ public class ErrorToDiagnoticTranslator {
 		final BasicDiagnostic chain = new BasicDiagnostic();
 		for (final GamlCompilationError e : errors) {
 			final Diagnostic d = translate(e, r, mode);
-			if (d != null)
+			if (d != null) {
 				chain.add(d);
+			}
 		}
 		return chain;
 	}
@@ -55,14 +56,14 @@ public class ErrorToDiagnoticTranslator {
 	public Diagnostic translate(final GamlCompilationError e, final GamlResource r, final CheckMode mode) {
 		final URI errorURI = e.getURI();
 		if (!GamlResourceIndexer.equals(errorURI, r.getURI())) {
-			final String uri = URI.decode(errorURI.toFileString());
+			//			final String uri = URI.decode(errorURI.toFileString());
 			final String s = URI.decode(errorURI.lastSegment());
 			final EObject m = r.getContents().get(0);
 			final EObject eObject = findImportWith(m, s);
 			final EAttribute feature =
 					eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
 							: eObject instanceof HeadlessExperiment
-									? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
+							? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
 									: GamlPackage.Literals.IMPORT__IMPORT_URI;
 			return createDiagnostic(CheckMode.NORMAL_ONLY, Diagnostic.ERROR, e.toString() + " (in " + s + ")", eObject,
 					feature, ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
@@ -106,30 +107,34 @@ public class ErrorToDiagnoticTranslator {
 			return CheckType.FAST;
 		} else if (mode == CheckMode.NORMAL_ONLY) {
 			return CheckType.NORMAL;
-		} else
+		} else {
 			return CheckType.FAST;
+		}
 	}
 
 	protected int toDiagnosticSeverity(final GamlCompilationError e) {
 		int diagnosticSeverity = -1;
-		if (e.isError())
+		if (e.isError()) {
 			diagnosticSeverity = Diagnostic.ERROR;
-		else if (e.isWarning())
+		} else if (e.isWarning()) {
 			diagnosticSeverity = Diagnostic.WARNING;
-		else if (e.isInfo())
+		} else if (e.isInfo()) {
 			diagnosticSeverity = Diagnostic.INFO;
+		}
 
 		return diagnosticSeverity;
 	}
 
 	private EObject findImportWith(final EObject m, final String s) {
-		if (m instanceof Model)
+		if (m instanceof Model) {
 			for (final Import i : ((Model) m).getImports()) {
-				if (i.getImportURI().endsWith(s))
+				if (i.getImportURI().endsWith(s)) {
 					return i;
+				}
 			}
-		else if (m instanceof ExperimentFileStructure)
+		} else if (m instanceof ExperimentFileStructure) {
 			return ((ExperimentFileStructure) m).getExp();
+		}
 		return m;
 	}
 

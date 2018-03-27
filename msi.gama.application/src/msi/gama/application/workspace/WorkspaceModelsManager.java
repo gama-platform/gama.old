@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -73,7 +73,8 @@ public class WorkspaceModelsManager {
 	public final static String TEST_NATURE = "msi.gama.application.testNature";
 	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
-	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
+	public static final QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
+	private static String BUILTIN_VERSION = null;
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 
@@ -99,7 +100,6 @@ public class WorkspaceModelsManager {
 		}
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
-			final String fp = filePath;
 			final String en = expName;
 			final Runnable run = () -> {
 				try {
@@ -192,13 +192,14 @@ public class WorkspaceModelsManager {
 			if ( projectFileBean != null ) {
 				/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
 				final File[] children = projectFileBean.listFiles();
-				if ( children != null )
-					for ( int i = 0; i < children.length; i++ ) {
-						if ( children[i].getName().equals(".project") ) {
-							dotFile = children[i];
+				if ( children != null ) {
+					for ( final File element : children ) {
+						if ( element.getName().equals(".project") ) {
+							dotFile = element;
 							break;
 						}
 					}
+				}
 			}
 		}
 
@@ -410,13 +411,15 @@ public class WorkspaceModelsManager {
 		System.out.println("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
 		for ( final Bundle plugin : pluginsWithModels.keySet() ) {
-			for ( final String entry : pluginsWithModels.get(plugin) )
+			for ( final String entry : pluginsWithModels.get(plugin) ) {
 				linkModelsToWorkspace(plugin, entry, false);
+			}
 		}
 		final Multimap<Bundle, String> pluginsWithTests = GamaBundleLoader.getPluginsWithTests();
 		for ( final Bundle plugin : pluginsWithTests.keySet() ) {
-			for ( final String entry : pluginsWithTests.get(plugin) )
+			for ( final String entry : pluginsWithTests.get(plugin) ) {
 				linkModelsToWorkspace(plugin, entry, true);
+			}
 		}
 	}
 
@@ -437,7 +440,7 @@ public class WorkspaceModelsManager {
 
 		} catch (final URISyntaxException e1) {
 			e1.printStackTrace();
-		} catch (final Exception e1) {
+		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
 
@@ -445,8 +448,9 @@ public class WorkspaceModelsManager {
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(bundle, core, tests, foundProjects);
 
-		if ( core )
+		if ( core ) {
 			stampWorkspaceFromModels();
+		}
 
 	}
 
@@ -458,10 +462,11 @@ public class WorkspaceModelsManager {
 		if ( dotFile == null ) { return; } // not a directory
 		if ( dotFile.length == 0 ) { // no .project file
 			final File[] files = folder.listFiles();
-			if ( files != null )
+			if ( files != null ) {
 				for ( final File f : folder.listFiles() ) {
 					findProjects(f, found);
 				}
+			}
 			return;
 		}
 		found.put(folder, new Path(dotFile[0].getAbsolutePath()));
@@ -518,17 +523,14 @@ public class WorkspaceModelsManager {
 
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("Creating or updating " + name, 2000);
+				final SubMonitor m = SubMonitor.convert(monitor, "Creating or updating " + name, 2000);
 				final IProject project = ws.getRoot().getProject(name);
-				// IProjectDescription desc = null;
 				if ( !project.exists() ) {
-					// desc = project.getDescription();
-					// } else {
 					final IProjectDescription desc = ws.newProjectDescription(name);
-					project.create(desc, new SubProgressMonitor(monitor, 1000));
+					project.create(desc, m.split(1000));
 				}
 				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
-				project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
+				project.open(IResource.BACKGROUND_REFRESH, m.split(1000));
 				projectHandle[0] = project;
 				setValuesProjectDescription(project, false, false, false, null);
 			}
@@ -543,6 +545,13 @@ public class WorkspaceModelsManager {
 		return projectHandle[0];
 	}
 
+	// static public String GET_BUILT_IN_GAMA_VERSION() {
+	// if (BUILTIN_VERSION == null) {
+	// BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
+	// }
+	// return BUILTIN_VERSION;
+	// }
+
 	static public void setValuesProjectDescription(final IProject proj, final boolean builtin, final boolean inPlugin,
 		final boolean inTests, final Bundle bundle) {
 		/* Modify the project description */
@@ -552,12 +561,13 @@ public class WorkspaceModelsManager {
 			final List<String> ids = new ArrayList<>();
 			ids.add(XTEXT_NATURE);
 			ids.add(GAMA_NATURE);
-			if ( inTests )
+			if ( inTests ) {
 				ids.add(TEST_NATURE);
-			else if ( inPlugin )
+			} else if ( inPlugin ) {
 				ids.add(PLUGIN_NATURE);
-			else if ( builtin )
+			} else if ( builtin ) {
 				ids.add(BUILTIN_NATURE);
+			}
 			desc = proj.getDescription();
 			desc.setNatureIds(ids.toArray(new String[0]));
 			// Addition of a special nature to the project.
@@ -574,7 +584,8 @@ public class WorkspaceModelsManager {
 			proj.setDescription(desc, IResource.FORCE, null);
 			// Addition of a special persistent property to indicate that the project is built-in
 			if ( builtin ) {
-				proj.setPersistentProperty(BUILTIN_PROPERTY, WorkspacePreferences.BUILTIN_VERSION);
+				proj.setPersistentProperty(BUILTIN_PROPERTY,
+					Platform.getProduct().getDefiningBundle().getVersion().toString());
 			}
 		} catch (final CoreException e) {
 			e.printStackTrace();

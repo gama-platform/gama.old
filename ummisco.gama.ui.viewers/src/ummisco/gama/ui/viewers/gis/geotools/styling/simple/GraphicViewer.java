@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GraphicViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GraphicViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,6 +11,7 @@ package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 
 import java.awt.Color;
 import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -58,6 +58,7 @@ import org.opengis.style.GraphicalSymbol;
  * <li>getGraphic( Fill, Stroke, StyleBuilder ) - construct a Graphic based on fields
  * </ul>
  * </p>
+ * 
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -117,6 +118,7 @@ public class GraphicViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
+	 * 
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -125,11 +127,13 @@ public class GraphicViewer {
 
 	/**
 	 * Remove listener.
+	 * 
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
-		if ( this.listener == listener1 )
+		if (this.listener == listener1) {
 			this.listener = null;
+		}
 	}
 
 	/**
@@ -138,8 +142,7 @@ public class GraphicViewer {
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
-		if ( this.listener == null )
-			return;
+		if (this.listener == null) { return; }
 		this.listener.widgetSelected(event);
 	}
 
@@ -180,9 +183,9 @@ public class GraphicViewer {
 	 * @return Graphic defined by this model
 	 */
 	public Graphic getGraphic(final Fill filll, final Stroke stroke, final StyleBuilder build) {
-		if ( !this.enabled ) {
+		if (!this.enabled) {
 			Mark mark = null;
-			if ( this.type == null ) {
+			if (this.type == null) {
 				build.createMark("square", null, null); //$NON-NLS-1$
 			} else {
 				mark = build.createMark(this.type, (Fill) null, (Stroke) null);
@@ -202,25 +205,26 @@ public class GraphicViewer {
 	 * @param mode
 	 * @param enabled
 	 */
-	public void setGraphic(Graphic graphic, final Mode mode, final Color defaultColor) {
+	public void setGraphic(final Graphic g, final Mode mode, final Color defaultColor) {
+		Graphic graphic = g;
 		boolean enabled = true;
-		if ( graphic == null ) {
+		if (graphic == null) {
 			final StyleBuilder builder = new StyleBuilder();
 			graphic = builder.createGraphic(null, builder.createMark(StyleBuilder.MARK_SQUARE, defaultColor), null);
 			enabled = true;
 		}
 		this.width = SLDs.size(graphic);
 		final String text = MessageFormat.format("{0,number,#0}", this.width); //$NON-NLS-1$
-		if ( text != null ) {
+		if (text != null) {
 			this.size.setText(text);
 			this.size.select(this.size.indexOf(text));
 		}
 
 		boolean marked = false;
-		if ( graphic != null && graphic.graphicalSymbols() != null && !graphic.graphicalSymbols().isEmpty() ) {
+		if (graphic != null && graphic.graphicalSymbols() != null && !graphic.graphicalSymbols().isEmpty()) {
 
-			for ( final GraphicalSymbol symbol : graphic.graphicalSymbols() ) {
-				if ( symbol instanceof Mark ) {
+			for (final GraphicalSymbol symbol : graphic.graphicalSymbols()) {
+				if (symbol instanceof Mark) {
 					final Mark mark = (Mark) symbol;
 					setMark(mark, mode);
 					marked = true;
@@ -228,7 +232,7 @@ public class GraphicViewer {
 				}
 			}
 		}
-		if ( !marked ) {
+		if (!marked) {
 			setMark(null, mode);
 		}
 		this.enabled = this.enabled && enabled;
@@ -243,7 +247,7 @@ public class GraphicViewer {
 			// Stroke is used in line, point and polygon
 			this.on.setEnabled(mode == Mode.POINT || mode == Mode.ALL);
 
-			if ( this.type != null ) {
+			if (this.type != null) {
 				this.name.setText(this.type);
 				this.name.select(this.name.indexOf(this.type));
 			}
@@ -257,7 +261,7 @@ public class GraphicViewer {
 	}
 
 	void listen(final boolean listen) {
-		if ( listen ) {
+		if (listen) {
 			this.on.addSelectionListener(this.sync);
 			this.size.addSelectionListener(this.sync);
 			this.size.addModifyListener(this.sync);

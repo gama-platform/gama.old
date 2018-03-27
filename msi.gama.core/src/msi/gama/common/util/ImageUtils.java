@@ -76,8 +76,7 @@ public class ImageUtils {
 			final BufferedImage image = cache.getIfPresent(fileName);
 			if (image != null) { return image; }
 			final GifDecoder gif = gifCache.getIfPresent(fileName);
-			if (gif != null)
-				return gif.getImage();
+			if (gif != null) { return gif.getImage(); }
 		}
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
@@ -87,23 +86,20 @@ public class ImageUtils {
 
 	public int getFrameCount(final String path) {
 		final GifDecoder gif = gifCache.getIfPresent(path);
-		if (gif == null)
-			return 1;
+		if (gif == null) { return 1; }
 		return gif.getFrameCount();
 	}
 
 	public int getDuration(final String path) {
 		final GifDecoder gif = gifCache.getIfPresent(path);
-		if (gif == null)
-			return 0;
+		if (gif == null) { return 0; }
 		return gif.getDuration();
 	}
 
 	private BufferedImage privateReadFromFile(final File file) throws IOException {
 		// System.out.println("READING " + file.getName());
 		BufferedImage result = NO_IMAGE;
-		if (file == null)
-			return result;
+		if (file == null) { return result; }
 		final String name = file.getName();
 		String ext = null;
 		if (name.contains(".")) {
@@ -147,14 +143,16 @@ public class ImageUtils {
 				ext = name.substring(file.getName().lastIndexOf("."));
 			}
 			if (gifExt.contains(ext)) {
-				if (useCache)
+				if (useCache) {
 					image = gifCache.get(file.getAbsolutePath(), () -> privateReadGifFromFile(file)).getImage();
-				else
+				} else {
 					image = privateReadGifFromFile(file).getImage();
-			} else if (useCache)
+				}
+			} else if (useCache) {
 				image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
-			else
+			} else {
 				image = privateReadFromFile(file);
+			}
 			return image == NO_IMAGE ? null : image;
 		} catch (final ExecutionException | IOException e) {
 			e.printStackTrace();
@@ -331,7 +329,8 @@ public class ImageUtils {
 		return ret;
 	}
 
-	public static BufferedImage flipRightSideLeftImage(BufferedImage img) {
+	public static BufferedImage flipRightSideLeftImage(final BufferedImage bi) {
+		BufferedImage img = bi;
 		final AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
 		tx.translate(-img.getWidth(null), 0);
 		final AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);

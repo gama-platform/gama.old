@@ -15,12 +15,7 @@ package msi.gama.headless.openmole;
 
 import msi.gama.headless.core.Experiment;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.gaml.Expression;
-import msi.gama.outputs.AbstractOutputManager;
-import msi.gama.outputs.IOutput;
-import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;

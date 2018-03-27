@@ -30,8 +30,9 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 
 	@Override
 	public boolean shouldExist() {
-		if (shouldExist)
+		if (shouldExist) {
 			return super.shouldExist();
+		}
 		return false;
 	}
 
@@ -57,8 +58,7 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 					.warning("Problem identifying the contents of " + getFile(scope).getAbsolutePath(), scope), false);
 			setBuffer(GamaListFactory.create());
 		}
-		try {
-			final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)));
+		try (final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			final IList<String> allLines = GamaListFactory.create(Types.STRING);
 			String str;
 			str = in.readLine();
@@ -66,7 +66,6 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 				allLines.add(str);
 				str = in.readLine();
 			}
-			in.close();
 			setBuffer(allLines);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);

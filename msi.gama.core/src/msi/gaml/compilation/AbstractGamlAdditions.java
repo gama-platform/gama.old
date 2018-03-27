@@ -86,7 +86,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
 	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
-			new THashMap<String, IGamaPopulationsLinker>();
+			new THashMap<>();
 	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new THashMap<>();
 
 	protected static String[] S(final String... strings) {
@@ -157,7 +157,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected void _skill(final String name, final Class clazz, final String... species) {
-		final SkillDescription sd = GamaSkillRegistry.INSTANCE.register(name, clazz,
+		GamaSkillRegistry.INSTANCE.register(name, clazz,
 				GamaBundleLoader.CURRENT_PLUGIN_NAME, ADDITIONS.get(clazz), species);
 	}
 
@@ -185,7 +185,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
 				contextKinds, remote, unique, name_unique, sc, validator, serializer,
 				names == null || names.length == 0 ? "variable declaration" : names[0],
-				GamaBundleLoader.CURRENT_PLUGIN_NAME);
+						GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		DescriptionFactory.addProto(md, keywords);
 	}
 

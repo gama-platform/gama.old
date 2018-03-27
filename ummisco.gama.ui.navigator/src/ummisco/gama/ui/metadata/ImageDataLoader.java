@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ImageDataLoader.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ImageDataLoader.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,6 +22,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
@@ -71,14 +71,15 @@ public class ImageDataLoader {
 	}
 
 	public static ImageData getImageData(final IFile file) {
-		InputStream in = null;
-		ImageInputStream is = null;
 		ImageData imageData = null;
 		final String ext = file.getFileExtension();
-		if (ext != null)
-			try {
-				file.refreshLocal(IResource.DEPTH_ONE, null);
-				in = file.getContents(true);
+		try {
+			file.refreshLocal(IResource.DEPTH_ONE, null);
+		} catch (final CoreException e1) {
+			e1.printStackTrace();
+		}
+		if (ext != null) {
+			try (InputStream in = file.getContents(true);) {
 				if ("asc".equals(ext)) {
 					imageData = readASC(in);
 				} else if ("pgm".equals(ext)) {
@@ -87,19 +88,12 @@ public class ImageDataLoader {
 					imageData = new ImageData(in);
 				}
 			} catch (final Exception ex) {
-
-				// System.out.println("Error in loading " +
-				// file.getLocation().toString());
 				if (ext.contains("tif")) {
 					TIFFImageReader reader;
 					final ImageReaderSpi spi = new TIFFImageReaderSpi();
 					reader = new TIFFImageReader(spi);
-					try {
-						is = new FileImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()));
-					} catch (final IOException e) {
-						e.printStackTrace();
-					}
-					if (is != null) {
+					try (ImageInputStream is =
+							new FileImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()));) {
 						reader.setInput(is);
 						BufferedImage image;
 						try {
@@ -110,24 +104,14 @@ public class ImageDataLoader {
 						} catch (final IOException e) {
 							e.printStackTrace();
 						}
+
+					} catch (final IOException e1) {
+						e1.printStackTrace();
 					}
 
-				}
-
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (final IOException e) {
-					}
-				}
-				if (is != null) {
-					try {
-						is.close();
-					} catch (final IOException e) {
-					}
 				}
 			}
+		}
 		if (imageData == null) {
 			System.out.println("null image data");
 		}
@@ -137,10 +121,8 @@ public class ImageDataLoader {
 
 	private static ImageData readPGM(final InputStream filename) {
 		int[][] pixels;
-		Scanner infile = null;
+		try (Scanner infile = new Scanner(filename);) {
 
-		try {
-			infile = new Scanner(filename);
 			// process the top 4 header lines
 			final String filetype = infile.nextLine();
 			if (!filetype.equalsIgnoreCase("p2")) {
@@ -172,14 +154,7 @@ public class ImageDataLoader {
 			}
 		} catch (final Exception e) {
 			System.out.println(e);
-			if (infile != null) {
-				infile.close();
-			}
 			return null;
-		} finally {
-			if (infile != null) {
-				infile.close();
-			}
 		}
 		int g;
 		final PaletteData palette = new PaletteData(16711680, 65280, 255);
@@ -197,9 +172,7 @@ public class ImageDataLoader {
 
 	private static ImageData readASC(final InputStream filename) {
 		int[][] pixels;
-		Scanner infile = null;
-		try {
-			infile = new Scanner(filename);
+		try (Scanner infile = new Scanner(filename);) {
 			// Not a ASC file
 			if (!infile.hasNext("ncols")) {
 				System.out.println("Not an ASC");
@@ -263,9 +236,6 @@ public class ImageDataLoader {
 			}
 		} catch (final Exception e) {
 			System.out.println(e);
-			if (infile != null) {
-				infile.close();
-			}
 			return null;
 		}
 		int g;
@@ -280,17 +250,16 @@ public class ImageDataLoader {
 
 		final ImageData result = data;
 		result.type = IMAGE_ASC;
-		infile.close();
 		return result;
 	}
 
 	public static ImageData convertToSWT(final java.awt.image.BufferedImage image) {
 		if (image.getColorModel() instanceof java.awt.image.DirectColorModel) {
 			final java.awt.image.DirectColorModel colorModel = (java.awt.image.DirectColorModel) image.getColorModel();
-			final PaletteData palette = new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(),
-					colorModel.getBlueMask());
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final PaletteData palette =
+					new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 			for (int y = 0; y < data.height; y++) {
 				for (int x = 0; x < data.width; x++) {
 					final int rgb = image.getRGB(x, y);
@@ -316,8 +285,8 @@ public class ImageDataLoader {
 				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
 			}
 			final PaletteData palette = new PaletteData(rgbs);
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 			data.transparentPixel = colorModel.getTransparentPixel();
 			final java.awt.image.WritableRaster raster = image.getRaster();
 			final int[] pixelArray = new int[1];
@@ -330,8 +299,8 @@ public class ImageDataLoader {
 			return data;
 		} else if (image.getColorModel() instanceof java.awt.image.ComponentColorModel) {
 
-			final java.awt.image.ComponentColorModel colorModel = (java.awt.image.ComponentColorModel) image
-					.getColorModel();
+			final java.awt.image.ComponentColorModel colorModel =
+					(java.awt.image.ComponentColorModel) image.getColorModel();
 			if (colorModel.getPixelSize() > 32) {
 				final BufferedImage newImage = ImageUtils.toCompatibleImage(image);
 				return convertToSWT(newImage);
@@ -339,8 +308,8 @@ public class ImageDataLoader {
 			// ASSUMES: 3 BYTE BGR IMAGE TYPE
 
 			final PaletteData palette = new PaletteData(0x0000FF, 0x00FF00, 0xFF0000);
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 
 			// This is valid because we are using a 3-byte Data model with no
 			// transparent pixels
@@ -355,17 +324,19 @@ public class ImageDataLoader {
 					for (int x = 0; x < data.width; x++) {
 						raster.getPixel(x, y, pixelArray);
 						final int val = pixelArray[0];
-						if (val > maxVal)
+						if (val > maxVal) {
 							maxVal = val;
-						if (val < minVal)
+						}
+						if (val < minVal) {
 							minVal = val;
+						}
 					}
 				}
 				for (int y = 0; y < data.height; y++) {
 					for (int x = 0; x < data.width; x++) {
 						raster.getPixel(x, y, pixelArray);
-						final int val = (int) (maxVal == minVal ? 0
-								: (pixelArray[0] - minVal) / (0.0 + maxVal - minVal) * 255);
+						final int val =
+								(int) (maxVal == minVal ? 0 : (pixelArray[0] - minVal) / (0.0 + maxVal - minVal) * 255);
 						final int pixel = palette.getPixel(new RGB(val, val, val));
 						data.setPixel(x, y, pixel);
 					}

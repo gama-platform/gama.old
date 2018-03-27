@@ -218,7 +218,7 @@ public class GamaPreferencesView {
 			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
 		}
-		final int compositeIndex = 0;
+		// final int compositeIndex = 0;
 
 		int i = 0;
 		for (final Pref e : list) {
@@ -246,9 +246,9 @@ public class GamaPreferencesView {
 			final boolean isSubParameter = activations.containsKey(e.getKey());
 			final AbstractEditor ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))],
 					e, isSubParameter, true);
-			if (e.isDisabled())
+			if (e.isDisabled()) {
 				ed.setActive(false);
-			else {
+			} else {
 				final Menu m = getMenuFor(e, ed);
 				final Label l = ed.getLabel();
 				l.setMenu(m);
@@ -277,25 +277,12 @@ public class GamaPreferencesView {
 		@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
 		final MenuItem i = new MenuItem(m, SWT.PUSH);
 		i.setText("Copy name to clipboard");
-		i.addSelectionListener(new Selector() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent se) {
-				WorkbenchHelper.copy(e.getKey());
-
-			}
-
-		});
+		i.addSelectionListener((Selector) se -> WorkbenchHelper.copy(e.getKey()));
 		final MenuItem i2 = new MenuItem(m, SWT.PUSH);
 		i2.setText("Revert to default value");
-		i2.addSelectionListener(new Selector() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent se) {
-				e.set(e.getInitialValue(GAMA.getRuntimeScope()));
-				ed.forceUpdateValueAsynchronously();
-			}
-
+		i2.addSelectionListener((Selector) se -> {
+			e.set(e.getInitialValue(GAMA.getRuntimeScope()));
+			ed.forceUpdateValueAsynchronously();
 		});
 		return m;
 	}
@@ -340,8 +327,7 @@ public class GamaPreferencesView {
 				final FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.prefs" });
 				final String path = fd.open();
-				if (path == null)
-					return;
+				if (path == null) { return; }
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue(true);
@@ -362,8 +348,7 @@ public class GamaPreferencesView {
 				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
 				final String path = fd.open();
-				if (path == null)
-					return;
+				if (path == null) { return; }
 				GamaPreferences.savePreferencesTo(path);
 			}
 
@@ -400,8 +385,9 @@ public class GamaPreferencesView {
 						close();
 						PlatformUI.getWorkbench().restart(true);
 					}
-				} else
+				} else {
 					close();
+				}
 			}
 
 		});
@@ -484,8 +470,7 @@ public class GamaPreferencesView {
 	}
 
 	private void saveDialogProperties() {
-		if (shell.isDisposed())
-			return;
+		if (shell.isDisposed()) { return; }
 		saveLocation();
 		saveSize();
 		saveTab();

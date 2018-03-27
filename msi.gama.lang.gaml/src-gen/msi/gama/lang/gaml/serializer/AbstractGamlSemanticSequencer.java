@@ -593,7 +593,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.ACTION_REF__REF));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getActionRefAccess().getRefActionDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getActionRefAccess().getRefActionDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.eGet(GamlPackage.Literals.ACTION_REF__REF, false));
 		feeder.finish();
 	}
 	
@@ -948,7 +948,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EQUATION_REF__REF));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getEquationRefAccess().getRefEquationDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getEquationRefAccess().getRefEquationDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.eGet(GamlPackage.Literals.EQUATION_REF__REF, false));
 		feeder.finish();
 	}
 	
@@ -1713,7 +1713,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.SKILL_REF__REF));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getSkillRefAccess().getRefSkillFakeDefinitionIDTerminalRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getSkillRefAccess().getRefSkillFakeDefinitionIDTerminalRuleCall_1_0_1(), semanticObject.eGet(GamlPackage.Literals.SKILL_REF__REF, false));
 		feeder.finish();
 	}
 	
@@ -2153,7 +2153,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.UNIT_NAME__REF));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getUnitRefAccess().getRefUnitFakeDefinitionIDTerminalRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getUnitRefAccess().getRefUnitFakeDefinitionIDTerminalRuleCall_1_0_1(), semanticObject.eGet(GamlPackage.Literals.UNIT_NAME__REF, false));
 		feeder.finish();
 	}
 	
@@ -2273,7 +2273,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.VARIABLE_REF__REF));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getVariableRefAccess().getRefVarDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.accept(grammarAccess.getVariableRefAccess().getRefVarDefinitionValid_IDParserRuleCall_1_0_1(), semanticObject.eGet(GamlPackage.Literals.VARIABLE_REF__REF, false));
 		feeder.finish();
 	}
 	

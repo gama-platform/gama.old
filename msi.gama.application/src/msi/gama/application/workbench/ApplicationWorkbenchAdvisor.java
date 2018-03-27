@@ -73,8 +73,10 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		final String[] args = Platform.getApplicationArgs();
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") )
+		{
 			return;
-		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+			// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+		}
 
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
@@ -200,11 +202,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	private void saveEclipsePreferences() {
 		final IPreferencesService service = Platform.getPreferencesService();
 
-		try {
-			final String name = Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf";
-			final FileOutputStream outputStream = new FileOutputStream(name);
+		try (final FileOutputStream outputStream = new FileOutputStream(Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf")){
 			service.exportPreferences(service.getRootNode(), WorkspacePreferences.getPreferenceFilters(), outputStream);
-			outputStream.close();
 		} catch (final CoreException | IOException e1) {}
 
 	}
@@ -220,13 +219,15 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			@Override
 			public void handle(final StatusAdapter statusAdapter, final int style) {
 				final int severity = statusAdapter.getStatus().getSeverity();
-				if ( severity == IStatus.INFO || severity == IStatus.CANCEL )
+				if ( severity == IStatus.INFO || severity == IStatus.CANCEL ) {
 					return;
+				}
 				final Throwable e = statusAdapter.getStatus().getException();
 				final String message = statusAdapter.getStatus().getMessage();
 				// Stupid Eclipse
-				if ( !message.contains("File toolbar contribution item") )
+				if ( !message.contains("File toolbar contribution item") ) {
 					System.out.println("GAMA Caught a workbench message : " + message);
+				}
 				if ( e != null ) {
 					e.printStackTrace();
 				}

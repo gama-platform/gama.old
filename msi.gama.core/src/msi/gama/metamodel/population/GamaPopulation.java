@@ -75,9 +75,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		if (species.isGrid()) {
 			final ITopology t = buildGridTopology(scope, species, host);
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) t.getPlaces();
-			return m.new GridPopulation<E>(t, host, species);
+			return m.new GridPopulation<>(t, host, species);
 		}
-		return new GamaPopulation<E>(host, species);
+		return new GamaPopulation<>(host, species);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		@Override
 		public Object executeOn(final IScope scope) throws GamaRuntimeException {
 			final IPopulation<T> pop = GamaPopulation.this;
-			final Set<IAgent> targets = new THashSet<>(Cast.asList(scope, listOfTargetAgents.value(scope)));
+			final Set<IAgent> targets = new THashSet<IAgent>(Cast.asList(scope, listOfTargetAgents.value(scope)));
 			final List<IAgent> toKill = new ArrayList<>();
 			for (final IAgent agent : pop.iterable(scope)) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
@@ -186,8 +186,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	@Override
 	public IList<T> listValue(final IScope scope, final IType contentsType, final boolean copy) {
-		if (copy)
-			return GamaListFactory.create(scope, contentsType, this);
+		if (copy) { return GamaListFactory.create(scope, contentsType, this); }
 		return this;
 	}
 
@@ -494,15 +493,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
 		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
-		final int rows = exp == null
-				? species.hasFacet(IKeyword.CELL_WIDTH) ? (int) (env.getWidth()
-						/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
+		final int rows = exp == null ? species.hasFacet(IKeyword.CELL_WIDTH)
+				? (int) (env.getWidth() / Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
 				: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
-		final int columns = exp == null
-				? species.hasFacet(IKeyword.CELL_HEIGHT) ? (int) (env.getHeight()
-						/ Cast.asFloat(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope))) : 100
-				: Cast.asInt(scope, exp.value(scope));
+		final int columns = exp == null ? species.hasFacet(IKeyword.CELL_HEIGHT)
+				? (int) (env.getHeight() / Cast.asFloat(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
+				: 100 : Cast.asInt(scope, exp.value(scope));
 
 		final boolean isTorus = host.getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
@@ -534,9 +531,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			if (file == null) {
 				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, horizontalOrientation,
 						useIndividualShapes, useNeighborsCache, optimizer);
-			} else
+			} else {
 				result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
 						optimizer);
+			}
 
 		}
 		// Reverts the modification of the world envelope (see #1953 and #1939)
@@ -610,8 +608,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
 		if (value instanceof IAgent && super.remove(value)) {
-			if (topology != null)
+			if (topology != null) {
 				topology.removeAgent((IAgent) value);
+			}
 			fireAgentRemoved(scope, (IAgent) value);
 		}
 	}
@@ -647,7 +646,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public void addListener(final IPopulation.Listener listener) {
 		if (listeners == null) {
-			listeners = new LinkedList<IPopulation.Listener>();
+			listeners = new LinkedList<>();
 		}
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);

@@ -26,8 +26,8 @@ species test_species {
 	//First test showing some options and operators
 	test t1 {
      	assert 100 + 100 = 200;
-    		assert 100 + 100 = 201 warning: true;
-    		assert is_error(a/0) warning: true;
+    	assert 100 + 100 = 201 warning: true;
+    	assert is_error(a/0) warning: true;
 	}
 	
 	//Second test executing comparison between list and type

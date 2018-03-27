@@ -88,8 +88,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	public GamaShape(final IShape source, final Geometry geom, final boolean copyAttributes) {
 		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
-		if (copyAttributes)
+		if (copyAttributes) {
 			mixAttributes(source);
+		}
 	}
 
 	public GamaShape(final IShape source, final Geometry geom) {
@@ -171,7 +172,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (bounds != null && !isPoint()) {
 			final Envelope3D env = getEnvelope();
 			final GamaPoint previous = getLocation();
-			final boolean flat = env.isFlat();
+			//			final boolean flat = env.isFlat();
 			if (isBoundingBox) {
 				geometry.apply(bounds.asBoundingBoxIn(env));
 			} else {
@@ -204,8 +205,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 			final GamaPoint previous = getLocation();
 			geometry.apply(Scaling3D.of(scaling));
 			setLocation(previous);
-			if (is3D())
+			if (is3D()) {
 				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
+			}
 		}
 	}
 
@@ -362,15 +364,15 @@ public class GamaShape implements IShape /* , IContainer */ {
 			result = ((Polygon) result).getExteriorRing();
 		} else
 
-		if (result instanceof MultiPolygon) {
-			final MultiPolygon mp = (MultiPolygon) result;
-			final LineString lines[] = new LineString[mp.getNumGeometries()];
-			for (int i = 0; i < mp.getNumGeometries(); i++) {
-				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
-			}
-			result = GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
+			if (result instanceof MultiPolygon) {
+				final MultiPolygon mp = (MultiPolygon) result;
+				final LineString lines[] = new LineString[mp.getNumGeometries()];
+				for (int i = 0; i < mp.getNumGeometries(); i++) {
+					lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
+				}
+				result = GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
 
-		}
+			}
 		return new GamaShape(result);
 	}
 

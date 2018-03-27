@@ -83,12 +83,13 @@ public class GAML {
 	}
 
 	private static String[] HTML_TAGS =
-			{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
+		{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
 	private static String[] REPLACEMENTS = { Strings.LN, Strings.LN, "", "", "", "", "", "", Strings.LN + "- ", "" };
 
 	public static String toText(final String s) {
-		if (s == null)
+		if (s == null) {
 			return "";
+		}
 		return breakStringToLines(StringUtils.replaceEach(s, HTML_TAGS, REPLACEMENTS), 120, Strings.LN);
 	}
 
@@ -96,8 +97,9 @@ public class GAML {
 		return Arrays.stream(longString.split(splitter)).collect(ArrayList<String>::new, (l, s) -> {
 			final Function<ArrayList<String>, Integer> id = list -> list.size() - 1;
 			if (l.size() == 0
-					|| l.get(id.apply(l)).length() != 0 && l.get(id.apply(l)).length() + s.length() >= maxLength)
+					|| l.get(id.apply(l)).length() != 0 && l.get(id.apply(l)).length() + s.length() >= maxLength) {
 				l.add("");
+			}
 			l.set(id.apply(l), l.get(id.apply(l)) + (l.get(id.apply(l)).length() == 0 ? "" : splitter) + s);
 		}, (l1, l2) -> l1.addAll(l2)).stream().reduce((s1, s2) -> s1 + "\n" + s2).get();
 	}
@@ -160,19 +162,22 @@ public class GAML {
 	 *            The string to use for line breaking.
 	 * @return The resulting multi-line string.
 	 */
-	public static String breakStringToLines(String str, final int maxLength, final String newLineString) {
+	public static String breakStringToLines(final String s, final int maxLength, final String newLineString) {
+		String str = s;
 		final StringBuilder result = new StringBuilder();
 		while (str.length() > maxLength) {
 			// Attempt to break on whitespace first,
 			int breakingIndex = lastIndexOfRegex(str, "\\s", maxLength);
 
 			// Then on other non-alphanumeric characters,
-			if (breakingIndex == NOT_FOUND)
+			if (breakingIndex == NOT_FOUND) {
 				breakingIndex = lastIndexOfRegex(str, "[^a-zA-Z0-9]", maxLength);
+			}
 
 			// And if all else fails, break in the middle of the word
-			if (breakingIndex == NOT_FOUND)
+			if (breakingIndex == NOT_FOUND) {
 				breakingIndex = maxLength;
+			}
 
 			// Append each prepared line to the builder
 			result.append(str.substring(0, breakingIndex + 1));
@@ -194,8 +199,9 @@ public class GAML {
 	public static String getDocumentationOn(final String query) {
 		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
 		final Multimap<GamlIdiomsProvider<?>, IGamlDescription> results = GamlIdiomsProvider.forName(keyword);
-		if (results.isEmpty())
+		if (results.isEmpty()) {
 			return "No result found";
+		}
 		final StringBuilder sb = new StringBuilder();
 		final int max = results.keySet().stream().mapToInt(each -> each.name.length()).max().getAsInt();
 		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
@@ -203,9 +209,10 @@ public class GAML {
 			sb.append("").append(separator).append("|| ");
 			sb.append(StringUtils.rightPad(provider.name, max));
 			sb.append(" ||").append(Strings.LN).append(separator);
-			for (final IGamlDescription d : list)
+			for (final IGamlDescription d : list) {
 				sb.append("== ").append(toText(d.getTitle())).append(Strings.LN).append(toText(provider.document(d)))
-						.append(Strings.LN);
+				.append(Strings.LN);
+			}
 		});
 
 		return sb.toString();
@@ -218,8 +225,9 @@ public class GAML {
 		final THashMap<String, String> results = new THashMap<>();
 		// Statements
 		final SymbolProto p = DescriptionFactory.getStatementProto(keyword);
-		if (p != null)
+		if (p != null) {
 			results.put("Statement", p.getDocumentation());
+		}
 		DescriptionFactory.visitStatementProtos((name, proto) -> {
 			if (proto.getFacet(keyword) != null) {
 				results.put("Facet of statement " + name, proto.getFacet(keyword).getDocumentation());
@@ -229,8 +237,9 @@ public class GAML {
 		final String[] facetDoc = { "" };
 		DescriptionFactory.visitVarProtos((name, proto) -> {
 			if (proto.getFacet(keyword) != null && types.size() < 4) {
-				if (!Types.get(name).isAgentType() || name.equals(IKeyword.AGENT))
+				if (!Types.get(name).isAgentType() || name.equals(IKeyword.AGENT)) {
 					types.add(name);
+				}
 				facetDoc[0] = proto.getFacet(keyword).getDocumentation();
 			}
 		});
@@ -272,8 +281,9 @@ public class GAML {
 		final IType<?> t = Types.builtInTypes.containsType(keyword) ? Types.get(keyword) : null;
 		if (t != null) {
 			String tt = t.getDocumentation();
-			if (tt == null)
+			if (tt == null) {
 				tt = "type " + keyword;
+			}
 			results.put("Type", tt);
 		}
 		// Built-in species
@@ -296,8 +306,9 @@ public class GAML {
 		if (exp != null) {
 			results.put("Constant", exp.getDocumentation());
 		}
-		if (results.isEmpty())
+		if (results.isEmpty()) {
 			return "No result found";
+		}
 		final StringBuilder sb = new StringBuilder();
 		final int max = results.keySet().stream().mapToInt(each -> each.length()).max().getAsInt();
 		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
@@ -355,23 +366,25 @@ public class GAML {
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final boolean onlyExpression) throws GamaRuntimeException {
-		if (agent == null)
+		if (agent == null) {
 			throw GamaRuntimeException.error("Agent is nil", GAMA.getRuntimeScope());
+		}
 		final IExecutionContext tempContext = agent.getScope().getExecutionContext();
 		return compileExpression(expression, agent, tempContext, onlyExpression);
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final IExecutionContext tempContext, final boolean onlyExpression) throws GamaRuntimeException {
-		if (agent == null)
+		if (agent == null) {
 			throw GamaRuntimeException.error("Agent is nil", tempContext.getScope());
+		}
 		final IDescription context = agent.getSpecies().getDescription();
 		try {
 			final IExpression result = getExpressionFactory().createExpr(expression, context, tempContext);
 			return result;
 		} catch (final Throwable e) {
 			// Maybe it is a statement instead ?
-			if (!onlyExpression)
+			if (!onlyExpression) {
 				try {
 					final IExpression result =
 							getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
@@ -379,7 +392,7 @@ public class GAML {
 				} catch (final Throwable e2) {
 					throw GamaRuntimeException.create(e2, tempContext.getScope());
 				}
-			else {
+			} else {
 				throw GamaRuntimeException.create(e, tempContext.getScope());
 			}
 		}
@@ -394,8 +407,9 @@ public class GAML {
 		if (a == null) { return null; }
 		final IScope scope = a.getScope();
 		final ITopLevelAgent agent = scope.getExperiment();
-		if (agent == null)
+		if (agent == null) {
 			return null;
+		}
 		return (ExperimentDescription) agent.getSpecies().getDescription();
 	}
 

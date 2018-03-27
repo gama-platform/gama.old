@@ -12,14 +12,14 @@ package ummisco.gama.ui.navigator;
 
 import java.text.Collator;
 
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import msi.gama.common.interfaces.IKeyword;
-import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.contents.Category;
+import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 
-public class NavigatorSorter extends ViewerSorter {
+public class NavigatorSorter extends ViewerComparator {
 
 	public NavigatorSorter() {
 	}
@@ -30,20 +30,26 @@ public class NavigatorSorter extends ViewerSorter {
 
 	@Override
 	public int category(final Object e2) {
-		if (e2 instanceof Category)
+		if (e2 instanceof Category) {
 			return -1;
-		if (e2 instanceof WrappedExperimentContent)
+		}
+		if (e2 instanceof WrappedExperimentContent) {
 			return 100;
+		}
 		if (e2 instanceof WrappedSyntacticContent) {
 			final WrappedSyntacticContent w = (WrappedSyntacticContent) e2;
-			if (w.element.isSpecies() && w.element.getKeyword().equals(IKeyword.GRID))
+			if (w.element.isSpecies() && w.element.getKeyword().equals(IKeyword.GRID)) {
 				return 0;
-			if (w.element.isSpecies())
+			}
+			if (w.element.isSpecies()) {
 				return 1;
-			if (!w.element.hasChildren())
+			}
+			if (!w.element.hasChildren()) {
 				return 2;
-			if (w.element.hasChildren() && w.element.getKeyword().equals(IKeyword.ACTION))
+			}
+			if (w.element.hasChildren() && w.element.getKeyword().equals(IKeyword.ACTION)) {
 				return 3;
+			}
 			return 4;
 		}
 		return 0;

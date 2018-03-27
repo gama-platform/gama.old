@@ -204,7 +204,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void loadAndBuild(final RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException {
+	ClassNotFoundException, IOException, GamaHeadlessException {
 
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
@@ -237,7 +237,7 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	public void load(final RuntimeContext ctx) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException {
+	ClassNotFoundException, IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final IModel mdl = ctx.loadModel(new File(this.sourcePath));
 		this.modelName = mdl.getName();
@@ -264,7 +264,7 @@ public class ExperimentJob implements IExperimentJob {
 			this.outputFile.writeSimulationHeader(this);
 		}
 		System.out.println("Simulation is running...");
-		final long startdate = Calendar.getInstance().getTimeInMillis();
+		//		final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
 		try {
@@ -275,8 +275,9 @@ public class ExperimentJob implements IExperimentJob {
 				if (step % affDelay == 0) {
 					System.out.print(".");
 				}
-				if (simulator.isInterrupted())
+				if (simulator.isInterrupted()) {
 					break;
+				}
 				doStep();
 				scope = GAMA.getRuntimeScope();
 				step++;
@@ -289,8 +290,9 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void dispose() {
-		if (this.simulator != null)
+		if (this.simulator != null) {
 			this.simulator.dispose();
+		}
 		if (this.outputFile != null) {
 			this.outputFile.close();
 		}
@@ -339,8 +341,8 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	public void initialize() {
-		parameters = new Vector<Parameter>();
-		outputs = new Vector<Output>();
+		parameters = new Vector<>();
+		outputs = new Vector<>();
 		if (simulator != null) {
 			simulator.dispose();
 			simulator = null;
@@ -492,8 +494,9 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Parameter getParameter(final String name) {
 		for (final Parameter p : parameters) {
-			if (p.getName().equals(name))
+			if (p.getName().equals(name)) {
 				return p;
+			}
 		}
 		return null;
 	}
@@ -505,8 +508,9 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Output getOutput(final String name) {
 		for (final Output p : outputs) {
-			if (p.getName().equals(name))
+			if (p.getName().equals(name)) {
 				return p;
+			}
 		}
 		return null;
 	}
@@ -534,8 +538,9 @@ public class ExperimentJob implements IExperimentJob {
 	@Override
 	public List<String> getOutputNames() {
 		final List<String> res = new ArrayList<>();
-		for (final Output o : outputs)
+		for (final Output o : outputs) {
 			res.add(o.getName());
+		}
 		return res;
 	}
 

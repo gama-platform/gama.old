@@ -12,13 +12,13 @@ global {
 	
 	init {
 		
-	int i<-0;
+	int i<-10;
 	create node_agent number:7
 	{
-		location<-{i,-i};
-		i<-i+1;
+		location<-{i,i + ( (i/10) mod 2)*10};
+		i<-i+10;
 	}
-	the_graph <- as_distance_graph(node_agent, 100.0);
+	the_graph <- as_distance_graph(node_agent, 30.0);
 		
 	}
 	
@@ -34,6 +34,9 @@ species edge_agent {
 species node_agent {
 	aspect default {	
 		draw circle(1) color: #red;
+		loop neigh over: the_graph neighbors_of self {
+			draw line([self.location, agent(neigh).location]) color: #black;
+		}
 	}
 }
 
@@ -69,39 +72,50 @@ experiment GraphTest type: test autorun: true {
 //		write first(node_agent);
 
 		write (node_agent[2]);
+		
+		write ("Degrees");
 		write(the_graph in_degree_of (node_agent[2]));
 		write(the_graph out_degree_of (node_agent[2]));
 		write(the_graph degree_of (node_agent[2]));
-		assert the_graph out_degree_of (node_agent[2])=2;
-		//out_edges_of
+		assert the_graph in_degree_of (node_agent[2])=4;
+		assert the_graph out_degree_of (node_agent[2])=4;
+		assert the_graph degree_of (node_agent[2]) = 8;
+		
+		write("out_edges_of");
 		write(the_graph out_edges_of (node_agent[2]));
 		write(the_graph in_edges_of (node_agent[2]));
-		assert the_graph out_edges_of (node_agent[2])=2;
-		//neighbors of node
+		assert length(the_graph out_edges_of (node_agent[2]))=4;
+		
+		write("neighbors of node");
 		write(the_graph neighbors_of(node_agent[2]));
-		assert length(the_graph neighbors_of(node_agent[2]))=4;
+		assert length(the_graph neighbors_of(node_agent[2]))=8;
+		assert length(remove_duplicates(the_graph neighbors_of(node_agent[2])))=4;
 		write(the_graph predecessors_of(node_agent[2]));
-		assert length(the_graph predecessors_of(node_agent[2]))=2;
+		assert length(the_graph predecessors_of(node_agent[2]))=4;
 		write(the_graph successors_of(node_agent[2]));
-		assert length(the_graph successors_of(node_agent[2]))=2;
+		assert length(the_graph successors_of(node_agent[2]))=4;
 	
 		point node8 <- {50.0,50.0};
 		write (the_graph add_node(node8));
 		write (node_agent[4] remove_node_from(the_graph));
 
+		write("");
+		write("Contains edges");
 		write (the_graph contains_vertex(node_agent[2]));
-		assert the_graph contains_vertex(node_agent[2])=true;
+		assert the_graph contains_vertex(node_agent[2]);
 		write (the_graph contains_edge(link(node_agent[2],node_agent[5])));
-		assert the_graph contains_edge(link(node_agent[2],node_agent[5]))=true;
-		
 		write (the_graph contains_edge(link(node_agent[2],node_agent[4])));
-		assert the_graph contains_edge(link(node_agent[2],node_agent[4]))=true;
-		write (the_graph contains_vertex(node_agent[4]));
-		assert the_graph contains_vertex(node_agent[4])=true;
+		write (the_graph contains_edge(link(node_agent[2],node_agent[3])));
 		
-		write (the_graph source_of(link(node_agent[2],node_agent[5])));
-		assert the_graph source_of(link(node_agent[2],node_agent[5]))=node_agent[2];
-		assert the_graph source_of(link(node_agent[2],node_agent[5]))=node_agent[5];
+		assert the_graph contains_edge(link(node_agent[2],node_agent[5])) = false;
+		assert the_graph contains_edge(link(node_agent[2],node_agent[3]));	
+		
+		write (the_graph contains_vertex(node_agent[4]));
+		assert the_graph contains_vertex(node_agent[4]) = false;
+		
+		write (the_graph source_of(link(node_agent[2],node_agent[3])));
+		assert the_graph source_of(link(node_agent[2],node_agent[3]))=node_agent[2];
+		assert the_graph target_of(link(node_agent[2],node_agent[3]))=node_agent[3];
 		
 	}
 	

@@ -110,7 +110,7 @@ public class AgentLayer extends AbstractLayer {
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 				y + IDisplaySurface.SELECTION_SIZE / 2);
-		for (final Map.Entry<IAgent, Rectangle2D> entry : new ArrayList<Map.Entry<IAgent, Rectangle2D>>(
+		for (final Map.Entry<IAgent, Rectangle2D> entry : new ArrayList<>(
 				shapes.entrySet())) {
 			if (entry.getValue().intersects(selection)) {
 				selectedAgents.add(entry.getKey());
@@ -124,8 +124,9 @@ public class AgentLayer extends AbstractLayer {
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		if (geometry instanceof IAgent) {
 			final Rectangle2D r = shapes.get(geometry);
-			if (r != null)
+			if (r != null) {
 				return r;
+			}
 		}
 		return super.focusOn(geometry, s);
 	}

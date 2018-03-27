@@ -19,8 +19,7 @@ experiment MathTest type: test autorun: true {
 	/** Insert here any assertion you need to test */
 		assert 10^0 = 1;
 		assert 10^1 = 10;
-		assert 10/0 = 10;
-		write (10/0);
+		assert is_error(10/0) ;
 		assert abs(-0.5) = 0.5;
 		assert abs(-7)=7;
 		assert abs (-7.0)=7;		

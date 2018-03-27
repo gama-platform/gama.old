@@ -295,7 +295,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		mm.setImageDescriptor(GamaIcons.create("display.sidebar2").descriptor());
 		mm.add(toggleSideControls.toAction());
 		mm.add(toggleOverlay.toAction());
-		mm.add(new Action("Toggle toolbar " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
+		mm.add(new Action("Toggle toolbar (FullScreen Only) " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
 				GamaIcons.create("display.fullscreen.toolbar2").descriptor()) {
 
 			@Override

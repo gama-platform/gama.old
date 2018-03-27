@@ -18,6 +18,9 @@ import org.eclipse.xtext.builder.builderState.IMarkerUpdater;
 import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
 import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.ui.editor.contentassist.antlr.IContentAssistParser;
+import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer;
+import org.eclipse.xtext.ide.LexerIdeBindings;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
@@ -51,6 +54,7 @@ import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 import msi.gama.common.interfaces.IGamlLabelProvider;
+import msi.gama.lang.gaml.ide.contentassist.antlr.GamlParser;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
@@ -95,13 +99,16 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(String.class).annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".");
-
+		binder.bind(IContentAssistParser.class).to((Class<? extends IContentAssistParser>) GamlParser.class);
+		binder.bind(Lexer.class)
+		.annotatedWith(Names.named(LexerIdeBindings.CONTENT_ASSIST))
+		.to(InternalGamlLexer.class);
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
 		// binder.bind(XtextDocumentProvider.class).to(XtextDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
-		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class).asEagerSingleton();
+		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class);
 	}
 
 	@Override
@@ -109,7 +116,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
 	}
 
-	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
 			bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;

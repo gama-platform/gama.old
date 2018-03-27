@@ -36,7 +36,7 @@ public class BlockExpressionDescription extends EcoreBasedExpressionDescription 
 		if (action != null) {
 			sd.addChild(action);
 			action.validate();
-			final String name = action.getName();
+			//			final String name = action.getName();
 			expression = new DenotedActionExpression(action);
 		}
 		return expression;

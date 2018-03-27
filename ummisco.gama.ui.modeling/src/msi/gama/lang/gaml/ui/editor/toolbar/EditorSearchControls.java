@@ -90,8 +90,9 @@ public class EditorSearchControls {
 
 			@Override
 			public void keyPressed(final KeyEvent e) {
-				if (e.character == SWT.ESC)
+				if (e.character == SWT.ESC) {
 					editor.setFocus();
+				}
 			}
 		});
 		this.adjustEnablement(false, null);
@@ -133,7 +134,7 @@ public class EditorSearchControls {
 	};
 
 	private void adjustEnablement(final boolean found, final Color color) {
-		final String text = find.getText();
+		//		final String text = find.getText();
 		if (color == null) {
 			find.setForeground(IGamaColors.VERY_LIGHT_GRAY.color());
 			// composite.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());

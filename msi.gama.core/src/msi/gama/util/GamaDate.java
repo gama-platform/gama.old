@@ -131,20 +131,22 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	public GamaDate(final IScope scope, final Temporal d) {
 		final ZoneId zone;
-		if (d instanceof ChronoZonedDateTime)
+		if (d instanceof ChronoZonedDateTime) {
 			zone = ZonedDateTime.from(d).getZone();
-		else if (d.isSupported(ChronoField.OFFSET_SECONDS)) {
+		} else if (d.isSupported(ChronoField.OFFSET_SECONDS)) {
 			zone = ZoneId.ofOffset("", ZoneOffset.ofTotalSeconds(d.get(ChronoField.OFFSET_SECONDS)));
-		} else
+		} else {
 			zone = GamaDateType.DEFAULT_ZONE;
+		}
 		if (!d.isSupported(MINUTE_OF_HOUR)) {
 			internal = ZonedDateTime.of(LocalDate.from(d), LocalTime.of(0, 0), zone);
-		} else if (!d.isSupported(DAY_OF_MONTH))
+		} else if (!d.isSupported(DAY_OF_MONTH)) {
 			internal = ZonedDateTime.of(LocalDate.from(
 					scope == null ? Dates.DATES_STARTING_DATE.getValue() : scope.getSimulation().getStartingDate()),
 					LocalTime.from(d), zone);
-		else
+		} else {
 			internal = d;
+		}
 	}
 
 	public GamaDate(final IScope scope, final String dateStr) {
@@ -165,17 +167,15 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	private static Temporal parse(final IScope scope, final String original, final DateTimeFormatter df) {
-		if (original == null || original.isEmpty() || original.equals("now"))
-			return LocalDateTime.now(GamaDateType.DEFAULT_ZONE);
+		if (original == null || original.isEmpty()
+				|| original.equals("now")) { return LocalDateTime.now(GamaDateType.DEFAULT_ZONE); }
 		Temporal result = null;
 
 		if (df != null) {
 			try {
 				final TemporalAccessor ta = df.parse(original);
-				if (ta instanceof Temporal)
-					return (Temporal) ta;
-				if (ta.isSupported(ChronoField.HOUR_OF_DAY))
-					return LocalTime.from(ta);
+				if (ta instanceof Temporal) { return (Temporal) ta; }
+				if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
 				return LocalDate.from(ta);
 			} catch (final DateTimeParseException e) {}
 			GAMA.reportAndThrowIfNeeded(scope,
@@ -198,8 +198,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			String other;
 			if (base.length == 1) {
 				other = "00:00:00";
-			} else
+			} else {
 				other = base[1];
+			}
 			String year, month, day;
 			if (date.length == 1) {
 				// ISO basic date format
@@ -211,12 +212,15 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 				month = date[1];
 				day = date[2];
 			}
-			if (year.length() == 2)
+			if (year.length() == 2) {
 				year = "20" + year;
-			if (month.length() == 1)
+			}
+			if (month.length() == 1) {
 				month = '0' + month;
-			if (day.length() == 1)
+			}
+			if (day.length() == 1) {
 				day = '0' + day;
+			}
 			dateStr = year + "-" + month + "-" + day + "T" + other;
 		} catch (final Exception e1) {
 			throw GamaRuntimeException.error(
@@ -256,8 +260,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 */
 	public double floatValue(final IScope scope) {
 		final SimulationAgent sim = scope.getSimulation();
-		if (sim == null)
-			return Dates.DATES_STARTING_DATE.getValue().until(this, ChronoUnit.SECONDS);
+		if (sim == null) { return Dates.DATES_STARTING_DATE.getValue().until(this, ChronoUnit.SECONDS); }
 		return sim.getStartingDate().until(this, ChronoUnit.SECONDS);
 	}
 
@@ -414,14 +417,13 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	@Override
 	public long getLong(final TemporalField field) {
-		if (internal.isSupported(field))
-			return internal.getLong(field);
+		if (internal.isSupported(field)) { return internal.getLong(field); }
 		if (field.equals(ChronoField.OFFSET_SECONDS)) {
 			// If no offset or time zone is supplied, we assume it is the zone of the modeler
 			return GamaDateType.DEFAULT_OFFSET_IN_SECONDS.getTotalSeconds();
 		}
-		if (field.equals(ChronoField.INSTANT_SECONDS))
-			return GamaDateType.EPOCH.until(internal, ChronoUnit.SECONDS);
+		if (field
+				.equals(ChronoField.INSTANT_SECONDS)) { return GamaDateType.EPOCH.until(internal, ChronoUnit.SECONDS); }
 		return 0l;
 
 	}
@@ -499,17 +501,15 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		// Exact date ?
 		if (this.equals(current)) { return true; }
 		// Not yet reached ?
-		if (isGreaterThan(current, true))
-			return false;
+		if (isGreaterThan(current, true)) { return false; }
 		GamaDate nextByPeriod = plus(scope, period);
 		// Null period ?
-		if (nextByPeriod.equals(this))
-			return false;
+		if (nextByPeriod.equals(this)) { return false; }
 		// Exactly reached ?
-		if (nextByPeriod.equals(current))
-			return true;
-		while (nextByPeriod.isSmallerThan(current, true))
+		if (nextByPeriod.equals(current)) { return true; }
+		while (nextByPeriod.isSmallerThan(current, true)) {
 			nextByPeriod = nextByPeriod.plus(scope, period);
+		}
 
 		final long stepInMillis = scope.getClock().getStepInMillis();
 		final GamaDate nextByStep = current.plus(stepInMillis, ChronoUnit.MILLIS);
@@ -537,8 +537,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		// period.evaluateAsTemporalExpression(scope, a);
 		// return this.plus(a.d).plus(a.p);
 		final long p = (long) (Cast.asFloat(scope, period.value(scope)) * 1000);
-		if (p == 0)
-			return this;
+		if (p == 0) { return this; }
 		return plus(p, ChronoUnit.MILLIS);
 	}
 
@@ -550,8 +549,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		// period.evaluateAsTemporalExpression(scope, a);
 		// return this.plus(a.d).plus(a.p);
 		GamaDate result = this;
-		for (int i = 0; i < repeat; i++)
+		for (int i = 0; i < repeat; i++) {
 			result = result.plus(period, unit);
+		}
 		return result;
 	}
 
@@ -569,8 +569,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		// milliseconds
 		final long frequencyInMillis = (long) (Cast.asFloat(scope, period.value(scope)) * 1000);
 		// Fail fast 3: if the frequency is null, we return false
-		if (frequencyInMillis == 0)
-			return false;
+		if (frequencyInMillis == 0) { return false; }
 
 		// We then grab the step from the scope and convert it to
 		// milliseconds
@@ -586,20 +585,21 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		}
 		// Finally, we return if the step is greater than the remainder
 		final boolean result = stepInMillis > remainder;
-		if (result)
+		if (result) {
 			System.out.println("We return true for " + current + " because the step " + stepInMillis
 					+ " is greater than the remainder " + remainder);
+		}
 		return result;
 	}
 
 	public double getDuration(final IScope scope, final TimeUnitConstantExpression exp, final Double number) {
 		final String name = exp.getName();
-		final boolean isTimeDependent = !exp.isConst();
+		// final boolean isTimeDependent = !exp.isConst();
 		final boolean month = name.startsWith("m");
 		final GamaDate next = this.plus(number, month ? ChronoUnit.MONTHS : ChronoUnit.YEARS);
 		final double result = this.until(next, ChronoUnit.MILLIS) / 1000d;
-//		System.out.println("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
-//				+ this.until(next, ChronoUnit.DAYS) + " days");
+		// System.out.println("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
+		// + this.until(next, ChronoUnit.DAYS) + " days");
 
 		return result;
 	}

@@ -73,6 +73,7 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -1841,9 +1842,9 @@ public abstract class Spatial {
 								// equals = "a geometry corresponding to the geometry of
 								// the agent applying the operator scaled by a
 								// coefficient of 2",
-								@example (
-										value = "circle(10) * 2",
-										equals = "circle(20)") }) })
+								@example ( value = "circle(10) * 2", equals = "circle(20)", test = false),
+								@example ( value = "(circle(10) * 2).location with_precision 9", equals = "(circle(20)).location with_precision 9"),
+								@example ( value = "(circle(10) * 2).height with_precision 9", equals = "(circle(20)).height with_precision 9", returnType="float")}) })
 		public static IShape scaled_by(final IScope scope, final IShape g, final Double coefficient) {
 			return new GamaShape(g, null, null, null, coefficient);
 			// return g1.scaledBy(scope, coefficient);
@@ -1924,11 +1925,8 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operands a float and an integer, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand",
 						examples = { @example (
-								value = "circle(5) + (5,32)",
-								// equals = "a geometry corresponding to the
-								// geometry of the agent applying the operator
-								// enlarged by a distance of 5", test = false
-								equals = "circle(10)") }) })
+								value = "circle(5) + (5,32)", equals = "circle(10)", test=false) }) })
+		@test("(circle(5) + (5,32)).height with_precision 5 = 20.0")
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
 				final Integer numberOfSegments) {
 			if (g == null) { return null; }
@@ -1945,11 +1943,8 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operands a float, an integer and one of #round, #square or #flat, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand and a flat, square or round end cap style",
 						examples = { @example (
-								value = "circle(5) + (5,32,#round)",
-								// equals = "a geometry corresponding to the
-								// geometry of the agent applying the operator
-								// enlarged by a distance of 5", test = false
-								equals = "circle(10)") }) })
+								value = "circle(5) + (5,32,#round)", equals = "circle(10)", test = false) }) })
+		@test("(circle(5) + (5,32,#round)).height with_precision 5 = 20.0")	
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
 				final Integer numberOfSegments, final Integer endCap) {
 			if (g == null) { return null; }
@@ -1966,11 +1961,9 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance. The number of segments used by default is 8 and the end cap style is #round",
 						examples = { @example (
-								value = "circle(5) + 5",
-								// equals = "a geometry corresponding to the
-								// geometry of the agent applying the operator
-								// enlarged by a distance of 5", test = false
-								equals = "circle(10)") }) })
+								value = "circle(5) + 5", equals = "circle(10)", test = false) }) })
+		@test("(circle(5) + 5).height with_precision 1 = 20.0")
+		@test("(circle(5) + 5).location with_precision 9 = (circle(10)).location with_precision 9")		
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			final Geometry gg = g.getInnerGeometry().buffer(size);

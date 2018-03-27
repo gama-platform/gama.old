@@ -39,7 +39,6 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -48,6 +47,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.WithTestSummary;
 import ummisco.gama.ui.interfaces.IModelRunner;
+import ummisco.gama.ui.modeling.internal.ModelingActivator;
 import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -64,7 +64,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	private void editModelInternal(final Object eObject) {
 		if (eObject instanceof URI) {
 			final URI uri = (URI) eObject;
-			final Injector injector = GamlActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
+			final Injector injector = ModelingActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
 			final IURIEditorOpener opener = injector.getInstance(IURIEditorOpener.class);
 			opener.open(uri, true);
 		} else if (eObject instanceof EObject) {

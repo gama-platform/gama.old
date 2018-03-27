@@ -17,12 +17,12 @@ import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.WrappedContainer;
 
-public class FileFolderSorter extends ViewerSorter {
+public class FileFolderSorter extends ViewerComparator {
 
 	public static boolean BY_DATE = false;
 

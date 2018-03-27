@@ -419,8 +419,11 @@ public class GamaPreferences {
 		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
 				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
 						new GenericFile("Enter path", false), IType.FILE).in(NAME, PATHS);
+		public static final String jriFile = System.getProperty("os.name").startsWith("Mac") ? "libjri.jnilib" : 
+			(System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll"); 
+
 		public static final Pref<? extends IGamaFile> LIB_R =
-				create("pref_lib_r", "Path to RScript library (http://www.r-project.org)",
+				create("pref_lib_r", "Path to JRI library ($R_HOME/library/rJava/jri/"+jriFile+") (http://www.r-project.org)",
 						new GenericFile(getDefaultRPath(), false), IType.FILE).in(NAME, PATHS);
 		/**
 		 * GeoTools
@@ -481,21 +484,25 @@ public class GamaPreferences {
 							public void afterValueChange(final Integer newValue) {}
 						});
 
+		// RScript adress:
+		// "/Library/Frameworks/R.framework/Versions/3.4/Resources/bin/exec/x86_64/RScript"
+		// "usr/bin/RScript"
+		// "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"
+		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
 		private static String getDefaultRPath() {
 			final String os = System.getProperty("os.name");
 			final String osbit = System.getProperty("os.arch");
 			if (os.startsWith("Mac")) {
-				if (osbit.endsWith(
-						"64")) { return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript"; }
-				return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript";
-			} else if (os.startsWith("Linux")) { return "usr/bin/RScript"; }
+				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
+			} else if (os.startsWith("Linux")) { return "/usr/local/lib/libjri.so"; }
 			if (os.startsWith("Windows")) {
-				if (osbit.endsWith("64")) { return "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"; }
-				return "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe";
+				if (osbit.endsWith("64")) { return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll"; }
+				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			}
 			return "";
 		}
 	}
+	
 
 	// TAB NAMES
 
@@ -535,8 +542,9 @@ public class GamaPreferences {
 	}
 
 	public static <T> Pref<T> create(final String key, final String title, final T value, final int type) {
-		if (key.contains(".") || key.contains(" "))
+		if (key.contains(".") || key.contains(" ")) {
 			System.out.println("WARNING. Preference " + key + " cannot be used as a variable");
+		}
 		final Pref<T> e = new Pref<T>(key, type).named(title).in(Interface.NAME, "").init(value);
 		register(e);
 		return e;
@@ -555,8 +563,9 @@ public class GamaPreferences {
 				if (storeKeys.contains(key)) {
 					final String val = store.get(key, GamaStringType.staticCast(scope, value, false));
 					gp.setValue(scope, GamaPointType.staticCast(scope, val, false));
-				} else
+				} else {
 					store.put(key, GamaStringType.staticCast(scope, value, false));
+				}
 				break;
 			case IType.INT:
 				if (storeKeys.contains(key)) {
@@ -686,8 +695,9 @@ public class GamaPreferences {
 	public static Map<String, Map<String, List<Pref>>> organizePrefs() {
 		final Map<String, Map<String, List<Pref>>> result = new TOrderedHashMap();
 		for (final Pref e : prefs.values()) {
-			if (e.isHidden())
+			if (e.isHidden()) {
 				continue;
+			}
 			final String tab = e.tab;
 			Map<String, List<Pref>> groups = result.get(tab);
 			if (groups == null) {
@@ -746,10 +756,8 @@ public class GamaPreferences {
 
 	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
 		// System.out.println("Apply preferences from " + path);
-		try {
-			final FileInputStream is = new FileInputStream(path);
+		try (final FileInputStream is = new FileInputStream(path);) {
 			store.importPreferences(is);
-			is.close();
 			reloadPreferences(modelValues);
 		} catch (final IOException | InvalidPreferencesFormatException e) {
 			e.printStackTrace();

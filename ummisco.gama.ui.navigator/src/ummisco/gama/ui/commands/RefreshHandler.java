@@ -35,7 +35,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
-import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
@@ -69,18 +68,7 @@ public class RefreshHandler implements IRefreshHandler {
 
 	@Override
 	public void refreshNavigator() {
-		
-		final UIJob job = new UIJob("Refreshing Navigator") {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				getNavigator().getCommonViewer().refresh();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(true);
-		job.schedule();
-		
+		WorkbenchHelper.run( ()->getNavigator().getCommonViewer().refresh());
 	}
 
 	protected void refreshResource(final IResource resource, final IProgressMonitor monitor) throws CoreException {
@@ -88,8 +76,8 @@ public class RefreshHandler implements IRefreshHandler {
 			checkLocationDeleted((IProject) resource);
 		} else if (resource.getType() == IResource.ROOT) {
 			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				checkLocationDeleted(projects[i]);
+			for (final IProject project : projects) {
+				checkLocationDeleted(project);
 			}
 		}
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -101,81 +89,84 @@ public class RefreshHandler implements IRefreshHandler {
 		errorStatus[0] = Status.OK_STATUS;
 		final List<? extends IResource> resources =
 				list == null || list.isEmpty() ? Arrays.asList(ResourcesPlugin.getWorkspace().getRoot()) : list;
-		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			@Override
-			public void execute(final IProgressMonitor monitor) {
-				final Iterator<? extends IResource> resourcesEnum = resources.iterator();
-				try {
-					while (resourcesEnum.hasNext()) {
+				final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+					@Override
+					public void execute(final IProgressMonitor monitor) {
+						final Iterator<? extends IResource> resourcesEnum = resources.iterator();
 						try {
-							final IResource resource = resourcesEnum.next();
-							refreshResource(resource, monitor);
-							if (monitor != null)
-								monitor.worked(1);
-						} catch (final CoreException e) {}
-						if (monitor.isCanceled()) { throw new OperationCanceledException(); }
-					}
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		final WorkspaceJob job = new WorkspaceJob("Refreshing the GAMA Workspace") {
-
-			@Override
-			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-
-				try {
-					ResourceManager.block();
-					monitor.beginTask("Refreshing GAMA Workspace: updating the library of models", 100);
-					WorkspaceModelsManager.loadModelsLibrary();
-					monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", 1000);
-					for (final IResource r : resources) {
-						r.accept(proxy -> {
-							final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
-							final IResource file = proxy.requestResource();
-							provider.storeMetaData(file, null, true);
-							provider.getMetaData(file, false, true);
-							monitor.worked(1);
-							return true;
-						}, IResource.NONE);
-
-					}
-					monitor.beginTask("Refreshing GAMA Workspace: refreshing resources", resources.size());
-					op.run(monitor);
-					monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
-					NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
-					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
-					try {
-
-						workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new ProgressMonitorWrapper(monitor) {
-
-							@Override
-							public void done() {
-								super.done();
+							while (resourcesEnum.hasNext()) {
+								try {
+									final IResource resource = resourcesEnum.next();
+									refreshResource(resource, monitor);
+									if (monitor != null) {
+										monitor.worked(1);
+									}
+								} catch (final CoreException e) {}
+								if (monitor != null && monitor.isCanceled()) { throw new OperationCanceledException(); }
 							}
-
-						});
-
-					} catch (final CoreException ex) {
-						ex.printStackTrace();
+						} finally {
+							if (monitor != null)
+							monitor.done();
+						}
 					}
-				} catch (final Exception e) {
-					e.printStackTrace();
-					return Status.CANCEL_STATUS;
-				} finally {
-					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
-					refreshNavigator();
-					ResourceManager.unblock(monitor);
-					monitor.done();
-				}
-				return errorStatus[0];
-			}
+				};
+				final WorkspaceJob job = new WorkspaceJob("Refreshing the GAMA Workspace") {
 
-		};
-		job.setUser(true);
-		job.schedule();
+					@Override
+					public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+
+						try {
+							ResourceManager.block();
+							monitor.beginTask("Refreshing GAMA Workspace: updating the library of models", 100);
+							WorkspaceModelsManager.loadModelsLibrary();
+							monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", 1000);
+							for (final IResource r : resources) {
+								r.accept(proxy -> {
+									final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
+									final IResource file = proxy.requestResource();
+									provider.storeMetaData(file, null, true);
+									provider.getMetaData(file, false, true);
+									monitor.worked(1);
+									return true;
+								}, IResource.NONE);
+
+							}
+							monitor.beginTask("Refreshing GAMA Workspace: refreshing resources", resources.size());
+							op.run(monitor);
+							monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
+							NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
+							monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
+							final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+							refreshNavigator();
+							monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
+							try {
+
+								workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new ProgressMonitorWrapper(monitor) {
+
+									@Override
+									public void done() {
+										super.done();
+										refreshNavigator();
+
+									}
+
+								});
+
+							} catch (final CoreException ex) {
+								ex.printStackTrace();
+							}
+						} catch (final Exception e) {
+							return Status.CANCEL_STATUS;
+						} finally {
+							ResourceManager.unblock(monitor);
+							monitor.done();
+						}
+						return errorStatus[0];
+					}
+
+				};
+				job.setUser(true);
+				job.schedule();
 	}
 
 	void checkLocationDeleted(final IProject project) throws CoreException {

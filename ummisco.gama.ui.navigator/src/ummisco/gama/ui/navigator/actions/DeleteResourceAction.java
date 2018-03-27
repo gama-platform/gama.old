@@ -606,9 +606,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			if (file != null) { return file; }
 		}
 		// here we can only guess how the input might be related to a resource
-		final IFile adapter = Util.getAdapter(input, IFile.class);
+		final IFile adapter = CloseResourceAction.getAdapter(input, IFile.class);
 		if (adapter != null) { return adapter; }
-		return Util.getAdapter(input, IResource.class);
+		return CloseResourceAction.getAdapter(input, IResource.class);
 	}
 
 	private static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {

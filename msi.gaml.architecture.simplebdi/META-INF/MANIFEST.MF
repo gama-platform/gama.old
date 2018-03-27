@@ -8,3 +8,4 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
 Export-Package: msi.gaml.architecture.simplebdi
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

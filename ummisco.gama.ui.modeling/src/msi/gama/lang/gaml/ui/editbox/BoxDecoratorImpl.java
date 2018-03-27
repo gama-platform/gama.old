@@ -222,7 +222,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 			if (settings.getFillOnMove() && currentBox != null && stateMask == settings.getFillKeyModifierSWTInt()) {
 				fillRectangle(settings.getFillSelectedColor(), gc, currentBox.rec.x - xOffset,
 						currentBox.rec.y - yOffset, ex ? r0.width : currentBox.rec.width + 1,
-						currentBox.rec.height + 1);
+								currentBox.rec.height + 1);
 			} else if (fillBox != null) {
 				fillRectangle(settings.getFillSelectedColor(), gc, fillBox.rec.x - xOffset, fillBox.rec.y - yOffset,
 						ex ? r0.width : fillBox.rec.width + 1, fillBox.rec.height + 1);
@@ -409,7 +409,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 			end = boxText.getOffsetAtLine(lineIndex);
 		}
 
-		final List<Box> result = new ArrayList<Box>();
+		final List<Box> result = new ArrayList<>();
 		for (final Box b : boxes) {
 			if (b.intersects(start, end)) {
 				result.add(b);
@@ -446,7 +446,8 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
-	void updateWidth(Box b) {
+	void updateWidth(final Box box) {
+		Box b = box;
 		Box p = b.parent;
 		while (p != null && p.rec != null && p.rec.x + p.rec.width <= b.rec.x + b.rec.width) {
 			p.rec.width += 5;
@@ -455,7 +456,8 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
-	void updateWidth3(Box b) {
+	void updateWidth3(final Box box) {
+		Box b = box;
 		Box p = b.parent;
 		while (p != null && p.rec != null && p.rec.x >= b.rec.x) {
 			p.rec.width += p.rec.x - b.rec.x + 3;

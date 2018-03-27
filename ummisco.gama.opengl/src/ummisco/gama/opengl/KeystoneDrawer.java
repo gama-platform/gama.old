@@ -112,7 +112,7 @@ public class KeystoneDrawer implements IKeystoneState {
 		openGL.translateBy(center);
 		openGL.setCurrentColor(fill);
 		openGL.scaleBy(Scaling3D.of(width, height, 1));
-		openGL.drawCachedGeometry(IShape.Type.SQUARE, null);
+		openGL.drawCachedGeometry(IShape.Type.SQUARE, true, null);
 		openGL.popMatrix();
 	}
 
@@ -185,8 +185,8 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	}
 
-	private double floor4Digit(double number) {
-		number *= 1000;
+	private double floor4Digit(final double n) {
+		double number = n * 1000;
 		number = Math.round(number);
 		number /= 1000;
 		return number;
@@ -313,13 +313,15 @@ public class KeystoneDrawer implements IKeystoneState {
 		if (mouse.x < renderer.getViewWidth() / 2) {
 			if (mouse.y < renderer.getViewHeight() / 2) {
 				return 1;
-			} else
+			} else {
 				return 0;
+			}
 		} else {
 			if (mouse.y < renderer.getViewHeight() / 2) {
 				return 2;
-			} else
+			} else {
 				return 3;
+			}
 		}
 	}
 
@@ -328,13 +330,15 @@ public class KeystoneDrawer implements IKeystoneState {
 		if (mouse.x < renderer.getViewWidth() / 2) {
 			if (mouse.y < renderer.getViewHeight() / 2) {
 				return 1;
-			} else
+			} else {
 				return 0;
+			}
 		} else {
 			if (mouse.y < renderer.getViewHeight() / 2) {
 				return 2;
-			} else
+			} else {
 				return 3;
+			}
 		}
 	}
 
@@ -352,10 +356,12 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	@Override
 	public boolean isKeystoneInAction() {
-		if (drawKeystoneHelper)
+		if (drawKeystoneHelper) {
 			return true;
-		if (!renderer.data.isKeystoneDefined())
+		}
+		if (!renderer.data.isKeystoneDefined()) {
 			return false;
+		}
 		return true;
 	}
 

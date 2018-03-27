@@ -10,6 +10,7 @@
 package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Map;
@@ -87,8 +88,7 @@ public class GamlResourceServices {
 			final ValidationContext status) {
 		final URI newURI = properlyEncodedURI(uri);
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
-		if (listener == null)
-			return;
+		if (listener == null) { return; }
 		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
 				: Iterables.filter(model.getExperiments(), each -> !each.isAbstract());
 		listener.validationEnded(exps, status);
@@ -115,8 +115,9 @@ public class GamlResourceServices {
 
 	public static ValidationContext getValidationContext(final GamlResource r) {
 		final URI newURI = properlyEncodedURI(r.getURI());
-		if (!resourceErrors.containsKey(newURI))
+		if (!resourceErrors.containsKey(newURI)) {
 			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
+		}
 		final ValidationContext result = resourceErrors.get(newURI);
 		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
@@ -141,7 +142,11 @@ public class GamlResourceServices {
 		} else {
 			path = new Path(uri.path());
 		}
-		path = new Path(URLDecoder.decode(path.toOSString()));
+		try {
+			path = new Path(URLDecoder.decode(path.toOSString(), "UTF-8"));
+		} catch (final UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return path;
 
 	}
@@ -158,8 +163,7 @@ public class GamlResourceServices {
 			final IPath fullPath = file.getLocation();
 			path = fullPath; // toOSString ?
 		}
-		if (path == null)
-			return null;
+		if (path == null) { return null; }
 		return path.uptoSegment(path.segmentCount() - 1);
 	}
 
@@ -195,13 +199,15 @@ public class GamlResourceServices {
 				final EObject e = desc.getUnderlyingElement(null);
 				if (e != null) {
 					r = (GamlResource) e.eResource();
-					if (r != null)
+					if (r != null) {
 						rs = r.getResourceSet();
+					}
 				}
 			}
 		}
-		if (rs == null)
+		if (rs == null) {
 			rs = poolSet;
+		}
 		final URI uri = URI.createURI(IKeyword.SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false);
 		// TODO Modifier le cache de la resource ici ?
 		final GamlResource result = (GamlResource) rs.createResource(uri);

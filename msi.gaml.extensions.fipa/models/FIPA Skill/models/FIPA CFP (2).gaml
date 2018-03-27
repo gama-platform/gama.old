@@ -68,7 +68,7 @@ species initiator skills: [fipa] {
 	reflex send_cfp_to_participants when: (time = 1) {
 		
 		write '(Time ' + time + '): ' + name + ' sends a cfp message to all participants';
-		do start_conversation with: [ to :: list(participant), protocol :: 'fipa-contract-net', performative :: 'cfp', contents :: ['Go swimming'] ];
+		do start_conversation to: list(participant) protocol: 'fipa-contract-net' performative: 'cfp' contents: ['Go swimming'] ;
 	}
 	
 	reflex receive_refuse_messages when: !empty(refuses) {
@@ -87,10 +87,10 @@ species initiator skills: [fipa] {
 			
 			if (p.sender = reject_proposal_participant) {
 				write '\t' + name + ' sends a reject_proposal message to ' + p.sender;
-				do reject_proposal with: [ message :: p, contents :: ['Not interested in your proposal'] ];
+				do reject_proposal message: p contents: ['Not interested in your proposal'] ;
 			} else {
 				write '\t' + name + ' sends a accept_proposal message to ' + p.sender;
-				do accept_proposal with: [ message :: p, contents :: ['Interesting proposal. Go do it'] ];
+				do accept_proposal message: p contents: ['Interesting proposal. Go do it'] ;
 			}
 		}
 	}
@@ -118,12 +118,12 @@ species participant skills: [fipa] {
 		
 		if (self = refuser) {
 			write '\t' + name + ' sends a refuse message to ' + agent(proposalFromInitiator.sender).name;
-			do refuse with: [ message :: proposalFromInitiator, contents :: ['I am busy today'] ];
+			do refuse message: proposalFromInitiator contents: ['I am busy today'] ;
 		}
 		
 		if (self in proposers) {
 			write '\t' + name + ' sends a propose message to ' + agent(proposalFromInitiator.sender).name;
-			do propose with: [ message :: proposalFromInitiator, contents :: ['Ok. That sound interesting'] ];
+			do propose message: proposalFromInitiator contents: ['Ok. That sound interesting'] ;
 		}
 	}
 	
@@ -138,23 +138,19 @@ species participant skills: [fipa] {
 		
 		if (self = failure_participant) {
 			write '\t' + name + ' sends a failure message to ' + agent(a.sender).name;
-			do failure with: [ message :: a, contents :: ['Failure'] ];
+			do failure message: a contents: ['Failure'] ;
 		}
 		
 		if (self = inform_done_participant) {
 			write '\t' + name + ' sends an inform_done message to ' + agent(a.sender).name;
-			do inform with: [ message :: a, contents :: ['Inform done'] ];
+			do inform message: a contents: ['Inform done'] ;
 		}
 		
 		if (self = inform_result_participant) {
 			write '\t' + name + ' sends an inform_result message to ' + agent(a.sender).name;
-			do inform with: [ message :: a, contents :: ['Inform result'] ];
+			do inform message: a contents: ['Inform result'] ;
 		}
 	}
 }
 
-experiment test type: gui {
-	output {
-		
-	}
-}
+experiment test type: gui { }

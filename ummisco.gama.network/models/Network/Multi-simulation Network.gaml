@@ -8,18 +8,20 @@
 model multi_simulation_Network
 
 global skills:[network]{
-	string simulationName <-"sender";
+	string simulationName <-"receiver";
 
 	init {
 		if(simulationName = "sender"){
-		  do connect to:"localhost" with_name:"sender" protocol:"tcp_client" port:3001;
-		  create NetworkingAgent number:10{	
-		    color <- rnd_color(255);	
-			shape <-circle(5);	
-		  }
+			write "Create TCP Client " + name;
+		  	do connect to:"localhost" with_name:"sender" protocol:"tcp_client" port:3001;
+		  	create NetworkingAgent number:10{	
+		    	color <- rnd_color(255);	
+				shape <-circle(5);	
+		  	}
 		}
 		if(simulationName = "receiver"){
-		  do connect to:"localhost" with_name:"receiver" protocol:"tcp_server" port:3001;
+			write "Create TCP Server " + name;
+			do connect to:"localhost" with_name:"receiver" protocol:"tcp_server" port:3001;
 		}
 	}
 	
@@ -55,7 +57,7 @@ experiment main type: gui {
 	//we define a init block to create new simulations
 	init {
 		//we create a second simulation (the first simulation is always created by default) with the given parameters
-		create simulation with: [simulationName::"receiver"];
+		create simulation with: [simulationName::"sender"];
 		
 	}
 	output {

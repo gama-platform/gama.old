@@ -26,7 +26,6 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -454,7 +453,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * Creates the feature-dependent actions for the menu bar.
 	 */
 	private void makeFeatureDependentActions(final IWorkbenchWindow window) {
-		final AboutInfo[] infos = null;
+		//		final AboutInfo[] infos = null;
 
 		final IPreferenceStore prefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 
@@ -539,7 +538,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 		final CommandContributionItemParameter commandParm = new CommandContributionItemParameter(getWindow(), actionId,
 			commandId, null, image != null ? icons.desc(image) : null, null, null, label, null, tooltip,
-			CommandContributionItem.STYLE_PUSH, null, false);
+				CommandContributionItem.STYLE_PUSH, null, false);
 		return new CommandContributionItem(commandParm);
 	}
 }

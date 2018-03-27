@@ -10,12 +10,18 @@
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.image;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -34,7 +40,7 @@ public class ImageViewerActionBarContributor extends EditorActionBarContributor 
 		super.init(bars);
 		editorInputSelectionProvider = new ISelectionProvider() {
 
-			private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+			private final ListenerList<ISelectionChangedListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
 			ISelection selection = StructuredSelection.EMPTY;
 
@@ -58,16 +64,17 @@ public class ImageViewerActionBarContributor extends EditorActionBarContributor 
 			}
 
 			@Override
-			public void setSelection(ISelection selection) {
+			public void setSelection(final ISelection s) {
+				ISelection selection = s;
 				if ( selection == null ) {
 					selection = StructuredSelection.EMPTY;
 				}
 				if ( !selection.equals(this.selection) ) {
 					this.selection = selection;
 					final SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-					Object[] listeners = this.listeners.getListeners();
-					for ( int i = 0; i < listeners.length; ++i ) {
-						final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+					final Object[] listeners = this.listeners.getListeners();
+					for (final Object listener : listeners) {
+						final ISelectionChangedListener l = (ISelectionChangedListener) listener;
 						SafeRunner.run(new SafeRunnable() {
 
 							@Override
@@ -80,13 +87,7 @@ public class ImageViewerActionBarContributor extends EditorActionBarContributor 
 			}
 		};
 		updateEditorInputSelectionProvider(currentEditor);
-		IShellProvider shellProvider = new IShellProvider() {
-
-			@Override
-			public Shell getShell() {
-				return currentEditor.getSite().getShell();
-			}
-		};
+		final IShellProvider shellProvider = () -> currentEditor.getSite().getShell();
 		propertiesAction = new PropertyDialogAction(shellProvider, editorInputSelectionProvider) {
 
 			@Override

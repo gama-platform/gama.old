@@ -28,4 +28,4 @@ after_success:
 - bash ./publish.sh
 branches:
   only:
-    - master
+    - oxygen

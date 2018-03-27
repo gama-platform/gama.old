@@ -102,8 +102,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null) { return; }
-		try {
-			final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)));
+		try (final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			final GamaMap<String, String> allLines = GamaMapFactory.create(Types.STRING, Types.STRING);
 			String str;
 			str = in.readLine();
@@ -111,7 +110,6 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 				allLines.put(str, str + "\n");
 				str = in.readLine();
 			}
-			in.close();
 			setBuffer(allLines);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);

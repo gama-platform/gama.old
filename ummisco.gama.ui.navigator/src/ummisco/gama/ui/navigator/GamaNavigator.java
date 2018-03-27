@@ -144,8 +144,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final Object o1 = getCommonViewer().getStructuredSelection().getFirstElement();
 		if (o1 instanceof IResource) {
 			current = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o1);
-		} else
+		} else {
 			current = (VirtualContent<?>) getCommonViewer().getStructuredSelection().getFirstElement();
+		}
 
 		StructuredSelection newSelection = new StructuredSelection();
 		if (selection instanceof StructuredSelection) {
@@ -153,21 +154,24 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			Object o = ((StructuredSelection) selection).getFirstElement();
 			if (o instanceof IResource) {
 				o = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o);
-				if (o != null)
+				if (o != null) {
 					newSelection = new StructuredSelection(o);
+				}
 			}
 		}
 
 		if (current instanceof WrappedSyntacticContent) {
 			final Object o = newSelection.getFirstElement();
 			if (o instanceof WrappedFile) {
-				if (((VirtualContent<?>) current).isContainedIn((VirtualContent<?>) o))
+				if (((VirtualContent<?>) current).isContainedIn((VirtualContent<?>) o)) {
 					getCommonViewer().setSelection(new StructuredSelection(current));
+				}
 				return;
 			}
 		}
-		if (!newSelection.isEmpty())
+		if (!newSelection.isEmpty()) {
 			super.selectReveal(newSelection);
+		}
 	}
 
 	@Override
@@ -260,11 +264,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void selectionChanged(final SelectionChangedEvent event) {
 		final IStructuredSelection currentSelection = (IStructuredSelection) event.getSelection();
-		final String message = null;
-		final String tooltip = null;
-		final Image img = null;
-		final Selector l = null;
-		final GamaUIColor color = null;
 		VirtualContent<?> element;
 		if (currentSelection == null || currentSelection.isEmpty()) {
 			element = NavigatorRoot.INSTANCE;

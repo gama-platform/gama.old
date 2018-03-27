@@ -140,8 +140,9 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		monitor.beginTask("Creating " + fileName, 2);
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IResource container = findContainer(monitor, containerName, root);
-		if (container == null)
+		if (container == null) {
 			return;
+		}
 		IContainer folder = (IContainer) container;
 		final IProject project = folder.getProject();
 
@@ -167,23 +168,17 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		fileHeader = "/**\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc
 				+ "\n" + "* Tags: Tag1, Tag2, TagN\n*/" + Strings.LN + Strings.LN;
 
-		try {
-			InputStream streamModel = getClass().getResourceAsStream(TEMPLATES.get(getPage().getTemplateType()));
-			streamModel = addFileHeader(folder, streamModel, title, desc);
-
-			try {
+		try (InputStream 
+				streamModel = addFileHeader(folder, getClass().getResourceAsStream(TEMPLATES.get(getPage().getTemplateType())), title, desc);) {
+			try (InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);){
 				ResourceManager.getInstance().reveal(file);
 				file.create(streamModel, true, monitor);
 				if (createDoc) {
 					final IFile htmlFile = project.getFile(new Path("doc/" + title + ".html"));
-					final InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);
 					htmlFile.create(resourceStream, true, monitor);
 					resourceStream.close();
 				}
-			} finally {
-				streamModel.close();
 			}
-
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -203,8 +198,9 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 				final IFolder folder = root.getFolder(new Path(containerName));
 				folder.create(true, true, monitor);
 				container = folder;
-			} else
+			} else {
 				return null;
+			}
 		} else if (!(container instanceof IContainer)) {
 			MessageDialog.openError(getShell(), "Not a folder", containerName + " is not a folder. Cannot proceed");
 			return null;
@@ -251,30 +247,21 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		final String newline = "\n";
 		String line;
 		final StringBuffer sb = new StringBuffer();
-		try {
-			final InputStream input =
-					this.getClass().getResourceAsStream("/templates/description-html-template.resource");
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			try {
-				while ((line = reader.readLine()) != null) {
-					line = line.replaceAll("authorModel", "By " + author);
-					line = line.replaceAll("titleModel", "Description of the model " + title);
-					line = line.replaceAll("descModel", desc);
-					sb.append(line);
-					sb.append(newline);
-				}
-
-			} finally {
-				reader.close();
+		try (final InputStream input =
+				this.getClass().getResourceAsStream("/templates/description-html-template.resource");final BufferedReader reader = new BufferedReader(new InputStreamReader(input));){
+			while ((line = reader.readLine()) != null) {
+				line = line.replaceAll("authorModel", "By " + author);
+				line = line.replaceAll("titleModel", "Description of the model " + title);
+				line = line.replaceAll("descModel", desc);
+				sb.append(line);
+				sb.append(newline);
 			}
-
 		} catch (final IOException ioe) {
 			ioe.printStackTrace();
 			final IStatus status =
 					new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		}
-
 		return new ByteArrayInputStream(sb.toString().getBytes());
 	}
 

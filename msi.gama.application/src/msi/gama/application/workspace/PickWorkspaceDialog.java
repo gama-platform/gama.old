@@ -484,7 +484,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			if ( !dotFile.exists() ) {
 				final boolean created = dotFile.createNewFile();
 				if ( !created ) { return false; }
-				dotFile = new File(wsRoot + File.separator + WorkspacePreferences.MODEL_IDENTIFIER);
+				dotFile = new File(wsRoot + File.separator + WorkspacePreferences.getModelIdentifier());
 				dotFile.createNewFile();
 			}
 

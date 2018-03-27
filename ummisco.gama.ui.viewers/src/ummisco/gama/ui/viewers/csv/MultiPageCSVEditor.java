@@ -61,7 +61,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  *
  */
 public class MultiPageCSVEditor extends MultiPageEditorPart
-		implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
+implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
 
@@ -161,7 +161,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		table.setLinesVisible(true);
 		// set the sorter for the table
 
-		tableViewer.setSorter(tableSorter);
+		tableViewer.setComparator(tableSorter);
 		// set a table filter
 		tableViewer.addFilter(tableFilter);
 
@@ -198,9 +198,9 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		if (!wasPageModified) {
 			firePropertyChange(IEditorPart.PROP_DIRTY);
 			editor.validateEditorInputState(); // will invoke:
-												// FileModificationValidator.validateEdit()
-												// (expected by some repository
-												// providers)
+			// FileModificationValidator.validateEdit()
+			// (expected by some repository
+			// providers)
 		}
 	}
 
@@ -409,7 +409,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	 */
 	private void updateTextEditorFromTable() {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput())
-				.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
+		.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
 	}
 
 	/**

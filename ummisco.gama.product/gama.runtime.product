@@ -60,7 +60,6 @@ openFile
    <launcher name="Gama">
       <linux icon="launcher_icons/icon.xpm"/>
       <macosx icon="launcher_icons/icon.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="launcher_icons/icon.ico"/>
          <bmp
@@ -281,7 +280,7 @@ openFile
       <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.dependencies" version="0.0.0"/>
+      <feature id="ummisco.gama.feature.dependencies"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier"/>
@@ -289,8 +288,8 @@ openFile
    </features>
 
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />

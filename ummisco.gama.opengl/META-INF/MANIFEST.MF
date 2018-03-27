@@ -33,3 +33,4 @@ Bundle-ClassPath: gluegen-rt-natives-linux-amd64.jar,
  jogl-all.jar,
  .
 Bundle-Vendor: UMMISCO
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

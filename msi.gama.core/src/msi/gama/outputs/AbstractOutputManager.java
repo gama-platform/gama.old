@@ -32,9 +32,8 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
-	protected final Map<String, IOutput> outputs = new TOrderedHashMap<String, IOutput>();
-	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<String, IOutput>();
-	protected String name;
+	protected final Map<String, IOutput> outputs = new TOrderedHashMap<>();
+	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<>();
 
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
@@ -72,10 +71,11 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void add(final IOutput output) {
-		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual())
+		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual()) {
 			virtualOutputs.put(output.getId(), output);
-		else
+		} else {
 			outputs.put(output.getId(), output);
+		}
 	}
 
 	// hqnghi add output with alias name from micro-model
@@ -91,7 +91,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		try {
 			// AD: explicit addition of an ArrayList to prevent dispose errors
 			// (when outputs remove themselves from the list)
-			for (final IOutput output : new ArrayList<IOutput>(outputs.values())) {
+			for (final IOutput output : new ArrayList<>(outputs.values())) {
 				output.dispose();
 			}
 			clear();
@@ -186,12 +186,14 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
 		for (final IOutput output : ImmutableList.copyOf(this)) {
-			if (!open(scope, output))
+			if (!open(scope, output)) {
 				return false;
+			}
 		}
 		return true;
 	}
 
+	@Override
 	public boolean open(final IScope scope, final IOutput output) {
 
 		if (scope.init(output).passed()) {

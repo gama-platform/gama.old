@@ -156,7 +156,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			sb.append(a).append(" at ");
 		}
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
-				.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
+		.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
 		return sb.toString();
 	}
 
@@ -214,7 +214,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	private void reportError(final GamaRuntimeException item) {
-		final String data = item.getAllText();
+		//		final String data = item.getAllText();
 		WebHelper.openPage("https://github.com/gama-platform/gama/issues/new");
 	}
 

@@ -69,8 +69,9 @@ public class LayerObject {
 		if (layer != null && layer.getTrace() != null || renderer instanceof ModernRenderer) {
 			objects = new LinkedList();
 			objects.add(currentList);
-		} else
+		} else {
 			objects = null;
+		}
 	}
 
 	protected boolean computeOverlay() {
@@ -126,8 +127,9 @@ public class LayerObject {
 								de.enableOverlay(true);
 							}
 						}
-						if (drawingEntity != null)
+						if (drawingEntity != null) {
 							renderer.getDrawer().addDrawingEntities(drawingEntity);
+						}
 					}
 				}
 			}
@@ -173,8 +175,9 @@ public class LayerObject {
 
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
 			if (picking) {
-				if (!overlay)
+				if (!overlay) {
 					gl.runWithNames(() -> drawAllObjects(gl, true));
+				}
 			} else {
 				if (isAnimated || overlay) {
 					drawAllObjects(gl, false);
@@ -206,7 +209,7 @@ public class LayerObject {
 		gl.scaleBy(width, height, 1);
 		gl.setCurrentColor(((OverlayLayer) layer).getBackground());
 		gl.setCurrentObjectAlpha(((OverlayLayer) layer).getDefinition().getTransparency());
-		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
+		gl.drawCachedGeometry(IShape.Type.ROUNDED, true, null);
 		gl.popMatrix();
 		gl.translateBy(offset.x, -offset.y, 0);
 	}
@@ -226,8 +229,9 @@ public class LayerObject {
 				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
 				drawObjects(gl, list, alpha, picking);
 			}
-		} else
+		} else {
 			drawObjects(gl, currentList, alpha, picking);
+		}
 	}
 
 	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
@@ -335,12 +339,13 @@ public class LayerObject {
 			isFading = getFading();
 			final int size = objects.size();
 			for (int i = 0, n = size - sizeLimit; i < n; i++) {
-				final List<AbstractObject> list = objects.poll();
+				objects.poll();
 			}
 			currentList = newCurrentList();
 			objects.offer(currentList);
-		} else
+		} else {
 			currentList.clear();
+		}
 		final Integer index = openGLListIndex;
 		if (index != null) {
 			gl.deleteList(index);

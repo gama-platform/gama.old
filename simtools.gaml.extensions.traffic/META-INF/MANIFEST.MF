@@ -9,3 +9,4 @@ Import-Package: com.vividsolutions.jts.geom
 Export-Package: simtools.gaml.extensions.traffic
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

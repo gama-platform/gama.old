@@ -153,8 +153,7 @@ public class MovingSkill extends Skill {
 
 	@getter (IKeyword.REAL_SPEED)
 	public double getRealSpeed(final IAgent agent) {
-		if (agent == null)
-			return 0.0;
+		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.REAL_SPEED);
 	}
 
@@ -220,16 +219,18 @@ public class MovingSkill extends Skill {
 	public void setCurrentEdge(final IAgent agent, final IPath path) {
 		if (path != null) {
 			final Integer index = (Integer) agent.getAttribute("index_on_path");
-			if (index < path.getEdgeList().size())
+			if (index < path.getEdgeList().size()) {
 				agent.setAttribute("current_edge", path.getEdgeList().get(index));
+			}
 		}
 	}
 
 	public void setCurrentEdge(final IAgent agent, final IGraph graph) {
 		if (graph != null) {
 			final Integer index = (Integer) agent.getAttribute("index_on_path");
-			if (index < graph.getEdges().size())
+			if (index < graph.getEdges().size()) {
 				agent.setAttribute("current_edge", graph.getEdges().get(index));
+			}
 		}
 	}
 
@@ -340,8 +341,9 @@ public class MovingSkill extends Skill {
 			if (on != null && on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
 				GamaMap<IShape, Double> probaDeplacement = null;
-				if (scope.hasArg("proba_edges"))
+				if (scope.hasArg("proba_edges")) {
 					probaDeplacement = (GamaMap<IShape, Double>) scope.getVarValue("proba_edges");
+				}
 				moveToNextLocAlongPathSimplified(scope, agent, graph, dist, probaDeplacement);
 				return;
 			}
@@ -425,11 +427,12 @@ public class MovingSkill extends Skill {
 			// GamaList.with(location, loc));
 			setLocation(agent, loc);
 		}
-		if (loc != null)
+		if (loc != null) {
 			agent.setAttribute(IKeyword.REAL_SPEED,
 					loc.euclidianDistanceTo(location) / scope.getClock().getStepInSeconds());
-		else
+		} else {
 			agent.setAttribute(IKeyword.REAL_SPEED, 0.0);
+		}
 		// scope.setStatus(loc == null ? ExecutionStatus.failure :
 		// ExecutionStatus.success);
 		return null;
@@ -594,10 +597,11 @@ public class MovingSkill extends Skill {
 				path = new GamaSpatialPath(source.getGeometry(), goal, edges, true);
 			} else {
 				if (topo instanceof GridTopology) {
-					if (on instanceof IList)
+					if (on instanceof IList) {
 						path = ((GridTopology) topo).pathBetween(scope, source, goal, (IList) on);
-					else if (on instanceof GamaMap)
+					} else if (on instanceof GamaMap) {
 						path = ((GridTopology) topo).pathBetween(scope, source, goal, (GamaMap) on);
+					}
 
 				} else {
 					path = topo.pathBetween(scope, source, goal);
@@ -646,7 +650,8 @@ public class MovingSkill extends Skill {
 	 * @return the next location
 	 */
 
-	protected IList initMoveAlongPath(final IAgent agent, final IPath path, GamaPoint currentLocation) {
+	protected IList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint cl) {
+		GamaPoint currentLocation = cl;
 		final IList initVals = GamaListFactory.create();
 		Integer index = 0;
 		Integer indexSegment = 1;
@@ -796,9 +801,10 @@ public class MovingSkill extends Skill {
 							}
 						}
 					}
-					if (line == null)
+					if (line == null) {
 						line = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, currentLocation,
 								filter);
+					}
 					index = edges.indexOf(line);
 				} else {
 					double distanceS = Double.MAX_VALUE;
@@ -911,12 +917,13 @@ public class MovingSkill extends Skill {
 							distance = 0;
 							break;
 						}
-						if (nextRoads.size() == 1)
+						if (nextRoads.size() == 1) {
 							edge = nextRoads.get(0);
+						}
 						if (nextRoads.size() > 1) {
-							if (probaEdge == null || probaEdge.isEmpty())
+							if (probaEdge == null || probaEdge.isEmpty()) {
 								edge = nextRoads.get(scope.getRandom().between(0, nextRoads.size() - 1));
-							else {
+							} else {
 								final IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
 								for (final IShape r : nextRoads) {
 									final Double val = (Double) probaEdge.get(r);
@@ -929,8 +936,9 @@ public class MovingSkill extends Skill {
 						if (!graph.isDirected()) {
 							if (currentLocation.equals(graph.getEdgeSource(edge))) {
 								inverse = 0;
-							} else
+							} else {
 								inverse = 1;
+							}
 						}
 						indexSegment = 0;
 					}
@@ -1204,10 +1212,8 @@ public class MovingSkill extends Skill {
 		final IShape line = Spatial.Creation.line(scope, pts);
 		// line = Spatial.Operators.inter(scope, line, geom);
 
-		if (line == null)
-			return getCurrentAgent(scope).getLocation();
-		if (geom.covers(line))
-			return loc;
+		if (line == null) { return getCurrentAgent(scope).getLocation(); }
+		if (geom.covers(line)) { return loc; }
 
 		// final ILocation computedPt = line.getPoints().lastValue(scope);
 

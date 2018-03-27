@@ -414,7 +414,7 @@ public class Cast {
 							equals = "'[1,5,9,3]'"),
 					@example (
 							value = "to_gaml(['a'::345, 'b'::13, 'c'::12])",
-							equals = "\"([\'a\'::345,\'b\'::13,\'c\'::12] as map )\""),
+							equals = "\"map([\'a\'::345,\'b\'::13,\'c\'::12])\""),
 					@example (
 							value = "to_gaml([[3,5,7,9],[2,4,6,8]])",
 							equals = "'[[3,5,7,9],[2,4,6,8]]'"),

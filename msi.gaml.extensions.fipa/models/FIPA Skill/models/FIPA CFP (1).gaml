@@ -23,10 +23,9 @@ global {
 species initiator skills: [fipa] { 
 	
 	reflex send_cfp_to_participants when: (time = 1) {
-		//list<participant> participants <- list(participant);
 		
 		write '(Time ' + time + '): ' + name + ' sends a cfp message to all participants';
-		do start_conversation (to: list(participant), protocol: 'fipa-contract-net', performative: 'cfp', contents: ['Go swimming']);
+		do start_conversation to: list(participant) protocol: 'fipa-contract-net' performative: 'cfp' contents: ['Go swimming'];
 	}
 	
 	reflex receive_refuse_messages when: !empty(refuses) {
@@ -44,13 +43,9 @@ species participant skills: [fipa] {
 		
 		message proposalFromInitiator <- cfps[0];
 		write '(Time ' + time + '): ' + name + ' receives a cfp message from ' + agent(proposalFromInitiator.sender).name + ' and replies with a refuse message';
-		do refuse (message: proposalFromInitiator, contents: ['I am busy today'] );
+		do refuse message: proposalFromInitiator contents: ['I am busy today'] ;
 		
 	}
 }
 
-experiment test type: gui { 
-	output {
-		
-	}
-}
+experiment test type: gui { }

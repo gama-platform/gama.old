@@ -36,7 +36,7 @@ public abstract class GamaExecutorService {
 
 	public static ForkJoinPool AGENT_PARALLEL_EXECUTOR;
 	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
-	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.sameThreadExecutor();
+	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();//sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
 			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL)

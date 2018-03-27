@@ -12,7 +12,6 @@ package ummisco.gama.opengl;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.nio.BufferOverflowException;
 
 import com.jogamp.opengl.GL;
@@ -155,8 +154,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		openGL.processUnloadedGeometries();
 		//
 
-		if (keystone.isKeystoneInAction())
+		if (keystone.isKeystoneInAction()) {
 			keystone.beginRenderToTexture();
+		}
 		openGL.beginScene(data.getBackgroundColor());
 		openGL.resetMatrix(GL2.GL_PROJECTION);
 
@@ -368,17 +368,17 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		tryToHighlight(attributes);
-		final File f = file.getFile(getSurface().getScope());
+		// final File f = file.getFile(getSurface().getScope());
 		if (file instanceof GamaGeometryFile) {
-			final GamaGeometryFile ggf = (GamaGeometryFile) file;
-			final String path = f.getAbsolutePath();
 			final ResourceObject object =
 					sceneBuffer.getSceneToUpdate().addGeometryFile((GamaGeometryFile) file, attributes);
-			if (object != null)
+			if (object != null) {
 				openGL.cacheGeometry(object);
+			}
 		} else if (file instanceof GamaImageFile) {
-			if (attributes.useCache())
+			if (attributes.useCache()) {
 				openGL.cacheTexture(file.getFile(getSurface().getScope()));
+			}
 			sceneBuffer.getSceneToUpdate().addImageFile((GamaImageFile) file, attributes);
 		}
 
@@ -449,8 +449,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public boolean mouseInROI(final Point mousePosition) {
 		final Envelope3D env = getROIEnvelope();
-		if (env == null)
-			return false;
+		if (env == null) { return false; }
 		final GamaPoint p = getRealWorldPointFromWindowPoint(mousePosition);
 		return env.contains(p);
 	}

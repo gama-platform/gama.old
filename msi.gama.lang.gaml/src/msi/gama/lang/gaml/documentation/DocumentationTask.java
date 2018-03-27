@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DocumentationTask.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DocumentationTask.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,27 +30,24 @@ class DocumentationTask {
 
 	public void process() {
 		// System.out.println("Documenting " + description.getName());
-		if (description == null)
-			return;
-		if (object == null)
-			return;
+		if (description == null) { return; }
+		if (object == null) { return; }
 		final Resource key = object.eResource();
-		if (key == null) {
-			return;
-		}
+		if (key == null) { return; }
 
 		DocumentationNode node = null;
 		try {
 			node = new DocumentationNode(description);
 		} catch (final Exception e) {
+			System.out.println("DocumentationTask.process()" + e.getMessage() + " for " + description.getTitle());
 		}
 		if (node != null) {
 			try {
 				final THashMap<EObject, IGamlDescription> map = documenter.getDocumentationCache(key);
-				if (map != null)
+				if (map != null) {
 					map.put(object, node);
-			} catch (final RuntimeException e) {
-			}
+				}
+			} catch (final RuntimeException e) {}
 		}
 
 	}

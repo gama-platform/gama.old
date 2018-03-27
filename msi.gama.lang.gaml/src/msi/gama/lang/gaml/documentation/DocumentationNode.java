@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DocumentationNode.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DocumentationNode.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,13 +9,37 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.documentation;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.lang.gaml.documentation.GamlResourceDocumenter.StringCompressor;
 import msi.gama.precompiler.GamlProperties;
 
 public class DocumentationNode implements IGamlDescription {
+
+	public static byte[] compress(final String text) throws IOException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (final OutputStream out = new DeflaterOutputStream(baos, true);) {
+			out.write(text.getBytes("ISO-8859-1"));
+		}
+		return baos.toByteArray();
+	}
+
+	public static String decompress(final byte[] bytes) throws IOException {
+		final InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final byte[] buffer = new byte[8192];
+		int len;
+		while ((len = in.read(buffer)) > 0) {
+			baos.write(buffer, 0, len);
+		}
+		return new String(baos.toByteArray(), "ISO-8859-1");
+	}
 
 	final byte[] title;
 	final byte[] doc;
@@ -30,8 +53,8 @@ public class DocumentationNode implements IGamlDescription {
 		if (plugin != null) {
 			documentation += "\n<p/><i> [defined in " + plugin + "] </i>";
 		}
-		doc = StringCompressor.compress(documentation);
-		this.title = StringCompressor.compress(title);
+		doc = compress(documentation);
+		this.title = compress(title);
 	}
 
 	/**
@@ -40,17 +63,26 @@ public class DocumentationNode implements IGamlDescription {
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-	}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
 	public String getDocumentation() {
-		return StringCompressor.decompress(doc);
+		try {
+			return decompress(doc);
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return "Error";
+		}
 	}
 
 	@Override
 	public String getTitle() {
-		return StringCompressor.decompress(title);
+		try {
+			return decompress(title);
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return "Error";
+		}
 	}
 
 	@Override

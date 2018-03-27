@@ -22,8 +22,12 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -323,11 +327,41 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 			if (file != null) { return file; }
 		}
 		// here we can only guess how the input might be related to a resource
-		final IFile adapter = Util.getAdapter(input, IFile.class);
+		final IFile adapter = getAdapter(input, IFile.class);
 		if (adapter != null) { return adapter; }
-		return Util.getAdapter(input, IResource.class);
+		return getAdapter(input, IResource.class);
 	}
+	
+	public final static <T> T getAdapter(Object sourceObject, Class<T> adapterType) {
+		Assert.isNotNull(adapterType);
+		if (sourceObject == null) {
+			return null;
+		}
+		if (adapterType.isInstance(sourceObject)) {
+			return adapterType.cast(sourceObject);
+		}
 
+		if (sourceObject instanceof IAdaptable) {
+			IAdaptable adaptable = (IAdaptable) sourceObject;
+
+			T result = adaptable.getAdapter(adapterType);
+			if (result != null) {
+				// Sanity-check
+				Assert.isTrue(adapterType.isInstance(result));
+				return result;
+			}
+		}
+
+		if (!(sourceObject instanceof PlatformObject)) {
+			T result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
+			if (result != null) {
+				return result;
+			}
+		}
+
+		return null;
+	}
+	
 	private static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
 		for (final IResource resource : roots) {
 			if (resource.contains(leaf)) { return true; }

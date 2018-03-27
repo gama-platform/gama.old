@@ -155,7 +155,6 @@ public abstract class GamlAccessContents implements IPopupProvider {
 				new List[GamlIdiomsProvider.PROVIDERS.size()];
 
 		final int[] indexPerProvider = new int[GamlIdiomsProvider.PROVIDERS.size()];
-		int countTotal = 0;
 		boolean done;
 		do {
 			// will be set to false if we find a provider with remaining
@@ -163,14 +162,13 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			done = true;
 			for (int i = 0; i < GamlIdiomsProvider.PROVIDERS.size(); i++) {
 				if (entries[i] == null) {
-					entries[i] = new ArrayList<GamlAccessEntry>();
+					entries[i] = new ArrayList<>();
 					indexPerProvider[i] = 0;
 				}
-				int count = 0;
 				final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
 				if (filter.length() > 0) {
 					final IGamlDescription[] sortedElements = provider.getSortedElements();
-					final List<GamlAccessEntry> poorFilterMatches = new ArrayList<GamlAccessEntry>();
+					final List<GamlAccessEntry> poorFilterMatches = new ArrayList<>();
 
 					int j = indexPerProvider[i];
 					while (j < sortedElements.length) {
@@ -196,8 +194,6 @@ public abstract class GamlAccessContents implements IPopupProvider {
 						}
 						if (entryEnabled(provider, entry)) {
 							entries[i].add(entry);
-							count++;
-							countTotal++;
 						}
 
 						j++;
@@ -206,11 +202,8 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					indexPerProvider[i] = j;
 					// If there were low quality matches and there is still
 					// room, add them (Bug 398455)
-					for (final Iterator<GamlAccessEntry> iterator = poorFilterMatches.iterator(); iterator.hasNext();) {
-						final GamlAccessEntry quickAccessEntry = iterator.next();
+					for (GamlAccessEntry quickAccessEntry : poorFilterMatches) {
 						entries[i].add(quickAccessEntry);
-						count++;
-						countTotal++;
 					}
 					if (j < sortedElements.length) {
 						done = false;
@@ -408,17 +401,20 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			@Override
 			public void mouseUp(final MouseEvent e) {
 
-				if (table.getSelectionCount() < 1)
+				if (table.getSelectionCount() < 1) {
 					return;
+				}
 
-				if (e.button != 1)
+				if (e.button != 1) {
 					return;
+				}
 
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));
 					final TableItem selection = table.getSelection()[0];
-					if (selection.equals(o))
+					if (selection.equals(o)) {
 						handleSelection();
+					}
 				}
 			}
 		});

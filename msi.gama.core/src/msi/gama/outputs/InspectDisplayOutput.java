@@ -95,9 +95,9 @@ import msi.gaml.types.Types;
 		omissible = IKeyword.NAME)
 @doc (
 		value = "`" + IKeyword.INSPECT + "` (and `" + IKeyword.BROWSE
-				+ "`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `"
-				+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
-				+ "` is used, type: default value is agent.",
+		+ "`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `"
+		+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
+		+ "` is used, type: default value is agent.",
 		usages = { @usage (
 				value = "An example of syntax is:",
 				examples = { @example (
@@ -156,7 +156,6 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, StringUtils.toGamlString("Inspect: "),
 				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE,
 				StringUtils.toGamlString(a.getSpeciesName() + " at " + a.getIndex())).validate());
-		final String expr = a.getSpeciesName() + " at " + a.getIndex();
 
 		setValue(GAML.getExpressionFactory().createConst(a, a.getType()));
 		lastValue = a;
@@ -193,9 +192,9 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	public void launch(final IScope scope) throws GamaRuntimeException {
 		if (!scope.init(InspectDisplayOutput.this).passed()) { return; }
 		// What to do in case of multi-simulations ???
-		if (scope.getSimulation() != null)
+		if (scope.getSimulation() != null) {
 			scope.getSimulation().addOutput(InspectDisplayOutput.this);
-		else if (scope.getExperiment() != null) {
+		} else if (scope.getExperiment() != null) {
 			scope.getExperiment().getSpecies().getExperimentOutputs().add(InspectDisplayOutput.this);
 		}
 		setPaused(false);

@@ -119,7 +119,7 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
 		return StreamEx.of(importedErrors).toMap(e -> e.toString() + " (" + URI.decode(e.getURI().lastSegment()) + ")",
-				e -> e.getURI());
+				e -> e.getURI(), (t, u) -> t);
 	}
 
 	public void setNoWarning() {

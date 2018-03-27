@@ -77,7 +77,7 @@ public class Request {
 	 */
 	public Request param(final String name, final Object value) {
 		if (params == null) {
-			params = new LinkedHashMap<String, Object>();
+			params = new LinkedHashMap<>();
 		}
 		if (multipleValues) {
 			final Object currentValue = params.get(name);
@@ -87,7 +87,7 @@ public class Request {
 					values.add(value);
 				} else {
 					// upgrade single value to set of values
-					final Collection<Object> values = new ArrayList<Object>();
+					final Collection<Object> values = new ArrayList<>();
 					values.add(currentValue);
 					values.add(value);
 					params.put(name, values);
@@ -116,7 +116,7 @@ public class Request {
 	 */
 	public Request param(final String name, final Iterable<Object> values) {
 		if (params == null) {
-			params = new LinkedHashMap<String, Object>();
+			params = new LinkedHashMap<>();
 		}
 		params.put(name, values);
 		return this;
@@ -134,7 +134,7 @@ public class Request {
 	 */
 	public Request params(final Map<String, Object> valueByName) {
 		if (params == null) {
-			params = new LinkedHashMap<String, Object>();
+			params = new LinkedHashMap<>();
 		}
 		params.putAll(valueByName);
 		return this;
@@ -171,7 +171,7 @@ public class Request {
 	 */
 	public Request header(final String name, final Object value) {
 		if (headers == null) {
-			headers = new LinkedHashMap<String, Object>();
+			headers = new LinkedHashMap<>();
 		}
 		headers.put(name, value);
 		return this;
@@ -330,7 +330,8 @@ public class Request {
 	 *            mandatory.
 	 * @return <code>this</code> for method chaining (fluent API)
 	 */
-	public Request retry(int retryCount, final boolean waitExponential) {
+	public Request retry(final int rc, final boolean waitExponential) {
+		int retryCount = rc;
 		if (retryCount < 0) {
 			retryCount = 0;
 		}

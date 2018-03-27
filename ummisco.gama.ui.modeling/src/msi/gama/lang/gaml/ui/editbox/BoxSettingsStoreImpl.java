@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import msi.gama.lang.gaml.ui.internal.GamlActivator;
+import ummisco.gama.ui.modeling.internal.ModelingActivator;
 
 public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 
@@ -34,7 +34,7 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 
 	protected IPreferenceStore getStore() {
 		if (store == null)
-			store = GamlActivator.getInstance().getPreferenceStore();
+			store = ModelingActivator.getInstance().getPreferenceStore();
 		return store;
 	}
 
@@ -93,7 +93,7 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		getStore().setValue(key(name), settings.export());
 		setFileNames(settings.getFileNames());
 		addToCatalog(name);
-		GamlActivator.getInstance().savePluginPreferences();
+		ModelingActivator.getInstance().savePluginPreferences();
 	}
 
 	protected void addToCatalog(final String name) {
@@ -139,7 +139,7 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 			storeCatalog(getCatalog());
 		getStore().setValue(key(name), "");
 		getStore().setValue(key(name + TXT_POSTFIX), "");
-		GamlActivator.getInstance().savePluginPreferences();
+		ModelingActivator.getInstance().savePluginPreferences();
 	}
 
 	protected void setFileNames(final Collection<String> fileNames) {

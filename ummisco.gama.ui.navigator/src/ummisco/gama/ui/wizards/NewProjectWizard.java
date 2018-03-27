@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -125,11 +125,11 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		try {
 
-			monitor.beginTask("", 2000);
-			proj.create(description, new SubProgressMonitor(monitor, 1000));
+			final SubMonitor m = SubMonitor.convert(monitor, "", 2000);
+			proj.create(description, m.split(1000));
 
 			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
-			proj.open(new SubProgressMonitor(monitor, 1000));
+			proj.open(m.split(1000));
 
 			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, isTest, null);
 

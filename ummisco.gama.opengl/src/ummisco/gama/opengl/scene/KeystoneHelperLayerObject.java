@@ -65,33 +65,33 @@ public class KeystoneHelperLayerObject extends LayerObject {
 			for (int cornerId = 0; cornerId < keystonePositions.length; cornerId++) {
 				final GamaColor outsideCircleColor = cornerId == renderer.getKeystone().getCornerSelected()
 						? new GamaColor(100, 0, 0, 255) : new GamaColor(0, 100, 0, 255);
-				final GamaColor insideCircleColor = cornerId == renderer.getKeystone().getCornerSelected()
-						? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
-				final GamaPoint circleLocation =
-						new GamaPoint(keystonePositions[cornerId][0], keystonePositions[cornerId][1]);
-				// build the circle and the border of the circle
-				final GeometryObject outsideCircle = createCircleObject(0.05, circleLocation, outsideCircleColor);
-				newElem.add(outsideCircle);
-				final GeometryObject insideCircle = createCircleObject(0.03, circleLocation, insideCircleColor);
-				newElem.add(insideCircle);
+						final GamaColor insideCircleColor = cornerId == renderer.getKeystone().getCornerSelected()
+								? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
+								final GamaPoint circleLocation =
+										new GamaPoint(keystonePositions[cornerId][0], keystonePositions[cornerId][1]);
+								// build the circle and the border of the circle
+								final GeometryObject outsideCircle = createCircleObject(0.05, circleLocation, outsideCircleColor);
+								newElem.add(outsideCircle);
+								final GeometryObject insideCircle = createCircleObject(0.03, circleLocation, insideCircleColor);
+								newElem.add(insideCircle);
 
-				// build background for label
-				final GamaPoint backgroundLocation =
-						new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f,
-								((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f - 0.01);
-				final GeometryObject bckgndObj =
-						createRectangleObject(0.2, 0.05, backgroundLocation, new GamaColor(255, 255, 255, 255));
-				newElem.add(bckgndObj);
-				// build label
-				final String content =
-						"(" + floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].x) + ","
-								+ floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].y) + ")";
-				final GamaPoint testLocation =
-						new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f - 0.08,
-								-((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f);
-				final StringObject strObj =
-						createStringObject(content, 0.0015, testLocation, new GamaColor(0, 0, 0, 1));
-				newElem.add(strObj);
+								// build background for label
+								final GamaPoint backgroundLocation =
+										new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f,
+												((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f - 0.01);
+								final GeometryObject bckgndObj =
+										createRectangleObject(0.2, 0.05, backgroundLocation, new GamaColor(255, 255, 255, 255));
+								newElem.add(bckgndObj);
+								// build label
+								final String content =
+										"(" + floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].x) + ","
+												+ floor4Digit(((ModernRenderer) renderer).getKeystone().getCoords()[cornerId].y) + ")";
+								final GamaPoint testLocation =
+										new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f - 0.08,
+												-((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f);
+								final StringObject strObj =
+										createStringObject(content, 0.0015, testLocation, new GamaColor(0, 0, 0, 1));
+								newElem.add(strObj);
 			}
 			// add the "back to default" button
 
@@ -139,8 +139,8 @@ public class KeystoneHelperLayerObject extends LayerObject {
 		return rectGeom;
 	}
 
-	private double floor4Digit(double number) {
-		number *= 1000;
+	private double floor4Digit(final double n) {
+		double number = n * 1000;
 		number = Math.round(number);
 		number /= 1000;
 		return number;

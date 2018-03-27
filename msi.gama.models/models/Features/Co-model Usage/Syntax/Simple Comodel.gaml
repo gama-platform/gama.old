@@ -46,12 +46,17 @@ global
 			do _step_;
 		}
 		
-		//kill simulation  of micro_model and recreate then
-		ask  (Mosquitos.Generic collect each.simulation){
-			do die;
-		}
-		ask (Mosquitos.Generic){
-			create simulation{do _init_;}
+		//ask  simulation of micro_model to kill all agents every 100 cycles and recreate them
+		if(cycle mod 100 = 0){			
+			ask  (Mosquitos.Generic collect each.simulation){
+				ask Mosquito{				
+					do die;
+				}
+			}
+			ask  (Mosquitos.Generic collect each.simulation){
+				seed<-float(rnd(100));
+				do _init_;
+			}
 		}
 	}
 }

@@ -47,8 +47,9 @@ public class GamaBundleLoader {
 	private static final boolean DEBUG = true;
 
 	public static void LOG(final String s) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println(s);
+		}
 	}
 
 	public static void ERROR(final Exception e) {
@@ -74,17 +75,17 @@ public class GamaBundleLoader {
 	public static String REGULAR_TESTS_LAYOUT = "tests";
 	public static String GENERATED_TESTS_LAYOUT = "gaml/tests";
 	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
-	private static Set<Bundle> GAMA_PLUGINS = new HashSet<Bundle>();
+	private static Set<Bundle> GAMA_PLUGINS = new HashSet<>();
 	private static Multimap<Bundle, String> MODEL_PLUGINS = ArrayListMultimap.create();
 	private static Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
-	public static Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<String>();
+	public static Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
 
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
-		final Set<IExtension> extensions = new HashSet<IExtension>();
+		final Set<IExtension> extensions = new HashSet<>();
 		try {
 			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 			extensions.addAll(Arrays.asList(p.getExtensions()));
@@ -104,12 +105,15 @@ public class GamaBundleLoader {
 			final Bundle bundle = Platform.getBundle(plugin.getName());
 
 			GAMA_PLUGINS.add(bundle);
-			if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null)
+			if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) {
 				MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT);
-			if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null)
+			}
+			if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) {
 				TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT);
-			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null)
+			}
+			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) {
 				TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
+			}
 		}
 		// LOG(">GAMA plugins with language additions: "
 		// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
@@ -145,8 +149,9 @@ public class GamaBundleLoader {
 			try {
 				// TODO Add the defining plug-in
 				cd = (ICreateDelegate) e.createExecutableExtension("class");
-				if (cd != null)
+				if (cd != null) {
 					CreateStatement.addDelegate(cd);
+				}
 			} catch (final CoreException e1) {
 				CreateStatement.removeDelegate(cd);
 				ERROR(e1);
@@ -179,14 +184,15 @@ public class GamaBundleLoader {
 		// We gather all the content types extensions defined in GAMA plugins
 		// (not in the other ones)
 		final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
-		final Set<IExtension> contentExtensions = new HashSet<IExtension>();
+		final Set<IExtension> contentExtensions = new HashSet<>();
 		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
 		for (final IExtension ext : contentExtensions) {
 			final IConfigurationElement[] configs = ext.getConfigurationElements();
 			for (final IConfigurationElement config : configs) {
 				final String s = config.getAttribute("file-extensions");
-				if (s != null)
+				if (s != null) {
 					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
+				}
 			}
 		}
 
@@ -198,14 +204,14 @@ public class GamaBundleLoader {
 	}
 
 	private static void performStaticInitializations() {
-		new Thread(() -> {
-			final long start = System.currentTimeMillis();
+//		new Thread(() -> {
+			// final long start = System.currentTimeMillis();
 			IExpressionCompiler.OPERATORS.forEachValue(object -> {
 				object.compact();
 				return true;
 			});
 			IExpressionCompiler.OPERATORS.compact();
-		}).start();
+//		}).start();
 
 	}
 

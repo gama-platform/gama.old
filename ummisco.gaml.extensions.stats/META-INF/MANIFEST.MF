@@ -10,3 +10,4 @@ Export-Package: ummisco.gaml.extensions.stats
 Bundle-ClassPath: .,
  lib/colt.jar,
  lib/concurrent.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

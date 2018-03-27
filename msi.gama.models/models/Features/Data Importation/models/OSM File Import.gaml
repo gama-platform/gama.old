@@ -102,6 +102,6 @@ experiment "Load OSM" type: gui
 
 experiment "Load OSM from Internet" type: gui parent: "Load OSM"
 {
-	parameter "File:" var: osmfile <- file<geometry> (osm_file("https://s3.amazonaws.com/metro-extracts.mapzen.com/hanoi_vietnam.osm.pbf", filtering));
+	parameter "File:" var: osmfile <- file<geometry> (osm_file("http://download.geofabrik.de/europe/andorra-latest.osm.pbf", filtering));
 	
 }

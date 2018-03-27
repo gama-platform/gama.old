@@ -35,12 +35,12 @@ global {
 
 species Initiator skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
+		write name + ' with conversations: ' + string(conversations) + '; messages: ' + string(mailbox);
 	}
 	
 	reflex send_request when: (time = 1) {
 		write 'send message';
-		do start_conversation (to :: [p], protocol :: 'fipa-request', performative :: 'request', contents :: ['go sleeping'] );
+		do start_conversation to: [p] protocol: 'fipa-request' performative: 'request' contents: ['go sleeping'] ;
 	}
 
 	reflex read_agree_message when: !(empty(agrees)) {
@@ -53,23 +53,23 @@ species Initiator skills: [fipa] {
 	reflex read_inform_message when: !(empty(informs)) {
 		write 'read inform messages';
 		loop i over: informs {
-			write 'inform message with content: ' + (string(i.contents));
+			write 'inform message with content: ' + string(i.contents);
 		}
 	}
 }
 
 species Participant skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
+		write name + ' with conversations: ' + string(conversations) + '; messages: ' + string(mailbox);
 	}
 
-	reflex reply_messages when: (!empty(mailbox)) {
-		message requestFromInitiator <- (mailbox at 0);
+	reflex reply_messages when: (!empty(requests)) {
+		message requestFromInitiator <- (requests at 0);
 		write 'agree message';
-		do agree with: [ message :: requestFromInitiator, contents :: ['I will'] ];
+		do agree message: requestFromInitiator contents: ['I will'] ;
 		
 		write 'inform the initiator';
-		do inform with: [ message :: requestFromInitiator, contents :: ['I\'m in bed already'] ];
+		do inform message: requestFromInitiator contents: ['I\'m in bed already'] ;
 	}
 }
 

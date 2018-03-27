@@ -14,3 +14,4 @@ Bundle-ClassPath: .,
  lib/tritonus_share.jar
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: UMMISCO
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

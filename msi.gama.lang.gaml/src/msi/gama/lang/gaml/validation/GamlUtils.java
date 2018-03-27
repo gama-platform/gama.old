@@ -5,16 +5,12 @@
  *******************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,10 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
-
-import com.google.common.io.ByteStreams;
 
 public class GamlUtils {
 
@@ -41,8 +34,9 @@ public class GamlUtils {
 	}
 
 	public static IProject createProject(final IProject project) throws CoreException {
-		if (!project.exists())
+		if (!project.exists()) {
 			project.create(monitor());
+		}
 		project.open(monitor());
 		return project;
 	}
@@ -219,35 +213,25 @@ public class GamlUtils {
 	// return file;
 	// }
 
-	public static IResource file(final String path) {
-		return root().findMember(new Path(path));
-	}
+	// public static IResource file(final String path) {
+	// return root().findMember(new Path(path));
+	// }
 
-	public static byte[] fileToByteArray(final IFile file) throws CoreException, IOException {
-		InputStream contents = null;
-		try {
-			contents = file.getContents();
-			return ByteStreams.toByteArray(contents);
-		} finally {
-			if (contents != null)
-				contents.close();
-		}
-	}
+	// public static byte[] fileToByteArray(final IFile file) throws CoreException, IOException {
+	// try (InputStream contents = file.getContents()) {
+	// return ByteStreams.toByteArray(contents);
+	// }
+	// }
 
-	public static String fileToString(final IFile file) throws CoreException, IOException {
-		return new String(fileToByteArray(file), file.getCharset());
-	}
+	// public static String fileToString(final IFile file) throws CoreException, IOException {
+	// return new String(fileToByteArray(file), file.getCharset());
+	// }
 
-	public static boolean fileIsEmpty(final IFile file) throws IOException, CoreException {
-		InputStream contents = null;
-		try {
-			contents = file.getContents();
-			return contents.read() == -1;
-		} finally {
-			if (contents != null)
-				contents.close();
-		}
-	}
+	// public static boolean fileIsEmpty(final IFile file) throws IOException, CoreException {
+	// try (InputStream contents = file.getContents()) {
+	// return contents.read() == -1;
+	// }
+	// }
 
 	// private static void create(final IContainer container)
 	// throws CoreException, InvocationTargetException, InterruptedException {

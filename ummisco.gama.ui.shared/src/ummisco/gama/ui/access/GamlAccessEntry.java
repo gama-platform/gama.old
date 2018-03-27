@@ -120,7 +120,7 @@ public class GamlAccessEntry {
 	}
 
 	public void measure(final Event event, final TextLayout textLayout) {
-		final Table table = ((TableItem) event.item).getParent();
+		// final Table table = ((TableItem) event.item).getParent();
 
 		event.width = 0;
 		switch (event.index) {
@@ -130,8 +130,7 @@ public class GamlAccessEntry {
 					final TextStyle boldStyle =
 							new TextStyle(GamaFonts.categoryBoldHelpFont, null, IGamaColors.TOOLTIP.color());
 					textLayout.setText(provider.name);
-					for (int i = 0; i < providerMatchRegions.length; i++) {
-						final int[] matchRegion = providerMatchRegions[i];
+					for (final int[] matchRegion : providerMatchRegions) {
 						textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 					}
 				} else {
@@ -141,8 +140,7 @@ public class GamlAccessEntry {
 			case 1:
 				textLayout.setText(element.getTitle());
 				final TextStyle boldStyle = new TextStyle(GamaFonts.boldHelpFont, null, IGamaColors.TOOLTIP.color());
-				for (int i = 0; i < elementMatchRegions.length; i++) {
-					final int[] matchRegion = elementMatchRegions[i];
+				for (final int[] matchRegion : elementMatchRegions) {
 					textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 				}
 
@@ -164,8 +162,7 @@ public class GamlAccessEntry {
 							new TextStyle(GamaFonts.categoryBoldHelpFont, null, IGamaColors.TOOLTIP.color());
 					textLayout.setText(provider.name);
 
-					for (int i = 0; i < providerMatchRegions.length; i++) {
-						final int[] matchRegion = providerMatchRegions[i];
+					for (final int[] matchRegion : providerMatchRegions) {
 						textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 					}
 
@@ -183,8 +180,7 @@ public class GamlAccessEntry {
 				textLayout.setText(label);
 				final TextStyle boldStyle = new TextStyle(GamaFonts.boldHelpFont, null, IGamaColors.TOOLTIP.color());
 
-				for (int i = 0; i < elementMatchRegions.length; i++) {
-					final int[] matchRegion = elementMatchRegions[i];
+				for (final int[] matchRegion : elementMatchRegions) {
 					textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 				}
 

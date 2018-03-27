@@ -7,3 +7,4 @@ Require-Bundle: msi.gama.core;bundle-version="1.7.0",
  msi.gama.ext;bundle-version="1.0.0"
 Bundle-ClassPath: .,
  lib/gephi-toolkit.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

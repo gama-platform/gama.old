@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.internal.navigator.AdaptabilityUtility;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionConstants;
@@ -78,10 +77,10 @@ public class OpenActionProvider extends CommonActionProvider {
 		if (ss == null || ss.size() != 1) { return; }
 		final Object o = ss.getFirstElement();
 		// first try IResource
-		IAdaptable openable = (IAdaptable) AdaptabilityUtility.getAdapter(o, IResource.class);
+		IAdaptable openable = CloseResourceAction.getAdapter(o, IResource.class);
 		// otherwise try ResourceMapping
 		if (openable == null) {
-			openable = (IAdaptable) AdaptabilityUtility.getAdapter(o, ResourceMapping.class);
+			openable = CloseResourceAction.getAdapter(o, ResourceMapping.class);
 		} else if (((IResource) openable).getType() != IResource.FILE) {
 			openable = null;
 		}

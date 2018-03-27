@@ -93,7 +93,7 @@ public class FocusStatement extends AbstractStatement {
 	public static final String TRUTH = "truth";
 	public static final String AGENTCAUSE = "agent_cause";
 
-	final IExpression name;
+	final IExpression nameExpression;
 	final IExpression variable;
 	final IExpression expression;
 	final IExpression belief;
@@ -109,7 +109,7 @@ public class FocusStatement extends AbstractStatement {
 
 	public FocusStatement(final IDescription desc) {
 		super(desc);
-		name = getFacet(IKeyword.NAME);
+		nameExpression = getFacet(IKeyword.NAME);
 		variable = getFacet(FocusStatement.VAR);
 		expression = getFacet(FocusStatement.EXPRESSION);
 		belief = getFacet(FocusStatement.BELIEF);
@@ -142,8 +142,8 @@ public class FocusStatement extends AbstractStatement {
 				// récupérer le nom précis des variables.
 				if (variable.value(scope) instanceof IContainer) {
 					String namePred;
-					if (name != null) {
-						namePred = (String) name.value(scope);
+					if (nameExpression != null) {
+						namePred = (String) nameExpression.value(scope);
 					} else {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
@@ -182,8 +182,8 @@ public class FocusStatement extends AbstractStatement {
 					}
 				} else {
 					String namePred;
-					if (name != null) {
-						namePred = (String) name.value(scope);
+					if (nameExpression != null) {
+						namePred = (String) nameExpression.value(scope);
 					} else {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
@@ -328,8 +328,8 @@ public class FocusStatement extends AbstractStatement {
 				}
 				if (expression != null) {
 					String namePred;
-					if (name != null) {
-						namePred = (String) name.value(scope);
+					if (nameExpression != null) {
+						namePred = (String) nameExpression.value(scope);
 					} else {
 						namePred = "expression" + "_" + scope.getAgent().getSpeciesName();
 					}
@@ -360,8 +360,8 @@ public class FocusStatement extends AbstractStatement {
 				} 
 				if(variable==null && belief == null && desire == null && uncertainty == null && ideal == null && emotion == null && expression == null){
 					String namePred = null;
-					if (name != null) {
-						namePred = (String) name.value(scope);
+					if (nameExpression != null) {
+						namePred = (String) nameExpression.value(scope);
 					}
 					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					tempPred = new Predicate(namePred, tempValues);

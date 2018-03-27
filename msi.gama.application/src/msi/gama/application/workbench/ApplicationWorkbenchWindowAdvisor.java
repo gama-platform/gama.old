@@ -108,7 +108,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowOpen() {
 		GAMA.getGui().openWelcomePage(true);
-
 	}
 
 }

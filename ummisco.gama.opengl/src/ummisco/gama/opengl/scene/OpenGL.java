@@ -162,10 +162,11 @@ public class OpenGL {
 		worldX = renderer.getEnvWidth();
 		worldY = renderer.getEnvHeight();
 		pickingState = renderer.getPickingState();
-		if (renderer instanceof JOGLRenderer)
+		if (renderer instanceof JOGLRenderer) {
 			geometryCache = new GeometryCache((JOGLRenderer) renderer);
-		else
+		} else {
 			geometryCache = null;
+		}
 		volatileTextures = CacheBuilder.newBuilder().build(new CacheLoader<BufferedImage, Texture>() {
 
 			@Override
@@ -204,8 +205,9 @@ public class OpenGL {
 
 	public void dispose() {
 		textRendererCache.dispose();
-		if (geometryCache != null)
+		if (geometryCache != null) {
 			geometryCache.dispose(gl);
+		}
 		volatileTextures.invalidateAll();
 		staticTextures.asMap().forEach((s, t) -> {
 			t.destroy(gl);
@@ -230,8 +232,9 @@ public class OpenGL {
 
 	public void setViewWidth(final int width) {
 		viewWidth = width;
-		if (originalViewWidth == 0)
+		if (originalViewWidth == 0) {
 			originalViewWidth = width;
+		}
 	}
 
 	public int getViewWidth() {
@@ -244,8 +247,9 @@ public class OpenGL {
 
 	public void setViewHeight(final int width) {
 		viewHeight = width;
-		if (originalViewHeight == 0)
+		if (originalViewHeight == 0) {
 			originalViewHeight = width;
+		}
 	}
 
 	public int getViewHeight() {
@@ -270,8 +274,9 @@ public class OpenGL {
 	 * translations are cumulative
 	 */
 	public void translateByZIncrement() {
-		if (!ZTranslationSuspended)
+		if (!ZTranslationSuspended) {
 			currentZTranslation += currentZIncrement;
+		}
 	}
 
 	public void suspendZTranslation() {
@@ -402,8 +407,9 @@ public class OpenGL {
 	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, final boolean solid,
 			final boolean clockwise, final boolean computeNormal, final Color border) {
 		if (solid) {
-			if (computeNormal)
+			if (computeNormal) {
 				setNormal(yNegatedVertices, clockwise);
+			}
 			final int style = number == 4 ? GL2.GL_QUADS : number == -1 ? GL2.GL_POLYGON : GL2.GL_TRIANGLES;
 			drawVertices(style, yNegatedVertices, number, clockwise);
 		}
@@ -441,8 +447,7 @@ public class OpenGL {
 	}
 
 	public void drawClosedLine(final ICoordinates yNegatedVertices, final Color color, final int number) {
-		if (color == null)
-			return;
+		if (color == null) { return; }
 		final Color previous = swapCurrentColor(color);
 		drawClosedLine(yNegatedVertices, number);
 		setCurrentColor(previous);
@@ -463,8 +468,9 @@ public class OpenGL {
 	 */
 	private void outputVertex(final double x, final double y, final double z) {
 		final double realZ = z * currentScale.z;
-		if (maxZ < realZ)
+		if (maxZ < realZ) {
 			maxZ = realZ;
+		}
 		gl.glVertex3d(x, y, z + currentZTranslation);
 	}
 
@@ -478,10 +484,12 @@ public class OpenGL {
 	}
 
 	public void drawVertex(final GamaPoint coords, final GamaPoint normal, final GamaPoint tex) {
-		if (normal != null)
+		if (normal != null) {
 			outputNormal(normal.x, normal.y, normal.z);
-		if (tex != null)
+		}
+		if (tex != null) {
 			gl.glTexCoord3d(tex.x, tex.y, tex.z);
+		}
 		outputVertex(coords.x, coords.y, coords.z);
 	}
 
@@ -643,15 +651,13 @@ public class OpenGL {
 	}
 
 	public void enablePrimaryTexture() {
-		if (primaryTexture == NO_TEXTURE)
-			return;
+		if (primaryTexture == NO_TEXTURE) { return; }
 		bindTexture(primaryTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
 
 	public void enableAlternateTexture() {
-		if (alternateTexture == NO_TEXTURE)
-			return;
+		if (alternateTexture == NO_TEXTURE) { return; }
 		bindTexture(alternateTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
@@ -678,8 +684,9 @@ public class OpenGL {
 	}
 
 	private void initializeStaticTexture(final File file) {
-		if (!texturesToProcess.contains(file.getAbsolutePath()))
+		if (!texturesToProcess.contains(file.getAbsolutePath())) {
 			texturesToProcess.add(file.getAbsolutePath());
+		}
 	}
 
 	public void processUnloadedTextures() {
@@ -693,7 +700,7 @@ public class OpenGL {
 	}
 
 	public Texture getTexture(final BufferedImage img) {
-		return volatileTextures.apply(img);
+		return volatileTextures.getUnchecked(img);
 	}
 
 	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
@@ -703,12 +710,13 @@ public class OpenGL {
 			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache);
 			texture = getTexture(image);
 
-		} else
+		} else {
 			try {
 				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl, file));
 			} catch (final ExecutionException e) {
 				e.printStackTrace();
 			}
+		}
 		return texture;
 	}
 
@@ -771,18 +779,19 @@ public class OpenGL {
 	// GEOMETRIES
 
 	public void cacheGeometry(final ResourceObject object) {
-		if (geometryCache != null)
+		if (geometryCache != null) {
 			geometryCache.saveGeometryToProcess(object);
+		}
 	}
 
 	public void processUnloadedGeometries() {
-		if (geometryCache != null)
+		if (geometryCache != null) {
 			geometryCache.processUnloadedGeometries(this);
+		}
 	}
 
 	public Envelope3D getEnvelopeFor(final GamaGeometryFile file) {
-		if (geometryCache != null)
-			return geometryCache.getEnvelope(file);
+		if (geometryCache != null) { return geometryCache.getEnvelope(file); }
 		return null;
 	}
 
@@ -799,8 +808,9 @@ public class OpenGL {
 	 *            the {x, y, z} coordinates
 	 */
 	public void rasterText(final String s, final int font, final double x, final double y, final double z) {
-		if (!inRasterTextMode)
+		if (!inRasterTextMode) {
 			beginRasterTextMode();
+		}
 		gl.glRasterPos3d(x, y, z);
 		glut.glutBitmapString(font, s);
 		exitRasterTextMode();
@@ -818,8 +828,9 @@ public class OpenGL {
 	 *            the sequence of {x, y, z} coordinates
 	 */
 	public void rasterText(final String[] seq, final int font, final double[] coords) {
-		if (!inRasterTextMode)
+		if (!inRasterTextMode) {
 			beginRasterTextMode();
+		}
 		for (int i = 0; i < seq.length; i++) {
 			gl.glRasterPos3d(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2] + currentZTranslation);
 			glut.glutBitmapString(font, seq[i]);
@@ -859,8 +870,9 @@ public class OpenGL {
 		if (r == null) { return; }
 		r.setUseVertexArrays(false);
 
-		if (getCurrentColor() != null)
+		if (getCurrentColor() != null) {
 			r.setColor(getCurrentColor());
+		}
 		final float scale = 1f / (float) (viewHeight / getWorldHeight());
 		r.begin3DRendering();
 		r.draw3D(string, (float) x, (float) y, (float) (z + currentZTranslation), scale);
@@ -874,8 +886,9 @@ public class OpenGL {
 				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
 		if (r == null) { return; }
 		r.setUseVertexArrays(false);
-		if (getCurrentColor() != null)
+		if (getCurrentColor() != null) {
 			r.setColor(getCurrentColor());
+		}
 		final float scale = 1f / (float) (viewHeight / getWorldHeight());
 		r.beginRendering(1, 1);
 		r.draw3D(string, (float) x, (float) y, (float) z, scale);
@@ -961,14 +974,13 @@ public class OpenGL {
 	}
 
 	public void drawCachedGeometry(final GamaGeometryFile file, final Color border) {
-		if (geometryCache == null)
-			return;
-		if (file == null)
-			return;
+		if (geometryCache == null) { return; }
+		if (file == null) { return; }
 		final Integer index = geometryCache.get(this, file);
-		if (index != null)
+		if (index != null) {
 			drawList(index);
-		if (border != null && !isWireframe()) {
+		}
+		if (border != null && !isWireframe() && index != null) {
 			final Color old = swapCurrentColor(border);
 			getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			drawList(index);
@@ -977,21 +989,22 @@ public class OpenGL {
 		}
 	}
 
-	public void drawCachedGeometry(final IShape.Type id, final Color border) {
-		if (geometryCache == null)
-			return;
-		if (id == null)
-			return;
+	public void drawCachedGeometry(final IShape.Type id, final boolean solid, final Color border) {
+		if (geometryCache == null) { return; }
+		if (id == null) { return; }
 		final BuiltInGeometry object = geometryCache.get(this, id);
-		if (object != null) {
-			object.draw(this);
-			if (border != null && !isWireframe()) {
-				final Color old = swapCurrentColor(border);
+		if (object != null) {	
+			if(solid && !isWireframe()) {
+				object.draw(this);								
+			}
+			
+			if(!solid || isWireframe() || border != null){
+				final Color old = swapCurrentColor(border!=null?border:getCurrentColor());
 				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 				object.draw(this);
 				setCurrentColor(old);
-				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-			}
+				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);				
+			} 
 		}
 	}
 
@@ -1106,10 +1119,11 @@ public class OpenGL {
 			beginDrawing(GL2.GL_QUAD_STRIP);
 			for (s = 0; s <= slices; s++) {
 				double a;
-				if (s == slices)
+				if (s == slices) {
 					a = 0.0f;
-				else
+				} else {
 					a = s * da;
+				}
 				sa = Math.sin(a);
 				ca = Math.cos(a);
 				outputTexCoord(0.5f + sa * r2 / dtc, 0.5f + ca * r2 / dtc);
@@ -1168,7 +1182,6 @@ public class OpenGL {
 
 		double da, r, dr, dz;
 		double x, y, z, nz;
-		final double nsign;
 		int i, j;
 		da = PI_2 / slices;
 		dr = (top - base) / stacks;

@@ -38,7 +38,7 @@ public class Webb {
 	public static final String HDR_USER_AGENT = Const.HDR_USER_AGENT;
 	public static final String HDR_AUTHORIZATION = "Authorization";
 
-	static final Map<String, Object> globalHeaders = new LinkedHashMap<String, Object>();
+	static final Map<String, Object> globalHeaders = new LinkedHashMap<>();
 	static String globalBaseUri;
 
 	static Integer connectTimeout = 10000; // 10 seconds
@@ -210,7 +210,7 @@ public class Webb {
 	 */
 	public void setDefaultHeader(final String name, final Object value) {
 		if (defaultHeaders == null) {
-			defaultHeaders = new HashMap<String, Object>();
+			defaultHeaders = new HashMap<>();
 		}
 		if (value == null) {
 			defaultHeaders.remove(name);
@@ -319,7 +319,7 @@ public class Webb {
 	}
 
 	private <T> Response<T> _execute(final Request request, final Class<T> clazz) {
-		final Response<T> response = new Response<T>(request);
+		final Response<T> response = new Response<>(request);
 
 		InputStream is = null;
 		boolean closeStream = true;
@@ -430,17 +430,9 @@ public class Webb {
 		// happen e.g. on 4.4.2/Moto G.
 		// Closing the stream in the try block might help sometimes (it's intermittently),
 		// but I don't want to deal with the IOException which can be thrown in close().
-		OutputStream os = null;
-		try {
-			os = connection.getOutputStream();
+		try (OutputStream os = connection.getOutputStream();) {
 			os.write(body);
 			os.flush();
-		} finally {
-			if (os != null) {
-				try {
-					os.close();
-				} catch (final Exception ignored) {}
-			}
 		}
 	}
 
@@ -459,20 +451,11 @@ public class Webb {
 
 		// "E/StrictMode﹕ A resource was acquired at attached stack trace but never released"
 		// see comments about this problem in #writeBody()
-		OutputStream os = null;
-		try {
-			os = connection.getOutputStream();
-			if (compress) {
-				os = new GZIPOutputStream(os);
-			}
+		try (final OutputStream os =
+				compress ? new GZIPOutputStream(connection.getOutputStream()) : connection.getOutputStream();) {
 			WebbUtils.copyStream(is, os);
 			os.flush();
 		} finally {
-			if (os != null) {
-				try {
-					os.close();
-				} catch (final Exception ignored) {}
-			}
 			if (is != null && closeStream) {
 				try {
 					is.close();
@@ -496,12 +479,12 @@ public class Webb {
 	Map<String, Object> mergeHeaders(final Map<String, Object> requestHeaders) {
 		Map<String, Object> headers = null;
 		if (!globalHeaders.isEmpty()) {
-			headers = new LinkedHashMap<String, Object>();
+			headers = new LinkedHashMap<>();
 			headers.putAll(globalHeaders);
 		}
 		if (defaultHeaders != null) {
 			if (headers == null) {
-				headers = new LinkedHashMap<String, Object>();
+				headers = new LinkedHashMap<>();
 			}
 			headers.putAll(defaultHeaders);
 		}

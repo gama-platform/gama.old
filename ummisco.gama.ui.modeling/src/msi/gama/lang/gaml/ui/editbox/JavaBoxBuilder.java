@@ -13,7 +13,9 @@ package msi.gama.lang.gaml.ui.editbox;
 public class JavaBoxBuilder extends BoxBuilderImpl {
 
 	@Override
-	protected void addLine(int start, final int end, int offset, final boolean empty) {
+	protected void addLine(final int s, final int end, final int o, final boolean empty) {
+		int start = s;
+		int offset = o;
 		// if (!empty && !startLineComment(start,end,offset,empty)) {
 		if ( !empty ) {
 			if ( startLineComment(start, end, offset, empty) ) {
@@ -52,7 +54,7 @@ public class JavaBoxBuilder extends BoxBuilderImpl {
 
 	private void updateEnds(final int start, final int end, final int n) {
 		Box b = currentbox;
-		int len = end - start;
+		final int len = end - start;
 		while (b != null) {
 			if ( b.offset <= n ) {
 				if ( b.maxLineLen < len ) {

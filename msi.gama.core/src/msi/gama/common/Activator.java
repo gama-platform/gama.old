@@ -22,11 +22,11 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		/* Early build of the contributions made by plugins to GAMA */
-		new Thread(() -> {
+//		new Thread(() -> {
 			GamaBundleLoader.preBuildContributions();
 			GamaExecutorService.startUp();
 			Dates.initialize();
-		}).start();
+//		}).start();
 
 	}
 

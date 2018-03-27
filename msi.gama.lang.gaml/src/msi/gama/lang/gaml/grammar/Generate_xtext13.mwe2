@@ -1,0 +1,88 @@
+module msi.gama.lang.gaml.GenerateGaml
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.ui.generator.*
+import java.util.*
+
+var baseName = "msi.gama.lang.gaml"
+var uiProjectName = "ummisco.gama.ui.modeling"
+var runtimeProject = baseName
+var ideProjectName = "${uiProjectName}"
+
+Workflow {
+	bean = StandaloneSetup {
+		scanClassPath = true
+		platformUri = "../${runtimeProject}/.."
+	}
+
+	component = DirectoryCleaner {
+		directory = "${runtimeProject}/src-gen"
+	}
+
+	component = DirectoryCleaner {
+		directory = "${ideProjectName}/src-gen"
+	}
+
+	component = XtextGenerator {
+		configuration = {
+			project = model.project.StandardProjectConfig {
+				baseName = "msi.gama.lang.gaml"
+				rootPath = ".."
+				runtime = {
+
+					name = runtimeProject
+				}
+				runtimeTest = {
+					enabled = false
+				}
+				eclipsePlugin = {
+					enabled = true
+					name = ideProjectName
+				}
+				genericIde = {
+					enabled = true
+					name = ideProjectName
+				}
+				eclipsePluginTest = {
+					enabled = false
+				}
+				createEclipseMetaData = true
+			}
+			code = {
+				preferXtendStubs = false
+				encoding = 'UTF-8'
+			}
+		}
+		language = StandardLanguage {
+			name = "msi.gama.lang.gaml.Gaml"
+			fileExtensions = "gaml,experiment"
+			validator = {
+				generateXtendStub = false
+			}
+			generator = {
+				generateXtendMain = false
+				generateXtendStub = false
+			}
+			contentAssist = {
+				generateXtendStub = false
+			}
+			formatter = {
+				generateXtendStub = false
+			}
+			junitSupport = {
+				generateXtendStub = false
+			}
+			labelProvider = {
+				generateXtendStub = false
+			}
+			scopeProvider = {
+				generateXtendStub = false
+			}
+			serializer = {
+				generateXtendStub = false
+			}
+		}
+
+	}
+}

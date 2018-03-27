@@ -49,10 +49,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	public AbstractNAryOperator(final OperatorProto proto, final IExpression... expressions) {
 		// Copy introduced in order to circumvent issue 1060
-		if (expressions.length == 0 || expressions[0] == null)
+		if (expressions.length == 0 || expressions[0] == null) {
 			exprs = null;
-		else
+		} else {
 			exprs = Arrays.copyOf(expressions, expressions.length);
+		}
 		this.prototype = proto;
 		if (prototype != null) {
 			type = prototype.returnType;
@@ -82,7 +83,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		final IType t = computeType(typeProvider, defaultType, kind);
 		if (t.isContainer() && contentTypeProvider != ITypeProvider.NONE) {
 			final IType c = computeType(contentTypeProvider, t.getContentType(), GamaType.CONTENT);
-			if (c != Types.NO_TYPE) { return ((IContainerType) t).of(c); }
+			if (c != Types.NO_TYPE) { return ((IContainerType<?>) t).of(c); }
 		}
 		return t;
 	}
@@ -95,12 +96,14 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			case NONE:
 				return defaultType;
 			case BOTH:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return GamaType.findCommonType(exprs, kind);
 			case FIRST_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[0].getType();
 			case FIRST_CONTENT_TYPE_OR_TYPE:
 				final IType leftType = exprs[0].getType();
@@ -108,35 +111,42 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				if (t2 == Types.NO_TYPE) { return leftType; }
 				return t2;
 			case SECOND_DENOTED_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[1].getDenotedType();
 			case SECOND_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[1].getType();
 			case FIRST_CONTENT_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[0].getType().getContentType();
 			case FIRST_KEY_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[0].getType().getKeyType();
 			case SECOND_CONTENT_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[1].getType().getContentType();
 			case SECOND_CONTENT_TYPE_OR_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				final IType rightType = exprs[1].getType();
 				final IType t3 = rightType.getContentType();
 				if (t3 == Types.NO_TYPE) { return rightType; }
 				return t3;
 			case SECOND_KEY_TYPE:
-				if (exprs == null)
+				if (exprs == null) {
 					return defaultType;
+				}
 				return exprs[1].getType().getKeyType();
 			default:
 				return typeProvider >= 0 ? Types.get(typeProvider) : defaultType;
@@ -148,20 +158,22 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
 		final AbstractNAryOperator copy = copy();
-		if (exprs != null)
+		if (exprs != null) {
 			for (int i = 0; i < exprs.length; i++) {
 				copy.exprs[i] = exprs[i].resolveAgainst(scope);
 			}
+		}
 		return copy;
 	}
 
 	@Override
 	public boolean isConst() {
 		if (!prototype.canBeConst) { return false; }
-		if (exprs != null)
+		if (exprs != null) {
 			for (int i = 0; i < exprs.length; i++) {
 				if (!exprs[i].isConst()) { return false; }
 			}
+		}
 		return true;
 	}
 
@@ -205,8 +217,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public IExpression arg(final int i) {
 		if (exprs == null) { return null; }
-		if (i >= exprs.length)
+		if (i >= exprs.length) {
 			return null;
+		}
 		return exprs[i];
 	}
 
@@ -248,20 +261,22 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	public void collectMetaInformation(final GamlProperties meta) {
 		prototype.collectMetaInformation(meta);
 		meta.put(GamlProperties.OPERATORS, prototype.getName());
-		if (exprs != null)
+		if (exprs != null) {
 			for (final IExpression e : exprs) {
 				if (e != null) {
 					e.collectMetaInformation(meta);
 				}
 			}
+		}
 	}
 
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		if (exprs != null) {
 			for (final IExpression e : exprs) {
-				if (e != null)
+				if (e != null) {
 					e.collectUsedVarsOf(species, result);
+				}
 			}
 		}
 	}

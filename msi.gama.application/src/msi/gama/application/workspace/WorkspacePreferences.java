@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -33,8 +34,7 @@ public class WorkspacePreferences {
 	static String selectedWorkspaceRootLocation;
 	static boolean applyPrefs;
 	public static final String WS_IDENTIFIER = ".gama_application_workspace";
-	public static final String MODEL_IDENTIFIER = getCurrentGamaStampString();
-	public static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
+	private static String MODEL_IDENTIFIER = null;
 
 	public static String getSelectedWorkspaceRootLocation() {
 		return selectedWorkspaceRootLocation;
@@ -58,7 +58,8 @@ public class WorkspacePreferences {
 
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			System.out.println(">GAMA version " + BUILTIN_VERSION + " loading...");
+			System.out.println(
+				">GAMA version " + Platform.getProduct().getDefiningBundle().getVersion().toString() + " loading...");
 			System.out.println(">GAMA models library version: " + gamaStamp);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
@@ -79,7 +80,7 @@ public class WorkspacePreferences {
 			}
 
 			@Override
-			public Map getMapping(final String scope) {
+			public Map<String, PreferenceFilterEntry[]> getMapping(final String scope) {
 				return null;
 			}
 		};
@@ -99,11 +100,9 @@ public class WorkspacePreferences {
 		final IPreferencesService service = Platform.getPreferencesService();
 		IExportedPreferences prefs;
 
-		try {
-			final FileInputStream input = new FileInputStream(new File(targetDirectory + "/.gama.epf"));
+		try (FileInputStream input = new FileInputStream(new File(targetDirectory + "/.gama.epf"))) {
 			prefs = service.readPreferences(input);
 			service.applyPreferences(prefs, WorkspacePreferences.getPreferenceFilters());
-			input.close();
 		} catch (final IOException e) {} catch (final CoreException e) {}
 		WorkspacePreferences.setApplyPrefs(false);
 
@@ -131,18 +130,16 @@ public class WorkspacePreferences {
 		if ( !f.exists() ) {
 			if ( askCreate ) {
 				final boolean create =
-					MessageDialog
-						.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
-							workspaceLocation +
-								" does not exist. Would you like to create a new workspace here" + (cloning
-									? ", copy the projects and preferences of an existing workspace into it, " : "") +
-								" and proceeed ?");
+					MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
+						workspaceLocation + " does not exist. Would you like to create a new workspace here" +
+							(cloning ? ", copy the projects and preferences of an existing workspace into it, " : "") +
+							" and proceeed ?");
 				if ( create ) {
 					try {
 						f.mkdirs();
 						final File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
-						final File dotFile = new File(workspaceLocation + File.separator + MODEL_IDENTIFIER);
+						final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 						dotFile.createNewFile();
 					} catch (final RuntimeException err) {
 						err.printStackTrace();
@@ -196,7 +193,7 @@ public class WorkspacePreferences {
 		} else {
 			if ( !wsTest.exists() ) { return "The selected directory is not a workspace directory"; }
 		}
-		final File dotFile = new File(workspaceLocation + File.separator + MODEL_IDENTIFIER);
+		final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 		if ( !dotFile.exists() ) {
 			if ( fromDialog ) {
 				final boolean create = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
@@ -219,6 +216,13 @@ public class WorkspacePreferences {
 			if ( !b ) { return ""; }
 		}
 		return null;
+	}
+
+	public static String getModelIdentifier() {
+		if ( MODEL_IDENTIFIER == null ) {
+			MODEL_IDENTIFIER = getCurrentGamaStampString();
+		}
+		return MODEL_IDENTIFIER;
 	}
 
 }

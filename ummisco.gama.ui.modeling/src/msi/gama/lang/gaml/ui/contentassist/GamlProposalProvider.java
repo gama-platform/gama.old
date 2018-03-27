@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlProposalProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlProposalProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -39,11 +38,9 @@ import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
 
 /**
- * see
- * http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on
- * how to customize content assistant
+ * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#contentAssist on how to customize content assistant
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	// private static Set<String> typeList;
@@ -56,12 +53,12 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// ImageDescriptor.createFromFile(GamlProposalProvider.class,
 	// "/icons/_facet.png")
 	// .createImage();
-	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png")
-			.createImage();
-	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png")
-			.createImage();
-	private static Image actionImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png")
-			.createImage();
+	private static Image typeImage =
+			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png").createImage();
+	private static Image varImage =
+			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png").createImage();
+	private static Image actionImage =
+			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png").createImage();
 
 	// private static Image skillImage =
 	// ImageDescriptor.createFromFile(GamlProposalProvider.class,
@@ -125,9 +122,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			}
 
 			if (context.getPrefix().equals(".")) {
-				if (isOperator) {
-					return null;
-				}
+				if (isOperator) { return null; }
 				if (cp != null && cp.getPriority() > 500) {
 					cp.setPriority(200);
 				}
@@ -193,7 +188,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	}
 
 	@Override
-	protected String getDisplayString(final EObject element, String qualifiedNameAsString, final String shortName) {
+	protected String getDisplayString(final EObject element, final String q, final String shortName) {
+		String qualifiedNameAsString = q;
 		if (qualifiedNameAsString == null) {
 			qualifiedNameAsString = shortName;
 		}
@@ -226,12 +222,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		// Disabling for comments (see Issue 786)
 		final EObject grammarElement = context.getCurrentNode().getGrammarElement();
-		if (grammarElement == ga.getML_COMMENTRule()) {
-			return;
-		}
-		if (grammarElement == ga.getSL_COMMENTRule()) {
-			return;
-		}
+		if (grammarElement == ga.getML_COMMENTRule()) { return; }
+		if (grammarElement == ga.getSL_COMMENTRule()) { return; }
 		//
 		addBuiltInElements(context, acceptor);
 		super.createProposals(context, acceptor);
@@ -240,15 +232,14 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	/**
 	 * @see org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider#doCreateProposal(java.lang.String,
-	 *      org.eclipse.jface.viewers.StyledString,
-	 *      org.eclipse.swt.graphics.Image, int,
+	 *      org.eclipse.jface.viewers.StyledString, org.eclipse.swt.graphics.Image, int,
 	 *      org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext)
 	 */
 	@Override
 	protected ConfigurableCompletionProposal doCreateProposal(final String proposal, final StyledString displayString,
 			final Image image, final int priority, final ContentAssistContext context) {
-		final ConfigurableCompletionProposal cp = super.doCreateProposal(proposal, displayString, image, priority,
-				context);
+		final ConfigurableCompletionProposal cp =
+				super.doCreateProposal(proposal, displayString, image, priority, context);
 		return cp;
 	}
 
@@ -256,11 +247,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	 * @param context
 	 * @param acceptor
 	 * 
-	 *            TODO Filter the proposals (passing an argument ?) depending on
-	 *            the context in the dispatcher (see commented methods below).
-	 *            TODO Build this list at once instead of recomputing it
-	 *            everytime (might be done in a dedicated data structure
-	 *            somewhere) and separate it by types (vars, units, etc.)
+	 *            TODO Filter the proposals (passing an argument ?) depending on the context in the dispatcher (see
+	 *            commented methods below). TODO Build this list at once instead of recomputing it everytime (might be
+	 *            done in a dedicated data structure somewhere) and separate it by types (vars, units, etc.)
 	 */
 	private void addBuiltInElements(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		if (proposals.isEmpty()) {
@@ -315,8 +304,8 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 		}
 		for (final BuiltInProposal bi : proposals) {
-			final ICompletionProposal cp = createCompletionProposal(bi.name, bi.title, bi.image, 1000,
-					context.getPrefix(), context);
+			final ICompletionProposal cp =
+					createCompletionProposal(bi.name, bi.title, bi.image, 1000, context.getPrefix(), context);
 			if (cp == null) {
 				// scope.getGui().debug("GamlProposalProvider.addBuiltInElements
 				// null for " + t);
@@ -332,8 +321,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	/**
 	 * @see org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider#doCreateProposal(java.lang.String,
-	 *      org.eclipse.jface.viewers.StyledString,
-	 *      org.eclipse.swt.graphics.Image, int, int)
+	 *      org.eclipse.jface.viewers.StyledString, org.eclipse.swt.graphics.Image, int, int)
 	 */
 	@Override
 	protected ConfigurableCompletionProposal doCreateProposal(final String proposal, final StyledString displayString,
@@ -350,10 +338,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	@Override
 	protected boolean isValidProposal(final String proposal, final String prefix, final ContentAssistContext context) {
-		if (prefix.equals(".")) {
-			return !types.contains(proposal) && !units.contains(proposal) && !constants.contains(proposal)
-					&& !skills.contains(proposal) && isValidProposal(proposal, "", context);
-		}
+		if (prefix.equals(
+				".")) { return !types.contains(proposal) && !units.contains(proposal) && !constants.contains(proposal)
+						&& !skills.contains(proposal) && isValidProposal(proposal, "", context); }
 		return super.isValidProposal(proposal, prefix, context);
 	}
 

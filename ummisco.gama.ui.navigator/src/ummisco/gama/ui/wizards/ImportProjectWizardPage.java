@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -272,7 +272,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			final String path =
 					projectSystemFile == null ? structureProvider.getLabel(parent) : projectSystemFile.getParent();
 
-			return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
+					return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
 		}
 
 		/**
@@ -470,7 +470,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		listComposite.setLayout(layout);
 
 		listComposite
-				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
+		.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -941,12 +941,12 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 		// Initialize recursion guard for recursive symbolic links
 		if (directoriesVisited == null) {
-			directoriesVisited = new HashSet<String>();
+			directoriesVisited = new HashSet<>();
 			try {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (final IOException exception) {
 				StatusManager.getManager()
-						.handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
+				.handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
 			}
 		}
 
@@ -1001,7 +1001,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 				structureProvider.getLabel(entry)));
 		List<?> children = structureProvider.getChildren(entry);
 		if (children == null) {
-			children = new ArrayList<Object>(1);
+			children = new ArrayList<>(1);
 		}
 		final Iterator<?> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
@@ -1089,20 +1089,20 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		saveWidgetValues();
 
 		final Object[] selected = projectsList.getCheckedElements();
-		createdProjects = new ArrayList<IProject>();
+		createdProjects = new ArrayList<>();
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			@Override
 			protected void execute(final IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
-					monitor.beginTask("", selected.length); //$NON-NLS-1$
+					final SubMonitor m = SubMonitor.convert(monitor,selected.length);
 					if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 					// Import as many projects as we can; accumulate errors to
 					// report to the user
 					final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 							DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid, null);
 					for (final Object element : selected) {
-						status.add(createExistingProject((ProjectRecord) element, new SubProgressMonitor(monitor, 1)));
+						status.add(createExistingProject((ProjectRecord) element, m.split(1)));
 					}
 					if (!status.isOK()) { throw new InvocationTargetException(new CoreException(status)); }
 				} finally {
@@ -1205,7 +1205,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 				final IProjectDescription desc = workspace.newProjectDescription(projectName);
 				desc.setBuildSpec(record.description.getBuildSpec());
 				desc.setComment(record.description.getComment());
-				desc.setDynamicReferences(record.description.getDynamicReferences());
+				//				desc.setDynamicReferences(record.description.getDynamicReferences());
 				desc.setNatureIds(record.description.getNatureIds());
 				desc.setReferencedProjects(record.description.getReferencedProjects());
 				record.description = desc;
@@ -1213,9 +1213,9 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		}
 
 		try {
-			monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 100);
-			project.create(record.description, new SubProgressMonitor(monitor, 30));
-			project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 70));
+			final SubMonitor m = SubMonitor.convert(monitor,DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 100);
+			project.create(record.description, m.split(30));
+			project.open(IResource.BACKGROUND_REFRESH, m.split(70));
 		} catch (final CoreException e) {
 			return e.getStatus();
 		} finally {
@@ -1282,7 +1282,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 * @return ProjectRecord[] array of projects that can be imported into the workspace
 	 */
 	public ProjectRecord[] getProjectRecords() {
-		final List<ProjectRecord> projectRecords = new ArrayList<ProjectRecord>();
+		final List<ProjectRecord> projectRecords = new ArrayList<>();
 		for (int i = 0; i < selectedProjects.length; i++) {
 			final String projectName = selectedProjects[i].getProjectName();
 			selectedProjects[i].hasConflicts =

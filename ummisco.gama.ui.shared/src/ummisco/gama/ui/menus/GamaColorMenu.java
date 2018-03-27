@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.menus;
 
+import static msi.gama.util.GamaColor.colors;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +33,7 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The class EditToolbarColorMenu.
@@ -74,13 +77,16 @@ public class GamaColorMenu extends GamaMenu {
 	private SelectionListener currentListener;
 
 	private static Integer reverse = null;
-	public static Comparator byRGB =
-			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
-	public static Comparator byBrightness =
-			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareBrightnessTo(GamaColor.colors.get(arg1));
-	public static Comparator byName = (arg0, arg1) -> getReverse() * arg0.toString().compareTo(arg1.toString());
-	public static Comparator byLuminescence =
-			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
+
+	public static Comparator<String> byRGB = (a, b) -> getReverse() * colors.get(a).compareTo(colors.get(b));
+
+	public static Comparator<String> byBrightness =
+			(a, b) -> getReverse() * colors.get(a).compareBrightnessTo(colors.get(b));
+
+	public static Comparator<String> byName = (a, b) -> getReverse() * a.compareTo(b);
+
+	public static Comparator<String> byLuminescence =
+			(a, b) -> getReverse() * GamaColor.colors.get(a).compareTo(GamaColor.colors.get(b));
 	public static Comparator colorComp = null;
 	public SelectionListener chooseSort = new SelectionAdapter() {
 
@@ -94,26 +100,14 @@ public class GamaColorMenu extends GamaMenu {
 	};
 
 	public static Boolean breakdown = null;
-	SelectionListener chooseBreak = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			final MenuItem item = (MenuItem) e.widget;
-			breakdown = !breakdown;
-			reset();
-		}
-
+	Selector chooseBreak = e -> {
+		breakdown = !breakdown;
+		reset();
 	};
 
-	SelectionListener chooseReverse = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			final MenuItem item = (MenuItem) e.widget;
-			setReverse(-1 * getReverse());
-			reset();
-		}
-
+	Selector chooseReverse = e -> {
+		setReverse(-1 * getReverse());
+		reset();
 	};
 
 	public static void openView(final IColorRunnable runnable, final RGB initial) {

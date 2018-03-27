@@ -369,7 +369,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		agent = pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
+		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
 		addDefaultParameters();
 	}
 

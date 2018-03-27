@@ -12,6 +12,7 @@ package ummisco.gama.opengl.vaoGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -202,7 +203,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		float YSize = (maxY - minY) / 2 == 0 ? 1 : (maxY - minY) / 2;
 		float ZSize = this.depth == 0 ? 1 : (float) this.depth;
 
-		final Scaling3D attrSize = Objects.firstNonNull(geomObj.getDimensions(), Scaling3D.of(1));
+		final Scaling3D attrSize = MoreObjects.firstNonNull(geomObj.getDimensions(), Scaling3D.of(1));
 
 		if (isSphere()) {
 			final float realSize = Math.max(YSize, XSize);

@@ -18,6 +18,6 @@ package msi.gama.lang.gaml;
 public class GamlStandaloneSetup extends GamlStandaloneSetupGenerated {
 
 	public static void doSetup() {
-		new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		new GamlStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 	}
 }

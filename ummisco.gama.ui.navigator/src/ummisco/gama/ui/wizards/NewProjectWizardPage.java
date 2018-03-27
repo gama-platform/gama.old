@@ -108,8 +108,9 @@ public class NewProjectWizardPage extends WizardPage {
 			if (infoOnly) {
 				setMessage(errorMessage, IStatus.INFO);
 				setErrorMessage(null);
-			} else
+			} else {
 				setErrorMessage(errorMessage);
+			}
 			boolean valid = errorMessage == null;
 			if (valid) {
 				valid = validatePage();
@@ -152,10 +153,11 @@ public class NewProjectWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				isTest = test.getSelection();
-				if (isTest)
+				if (isTest) {
 					newModel.setText("Create a new test experiment file");
-				else
+				} else {
 					newModel.setText("Create a new model file");
+				}
 				projectGroup.layout();
 			}
 		});
@@ -312,7 +314,7 @@ public class NewProjectWizardPage extends WizardPage {
 			return false;
 		}
 
-		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
+		// final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
 		// locationArea.setExistingProject(project);
 
 		// final String validLocationMessage = locationArea.checkValidLocation();

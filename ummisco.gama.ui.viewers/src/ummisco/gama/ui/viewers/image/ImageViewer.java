@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -82,7 +82,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * A simple image viewer editor.
  */
 public class ImageViewer extends EditorPart
-		implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
+implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	GamaToolbar2 toolbar;
 	private Image image;
@@ -507,11 +507,11 @@ public class ImageViewer extends EditorPart
 			final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
 		// the generation of the image data doesn't report progress
-		monitor.beginTask(dest.getFullPath().toPortableString(), IProgressMonitor.UNKNOWN/* taskSize */);
+		final SubMonitor m = SubMonitor.convert(monitor, dest.getFullPath().toPortableString(), IProgressMonitor.UNKNOWN/* taskSize */);
 		try {
 			if (!dest.getParent().exists()) {
 				final ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
-				gen.generateContainer(new SubProgressMonitor(monitor, 500));
+				gen.generateContainer(m.split(500));
 				if (monitor.isCanceled()) { throw new InterruptedException(); }
 			}
 			final ImageLoader loader = new ImageLoader();
@@ -545,8 +545,8 @@ public class ImageViewer extends EditorPart
 					if (!status.isOK()) {
 						final IStatus fstatus = status;
 						getSite().getShell().getDisplay()
-								.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), "Error Saving",
-										MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus));
+						.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), "Error Saving",
+								MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus));
 					}
 					return Status.OK_STATUS;
 				}
@@ -555,8 +555,8 @@ public class ImageViewer extends EditorPart
 			writeJob.setUser(false);
 			writeJob.schedule();
 
-			final BufferedInputStream in = new BufferedInputStream(pin);
-			try {
+
+			try (final BufferedInputStream in = new BufferedInputStream(pin)) {
 				// try reading one byte to make sure that loader.save() actually
 				// worked before we destroy or create a file.
 				in.mark(1);
@@ -566,14 +566,12 @@ public class ImageViewer extends EditorPart
 				if (first != -1) {
 					in.reset();
 					if (dest.exists()) {
-						dest.setContents(in, true, true, new SubProgressMonitor(monitor, 500));
+						dest.setContents(in, true, true, m.split(500));
 					} else {
-						dest.create(in, true, new SubProgressMonitor(monitor, 500));
+						dest.create(in, true, m.split(500));
 					}
 				}
-			} finally {
-				in.close();
-			}
+			} 
 		} finally {
 			monitor.done();
 		}
@@ -622,7 +620,8 @@ public class ImageViewer extends EditorPart
 	 * passed in value is larger than the {@link #getMaxZoomFactor() max zoom factor}, the max zoom factor will used
 	 * instead.
 	 */
-	public void setZoomFactor(double newZoom) {
+	public void setZoomFactor(final double z) {
+		double newZoom = z;
 		// don't go bigger than the maz zoom
 		newZoom = Math.min(newZoom, maxZoomFactor);
 		if (zoomFactor != newZoom && newZoom > 0.0d) {

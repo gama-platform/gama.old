@@ -3,59 +3,56 @@
  */
 package msi.gama.lang.gaml;
 
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.ISetup;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import msi.gama.lang.gaml.gaml.GamlPackage;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.xtext.ISetup;
+import org.eclipse.xtext.XtextPackage;
+import org.eclipse.xtext.resource.IResourceFactory;
+import org.eclipse.xtext.resource.IResourceServiceProvider;
+import org.eclipse.xtext.resource.impl.BinaryGrammarResourceFactoryImpl;
 
-/**
- * Generated from StandaloneSetup.xpt!
- */
-@SuppressWarnings ("all")
+@SuppressWarnings("all")
 public class GamlStandaloneSetupGenerated implements ISetup {
 
 	@Override
 	public Injector createInjectorAndDoEMFRegistration() {
 		// register default ePackages
 		if (!Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().containsKey("ecore"))
-			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore",
-					new org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl());
+			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
+				"ecore", new EcoreResourceFactoryImpl());
 		if (!Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().containsKey("xmi"))
-			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi",
-					new org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl());
+			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
+				"xmi", new XMIResourceFactoryImpl());
 		if (!Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().containsKey("xtextbin"))
-			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xtextbin",
-					new org.eclipse.xtext.resource.impl.BinaryGrammarResourceFactoryImpl());
-		if (!EPackage.Registry.INSTANCE.containsKey(org.eclipse.xtext.XtextPackage.eNS_URI))
-			EPackage.Registry.INSTANCE.put(org.eclipse.xtext.XtextPackage.eNS_URI,
-					org.eclipse.xtext.XtextPackage.eINSTANCE);
+			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
+				"xtextbin", new BinaryGrammarResourceFactoryImpl());
+		if (!EPackage.Registry.INSTANCE.containsKey(XtextPackage.eNS_URI))
+			EPackage.Registry.INSTANCE.put(XtextPackage.eNS_URI, XtextPackage.eINSTANCE);
 
-		final Injector injector = createInjector();
+		Injector injector = createInjector();
 		register(injector);
 		return injector;
 	}
-
+	
 	public Injector createInjector() {
-		return Guice.createInjector(new msi.gama.lang.gaml.GamlRuntimeModule());
+		return Guice.createInjector(new GamlRuntimeModule());
 	}
-
-	public void register(final Injector injector) {
+	
+	public void register(Injector injector) {
 		if (!EPackage.Registry.INSTANCE.containsKey("http://www.gama.msi/lang/gaml/Gaml")) {
-			EPackage.Registry.INSTANCE.put("http://www.gama.msi/lang/gaml/Gaml",
-					msi.gama.lang.gaml.gaml.GamlPackage.eINSTANCE);
+			EPackage.Registry.INSTANCE.put("http://www.gama.msi/lang/gaml/Gaml", GamlPackage.eINSTANCE);
 		}
-		final org.eclipse.xtext.resource.IResourceFactory resourceFactory =
-				injector.getInstance(org.eclipse.xtext.resource.IResourceFactory.class);
-		final org.eclipse.xtext.resource.IResourceServiceProvider serviceProvider =
-				injector.getInstance(org.eclipse.xtext.resource.IResourceServiceProvider.class);
+		IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
+		IResourceServiceProvider serviceProvider = injector.getInstance(IResourceServiceProvider.class);
+		
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("gaml", resourceFactory);
-		org.eclipse.xtext.resource.IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("gaml",
-				serviceProvider);
+		IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("gaml", serviceProvider);
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("experiment", resourceFactory);
-		org.eclipse.xtext.resource.IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap()
-				.put("experiment", serviceProvider);
-
+		IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("experiment", serviceProvider);
 	}
 }

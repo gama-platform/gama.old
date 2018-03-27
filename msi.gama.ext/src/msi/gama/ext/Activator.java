@@ -34,7 +34,12 @@ public class Activator implements BundleActivator {
 		// Forces early initialisation of operation registry of JAI.
 		// It fixes initialisation problems in some third party equinox
 		// applications such as OpenMOLE.
-		javax.media.jai.JAI.getDefaultInstance().getOperationRegistry().getRegistryModes();
+
+		final String os = System.getProperty("os.name");
+//		if (!os.startsWith("Mac")) {
+				javax.media.jai.JAI.getDefaultInstance().getOperationRegistry().getRegistryModes();
+//		}
+				System.out.println("JAI activated");
 	}
 
 	/*

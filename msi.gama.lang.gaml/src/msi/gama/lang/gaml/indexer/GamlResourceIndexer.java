@@ -286,7 +286,7 @@ public class GamlResourceIndexer {
 	 */
 	public static Iterator<URI> allImportsOf(final URI uri) {
 		if (!indexes(uri))
-			return Iterators.emptyIterator();
+			return Iterators.singletonIterator(uri);//.emptyIterator();
 		final Iterator<URI> result = new BreadthFirstIterator(index, GamlResourceServices.properlyEncodedURI(uri));
 		result.next(); // to eliminate the uri
 		return result;

@@ -13,7 +13,7 @@
 	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-windows-amd64.jar"/>
 	<classpathentry exported="true" kind="lib" path="gluegen-rt-natives-windows-i586.jar"/>
-	<classpathentry exported="true" kind="lib" path="gluegen-rt.jar" sourcepath="gluegen.2.3.2.zip"/>
+	<classpathentry exported="true" kind="lib" path="gluegen-rt.jar" sourcepath="gluegen.2.3.2.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all-natives-linux-amd64.jar"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all-natives-linux-i586.jar"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all-natives-macosx-universal.jar"/>

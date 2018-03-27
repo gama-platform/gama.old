@@ -4,7 +4,7 @@ Bundle-Name: Viewers
 Bundle-SymbolicName: ummisco.gama.ui.viewers;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Bundle-Vendor: UMMISCO
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.workbench,
  org.eclipse.core.resources,

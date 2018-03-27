@@ -329,7 +329,7 @@ public interface IMatrix<T>
 			masterDoc = true,
 			examples = { @example (
 					value = "transpose(matrix([[5,-3],[6,-4]]))",
-					equals = "[[5,6],[-3,-4]]") })
+					equals = "matrix([[5,6],[-3,-4]])") })
 	public abstract IMatrix transpose(IScope scope) throws GamaRuntimeException;
 
 	@operator (
@@ -343,8 +343,8 @@ public interface IMatrix<T>
 			value = "The inverse matrix of the given matrix. If no inverse exists, returns a matrix that has properties that resemble that of an inverse.",
 			masterDoc = true,
 			examples = { @example (
-					value = "inverse(matrix([[5,-3],[6,-4]]))",
-					equals = "[2.0000000000000004,-0.9999999999999998]") })
+					value = "inverse(matrix([[4,3],[3,2]]))",
+					equals = "matrix([[-2.0,3.0],[3.0,-4.0]])") })
 	public abstract IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException;
 
 	@Override

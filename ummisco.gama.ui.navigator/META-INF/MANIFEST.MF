@@ -3,26 +3,25 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Navigator
 Bundle-SymbolicName: ummisco.gama.ui.navigator;singleton:=true
 Bundle-Version: 1.7.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
- JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: ummisco.gama.ui.shared,
- org.eclipse.swt;bundle-version="3.104.2",
- org.eclipse.core.resources;bundle-version="3.10.1",
- org.eclipse.core.runtime;bundle-version="3.11.1",
- org.eclipse.ui;bundle-version="3.107.0",
- org.eclipse.ui.navigator;bundle-version="3.6.0",
+ org.eclipse.swt,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.navigator,
  org.eclipse.jface,
  org.eclipse.ui.workbench,
- org.eclipse.ui.ide;bundle-version="3.11.0",
- org.eclipse.ui.navigator.resources;bundle-version="3.5.1",
+ org.eclipse.ui.ide,
+ org.eclipse.ui.navigator.resources,
  msi.gama.core,
  msi.gama.application,
- msi.gama.ext;bundle-version="1.7.0",
- org.eclipse.core.expressions;bundle-version="3.5.0",
- org.eclipse.team.ui;bundle-version="3.7.200",
+ msi.gama.ext,
+ org.eclipse.core.expressions,
+ org.eclipse.team.ui,
  org.eclipse.compare,
  org.eclipse.ltk.core.refactoring,
- org.eclipse.ltk.ui.refactoring;bundle-version="3.7.200",
+ org.eclipse.ltk.ui.refactoring,
  com.google.guava
 Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gama.ui.commands,

@@ -63,7 +63,6 @@ openFile
    <launcher name="Gama">
       <linux icon="launcher_icons/icon.xpm"/>
       <macosx icon="launcher_icons/icon.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="launcher_icons/icon.ico"/>
          <bmp
@@ -78,7 +77,10 @@ openFile
    </launcher>
 
    <vm>
+      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
+      <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
 
    <license>

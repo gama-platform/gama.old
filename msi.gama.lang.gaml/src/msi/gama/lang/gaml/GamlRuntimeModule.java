@@ -159,4 +159,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 				.to(org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
 	}
 
+	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
+	public Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
+		return msi.gama.lang.gaml.formatting.GamlFormatter.class;
+	}
 }

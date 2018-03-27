@@ -38,6 +38,7 @@ import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Point;
+import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Equations;
@@ -55,6 +56,7 @@ import msi.gama.lang.gaml.gaml.impl.BlockImpl;
 import msi.gama.lang.gaml.gaml.impl.ExpressionListImpl;
 import msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
+import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
 import msi.gama.lang.gaml.gaml.impl.S_EquationsImpl;
 import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
@@ -141,7 +143,7 @@ public class EGaml {
 	public static Map<String, Facet> getFacetsMapOf(final Statement s) {
 		final List<Facet> list = getFacetsOf(s);
 		if (list.isEmpty()) { return Collections.EMPTY_MAP; }
-		final Map<String, Facet> map = new TOrderedHashMap<String, Facet>();
+		final Map<String, Facet> map = new TOrderedHashMap<>();
 		for (final Facet f : list) {
 			map.put(getKeyOf(f), f);
 		}
@@ -154,6 +156,12 @@ public class EGaml {
 		@Override
 		public Boolean caseModel(final Model object) {
 			return ((ModelImpl) object).eIsSet(GamlPackage.MODEL__BLOCK);
+		}
+
+		@Override
+		public Boolean caseS_Action(final S_Action object) {
+			if (((S_ActionImpl) object).eIsSet(GamlPackage.SACTION__ARGS)) { return true; }
+			return caseStatement(object);
 		}
 
 		@Override
@@ -246,8 +254,7 @@ public class EGaml {
 	 * @return the key of
 	 */
 	public static String getKeyOf(final EObject f) {
-		if (f == null)
-			return null;
+		if (f == null) { return null; }
 		return getKeyOf(f, f.eClass());
 	}
 
@@ -326,8 +333,7 @@ public class EGaml {
 	 */
 	public static String getNameOfRef(final EObject o) {
 		final ICompositeNode n = NodeModelUtils.getNode(o);
-		if (n != null)
-			return NodeModelUtils.getTokenText(n);
+		if (n != null) { return NodeModelUtils.getTokenText(n); }
 		if (o instanceof VariableRef) {
 			return ((VariableRef) o).getRef().getName();
 		} else if (o instanceof UnitName) {
@@ -340,8 +346,9 @@ public class EGaml {
 			return ((EquationRef) o).getRef().getName();
 		} else if (o instanceof TypeRef) {
 			return ((TypeRef) o).getRef().getName();
-		} else
+		} else {
 			return "";
+		}
 	}
 
 	/**
@@ -516,8 +523,7 @@ public class EGaml {
 	 * @return true, if is batch
 	 */
 	public static boolean isBatch(final Statement e) {
-		if (!((StatementImpl) e).eIsSet(GamlPackage.STATEMENT__FACETS))
-			return false;
+		if (!((StatementImpl) e).eIsSet(GamlPackage.STATEMENT__FACETS)) { return false; }
 		for (final Facet f : e.getFacets()) {
 			if (getKeyOf(f).equals(IKeyword.TYPE)) {
 				final String type = EGaml.getKeyOf(f.getExpr());
@@ -529,8 +535,7 @@ public class EGaml {
 	}
 
 	public static boolean isBatch(final HeadlessExperiment e) {
-		if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS))
-			return false;
+		if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) { return false; }
 		for (final Facet f : e.getFacets()) {
 			if (getKeyOf(f).equals(IKeyword.TYPE)) {
 				final String type = EGaml.getKeyOf(f.getExpr());

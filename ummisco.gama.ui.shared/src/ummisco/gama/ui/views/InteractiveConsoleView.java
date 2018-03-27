@@ -162,8 +162,9 @@ public class InteractiveConsoleView extends GamaViewPart
 				Thread.sleep(200);
 			} catch (final InterruptedException e) {}
 			WorkbenchHelper.run(() -> {
-				if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed())
+				if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed()) {
 					viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());
+				}
 
 			});
 
@@ -179,12 +180,14 @@ public class InteractiveConsoleView extends GamaViewPart
 			return;
 		}
 		if (indexInHistory <= 0) {
-			if (back)
+			if (back) {
 				ViewsHelper.requestUserAttention(this, "No more history");
+			}
 			indexInHistory = 0;
 		} else if (indexInHistory >= history.size() - 1) {
-			if (!back)
+			if (!back) {
 				ViewsHelper.requestUserAttention(this, "No more history");
+			}
 			indexInHistory = history.size() - 1;
 		}
 		try {
@@ -196,8 +199,9 @@ public class InteractiveConsoleView extends GamaViewPart
 			text.setCaretOffset(text.getCharCount());
 			if (back) {
 				indexInHistory--;
-			} else
+			} else {
 				indexInHistory++;
+			}
 		} catch (final org.eclipse.jface.text.BadLocationException e1) {}
 
 	}
@@ -210,13 +214,13 @@ public class InteractiveConsoleView extends GamaViewPart
 	 */
 	public void append(final String text, final boolean error, final boolean showPrompt) {
 
-		final OutputStreamWriter writer = error ? errorWriter : resultWriter;
 		WorkbenchHelper.asyncRun(() -> {
-			try {
+			try (final OutputStreamWriter writer = error ? errorWriter : resultWriter;) {
 				writer.append(text);
 				writer.flush();
-				if (showPrompt)
+				if (showPrompt) {
 					showPrompt();
+				}
 			} catch (final IOException e) {}
 
 		});
@@ -324,7 +328,7 @@ public class InteractiveConsoleView extends GamaViewPart
 			boolean error = false;
 			if (entered.startsWith("?")) {
 				result = GAML.getDocumentationOn(entered.substring(1));
-			} else
+			} else {
 				try {
 					final IExpression expr = GAML.compileExpression(s, agent, this, false);
 					if (expr != null) {
@@ -336,12 +340,14 @@ public class InteractiveConsoleView extends GamaViewPart
 				} finally {
 					agent.getSpecies().removeTemporaryAction();
 				}
+			}
 			if (result == null) {
 				result = "nil";
 			}
 			append(result, error, true);
-			if (!error && GAMA.getExperiment() != null)
+			if (!error && GAMA.getExperiment() != null) {
 				GAMA.getExperiment().refreshAllOutputs();
+			}
 		}
 
 	}
@@ -355,8 +361,9 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	private IAgent getListeningAgent() {
-		if (scope == null)
+		if (scope == null) {
 			setExecutorAgent(GAMA.getPlatformAgent());
+		}
 		return scope.getRoot();
 	}
 

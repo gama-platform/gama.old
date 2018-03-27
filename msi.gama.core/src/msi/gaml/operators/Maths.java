@@ -217,7 +217,7 @@ public class Maths {
 			masterDoc = true,
 			examples = @example (
 					value = "asin (90)",
-					equals = "#nan"),
+					equals = "#nan", test = false),
 			see = { "acos", "atan" })
 	@test("asin(0) = 0.0")
 	@test("asin(-1) = -90.0")
@@ -312,7 +312,7 @@ public class Maths {
 			usages = @usage ("Operand values out of the range [0-359] are normalized."),
 			examples = { @example (
 					value = "sin_rad(#pi)",
-					equals = "0.0") },
+					equals = "0.0", test = false) },
 			see = { "cos", "tan" })
 	public static Double sin_rad(final Double rv) {
 		return FastMath.sin(rv);
@@ -386,7 +386,7 @@ public class Maths {
 			masterDoc = true,
 			usages = @usage ("Operand values out of the range [0-359] are normalized."),
 			examples = { @example (
-					value = "sin(360)",
+					value = "sin(360) with_precision 10 with_precision 10",
 					equals = "0.0") },
 			see = { "cos", "tan" })
 	public static Double sin(final Double rv) {

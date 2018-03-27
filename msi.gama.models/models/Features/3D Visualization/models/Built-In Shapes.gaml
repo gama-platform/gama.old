@@ -11,6 +11,8 @@ global {
 	
 	file gamaRaster <- file('../images/Gama.jpg');
 	
+	bool emptiness <- false;
+	
 	int size <- 10;
 	list<geometry> geometries2D <-[ point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size), square(size) - square(size / 2)];
 	list<geometry> texturedGeometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size),square(size) - square(size / 2) ];	
@@ -65,7 +67,7 @@ species Geometry2D{
 	}
 	
 	aspect default {
-		draw myGeometry color:#gamaorange at:location border:#gamablue ;
+		draw myGeometry color:#gamaorange at:location border:#gamablue empty: emptiness ;
     }
 } 
 
@@ -87,7 +89,7 @@ species Geometry3D{
 		myGeometry <- myGeometry rotated_by (-1,{1,0,0});
 	}
 	aspect default {
-		draw myGeometry color:#gamaorange at:location border: #gamablue ;
+		draw myGeometry color:#gamaorange at:location border: #gamablue empty: emptiness ;
     }
 }
 
@@ -102,8 +104,10 @@ species TexturedGeometry3D{
 }
 
 experiment "3D Shapes"  type: gui {
+	parameter "Are geometries empty?" var: emptiness ;
+	
 	output {
-		display View1 type:opengl  background:rgb(10,40,55)   {
+		display View1 type:opengl background:rgb(10,40,55)   {
 			species Geometry2D aspect:default;
 			species TexturedGeometry2D aspect:default;
 			species Geometry3D aspect:default;

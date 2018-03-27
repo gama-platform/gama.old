@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.lang.gaml.ui.internal.GamlActivator;
+import ummisco.gama.ui.modeling.internal.ModelingActivator;
 
 @SuppressWarnings({ "rawtypes" })
 public class BoxProviderRegistry {
@@ -52,7 +52,7 @@ public class BoxProviderRegistry {
 
 	protected Collection<IBoxProvider> loadProviders() {
 		List<IBoxProvider> result = null;
-		final String pSetting = GamlActivator.getInstance().getPreferenceStore().getString(PROIVDERS);
+		final String pSetting = ModelingActivator.getInstance().getPreferenceStore().getString(PROIVDERS);
 		if (pSetting != null && pSetting.length() > 0) {
 			final String[] split = pSetting.split(",");
 			if (split.length > 0) {
@@ -81,7 +81,7 @@ public class BoxProviderRegistry {
 				}
 				sb.append(p.getName());
 			}
-			GamlActivator.getInstance().getPreferenceStore().setValue(PROIVDERS, sb.toString());
+			ModelingActivator.getInstance().getPreferenceStore().setValue(PROIVDERS, sb.toString());
 		}
 	}
 

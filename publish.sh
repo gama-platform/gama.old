@@ -40,7 +40,7 @@ commit_io_website_files() {
 
 clean(){
 	echo "Clean p2 update site"		
-	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
+	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/oxygen/clean.sh
 }
 
 deploy(){	
@@ -50,7 +50,7 @@ deploy(){
 
 release(){
 	echo "Upload continuous release to github"		
-	bash ./github-release.sh "$TRAVIS_COMMIT" 
+	bash ./githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
@@ -82,7 +82,7 @@ else
 		commit_wiki_files
 		commit_io_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
 		release 
 	fi	
 fi

@@ -48,7 +48,10 @@ public class GamaListType extends GamaContainerType<IList> {
 	public static IList staticCast(final IScope scope, final Object obj, final IType ct, final boolean copy)
 			throws GamaRuntimeException {
 		final IType contentsType = ct == null ? Types.NO_TYPE : ct;
-		if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
+		// BG fix issue ##2338 
+		//if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
+		if (obj == null) { return GamaListFactory.create(ct, 0); }
+		
 		if (obj instanceof GamaDate) { return ((GamaDate) obj).listValue(scope, ct); }
 		if (obj instanceof IContainer) {
 			if (obj instanceof IPopulation)
