@@ -74,11 +74,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			// caller, only the order
 			if (names.containsKey("0")) {
 				int index = 0;
-				for (final String name : allArgs) {
+				for (final String the_name : allArgs) {
 					final String key = String.valueOf(index++);
 					final IExpressionDescription old = names.get(key);
 					if (old != null) {
-						names.put(name, old);
+						names.put(the_name, old);
 						names.remove(key);
 					}
 				}
@@ -108,44 +108,29 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				}
 			}
 		}
-		// If one is missing in the arguments passed, we raise an error
-		// (except for primitives for the moment)
-		// if ( !getKeyword().equals(PRIMITIVE) ) {
-		// AD: Change in the policy regarding primitives; if it is not stated,
-		// the arguments are now considered as
-		// optional.
-		// for (final String arg : mandatoryArgs) {
-		// if (!names.containsKey(arg)) {
-		// caller.error(
-		// "Missing argument " + arg + " in call to " + getName() + ". Arguments
-		// passed are : " + names,
-		// IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new
-		// String[] { arg });
-		// return false;
-		// }
-		// }
-		// }
+
 		for (final Map.Entry<String, IExpressionDescription> arg : names.entrySet()) {
 			// A null value indicates a previous compilation error in the
 			// arguments
 			if (arg != null) {
-				final String name = arg.getKey();
-				if (!allArgs.contains(name)) {
-					caller.error("Unknown argument " + name + " in call to " + getName(), IGamlIssue.UNKNOWN_ARGUMENT,
-							arg.getValue().getTarget(), new String[] { arg.getKey() });
+				final String the_name = arg.getKey();
+				if (!allArgs.contains(the_name)) {
+					caller.error("Unknown argument " + the_name + " in call to " + getName(),
+							IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(), new String[] { arg.getKey() });
 					return false;
 				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
-					final IDescription formalArg = Iterables.find(formalArgs, input -> input.getName().equals(name));
+					final IDescription formalArg =
+							Iterables.find(formalArgs, input -> input.getName().equals(the_name));
 					final IType<?> formalType = formalArg.getType();
 					final IType<?> callerType = arg.getValue().getExpression().getType();
 					if (Types.intFloatCase(formalType, callerType)) {
-						caller.warning("The argument " + name + " (of type " + callerType + ") will be casted to "
+						caller.warning("The argument " + the_name + " (of type " + callerType + ") will be casted to "
 								+ formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
 					} else {
 						boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
 						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
 						if (!accepted) {
-							caller.error("The type of argument " + name + " should be " + formalType,
+							caller.error("The type of argument " + the_name + " should be " + formalType,
 									IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
 							return false;
 						}
@@ -165,14 +150,14 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	public Arguments createCompiledArgs() {
 		final Arguments ca = new Arguments();
 		for (final IDescription sd : getFormalArgs()) {
-			final String name = sd.getName();
+			final String the_name = sd.getName();
 			IExpression e = null;
 			final IDescription superDesc = getEnclosingDescription();
 			final IExpressionDescription ed = sd.getFacet(VALUE, DEFAULT);
 			if (ed != null) {
 				e = ed.compile(superDesc);
 			}
-			ca.put(name, e);
+			ca.put(the_name, e);
 		}
 		return ca;
 
@@ -225,8 +210,9 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		for (final IDescription desc : getFormalArgs()) {
 			args.append(desc.getType()).append(" ").append(desc.getName()).append(", ");
 		}
-		if (args.length() > 0)
+		if (args.length() > 0) {
 			args.setLength(args.length() - 2);
+		}
 
 		return "(" + args.toString() + ")" + returns;
 

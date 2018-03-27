@@ -495,12 +495,12 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		urisAsList.remove(resource.getURI());
 		Collections.reverse(urisAsList);
 		final IResourceDescriptions descriptions = getResourceDescriptions(resource, urisAsList);
-
 		scope = SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
 		return scope;
 	}
 
 	public static IEObjectDescription getVar(final String name) {
+		if (name == null) { return null; }
 		return descriptions.get(eVar).get(QualifiedName.create(name));
 	}
 

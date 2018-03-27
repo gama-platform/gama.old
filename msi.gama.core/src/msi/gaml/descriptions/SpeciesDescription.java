@@ -161,24 +161,24 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public boolean redefinesAttribute(final String name) {
-		if (super.redefinesAttribute(name))
+	public boolean redefinesAttribute(final String theName) {
+		if (super.redefinesAttribute(theName))
 			return true;
 		if (skills != null)
 			for (final SkillDescription skill : skills) {
-				if (skill.hasAttribute(name))
+				if (skill.hasAttribute(theName))
 					return true;
 			}
 		return false;
 	}
 
 	@Override
-	public boolean redefinesAction(final String name) {
-		if (super.redefinesAction(name))
+	public boolean redefinesAction(final String theName) {
+		if (super.redefinesAction(theName))
 			return true;
 		if (skills != null)
 			for (final SkillDescription skill : skills) {
-				if (skill.hasAction(name, false))
+				if (skill.hasAction(theName, false))
 					return true;
 			}
 		return false;

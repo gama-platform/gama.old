@@ -61,19 +61,20 @@ public abstract class TypeDescription extends SymbolDescription {
 		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
 		addChildren(cp);
 		// parent can be null
-		if (parent != null)
+		if (parent != null) {
 			setParent(parent);
-		if (plugin != null && isBuiltIn())
+		}
+		if (plugin != null && isBuiltIn()) {
 			this.originName = plugin;
-		// System.out.println("Origin name " + getOriginName() + " and plugin "
-		// + plugin + " of " + this);
+			// System.out.println("Origin name " + getOriginName() + " and plugin "
+			// + plugin + " of " + this);
+		}
 
 	}
 
 	@Override
 	public String getDefiningPlugin() {
-		if (isBuiltIn())
-			return originName;
+		if (isBuiltIn()) { return originName; }
 		return null;
 	}
 
@@ -93,11 +94,12 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getAttributeNames() {
 		final Collection<String> accumulator =
-				parent != null && parent != this ? parent.getAttributeNames() : new TLinkedHashSet<String>();
+				parent != null && parent != this ? parent.getAttributeNames() : new TLinkedHashSet<>();
 		if (attributes != null) {
 			attributes.forEachKey(s -> {
-				if (accumulator.contains(s))
+				if (accumulator.contains(s)) {
 					accumulator.remove(s);
+				}
 				accumulator.add(s);
 				return true;
 			});
@@ -112,10 +114,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean redefinesAttribute(final String name) {
-		if (!attributes.contains(name))
-			return false;
-		if (parent == null || parent == this)
-			return false;
+		if (!attributes.contains(name)) { return false; }
+		if (parent == null || parent == this) { return false; }
 		return parent.hasAttribute(name);
 	}
 
@@ -137,8 +137,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
-		if (attributes == null)
+		if (attributes == null) {
 			attributes = new TOrderedHashMap();
+		}
 		// synchronized (this) {
 		attributes.put(vd.getName(), vd);
 		// }
@@ -272,10 +273,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
 		// TODO Do it once for built-in species
-		final Collection<String> accumulator = parent != null && parent != this
-				? parent.getOrderedAttributeNames(forInit) : new TLinkedHashSet<String>();
-		if (attributes == null)
-			return accumulator;
+		final Collection<String> accumulator =
+				parent != null && parent != this ? parent.getOrderedAttributeNames(forInit) : new TLinkedHashSet<>();
+		if (attributes == null) { return accumulator; }
 		if (attributes.size() <= 1) {
 			accumulator.addAll(attributes.keySet());
 			return accumulator;
@@ -310,8 +310,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 			final VariableDescription vd = iterator.next();
 			final String name = vd.getName();
-			if (accumulator.contains(name))
+			if (accumulator.contains(name)) {
 				accumulator.remove(name);
+			}
 			accumulator.add(name);
 		}
 		return accumulator;
@@ -324,8 +325,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	 * @return
 	 */
 	protected boolean verifyAttributeCycles() {
-		if (attributes == null || attributes.size() <= 1)
-			return true;
+		if (attributes == null || attributes.size() <= 1) { return true; }
 
 		final VariableDescription shape = attributes.get(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
@@ -334,7 +334,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
-		attributes.forEachEntry((name, var) -> {
+		attributes.forEachEntry((aName, var) -> {
 
 			dependencies.addVertex(var);
 			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
@@ -350,13 +350,14 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 		});
 
-		final CycleDetector cycleDetector = new CycleDetector<VariableDescription, Object>(dependencies);
+		final CycleDetector cycleDetector = new CycleDetector<>(dependencies);
 		if (cycleDetector.detectCycles()) {
 			final Set<VariableDescription> inCycles = cycleDetector.findCycles();
 			final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
 			for (final VariableDescription vd : inCycles) {
-				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn())
+				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
 					continue;
+				}
 				final Collection<String> strings = new HashSet(names);
 				strings.remove(vd.getName());
 				vd.error("Cycle detected between " + vd.getName() + " and " + strings
@@ -374,11 +375,11 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void duplicateInfo(final IDescription one, final IDescription two) {
-		final String name = one.getName();
+		final String aName = one.getName();
 		final String key = one.getKeyword();
-		final String error = key + " " + name + " is declared twice. This definition supersedes the previous in "
+		final String error = key + " " + aName + " is declared twice. This definition supersedes the previous in "
 				+ two.getOriginName();
-		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, aName);
 	}
 
 	protected void addAction(final ActionDescription newAction) {
@@ -394,21 +395,21 @@ public abstract class TypeDescription extends SymbolDescription {
 		actions.put(actionName, newAction);
 	}
 
-	public boolean redefinesAction(final String name) {
-		if (!actions.contains(name))
-			return false;
-		if (parent == null || parent == this)
-			return false;
-		return parent.hasAction(name, false);
+	public boolean redefinesAction(final String theName) {
+		if (!actions.contains(theName)) { return false; }
+		if (parent == null || parent == this) { return false; }
+		return parent.hasAction(theName, false);
 	}
 
 	@Override
 	public ActionDescription getAction(final String aName) {
 		ActionDescription ownAction = null;
-		if (actions != null)
+		if (actions != null) {
 			ownAction = actions.get(aName);
-		if (ownAction == null && parent != null && parent != this)
+		}
+		if (ownAction == null && parent != null && parent != this) {
 			ownAction = getParent().getAction(aName);
+		}
 		return ownAction;
 	}
 
@@ -417,8 +418,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void removeAction(final String temp) {
-		if (actions == null)
-			return;
+		if (actions == null) { return; }
 		actions.remove(temp);
 
 	}
@@ -426,8 +426,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	public Collection<String> getActionNames() {
 		final Collection<String> allNames =
 				new LinkedHashSet(actions == null ? Collections.EMPTY_LIST : actions.keySet());
-		if (parent != null && parent != this)
+		if (parent != null && parent != this) {
 			allNames.addAll(getParent().getActionNames());
+		}
 		return allNames;
 	}
 
@@ -438,8 +439,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean hasAction(final String a, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null || parent == this)
-				return false;
+			if (parent == null || parent == this) { return false; }
 			return parent.hasAction(a, false);
 		}
 		return actions != null && actions.containsKey(a)
@@ -449,16 +449,14 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null)
-				return null;
+			if (parent == null) { return null; }
 			return parent.getDescriptionDeclaringAction(name, false);
 		}
 		return hasAction(name, false) ? this : null;
 	}
 
 	public final boolean isAbstract() {
-		if (isAbstract)
-			return true;
+		if (isAbstract) { return true; }
 		for (final ActionDescription a : getActions()) {
 			if (a.isAbstract()) { return true; }
 		}
@@ -504,8 +502,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritActionsFrom(final TypeDescription p) {
-		if (p == null || p == this)
-			return;
+		if (p == null || p == this) { return; }
 		for (final ActionDescription inheritedAction : p.getActions()) {
 			final String actionName = inheritedAction.getName();
 			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
@@ -518,16 +515,16 @@ public abstract class TypeDescription extends SymbolDescription {
 							userDeclared.warning(
 									"Redefining the built-in primitive 'die' is not advised as it can lead to potential troubles in the disposal of simulations. If it was not your intention, consider renaming this action.",
 									IGamlIssue.GENERAL);
-						} else
+						} else {
 							userDeclared.info(
 									"Action '" + actionName + "' replaces a primitive of the same name defined in "
 											+ userDeclared.getOriginName()
 											+ ". If it was not your intention, consider renaming it.",
 									IGamlIssue.GENERAL);
+						}
 					} else {
 						userDeclared.info("Action '" + actionName + "' supersedes the one defined in  "
 								+ inheritedAction.getOriginName(), IGamlIssue.REDEFINES);
-						return;
 					}
 				}
 			} else if (inheritedAction.isAbstract()) {
@@ -566,39 +563,34 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
 		for (final IDescription d : getAttributes()) {
-			if (!visitor.visit(d))
-				return false;
+			if (!visitor.visit(d)) { return false; }
 		}
 		for (final IDescription d : getActions()) {
-			if (!visitor.visit(d))
-				return false;
+			if (!visitor.visit(d)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (!visitOwnAttributes(visitor))
-			return false;
+		if (!visitOwnAttributes(visitor)) { return false; }
 		return visitOwnActions(visitor);
 	}
 
 	public boolean visitAllAttributes(final DescriptionVisitor visitor) {
-		if (parent != null && parent != this)
-			if (!parent.visitAllAttributes(visitor))
-				return false;
+		if (parent != null && parent != this) {
+			if (!parent.visitAllAttributes(visitor)) { return false; }
+		}
 		return visitOwnAttributes(visitor);
 	}
 
 	public boolean visitOwnAttributes(final DescriptionVisitor visitor) {
-		if (attributes == null)
-			return true;
+		if (attributes == null) { return true; }
 		return attributes.forEachValue(visitor);
 	}
 
 	public boolean visitOwnActions(final DescriptionVisitor visitor) {
-		if (actions == null)
-			return true;
+		if (actions == null) { return true; }
 		return actions.forEachValue(visitor);
 	}
 
@@ -610,11 +602,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated)
-			return this;
+		if (validated) { return this; }
 		final IDescription result = super.validate();
-		if (result != null && !verifyAttributeCycles())
-			return null;
+		if (result != null && !verifyAttributeCycles()) { return null; }
 		return result;
 	}
 
