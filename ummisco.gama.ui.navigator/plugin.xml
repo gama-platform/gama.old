@@ -223,6 +223,32 @@
                name="msi.gama.gui.gamaNavigator.separator1"
                visible="true">
          </separator>
+         <menu
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
+               id="menu.gama.export"
+               label="Export...">
+            <command
+                  commandId="org.eclipse.ui.file.export"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
+                  label="Project…"
+                  style="push">
+               <parameter
+                     name="exportWizardId"
+                     value="ummisco.gama.ui.export.ExternalProject">
+               </parameter>
+            </command>
+           
+            <command
+                  commandId="org.eclipse.ui.file.export"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+                  label="To archive..."
+                  style="push">
+               <parameter
+                     name="exportWizardId"
+                     value="ummisco.gama.ui.export.ZipFile">
+               </parameter>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -751,5 +777,22 @@ type="java.lang.Object">
              </instanceof>
           </enabledWhen>
        </page>
+    </extension>
+    <extension
+          point="org.eclipse.ui.exportWizards">
+       <wizard
+             category="msi.gama.gui.wizards.GAMA"
+             class="ummisco.gama.ui.wizards.ExportProjectWizard"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+             id="ummisco.gama.ui.export.ExternalProject"
+             name="GAMA Project">
+       </wizard>
+       <wizard
+             category="msi.gama.gui.wizards.GAMA"
+             class="ummisco.gama.ui.wizards.ZipExportWizard"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+             id="ummisco.gama.ui.export.ZipFile"
+             name="External files to archive">
+       </wizard>
     </extension>
 </plugin>
