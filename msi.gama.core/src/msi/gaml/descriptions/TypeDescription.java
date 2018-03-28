@@ -12,6 +12,7 @@ package msi.gaml.descriptions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -547,16 +548,85 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (!parentType.isAssignableFrom(myType)) {
 			myAction.error("Return type (" + myType + ") differs from that (" + parentType
 					+ ") of the implementation of  " + actionName + " in " + parentName);
+			return;
 		}
-		final List<String> myNames = myAction.getArgNames();
-		final List<String> parentNames = parentAction.getArgNames();
-		final boolean different = myNames.size() != parentNames.size() || !myNames.containsAll(parentNames);
+		final Iterable<IDescription> myArgs = myAction.getFormalArgs();
+		final Iterable<IDescription> parentArgs = parentAction.getFormalArgs();
+		final Iterator<IDescription> myIt = myArgs.iterator();
+		final Iterator<IDescription> parentIt = parentArgs.iterator();
+		String added = null;
+		boolean differentName = false;
+		String differentType = null;
+		while (myIt.hasNext()) {
+			final IDescription myArg = myIt.next();
+			if (!parentIt.hasNext()) {
+				added = myArg.getName();
+				break;
+			}
+			final IDescription parentArg = parentIt.next();
+			final String myName = myArg.getName();
+			final String pName = parentArg.getName();
+			if (!myName.equals(pName)) {
+				differentName = true;
+				break;
+			}
+			if (!parentArg.getType().isAssignableFrom(myArg.getType())) {
+				differentType = myName;
+				break;
+			}
+		}
+		if (!myIt.hasNext() && parentIt.hasNext()) {
+			final String error = "Missing argument: " + parentIt.next().getName();
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			return;
+		}
+		if (added != null) {
+			final String error =
+					"Argument " + added + " does not belong to the definition of " + actionName + " in " + parentName;
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			return;
+		}
+		if (differentName) {
+			final String error = "The  names of arguments should be identical to those of the definition of "
+					+ actionName + " in " + parentName;
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			return;
+		}
+		if (differentType != null) {
+			final String error = "The  type of argument  " + differentType
+					+ " is not compatible with that in the definition of " + actionName + " in " + parentName;
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			return;
+		}
 
-		if (different) {
-			final String error = "The list of arguments " + myNames + " differs from that of the implementation of "
-					+ actionName + " in " + parentName + " " + parentNames + "";
-			myAction.warning(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		}
+		// final Map<String, IType<?>> myMap = StreamEx.of(myArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
+		// final Map<String, IType<?>> parentMap =
+		// StreamEx.of(parentArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
+		//
+		// final List<String> myNames = myAction.getArgNames();
+		// final List<String> parentNames = parentAction.getArgNames();
+		// boolean different = myNames.size() != parentNames.size();
+		// if (different) {
+		// final String error = "The number of arguments should be identical to that of the definition of "
+		// + actionName + " in " + parentName + ": " + parentNames + "";
+		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+		// return;
+		// }
+		// different = !myNames.containsAll(parentNames);
+		// if (different) {
+		// final String error = "The names of arguments should be identical to those of the definition of "
+		// + actionName + " in " + parentName + " " + parentNames + "";
+		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+		// return;
+		// }
+		// final List<IType<?>> myTypes = myAction.getArgTypes();
+		// final List<IType<?>> parentTypes = parentAction.getArgTypes();
+		// different = !myTypes.containsAll(parentTypes);
+		// if (different) {
+		// final String error = "The types of arguments should be identical to those in the definition of "
+		// + actionName + " in " + parentName + " " + parentTypes + "";
+		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+		// }
 
 	}
 
