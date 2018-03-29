@@ -1,21 +1,21 @@
 model SIR_ABM_coupling
 
-import "SIR_ABM.gaml"
-experiment "Adapter" type: gui parent: SIR_ABM_exp
+import "../../../Epidemiology/models/Susceptible Infected Recovered (SIR).gaml"
+experiment "Adapter" type: gui parent: Simulation
 {
 	int get_num_S
 	{
-		return length(Host where (each.state = 0));
+		return length(Host where (each.is_susceptible));
 	}
 
 	int get_num_I
 	{
-		return length(Host where (each.state = 1));
+		return length(Host where (each.is_infected));
 	}
 
 	int get_num_R
 	{
-		return length(Host where (each.state = 2));
+		return length(Host where (each.is_immune));
 	}
 
 	action set_num_S_I_R (int numS, int numI, int numR)
@@ -28,42 +28,51 @@ experiment "Adapter" type: gui parent: SIR_ABM_exp
 
 	action set_num_S (int num)
 	{
-		ask (Host where (each.state = 0))
+		ask (Host where (each.is_susceptible))
 		{
 			do die;
 		}
 
 		create Host number: num
 		{
-			state <- 0;
+        	is_susceptible <- true;
+        	is_infected <-  false;
+            is_immune <-  false; 
+            color <-  #green;
 		}
 
 	}
 
 	action set_num_I (int num)
 	{		
-		ask (Host where (each.state = 1))
+		ask (Host where (each.is_infected))
 		{
 			do die;
 		}
 
 		create Host number: num
 		{
-			state <- 1;
+            is_susceptible <-  false;
+            is_infected <-  true;
+            is_immune <-  false; 
+            color <-  #red; 
 		}
 
 	}
 
 	action set_num_R (int num)
 	{		
-		ask (Host where (each.state = 2))
+		ask (Host where (each.is_immune))
 		{
 			do die;
 		}
 
 		create Host number: num
 		{
-			state <- 2;
+            is_susceptible <-  false;
+            is_infected <-  false;
+            is_immune <-  true; 
+            color <-  #blue; 
 		}
 	}
 
