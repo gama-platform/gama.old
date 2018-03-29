@@ -224,7 +224,7 @@
                visible="true">
          </separator>
          <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.export2.png"
                id="menu.gama.export"
                label="Export...">
             <command
@@ -237,17 +237,25 @@
                      value="ummisco.gama.ui.export.ExternalProject">
                </parameter>
             </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="true"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.WrappedProject">
+                        </instanceof>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.WrappedFolder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
            
-            <command
-                  commandId="org.eclipse.ui.file.export"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
-                  label="To archive..."
-                  style="push">
-               <parameter
-                     name="exportWizardId"
-                     value="ummisco.gama.ui.export.ZipFile">
-               </parameter>
-            </command>
          </menu>
       </menuContribution>
       <menuContribution
