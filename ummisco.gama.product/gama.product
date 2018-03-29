@@ -57,8 +57,8 @@ openFile
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="43,508,527,12"
-      startupMessageRect="230,490,541,16"
+      startupProgressRect="43,500,527,12"
+      startupMessageRect="230,482,541,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
       <linux icon="launcher_icons/icon.xpm"/>
@@ -75,6 +75,7 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
