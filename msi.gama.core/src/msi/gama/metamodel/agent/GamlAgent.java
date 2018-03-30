@@ -321,7 +321,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				microPopulation = getHost().getPopulationFor(species);
 			}
 		} else {
-			microPopulation = this.getExternMicroPopulationFor(micro.getAlias() + "." + species.getName());
+			microPopulation = this.getScope().getSimulation().getExternMicroPopulationFor(micro.getAlias() + "." + species.getName());
 		}
 		// end-hqnghi
 		return microPopulation;

@@ -84,9 +84,11 @@ public class SpeciesLayer extends AgentLayer {
 			} else {
 				result = scope.execute(aspect, a, null);
 			}
-			final Rectangle2D r = (Rectangle2D) result.getValue();
-			if (r != null) {
-				shapes.put(a, r);
+			if(result.getValue() instanceof Rectangle2D) {				
+				final Rectangle2D r = (Rectangle2D) result.getValue();
+				if (r != null) {
+					shapes.put(a, r);
+				}
 			}
 			if (!(a instanceof IMacroAgent)) {
 				continue;
