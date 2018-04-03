@@ -28,6 +28,7 @@ openFile
       <programArgsLin>--launcher.GTK_version 2
       </programArgsLin>
       <vmArgs>-server
+-Dosgi.locking=none
 -noverify
 -Xmn128m
 -Xss2m
@@ -75,7 +76,6 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
