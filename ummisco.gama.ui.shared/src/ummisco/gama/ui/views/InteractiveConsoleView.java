@@ -64,10 +64,9 @@ public class InteractiveConsoleView extends GamaViewPart
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
 	private OutputStreamWriter resultWriter, errorWriter;
-	private BufferedReader reader;
+	BufferedReader reader;
 	private IScope scope;
 	private final Map<String, Object> temps = new LinkedHashMap<>();
-	// private IAgent listeningAgent;
 	private final List<String> history = new ArrayList<>();
 	private int indexInHistory = 0;
 	private Composite controlToDisplayInFullScreen;
@@ -215,7 +214,8 @@ public class InteractiveConsoleView extends GamaViewPart
 	public void append(final String text, final boolean error, final boolean showPrompt) {
 
 		WorkbenchHelper.asyncRun(() -> {
-			try (final OutputStreamWriter writer = error ? errorWriter : resultWriter;) {
+			@SuppressWarnings ("resource") final OutputStreamWriter writer = error ? errorWriter : resultWriter;
+			try {
 				writer.append(text);
 				writer.flush();
 				if (showPrompt) {
