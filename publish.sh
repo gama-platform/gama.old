@@ -40,7 +40,7 @@ commit_io_website_files() {
 
 clean(){
 	echo "Clean p2 update site"		
-	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/oxygen/clean.sh
+	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
 }
 
 deploy(){	
