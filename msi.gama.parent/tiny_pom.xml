@@ -12,12 +12,12 @@
 		<repository>
 			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
-			<url>scp://51.255.46.42/./var/www/gama_updates/oxygen</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</repository>
 		<snapshotRepository>
 			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
-			<url>scp://51.255.46.42/./var/www/gama_updates/oxygen</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -39,7 +39,7 @@
 			<properties>
 				<!-- Properties relative to the distant host where to upload the repo -->
 				<ftp.url>scp://51.255.46.42</ftp.url>
-				<ftp.toDir>./var/www/gama_updates/oxygen</ftp.toDir>
+				<ftp.toDir>./var/www/gama_updates</ftp.toDir>
 				<!-- Relative path to the repo being uploaded -->
 				<repo.path>${project.build.directory}/repository/</repo.path>
 			</properties>
@@ -92,14 +92,25 @@
 	</profiles>
 
 
+	
 	<repositories>
 		<repository>
 			<id>portfolio-non-maven-dependencies</id>
 			<url>http://buchen.github.io/maven-repo</url>
 		</repository>
 		<repository>
-			<id>eclipse-mars</id>
-			<url>http://download.eclipse.org/releases/mars</url>
+			<id>eclipse-oxygenepp</id>
+			<url>http://download.eclipse.org/technology/epp/packages/oxygen/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>eclipse-oxygen</id>
+			<url>http://download.eclipse.org/releases/oxygen/201712201001/</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>xtext</id>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -164,6 +175,7 @@
 		</repository>
 
 	</repositories>
+
 
 	<modules>
 
