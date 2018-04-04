@@ -141,8 +141,7 @@ public class VariableDescription extends SymbolDescription {
 	public boolean isContextualType() {
 		String type = getLitteral(TYPE);
 		int provider = GamaIntegerType.staticCast(null, type, null, false);
-		if (provider < 0)
-			return true;
+		if (provider < 0) { return true; }
 		type = getLitteral(OF);
 		provider = GamaIntegerType.staticCast(null, type, null, false);
 		return provider < 0;
@@ -218,8 +217,9 @@ public class VariableDescription extends SymbolDescription {
 			@Override
 			public boolean visit(final String name, final IExpressionDescription exp) {
 				final IExpression expression = exp.getExpression();
-				if (expression != null)
+				if (expression != null) {
 					expression.collectUsedVarsOf(getSpeciesContext(), result);
+				}
 				return true;
 			}
 		});
@@ -260,10 +260,10 @@ public class VariableDescription extends SymbolDescription {
 		return pName;
 	}
 
-	@Override
-	public TypeDescription getEnclosingDescription() {
-		return (TypeDescription) super.getEnclosingDescription();
-	}
+	// @Override
+	// public TypeDescription getEnclosingDescription() {
+	// return (TypeDescription) super.getEnclosingDescription();
+	// }
 
 	@Override
 	public String getTitle() {
@@ -273,8 +273,7 @@ public class VariableDescription extends SymbolDescription {
 		final String title = getType().getTitle() +
 		// (isRedefinition ? "Redefinition of " : "Definition of ")
 				(isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
-		if (getEnclosingDescription() == null)
-			return title;
+		if (getEnclosingDescription() == null) { return title; }
 		final String s = title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
 		return s;
 	}
@@ -284,8 +283,8 @@ public class VariableDescription extends SymbolDescription {
 		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
 		if (isBuiltIn()) { return doc == null ? "Not yet documented" : doc; }
 		String s = "";
-		if (getEnclosingDescription() != null && getEnclosingDescription().redefinesAttribute(getName())
-				&& doc != null) {
+		if (getEnclosingDescription() instanceof TypeDescription
+				&& ((TypeDescription) getEnclosingDescription()).redefinesAttribute(getName()) && doc != null) {
 			s += doc + "<br/>";
 		}
 		return s + getMeta().getFacetsDocumentation();
@@ -294,8 +293,9 @@ public class VariableDescription extends SymbolDescription {
 	public String getShortDescription() {
 		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
 		String s = ", of type " + getType().getTitle();
-		if (getEnclosingDescription() != null
-				&& (getEnclosingDescription().redefinesAttribute(getName()) || isBuiltIn()) && doc != null) {
+		if (getEnclosingDescription() instanceof TypeDescription
+				&& (((TypeDescription) getEnclosingDescription()).redefinesAttribute(getName()) || isBuiltIn())
+				&& doc != null) {
 			s += ": " + doc;
 		}
 		return s;

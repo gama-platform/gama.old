@@ -17,6 +17,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 
 import com.google.inject.Inject;
 
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -85,23 +86,24 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		}
 		if (o instanceof TypeRef) {
 			final Statement s = EGaml.getStatement(o);
-			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) { return comment
-					+ GamlResourceServices.getResourceDocumenter().getGamlDocumentation(s).getDocumentation(); }
+			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
+				final IDocManager dm = GamlResourceServices.getResourceDocumenter();
+				final IGamlDescription gd = dm.getGamlDocumentation(s);
+				if (gd != null) { return gd.getDocumentation(); }
+			}
 		} else if (o instanceof Function) {
 			final Function f = (Function) o;
 			if (f.getAction() instanceof ActionRef) {
 				final ActionRef ref = (ActionRef) f.getAction();
 				final String temp = getDocumentation(ref.getRef());
-				if (!temp.contains("No documentation"))
-					return temp;
+				if (!temp.contains("No documentation")) { return temp; }
 			}
 		} else if (o instanceof VariableRef) {
 			final VarDefinition vd = ((VariableRef) o).getRef();
 			if (vd != null) {
 				if (vd.eContainer() == null) {
 					final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
-					if (desc != null)
-						return desc.getUserData("doc");
+					if (desc != null) { return desc.getUserData("doc"); }
 				}
 			}
 		} else if (o instanceof UnitName) { return IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName())

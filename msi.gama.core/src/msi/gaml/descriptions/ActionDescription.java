@@ -193,10 +193,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		return sb.toString();
 	}
 
-	@Override
-	public TypeDescription getEnclosingDescription() {
-		return (TypeDescription) super.getEnclosingDescription();
-	}
+	// @Override
+	// public TypeDescription getEnclosingDescription() {
+	// return (TypeDescription) super.getEnclosingDescription();
+	// }
 
 	@Override
 	public String getTitle() {
