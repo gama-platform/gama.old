@@ -1826,7 +1826,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("name of the predicates to check")) },
 			doc = @doc (
 					value = "get the list of predicates is in the belief base with the given name.",
-					returns = "the list of predicates.",
+					returns = "the list of beliefs (mental state).",
 					examples = { @example ("get_belief(\"has_water\")") }))
 	public IList<MentalState> getBeliefsName(final IScope scope) throws GamaRuntimeException {
 		final String predicateName = (String) (scope.hasArg("name") ? scope.getArg("name", IType.STRING) : null);
@@ -1850,7 +1850,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("predicate to check")) },
 			doc = @doc (
 					value = "get the list of predicates in the belief base",
-					returns = "the list of beliefs.",
+					returns = "the list of beliefs (mental state).",
 					examples = { @example ("get_beliefs(\"has_water\")") }))
 	public IList<MentalState> getBeliefs(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
@@ -1880,7 +1880,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("mental state to check")) },
 			doc = @doc (
 					value = "get the list of bliefs in the belief base containing the mental state",
-					returns = "the list of beliefs.",
+					returns = "the list of beliefs (mental state).",
 					examples = { @example ("get_beliefs_mental_state(\"has_water\")") }))
 	public IList<MentalState> getBeliefsMentalState(final IScope scope) throws GamaRuntimeException {
 		final MentalState predicateDirect =
@@ -4652,7 +4652,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("predicate to return")) },
 			doc = @doc (
 					value = "get the predicates is in the uncertainty base (if several, returns the first one).",
-					returns = "the predicate if it is in the base.",
+					returns = "the uncertainty (mental state) if it is in the base.",
 					examples = { @example ("get_uncertainty(new_predicate(\"has_water\", true))") }))
 	public MentalState getUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
@@ -4969,7 +4969,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("mental state to return")) },
 			doc = @doc (
 					value = "get the mental state in the ideal base (if several, returns the first one).",
-					returns = "the ideal if it is in the base.",
+					returns = "the ideal (mental state) if it is in the base.",
 					examples = { @example ("get_ideal(new_predicate(\"has_water\", true))") }))
 	public MentalState getIdealMentalState(final IScope scope) throws GamaRuntimeException {
 		final MentalState predicateDirect =
@@ -5157,7 +5157,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					doc = @doc ("predicate to return")) },
 			doc = @doc (
 					value = "get the predicates in the obligation base (if several, returns the first one).",
-					returns = "the obligation if it is in the base.",
+					returns = "the obligation (mental state) if it is in the base.",
 					examples = { @example ("get_obligation(new_predicate(\"has_water\", true))") }))
 	public MentalState getObligation(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect =
