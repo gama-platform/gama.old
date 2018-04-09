@@ -691,17 +691,19 @@ public abstract class SymbolDescription implements IDescription {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
 
-					} else if (fp.name.equals(IKeyword.ATTRIBUTES) && keyword.equals(IKeyword.SAVE)) {
-						// Special case for the 'save' statement
-						final SpeciesDescription species = getType().getDenotedSpecies();
-						if(null!=species) {							
-							exp = expr.compile(species);
-						}else {
-							error("When using \"attributes\" facet, species is expecting instead of " + getType(),
-									facet);
-							return false;
-						}
-					} else if (!fp.isLabel()) {
+					} 
+//					else if (fp.name.equals(IKeyword.ATTRIBUTES) && keyword.equals(IKeyword.SAVE)) {
+//						// Special case for the 'save' statement
+//						final SpeciesDescription species = getType().getDenotedSpecies();
+//						if(null!=species) {							
+//							exp = expr.compile(species);
+//						}else {
+//							error("When using \"attributes\" facet, species is expecting instead of " + getType(),
+//									facet);
+//							return false;
+//						}
+//					} 
+					else if (!fp.isLabel()) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
 						exp = expr.getExpression();

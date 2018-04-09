@@ -219,7 +219,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IType<?> t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 
-			if (args == null || args.isEmpty()) { return; }
+			if (att==null && (args == null || args.isEmpty())) { return; }
 			if (species == null) {
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
 			} else {
