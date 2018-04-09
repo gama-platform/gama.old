@@ -694,7 +694,13 @@ public abstract class SymbolDescription implements IDescription {
 					} else if (fp.name.equals(IKeyword.ATTRIBUTES) && keyword.equals(IKeyword.SAVE)) {
 						// Special case for the 'save' statement
 						final SpeciesDescription species = getType().getDenotedSpecies();
-						exp = expr.compile(species);
+						if(null!=species) {							
+							exp = expr.compile(species);
+						}else {
+							error("When using \"attributes\" facet, species is expecting instead of " + getType(),
+									facet);
+							return false;
+						}
 					} else if (!fp.isLabel()) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
