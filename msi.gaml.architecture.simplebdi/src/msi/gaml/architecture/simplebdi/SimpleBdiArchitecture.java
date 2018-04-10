@@ -4418,7 +4418,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final Emotion oldEmo = getEmotion(scope, emo);
 			if (!oldEmo.getNoIntensity()) {
 				newEmo = new Emotion(emo.getName(), emo.getIntensity() + oldEmo.getIntensity(), emo.getAbout(),
-						Math.min(emo.getDecay(), oldEmo.getDecay()), emo.getAgentCause());
+						/*Math.min(emo.getDecay(), oldEmo.getDecay()),*/ emo.getAgentCause());
+				if(oldEmo.getIntensity()>=emo.getIntensity()) {
+					newEmo.setDecay(oldEmo.getDecay());
+				} else {
+					newEmo.setDecay(emo.getDecay());
+				}
 				if(newEmo.getIntensity()>1.0){
 					newEmo.setIntensity(1.0);
 				}
