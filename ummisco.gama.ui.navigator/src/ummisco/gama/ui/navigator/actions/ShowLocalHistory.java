@@ -51,11 +51,11 @@ public class ShowLocalHistory extends WorkspaceAction {
 			return;
 		}
 		final IFileState states[] = getLocalHistory();
-		if (states == null || states.length == 0)
-			return;
+		if (states == null || states.length == 0) { return; }
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
-				final IResource resource = (IResource) fSelection.getFirstElement();
+
+				final IResource resource = this.getSelectedResources().get(0);
 				final Runnable r = () -> {
 					final IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource,
 							LocalHistoryPageSource.getInstance());
@@ -81,8 +81,9 @@ public class ShowLocalHistory extends WorkspaceAction {
 		isFile = selectionIsOfType(IResource.FILE);
 		if (!isFile) {
 			return sel.size() == 1 && selectionIsOfType(IResource.FOLDER | IResource.PROJECT);
-		} else
+		} else {
 			return true;
+		}
 	}
 
 	protected boolean isCompare() {
@@ -97,8 +98,9 @@ public class ShowLocalHistory extends WorkspaceAction {
 		final IFile file = ResourceManager.getFile(getSelection().getFirstElement());
 		IFileState states[] = null;
 		try {
-			if (file != null)
+			if (file != null) {
 				states = file.getHistory(null);
+			}
 		} catch (final CoreException ex) {
 			MessageDialog.openError(WorkbenchHelper.getShell(), getPromptTitle(), ex.getMessage());
 			return null;
