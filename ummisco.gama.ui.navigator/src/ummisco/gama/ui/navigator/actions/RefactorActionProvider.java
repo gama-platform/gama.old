@@ -31,6 +31,7 @@ public class RefactorActionProvider extends CommonActionProvider {
 
 	private RenameResourceAction renameAction;
 	private ShowLocalHistory historyAction;
+	private CompareWithEachOtherAction compareAction;
 	private Shell shell;
 
 	@Override
@@ -46,6 +47,8 @@ public class RefactorActionProvider extends CommonActionProvider {
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 		historyAction = new ShowLocalHistory(sp);
 		historyAction.setImageDescriptor(GamaIcons.create("navigator/navigator.date2").descriptor());
+		compareAction = new CompareWithEachOtherAction(sp);
+		compareAction.setImageDescriptor(GamaIcons.create("layout.horizontal").descriptor());
 	}
 
 	@Override
@@ -71,8 +74,12 @@ public class RefactorActionProvider extends CommonActionProvider {
 		if (anyResourceSelected) {
 			renameAction.selectionChanged(selection);
 			historyAction.selectionChanged(selection);
+			compareAction.selectionChanged(selection);
 			menu.insertBefore(CopyAction.ID, renameAction);
 			menu.insertAfter("additions", historyAction);
+			if (selection.size() == 2) {
+				menu.insertAfter("additions", compareAction);
+			}
 		}
 	}
 
@@ -81,6 +88,7 @@ public class RefactorActionProvider extends CommonActionProvider {
 		final IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		renameAction.selectionChanged(selection);
 		historyAction.selectionChanged(selection);
+		compareAction.selectionChanged(selection);
 	}
 
 }
