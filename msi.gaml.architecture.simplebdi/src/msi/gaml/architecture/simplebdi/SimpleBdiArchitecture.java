@@ -923,7 +923,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							.equalsIntentionPlan(currentIntention(scope).getPredicate());
 			}
 			boolean isObligationConditionSatisfied = false;
-			if(statement.getObligationExpression() != null && statement.getObligationExpression().value(scope) != null){
+			if(statement.getObligationExpression() != null && statement.getObligationExpression().value(scope) != null && hasObligation(scope,new MentalState("Obligation",((Predicate) statement.getObligationExpression().value(scope))))){
 					isObligationConditionSatisfied = ((Predicate) statement.getObligationExpression().value(scope))
 							.equalsIntentionPlan(currentIntention(scope).getPredicate());
 			}
@@ -5923,7 +5923,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		social.setFamiliarity(familiarityModif);
 	}
 
-	private void updateNormViolation(IScope scope){
+	public void updateNormViolation(IScope scope){
 		final IAgent agent = getCurrentAgent(scope);
 		NormStatement _persistentNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
 //		Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
@@ -5958,7 +5958,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 	
-	private void updateNormLifetime(IScope scope){
+	public void updateNormLifetime(IScope scope){
 		for(Norm tempNorm : getNorms(scope)){
 			if(tempNorm!=null){
 				tempNorm.updateLifeime();

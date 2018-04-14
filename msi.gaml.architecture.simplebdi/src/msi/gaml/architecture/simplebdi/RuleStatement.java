@@ -176,6 +176,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The uncertainty that will be removed")),
 				@facet (
+						name = RuleStatement.REMOVE_OBLIGATION,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("The obligation that will be removed")),
+				@facet (
 						name = IKeyword.WHEN,
 						type = IType.BOOL,
 						optional = true,
@@ -239,6 +244,7 @@ public class RuleStatement extends AbstractStatement {
 	public static final String REMOVE_DESIRES = "remove_desires";
 	public static final String REMOVE_EMOTIONS = "remove_emotions";
 	public static final String REMOVE_UNCERTAINTIES = "remove_uncertainties";
+	public static final String REMOVE_OBLIGATION = "remove_obligation";
 	public static final String STRENGTH = "strength";
 	public static final String THRESHOLD = "threshold";
 
@@ -269,6 +275,7 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression removeDesires;
 	final IExpression removeEmotions;
 	final IExpression removeUncertainties;
+	final IExpression removeObligation;
 	final IExpression strength;
 	final IExpression threshold;
 	final IExpression lifetime;
@@ -301,6 +308,7 @@ public class RuleStatement extends AbstractStatement {
 		removeDesires = getFacet(RuleStatement.REMOVE_DESIRES);
 		removeEmotions = getFacet(RuleStatement.REMOVE_EMOTIONS);
 		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
+		removeObligation = getFacet(RuleStatement.REMOVE_OBLIGATION);
 		strength = getFacet(RuleStatement.STRENGTH);
 		threshold = getFacet(RuleStatement.THRESHOLD);
 		lifetime = getFacet("lifetime");
@@ -421,7 +429,12 @@ public class RuleStatement extends AbstractStatement {
 													SimpleBdiArchitecture.removeUncertainty(scope,
 															tempRemoveUncertainty);
 												}
-
+												if (removeObligation != null) {
+													final Predicate removeObl = (Predicate) removeObligation.value(scope);
+													final MentalState tempRemoveObl =
+															new MentalState("Obligation", removeObl);
+													SimpleBdiArchitecture.removeObligation(scope, tempRemoveObl);
+												}
 												if (newDesires != null) {
 													final List<Predicate> newDess =
 															(List<Predicate>) newDesires.value(scope);

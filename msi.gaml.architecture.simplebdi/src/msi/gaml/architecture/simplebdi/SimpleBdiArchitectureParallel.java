@@ -23,6 +23,7 @@ import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Maths;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.statements.IStatement;
 
@@ -117,7 +118,15 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 			}
 		}
 		
-		GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
+		if (_lawsNumber > 0) {
+			for (int i = 0; i < _lawsNumber; i++) {
+				LawStatement statement = _laws.get(i);
+				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
+				GamaExecutorService.execute(scope, statement, agents,par) ;
+			}
+		}
+		
+//		GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
 		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), agents,parallel) ;
 	}
 	
@@ -129,12 +138,28 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 			Double expressivity = (Double) scope.getAgent().getAttribute(EXTRAVERSION);
 			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
+			Double agreeableness = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 			scope.getAgent().setAttribute(CHARISMA, expressivity);
 			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
-			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, conscience);
-			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, conscience);
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, Maths.sqrt(scope, conscience));
+			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, Maths.sqrt(scope, conscience));
+			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, (conscience+agreeableness)*0.5));
 		}
-		return executePlans(scope);
+//		return executePlans(scope);
+		Object result = executePlans(scope);
+		if(!scope.getAgent().dead()){
+			//Activer la violation des normes
+			updateNormViolation(scope);
+			//Mettre à jour le temps de vie des normes
+			updateNormLifetime(scope);
+			
+				// Part that manage the lifetime of predicates
+//			if(result!=null){
+//				updateLifeTimePredicates(scope);
+//				updateEmotionsIntensity(scope);
+//			}
+		}
+		return result;
 	}
 
 }

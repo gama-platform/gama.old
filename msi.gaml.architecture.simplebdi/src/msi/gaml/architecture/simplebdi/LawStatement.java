@@ -125,6 +125,10 @@ public class LawStatement extends AbstractStatement{
 		return newObligation;
 	}
 	
+	public IExpression getParallel() {
+		return parallel;
+	}
+	
 	public LawStatement(IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);
