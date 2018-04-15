@@ -5512,15 +5512,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Double) (scope.hasArg("liking") ? scope.getArg("liking", IType.FLOAT) : 0.0);
 		if (agentDirect != null) { 
 			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
-			tempSocial.setLiking(tempSocial.getLiking()+likingDirect);
-			if(tempSocial.getLiking()>1.0){
-				tempSocial.setLiking(1.0);
-			}
-			if(tempSocial.getLiking()<-1.0){
-				tempSocial.setLiking(-1.0);
-			}
-			return true;
-			}
+			if(tempSocial!=null) {
+				tempSocial.setLiking(tempSocial.getLiking()+likingDirect);
+				if(tempSocial.getLiking()>1.0){
+					tempSocial.setLiking(1.0);
+				}
+				if(tempSocial.getLiking()<-1.0){
+					tempSocial.setLiking(-1.0);
+				}
+				return true;
+				}
+		}
 		return false;
 	}
 	
@@ -5548,15 +5550,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Double) (scope.hasArg("dominance") ? scope.getArg("dominance", IType.FLOAT) : 0.0);
 		if (agentDirect != null) { 
 			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			if(tempSocial!=null) {
 			tempSocial.setDominance(tempSocial.getDominance()+dominanceDirect);
-			if(tempSocial.getDominance()>1.0){
-				tempSocial.setDominance(1.0);
-			}
-			if(tempSocial.getDominance()<-1.0){
-				tempSocial.setDominance(-1.0);
-			}
-			return true;
-			}
+				if(tempSocial.getDominance()>1.0){
+					tempSocial.setDominance(1.0);
+				}
+				if(tempSocial.getDominance()<-1.0){
+					tempSocial.setDominance(-1.0);
+				}
+				return true;
+				}
+		}
 		return false;
 	}
 	
@@ -5584,15 +5588,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Double) (scope.hasArg("solidarity") ? scope.getArg("solidarity", IType.FLOAT) : 0.0);
 		if (agentDirect != null) { 
 			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+			if(tempSocial!=null) {
 			tempSocial.setSolidarity(tempSocial.getSolidarity()+solidarityDirect);
-			if(tempSocial.getSolidarity()>1.0){
-				tempSocial.setSolidarity(1.0);
-			}
-			if(tempSocial.getSolidarity()<0.0){
-				tempSocial.setSolidarity(-1.0);
-			}
-			return true;
-			}
+				if(tempSocial.getSolidarity()>1.0){
+					tempSocial.setSolidarity(1.0);
+				}
+				if(tempSocial.getSolidarity()<0.0){
+					tempSocial.setSolidarity(-1.0);
+				}
+				return true;
+				}
+		}
 		return false;
 	}
 	
@@ -5619,16 +5625,18 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Double familiarityDirect =
 				(Double) (scope.hasArg("familiarity") ? scope.getArg("familiarity", IType.FLOAT) : 0.0);
 		if (agentDirect != null) { 
-			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
-			tempSocial.setFamiliarity(tempSocial.getFamiliarity()+familiarityDirect);
-			if(tempSocial.getFamiliarity()>1.0){
-				tempSocial.setFamiliarity(1.0);
+				SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
+				if(tempSocial!=null) {
+				tempSocial.setFamiliarity(tempSocial.getFamiliarity()+familiarityDirect);
+				if(tempSocial.getFamiliarity()>1.0){
+					tempSocial.setFamiliarity(1.0);
+				}
+				if(tempSocial.getFamiliarity()<0.0){
+					tempSocial.setFamiliarity(0.0);
+				}
+				return true;
 			}
-			if(tempSocial.getFamiliarity()<0.0){
-				tempSocial.setFamiliarity(0.0);
-			}
-			return true;
-			}
+		}
 		return false;
 	}
 	
@@ -5656,15 +5664,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Double) (scope.hasArg("trust") ? scope.getArg("trust", IType.FLOAT) : 0.0);
 		if (agentDirect != null) { 
 			SocialLink tempSocial = getSocialLink(scope,new SocialLink(agentDirect));
-			tempSocial.setTrust(tempSocial.getTrust()+trustDirect);
-			if(tempSocial.getTrust()>1.0){
-				tempSocial.setLiking(1.0);
+			if(tempSocial!=null) {
+				tempSocial.setTrust(tempSocial.getTrust()+trustDirect);
+				if(tempSocial.getTrust()>1.0){
+					tempSocial.setTrust(1.0);
+				}
+				if(tempSocial.getTrust()<-1.0){
+					tempSocial.setTrust(-1.0);
+				}
+				return true;
 			}
-			if(tempSocial.getTrust()<-1.0){
-				tempSocial.setLiking(-1.0);
-			}
-			return true;
-			}
+		}
 		return false;
 	}
 	
