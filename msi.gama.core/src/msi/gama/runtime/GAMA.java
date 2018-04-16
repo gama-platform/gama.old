@@ -38,7 +38,7 @@ import msi.gaml.compilation.kernel.GamaMetaModel;
  */
 public class GAMA {
 
-	public final static String VERSION = "GAMA 1.7";
+	public final static String VERSION = "GAMA 1.8";
 	public static final String _WARNINGS = "warnings";
 	public static PlatformAgent agent;
 
@@ -143,8 +143,9 @@ public class GAMA {
 		}
 
 		// Test added to fix #2229
-		if (!currentExperiment.isBatch())
+		if (!currentExperiment.isBatch()) {
 			currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
+		}
 
 		controllers.add(currentExperiment.getController());
 		return currentExperiment;
@@ -216,8 +217,9 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
-		if (scope != null && scope.getGui() != null)
+		if (scope != null && scope.getGui() != null) {
 			scope.getGui().runtimeError(scope, g);
+		}
 		g.setReported();
 
 		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
@@ -325,8 +327,7 @@ public class GAMA {
 
 	public static IScope getRuntimeScope() {
 		// If GAMA has not yet been loaded, we return null
-		if (!GamaBundleLoader.LOADED)
-			return null;
+		if (!GamaBundleLoader.LOADED) { return null; }
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null) { return getPlatformAgent().getScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
@@ -433,8 +434,9 @@ public class GAMA {
 	}
 
 	public static PlatformAgent getPlatformAgent() {
-		if (agent == null)
+		if (agent == null) {
 			agent = new PlatformAgent();
+		}
 		return agent;
 	}
 
