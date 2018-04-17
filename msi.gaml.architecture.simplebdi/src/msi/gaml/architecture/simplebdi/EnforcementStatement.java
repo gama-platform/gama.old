@@ -115,6 +115,7 @@ public class EnforcementStatement extends AbstractStatement{
 						}
 						//Ici, la sanction est exécutée dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
 	//					return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						if(sanctionToExecute!=null)
 						retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 					} else if(normToTest.getApplied() && reward!=null){
 						//on applique le reward
@@ -127,6 +128,7 @@ public class EnforcementStatement extends AbstractStatement{
 						}
 						//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
 	//					return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						if(rewardToExecute!=null)
 						retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 					}
 				}
@@ -154,6 +156,7 @@ public class EnforcementStatement extends AbstractStatement{
 							}
 							//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
 	//						return rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							if(rewardToExecute!=null)
 							retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 							tempNorm.sanctioned();
 						} else { 
@@ -167,6 +170,7 @@ public class EnforcementStatement extends AbstractStatement{
 								}
 								//Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est indirecte contre une norme sociale
 		//						return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+								if(sanctionToExecute!=null)
 								retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								tempNorm.sanctioned();
 							}
@@ -198,6 +202,7 @@ public class EnforcementStatement extends AbstractStatement{
 											rewardToExecute = tempReward;
 										}
 									}
+									if(rewardToExecute!=null)
 									retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								}
 							} else {
@@ -209,6 +214,7 @@ public class EnforcementStatement extends AbstractStatement{
 											sanctionToExecute = tempSanction;
 										}
 									}
+									if(sanctionToExecute!=null)
 									retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								}
 							}
