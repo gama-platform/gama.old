@@ -3,7 +3,7 @@ set -e
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="oxygenCI"
+RELEASE="latest"
 thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
