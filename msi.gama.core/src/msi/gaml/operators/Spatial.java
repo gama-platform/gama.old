@@ -14,10 +14,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -2441,6 +2443,94 @@ public abstract class Spatial {
 				throws GamaRuntimeException {
 			// cols, rows
 			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false, "");
+		}
+		
+		@operator (
+				value = "to_sub_geometries",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries resulting after spliting the geometry into sub-geometries.",
+				examples = { @example (
+						value = "split_geometry(rectangle(10, 50), [0.1, 0.5, 0.4])",
+						equals = "a list of three geometries corresponding to 3 sub-geometries",
+						test = false) })
+		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates ) {
+			if (geom == null) { return GamaListFactory.create(Types.GEOMETRY); }
+			
+			double dimension = geom.getArea() / 2000.0;
+			return splitGeometries(scope,geom,rates,dimension);
+		}
+		
+		@operator (
+				value = "to_sub_geometries",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries resulting after spliting the geometry into sub-geometries.",
+				examples = { @example (
+						value = "split_geometry(rectangle(10, 50), [0.1, 0.5, 0.4], 1.0)",
+						equals = "a list of three geometries corresponding to 3 sub-geometries using cubes of 1m size",
+						test = false) })
+		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates, Double dimension )
+				throws GamaRuntimeException {
+			if (geom == null || rates == null || rates.isEmpty()) { return GamaListFactory.create(Types.GEOMETRY); }
+			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
+			if (geom.isPoint()) {nwGeoms.add(geom.copy(scope)); }
+			else if (geom.isLine()) {
+				IList<Double> translatedRates = GamaListFactory.create(Types.FLOAT);
+				Double sum = (Double) Containers.sum(scope, rates);
+				double accu = 0;
+				for (int i = 0; i < rates.size() - 1; i++) {
+					accu += rates.get(i);
+					translatedRates.add(accu/sum);
+				}
+				IList<GamaPoint> pts = Punctal.points_along(geom, translatedRates);
+				IShape g = geom.copy(scope);
+				for (GamaPoint pt: pts) {
+					IList<IShape> shapes = Operators.split_at(g, pt);
+					nwGeoms.add(shapes.get(0));
+					g = shapes.get(1);
+				}
+				nwGeoms.add(g);
+			}
+			else if (geom.getArea() > 0){
+				Comparator<IShape> comp;
+				if (geom.getWidth() > geom.getHeight()) {
+					 comp = new Comparator<IShape>() {
+							@Override
+							public int compare(IShape o1, IShape o2) {
+								return Double.compare(o1.getLocation().getX(), o2.getLocation().getX());
+							}
+					 };
+				} else {
+					comp = new Comparator<IShape>() {
+						@Override
+						public int compare(IShape o1, IShape o2) {
+							return Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
+						}
+				 };
+				}
+				List<IShape> listSq = toSquares(scope, geom, dimension).stream().sorted(comp).collect(Collectors.toList());
+				Double sum = (Double) Containers.sum(scope, rates);
+				int totalNumber = listSq.size();
+				for (Double rate : rates ) {
+					int number = Math.min((int) (rate / sum * totalNumber + 0.5), listSq.size());
+					IList<IShape> squares = GamaListFactory.create(Types.GEOMETRY);
+					for (int i = 0; i < number; i++) {
+						squares.add(listSq.remove(0));
+					}
+					if (squares.size() > 0) {
+						IShape unionG = Transformations.clean(scope, Operators.union(scope, squares));
+						nwGeoms.add(unionG);
+						
+					}
+				}
+				
+			}
+			return nwGeoms;
 		}
 
 		@operator (

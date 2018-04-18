@@ -426,7 +426,7 @@ public class GeometryUtils {
 		final int nb = g.getNumGeometries();
 		for (int i = 0; i < nb; i++) {
 			final Geometry gg = g.getGeometryN(i);
-			geoms.add(new GamaShape(gg));
+			geoms.add(new GamaShape(gg.intersection(scope.getSimulation().getInnerGeometry())));
 		}
 		return geoms;
 	}
