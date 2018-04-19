@@ -227,10 +227,8 @@ public class Variable extends Symbol implements IVariable {
 			// return;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			final IExpression initExpression = vd.getFacetExpr(INIT);
-			if (amongExpression == null || initExpression == null)
-				return;
-			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst())
-				return;
+			if (amongExpression == null || initExpression == null) { return; }
+			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst()) { return; }
 			final ListExpression list = (ListExpression) amongExpression;
 			final Object init = initExpression.value(null);
 			if (!list.containsValue(init)) {
@@ -588,7 +586,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public boolean isEditable() {
-		return true;
+		return !isNotModifiable;
 	}
 
 	/**
@@ -620,15 +618,15 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public void setEnclosing(final ISymbol enclosing) {
-		if (enclosing instanceof AbstractSpecies)
+		if (enclosing instanceof AbstractSpecies) {
 			buildHelpers((AbstractSpecies) enclosing);
+		}
 	}
 
 	@Override
 	public boolean isMicroPopulation() {
 		final VariableDescription desc = getDescription();
-		if (desc == null)
-			return false;
+		if (desc == null) { return false; }
 		return desc.isSyntheticSpeciesContainer();
 	}
 

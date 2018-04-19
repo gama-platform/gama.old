@@ -150,28 +150,32 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
 		final ModelDescription wd = desc.getModelDescription();
-		final IDescription targetedGlobalVar = wd.getAttribute(varName);
+		final VariableDescription targetedGlobalVar = wd.getAttribute(varName);
 		if (type.equals(Types.NO_TYPE)) {
 			type = targetedGlobalVar.getType();
 		}
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
 		final IScope runtimeScope = GAMA.getRuntimeScope();
-		if (min != null && min.isConst())
+		if (min != null && min.isConst()) {
 			getMinValue(runtimeScope);
+		}
 		max = getFacet(IKeyword.MAX);
-		if (max != null && max.isConst())
+		if (max != null && max.isConst()) {
 			getMaxValue(runtimeScope);
+		}
 		step = getFacet(IKeyword.STEP);
-		if (step != null && step.isConst())
+		if (step != null && step.isConst()) {
 			getStepValue(runtimeScope);
+		}
 		among = getFacet(IKeyword.AMONG);
-		if (among != null && among.isConst())
+		if (among != null && among.isConst()) {
 			getAmongValue(runtimeScope);
+		}
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		slider = getFacet("slider");
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
-		isEditable = true;
+		isEditable = !targetedGlobalVar.isNotModifiable();
 	}
 
 	public ExperimentParameter(final IScope scope, final IParameter p) {
@@ -345,7 +349,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
-		final Set<Object> neighborValues = new HashSet<Object>();
+		final Set<Object> neighborValues = new HashSet<>();
 		if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
 			final int index = getAmongValue(scope).indexOf(this.value(scope));
 			if (index > 0) {
@@ -507,8 +511,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
-		if (slider == null)
-			return true;
+		if (slider == null) { return true; }
 		return Cast.asBool(scope, slider.value(scope));
 	}
 
