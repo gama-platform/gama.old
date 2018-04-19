@@ -2453,7 +2453,7 @@ public abstract class Spatial {
 		@doc (
 				value = "A list of geometries resulting after spliting the geometry into sub-geometries.",
 				examples = { @example (
-						value = "split_geometry(rectangle(10, 50), [0.1, 0.5, 0.4])",
+						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4])",
 						equals = "a list of three geometries corresponding to 3 sub-geometries",
 						test = false) })
 		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates ) {
@@ -2471,7 +2471,7 @@ public abstract class Spatial {
 		@doc (
 				value = "A list of geometries resulting after spliting the geometry into sub-geometries.",
 				examples = { @example (
-						value = "split_geometry(rectangle(10, 50), [0.1, 0.5, 0.4], 1.0)",
+						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4], 1.0)",
 						equals = "a list of three geometries corresponding to 3 sub-geometries using cubes of 1m size",
 						test = false) })
 		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates, Double dimension )
