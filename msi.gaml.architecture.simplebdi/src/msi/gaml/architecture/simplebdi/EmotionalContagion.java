@@ -112,6 +112,8 @@ public class EmotionalContagion extends AbstractStatement {
 								if(decayValue<0.0){
 									decayValue = 0.0;
 								}
+							} else {
+								decayValue = SimpleBdiArchitecture.getEmotion(scope, (Emotion) emotionDetected.value(scope)).getDecay();
 							}
 							tempEmo.setDecay(decayValue);
 							if(intensity!=null){
