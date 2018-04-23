@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.util.matrix;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	public GamaIntMatrix(final int cols, final int rows) {
 		super(cols, rows, Types.INT);
-		matrix = new int[cols * rows];
+		matrix = (int[]) Array.newInstance(int.class, cols, rows);
 	}
 
 	public int[] getMatrix() {
