@@ -21,16 +21,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.shp.JTSUtilities;
 import org.geotools.feature.SchemaException;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.gce.image.WorldImageWriter;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.graph.util.geom.GeometryUtil;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -38,13 +41,22 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -681,6 +693,50 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			});
 		}
 	}
+	
+	private Geometry fixesPolygonCWS(Geometry g) {
+		if (g instanceof Polygon) {
+			Polygon p = (Polygon) g;
+			boolean clockwise = CGAlgorithms.isCCW(p.getExteriorRing().getCoordinates());
+			if (p.getNumInteriorRing() == 0) return g;
+			boolean change = false;
+			LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+			GeometryFactory geomFact = new GeometryFactory(); 
+			for (int i = 0; i < p.getNumInteriorRing(); i ++) {
+				LinearRing hole = (LinearRing) p.getInteriorRingN(i);
+				if ((!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates())) ||
+				(clockwise && CGAlgorithms.isCCW(hole.getCoordinates()))){
+					change = true;
+					Coordinate[] coords = hole.getCoordinates();
+					ArrayUtils.reverse(coords);
+					CoordinateSequence points = CoordinateArraySequenceFactory.instance().create(coords);
+					holes[i] = new LinearRing(points, geomFact);
+				}else {
+					holes[i] = hole;
+				}
+			}
+			if (change) {
+				return geomFact.createPolygon((LinearRing) p.getExteriorRing(), holes);
+			}
+		} else if (g instanceof GeometryCollection) {
+			GeometryCollection gc = (GeometryCollection) g;
+			boolean change = false;
+			GeometryFactory geomFact = new GeometryFactory(); 
+			Geometry[] geometries = new Geometry[gc.getNumGeometries()];
+			for (int i = 0; i < gc.getNumGeometries(); i++) {
+				Geometry gg = gc.getGeometryN(i);
+				if (gg instanceof Polygon) {
+					geometries[i] = fixesPolygonCWS(gg);
+					change = true;
+				} else {
+					geometries[i] = gg;
+				}
+			}
+			if (change)
+				return geomFact.createGeometryCollection(geometries);
+		}
+		return g;
+	}
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
@@ -729,7 +785,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				values.clear();
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				// geometry is by convention (in specs) at position 0
-				values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
+				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+				g = fixesPolygonCWS(g);
+				
+				values.add(g);
 				if (ag instanceof IAgent) {
 					for (final IExpression variable : attributeValues) {
 						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
