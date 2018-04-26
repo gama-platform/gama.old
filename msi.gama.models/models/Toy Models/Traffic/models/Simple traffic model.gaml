@@ -44,7 +44,6 @@ global {
 }
 //Species to represent the people using the skill moving
 species people skills: [moving]{
-	geometry shape<- circle(5);
 	//Target point of the agent
 	point target;
 	//Probability of leaving the building
@@ -65,7 +64,7 @@ species people skills: [moving]{
 	}
 	
 	aspect default {
-		draw shape color: color;
+		draw circle(5) color: color;
 	}
 }
 //Species to represent the buildings
