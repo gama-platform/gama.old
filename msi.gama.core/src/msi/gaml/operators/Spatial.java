@@ -91,6 +91,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
@@ -2579,6 +2580,7 @@ public abstract class Spatial {
 				for (final IShape line : split_lines) {
 					final IShape matchingGeom = geoms.stream(scope)
 							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry())).get();
+					if (matchingGeom == null ||matchingGeom.getAttributes() == null ) continue;
 					for (final String att : matchingGeom.getAttributes().keySet()) {
 						line.setAttribute(att, matchingGeom.getAttribute(att));
 					}
@@ -2635,6 +2637,106 @@ public abstract class Spatial {
 				return new GamaShape(g, GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polys));
 			}
 			return g.copy(scope);
+		}
+		
+		@operator (
+				value = "clean_network",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of polylines corresponding to the cleaning of the first operand (list of polyline geometry or agents), considering the tolerance distance given "
+						+ "by the second operand; the third operator is used to define if the operator should as well split the lines at their intersections(true to split the lines); the last operand"
+						+ "is used to specify if the operator should as well keep only the main connected component of the network. "
+						+ "Usage: clean_network(lines:list of geometries or agents, tolerance: float, split_lines: bool, keepMainConnectedComponent: bool)",
+				comment = "The cleaned set of polylines",
+				examples = { @example (
+						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
+						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
+						test = false) })
+		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, double tolerance, boolean splitlines, boolean keepMainGraph) {
+			if (polylines == null || polylines.isEmpty()) { return polylines; }
+			IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
+			geoms.removeIf(a -> ! a.getGeometry().isLine());
+			if (geoms.isEmpty()) return GamaListFactory.create();
+			IList<IShape> results = GamaListFactory.create();
+			
+			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
+			boolean modif = true;
+			while (modif) {
+				for (IShape geom : geomsTmp) {
+					GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+					modif = connectLine(scope,ptF,geom,true,geoms,results,tolerance);
+					if (modif) {
+						geomsTmp = GamaListFactory.create();
+						geomsTmp.addAll(geoms);
+						break;
+					}
+					GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+					modif = connectLine(scope,ptL,geom,false,geoms,results,tolerance);
+					if (modif) {
+						geomsTmp = GamaListFactory.create();
+						geomsTmp.addAll(geoms);
+						break;
+					}
+					results.add(geom);
+					geoms.remove(geom);
+				}
+			}
+			results.removeIf(a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
+			if (splitlines) {
+				results =Transformations.split_lines(scope, results, true);
+			}
+			if (keepMainGraph) {
+				IGraph graph = Graphs.spatialFromEdges(scope,results);
+				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);
+				return graph.getEdges();
+			}
+			return results;
+		}
+		
+		
+		
+		private static boolean connectLine(IScope scope, GamaPoint pt, IShape shape, boolean first,IList<IShape> geoms,IList<IShape> results, double tolerance) {
+			IList<IShape> tot = (IList<IShape>) geoms.copy(scope);
+			tot.addAll(results);
+			tot.remove(shape);
+			IShape closest = Queries.closest_to(scope, tot, pt);
+			if (closest.intersects(shape)) return false;
+			if (closest.euclidianDistanceTo(pt) <= tolerance) {
+				GamaPoint fp = (GamaPoint) closest.getPoints().firstValue(scope);
+				if (pt.equals3D(fp)) return false;
+				GamaPoint lp = (GamaPoint) closest.getPoints().lastValue(scope);
+				if (pt.equals3D(lp)) return false;
+				if ((pt.euclidianDistanceTo(fp)) <= tolerance) {
+					modifyPoint(scope,shape,fp,first);
+					return false;
+				} else if ((pt.euclidianDistanceTo(lp)) <= tolerance) {
+					modifyPoint(scope,shape,lp,first);
+					return false;
+				} else {
+					GamaPoint ptS = Punctal.closest_points_with(pt, closest).get(1);
+					modifyPoint(scope,shape,ptS,first);
+					IList<IShape> spliL = Operators.split_at(closest, ptS);
+					if (results.contains(closest)) {
+						results.remove(closest);
+						results.addAll(spliL);
+					} else {
+						geoms.remove(closest);
+						geoms.addAll(spliL);
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/*if (first) {g <- line([pt] + (g.points - first(g.points)));}
+		else {g <- line((g.points - last(g.points)) + [pt]);}
+		return g;*/
+		private static void modifyPoint(IScope scope, IShape shape, GamaPoint pt, boolean first) {
+			if (first) shape.getInnerGeometry().getCoordinates()[0] = pt;
+			else  shape.getInnerGeometry().getCoordinates()[shape.getInnerGeometry().getCoordinates().length-1] = pt;
+			shape.getInnerGeometry().geometryChanged();
 		}
 
 		/**

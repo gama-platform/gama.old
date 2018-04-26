@@ -579,7 +579,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				geom = geom.union();
 				if (!geom.isEmpty()) { return new GamaShape(geom); }
 			}
-		} catch (final AssertionFailedException e) {
+		} catch (final Exception e) {
 			// Geometry gs[] = new Geometry[geoms.length];
 			final List<Geometry> gs = new ArrayList(geoms.size());
 			for (final Geometry g : geoms) {
