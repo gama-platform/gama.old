@@ -1813,10 +1813,14 @@ public abstract class Spatial {
 					lines.add(new GamaShape(g));
 				}
 			}
-			for (IShape li : lines) {
-				for (String at : geom.getAttributes().keySet()) 
-					li.setAttribute(at, geom.getAttribute(at));
+			if (geom.getAttributes() != null) {
+				for (IShape li : lines) {
+					for (String at : geom.getAttributes().keySet()) 
+						li.setAttribute(at, geom.getAttribute(at));
+				}
 			}
+				
+			
 			return lines;
 		}
 	}
