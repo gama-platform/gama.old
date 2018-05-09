@@ -3450,7 +3450,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							getEmotionBase(scope, EMOTION_BASE).cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
 					for (final Emotion emo : emoTemps) {
 						if (emo.getName().equals("hope")) {
-							if (emo.getAbout() != null && emo.getAbout().equals(predicateDirect.getPredicate())){
+							if (emo.getAbout() != null && emo.getAbout().equalsEmotions(predicateDirect.getPredicate())){
 								Emotion satisfaction = null;
 								Emotion joy = null;
 								final IAgent agentTest = emo.getAgentCause();
@@ -3525,7 +3525,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 							}
 						}
 						if (emo.getName().equals("fear")) {
-							if (emo.getAbout() != null && emo.getAbout().equals(predicateDirect.getPredicate())){
+							if (emo.getAbout() != null && emo.getAbout().equalsEmotions(predicateDirect.getPredicate())){
 								Emotion fearConfirmed = null;
 								Emotion sadness = null;
 								final IAgent agentTest = emo.getAgentCause();
@@ -4550,8 +4550,22 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static Boolean addUncertainty(final IScope scope, final MentalState predicate) {
 		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
 				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) scope.getAgent().getAttribute(USE_EMOTIONS_ARCHITECTURE);
-		if (getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(predicate)) {
-			removeFromBase(scope, predicate, BELIEF_BASE);
+		MentalState predTemp = null;
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			if (predTest.getPredicate()!=null && predicate.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicate.getPredicate())) {
+				predTemp = predTest;
+			}
+		}
+		if (predTemp != null) {
+			removeFromBase(scope, predTemp, BELIEF_BASE);
+		}
+		for (final MentalState predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+			if (predTest.getPredicate()!=null && predicate.getPredicate()!=null && predTest.getPredicate().equalsButNotTruth(predicate.getPredicate())) {
+				predTemp = predTest;
+			}
+		}
+		if (predTemp != null) {
+			removeFromBase(scope, predTemp, UNCERTAINTY_BASE);
 		}
 		if(use_emotion_architecture){
 			createHopeFromMentalState(scope, predicate);

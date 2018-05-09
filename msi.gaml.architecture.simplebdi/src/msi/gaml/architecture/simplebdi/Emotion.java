@@ -261,7 +261,7 @@ public class Emotion implements IValue {
 		}
 		/*
 		 * if(about==null){ if(other.about!=null){return false;} }else
-		 */if (about != null && other.about != null && !about.equals(other.about)) {
+		 */if (about != null && other.about != null && !about.equalsEmotions(other.about)) {
 			return false;
 		}
 		/*

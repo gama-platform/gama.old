@@ -648,10 +648,10 @@ public class Predicate implements IValue {
 			}
 			/*
 			 * if(agentCause==null){ if(other.agentCause!=null){return false;}
-			 * }else
-			 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
-				return false;
-			}
+			 * }else*/
+//			 if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
+//				return false;
+//			}
 
 			return true;
 		} else {
@@ -659,6 +659,68 @@ public class Predicate implements IValue {
 		}
 	}
 
+	public boolean equalsEmotions(final Object obj) {
+		//Ne teste pas l'agent cause.
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Predicate other = (Predicate) obj;
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+
+		if (subintentions == null) {
+			if (other.subintentions != null && !other.subintentions.isEmpty()) {
+				return false;
+			}
+		} else if (!subintentions.equals(other.subintentions)) {
+			return false;
+		}
+		if (superIntention == null) {
+			if (other.superIntention != null) {
+				return false;
+			}
+		} else if (superIntention.getPredicate() == null) {
+			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+				return false;
+			}
+		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+			return false;
+		}
+		if (is_true != other.is_true) {
+			return false;
+		}
+		// if(lifetime!=-1 || other.lifetime!=1){
+		// if(lifetime!=other.lifetime){return false;}
+		// }
+		if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) {
+			return true;
+		}
+		/*
+		 * if ( values == null ) { if ( other.values != null ) { return false; }
+		 * } else
+		 */ if (values != null && other.values != null && !values.equals(other.values)) {
+			return false;
+		}
+		/*
+		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else*/
+//		 if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
+//			return false;
+//		}
+
+		return true;
+	}
+	
 	/**
 	 * Method getType()
 	 * 
