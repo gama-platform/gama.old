@@ -176,6 +176,7 @@ public abstract class GamaExecutorService {
 		switch (concurrency) {
 			case 0:
 				for (final A agent : array) {
+					if (((IAgent) agent).dead()) continue; //add this condition to avoid the activation of dead agents
 					if (!scope.step((IAgent) agent).passed())
 						return false;
 				}
