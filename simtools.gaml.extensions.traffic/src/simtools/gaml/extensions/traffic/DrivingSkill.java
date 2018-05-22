@@ -513,7 +513,7 @@ public class DrivingSkill extends MovingSkill {
 			// The current edge is over, agent moves to the next one
 		}
 		if (currentLocation.equals(falseTarget)) {
-			currentLocation = (GamaPoint) path.getEndVertex();
+			currentLocation = ((IShape) path.getEndVertex()).getLocation().toGamaPoint();
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
