@@ -371,6 +371,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			while (loop_instantaneous_plans) {
 				loop_instantaneous_plans = false;
 				final IAgent agent = getCurrentAgent(scope);
+				if (agent.dead()) return null;
 				agent.setAttribute(LAW_BASE, _laws);
 				agent.setAttribute(PLAN_BASE, _plans);
 				agent.setAttribute(NORM_BASE, _norms);
