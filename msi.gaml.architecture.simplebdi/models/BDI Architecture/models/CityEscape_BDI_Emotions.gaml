@@ -89,7 +89,7 @@ species people skills: [moving] control: simple_bdi{
 
     //if the agent perceive that their is something that is not normal (a hazard), it has a probability proba_detect_hazard to suppose (add to its unertainty base) that there is a catastrophe occuring
 	perceive target:hazard in: hazard_distance when: not escape_mode and flip(proba_detect_hazard){
-		focus catastrophe is_uncertain: true;
+		focus id:"catastrophe" is_uncertain: true;
 		ask myself {
 //			do add_uncertainty(catastropheP);
 			if(fearful){
@@ -102,7 +102,7 @@ species people skills: [moving] control: simple_bdi{
 
 	//if the agent perceive the catastrophe, it adds a belief about it and pass in escape mode
 	perceive target:catastrophe in:catastrophe_distance{
-		focus catastrophe;
+		focus id:"catastrophe";
 		ask myself{
 //			do add_belief(catastropheP);
 			if(not escape_mode){

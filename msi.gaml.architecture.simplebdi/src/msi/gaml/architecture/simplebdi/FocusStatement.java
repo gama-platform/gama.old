@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 		IConcept.BDI })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the focus")),
+		@facet(name = IKeyword.ID, type = IType.STRING, optional = true, doc = @doc("the identifier of the focus")),
 		@facet(name = FocusStatement.VAR, type = { IType.NONE, IType.LIST,
 				IType.CONTAINER }, optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
 		@facet(name = FocusStatement.EXPRESSION, type = IType.NONE, optional = true, doc = @doc("an expression that will be the value kept in the belief")),
@@ -80,7 +80,7 @@ import msi.gaml.types.IType;
 				optional = true,
 				doc = @doc("a boolean to indicate if the mental state created is an uncertainty")),
 		@facet(name = FocusStatement.STRENGTH, type = { IType.FLOAT,
-				IType.INT }, optional = true, doc = @doc("The priority of the created predicate")) }, omissible = IKeyword.NAME)
+				IType.INT }, optional = true, doc = @doc("The priority of the created predicate")) })
 @doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
 		@example("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
 public class FocusStatement extends AbstractStatement {
@@ -116,7 +116,7 @@ public class FocusStatement extends AbstractStatement {
 
 	public FocusStatement(final IDescription desc) {
 		super(desc);
-		nameExpression = getFacet(IKeyword.NAME);
+		nameExpression = getFacet(IKeyword.ID);
 		variable = getFacet(FocusStatement.VAR);
 		expression = getFacet(FocusStatement.EXPRESSION);
 		belief = getFacet(FocusStatement.BELIEF);

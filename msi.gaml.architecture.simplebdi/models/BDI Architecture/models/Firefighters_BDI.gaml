@@ -13,6 +13,13 @@ model Firefighters
 
 global {
 	int displatTextSize <-4;
+	
+	//We define the predicates that will be used later.
+	predicate patrol_desire <- new_predicate("patrol");
+	predicate water_predicate <- new_predicate("has water",true);
+	predicate no_water_predicate <- new_predicate("has water", false) ;
+	string fireLocation <- "fireLocation";
+	
 	init {
 		create fireArea number:20;
 		create waterArea number:1;
@@ -28,14 +35,10 @@ global {
 //give the simple_bdi architecture to the firefighter agents
 species firefighter skills: [moving] control: simple_bdi{	
 	
-	//Here are the variables used by a helicopter. We define the predicates that will be used later.
+	//Here are the variables used by a helicopter. 
 	rgb color <- rnd_color(150);
 	float waterValue;
 	grille maCellule <- one_of(grille);
-	predicate patrol_desire <- new_predicate("patrol");
-	predicate water_predicate <- new_predicate("has water",true);
-	predicate no_water_predicate <- new_predicate("has water", false) ;
-
 	//Definition of the variables featured in the BDI architecture.
 	float plan_persistence <- 1.0; 
 	float intention_persistence <- 1.0;
@@ -62,17 +65,14 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
 	perceive target:fireArea in: 15{
-		focus fireLocation var:location strength:10.0;
+		focus id:fireLocation var:location strength:10.0; 
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		} 
-		//list<predicate> preds <- myself.get_beliefs_with_name("fireLocation") collect each.predicate;
-		list<predicate> preds2 <- (myself get_beliefs_with_name_op "fireLocation") collect each.predicate;
-	write preds2;
 	}
 	
 	//The rules are used to create a desire from a belief. We can specify the priority of the desire with a statement priority.
-	//rule belief: new_predicate("fireLocation") new_desire: get_predicate(get_belief_with_name("fireLocation"));
+	rule belief: new_predicate(fireLocation) new_desire: get_predicate(get_belief_with_name(fireLocation));
 	rule belief: no_water_predicate new_desire: water_predicate strength: 10.0;
 	
 	//The plan to do when the intention is to patrol.
@@ -81,7 +81,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	}
 	 
 	//The plan that is executed when the agent got the intention of extinguish a fire.
-	plan stopFire intention: new_predicate("fireLocation") priority:5{
+	plan stopFire intention: new_predicate(fireLocation) priority:5{
 		point target_fire <- point(get_predicate(get_current_intention()).values["location_value"] );
 		if(waterValue>0){
 			if (self distance_to target_fire <= 1) {
