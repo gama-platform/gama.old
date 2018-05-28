@@ -1862,7 +1862,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		return predicates;
 	}
-
+	
+	
 	@action (
 			name = "get_beliefs",
 			args = { @arg (

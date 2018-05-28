@@ -16,11 +16,11 @@ import msi.gaml.types.Types;
 		doc = @doc ("The name of this norm")),
 		@var (
 				name = NormStatement.INTENTION,
-				type = IType.NONE,
+				type = PredicateType.id,
 				doc = @doc ("A string representing the current intention of this Norm")),
 		@var (
 				name = NormStatement.OBLIGATION,
-				type = IType.NONE,
+				type = PredicateType.id,
 				doc = @doc ("A string representing the current obligation of this Norm")),
 		@var (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,

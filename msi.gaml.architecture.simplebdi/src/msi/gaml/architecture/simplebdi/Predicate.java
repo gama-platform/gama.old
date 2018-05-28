@@ -14,6 +14,7 @@ package msi.gaml.architecture.simplebdi;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
@@ -475,9 +476,18 @@ public class Predicate implements IValue {
 		/*
 		 * if ( values == null ) { if ( other.values != null ) { return false; }
 		 * } else
-		 */ if (values != null && other.values != null && !values.equals(other.values)) {
-			return false;
-		}
+		 */ if (values != null && other.values != null)
+			{
+			 Set<String> keys = values.keySet();
+			 keys.retainAll(other.values.keySet());
+			 for (String k : keys) {
+				 if (!values.get(k).equals(other.values.get(k))) 
+					 return false;
+			 }
+			 return true;
+			}
+			
+		
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
 		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {

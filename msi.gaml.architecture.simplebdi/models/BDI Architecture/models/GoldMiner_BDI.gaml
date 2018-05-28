@@ -56,7 +56,7 @@ species miner skills: [moving] control:simple_bdi {
 	
 	//if the agent perceive a gold nugget in its neighborhood, it adds a belief a belief concening its location and remove its wandering intention
 	perceive target:gold in:viewdist {
-		focus location_gold var:location;
+		focus id:"location_gold" var:location;
 		ask myself {do remove_intention(wander, false);}
 	}
 	
