@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -13,7 +15,11 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
+import msi.gaml.types.IType;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Operators {
@@ -1571,5 +1577,32 @@ public class Operators {
 			return null;
 		}
 	}
+	
+	//example of transformation of actions to operator
+	@operator (
+			value = "get_beliefs_with_name_op",
+					can_be_const = true,
+					content_type = MentalStateType.id,
+					category = { "BDI" },
+					concept = { IConcept.BDI })
+		@doc (
+					value = "get the list of predicates is in the belief base with the given name.",
+					returns = "the list of beliefs (mental state).",
+					examples = { @example ("get_belief(\"has_water\")") })
+	public static IList<MentalState> getBeliefsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+		final IList<MentalState> predicates = GamaListFactory.create();
+		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
+			return predicates;
+		if (predicateName != null) {
+			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			for (final MentalState mental : beliefs) {
+				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+					predicates.add(mental);
+				}
+			}
+		}
+		return predicates;
+	}
+
 
 }

@@ -11,9 +11,9 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars({@var(name = "modality", type = IType.STRING),
-	@var(name = "predicate", type = IType.NONE),
-	@var(name = "mental_state", type = IType.NONE),
-	@var(name = "emotion", type=IType.NONE),
+	@var(name = "predicate", type = PredicateType.id),
+	@var(name = "mental_state", type = MentalStateType.id),
+	@var(name = "emotion", type= EmotionType.id),
 	@var(name = "owner", type = IType.AGENT),
 	@var(name = "strength", type = IType.FLOAT),
 	@var(name = "lifetime", type = IType.INT)})

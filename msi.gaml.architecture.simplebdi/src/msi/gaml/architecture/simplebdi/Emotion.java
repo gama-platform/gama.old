@@ -11,7 +11,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "intensity", type = IType.FLOAT),
-		@var(name = "about", type = IType.NONE), @var(name = "decay", type = IType.FLOAT),
+		@var(name = "about", type = PredicateType.id), @var(name = "decay", type = IType.FLOAT),
 		@var(name = "agentCause", type = IType.AGENT), @var(name = "owner", type = IType.AGENT)})
 public class Emotion implements IValue {
 

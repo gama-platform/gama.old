@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
 				type = IType.STRING),
 		@var (
 				name = SimpleBdiPlanStatement.INTENTION,
-				type = IType.NONE,
+				type = MentalStateType.id,
 				doc = @doc ("A string representing the current intention of this BDI plan")),
 		@var (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
