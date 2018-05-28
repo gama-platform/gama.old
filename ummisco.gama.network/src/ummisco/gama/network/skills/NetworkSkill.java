@@ -83,7 +83,7 @@ public class NetworkSkill extends MessagingSkill {
 			@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 			@arg(name = INetworkSkill.LOGIN, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 			@arg(name = INetworkSkill.PASSWORD, type = IType.STRING, optional = true, doc = @doc("server nameL")),
-			@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = {
+			@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = true, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = {
 					@example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER))

@@ -1,8 +1,8 @@
 /**
-* Name: MQQT_HelloWorld_Send
-* Author: Arnaud Grignard
-* Description: Two clients are communicated throught the MQQT protocol.
-* Tags: Network, MQQT
+* Name: MQTT__Send
+* Author: Nicolas Marilleau and Arnaud Grignard
+* Description: Two clients are communicated throught the MQTT protocol.
+* Tags: Network, MQTT
 */
 
 model MQQT_HelloWorld_Send
@@ -17,9 +17,17 @@ global {
 		create NetworkingAgent number:1{
 			name <-clients[0];
 			dest <- clients[1];
-			
 			i <- i + 1;
-			do connect to:"localhost" with_name:"send";
+			/**
+			 * Demo connection based on the demo gama server. 
+			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could be slow down the simulation. 
+			 * It is a free and unsecure server.
+			 * Using YOUR server is thus adviced. You can download free solution such as ActiveMQ (http://activemq.apache.org) 
+			 */
+			do connect  with_name:"sender";
+			
+			//default ActiveMQ mqtt login is "admin", the password is "password"
+			//do connect to:"localhost" with_name:"send";
 		}
 	}
 }
@@ -30,15 +38,15 @@ species NetworkingAgent skills:[network]{
 	reflex send when: cycle mod 10  = 3
 	{
 		write "sending message: " + "This message a string" + name;
-		do send to:"send" contents:"This message a string" + name;
-		do send to:"receive" contents:"This message a string" + name;		
+		do send to:"sender" contents:"This message a string" + name;
+		do send to:"receiver" contents:"This message a string" + name;		
 	}
 	reflex send2 when: cycle mod 10  = 5
 	{
 		int a <- 0;		
 		write "sending message: " + a;
-		do send to:"send" contents:a;
-		do send to:"receive" contents:a;		
+		do send to:"sender" contents:a;
+		do send to:"receiver" contents:a;		
 	}
 	
 
@@ -55,7 +63,7 @@ species NetworkingAgent skills:[network]{
 	}
 }
 
-experiment testdd type: gui {
+experiment Network_sender type: gui {
 	output {
 	}
 }
