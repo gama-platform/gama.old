@@ -1,22 +1,28 @@
 /**
-* Name: MQQT_HelloWorld_Send
-* Author: Arnaud Grignard
-* Description: Two clients are communicated throught the MQQT protocol.
-* Tags: Network, MQQT
+* Name: MQTT_Receiver
+* Author: Nicolas Marilleau and Arnaud Grignard
+* Description: The simple receiver model based on MQTT protocol.
+* Tags: Network, MQTT
 */
 
 model MQQT_HelloWorld_Receive
 
 global {	
-	list<string> clients <-["send","receive"];
 	init {
 		write "A MQTT server should run." color: #red;
 		write "Another instance of GAMA should run the model Example_MQTT_Send.gaml, so that an agent can send messages.";
 		
 		create NetworkingAgent number:1{
-		    name <-clients[1];
-		    dest <- clients[0];
-			do connect to:"localhost" with_name:name;
+			/**
+			 * Demo connection based on the demo gama server. 
+			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could be slow down the simulation. 
+			 * It is a free and unsecure server.
+			 * Using YOUR server is thus adviced. You can download free solution such as ActiveMQ (http://activemq.apache.org) 
+			 */
+			do connect  with_name:"receiver";
+			
+			//default ActiveMQ mqtt login is "admin", the password is "password"
+			//do connect to:"localhost" with_name:name;
 		}
 	}
 }
@@ -31,7 +37,7 @@ species NetworkingAgent skills:[network]{
 	}
 }
 
-experiment testdd type: gui {
+experiment Network_reciever type: gui {
 	output {
 	}
 }

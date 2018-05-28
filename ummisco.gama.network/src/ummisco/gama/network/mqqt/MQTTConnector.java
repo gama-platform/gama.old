@@ -27,11 +27,11 @@ import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 
 public final class MQTTConnector extends Connector{
-	public static String DEFAULT_USER = "admin";
+	public static String DEFAULT_USER = "gama_demo";
 	public static String DEFAULT_LOCAL_NAME = "gama-"+Calendar.getInstance().getTimeInMillis()+"@";
-	public static String DEFAULT_PASSWORD = "password";
-	public static String DEFAULT_HOST =  "localhost";
-	public static String DEFAULT_PORT =  "1883";
+	public static String DEFAULT_PASSWORD = "gama_demo";
+	public static String DEFAULT_HOST =  "195.221.248.15";
+	public static String DEFAULT_PORT =  "1935";
 	
 	protected MqttClient sendConnection = null;
 	protected IScope simulationScope;
