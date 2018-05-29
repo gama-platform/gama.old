@@ -59,6 +59,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The mandatory uncertainty")),
 				@facet (
+						name = RuleStatement.IDEAL,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("The mandatory ideal")),
+				@facet (
+						name = RuleStatement.OBLIGATION,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("The mandatory obligation")),
+				@facet (
 						name = RuleStatement.DESIRES,
 						type = IType.LIST,
 						of = PredicateType.id,
@@ -83,6 +93,18 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The mandatory uncertainties")),
 				@facet (
+						name = RuleStatement.IDEALS,
+						type = IType.LIST,
+						of = PredicateType.id,
+						optional = true,
+						doc = @doc ("The mandatory ideals")),
+				@facet (
+						name = RuleStatement.OBLIGATIONS,
+						type = IType.LIST,
+						of = PredicateType.id,
+						optional = true,
+						doc = @doc ("The mandatory obligations")),
+				@facet (
 						name = RuleStatement.NEW_DESIRE,
 						type = PredicateType.id,
 						optional = true,
@@ -102,6 +124,11 @@ import msi.gaml.types.IType;
 						type = PredicateType.id,
 						optional = true,
 						doc = @doc ("The uncertainty that will be added")),
+				@facet (
+						name = RuleStatement.NEW_IDEAL,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("The ideal that will be added")),
 				@facet (
 						name = RuleStatement.NEW_DESIRES,
 						type = IType.LIST,
@@ -127,6 +154,12 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The uncertainty that will be added")),
 				@facet (
+						name = RuleStatement.NEW_IDEALS,
+						type = IType.LIST,
+						of = PredicateType.id,
+						optional = true,
+						doc = @doc ("The ideals that will be added")),
+				@facet (
 						name = RuleStatement.REMOVE_BELIEFS,
 						type = IType.LIST,
 						of = PredicateType.id,
@@ -145,6 +178,18 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The emotion that will be removed")),
 				@facet (
+						name = RuleStatement.REMOVE_IDEALS,
+						type = IType.LIST,
+						of = PredicateType.id,
+						optional = true,
+						doc = @doc ("The ideals that will be removed")),
+				@facet (
+						name = RuleStatement.REMOVE_OBLIGATIONS,
+						type = IType.LIST,
+						of = PredicateType.id,
+						optional = true,
+						doc = @doc ("The obligation that will be removed")),
+				@facet (
 						name = RuleStatement.REMOVE_UNCERTAINTIES,
 						type = IType.LIST,
 						of = PredicateType.id,
@@ -155,6 +200,11 @@ import msi.gaml.types.IType;
 						type = PredicateType.id,
 						optional = true,
 						doc = @doc ("The belief that will be removed")),
+				@facet (
+						name = RuleStatement.REMOVE_IDEAL,
+						type = PredicateType.id,
+						optional = true,
+						doc = @doc ("The ideal that will be removed")),
 				@facet (
 						name = RuleStatement.REMOVE_DESIRE,
 						type = PredicateType.id,
@@ -222,29 +272,38 @@ public class RuleStatement extends AbstractStatement {
 	public static final String DESIRE = "desire";
 	public static final String EMOTION = "emotion";
 	public static final String UNCERTAINTY = "uncertainty";
+	public static final String IDEAL = "ideal";
+	public static final String OBLIGATION = "obligation";
 	public static final String RULES = "rules";
 	public static final String BELIEFS = "beliefs";
 	public static final String DESIRES = "desires";
 	public static final String EMOTIONS = "emotions";
 	public static final String UNCERTAINTIES = "uncertainties";
+	public static final String IDEALS = "ideals";
+	public static final String OBLIGATIONS = "obligations";
 	public static final String NEW_DESIRE = "new_desire";
 	public static final String NEW_BELIEF = "new_belief";
 	public static final String NEW_EMOTION = "new_emotion";
 	public static final String NEW_UNCERTAINTY = "new_uncertainty";
+	public static final String NEW_IDEAL = "new_ideal";
 	public static final String REMOVE_BELIEF = "remove_belief";
 	public static final String REMOVE_DESIRE = "remove_desire";
 	public static final String REMOVE_INTENTION = "remove_intention";
 	public static final String REMOVE_EMOTION = "remove_emotion";
 	public static final String REMOVE_UNCERTAINTY = "remove_uncertainty";
+	public static final String REMOVE_IDEAL = "remove_ideal";
+	public static final String REMOVE_OBLIGATION = "remove_obligation";
 	public static final String NEW_DESIRES = "new_desires";
 	public static final String NEW_BELIEFS = "new_beliefs";
 	public static final String NEW_EMOTIONS = "new_emotions";
 	public static final String NEW_UNCERTAINTIES = "new_uncertainties";
+	public static final String NEW_IDEALS = "new_ideals";
 	public static final String REMOVE_BELIEFS = "remove_beliefs";
 	public static final String REMOVE_DESIRES = "remove_desires";
 	public static final String REMOVE_EMOTIONS = "remove_emotions";
 	public static final String REMOVE_UNCERTAINTIES = "remove_uncertainties";
-	public static final String REMOVE_OBLIGATION = "remove_obligation";
+	public static final String REMOVE_IDEALS = "remove_ideals";
+	public static final String REMOVE_OBLIGATIONS = "remove_obligations";
 	public static final String STRENGTH = "strength";
 	public static final String THRESHOLD = "threshold";
 
@@ -254,28 +313,37 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression desire;
 	final IExpression emotion;
 	final IExpression uncertainty;
+	final IExpression ideal;
+	final IExpression obligation;
 	final IExpression beliefs;
 	final IExpression desires;
 	final IExpression emotions;
 	final IExpression uncertainties;
+	final IExpression ideals;
+	final IExpression obligations;
 	final IExpression newBelief;
 	final IExpression newDesire;
 	final IExpression newEmotion;
 	final IExpression newUncertainty;
+	final IExpression newIdeal;
 	final IExpression removeBelief;
 	final IExpression removeDesire;
 	final IExpression removeIntention;
 	final IExpression removeEmotion;
 	final IExpression removeUncertainty;
+	final IExpression removeIdeal;
+	final IExpression removeObligation;
 	final IExpression newBeliefs;
 	final IExpression newDesires;
 	final IExpression newEmotions;
 	final IExpression newUncertainties;
+	final IExpression newIdeals;
 	final IExpression removeBeliefs;
 	final IExpression removeDesires;
 	final IExpression removeEmotions;
 	final IExpression removeUncertainties;
-	final IExpression removeObligation;
+	final IExpression removeIdeals;
+	final IExpression removeObligations;
 	final IExpression strength;
 	final IExpression threshold;
 	final IExpression lifetime;
@@ -287,28 +355,37 @@ public class RuleStatement extends AbstractStatement {
 		desire = getFacet(RuleStatement.DESIRE);
 		emotion = getFacet(RuleStatement.EMOTION);
 		uncertainty = getFacet(RuleStatement.UNCERTAINTY);
+		ideal = getFacet(RuleStatement.IDEAL);
+		obligation = getFacet(RuleStatement.OBLIGATION);
 		beliefs = getFacet(RuleStatement.BELIEFS);
 		desires = getFacet(RuleStatement.DESIRES);
 		emotions = getFacet(RuleStatement.EMOTIONS);
 		uncertainties = getFacet(RuleStatement.UNCERTAINTIES);
+		ideals = getFacet(RuleStatement.IDEALS);
+		obligations = getFacet(RuleStatement.OBLIGATIONS);
 		newBelief = getFacet(RuleStatement.NEW_BELIEF);
 		newDesire = getFacet(RuleStatement.NEW_DESIRE);
 		newEmotion = getFacet(RuleStatement.NEW_EMOTION);
 		newUncertainty = getFacet(RuleStatement.NEW_UNCERTAINTY);
+		newIdeal = getFacet(RuleStatement.NEW_IDEAL);
 		removeBelief = getFacet(RuleStatement.REMOVE_BELIEF);
 		removeDesire = getFacet(RuleStatement.REMOVE_DESIRE);
 		removeIntention = getFacet(RuleStatement.REMOVE_INTENTION);
 		removeEmotion = getFacet(RuleStatement.REMOVE_EMOTION);
 		removeUncertainty = getFacet(RuleStatement.REMOVE_UNCERTAINTY);
+		removeIdeal = getFacet(RuleStatement.REMOVE_IDEAL);
+		removeObligation = getFacet(RuleStatement.REMOVE_OBLIGATION);
 		newBeliefs = getFacet(RuleStatement.NEW_BELIEFS);
 		newDesires = getFacet(RuleStatement.NEW_DESIRES);
 		newEmotions = getFacet(RuleStatement.NEW_EMOTIONS);
 		newUncertainties = getFacet(RuleStatement.NEW_UNCERTAINTIES);
+		newIdeals = getFacet(RuleStatement.NEW_IDEALS);
 		removeBeliefs = getFacet(RuleStatement.REMOVE_BELIEFS);
 		removeDesires = getFacet(RuleStatement.REMOVE_DESIRES);
 		removeEmotions = getFacet(RuleStatement.REMOVE_EMOTIONS);
 		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
-		removeObligation = getFacet(RuleStatement.REMOVE_OBLIGATION);
+		removeIdeals = getFacet(RuleStatement.REMOVE_IDEALS);
+		removeObligations = getFacet(RuleStatement.REMOVE_OBLIGATIONS);
 		strength = getFacet(RuleStatement.STRENGTH);
 		threshold = getFacet(RuleStatement.THRESHOLD);
 		lifetime = getFacet("lifetime");
@@ -340,12 +417,26 @@ public class RuleStatement extends AbstractStatement {
 						tempUncertainty.setPredicate((Predicate) uncertainty.value(scope));
 					}
 					if (uncertainty == null || SimpleBdiArchitecture.hasUncertainty(scope, tempUncertainty)) {
+						final MentalState tempIdeal = new MentalState("Ideal");
+						if (ideal != null) {
+							tempIdeal.setPredicate((Predicate) ideal.value(scope));
+					}
+						if(ideal == null || SimpleBdiArchitecture.hasIdeal(scope, tempIdeal)){
+							final MentalState tempObligation = new MentalState("Obligation");
+							if (obligation != null) {
+								tempObligation.setPredicate((Predicate) obligation.value(scope));
+						}
+							if(obligation == null || SimpleBdiArchitecture.hasObligation(scope, tempUncertainty)) {
 						if (emotion == null
 								|| SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
 							if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
 								if (desires == null || hasDesires(scope, (List<Predicate>) desires.value(scope))) {
 									if (uncertainties == null
 											|| hasUncertainties(scope, (List<Predicate>) uncertainties.value(scope))) {
+										if (ideals == null
+												|| hasIdeals(scope, (List<Predicate>) ideals.value(scope))) {
+											if (obligations == null
+													|| hasObligations(scope, (List<Predicate>) obligations.value(scope))) {
 										if (emotions == null
 												|| hasEmotions(scope, (List<Emotion>) emotions.value(scope))) {
 
@@ -398,6 +489,20 @@ public class RuleStatement extends AbstractStatement {
 													}
 													SimpleBdiArchitecture.addUncertainty(scope, tempNewUncertainty);
 												}
+												if (newIdeal != null) {
+													final Predicate newIde = (Predicate) newIdeal.value(scope);
+													final MentalState tempNewIdeal =
+															new MentalState("Ideal", newIde);
+													if (strength != null) {
+														tempNewIdeal.setStrength(
+																Cast.asFloat(scope, strength.value(scope)));
+													}
+													if (lifetime != null) {
+														tempNewIdeal
+																.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+													}
+													SimpleBdiArchitecture.addIdeal(scope, tempNewIdeal);
+												}
 												if (removeBelief != null) {
 													final Predicate removBel = (Predicate) removeBelief.value(scope);
 													final MentalState tempRemoveBelief =
@@ -428,6 +533,12 @@ public class RuleStatement extends AbstractStatement {
 															new MentalState("Uncertainty", removUncert);
 													SimpleBdiArchitecture.removeUncertainty(scope,
 															tempRemoveUncertainty);
+												}
+												if (removeIdeal != null) {
+													final Predicate removeIde = (Predicate) removeIdeal.value(scope);
+													final MentalState tempRemoveIde =
+															new MentalState("Ideal", removeIde);
+													SimpleBdiArchitecture.removeIdeal(scope, tempRemoveIde);
 												}
 												if (removeObligation != null) {
 													final Predicate removeObl = (Predicate) removeObligation.value(scope);
@@ -492,6 +603,23 @@ public class RuleStatement extends AbstractStatement {
 														SimpleBdiArchitecture.addUncertainty(scope, tempUncertainties);
 													}
 												}
+												if (newIdeals != null) {
+													final List<Predicate> newIdes =
+															(List<Predicate>) newIdeals.value(scope);
+													for (final Predicate newIde : newIdes) {
+														final MentalState tempIdeals =
+																new MentalState("Ideal", newIde);
+														if (strength != null) {
+															tempIdeals.setStrength(
+																	Cast.asFloat(scope, strength.value(scope)));
+														}
+														if (lifetime != null) {
+															tempIdeals.setLifeTime(
+																	Cast.asInt(scope, lifetime.value(scope)));
+														}
+														SimpleBdiArchitecture.addDesire(scope, null, tempIdeals);
+													}
+												}
 												if (removeBeliefs != null) {
 													final List<Predicate> removBels =
 															(List<Predicate>) removeBeliefs.value(scope);
@@ -526,10 +654,32 @@ public class RuleStatement extends AbstractStatement {
 																tempRemoveUncertainties);
 													}
 												}
+												if (removeIdeals != null) {
+													final List<Predicate> removeIdes =
+															(List<Predicate>) removeIdeals.value(scope);
+													for (final Predicate removeIde : removeIdes) {
+														final MentalState tempRemoveIdeals =
+																new MentalState("Ideal", removeIde);
+														SimpleBdiArchitecture.removeDesire(scope, tempRemoveIdeals);
+													}
+												}
+												if (removeObligations != null) {
+													final List<Predicate> removeObls =
+															(List<Predicate>) removeObligations.value(scope);
+													for (final Predicate removeObl : removeObls) {
+														final MentalState tempRemoveObligations =
+																new MentalState("Obligation", removeObl);
+														SimpleBdiArchitecture.removeDesire(scope, tempRemoveObligations);
+													}
+												}
 											}
 										}
 									}
 								}
+							}
+						}
+					}
+						}
 							}
 						}
 					}
@@ -565,7 +715,25 @@ public class RuleStatement extends AbstractStatement {
 		}
 		return true;
 	}
+	
+	private boolean hasIdeals(final IScope scope, final List<Predicate> predicates) {
+		for (final Predicate p : predicates) {
+			final MentalState temp = new MentalState("Ideal", p);
+			if (!SimpleBdiArchitecture.hasIdeal(scope, temp))
+				return false;
+		}
+		return true;
+	}
 
+	private boolean hasObligations(final IScope scope, final List<Predicate> predicates) {
+		for (final Predicate p : predicates) {
+			final MentalState temp = new MentalState("Uncertainty", p);
+			if (!SimpleBdiArchitecture.hasUncertainty(scope, temp))
+				return false;
+		}
+		return true;
+	}
+	
 	private boolean hasEmotions(final IScope scope, final List<Emotion> emotions) {
 		for (final Emotion p : emotions) {
 			if (!SimpleBdiArchitecture.hasEmotion(scope, p))
