@@ -58,8 +58,8 @@ import msi.gaml.types.Types;
 				IType.GEOMETRY }, optional = true, doc = @doc("a float or a geometry. If it is a float, it's a radius of a detection area. If it is a geometry, it is the area of detection of others species.")),
 		@facet(name = PerceiveStatement.EMOTION, type = EmotionType.id, optional = true, doc = @doc("The emotion needed to do the perception")),
 		@facet(name = PerceiveStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("Threshold linked to the emotion.")),
-		@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.POINT,
-				IType.AGENT }, optional = false, doc = @doc("the list of the agent you want to perceive")) }, omissible = IKeyword.NAME)
+		@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, /*IType.POINT,*/
+				IType.AGENT }, of = IType.AGENT, optional = false, doc = @doc("the list of the agent you want to perceive")) }, omissible = IKeyword.NAME)
 @doc(value = "Allow the agent, with a bdi architecture, to perceive others agents", usages = {
 		@usage(value = "the basic syntax to perceive agents inside a circle of perception", examples = {
 				@example(value = "perceive name_of-perception target: the_agents_you_want_to_perceive in: a_distance when: a_certain_condition {", isExecutable = false),
