@@ -2927,12 +2927,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			args = { @arg (
 					name = PREDICATE,
 					type = PredicateType.id,
-					optional = true,
+					optional = false,
 					doc = @doc ("intention's predicate to remove")),
 					@arg (
 							name = REMOVE_DESIRE_AND_INTENTION,
 							type = IType.BOOL,
-							optional = false,
+							optional = true,
 							doc = @doc ("removes also desire")) },
 			doc = @doc (
 					value = "removes the predicates from the intention base.",
@@ -2946,14 +2946,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (predicateDirect != null) {
 			final Boolean dodesire =
 					scope.hasArg(REMOVE_DESIRE_AND_INTENTION) ? scope.getBoolArg(REMOVE_DESIRE_AND_INTENTION) : false;
-			getBase(scope, INTENTION_BASE).remove(temp);
+//			getBase(scope, INTENTION_BASE).remove(temp);
 			if (dodesire) {
 				getBase(scope, DESIRE_BASE).remove(temp);
 				getBase(scope, OBLIGATION_BASE).remove(temp);
 			}
-			if (predicateDirect.equals(currentIntention(scope).getPredicate()))
+			if (currentIntention(scope)!=null && predicateDirect.equals(currentIntention(scope).getPredicate())) {
 				scope.getAgent().setAttribute(CURRENT_PLAN, null);
 				scope.getAgent().setAttribute(CURRENT_NORM, null);
+			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 				if(((MentalState) statement).getPredicate()!=null){
 					final List<MentalState> statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
@@ -2970,6 +2971,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
+			getBase(scope, INTENTION_BASE).remove(temp);
 
 			return true;
 		}
