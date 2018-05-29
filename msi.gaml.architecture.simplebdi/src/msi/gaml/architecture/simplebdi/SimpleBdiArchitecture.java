@@ -2951,7 +2951,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				getBase(scope, DESIRE_BASE).remove(temp);
 				getBase(scope, OBLIGATION_BASE).remove(temp);
 			}
-			if (predicateDirect.equals(currentIntention(scope)))
+			if (predicateDirect.equals(currentIntention(scope).getPredicate()))
 				scope.getAgent().setAttribute(CURRENT_PLAN, null);
 				scope.getAgent().setAttribute(CURRENT_NORM, null);
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {

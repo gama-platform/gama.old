@@ -476,7 +476,7 @@ public class Predicate implements IValue {
 		/*
 		 * if ( values == null ) { if ( other.values != null ) { return false; }
 		 * } else
-		 */ if (values != null && other.values != null)
+//		 */ if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
 			{
 			 Set<String> keys = values.keySet();
 			 keys.retainAll(other.values.keySet());
@@ -486,7 +486,9 @@ public class Predicate implements IValue {
 			 }
 			 return true;
 			}
-			
+//			if (values != null && other.values != null && !values.equals(other.values)) {
+//			return false;
+//		}
 		
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
@@ -540,9 +542,20 @@ public class Predicate implements IValue {
 		/*
 		 * if ( values == null ) { if ( other.values != null ) { return false; }
 		 * } else
-		 */ if (values != null && other.values != null && !values.equals(other.values)) {
-			return false;
+		 */ 
+		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
+		{
+		 Set<String> keys = values.keySet();
+		 keys.retainAll(other.values.keySet());
+		 for (String k : keys) {
+			 if (!values.get(k).equals(other.values.get(k))) 
+				 return false;
+		 }
+		 return true;
 		}
+//		if (values != null && other.values != null && !values.equals(other.values)) {
+//			return false;
+//		}
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
 		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
@@ -597,9 +610,20 @@ public class Predicate implements IValue {
 		/*
 		 * if ( values == null ) { if ( other.values != null ) { return false; }
 		 * } else
-		 */ if (values != null && other.values != null && !values.equals(other.values)) {
-			return false;
+		 */ 
+		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
+		{
+		 Set<String> keys = values.keySet();
+		 keys.retainAll(other.values.keySet());
+		 for (String k : keys) {
+			 if (!values.get(k).equals(other.values.get(k))) 
+				 return false;
+		 }
+		 return true;
 		}
+//		if (values != null && other.values != null && !values.equals(other.values)) {
+//			return false;
+//		}
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
 		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
@@ -653,9 +677,20 @@ public class Predicate implements IValue {
 			/*
 			 * if ( values == null ) { if ( other.values != null ) { return
 			 * false; } } else
-			 */ if (values != null && other.values != null && !values.equals(other.values)) {
-				return false;
+			 */ 
+			if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
+			{
+			 Set<String> keys = values.keySet();
+			 keys.retainAll(other.values.keySet());
+			 for (String k : keys) {
+				 if (!values.get(k).equals(other.values.get(k))) 
+					 return false;
+			 }
+			 return true;
 			}
+//			if (values != null && other.values != null && !values.equals(other.values)) {
+//				return false;
+//			}
 			/*
 			 * if(agentCause==null){ if(other.agentCause!=null){return false;}
 			 * }else*/
@@ -719,9 +754,20 @@ public class Predicate implements IValue {
 		/*
 		 * if ( values == null ) { if ( other.values != null ) { return false; }
 		 * } else
-		 */ if (values != null && other.values != null && !values.equals(other.values)) {
-			return false;
+		 */ 
+		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
+		{
+		 Set<String> keys = values.keySet();
+		 keys.retainAll(other.values.keySet());
+		 for (String k : keys) {
+			 if (!values.get(k).equals(other.values.get(k))) 
+				 return false;
+		 }
+		 return true;
 		}
+//		if (values != null && other.values != null && !values.equals(other.values)) {
+//			return false;
+//		}
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else*/
 //		 if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {

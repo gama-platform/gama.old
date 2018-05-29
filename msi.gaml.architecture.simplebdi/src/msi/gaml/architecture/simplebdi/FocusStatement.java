@@ -468,8 +468,8 @@ public class FocusStatement extends AbstractStatement {
 					if (nameExpression != null) {
 						namePred = (String) nameExpression.value(scope);
 					}
-					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
-					tempPred = new Predicate(namePred, tempValues);
+//					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
+				tempPred = new Predicate(namePred/*, tempValues*/);
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scope, truth.value(scope)));
 					}
