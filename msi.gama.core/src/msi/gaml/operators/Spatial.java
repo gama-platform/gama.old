@@ -2660,7 +2660,7 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
 						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
-						test = false) })
+						isExecutable = false) })
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, double tolerance, boolean splitlines, boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
 			IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
