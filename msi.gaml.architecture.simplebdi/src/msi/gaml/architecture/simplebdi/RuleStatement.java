@@ -11,7 +11,9 @@
 
 package msi.gaml.architecture.simplebdi;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,6 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.System;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
@@ -256,6 +259,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the lifetime value of the mental state created")),
 				@facet (
+						name = RuleStatement.ALL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("add a desire for each belief")),
+				@facet (
 						name = IKeyword.NAME,
 						type = IType.ID,
 						optional = true,
@@ -306,6 +314,7 @@ public class RuleStatement extends AbstractStatement {
 	public static final String REMOVE_OBLIGATIONS = "remove_obligations";
 	public static final String STRENGTH = "strength";
 	public static final String THRESHOLD = "threshold";
+	public static final String ALL = "all";
 
 	final IExpression when;
 	final IExpression parallel;
@@ -346,6 +355,7 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression removeObligations;
 	final IExpression strength;
 	final IExpression threshold;
+	final IExpression all;
 	final IExpression lifetime;
 
 	public RuleStatement(final IDescription desc) {
@@ -390,6 +400,7 @@ public class RuleStatement extends AbstractStatement {
 		threshold = getFacet(RuleStatement.THRESHOLD);
 		lifetime = getFacet("lifetime");
 		parallel = getFacet(IKeyword.PARALLEL);
+		all = getFacet(RuleStatement.ALL);
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -401,10 +412,27 @@ public class RuleStatement extends AbstractStatement {
 				&& newUncertainties == null && removeBeliefs == null && removeDesires == null && removeEmotions == null
 				&& removeUncertainties == null)
 			return null;
+		boolean allVal = (all != null) && Cast.asBool(scope, all.value(scope));
+		List<Predicate> predList = null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			final MentalState tempBelief = new MentalState("Belief");
+			boolean has_belief = true;
 			if (belief != null) {
 				tempBelief.setPredicate((Predicate) belief.value(scope));
+				has_belief = SimpleBdiArchitecture.hasBelief(scope, tempBelief);
+				java.lang.System.out.println("tempBelief: " + tempBelief);
+				if (has_belief) {
+					predList = new ArrayList<Predicate>();
+					for (final MentalState mental : SimpleBdiArchitecture.getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+						if(mental.getPredicate()!=null){
+							if (tempBelief.getPredicate().equals(mental.getPredicate())) {
+								predList.add(mental.getPredicate());
+							}
+						}
+					}
+					java.lang.System.out.println("predList: " + predList);
+					
+				}
 			}
 			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief)) {
 				final MentalState tempDesire = new MentalState("Desire");
@@ -446,17 +474,35 @@ public class RuleStatement extends AbstractStatement {
 																	.value(scope)).intensity >= (Double) threshold
 																			.value(scope)) {
 												if (newDesire != null) {
-													final Predicate newDes = (Predicate) newDesire.value(scope);
-													final MentalState tempNewDesire = new MentalState("Desire", newDes);
-													if (strength != null) {
-														tempNewDesire.setStrength(
-																Cast.asFloat(scope, strength.value(scope)));
+													if (allVal) {
+														for (Predicate p : predList) {
+															final Predicate newDes = (Predicate) newDesire.value(scope);
+															final MentalState tempNewDesire = new MentalState("Desire", newDes);
+															tempNewDesire.getPredicate().setValues((Map<String, Object>) System.opCopy(scope, p.getValues()));
+															if (strength != null) {
+																tempNewDesire.setStrength(
+																		Cast.asFloat(scope, strength.value(scope)));
+															}
+															if (lifetime != null) {
+																tempNewDesire
+																		.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+															}
+															SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
+														}
+													} else {
+														final Predicate newDes = (Predicate) newDesire.value(scope);
+														final MentalState tempNewDesire = new MentalState("Desire", newDes);
+														if (strength != null) {
+															tempNewDesire.setStrength(
+																	Cast.asFloat(scope, strength.value(scope)));
+														}
+														if (lifetime != null) {
+															tempNewDesire
+																	.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+														}
+														SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
+									
 													}
-													if (lifetime != null) {
-														tempNewDesire
-																.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
-													}
-													SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
 												}
 												if (newBelief != null) {
 													final Predicate newBel = (Predicate) newBelief.value(scope);
