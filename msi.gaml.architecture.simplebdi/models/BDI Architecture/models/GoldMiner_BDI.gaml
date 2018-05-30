@@ -62,6 +62,7 @@ species miner skills: [moving] control:simple_bdi {
 	
 	//if the agent has the belief that their is gold at given location, it adds the desire to get gold 
 	rule belief: new_predicate("location_gold") new_desire: get_gold strength:10.0;
+	rule belief: new_predicate("location_gold") new_desire: new_predicate("toto") all: true strength:0.1;
 	
 	//if the agent has the belief that it has gold, it adds the desire to return to the base
 	rule belief: has_gold new_desire: return_base strength:100;

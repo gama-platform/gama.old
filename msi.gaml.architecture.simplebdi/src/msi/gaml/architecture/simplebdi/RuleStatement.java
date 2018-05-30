@@ -420,7 +420,6 @@ public class RuleStatement extends AbstractStatement {
 			if (belief != null) {
 				tempBelief.setPredicate((Predicate) belief.value(scope));
 				has_belief = SimpleBdiArchitecture.hasBelief(scope, tempBelief);
-				java.lang.System.out.println("tempBelief: " + tempBelief);
 				if (has_belief) {
 					predList = new ArrayList<Predicate>();
 					for (final MentalState mental : SimpleBdiArchitecture.getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
@@ -430,7 +429,6 @@ public class RuleStatement extends AbstractStatement {
 							}
 						}
 					}
-					java.lang.System.out.println("predList: " + predList);
 					
 				}
 			}
