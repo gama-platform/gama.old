@@ -42,17 +42,9 @@ public class InitializationUniform implements Initialization {
 		}
 		final List<Chromosome> populationInitOrd = new ArrayList<Chromosome>(populationInit);
 		Collections.sort(populationInitOrd);
-		final List<Chromosome> populationInitFinal = new ArrayList<Chromosome>();
-		if (!algo.isMaximize) {
-			for (int i = 0; i < populationDim; i++) {
-				populationInitFinal.add(populationInitOrd.get(i));
-			}
-		} else {
-			for (int i = populationInitOrd.size() - 1; i > populationInitOrd.size() - populationDim - 1; i--) {
-				populationInitFinal.add(populationInitOrd.get(i));
-			}
-		}
-		return populationInitFinal;
+		if (algo.isMaximize)
+			Collections.reverse(populationInitOrd);
+		return populationInitOrd.subList(0, populationDim);
 	}
 
 }
