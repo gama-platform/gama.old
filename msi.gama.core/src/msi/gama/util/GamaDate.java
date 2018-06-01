@@ -66,6 +66,10 @@ import msi.gaml.types.Types;
 		type = IType.INT,
 		doc = { @doc ("Returns the index of the day of the week (with Monday being 1)") }),
 		@var (
+				name = "date",
+				type = IType.DATE,
+				doc = { @doc ("Returns a new date object with only the year-month-day components of this date") }),
+		@var (
 				name = "leap",
 				type = IType.BOOL,
 				doc = { @doc ("Returns true if the year is a leap year") }),
@@ -331,6 +335,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	@getter ("year")
 	public int getYear() {
 		return internal.get(YEAR);
+	}
+
+	@getter ("date")
+	public GamaDate getDate() {
+		return GamaDate.of(LocalDate.of(getYear(), getMonth(), getDay()));
 	}
 
 	@getter ("day_of_year")
