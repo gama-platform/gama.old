@@ -478,6 +478,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return internal.hashCode();
+	}
+
 	public GamaDate plus(final double duration, final TemporalUnit unit) {
 		return plus((long) duration, unit);
 	}
