@@ -175,8 +175,13 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			try {
 				final TemporalAccessor ta = df.parse(original);
 				if (ta instanceof Temporal) { return (Temporal) ta; }
-				if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
-				return LocalDate.from(ta);
+				if (!ta.isSupported(ChronoField.YEAR) && !ta.isSupported(ChronoField.MONTH_OF_YEAR)
+						&& !ta.isSupported(ChronoField.DAY_OF_MONTH)) {
+					if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
+				}
+				if (!ta.isSupported(ChronoField.HOUR_OF_DAY) && !ta.isSupported(ChronoField.MINUTE_OF_HOUR)
+						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE)) { return LocalDate.from(ta); }
+				return LocalDateTime.from(ta);
 			} catch (final DateTimeParseException e) {}
 			GAMA.reportAndThrowIfNeeded(scope,
 					GamaRuntimeException.warning(
