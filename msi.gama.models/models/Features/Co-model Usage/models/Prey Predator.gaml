@@ -13,8 +13,8 @@ global
 	float perceipt_radius <- 20.0;
 	int preyinit <- 500;
 	int predatorinit <- 3;
-	list<agent> lstPredator <- list<agent> (predator);
-	list<agent> lstPrey <- list<agent> (prey);
+	list<agent> lstPredator;// <- list<agent> (predator);
+	list<agent> lstPrey; //<- list<agent> (prey);
 	init
 	{
 		create prey number: preyinit;
