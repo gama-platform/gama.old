@@ -71,6 +71,20 @@ public class GraphTopology extends AbstractTopology {
 	public boolean isContinuous() {
 		return false;
 	}
+	
+	private IShape optimizedClosestTo(IShape source, List<IShape> candidates) {
+		IShape result = null;
+		ILocation loc = source.getLocation();
+		double distMin = Double.MAX_VALUE;
+		for (IShape c : candidates) {
+			double dist = loc.euclidianDistanceTo(c.getLocation());
+			if (dist < distMin) {
+				distMin = dist;
+				result = c;
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * @throws GamaRuntimeException
@@ -87,6 +101,7 @@ public class GraphTopology extends AbstractTopology {
 		final boolean targetNSame = isAgentVertex == target instanceof IAgent;
 		final boolean sourceNSame = isAgentVertex == source instanceof IAgent;
 		boolean sourceNode = graph.getVertexMap().containsKey(source);
+		boolean optimizedClosestTo = GamaPreferences.External.AT_DISTANCE_OPTIMIZATION.getValue();
 
 		if (sourceNode && GamaPreferences.External.TOLERANCE_POINTS.getValue() > 0.0) {
 			for (final IShape v : graph.getVertexMap().keySet()) {
@@ -132,7 +147,10 @@ public class GraphTopology extends AbstractTopology {
 			if (!sourceNode) {
 				edgeS = getPathEdge(scope, source);
 				if (edgeS == null) {
-					if (optimization) {
+					if (optimizedClosestTo) {
+						edgeS = optimizedClosestTo(source, getPlaces().getEdges());
+					}
+					else if (optimization) {
 						final Collection<IAgent> ags = scope.getSimulation().getAgent().getTopology()
 								.getNeighborsOf(scope, source, dist, filter);
 						if (!ags.isEmpty()) {
@@ -155,7 +173,10 @@ public class GraphTopology extends AbstractTopology {
 			if (!targetNode) {
 				edgeT = getPathEdge(scope, target);
 				if (edgeT == null) {
-					if (optimization) {
+					if (optimizedClosestTo) {
+						edgeT = optimizedClosestTo(target, getPlaces().getEdges());
+					}
+					else if (optimization) {
 						final Collection<IAgent> ags = scope.getSimulation().getAgent().getTopology()
 								.getNeighborsOf(scope, target, dist, filter);
 						if (!ags.isEmpty()) {
@@ -185,17 +206,18 @@ public class GraphTopology extends AbstractTopology {
 			if (edgeT != null)
 				distTMin = 0;
 			if (distSMin > 0 && !sourceNode || distTMin > 0 && !targetNode) {
+				
 				for (final Object e : graph.getEdges()) {
 					final IShape edge = (IShape) e;
 					if (!sourceNode && distSMin > 0) {
-						final double distS = edge.euclidianDistanceTo(source);
+						final double distS = optimizedClosestTo ? edge.getLocation().euclidianDistanceTo(source.getLocation()) : edge.euclidianDistanceTo(source);
 						if (distS < distSMin) {
 							distSMin = distS;
 							edgeS = edge;
 						}
 					}
 					if (!targetNode && distTMin > 0) {
-						final double distT = edge.euclidianDistanceTo(target);
+						final double distT = optimizedClosestTo ?  edge.getLocation().euclidianDistanceTo(target.getLocation()) : edge.euclidianDistanceTo(target);
 						if (distT < distTMin) {
 							distTMin = distT;
 							edgeT = edge;

@@ -408,6 +408,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL).in(NAME,
 						OPTIMIZATIONS);
+		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION =
+				create("pref_optimize_path_computation", "Optimize the path computation operators and goto action (but with possible 'jump' issues)", false, IType.BOOL).in(NAME,
+						OPTIMIZATIONS);
+		
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME,
 						OPTIMIZATIONS);
