@@ -514,7 +514,7 @@ experiment cloud_experiment type: gui {
 	parameter 'Create clouds?' var: create_cloud <- true;
 		
 	output {
-		display 'Standard display' {
+		display 'Standard display' synchronized: true {
 			species ball aspect: default transparency: 0.5 ;
 			
 			species group aspect: default transparency: 0.5 {
@@ -529,16 +529,16 @@ experiment cloud_experiment type: gui {
 			}
 		}
 		
-		display 'Ball display' {
+		display 'Ball display' synchronized: true{
 			species ball;
 		}
 		
-		display 'Group display' {
+		display 'Group display' synchronized: true {
 			species group;
 			species group_agents_viewer;
 		}
 
-		display 'Cloud display' {
+		display 'Cloud display' synchronized: true{
 			species cloud;
 		}
 		
