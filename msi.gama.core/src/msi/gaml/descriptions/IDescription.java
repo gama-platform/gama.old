@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
@@ -90,8 +91,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		@Override
 		public boolean visit(final IDescription desc) {
-			if (desc.validate() == null) // TODO Verify this.
-				return false;
+			if (desc.validate() == null) { return false; }
 			return true;
 
 		}
@@ -145,8 +145,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public default Iterable<IDescription> getChildren() {
 		final IDescription enclosing = getEnclosingDescription();
-		if (enclosing == null)
-			return getOwnChildren();
+		if (enclosing == null) { return getOwnChildren(); }
 		return Iterables.concat(enclosing.getChildren(), getOwnChildren());
 	}
 
@@ -210,6 +209,28 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 */
 	public default boolean visitFacets(final FacetVisitor visitor) {
 		return visitFacets(null, visitor);
+	}
+
+	public default void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+		this.visitFacets(new FacetVisitor() {
+
+			@Override
+			public boolean visit(final String name, final IExpressionDescription exp) {
+				final IExpression expression = exp.getExpression();
+				if (expression != null) {
+					expression.collectUsedVarsOf(species, result);
+				}
+				return true;
+			}
+		});
+		this.visitOwnChildren(new DescriptionVisitor() {
+
+			@Override
+			public boolean visit(final IDescription desc) {
+				desc.collectUsedVarsOf(species, result);
+				return true;
+			}
+		});
 	}
 
 	public boolean visitFacets(Set<String> facets, FacetVisitor visitor);

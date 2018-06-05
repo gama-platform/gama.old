@@ -292,14 +292,16 @@ public abstract class TypeDescription extends SymbolDescription {
 		attributes.forEachEntry((name, var) -> {
 
 			dependencies.addVertex(var);
-			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(shape, var);
-			}
 			final Collection<VariableDescription> varDependencies = var.getDependencies(forInit);
 			for (final VariableDescription newVar : varDependencies) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
 					dependencies.addEdge(newVar, var);
+				}
+			}
+			if (var.isSyntheticSpeciesContainer()) {
+				if (shape != null && !shapeDependencies.contains(var)) {
+					dependencies.addEdge(shape, var);
 				}
 			}
 			return true;

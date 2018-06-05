@@ -223,6 +223,11 @@ public class VariableDescription extends SymbolDescription {
 				return true;
 			}
 		});
+		if (isSyntheticSpeciesContainer()) {
+			final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
+			final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
+			sd.collectUsedVarsOf(mySpecies, result);
+		}
 		result.remove(this);
 		result.remove(null);
 		return result.items();
