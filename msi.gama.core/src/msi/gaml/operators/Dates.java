@@ -37,6 +37,7 @@ import java.time.temporal.TemporalQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,13 +87,12 @@ public class Dates {
 		}
 	};
 
-	public final static Pref<String> DATES_CUSTOM_FORMATTER = GamaPreferences
-			.create("pref_date_custom_formatter",
-					"Custom date pattern (https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)",
-					DEFAULT_FORMAT, IType.STRING)
-			.in(GamaPreferences.External.NAME, GamaPreferences.External.DATES).onChange((e) -> {
+	public final static Pref<String> DATES_CUSTOM_FORMATTER = GamaPreferences.create("pref_date_custom_formatter",
+			"Custom date pattern (https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)",
+			DEFAULT_FORMAT, IType.STRING).in(GamaPreferences.External.NAME, GamaPreferences.External.DATES)
+			.onChange((e) -> {
 				try {
-					FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e)));
+					FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e), null));
 					if (DEFAULT_VALUE.equals(CUSTOM_KEY)) {
 						FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(CUSTOM_KEY));
 					}
@@ -140,8 +140,9 @@ public class Dates {
 		final Double arg = Cast.asFloat(scope, left.value(scope));
 		if (right instanceof TimeUnitConstantExpression) {
 			return scope.getClock().getCurrentDate().getDuration(scope, (TimeUnitConstantExpression) right, arg);
-		} else
+		} else {
 			return 0d;
+		}
 
 	}
 
@@ -490,7 +491,7 @@ public class Dates {
 			examples = { @example (
 					value = "date('2000-01-01') plus_weeks 15",
 					equals = "date('2000-04-15')") })
-	@test("is_error(date('2000-15-01'))")
+	@test ("is_error(date('2000-15-01'))")
 	public static GamaDate addWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
 		return date1.plus(nbWeeks, WEEKS);
@@ -823,20 +824,48 @@ public class Dates {
 		return !date1.equals(date2);
 	}
 
-	public static DateTimeFormatter getFormatter(final String p) {
+	static Locale getLocale(final String l) {
+		if (l == null) { return Locale.getDefault(); }
+		final String locale = l.toLowerCase();
+		switch (locale) {
+			case "us":
+				return Locale.US;
+			case "fr":
+				return Locale.FRANCE;
+			case "en":
+				return Locale.ENGLISH;
+			case "de":
+				return Locale.GERMAN;
+			case "it":
+				return Locale.ITALIAN;
+			case "jp":
+				return Locale.JAPANESE;
+			case "uk":
+				return Locale.UK;
+			default:
+				return new Locale(locale);
+		}
+	}
+
+	static String getFormatterKey(final String p, final String locale) {
+		if (locale == null) { return p; }
+		return p + locale;
+	}
+
+	public static DateTimeFormatter getFormatter(final String p, final String locale) {
+
 		final String pattern = p;
 		// Can happen during initialization
-		if (FORMATTERS == null || FORMATTERS.isEmpty())
-			return DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
-		if (pattern == null)
-			return FORMATTERS.get(DEFAULT_KEY);
+		if (FORMATTERS == null || FORMATTERS.isEmpty()) { return DateTimeFormatter.ofPattern(DEFAULT_FORMAT); }
+		if (pattern == null) { return FORMATTERS.get(DEFAULT_KEY); }
 		final DateTimeFormatter formatter = FORMATTERS.get(pattern);
-		if (formatter != null)
-			return formatter;
+		if (formatter != null) { return formatter; }
 		if (!pattern.contains("%")) {
 			try {
-				final DateTimeFormatter result = DateTimeFormatter.ofPattern(pattern);
-				FORMATTERS.put(pattern, result);
+				final DateTimeFormatterBuilder df = new DateTimeFormatterBuilder();
+				final DateTimeFormatter result =
+						df.parseCaseInsensitive().appendPattern(pattern).toFormatter(getLocale(locale));
+				FORMATTERS.put(getFormatterKey(pattern, locale), result);
 				return result;
 			} catch (final IllegalArgumentException e) {
 				GAMA.reportAndThrowIfNeeded(GAMA.getRuntimeScope(),
@@ -845,6 +874,7 @@ public class Dates {
 			}
 		}
 		final DateTimeFormatterBuilder df = new DateTimeFormatterBuilder();
+		df.parseCaseInsensitive();
 		final List<String> dateList = new ArrayList<>();
 		final Matcher m = model_pattern.matcher(pattern);
 		int i = 0;
@@ -898,8 +928,8 @@ public class Dates {
 				df.appendLiteral(s);
 			}
 		}
-		final DateTimeFormatter result = df.toFormatter();
-		FORMATTERS.put(pattern, result);
+		final DateTimeFormatter result = df.toFormatter(getLocale(locale));
+		FORMATTERS.put(getFormatterKey(pattern, locale), result);
 		return result;
 	}
 
@@ -925,6 +955,22 @@ public class Dates {
 	}
 
 	@operator (
+			value = "date",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING, IOperatorCategory.TIME },
+			concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
+	@doc (
+			value = "converts a string to a date following a custom pattern and a specific locale (e.g. 'fr', 'en'...). The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for parsing years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will parse the date using one of the ISO date & time formats (similar to date('...') in that case). The pattern can also follow the pattern definition found here, which gives much more control over what will be parsed: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constant: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences ",
+			usages = @usage (
+					value = "",
+					examples = @example (
+							value = "date d <- date(\"1999-january-30\", 'yyyy-MMMM-dd', 'en');",
+							test = false)))
+	public static GamaDate date(final IScope scope, final String value, final String pattern, final String locale) {
+		return new GamaDate(scope, value, pattern, locale);
+	}
+
+	@operator (
 			value = "string",
 			can_be_const = true,
 			category = { IOperatorCategory.STRING, IOperatorCategory.TIME },
@@ -937,7 +983,23 @@ public class Dates {
 							value = "format(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
 	public static String format(final GamaDate time, final String pattern) {
-		return time.toString(pattern);
+		return format(time, pattern, null);
+	}
+
+	@operator (
+			value = "string",
+			can_be_const = true,
+			category = { IOperatorCategory.STRING, IOperatorCategory.TIME },
+			concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
+	@doc (
+			value = "converts a date to astring following a custom pattern and using a specific locale (e.g.: 'fr', 'en', etc.). The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constants: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences",
+			usages = @usage (
+					value = "",
+					examples = @example (
+							value = "format(#now, 'yyyy-MM-dd')",
+							isExecutable = false)))
+	public static String format(final GamaDate time, final String pattern, final String locale) {
+		return time.toString(pattern, locale);
 	}
 
 	private static class DurationFormatter implements TemporalAccessor {
@@ -969,18 +1031,21 @@ public class Dates {
 			final long day = getLong(DAY_OF_MONTH);
 			if (month > 0) {
 				if (month < 2) {
-					if (day < 2)
+					if (day < 2) {
 						return M1D1HMS;
-					else
+					} else {
 						return M1DHMS;
-				} else
+					}
+				} else {
 					return MDHMS;
+				}
 			}
 			if (day > 0) {
 				if (day < 2) {
 					return D1HMS;
-				} else
+				} else {
 					return DHMS;
+				}
 			}
 			return HMS;
 		}
@@ -1002,8 +1067,8 @@ public class Dates {
 				return temporal.getLong(DAY_OF_MONTH) - 1l;
 			} else if (field == MONTH_OF_YEAR) {
 				return temporal.getLong(MONTH_OF_YEAR) - 1;
-			} else if (field == YEAR)
-				return temporal.getLong(YEAR) - Dates.DATES_STARTING_DATE.getValue().getLong(YEAR);
+			} else if (field == YEAR) { return temporal.getLong(YEAR)
+					- Dates.DATES_STARTING_DATE.getValue().getLong(YEAR); }
 			return 0;
 		}
 
@@ -1015,8 +1080,7 @@ public class Dates {
 		@SuppressWarnings ("unchecked")
 		@Override
 		public <R> R query(final TemporalQuery<R> query) {
-			if (query == TemporalQueries.precision())
-				return (R) SECONDS;
+			if (query == TemporalQueries.precision()) { return (R) SECONDS; }
 			if (query == TemporalQueries.chronology()) { return (R) IsoChronology.INSTANCE; }
 			if (query == TemporalQueries.zone() || query == TemporalQueries.zoneId()) { return null; }
 			return query.queryFrom(this);

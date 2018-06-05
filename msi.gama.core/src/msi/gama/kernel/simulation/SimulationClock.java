@@ -101,9 +101,9 @@ public class SimulationClock {
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	public void setCycle(final int i) throws GamaRuntimeException {
 		if (i < 0) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", scope); }
-		//TODO check backward
-		if ( (i < cycle) && (!scope.getExperiment().canStepBack())) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards",
-				scope); }
+		// TODO check backward
+		if ((i < cycle) && (!scope.getExperiment().canStepBack())) { throw GamaRuntimeException
+				.error("The current cycle of a simulation cannot be set backwards", scope); }
 		final int previous = cycle;
 		cycle = i;
 		setCurrentDate(getCurrentDate().plus(getStepInMillis(), cycle - previous, ChronoUnit.MILLIS));
@@ -151,7 +151,7 @@ public class SimulationClock {
 	 */
 	public double getTimeElapsedInSeconds() {
 		// BG 16/03/2018 : to fix the issue that time != cycle * step, when step is not an integer number.
-		//return getStartingDate().until(getCurrentDate(), ChronoUnit.SECONDS);
+		// return getStartingDate().until(getCurrentDate(), ChronoUnit.SECONDS);
 		return getStartingDate().until(getCurrentDate(), ChronoUnit.MILLIS) / 1000.0;
 	}
 
@@ -274,7 +274,7 @@ public class SimulationClock {
 
 		try {
 			final String date = outputCurrentDateAsDuration ? Dates.asDuration(getStartingDate(), getCurrentDate())
-					: getCurrentDate().toString("yyyy-MM-dd HH:mm:ss");
+					: getCurrentDate().toString("yyyy-MM-dd HH:mm:ss", "en");
 			infoStringBuilder.append("[").append(date).append("]");
 		} catch (final DateTimeException e) {}
 		return infoStringBuilder.toString();
@@ -321,8 +321,9 @@ public class SimulationClock {
 	}
 
 	public GamaDate getStartingDate() {
-		if (startingDate == null)
+		if (startingDate == null) {
 			setStartingDate(Dates.DATES_STARTING_DATE.getValue());
+		}
 		return startingDate;
 	}
 

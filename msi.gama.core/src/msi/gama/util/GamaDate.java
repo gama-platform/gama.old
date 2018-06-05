@@ -158,7 +158,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	public GamaDate(final IScope scope, final String dateStr, final String pattern) {
-		this(scope, parse(scope, dateStr, Dates.getFormatter(pattern)));
+		this(scope, dateStr, pattern, null);
+	}
+
+	public GamaDate(final IScope scope, final String dateStr, final String pattern, final String locale) {
+		this(scope, parse(scope, dateStr, Dates.getFormatter(pattern, locale)));
 	}
 
 	public GamaDate(final IScope scope, final double val) {
@@ -186,7 +190,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 				if (!ta.isSupported(ChronoField.HOUR_OF_DAY) && !ta.isSupported(ChronoField.MINUTE_OF_HOUR)
 						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE)) { return LocalDate.from(ta); }
 				return LocalDateTime.from(ta);
-			} catch (final DateTimeParseException e) {}
+			} catch (final DateTimeParseException e) {
+				e.printStackTrace();
+			}
 			GAMA.reportAndThrowIfNeeded(scope,
 					GamaRuntimeException.warning(
 							"The date " + original + " can not correctly be parsed by the pattern provided", scope),
@@ -309,7 +315,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	@Override
 	public String toString() {
-		return toString(null);
+		return toString(null, null);
 	}
 
 	@Override
@@ -467,8 +473,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		return unit.between(internal, endExclusive);
 	}
 
-	public String toString(final String string) {
-		return Dates.getFormatter(string).format(this);
+	public String toString(final String string, final String locale) {
+		return Dates.getFormatter(string, locale).format(this);
 	}
 
 	public boolean isGreaterThan(final GamaDate date2, final boolean strict) {
@@ -637,12 +643,12 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	public String toISOString() {
-		return toString(Dates.ISO_OFFSET_KEY);
+		return toString(Dates.ISO_OFFSET_KEY, null);
 	}
 
 	public static GamaDate fromISOString(final String s) {
 		try {
-			final TemporalAccessor t = Dates.getFormatter(Dates.ISO_OFFSET_KEY).parse(s);
+			final TemporalAccessor t = Dates.getFormatter(Dates.ISO_OFFSET_KEY, null).parse(s);
 			if (t instanceof Temporal) { return of((Temporal) t); }
 		} catch (final DateTimeParseException e) {}
 		return new GamaDate(null, s);
