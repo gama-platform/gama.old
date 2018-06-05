@@ -32,6 +32,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -311,7 +312,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildPolyline(final List<IShape> points) {
-		final List<Coordinate> coordinates = new ArrayList<Coordinate>();
+		final List<Coordinate> coordinates = new ArrayList<>();
 		for (final IShape p : points) {
 			coordinates.add((GamaPoint) p.getLocation());
 		}
@@ -579,7 +580,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				geom = geom.union();
 				if (!geom.isEmpty()) { return new GamaShape(geom); }
 			}
-		} catch (final Exception e) {
+		} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e) {
 			// Geometry gs[] = new Geometry[geoms.length];
 			final List<Geometry> gs = new ArrayList(geoms.size());
 			for (final Geometry g : geoms) {
@@ -588,7 +589,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			try {
 				final Geometry geom = CascadedPolygonUnion.union(gs);
 				if (geom != null && !geom.isEmpty()) { return new GamaShape(geom); }
-			} catch (final AssertionFailedException e2) {
+			} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e2) {
 				return null;
 			}
 

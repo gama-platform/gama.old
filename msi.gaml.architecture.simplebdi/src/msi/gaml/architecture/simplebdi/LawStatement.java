@@ -1,6 +1,8 @@
 package msi.gaml.architecture.simplebdi;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -17,6 +19,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.System;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
@@ -78,7 +81,11 @@ import msi.gaml.types.IType;
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("Threshold linked to the obedience value.")),
-				
+				@facet (
+						name = LawStatement.ALL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("add an obligation for each belief")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.ID,
@@ -101,6 +108,7 @@ public class LawStatement extends AbstractStatement{
 	public static final String STRENGTH = "strength";
 	public static final String LIFETIME = "lifetime";
 	public static final String THRESHOLD = "threshold";
+	public static final String ALL = "all";
 	
 
 	final IExpression when;
@@ -112,6 +120,7 @@ public class LawStatement extends AbstractStatement{
 	final IExpression strength;
 	final IExpression lifetime;
 	final IExpression threshold;
+	final IExpression all;
 	
 	public IExpression getContextExpression() {
 		return when;
@@ -140,6 +149,7 @@ public class LawStatement extends AbstractStatement{
 		lifetime = getFacet("lifetime");
 		threshold = getFacet(LawStatement.THRESHOLD);
 		parallel = getFacet(IKeyword.PARALLEL);
+		all = getFacet(IKeyword.ALL);
 		setName(desc.getName());
 	}
 
@@ -148,34 +158,72 @@ public class LawStatement extends AbstractStatement{
 	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 		if (newObligation == null && newObligations == null)
 			return null;
+		boolean allVal = (all != null) && Cast.asBool(scope, all.value(scope));
+		List<Predicate> predBeliefList = null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			final MentalState tempBelief = new MentalState("Belief");
 			Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
+			boolean has_belief = true;
 			if (belief != null) {
 				tempBelief.setPredicate((Predicate) belief.value(scope));
+				has_belief = SimpleBdiArchitecture.hasBelief(scope, tempBelief);
+				if (has_belief) {
+					predBeliefList = new ArrayList<Predicate>();
+					for (final MentalState mental : SimpleBdiArchitecture.getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+						if(mental.getPredicate()!=null){
+							if (tempBelief.getPredicate().equals(mental.getPredicate())) {
+								predBeliefList.add(mental.getPredicate());
+							}
+						}
+					}
+				}
 			}
 			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief)) {				
 				if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
 					if (threshold == null || obedienceValue>= (Double) threshold.value(scope)) {
 						if (newObligation != null) {
-							final Predicate newObl = (Predicate) newObligation.value(scope);
-							final MentalState tempNewObligation = new MentalState("Obligation", newObl);
-							if (strength != null) {
-								tempNewObligation.setStrength(
-								Cast.asFloat(scope, strength.value(scope)));
-							}
-							if (lifetime != null) {
-								tempNewObligation
-									.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
-							}
-							//ne faire ces actions que si on n'a pas déjà l'obligation
-							if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
-								SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
-								SimpleBdiArchitecture.clearIntention(scope);
-								final IAgent agent = scope.getAgent();
-								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
-								agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
-							}
+							if (allVal) {
+								for (Predicate p : predBeliefList) {
+									final Predicate newObl = (Predicate) newObligation.value(scope);
+									final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+									tempNewObligation.getPredicate().setValues((Map<String, Object>) System.opCopy(scope, p.getValues()));
+									if (strength != null) {
+										tempNewObligation.setStrength(
+										Cast.asFloat(scope, strength.value(scope)));
+									}
+									if (lifetime != null) {
+										tempNewObligation
+											.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+									}
+									//ne faire ces actions que si on n'a pas déjà l'obligation
+									if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
+										SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+										SimpleBdiArchitecture.clearIntention(scope);
+										final IAgent agent = scope.getAgent();
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+									}
+								} 
+							}else {
+									final Predicate newObl = (Predicate) newObligation.value(scope);
+									final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+									if (strength != null) {
+										tempNewObligation.setStrength(
+										Cast.asFloat(scope, strength.value(scope)));
+									}
+									if (lifetime != null) {
+										tempNewObligation
+											.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+									}
+									//ne faire ces actions que si on n'a pas déjà l'obligation
+									if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
+										SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+										SimpleBdiArchitecture.clearIntention(scope);
+										final IAgent agent = scope.getAgent();
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+									}
+								}
 						}
 						if (newObligations != null) {
 							final List<Predicate> newObls =

@@ -66,6 +66,10 @@ import msi.gaml.types.Types;
 		type = IType.INT,
 		doc = { @doc ("Returns the index of the day of the week (with Monday being 1)") }),
 		@var (
+				name = "date",
+				type = IType.DATE,
+				doc = { @doc ("Returns a new date object with only the year-month-day components of this date") }),
+		@var (
 				name = "leap",
 				type = IType.BOOL,
 				doc = { @doc ("Returns true if the year is a leap year") }),
@@ -175,8 +179,13 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			try {
 				final TemporalAccessor ta = df.parse(original);
 				if (ta instanceof Temporal) { return (Temporal) ta; }
-				if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
-				return LocalDate.from(ta);
+				if (!ta.isSupported(ChronoField.YEAR) && !ta.isSupported(ChronoField.MONTH_OF_YEAR)
+						&& !ta.isSupported(ChronoField.DAY_OF_MONTH)) {
+					if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
+				}
+				if (!ta.isSupported(ChronoField.HOUR_OF_DAY) && !ta.isSupported(ChronoField.MINUTE_OF_HOUR)
+						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE)) { return LocalDate.from(ta); }
+				return LocalDateTime.from(ta);
 			} catch (final DateTimeParseException e) {}
 			GAMA.reportAndThrowIfNeeded(scope,
 					GamaRuntimeException.warning(
@@ -328,6 +337,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		return internal.get(YEAR);
 	}
 
+	@getter ("date")
+	public GamaDate getDate() {
+		return GamaDate.of(LocalDate.of(getYear(), getMonth(), getDay()));
+	}
+
 	@getter ("day_of_year")
 	public int getDayOfYear() {
 		return internal.get(DAY_OF_YEAR);
@@ -471,6 +485,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	public boolean equals(final Object o) {
 		if (o instanceof GamaDate) { return internal.equals(((GamaDate) o).internal); }
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return internal.hashCode();
 	}
 
 	public GamaDate plus(final double duration, final TemporalUnit unit) {

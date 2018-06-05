@@ -364,7 +364,11 @@ global {
 		
 		//Species contained in the cloud to represent the groups captured by the cloud agent
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			geometry shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer 10 update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+			geometry shape update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+
+			init {
+				shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer 10;
+			}
 
 			reflex capture_nearby_free_balls when: false {
 			}

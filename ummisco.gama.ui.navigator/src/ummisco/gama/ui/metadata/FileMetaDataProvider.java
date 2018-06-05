@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -174,9 +176,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		@Override
 		public String getSuffix() {
-			if (comment == null || comment.isEmpty()) {
-				return "";
-			}
+			if (comment == null || comment.isEmpty()) { return ""; }
 			return comment;
 		}
 
@@ -201,16 +201,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public static final Map<String, Class<? extends GamaFileMetaData>> CLASSES =
 			new HashMap<String, Class<? extends GamaFileMetaData>>() {
 
-		{
-			put(CSV_CT_ID, CSVInfo.class);
-			put(IMAGE_CT_ID, ImageInfo.class);
-			put(GAML_CT_ID, GamlFileInfo.class);
-			put(SHAPEFILE_CT_ID, ShapeInfo.class);
-			put(OSM_CT_ID, OSMInfo.class);
-			put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
-			put("project", ProjectInfo.class);
-		}
-	};
+				{
+					put(CSV_CT_ID, CSVInfo.class);
+					put(IMAGE_CT_ID, ImageInfo.class);
+					put(GAML_CT_ID, GamlFileInfo.class);
+					put(SHAPEFILE_CT_ID, ShapeInfo.class);
+					put(OSM_CT_ID, OSMInfo.class);
+					put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
+					put("project", ProjectInfo.class);
+				}
+			};
 
 	ExecutorService executor = Executors.newCachedThreadPool();
 	volatile boolean started;
@@ -353,9 +353,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
 		startup();
-		if (!file.isAccessible()) {
-			return;
-		}
+		if (!file.isAccessible()) { return; }
 		try {
 			// System.out.println("Writing back metadata to " + file);
 			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
@@ -460,9 +458,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private GenericFileInfo createGenericFileMetaData(final IFile file) {
 		String ext = file.getFileExtension();
-		if (ext == null) {
-			return new GenericFileInfo(file.getModificationStamp(), "Generic file");
-		}
+		if (ext == null) { return new GenericFileInfo(file.getModificationStamp(), "Generic file"); }
 		ext = ext.toUpperCase();
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
@@ -501,9 +497,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	private void startup() {
-		if (started) {
-			return;
-		}
+		if (started) { return; }
 		started = true;
 		System.out.print("Reading workspace metadata ");
 		final long ms = System.currentTimeMillis();
@@ -531,9 +525,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			@Override
 			public void saving(final ISaveContext context) throws CoreException {
-				if (context.getKind() != ISaveContext.FULL_SAVE) {
-					return;
-				}
+				if (context.getKind() != ISaveContext.FULL_SAVE) { return; }
 				System.out.print("Saving workspace metadata ");
 				final long ms = System.currentTimeMillis();
 				try {
@@ -560,6 +552,21 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			@Override
 			public void doneSaving(final ISaveContext context) {}
 		};
+	}
+
+	public List<IFile> getSupportFilesOf(final IFile f) {
+		if (f == null) { return Collections.EMPTY_LIST; }
+		if (!getContentTypeId(f).equals(SHAPEFILE_CT_ID)) { return Collections.EMPTY_LIST; }
+		final IContainer c = f.getParent();
+		final List<IFile> result = new ArrayList<>();
+		try {
+			for (final IResource r : c.members()) {
+				if (r instanceof IFile && isSupport(f, (IFile) r)) {
+					result.add((IFile) r);
+				}
+			}
+		} catch (final CoreException e) {}
+		return result;
 	}
 
 }

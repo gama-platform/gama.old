@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'SetStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'SetStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -42,27 +41,48 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { /*
-					 * @facet(name = IKeyword.VAR, type = IType.NONE, optional =
-					 * true),
+@facets (
+		value = { /*
+					 * @facet(name = IKeyword.VAR, type = IType.NONE, optional = true),
 					 */
-		@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the name of an existing variable or attribute to be modified")),
-		@facet(name = IKeyword.VALUE, type = {
-				IType.NONE }, optional = false, doc = @doc("the value to affect to the variable or attribute")) }, omissible = IKeyword.NAME)
-@symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, concept = {
-		IConcept.ATTRIBUTE }, with_sequence = false)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER }, symbols = IKeyword.CHART)
-@validator(AssignmentValidator.class)
-@doc(value = "Allows to assign a value to the variable or attribute specified")
-@serializer(AssignmentSerializer.class)
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.NONE,
+						optional = false,
+						doc = @doc ("the name of an existing variable or attribute to be modified")),
+				@facet (
+						name = IKeyword.VALUE,
+						type = { IType.NONE },
+						optional = false,
+						doc = @doc ("the value to affect to the variable or attribute")) },
+		omissible = IKeyword.NAME)
+@symbol (
+		name = { IKeyword.SET },
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		concept = { IConcept.ATTRIBUTE },
+		with_sequence = false)
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER },
+		symbols = IKeyword.CHART)
+@validator (AssignmentValidator.class)
+@doc (
+		value = "Allows to assign a value to the variable or attribute specified")
+@serializer (AssignmentSerializer.class)
 public class SetStatement extends AbstractStatement {
 
 	public static class AssignmentSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			sb.append(desc.getName()).append(" <- ").append(desc.getFacet(VALUE).serialize(includingBuiltIn))
-					.append(";");
+			if (desc == null) { return; }
+			final IExpressionDescription ed = desc.getFacet(VALUE);
+			if (ed == null) { return; }
+			final String exp = ed.serialize(includingBuiltIn);
+			if (exp == null) { return; }
+			sb.append(desc.getName());
+			sb.append(" <- ");
+			sb.append(exp);
+			sb.append(";");
 		}
 
 	}
@@ -121,8 +141,7 @@ public class SetStatement extends AbstractStatement {
 	}
 
 	public String getVarName() {
-		if (varExpr != null)
-			return varExpr.literalValue();
+		if (varExpr != null) { return varExpr.literalValue(); }
 		return null;
 	}
 

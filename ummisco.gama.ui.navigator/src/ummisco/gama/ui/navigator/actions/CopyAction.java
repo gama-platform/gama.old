@@ -8,9 +8,11 @@
  *******************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -25,8 +27,10 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
+
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
 
 /**
  * Standard action for copying the currently selected resources to the clipboard.
@@ -67,12 +71,12 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 *            a platform clipboard
 	 */
 	public CopyAction(final Shell shell, final Clipboard clipboard) {
-		super(WorkbenchNavigatorMessages.CopyAction_Cop_);
+		super("Copy");
 		Assert.isNotNull(shell);
 		Assert.isNotNull(clipboard);
 		this.shell = shell;
 		this.clipboard = clipboard;
-		setToolTipText(WorkbenchNavigatorMessages.CopyAction_Copy_selected_resource_s_);
+		setToolTipText("Copy selected resource(s)");
 		setId(CopyAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "CopyHelpId"); //$NON-NLS-1$
 		// TODO INavigatorHelpContextIds.COPY_ACTION);
@@ -135,6 +139,23 @@ import org.eclipse.ui.part.ResourceTransfer;
 		if (pasteAction != null && pasteAction.getStructuredSelection() != null) {
 			pasteAction.selectionChanged(pasteAction.getStructuredSelection());
 		}
+	}
+
+	/**
+	 * Returns the elements in the current selection that are <code>IResource</code>s.
+	 *
+	 * @return list of resource elements (element type: <code>IResource</code>)
+	 */
+	@Override
+	protected List<? extends IResource> getSelectedResources() {
+		final List<IResource> list = new ArrayList<>();
+		for (final IResource r : super.getSelectedResources()) {
+			list.add(r);
+			if (ResourceManager.isFile(r)) {
+				list.addAll(FileMetaDataProvider.getInstance().getSupportFilesOf((IFile) r));
+			}
+		}
+		return list;
 	}
 
 	/**
