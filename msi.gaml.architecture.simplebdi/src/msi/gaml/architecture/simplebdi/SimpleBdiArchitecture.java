@@ -5953,7 +5953,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	public void updateNormViolation(IScope scope){
 		final IAgent agent = getCurrentAgent(scope);
-		NormStatement _persistentNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
+		Norm _persistentNorm = (Norm) agent.getAttribute(CURRENT_NORM);
 //		Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
 		
 		for(Norm tempNorm : getNorms(scope)){
@@ -5976,9 +5976,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	//			final boolean thresholdSatisfied = statement.getThreshold() == null
 	//					|| obedienceValue >= (Double) statement.getThreshold().value(scope);
 				if ((isContextConditionSatisfied && isIntentionConditionSatisfied) || (isContextConditionSatisfied && isObligationConditionSatisfied) /* && thresholdSatisfied*/) {
-					if(_persistentNorm==null || !statement.equals(_persistentNorm)){
+					if(_persistentNorm==null || !statement.equals(_persistentNorm.getNormStatement())){
 						tempNorm.violated(scope);
-					} else if(statement.equals(_persistentNorm)){
+					} else if(statement.equals(_persistentNorm.getNormStatement())){
 						tempNorm.applied(scope);
 					}
 				}
