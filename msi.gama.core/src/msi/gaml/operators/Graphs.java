@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
 import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
+import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -1396,6 +1398,26 @@ public class Graphs {
 		// return graph.computeShortestPathBetween(sourTarg.key,
 		// sourTarg.value);
 
+	}
+
+	@operator (
+			value = "max_flow_between",
+			type = IType.LIST,
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "The max flow (map<edge,flow> in a graph between the source and the sink using Edmonds-Karp algorithm",
+			examples = { @example (
+					value = "max_flow_between(my_graph, vertice1, vertice2)",
+					isExecutable = false) })
+	public static GamaMap<Object,Double> maxFlowBetween(final IScope scope, final GamaGraph graph,
+			final Object source, final Object sink) throws GamaRuntimeException {
+		EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
+		MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
+		GamaMap<Object, Double> result = GamaMapFactory.create();
+		result.putAll(mf.getFlow());
+		return result;
 	}
 
 	@operator (

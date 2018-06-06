@@ -588,10 +588,12 @@ Export-Package: com.kitfox.svg;
    org.jgrapht.event,
    org.jgrapht.graph,
    org.jgrapht",
+ org.jgrapht.alg.flow,
  org.jgrapht.alg.interfaces,
  org.jgrapht.alg.shortestpath,
  org.jgrapht.alg.spanning,
  org.jgrapht.alg.util,
+ org.jgrapht.alg.util.extension,
  org.jgrapht.graph;
   uses:="org.jgrapht.event,
    org.jgrapht.graph.builder,
