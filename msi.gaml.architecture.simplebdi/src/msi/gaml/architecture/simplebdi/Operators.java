@@ -1789,7 +1789,7 @@ public class Operators {
 					value = "get the list of uncertainties in the uncertainty base which predicate has the given name.",
 					returns = "the list of uncertainties (mental state).",
 					examples = { @example ("get_uncertainties_with_name_op(self,\"has_water\")") })
-	public static IList<MentalState> getUncertaintiessName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getUncertaintiesName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
 			return predicates;
@@ -2030,7 +2030,7 @@ public class Operators {
 	}
 	
 	@operator (
-			value = "get_oligation_op",
+			value = "get_obligation_op",
 					can_be_const = true,
 					content_type = MentalStateType.id,
 					category = { "BDI" },

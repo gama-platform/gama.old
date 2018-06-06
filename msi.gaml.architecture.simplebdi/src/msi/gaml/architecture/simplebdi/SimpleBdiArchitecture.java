@@ -169,10 +169,10 @@ import msi.gaml.types.Types;
 				init = "[]"),
 		@var (
 				name = SimpleBdiArchitecture.CURRENT_PLAN,
-				type = IType.NONE),
+				type = IType.NONE/*BDIPlanType.id*/),
 		@var (
 				name = SimpleBdiArchitecture.CURRENT_NORM,
-				type = IType.NONE)})
+				type = IType.NONE/*NormType.id*/)})
 @skill (
 		name = SimpleBdiArchitecture.SIMPLE_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
@@ -390,8 +390,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						: (Double) agent.getAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS);
 
 				}
-				SimpleBdiPlanStatement _persistentTask = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
-				NormStatement _persistentNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
+				BDIPlan _persistentTask = (BDIPlan) agent.getAttribute(CURRENT_PLAN);
+				Norm _persistentNorm = (Norm) agent.getAttribute(CURRENT_NORM);
 				// RANDOMLY REMOVE (last)INTENTION
 				Boolean flipResultintention = msi.gaml.operators.Random.opFlip(scope, persistenceCoefficientintention);
 				while (!flipResultintention && intentionBase.size() > 0) {
@@ -426,8 +426,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					agent.setAttribute(CURRENT_NORM, _persistentNorm);
 				}
 
-				_persistentTask = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
-				_persistentNorm = (NormStatement) agent.getAttribute(CURRENT_NORM);
+				_persistentTask = (BDIPlan) agent.getAttribute(CURRENT_PLAN);
+				_persistentNorm = (Norm) agent.getAttribute(CURRENT_NORM);
 				// if((currentIntention(scope)!=null) && (_persistentTask!=null)
 				// &&
 				// !(_persistentTask._intention.value(scope).equals(currentIntention(scope)))){
@@ -508,11 +508,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				if(_persistentNorm !=null){
 					if (!agent.dead()) {
-						result = _persistentNorm.executeOn(scope);
+						result = _persistentNorm.getNormStatement().executeOn(scope);
 						boolean isExecuted = false;
-						if (_persistentNorm.getExecutedExpression() != null) {
+						if (_persistentNorm.getNormStatement().getExecutedExpression() != null) {
 							isExecuted = msi.gaml.operators.Cast.asBool(scope,
-									_persistentNorm.getExecutedExpression().value(scope));
+									_persistentNorm.getNormStatement().getExecutedExpression().value(scope));
 						}
 						if (this.iscurrentplaninstantaneous) {
 							loop_instantaneous_plans = true;
@@ -526,11 +526,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				if (_persistentTask != null) {
 					if (!agent.dead()) {
-						result = _persistentTask.executeOn(scope);
+						result = _persistentTask.getPlanStatement().executeOn(scope);
 						boolean isExecuted = false;
-						if (_persistentTask.getExecutedExpression() != null) {
+						if (_persistentTask.getPlanStatement().getExecutedExpression() != null) {
 							isExecuted = msi.gaml.operators.Cast.asBool(scope,
-									_persistentTask.getExecutedExpression().value(scope));
+									_persistentTask.getPlanStatement().getExecutedExpression().value(scope));
 						}
 						if (this.iscurrentplaninstantaneous) {
 							loop_instantaneous_plans = true;
@@ -829,15 +829,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 	
 	//Faire la même chose pour choisir la norm à appliquer, en l'appelant avant.
-	protected final SimpleBdiPlanStatement selectExecutablePlanWithHighestPriority(final IScope scope) {
+	protected final BDIPlan selectExecutablePlanWithHighestPriority(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
 				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
 
-		SimpleBdiPlanStatement resultStatement = null;
+		BDIPlan resultStatement = null;
 
 		double highestPriority = Double.MIN_VALUE;
-		final List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
+		final List<BDIPlan> temp_plan = new ArrayList<BDIPlan>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
 		for (final Object BDIPlanstatement : scope.getSimulation().getRandomGenerator()
 				.shuffle(new ArrayList(_plans))) {
@@ -856,7 +856,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (isContextConditionSatisfied && isIntentionConditionSatisfied && isEmotionConditionSatisfied
 					&& thresholdSatisfied) {
 				if (is_probabilistic_choice) {
-					temp_plan.add(statement);
+					temp_plan.add(((BDIPlan) BDIPlanstatement));
 				} else {
 					double currentPriority = 1.0;
 					if (statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null) {
@@ -866,7 +866,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 					if (highestPriority < currentPriority) {
 						highestPriority = currentPriority;
-						resultStatement = statement;
+						resultStatement = ((BDIPlan) BDIPlanstatement);
 					}
 				}
 			}
@@ -888,26 +888,26 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 		iscurrentplaninstantaneous = false;
 		if (resultStatement != null) {
-			if (resultStatement.getFacet(SimpleBdiArchitecture.INSTANTANEAOUS) != null) {
+			if (resultStatement.getPlanStatement().getFacet(SimpleBdiArchitecture.INSTANTANEAOUS) != null) {
 				iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope,
-						resultStatement.getInstantaneousExpression().value(scope));
+						resultStatement.getPlanStatement().getInstantaneousExpression().value(scope));
 			}
 		}
 
 		return resultStatement;
 	}
 
-	protected final NormStatement selectExecutableNormWithHighestPriority(final IScope scope) {
+	protected final Norm selectExecutableNormWithHighestPriority(final IScope scope) {
 		//Doit sélectionner une norme sociale ou une norme obligatoire
 		final IAgent agent = getCurrentAgent(scope);
 		Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
 				? scope.getBoolArg(PROBABILISTIC_CHOICE) : (Boolean) agent.getAttribute(PROBABILISTIC_CHOICE);
 
-		NormStatement resultStatement = null;
+		Norm resultStatement = null;
 
 		double highestPriority = Double.MIN_VALUE;
-		final List<NormStatement> temp_norm = new ArrayList<NormStatement>();
+		final List<Norm> temp_norm = new ArrayList<Norm>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
 		for(Norm tempNorm : getNorms(scope)){
 				tempNorm.setSanctioned(false);;
@@ -933,7 +933,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			
 			if(isContextConditionSatisfied && isObligationConditionSatisfied  && thresholdSatisfied){
 				if (is_probabilistic_choice) {
-					temp_norm.add(statement);
+					temp_norm.add((Norm) Normstatement);
 				} else {
 					double currentPriority = 1.0;
 					if (statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null) {
@@ -943,7 +943,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 					if (highestPriority < currentPriority) {
 						highestPriority = currentPriority;
-						resultStatement = statement;
+						resultStatement = (Norm) Normstatement;
 					}
 //					Norm normToChange = null;
 //					for(Norm tempNorm : getNorms(scope)){
@@ -961,7 +961,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					
 			if (isContextConditionSatisfied && isIntentionConditionSatisfied && thresholdSatisfied) {
 				if (is_probabilistic_choice) {
-					temp_norm.add(statement);
+					temp_norm.add((Norm) Normstatement);
 				} else {
 					double currentPriority = 1.0;
 					if (statement.getFacet(SimpleBdiArchitecture.PRIORITY) != null) {
@@ -971,7 +971,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 					if (highestPriority < currentPriority) {
 						highestPriority = currentPriority;
-						resultStatement = statement;
+						resultStatement = (Norm) Normstatement;
 					}
 				}
 			}
@@ -993,9 +993,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 		iscurrentplaninstantaneous = false;
 		if (resultStatement != null) {
-			if (resultStatement.getFacet(SimpleBdiArchitecture.INSTANTANEAOUS) != null) {
+			if (resultStatement.getNormStatement().getFacet(SimpleBdiArchitecture.INSTANTANEAOUS) != null) {
 				iscurrentplaninstantaneous = msi.gaml.operators.Cast.asBool(scope,
-						resultStatement.getInstantaneousExpression().value(scope));
+						resultStatement.getNormStatement().getInstantaneousExpression().value(scope));
 			}
 		}
 
