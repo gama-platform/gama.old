@@ -14,10 +14,12 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -36,8 +38,9 @@ public abstract class AbstractObject {
 		if (attributes.getTextures() != null) {
 			textures = new int[attributes.getTextures().size()];
 			Arrays.fill(textures, OpenGL.NO_TEXTURE);
-		} else
+		} else {
 			textures = null;
+		}
 	}
 
 	public abstract DrawerType getDrawerType();
@@ -100,8 +103,9 @@ public abstract class AbstractObject {
 	}
 
 	public final void draw(final OpenGL gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
-		if (isPicking)
+		if (isPicking) {
 			gl.registerForSelection(attributes.getIndex());
+		}
 		drawer.draw(this);
 		if (isPicking) {
 			gl.markIfSelected(attributes);
@@ -146,6 +150,18 @@ public abstract class AbstractObject {
 
 	public int getIndex() {
 		return attributes.getIndex();
+	}
+
+	public AxisAngle getInitRotation() {
+		return null;
+	}
+
+	public GamaGeometryFile getFile() {
+		return null;
+	}
+
+	public Envelope3D getEnvelope(final OpenGL gl) {
+		return null;
 	}
 
 }

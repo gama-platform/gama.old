@@ -230,11 +230,25 @@ public class DrawStatement extends AbstractStatementSequence {
 					}
 				}
 				final IExpression exp = geom.getExpression();
+				final IType<?> type = exp == null ? Types.NO_TYPE : exp.getType();
 				if (exp == null || !canDraw(exp)) {
-					final IType<?> type = exp == null ? Types.NO_TYPE : exp.getType();
 					description.error("'draw' cannot draw objects of type " + type, IGamlIssue.WRONG_TYPE, GEOMETRY);
 					return;
 				}
+				if (type.equals(Types.STRING)) {
+					final IExpressionDescription rot = description.getFacet(ROTATE);
+
+					if (rot != null) {
+						final IExpressionDescription per = description.getFacet(PERSPECTIVE);
+						if (per != null) {
+							if (per.isConst() && per.equalsString(FALSE)) {
+								description.warning("Rotations cannot be applied when perspective is false",
+										IGamlIssue.CONFLICTING_FACETS, ROTATE);
+							}
+						}
+					}
+				}
+
 			}
 
 		}
@@ -291,8 +305,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (executer == null)
-			return null;
+		if (executer == null) { return null; }
 		final IGraphics g = scope.getGraphics();
 		if (g == null) { return null; }
 		try {
@@ -300,8 +313,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			// material, perspective, lineWidth);
 
 			final Rectangle2D result = executer.executeOn(scope, g, data.get().computeAttributes(scope));
-			if (result != null)
+			if (result != null) {
 				g.accumulateTemporaryEnvelope(result);
+			}
 			return result;
 		} catch (final GamaRuntimeException e) {
 			throw e;

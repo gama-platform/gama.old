@@ -22,12 +22,10 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 
-import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Rotation3D;
-import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.geometry.Scaling3D.Heterogeneous;
 import msi.gama.common.geometry.UnboundedCoordinateSequence;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -67,38 +65,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	}
 
 	/**
-	 * Applies either the rotation defined by the modeler in the draw statement and/or the initial rotation imposed to
-	 * geometries read from 3D files to the gl context
-	 * 
-	 * @param object
-	 *            the object specifying the rotations
-	 * @return true if one of the 2 rotations is applied, false otherwise
-	 */
-	protected boolean applyRotation(final GeometryObject object) {
-		final AxisAngle rotation = object.getRotation();
-		final AxisAngle initRotation = object.getInitRotation();
-		if (rotation == null && initRotation == null)
-			return false;
-		final GamaPoint loc = object.getLocation();
-		try {
-			gl.translateBy(loc.x, -loc.y, loc.z);
-			if (rotation != null) {
-				final GamaPoint axis = rotation.getAxis();
-				// AD Change to a negative rotation to fix Issue #1514
-				gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
-			}
-			if (initRotation != null) {
-				final GamaPoint initAxis = initRotation.axis;
-				// AD Change to a negative rotation to fix Issue #1514
-				gl.rotateBy(-initRotation.angle, initAxis.x, initAxis.y, initAxis.z);
-			}
-		} finally {
-			gl.translateBy(-loc.x, loc.y, -loc.z);
-		}
-		return true;
-	}
-
-	/**
 	 * Applies a translation to the gl context (only useful for geometries read from files right now)
 	 * 
 	 * @param object
@@ -112,39 +78,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Applies a scaling to the gl context if a size is defined. The scaling is done with respect of the envelope of the
-	 * geometrical object
-	 * 
-	 * @param object
-	 *            the object defining the size and the original envelope of the geometry
-	 * @param returns
-	 *            true if a scaling occured, false otherwise
-	 */
-	protected boolean applyScaling(final GeometryObject object) {
-
-		final Scaling3D size = object.getDimensions();
-		if (size != null) {
-			final Envelope3D env = object.getEnvelope(gl);
-			if (env != null) {
-				final boolean in2D =
-						env.isFlat() || size.getZ() == 0d || object.getFile() != null && object.getFile().is2D();
-				double factor = 0.0;
-				if (in2D) {
-					factor = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-				} else {
-					final double min_xy = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-					factor = Math.min(min_xy, size.getZ() / env.getDepth());
-				}
-				if (factor != 1d)
-					gl.scaleBy(factor, factor, factor);
-				return true;
-			}
-		}
-		return false;
-
 	}
 
 	/**
@@ -174,8 +107,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				drawGeometry(geometry, solid, border, height, type);
 			}
 		} finally {
-			if (push)
+			if (push) {
 				gl.popMatrix();
+			}
 		}
 	}
 
@@ -231,12 +165,13 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case ENVIRONMENT:
 			case POLYHEDRON:
 			case GRIDLINE:
-				if (geom instanceof Polygon)
+				if (geom instanceof Polygon) {
 					if (height != 0) {
 						drawPolyhedron((Polygon) geom, solid, height, border);
 					} else {
 						drawPolygon((Polygon) geom, solid, border, true, true);
 					}
+				}
 				break;
 			case LINESTRING:
 			case LINEARRING:
@@ -279,16 +214,18 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise,
 			final boolean computeVertices) {
-		if (computeVertices)
+		if (computeVertices) {
 			_vertices.setToYNegated(getContourCoordinates(p));
+		}
 		if (solid) {
 			gl.setNormal(_vertices, clockwise);
 			final boolean hasHoles = getHolesNumber(p) > 0;
 			final int size = _vertices.size();
 			if (hasHoles || size > 5) {
 				gl.drawPolygon(p, _vertices, clockwise);
-			} else
+			} else {
 				gl.drawSimpleShape(_vertices, size - 1, solid, clockwise, false, null);
+			}
 		}
 		if (border != null) {
 			gl.drawClosedLine(_vertices, border, -1);
@@ -298,13 +235,13 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private void drawPlan(final Geometry p, final boolean solid, final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
-		if (height != 0)
+		if (height != 0) {
 			_vertices.visit((pj, pk) -> {
 				_quadvertices.setTo(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + height, pj.x, pj.y, pj.z + height, pj.x, pj.y,
 						pj.z, pk.x, pk.y, pk.z);
 				gl.drawSimpleShape(_quadvertices, 4, solid, true, true, border);
 			});
-		else {
+		} else {
 			gl.drawLine(_vertices, -1);
 		}
 	}
@@ -316,7 +253,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		gl.scaleBy(_scale);
 		gl.drawCachedGeometry(type, solid, border);
 		gl.popMatrix();
-		
+
 	}
 
 	private void drawPoint(final Geometry point, final boolean solid, final double height, final Color border) {
@@ -363,8 +300,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		drawCachedGeometry(Type.CIRCLE, solid, border);
 	}
 
-	public void drawRoundedRectangle(final GamaPoint pos, final boolean solid, final double width, final double height, final Color fill,
-			final Color border) {
+	public void drawRoundedRectangle(final GamaPoint pos, final boolean solid, final double width, final double height,
+			final Color fill, final Color border) {
 		_center.setCoordinate(pos);
 		_scale.setTo(width, height, 1);
 		gl.setCurrentColor(fill);
@@ -455,8 +392,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 					gl.setCurrentColor(border);
 					glut.glutWireTeapot(height);
 				}
-			} else
+			} else {
 				glut.glutWireTeapot(height);
+			}
 		} finally {
 			gl.popMatrix();
 		}
@@ -469,8 +407,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 *            the size of the ROI box
 	 */
 	public void drawROIHelper(final Envelope3D envelope) {
-		if (envelope == null)
-			return;
+		if (envelope == null) { return; }
 		final Polygon polygon = envelope.yNegated().toGeometry();
 		gl.setCurrentColor(0, 0.5, 0, 0.15);
 		gl.setZIncrement(0);

@@ -16,7 +16,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -63,12 +62,6 @@ public class GeometryObject extends AbstractObject {
 		return super.isFilled() && getType() != IShape.Type.GRIDLINE;
 	}
 
-	// public SimpleGeometryObject toSimpleGeometryObject() {
-	// return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getHeight(),
-	// attributes.getAngle(), attributes.getAxis(), getLocation(), attributes.getSize(), getType(),
-	// !isFilled(), attributes.getTextures());
-	// }
-
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -82,14 +75,7 @@ public class GeometryObject extends AbstractObject {
 		return DrawerType.GEOMETRY;
 	}
 
-	public GamaGeometryFile getFile() {
-		return null;
-	}
-
-	public AxisAngle getInitRotation() {
-		return null;
-	}
-
+	@Override
 	public Envelope3D getEnvelope(final OpenGL gl) {
 		return Envelope3D.of(geometry);
 	}

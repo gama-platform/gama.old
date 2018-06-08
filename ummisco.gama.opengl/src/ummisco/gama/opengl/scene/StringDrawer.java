@@ -33,21 +33,32 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	@Override
 	protected void _draw(final StringObject s) {
-		final GamaPoint p = s.getLocation();
-		if (s.getFont() != null && s.iisInPerspective()) {
-			final Font f = s.getFont();
-			gl.perspectiveText(s.string, f, p.x, p.y, p.z);
-		} else {
-			int fontToUse = GLUT.BITMAP_HELVETICA_18;
-			final Font f = s.getFont();
-			if (f != null) {
-				if (f.getSize() < 10) {
-					fontToUse = GLUT.BITMAP_HELVETICA_10;
-				} else if (f.getSize() < 16) {
-					fontToUse = GLUT.BITMAP_HELVETICA_12;
-				}
+		final boolean push = s.getRotation() != null;
+		try {
+			if (push) {
+				gl.pushMatrix();
+				applyRotation(s);
 			}
-			gl.rasterText(s.string, fontToUse, p.x, p.y, p.z);
+			final GamaPoint p = s.getLocation();
+			if (s.getFont() != null && s.iisInPerspective()) {
+				final Font f = s.getFont();
+				gl.perspectiveText(s.string, f, p.x, p.y, p.z);
+			} else {
+				int fontToUse = GLUT.BITMAP_HELVETICA_18;
+				final Font f = s.getFont();
+				if (f != null) {
+					if (f.getSize() < 10) {
+						fontToUse = GLUT.BITMAP_HELVETICA_10;
+					} else if (f.getSize() < 16) {
+						fontToUse = GLUT.BITMAP_HELVETICA_12;
+					}
+				}
+				gl.rasterText(s.string, fontToUse, p.x, p.y, p.z);
+			}
+		} finally {
+			if (push) {
+				gl.popMatrix();
+			}
 		}
 	}
 
