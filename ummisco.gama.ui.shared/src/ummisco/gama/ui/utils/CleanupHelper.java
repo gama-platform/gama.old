@@ -64,8 +64,8 @@ public class CleanupHelper {
 	static class ForceMaximizeRestoration {
 		public static void run() {
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				final IWorkbenchPage page = windows[i].getActivePage();
+			for (final IWorkbenchWindow window : windows) {
+				final IWorkbenchPage page = window.getActivePage();
 				if (page != null) {
 					page.addPartListener(new IPartListener2() {
 
@@ -123,14 +123,14 @@ public class CleanupHelper {
 		public static void run() {
 			final RemoveUnwantedActionSets remove = new RemoveUnwantedActionSets();
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				final IWorkbenchPage page = windows[i].getActivePage();
+			for (final IWorkbenchWindow window : windows) {
+				final IWorkbenchPage page = window.getActivePage();
 				if (page != null) {
 					// Doing the initial cleanup on the default perspective
 					// (modeling)
 					remove.perspectiveActivated(page, null);
 				}
-				windows[i].addPerspectiveListener(remove);
+				window.addPerspectiveListener(remove);
 			}
 		}
 
@@ -149,8 +149,9 @@ public class CleanupHelper {
 					for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
 						if (item.getId().contains(s1)) {
 							try {
-								if (w.getCoolBarManager2().find(item.getId()) != null)
+								if (w.getCoolBarManager2().find(item.getId()) != null) {
 									w.getCoolBarManager2().remove(item);
+								}
 							} catch (final Exception e) {}
 						}
 					}
@@ -188,10 +189,10 @@ public class CleanupHelper {
 
 	static class RemoveUnwantedWizards {
 
-		private static Set<String> CATEGORIES_TO_REMOVE = new HashSet<String>(Arrays
+		private static Set<String> CATEGORIES_TO_REMOVE = new HashSet<>(Arrays
 				.asList(new String[] { "org.eclipse.pde.PDE", "org.eclipse.emf.codegen.ecore.ui.wizardCategory" }));
 
-		private static Set<String> IDS_TO_REMOVE = new HashSet<String>(Arrays.asList(
+		private static Set<String> IDS_TO_REMOVE = new HashSet<>(Arrays.asList(
 				new String[] { "org.eclipse.ui.wizards.new.project", "org.eclipse.equinox.p2.replication.import",
 						"org.eclipse.equinox.p2.replication.importfrominstallation",
 						"org.eclipse.team.ui.ProjectSetImportWizard", "org.eclipse.equinox.p2.replication.export",
@@ -220,7 +221,7 @@ public class CleanupHelper {
 		}
 
 		static private IWizardDescriptor[] getAllWizards(final IWizardCategory[] categories) {
-			final List<IWizardDescriptor> results = new ArrayList<IWizardDescriptor>();
+			final List<IWizardDescriptor> results = new ArrayList<>();
 			for (final IWizardCategory wizardCategory : categories) {
 
 				results.addAll(Arrays.asList(wizardCategory.getWizards()));
@@ -236,7 +237,8 @@ public class CleanupHelper {
 		public final static Set<String> MENU_ITEMS_TO_REMOVE = new HashSet<>(Arrays.asList("openWorkspace",
 				"helpSearch", "org.eclipse.search.OpenFileSearchPage", "textSearchSubMenu", "reopenEditors",
 				"converstLineDelimitersTo", "org.eclipse.equinox.p2.ui.sdk.update",
-				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails"));
+				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails",
+				"org.eclipse.e4.ui.importer.openDirectory.menu"));
 		public final static Map<String, String> MENU_IMAGES = new HashMap<String, String>() {
 			{
 				put("print", "menu.print2");
@@ -291,12 +293,14 @@ public class CleanupHelper {
 			// sb.append("Menu ").append(menu.getId()).append(" :: ");
 			for (final IContributionItem item : menu.getItems()) {
 				final String name = item.getId();
+				System.out.println(name);
 				if (MENU_ITEMS_TO_REMOVE.contains(name)) {
 					item.setVisible(false);
 					continue;
 				}
-				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible())
+				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible()) {
 					continue;
+				}
 				if (MENU_IMAGES.containsKey(name)) {
 					changeIcon(menu, item, GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
 				}

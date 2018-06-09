@@ -95,6 +95,21 @@
                      name="newWizardId"
                      value="msi.gama.gui.wizards.newProjectWizard">
                </parameter>
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="and">
+                        <or>
+                           <instanceof
+                                 value="ummisco.gama.ui.navigator.contents.UserProjectsFolder">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
             </command>
             <command
                   commandId="org.eclipse.ui.newWizard"
@@ -144,11 +159,14 @@
                         ifEmpty="true"
                         operator="and">
                      <or>
-                        <adapt
-                              type="org.eclipse.core.resources.IResource">
-                        </adapt>
                         <instanceof
-                              value="ummisco.gama.ui.navigator.contents.TopLevelFolder">
+                              value="ummisco.gama.ui.navigator.contents.WrappedProject">
+                        </instanceof>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.WrappedFolder">
+                        </instanceof>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.UserProjectsFolder">
                         </instanceof>
                      </or>
                   </iterate>
@@ -169,6 +187,21 @@
                      name="importWizardId"
                      value="ummisco.gama.ui.import.ExternalProject">
                </parameter>
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="selection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="and">
+                        <or>
+                           <instanceof
+                                 value="ummisco.gama.ui.navigator.contents.UserProjectsFolder">
+                           </instanceof>
+                        </or>
+                     </iterate>
+                  </with>
+               </visibleWhen>
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
@@ -208,11 +241,14 @@
                         ifEmpty="true"
                         operator="and">
                      <or>
-                        <adapt
-                              type="org.eclipse.core.resources.IResource">
-                        </adapt>
                         <instanceof
-                              value="ummisco.gama.ui.navigator.contents.TopLevelFolder">
+                              value="ummisco.gama.ui.navigator.contents.WrappedProject">
+                        </instanceof>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.WrappedFolder">
+                        </instanceof>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.UserProjectsFolder">
                         </instanceof>
                      </or>
                   </iterate>
@@ -270,6 +306,21 @@
                   name="newWizardId"
                   value="msi.gama.gui.wizards.newProjectWizard">
             </parameter>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="true"
+                        operator="and">
+                     <or>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.UserProjectsFolder">
+                        </instanceof>
+                     </or>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
          <command
                commandId="org.eclipse.ui.newWizard"
