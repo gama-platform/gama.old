@@ -42,7 +42,7 @@ public class ModelScene {
 	public static final String KEYSTONE_HELPER_KEY = "__keystone__0";
 	public static final String LIGHTS_KEY = "__lights__0";
 	public static final String FPS_KEY = "z__fps__0";
-	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<String, LayerObject>();
+	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
 	protected LayerObject currentLayer;
 	protected final Abstract3DRenderer renderer;
 	private volatile boolean rendered = false;
@@ -70,8 +70,9 @@ public class ModelScene {
 			layers.put(ROTATION_HELPER_KEY, new RotationHelperLayerObject(renderer));
 			layers.put(KEYSTONE_HELPER_KEY, new KeystoneHelperLayerObject(renderer));
 			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
-			if (renderer.data.isShowfps())
+			if (renderer.data.isShowfps()) {
 				layers.put(FPS_KEY, new FPSLayerObject(renderer));
+			}
 		}
 	}
 
@@ -122,8 +123,7 @@ public class ModelScene {
 	}
 
 	private double computeVisualZIncrement() {
-		if (objectNumber == 0)
-			return 0d;
+		if (objectNumber == 0) { return 0d; }
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 		final double maxZ = renderer.getMaxEnvDim() / 2000d;
 		// The increment is simply
@@ -131,8 +131,7 @@ public class ModelScene {
 	}
 
 	public boolean cannotAdd() {
-		if (currentLayer == null)
-			return true;
+		if (currentLayer == null) { return true; }
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
 

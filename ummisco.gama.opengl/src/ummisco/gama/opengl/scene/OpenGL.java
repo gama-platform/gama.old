@@ -993,18 +993,18 @@ public class OpenGL {
 		if (geometryCache == null) { return; }
 		if (id == null) { return; }
 		final BuiltInGeometry object = geometryCache.get(this, id);
-		if (object != null) {	
-			if(solid && !isWireframe()) {
-				object.draw(this);								
+		if (object != null) {
+			if (solid && !isWireframe()) {
+				object.draw(this);
 			}
-			
-			if(!solid || isWireframe() || border != null){
-				final Color old = swapCurrentColor(border!=null?border:getCurrentColor());
+
+			if (!solid || isWireframe() || border != null) {
+				final Color old = swapCurrentColor(border != null ? border : getCurrentColor());
 				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 				object.draw(this);
 				setCurrentColor(old);
-				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);				
-			} 
+				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+			}
 		}
 	}
 
@@ -1224,10 +1224,14 @@ public class OpenGL {
 
 	public void beginObject(final AbstractObject object) {
 		setWireframe(isWireframe);
-		translateByZIncrement();
 		setLineWidth(object.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getColor());
+	}
+
+	public void endObject(final AbstractObject object) {
+		disableTextures();
+		translateByZIncrement();
 	}
 
 	public void beginScene(final Color backgroundColor) {
