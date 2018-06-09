@@ -28,12 +28,10 @@ import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.shp.JTSUtilities;
 import org.geotools.feature.SchemaException;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.gce.image.WorldImageWriter;
 import org.geotools.geometry.Envelope2D;
-import org.geotools.graph.util.geom.GeometryUtil;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -44,7 +42,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -55,7 +52,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -231,23 +227,25 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IType<?> t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 
-			if (att==null && (args == null || args.isEmpty())) { return; }
+			if (att == null && (args == null || args.isEmpty())) { return; }
 			if (species == null) {
-				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
+				desc.error("Attributes can only be saved for agents", IGamlIssue.UNKNOWN_FACET,
+						att == null ? WITH : ATTRIBUTES);
 			} else {
-				args.forEachEntry(new FacetVisitor() {
+				if (args != null) {
+					args.forEachEntry(new FacetVisitor() {
 
-					@Override
-					public boolean visit(final String name, final IExpressionDescription exp) {
-						if (!species.hasAttribute(name)) {
-							desc.error(
-									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
-									IGamlIssue.UNKNOWN_VAR, WITH);
-							return false;
+						@Override
+						public boolean visit(final String name, final IExpressionDescription exp) {
+							if (!species.hasAttribute(name)) {
+								desc.error("Attribute " + name + " is not defined for the agents of "
+										+ data.serialize(false), IGamlIssue.UNKNOWN_VAR, WITH);
+								return false;
+							}
+							return true;
 						}
-						return true;
-					}
-				});
+					});
+				}
 			}
 		}
 
@@ -268,8 +266,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private boolean shouldOverwrite(final IScope scope) {
-		if (rewriteExpr == null)
-			return true;
+		if (rewriteExpr == null) { return true; }
 		return Cast.asBool(scope, rewriteExpr.value(scope));
 	}
 
@@ -508,8 +505,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 		}
 
-		if ("DynamicLineString".equals(geomType))
+		if ("DynamicLineString".equals(geomType)) {
 			geomType = LineString.class.getSimpleName();
+		}
 		return geomType;
 	}
 
@@ -534,10 +532,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					: agents.getType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			if (species != null) {
-				if (withFacet != null)
+				if (withFacet != null) {
 					computeInitsFromWithFacet(scope, withFacet, attributes, species);
-				else if (attributesFacet != null)
+				} else if (attributesFacet != null) {
 					computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
+				}
 				for (final String e : attributes.keySet()) {
 					final IExpression var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
@@ -594,8 +593,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							for (final String v : attributeNames) {
 								String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
 								if (val.startsWith("'") && val.endsWith("'")
-										|| val.startsWith("\"") && val.endsWith("\""))
+										|| val.startsWith("\"") && val.endsWith("\"")) {
 									val = val.substring(1, val.length() - 1);
+								}
 								fw.write(";" + val);
 							}
 							fw.write(Strings.LN);
@@ -607,16 +607,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						fw.write(item.serialize(true).replace("]", "").replace("[", ""));
 						fw.write(Strings.LN);
 					}
-					if(itemType.id()==IType.MATRIX)
-					{
-						String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
+					if (itemType.id() == IType.MATRIX) {
+						final String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
 						for (int i = 0; i < tmpValue.length - 1; i++) {
 							String val = Cast.toGaml(tmpValue[i]);
-							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							if (val.startsWith("'") && val.endsWith("'")
+									|| val.startsWith("\"") && val.endsWith("\"")) {
 								val = val.substring(1, val.length() - 1);
-							if(tmpValue[i].contains(";"))
-							{
-								String[] valueSplitted = val.split(";");
+							}
+							if (tmpValue[i].contains(";")) {
+								final String[] valueSplitted = val.split(";");
 								fw.write(valueSplitted[0]);
 								val = valueSplitted[1];
 								fw.write(Strings.LN);
@@ -624,21 +624,23 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							fw.write(val + ",");
 						}
 						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
 							val = val.substring(1, val.length() - 1);
+						}
 						fw.write(val + Strings.LN);
-					}
-					else
-					{
+					} else {
 						for (int i = 0; i < values.size() - 1; i++) {
 							String val = Cast.toGaml(values.get(i)).replace(';', ',');
-							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							if (val.startsWith("'") && val.endsWith("'")
+									|| val.startsWith("\"") && val.endsWith("\"")) {
 								val = val.substring(1, val.length() - 1);
+							}
 							fw.write(val + ",");
 						}
 						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
 							val = val.substring(1, val.length() - 1);
+						}
 						fw.write(val + Strings.LN);
 					}
 				}
@@ -673,8 +675,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
 		if (withFacet.isEmpty() && species != null) {
 			for (final String var : species.getAttributeNames()) {
-				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var))
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var)) {
 					values.put(var, species.getVarExpr(var, false));
+				}
 			}
 		} else {
 			withFacet.forEach((key, value) -> {
@@ -693,38 +696,36 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			});
 		}
 	}
-	
-	private Geometry fixesPolygonCWS(Geometry g) {
+
+	private Geometry fixesPolygonCWS(final Geometry g) {
 		if (g instanceof Polygon) {
-			Polygon p = (Polygon) g;
-			boolean clockwise = CGAlgorithms.isCCW(p.getExteriorRing().getCoordinates());
-			if (p.getNumInteriorRing() == 0) return g;
+			final Polygon p = (Polygon) g;
+			final boolean clockwise = CGAlgorithms.isCCW(p.getExteriorRing().getCoordinates());
+			if (p.getNumInteriorRing() == 0) { return g; }
 			boolean change = false;
-			LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
-			GeometryFactory geomFact = new GeometryFactory(); 
-			for (int i = 0; i < p.getNumInteriorRing(); i ++) {
-				LinearRing hole = (LinearRing) p.getInteriorRingN(i);
-				if ((!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates())) ||
-				(clockwise && CGAlgorithms.isCCW(hole.getCoordinates()))){
+			final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+			final GeometryFactory geomFact = new GeometryFactory();
+			for (int i = 0; i < p.getNumInteriorRing(); i++) {
+				final LinearRing hole = (LinearRing) p.getInteriorRingN(i);
+				if ((!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates()))
+						|| (clockwise && CGAlgorithms.isCCW(hole.getCoordinates()))) {
 					change = true;
-					Coordinate[] coords = hole.getCoordinates();
+					final Coordinate[] coords = hole.getCoordinates();
 					ArrayUtils.reverse(coords);
-					CoordinateSequence points = CoordinateArraySequenceFactory.instance().create(coords);
+					final CoordinateSequence points = CoordinateArraySequenceFactory.instance().create(coords);
 					holes[i] = new LinearRing(points, geomFact);
-				}else {
+				} else {
 					holes[i] = hole;
 				}
 			}
-			if (change) {
-				return geomFact.createPolygon((LinearRing) p.getExteriorRing(), holes);
-			}
+			if (change) { return geomFact.createPolygon((LinearRing) p.getExteriorRing(), holes); }
 		} else if (g instanceof GeometryCollection) {
-			GeometryCollection gc = (GeometryCollection) g;
+			final GeometryCollection gc = (GeometryCollection) g;
 			boolean change = false;
-			GeometryFactory geomFact = new GeometryFactory(); 
-			Geometry[] geometries = new Geometry[gc.getNumGeometries()];
+			final GeometryFactory geomFact = new GeometryFactory();
+			final Geometry[] geometries = new Geometry[gc.getNumGeometries()];
 			for (int i = 0; i < gc.getNumGeometries(); i++) {
-				Geometry gg = gc.getGeometryN(i);
+				final Geometry gg = gc.getGeometryN(i);
 				if (gg instanceof Polygon) {
 					geometries[i] = fixesPolygonCWS(gg);
 					change = true;
@@ -732,8 +733,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					geometries[i] = gg;
 				}
 			}
-			if (change)
-				return geomFact.createGeometryCollection(geometries);
+			if (change) { return geomFact.createGeometryCollection(geometries); }
 		}
 		return g;
 	}
@@ -787,19 +787,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				// geometry is by convention (in specs) at position 0
 				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 				g = fixesPolygonCWS(g);
-				
+
 				values.add(g);
 				if (ag instanceof IAgent) {
 					for (final IExpression variable : attributeValues) {
 						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
 						if (variable.getType().equals(IType.STRING)) {
-							if (val == null)
+							if (val == null) {
 								val = "";
-							else {
+							} else {
 								final String val2 = val.toString();
 								if (val2.startsWith("'") && val2.endsWith("'")
-										|| val2.startsWith("\"") && val2.endsWith("\""))
+										|| val2.startsWith("\"") && val2.endsWith("\"")) {
 									val = val2.substring(1, val2.length() - 1);
+								}
 							}
 						}
 						values.add(val);
@@ -818,8 +819,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (gis != null) {
 				writePRJ(scope, path, gis);
 			}
-		} catch (final ClassCastException e){
-			throw GamaRuntimeException.error("Cannot save agents/geometries with different types of geometries (point, line, polygon) in a same shapefile", scope);
+		} catch (final ClassCastException e) {
+			throw GamaRuntimeException.error(
+					"Cannot save agents/geometries with different types of geometries (point, line, polygon) in a same shapefile",
+					scope);
 		} finally {
 			store.dispose();
 		}
