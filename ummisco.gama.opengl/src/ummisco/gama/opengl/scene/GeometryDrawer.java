@@ -192,7 +192,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	private void drawPolyhedron(final Polygon polygon, final boolean solid, final double height, final Color border) {
 		final boolean hasHoles = getHolesNumber(polygon) > 0;
 		// Draw bottom
-		drawPolygon(polygon, solid, hasHoles ? border : null, false, true);
+		drawPolygon(polygon, solid, hasHoles ? border : null, true, true);
 		_vertices.getNormal(true, height, _normal);
 		try {
 			gl.pushMatrix();
@@ -339,31 +339,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			drawCachedGeometry(Type.CYLINDER, solid, border);
 
 		}
-		// _vertices.visit((v1, v2) -> {
-		// // draw first sphere
-		// _center.setLocation(v1);
-		// _normal.setLocation(v2);
-		// _normal.subtract(v1);
-		// final double height = _normal.norm();
-		// _tangent.setLocation(_normal.orthogonal());
-		// _normal.normalize();
-		// if (!v1.equals(first)) {
-		// _scale.setTo(radius);
-		// drawCachedGeometry(Type.SPHERE, border);
-		// }
-		// // draw tube
-		// _scale.setTo(radius, radius, height);
-		// drawCachedGeometry(Type.CYLINDER, border);
-		// // draw second sphere
-		// if (!v2.equals(last)) {
-		// _center.setLocation(v2);
-		// _normal.negate();
-		// _tangent.setLocation(_normal.orthogonal());
-		// _scale.setTo(radius);
-		// drawCachedGeometry(Type.SPHERE, border);
-		// }
-
-		// });
 
 	}
 
