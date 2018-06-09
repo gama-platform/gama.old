@@ -13,6 +13,7 @@ import java.awt.Font;
 
 import com.jogamp.opengl.util.gl2.GLUT;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -33,13 +34,18 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	@Override
 	protected void _draw(final StringObject s) {
-		final boolean push = s.getRotation() != null;
 		try {
-			if (push) {
-				gl.pushMatrix();
-				applyRotation(s);
+			gl.pushMatrix();
+			final AxisAngle rotation = s.getRotation();
+			GamaPoint p = s.getLocation();
+			if (rotation != null) {
+				gl.translateBy(p.x, p.y, p.z);
+				final GamaPoint axis = rotation.getAxis();
+				// AD Change to a negative rotation to fix Issue #1514
+				gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
+				// Voids the location so as to make only one translation
+				p = GamaPoint.NULL_POINT;
 			}
-			final GamaPoint p = s.getLocation();
 			if (s.getFont() != null && s.iisInPerspective()) {
 				final Font f = s.getFont();
 				gl.perspectiveText(s.string, f, p.x, p.y, p.z);
@@ -56,9 +62,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 				gl.rasterText(s.string, fontToUse, p.x, p.y, p.z);
 			}
 		} finally {
-			if (push) {
-				gl.popMatrix();
-			}
+			gl.popMatrix();
 		}
 	}
 
