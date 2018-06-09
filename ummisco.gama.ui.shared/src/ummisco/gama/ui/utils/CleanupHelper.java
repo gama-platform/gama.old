@@ -293,7 +293,7 @@ public class CleanupHelper {
 			// sb.append("Menu ").append(menu.getId()).append(" :: ");
 			for (final IContributionItem item : menu.getItems()) {
 				final String name = item.getId();
-				System.out.println(name);
+				// System.out.println(name);
 				if (MENU_ITEMS_TO_REMOVE.contains(name)) {
 					item.setVisible(false);
 					continue;
