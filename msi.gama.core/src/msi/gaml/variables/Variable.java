@@ -299,6 +299,18 @@ public class Variable extends Symbol implements IVariable {
 						cd.getType().toString());
 				return;
 			}
+			if (cd.hasFacet(ENABLES)) {
+				if (!cd.getType().equals(Types.BOOL)) {
+					cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
+							IGamlIssue.CONFLICTING_FACETS, ENABLES);
+				}
+			}
+			if (cd.hasFacet(DISABLES)) {
+				if (!cd.getType().equals(Types.BOOL)) {
+					cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
+							IGamlIssue.CONFLICTING_FACETS, DISABLES);
+				}
+			}
 			// AD 15/04/14: special case for files
 			// AD 17/06/16 The restriction is temporarily removed
 			// if (!init.isConst() && init.getType().getType().id() !=

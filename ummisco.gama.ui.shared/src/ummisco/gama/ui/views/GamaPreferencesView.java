@@ -82,7 +82,7 @@ public class GamaPreferencesView {
 	public static int NB_DIVISIONS = 2;
 
 	static GamaPreferencesView instance;
-	private static boolean restartRequired;
+	static boolean restartRequired;
 
 	public static void show() {
 		if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
@@ -178,9 +178,9 @@ public class GamaPreferencesView {
 
 	final Map<String, Boolean> activations = new HashMap();
 
-	private void checkActivables(final Pref e, final Object value) {
-		if (e.getActivable() != null) {
-			for (final String activable : e.getActivable()) {
+	void checkActivables(final Pref e, final Object value) {
+		if (e.getEnablement() != null) {
+			for (final String activable : e.getEnablement()) {
 				final IParameterEditor ed = editors.get(activable);
 				if (ed == null) {
 					if (value instanceof Boolean) {
@@ -197,8 +197,8 @@ public class GamaPreferencesView {
 				}
 			}
 		}
-		if (e.getDeactivable() != null && value instanceof Boolean) {
-			for (final String deactivable : e.getDeactivable()) {
+		if (e.getDisablement() != null && value instanceof Boolean) {
+			for (final String deactivable : e.getDisablement()) {
 				final IParameterEditor ed = editors.get(deactivable);
 				if (ed == null) {
 					activations.put(deactivable, !(Boolean) value);
@@ -269,7 +269,7 @@ public class GamaPreferencesView {
 		compo.pack(true);
 	}
 
-	private Menu getMenuFor(final Pref e, final AbstractEditor ed) {
+	private static Menu getMenuFor(final Pref e, final AbstractEditor ed) {
 		final Menu m = new Menu(ed.getLabel());
 		final MenuItem title = new MenuItem(m, SWT.PUSH);
 		title.setEnabled(false);
@@ -450,7 +450,7 @@ public class GamaPreferencesView {
 
 	}
 
-	private void close() {
+	void close() {
 		shell.setVisible(false);
 	}
 

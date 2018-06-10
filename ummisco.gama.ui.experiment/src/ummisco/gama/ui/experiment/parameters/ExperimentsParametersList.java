@@ -19,20 +19,38 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.UserCommandStatement;
+import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener.Command;
 import ummisco.gama.ui.interfaces.IParameterEditor;
+import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ExperimentsParametersList extends EditorsList<String> {
+
+	@FunctionalInterface
+	static interface EditorVisitor {
+		abstract void visit(IParameterEditor ed);
+	}
+
 	final IScope scope;
+	final Map<String, Boolean> activations = new HashMap<>();
 
 	public ExperimentsParametersList(final IScope scope,
 			final Collection<? extends IExperimentDisplayable> paramsAndCommands) {
 		super();
 		this.scope = scope;
 		add(paramsAndCommands, null);
+	}
+
+	@Override
+	public boolean isEnabled(final AbstractEditor<?> gpParam) {
+		final IParameter p = gpParam.getParam();
+		if (p == null) { return true; }
+		final Boolean b = activations.get(p.getName());
+		return b == null ? true : b;
 	}
 
 	@Override
@@ -45,24 +63,77 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		return null;
 	}
 
+	public IParameterEditor getEditorForVar(final String var) {
+		for (final Map<String, IParameterEditor<?>> m : categories.values()) {
+			for (final IParameterEditor<?> ed : m.values()) {
+				final IParameter param = ed.getParam();
+				if (param != null && param.getName().equals(var)) { return ed; }
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		for (final IExperimentDisplayable var : params) {
 			final IParameterEditor gp;
-			if (var instanceof IParameter)
-				gp = EditorFactory.getInstance().create(scope, (IAgent) null, (IParameter) var, null);
-			else
+			if (var instanceof IParameter) {
+				final IParameter param = (IParameter) var;
+				gp = EditorFactory.getInstance().create(scope, (IAgent) null, param, null);
+				if (param.getType().equals(Types.BOOL)) {
+					final String[] enablements = param.getEnablement();
+					final String[] disablements = param.getDisablement();
+					if (enablements.length > 0) {
+						final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
+						for (final String other : enablements) {
+							activations.put(other, value);
+						}
+						param.addChangeListener((scope, val) -> {
+							for (final String enabled : enablements) {
+								final IParameterEditor ed = getEditorForVar(enabled);
+								if (ed != null) {
+									ed.setActive((Boolean) val);
+								}
+							}
+						});
+					}
+					if (disablements.length > 0) {
+						final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
+						for (final String other : disablements) {
+							activations.put(other, !value);
+						}
+						param.addChangeListener((scope, val) -> {
+							for (final String disabled : disablements) {
+								final IParameterEditor ed = getEditorForVar(disabled);
+								if (ed != null) {
+									ed.setActive(!(Boolean) val);
+								}
+							}
+						});
+					}
+				}
+			} else {
 				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
 						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
 							final Object result = ((UserCommandStatement) var).executeOn(scope);
 							GAMA.getExperiment().refreshAllOutputs();
 							return result;
 						}));
+			}
 			String cat = var.getCategory();
 			cat = cat == null ? "General" : cat;
 			addItem(cat);
 			categories.get(cat).put(var.getName(), gp);
+
 		}
+	}
+
+	void visitEditors(final EditorVisitor visitor) {
+		categories.forEach((s, m) -> {
+			m.forEach((n, p) -> {
+				visitor.visit(p);
+			});
+		});
 	}
 
 	@Override

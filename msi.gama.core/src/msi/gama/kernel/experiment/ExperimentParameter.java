@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
@@ -90,6 +92,16 @@ import msi.gaml.variables.Variable;
 						optional = true,
 						doc = @doc ("Provides a block of statements that will be executed whenever the value of the parameter changes")),
 				@facet (
+						name = IKeyword.ENABLES,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc ("a list of global variables whose parameter editors will be enabled when this parameter value is set to true (they are otherwise disabled)")),
+				@facet (
+						name = IKeyword.DISABLES,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc ("a list of global variables whose parameter editors will be disabled when this parameter value is set to true (they are otherwise enabled)")),
+				@facet (
 						name = "slider",
 						type = IType.BOOL,
 						optional = true,
@@ -135,12 +147,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private Object value = UNDEFINED;
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
+	final private String[] disables, enables;
 	String varName, title, category, unitLabel;
 	IType type = Types.NO_TYPE;
 	boolean isEditable;
 	boolean canBeNull;
 	boolean isDefined = true;
 	final IExpression init, among, min, max, step, slider, onChange;
+	final List<ParameterChangeListener> listeners = new ArrayList<>();
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -173,8 +187,21 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			getAmongValue(runtimeScope);
 		}
 		onChange = getFacet(IKeyword.ON_CHANGE);
+		if (onChange != null) {
+			listeners.add((scope, v) -> {
+				final IExecutable on_changer =
+						scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
+				scope.getExperiment().executeAction(on_changer);
+			});
+
+		}
 		slider = getFacet("slider");
+		final IExpressionDescription d = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.DISABLES) : null;
+		final IExpressionDescription e = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.ENABLES) : null;
+		disables = d != null ? d.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		enables = e != null ? e.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
+
 		isEditable = !targetedGlobalVar.isNotModifiable();
 	}
 
@@ -192,6 +219,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		super(null);
 		this.slider = null;
 		this.title = title;
+		disables = EMPTY_STRINGS;
+		enables = EMPTY_STRINGS;
 		this.canBeNull = canBeNull;
 		// this.order = p.getDefinitionOrder();
 		this.amongValue = among;
@@ -239,6 +268,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		listeners.clear();
+	}
+
 	private void setType(final IType iType) {
 		type = iType;
 	}
@@ -263,7 +298,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		isEditable = editable;
 	}
 
-	// private static Object[] JunkResults = new Object[1];
+	@Override
+	public void addChangeListener(final ParameterChangeListener listener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;
@@ -294,11 +334,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				newValue = getAmongValue(scope).get(0);
 			}
 		}
-		if (value != UNDEFINED && onChange != null) {
+		if (value != UNDEFINED) {
+			for (final ParameterChangeListener listener : listeners) {
+				listener.changed(scope, newValue);
+			}
 			// Already initialized, we call the on_change behavior
-			final IExecutable on_changer =
-					scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
-			scope.getExperiment().executeAction(on_changer);
+			// final IExecutable on_changer =
+			// scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
+			// scope.getExperiment().executeAction(on_changer);
 			// scope.execute(on_changer, scope.getAgentScope(), null,
 			// JunkResults);
 
@@ -513,6 +556,16 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public boolean acceptsSlider(final IScope scope) {
 		if (slider == null) { return true; }
 		return Cast.asBool(scope, slider.value(scope));
+	}
+
+	@Override
+	public String[] getEnablement() {
+		return this.enables;
+	}
+
+	@Override
+	public String[] getDisablement() {
+		return this.disables;
 	}
 
 }

@@ -19,6 +19,7 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.ui.interfaces.IParameterEditor;
+import ummisco.gama.ui.parameters.AbstractEditor;
 
 public abstract class EditorsList<T> implements ItemList<T> {
 
@@ -69,5 +70,9 @@ public abstract class EditorsList<T> implements ItemList<T> {
 
 	@Override
 	public void makeItemSelectable(final T obj, final boolean b) {}
+
+	public boolean isEnabled(final AbstractEditor<?> gpParam) {
+		return true;
+	}
 
 }

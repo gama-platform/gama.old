@@ -24,6 +24,12 @@ import msi.gaml.types.IType;
  */
 public interface IParameter extends IExperimentDisplayable {
 
+	public static interface ParameterChangeListener {
+		void changed(IScope scope, Object newValue);
+	}
+
+	public final String[] EMPTY_STRINGS = new String[0];
+
 	// public abstract Integer getDefinitionOrder();
 
 	public abstract void setValue(IScope scope, Object value);
@@ -51,6 +57,18 @@ public interface IParameter extends IExperimentDisplayable {
 	public abstract Number getStepValue(IScope scope);
 
 	public boolean isDefined();
+
+	public default String[] getEnablement() {
+		return EMPTY_STRINGS;
+	}
+
+	public default String[] getDisablement() {
+		return EMPTY_STRINGS;
+	}
+
+	public default void addChangeListener(final ParameterChangeListener listener) {
+		// Nothing to do by default
+	}
 
 	public interface Batch extends IParameter {
 

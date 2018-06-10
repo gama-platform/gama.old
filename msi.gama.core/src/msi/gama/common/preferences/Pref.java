@@ -29,8 +29,8 @@ public class Pref<T> implements IParameter {
 	List<T> values;
 	Number min, max;
 	boolean slider = true; // by default
-	String[] activates, deactivates;
-	Set<IPreferenceChangeListener<T>> listeners = new HashSet<IPreferenceChangeListener<T>>();
+	String[] enables, disables;
+	Set<IPreferenceChangeListener<T>> listeners = new HashSet<>();
 	private T[] v;
 
 	Pref(final String key, final int type) {
@@ -130,12 +130,12 @@ public class Pref<T> implements IParameter {
 	}
 
 	public Pref<T> activates(final String... link) {
-		activates = link;
+		enables = link;
 		return this;
 	}
 
 	public Pref<T> deactivates(final String... link) {
-		deactivates = link;
+		disables = link;
 		return this;
 	}
 
@@ -264,12 +264,12 @@ public class Pref<T> implements IParameter {
 		}
 	}
 
-	public String[] getActivable() {
-		return this.activates;
+	public String[] getEnablement() {
+		return this.enables;
 	}
 
-	public String[] getDeactivable() {
-		return this.deactivates;
+	public String[] getDisablement() {
+		return this.disables;
 	}
 
 	public void save() {

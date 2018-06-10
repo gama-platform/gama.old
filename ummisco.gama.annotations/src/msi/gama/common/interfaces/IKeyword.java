@@ -108,7 +108,6 @@ public interface IKeyword {
 	public static final String DIFFUSE_LIGHT = "diffuse_light";
 	public static final String DIFFUSE_LIGHT_POS = "diffuse_light_pos";
 	public static final String DIRECTION = "direction";
-	public static final String DISABLE = "disable";
 	public static final String DISPLAY = "display";
 	public static final String DISPLAY_GL = "graphdisplaygl";
 	public static final String DISPLAY_GRAPH = "graphdisplay";
@@ -128,7 +127,6 @@ public interface IKeyword {
 	public static final String ELSE = "else";
 	public static final String EMPTY = "empty";
 	public static final String BORDER = "border";
-	public static final String ENABLE = "enable";
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
@@ -154,6 +152,8 @@ public interface IKeyword {
 	/*
 	 *
 	 */
+	public static final String ENABLES = "enables";
+	public static final String DISABLES = "disables";
 	public static final String EVENT = "event";
 	public static final String ERROR = "error";
 	public static final String EXHAUSTIVE = "exhaustive";
