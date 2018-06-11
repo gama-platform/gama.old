@@ -140,9 +140,7 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		monitor.beginTask("Creating " + fileName, 2);
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IResource container = findContainer(monitor, containerName, root);
-		if (container == null) {
-			return;
-		}
+		if (container == null) { return; }
 		IContainer folder = (IContainer) container;
 		final IProject project = folder.getProject();
 
@@ -165,12 +163,12 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 
 		final IFile file = folder.getFile(new Path(fileName));
 
-		fileHeader = "/**\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc
-				+ "\n" + "* Tags: Tag1, Tag2, TagN\n*/" + Strings.LN + Strings.LN;
+		fileHeader = "/***\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc
+				+ "\n" + "* Tags: Tag1, Tag2, TagN\n***/" + Strings.LN + Strings.LN;
 
-		try (InputStream 
-				streamModel = addFileHeader(folder, getClass().getResourceAsStream(TEMPLATES.get(getPage().getTemplateType())), title, desc);) {
-			try (InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);){
+		try (InputStream streamModel = addFileHeader(folder,
+				getClass().getResourceAsStream(TEMPLATES.get(getPage().getTemplateType())), title, desc);) {
+			try (InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);) {
 				ResourceManager.getInstance().reveal(file);
 				file.create(streamModel, true, monitor);
 				if (createDoc) {
@@ -248,7 +246,8 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		String line;
 		final StringBuffer sb = new StringBuffer();
 		try (final InputStream input =
-				this.getClass().getResourceAsStream("/templates/description-html-template.resource");final BufferedReader reader = new BufferedReader(new InputStreamReader(input));){
+				this.getClass().getResourceAsStream("/templates/description-html-template.resource");
+				final BufferedReader reader = new BufferedReader(new InputStreamReader(input));) {
 			while ((line = reader.readLine()) != null) {
 				line = line.replaceAll("authorModel", "By " + author);
 				line = line.replaceAll("titleModel", "Description of the model " + title);
