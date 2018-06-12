@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -185,6 +186,25 @@ public class Strings {
 					value = "'to be or not to be,that is the question' split_with ' ,'",
 					equals = "['to','be','or','not','to','be','that','is','the','question']"))
 	public static IList opTokenize(final IScope scope, final String target, final String pattern) {
+		return opTokenize(scope,target,pattern,false);
+	}
+
+	@operator (
+			value = { "split_with", "tokenize" },
+			content_type = IType.STRING,
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true).",
+			comment = "Delimiters themselves are excluded from the resulting list.",
+			examples = @example (
+					value = "'aa::bb:cc' split_with ('::', true)",
+					equals = "['aa','bb:cc']"))
+	public static IList opTokenize(final IScope scope, final String target, final String pattern, final Boolean completeSep) {
+		if (completeSep) {
+			return GamaListFactory.create(scope, Types.STRING,target.split(pattern));
+		}
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return GamaListFactory.create(scope, Types.STRING, st);
 	}
