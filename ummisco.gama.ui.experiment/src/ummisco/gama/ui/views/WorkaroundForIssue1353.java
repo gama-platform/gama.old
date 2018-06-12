@@ -59,12 +59,14 @@ public class WorkaroundForIssue1353 {
 	private static Shell shell;
 
 	public static void showShell() {
-		if (shell != null)
+		if (shell != null) {
 			WorkbenchHelper.asyncRun(() -> {
+				// System.out.println("Showing shell");
 				getShell().open();
 				getShell().setVisible(false);
 
 			});
+		}
 
 	}
 
@@ -76,6 +78,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	private static void createShell() {
+		// System.out.println("Shell created");
 		shell = new Shell(WorkbenchHelper.getShell(), SWT.APPLICATION_MODAL);
 		shell.setSize(5, 5);
 		shell.setAlpha(0);
@@ -84,6 +87,9 @@ public class WorkaroundForIssue1353 {
 
 	public static void install() {
 		if (!PlatformHelper.isCocoa()) { return; }
+		if (shell != null) { return; }
+		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " installed");
+		createShell();
 		WorkbenchHelper.getPage().addPartListener(new PartListener());
 
 	}
