@@ -968,6 +968,69 @@ public abstract class Spatial {
 			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
 			return BezierCurve(scope,P0,P01,P1,nbPoints);
 		}
+		
+		@operator (
+				value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given inflection point (between 0.0 and 1.0 - default 0.5), and the given rotation angle (90 = along the z axis).",
+				usages = { @usage (
+						value = "if the operand is nil, returns nil") },
+				examples = { @example (
+						value = "curve({0,0},{10,10}, 0.5, 100, 0.8, 90)",
+						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
+						test = false) },
+				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						"triangle", "line" })
+	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final int nbPoints, final double proportion, final double angle) {
+			IShape shape = BezierCurve(scope,P0,P1,coefficient,false,nbPoints,proportion);
+			shape = Transformations.rotated_by(scope, shape, angle, new GamaPoint(P0.x - P1.x,P0.y - P1.y,P0.z - P1.z));
+			GamaPoint newPt0 = (GamaPoint) shape.getPoints().get(0);
+			shape = Transformations.translated_by(scope, shape, new GamaPoint(P0.x - newPt0.x,P0.y - newPt0.y,P0.z - newPt0.z));
+			return shape;
+		}
+		
+		@operator (
+				value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given rotation angle (90 = along the z axis).",
+				usages = { @usage (
+						value = "if the operand is nil, returns nil") },
+				examples = { @example (
+						value = "curve({0,0},{10,10}, 0.5, 100, 90)",
+						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
+						test = false) },
+				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						"triangle", "line" })
+	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final int nbPoints, final double angle) {
+			return BezierCurve(scope,P0,P1,coefficient,nbPoints,0.5,angle);
+		}
+		
+		@operator (
+				value = { "curve" },
+				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius considering the given rotation angle (90 = along the z axis).",
+				usages = { @usage (
+						value = "if the operand is nil, returns nil") },
+				examples = { @example (
+						value = "curve({0,0},{10,10}, 0.5, 90)",
+						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
+						test = false) },
+				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						"triangle", "line" })
+	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final double angle) {
+			return BezierCurve(scope,P0,P1,coefficient,10,0.5,angle);
+		}
+		
+		
 
 		@operator (
 				value = { "curve" },
