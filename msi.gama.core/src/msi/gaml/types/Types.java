@@ -19,6 +19,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.util.tree.GamaTreeNode;
+import msi.gama.util.tree.GamaTree;
+import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -26,7 +29,6 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.types.TypeTree.Order;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -219,8 +221,8 @@ public class Types {
 	}
 
 	public static void init() {
-		final TypeTree<IType> hierarchy = buildHierarchy();
-		for (final TypeNode<IType> node : hierarchy.build(Order.PRE_ORDER)) {
+		final GamaTree<IType> hierarchy = buildHierarchy();
+		for (final GamaTreeNode<IType> node : hierarchy.build(Order.PRE_ORDER)) {
 			final IType type = node.getData();
 			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
 			final Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
@@ -230,9 +232,9 @@ public class Types {
 		// System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
 	}
 
-	private static TypeTree<IType> buildHierarchy() {
-		final TypeNode<IType> root = new TypeNode(NO_TYPE);
-		final TypeTree<IType> hierarchy = new TypeTree();
+	private static GamaTree<IType> buildHierarchy() {
+		final GamaTreeNode<IType> root = new GamaTreeNode(NO_TYPE);
+		final GamaTree<IType> hierarchy = new GamaTree();
 		hierarchy.setRoot(root);
 		final List<IType>[] depths = typesWithDepths();
 		for (int i = 1; i < 10; i++) {
@@ -266,17 +268,17 @@ public class Types {
 		return depths;
 	}
 
-	private static void place(final IType t, final TypeTree<IType> hierarchy) {
-		final Map<TypeNode<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
+	private static void place(final IType t, final GamaTree<IType> hierarchy) {
+		final Map<GamaTreeNode<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
 		int max = 0;
-		TypeNode<IType> parent = hierarchy.getRoot();
-		for (final TypeNode<IType> current : map.keySet()) {
+		GamaTreeNode<IType> parent = hierarchy.getRoot();
+		for (final GamaTreeNode<IType> current : map.keySet()) {
 			if (current.getData().isAssignableFrom(t) && map.get(current) > max) {
 				max = map.get(current);
 				parent = current;
 			}
 		}
-		parent.addChild(new TypeNode(t));
+		parent.addChild(new GamaTreeNode(t));
 	}
 
 	private static List<SpeciesDescription> builtInSpecies;

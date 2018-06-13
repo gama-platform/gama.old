@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gaml.types;
+package msi.gama.util.tree;
 
 /*
  * Copyright 2010 Vivin Suresh Paliath
@@ -23,36 +23,36 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Strings;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TypeTree<T> {
+public class GamaTree<T> {
 
 	public static enum Order {
 		PRE_ORDER, POST_ORDER
 	}
 
-	private TypeNode<T> root;
+	private GamaTreeNode<T> root;
 
-	public TypeTree() {
+	public GamaTree() {
 		super();
 	}
 
-	public TypeTree(final TypeNode<T> root) {
+	public GamaTree(final GamaTreeNode<T> root) {
 		setRoot(root);
 	}
 
-	public TypeTree(final T root) {
-		setRoot(new TypeNode(root));
+	public GamaTree(final T root) {
+		setRoot(new GamaTreeNode(root));
 	}
 
-	public TypeNode<T> getRoot() {
+	public GamaTreeNode<T> getRoot() {
 		return this.root;
 	}
 
-	public void setRoot(final TypeNode<T> root) {
+	public void setRoot(final GamaTreeNode<T> root) {
 		this.root = root;
 	}
 
-	public TypeNode<T> setRoot(final T root) {
-		final TypeNode<T> result = new TypeNode(root);
+	public GamaTreeNode<T> setRoot(final T root) {
+		final GamaTreeNode<T> result = new GamaTreeNode(root);
 		setRoot(result);
 		return result;
 	}
@@ -68,10 +68,10 @@ public class TypeTree<T> {
 		return numberOfNodes;
 	}
 
-	private int auxiliaryGetNumberOfNodes(final TypeNode<T> node) {
+	private int auxiliaryGetNumberOfNodes(final GamaTreeNode<T> node) {
 		int numberOfNodes = node.getNumberOfChildren();
 
-		for (final TypeNode<T> child : node.getChildren()) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			numberOfNodes += auxiliaryGetNumberOfNodes(child);
 		}
 
@@ -82,8 +82,8 @@ public class TypeTree<T> {
 		return find(dataToFind) != null;
 	}
 
-	public TypeNode<T> find(final T dataToFind) {
-		TypeNode<T> returnNode = null;
+	public GamaTreeNode<T> find(final T dataToFind) {
+		GamaTreeNode<T> returnNode = null;
 
 		if (root != null) {
 			returnNode = auxiliaryFind(root, dataToFind);
@@ -92,8 +92,8 @@ public class TypeTree<T> {
 		return returnNode;
 	}
 
-	private TypeNode<T> auxiliaryFind(final TypeNode<T> currentNode, final T dataToFind) {
-		TypeNode<T> returnNode = null;
+	private GamaTreeNode<T> auxiliaryFind(final GamaTreeNode<T> currentNode, final T dataToFind) {
+		GamaTreeNode<T> returnNode = null;
 		int i = 0;
 
 		if (currentNode.getData().equals(dataToFind)) {
@@ -115,8 +115,8 @@ public class TypeTree<T> {
 		return root == null;
 	}
 
-	public List<TypeNode<T>> build(final Order traversalOrder) {
-		List<TypeNode<T>> returnList = null;
+	public List<GamaTreeNode<T>> build(final Order traversalOrder) {
+		List<GamaTreeNode<T>> returnList = null;
 
 		if (root != null) {
 			returnList = build(root, traversalOrder);
@@ -125,8 +125,8 @@ public class TypeTree<T> {
 		return returnList;
 	}
 
-	public List<TypeNode<T>> build(final TypeNode<T> node, final Order traversalOrder) {
-		final List<TypeNode<T>> traversalResult = new ArrayList<TypeNode<T>>();
+	public List<GamaTreeNode<T>> build(final GamaTreeNode<T> node, final Order traversalOrder) {
+		final List<GamaTreeNode<T>> traversalResult = new ArrayList<GamaTreeNode<T>>();
 
 		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrder(node, traversalResult);
@@ -139,7 +139,7 @@ public class TypeTree<T> {
 		return traversalResult;
 	}
 
-	public List<T> getAllElements(final TypeNode<T> node, final Order traversalOrder) {
+	public List<T> getAllElements(final GamaTreeNode<T> node, final Order traversalOrder) {
 
 		if (node == null) {
 			return Collections.EMPTY_LIST;
@@ -156,8 +156,8 @@ public class TypeTree<T> {
 		return traversalResult;
 	}
 
-	public TypeTree<T> copy() {
-		final TypeTree<T> result = new TypeTree();
+	public GamaTree<T> copy() {
+		final GamaTree<T> result = new GamaTree();
 		result.setRoot(getRoot().copy());
 		return result;
 	}
@@ -168,7 +168,7 @@ public class TypeTree<T> {
 
 	public List<T> getAllElements(final T data, final Order traversalOrder) {
 		final List<T> traversalResult = new ArrayList<T>();
-		final TypeNode<T> node = find(data);
+		final GamaTreeNode<T> node = find(data);
 		if (node == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -184,40 +184,40 @@ public class TypeTree<T> {
 
 	}
 
-	private void buildPreOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {
+	private void buildPreOrder(final GamaTreeNode<T> node, final List<GamaTreeNode<T>> traversalResult) {
 		traversalResult.add(node);
 
-		for (final TypeNode<T> child : node.getChildren()) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			buildPreOrder(child, traversalResult);
 		}
 	}
 
-	private void getAllPreOrder(final TypeNode<T> node, final List<T> traversalResult) {
+	private void getAllPreOrder(final GamaTreeNode<T> node, final List<T> traversalResult) {
 		traversalResult.add(node.getData());
 
-		for (final TypeNode<T> child : node.getChildren()) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			getAllPreOrder(child, traversalResult);
 		}
 	}
 
-	private void getAllPostOrder(final TypeNode<T> node, final List<T> traversalResult) {
-		for (final TypeNode<T> child : node.getChildren()) {
+	private void getAllPostOrder(final GamaTreeNode<T> node, final List<T> traversalResult) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			getAllPostOrder(child, traversalResult);
 		}
 
 		traversalResult.add(node.getData());
 	}
 
-	private void buildPostOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {
-		for (final TypeNode<T> child : node.getChildren()) {
+	private void buildPostOrder(final GamaTreeNode<T> node, final List<GamaTreeNode<T>> traversalResult) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			buildPostOrder(child, traversalResult);
 		}
 
 		traversalResult.add(node);
 	}
 
-	public Map<TypeNode<T>, Integer> buildWithDepth(final Order traversalOrder) {
-		Map<TypeNode<T>, Integer> returnMap = null;
+	public Map<GamaTreeNode<T>, Integer> buildWithDepth(final Order traversalOrder) {
+		Map<GamaTreeNode<T>, Integer> returnMap = null;
 
 		if (root != null) {
 			returnMap = buildWithDepth(root, traversalOrder);
@@ -226,8 +226,8 @@ public class TypeTree<T> {
 		return returnMap;
 	}
 
-	public Map<TypeNode<T>, Integer> buildWithDepth(final TypeNode<T> node, final Order traversalOrder) {
-		final Map<TypeNode<T>, Integer> traversalResult = new TOrderedHashMap<TypeNode<T>, Integer>();
+	public Map<GamaTreeNode<T>, Integer> buildWithDepth(final GamaTreeNode<T> node, final Order traversalOrder) {
+		final Map<GamaTreeNode<T>, Integer> traversalResult = new TOrderedHashMap<GamaTreeNode<T>, Integer>();
 
 		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrderWithDepth(node, traversalResult, 0);
@@ -240,18 +240,18 @@ public class TypeTree<T> {
 		return traversalResult;
 	}
 
-	private void buildPreOrderWithDepth(final TypeNode<T> node, final Map<TypeNode<T>, Integer> traversalResult,
+	private void buildPreOrderWithDepth(final GamaTreeNode<T> node, final Map<GamaTreeNode<T>, Integer> traversalResult,
 			final int depth) {
 		traversalResult.put(node, depth);
 
-		for (final TypeNode<T> child : node.getChildren()) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			buildPreOrderWithDepth(child, traversalResult, depth + 1);
 		}
 	}
 
-	private void buildPostOrderWithDepth(final TypeNode<T> node, final Map<TypeNode<T>, Integer> traversalResult,
+	private void buildPostOrderWithDepth(final GamaTreeNode<T> node, final Map<GamaTreeNode<T>, Integer> traversalResult,
 			final int depth) {
-		for (final TypeNode<T> child : node.getChildren()) {
+		for (final GamaTreeNode<T> child : node.getChildren()) {
 			buildPostOrderWithDepth(child, traversalResult, depth + 1);
 		}
 
@@ -280,9 +280,9 @@ public class TypeTree<T> {
 		 */
 
 		if (root != null) {
-			final Map<TypeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
+			final Map<GamaTreeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
 			final StringBuilder sb = new StringBuilder();
-			for (final TypeNode<T> t : map.keySet()) {
+			for (final GamaTreeNode<T> t : map.keySet()) {
 				for (int i = 0; i < map.get(t); i++) {
 					sb.append(Strings.TAB);
 				}

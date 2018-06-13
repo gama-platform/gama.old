@@ -9,7 +9,7 @@
  *
  **********************************************************************************************/
 
-package msi.gaml.types;
+package msi.gama.util.tree;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,21 +17,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TypeNode<T> {
+public class GamaTreeNode<T> {
 
 	private T data;
-	private List<TypeNode<T>> children;
-	private TypeNode<T> parent;
+	private List<GamaTreeNode<T>> children;
+	private GamaTreeNode<T> parent;
 
-	public TypeNode(final T data) {
+	public GamaTreeNode(final T data) {
 		setData(data);
 	}
 
-	public TypeNode<T> getParent() {
+	public GamaTreeNode<T> getParent() {
 		return parent;
 	}
 
-	public List<TypeNode<T>> getChildren() {
+	public List<GamaTreeNode<T>> getChildren() {
 		if (children == null)
 			return Collections.EMPTY_LIST;
 		return this.children;
@@ -45,15 +45,15 @@ public class TypeNode<T> {
 		return getNumberOfChildren() > 0;
 	}
 
-	public void addChild(final TypeNode<T> child) {
+	public void addChild(final GamaTreeNode<T> child) {
 		child.parent = this;
 		if (children == null)
 			children = new ArrayList<>();
 		children.add(child);
 	}
 
-	public TypeNode<T> addChild(final T child) {
-		final TypeNode<T> result = new TypeNode<>(child);
+	public GamaTreeNode<T> addChild(final T child) {
+		final GamaTreeNode<T> result = new GamaTreeNode<>(child);
 		addChild(result);
 		return result;
 	}
@@ -70,7 +70,7 @@ public class TypeNode<T> {
 		children.remove(index);
 	}
 
-	public TypeNode<T> getChildAt(final int index) throws IndexOutOfBoundsException {
+	public GamaTreeNode<T> getChildAt(final int index) throws IndexOutOfBoundsException {
 		if (children == null)
 			return null;
 		return children.get(index);
@@ -100,7 +100,7 @@ public class TypeNode<T> {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final TypeNode<?> other = (TypeNode<?>) obj;
+		final GamaTreeNode<?> other = (GamaTreeNode<?>) obj;
 		if (data == null) {
 			if (other.data != null) {
 				return false;
@@ -127,7 +127,7 @@ public class TypeNode<T> {
 	public String toStringVerbose() {
 		String stringRepresentation = getData().toString() + ":[";
 
-		for (final TypeNode<T> node : getChildren()) {
+		for (final GamaTreeNode<T> node : getChildren()) {
 			stringRepresentation += node.getData().toString() + ", ";
 		}
 
@@ -145,17 +145,17 @@ public class TypeNode<T> {
 	public void dispose() {
 		parent = null;
 		if (children != null) {
-			for (final TypeNode<T> node : children) {
+			for (final GamaTreeNode<T> node : children) {
 				node.dispose();
 			}
 			children.clear();
 		}
 	}
 
-	public TypeNode<T> copy() {
-		final TypeNode<T> result = new TypeNode<>(getData());
+	public GamaTreeNode<T> copy() {
+		final GamaTreeNode<T> result = new GamaTreeNode<>(getData());
 		if (children != null)
-			for (final TypeNode<T> node : children) {
+			for (final GamaTreeNode<T> node : children) {
 				result.addChild(node.copy());
 			}
 		return result;

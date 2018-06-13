@@ -254,6 +254,7 @@ Export-Package: msi.gama.common,
    msi.gaml.types",
  msi.gama.util.path,
  msi.gama.util.random,
+ msi.gama.util.tree,
  msi.gaml.architecture;
   uses:="msi.gaml.species,
    msi.gaml.commands,
