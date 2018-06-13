@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ListExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ListExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,7 +29,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 23 août 07
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class ListExpression extends AbstractExpression {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
@@ -51,7 +50,7 @@ public class ListExpression extends AbstractExpression {
 	final IExpression[] elements;
 	// private final Object[] values;
 	// private boolean isConst;
-	private boolean computed;
+	// private boolean computed;
 
 	ListExpression(final Iterable<? extends IExpression> elements) {
 		this.elements = Iterables.toArray(elements, IExpression.class);
@@ -66,15 +65,11 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	public boolean containsValue(final Object o) {
-		if (o == null)
-			return false;
+		if (o == null) { return false; }
 		for (final IExpression exp : elements) {
-			if (!(exp instanceof ConstantExpression)) {
-				return false;
-			}
+			if (!(exp instanceof ConstantExpression)) { return false; }
 			final Object e = exp.value(null);
-			if (o.equals(e))
-				return true;
+			if (o.equals(e)) { return true; }
 		}
 		return false;
 	}
@@ -99,12 +94,12 @@ public class ListExpression extends AbstractExpression {
 		final Object[] values = new Object[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] == null) {
-				computed = false;
+				// computed = false;
 				return GamaListFactory.create();
 			}
 			values[i] = elements[i].value(scope);
 		}
-		computed = true;
+		// computed = true;
 		// Important NOT to return the reference to values (but a copy of it).
 		return GamaListFactory.createWithoutCasting(getType().getContentType(), values);
 	}
