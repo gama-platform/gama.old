@@ -263,6 +263,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private final List<AbstractLayerStatement> layers;
 	protected IDisplaySurface surface;
+	private int index;
 
 	final LayeredDisplayData data = new LayeredDisplayData();
 	// Specific to overlays
@@ -372,8 +373,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final boolean hasVirtual = childFacets.contains(VIRTUAL);
 			final Facets parentFacets = parent.getFacets();
 			childFacets.complementWith(parentFacets);
-			if (!hasVirtual)
+			if (!hasVirtual) {
 				childFacets.remove(VIRTUAL);
+			}
 			child.replaceChildrenWith(Iterables.concat(parent.getOwnChildren(), child.getOwnChildren()));
 
 		}
@@ -420,8 +422,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void open() {
 		super.open();
-		if (getView() != null)
+		if (getView() != null) {
 			getView().waitToBeRealized();
+		}
 	}
 
 	@Override
@@ -464,10 +467,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.outputReloaded();
 			return;
 		}
-		if (scope.getExperiment().isHeadless())
+		if (scope.getExperiment().isHeadless()) {
 			// if (GAMA.isInHeadLessMode())
 			data.setDisplayType(IKeyword.IMAGE);
-		else if (data.isOpenGL()) {
+		} else if (data.isOpenGL()) {
 			// If in headless mode, we need to get the 'image' surface
 			return;
 		}
@@ -563,6 +566,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void releaseView() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(final int index) {
+		this.index = index;
 	}
 
 }

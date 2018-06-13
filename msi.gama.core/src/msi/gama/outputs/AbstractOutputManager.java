@@ -35,6 +35,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	protected final Map<String, IOutput> outputs = new TOrderedHashMap<>();
 	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<>();
 
+	protected int displayIndex;
+
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 	}
@@ -126,6 +128,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 				final IOutput o = (IOutput) s;
 				add(o);
 				o.setUserCreated(false);
+				if (o instanceof LayeredDisplayOutput) {
+					((LayeredDisplayOutput) o).setIndex(displayIndex++);
+				}
 			}
 		}
 	}
@@ -186,9 +191,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
 		for (final IOutput output : ImmutableList.copyOf(this)) {
-			if (!open(scope, output)) {
-				return false;
-			}
+			if (!open(scope, output)) { return false; }
 		}
 		return true;
 	}
