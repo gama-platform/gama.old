@@ -518,7 +518,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			int i = getPlaceIndexAt(xx, yy);
 			if (matrix[i] == null) { return -1; }
 			if (matrix[i].getLocation() == p) { return i; }
-			final TIntHashSet toObserve = ((GridHexagonalNeighborhoodHorizontal) getNeighborhood())
+			final TIntHashSet toObserve = ((GridHexagonalNeighborhood) getNeighborhood())
 					.getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
