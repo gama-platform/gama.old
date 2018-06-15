@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentBackwardAgent.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentBackwardAgent.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,13 +23,13 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.tree.GamaTreeNode;
 import msi.gama.util.tree.GamaTree;
+import msi.gama.util.tree.GamaTreeNode;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gaml.ReverseOperators;
 
-@experiment(IKeyword.MEMORIZE)
+@experiment (IKeyword.MEMORIZE)
 public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	GamaTree<String> historyTree;
@@ -38,7 +37,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
 		super(s);
-		historyTree = new GamaTree<String>();
+		historyTree = new GamaTree<>();
 	}
 
 	/**
@@ -67,9 +66,10 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
 
 		currentNode = currentNode.addChild(state);
-		
-//		scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(), scope.getRoot(), new GamaColor(0, 0, 0));
-		
+
+		// scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(),
+		// scope.getRoot(), new GamaColor(0, 0, 0));
+
 		return result;
 	}
 
@@ -89,29 +89,28 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 					// get the previous state
 					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
-					
 
 					// Update of the simulation
 					final SimulationAgent currentSimAgt = getSimulation();
-					
+
 					currentSimAgt.updateWith(scope, agt);
-					
+
 					// useful to recreate the random generator
-					int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
-					String rngName = currentSimAgt.getRandomGenerator().getRngName();
-					Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
-					
+					final int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
+					final String rngName = currentSimAgt.getRandomGenerator().getRngName();
+					final Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
+
 					final IOutputManager outputs = getSimulation().getOutputManager();
 					if (outputs != null) {
 						outputs.step(scope);
 					}
-										
+
 					// Recreate the random generator and set it to the same state as the saved one
-					if( ((ExperimentPlan) this.getSpecies()).keepsSeed() ) {
-						currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));	
-						currentSimAgt.getRandomGenerator().setUsage(rngUsage);						
+					if (((ExperimentPlan) this.getSpecies()).keepsSeed()) {
+						currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));
+						currentSimAgt.getRandomGenerator().setUsage(rngUsage);
 					} else {
-						currentSimAgt.setRandomGenerator(new RandomUtils(super.random.next(), rngName));							
+						currentSimAgt.setRandomGenerator(new RandomUtils(super.random.next(), rngName));
 					}
 
 					currentNode = currentNode.getParent();
@@ -135,14 +134,14 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	@Override
 	public boolean canStepBack() {
-		
-		int current_cycle = getSimulation().getCycle(this.getScope());
-		return (current_cycle > 0 ) ? true : false;
-	//	return currentNode != null && currentNode.getParent() != null;
+
+		final int current_cycle = getSimulation().getCycle(this.getScope());
+		return (current_cycle > 0) ? true : false;
+		// return currentNode != null && currentNode.getParent() != null;
 	}
-	
+
 	@Override
 	public boolean isMemorize() {
 		return true;
-	}	
+	}
 }
