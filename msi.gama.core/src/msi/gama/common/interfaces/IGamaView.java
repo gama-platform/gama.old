@@ -13,6 +13,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -51,6 +52,13 @@ public interface IGamaView {
 		void toggleSideControls();
 
 		void toggleOverlay();
+
+		LayeredDisplayOutput getOutput();
+
+		default int getIndex() {
+			final LayeredDisplayOutput output = getOutput();
+			return output == null ? 0 : output.getIndex();
+		}
 	}
 
 	public interface Error {
