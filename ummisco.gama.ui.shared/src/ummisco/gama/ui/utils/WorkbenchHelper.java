@@ -41,7 +41,7 @@ import ummisco.gama.ui.views.IGamlEditor;
 
 public class WorkbenchHelper {
 
-	private static final Object NULL = new Object();
+	static final Object NULL = new Object();
 
 	public final static LoadingCache<Class<?>, Object> SERVICES =
 			CacheBuilder.newBuilder().build(new CacheLoader<Class<?>, Object>() {
@@ -49,9 +49,7 @@ public class WorkbenchHelper {
 				@Override
 				public Object load(final Class<?> key) throws Exception {
 					final Object o = getWorkbench().getService(key);
-					if (o == null) {
-						return NULL;
-					}
+					if (o == null) { return NULL; }
 					return o;
 				}
 			});
@@ -134,9 +132,7 @@ public class WorkbenchHelper {
 		final IWorkbenchPage page = getPage();
 		if (page != null) {
 			final IEditorPart editor = page.getActiveEditor();
-			if (editor instanceof IGamlEditor) {
-				return (IGamlEditor) editor;
-			}
+			if (editor instanceof IGamlEditor) { return (IGamlEditor) editor; }
 		}
 		return null;
 	}
@@ -149,6 +145,16 @@ public class WorkbenchHelper {
 
 	public static IWorkbench getWorkbench() {
 		return PlatformUI.getWorkbench();
+	}
+
+	public static IGamaView.Display findDisplay(final String id) {
+		final IWorkbenchPage page = WorkbenchHelper.getPage();
+		if (page == null) { return null; } // Closing the workbench
+		final IViewReference ref = page.findViewReference(id);
+		if (ref == null) { return null; }
+		final IViewPart view = ref.getView(false);
+		if (view instanceof IGamaView.Display) { return (IGamaView.Display) view; }
+		return null;
 	}
 
 	public static IViewPart findView(final String id, final String second, final boolean restore) {
@@ -215,12 +221,8 @@ public class WorkbenchHelper {
 			final IViewPart part = ref.getView(false);
 			if (part instanceof IGamaView.Display) {
 				final IGamaView.Display display = (IGamaView.Display) ref.getView(true);
-				if (display.isFullScreen()) {
-					return (IViewPart) display;
-				}
-				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y)) {
-					return part;
-				}
+				if (display.isFullScreen()) { return (IViewPart) display; }
+				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y)) { return part; }
 
 			}
 		}
