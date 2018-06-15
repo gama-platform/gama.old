@@ -311,7 +311,12 @@
             </menu>
             <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
-                  label="Arrange outputs...">
+                  label="Layout Displays...">
+               <command
+                     commandId="msi.gama.application.toggleDisplayTabs"
+                     label="Toggle Tabs"
+                     style="push">
+               </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
@@ -714,6 +719,20 @@
          </activeWhen>
       </handler>
       <handler
+            class="ummisco.gama.ui.commands.ToggleDisplayTabs"
+            commandId="msi.gama.application.toggleDisplayTabs">
+         <activeWhen>
+            <and>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+            </and>
+         </activeWhen>
+      </handler>
+      <handler
             class="ummisco.gama.ui.commands.ArrangeDisplayViews"
             commandId="msi.gama.application.layoutDisplays">
          <activeWhen>
@@ -997,6 +1016,10 @@
             defaultHandler="ummisco.gama.ui.commands.ShowInteractiveConsole"
             id="msi.gama.application.command.interactive"
             name="Show Interactive Console">
+      </command>
+      <command
+            id="msi.gama.application.toggleDisplayTabs"
+            name="Toggle Display Tabs">
       </command>
    </extension>
    <extension
