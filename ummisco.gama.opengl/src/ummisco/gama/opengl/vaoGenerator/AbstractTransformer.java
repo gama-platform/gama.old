@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.AxisAngle;
@@ -49,9 +48,9 @@ abstract class AbstractTransformer {
 	protected boolean isTriangulation = false;
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
-	protected ArrayList<int[]> faces = new ArrayList<int[]>();
+	protected ArrayList<int[]> faces = new ArrayList<>();
 	// (way to construct a face from the indices of the coordinates (anti clockwise for front face) )
-	private final ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>();
+	private final ArrayList<int[]> edgesToSmooth = new ArrayList<>();
 	// (list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !) )
 	protected float[] coords;
@@ -64,7 +63,7 @@ abstract class AbstractTransformer {
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
 
-	private HashMap<Integer, Integer> mapOfOriginalIdx = new HashMap<Integer, Integer>();
+	private HashMap<Integer, Integer> mapOfOriginalIdx = new HashMap<>();
 
 	protected int[] topFace;
 	protected int[] bottomFace;
@@ -85,26 +84,29 @@ abstract class AbstractTransformer {
 	protected void genericInit(final AbstractObject object, final boolean isOverlay, final boolean isTriangulation,
 			final double layerAlpha) {
 		this.isOverlay = isOverlay;
-		this.faces = new ArrayList<int[]>();
+		this.faces = new ArrayList<>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
 
 		this.depth = MoreObjects.firstNonNull(object.getHeight(), 0.0);
 		this.pickingId = object.getIndex();
 		final Color c = object.getColor();
-		if (c != null)
+		if (c != null) {
 			this.color = new GamaColor(c, c.getAlpha() / 255.0 * layerAlpha);
-		else
+		} else {
 			this.color = null;
+		}
 		this.borderColor = object.getBorder();
 		this.isTriangulation = isTriangulation;
 		this.material = object.getMaterial();
-		if (this.material == null)
+		if (this.material == null) {
 			this.material = GamaMaterialType.DEFAULT_MATERIAL;
+		}
 
 		this.translation = object.getLocation();
-		if (translation == null)
+		if (translation == null) {
 			translation = new GamaPoint(0, 0, 0); // ex : charts
+		}
 		final AxisAngle rot = object.getRotation();
 		// Change to a negative rotation to fix Issue #1514
 		this.rotation = rot == null ? null : new GamaPair<>(rot.getAngle(), rot.getAxis(), Types.FLOAT, Types.POINT);
@@ -233,15 +235,19 @@ abstract class AbstractTransformer {
 				float minY = Float.MAX_VALUE;
 				float maxX = Float.MIN_VALUE;
 				float maxY = Float.MIN_VALUE;
-				for (int vIdx = 0; vIdx < face.length; vIdx++) {
-					if (coords[face[vIdx] * 3] < minX)
-						minX = coords[face[vIdx] * 3];
-					if (coords[face[vIdx] * 3 + 1] < minY)
-						minY = coords[face[vIdx] * 3 + 1];
-					if (coords[face[vIdx] * 3] > maxX)
-						maxX = coords[face[vIdx] * 3];
-					if (coords[face[vIdx] * 3 + 1] > maxY)
-						maxY = coords[face[vIdx] * 3 + 1];
+				for (final int element : face) {
+					if (coords[element * 3] < minX) {
+						minX = coords[element * 3];
+					}
+					if (coords[element * 3 + 1] < minY) {
+						minY = coords[element * 3 + 1];
+					}
+					if (coords[element * 3] > maxX) {
+						maxX = coords[element * 3];
+					}
+					if (coords[element * 3 + 1] > maxY) {
+						maxY = coords[element * 3 + 1];
+					}
 				}
 				final float width = maxX - minX;
 				final float height = maxY - minY;
@@ -259,12 +265,11 @@ abstract class AbstractTransformer {
 	protected void applySmoothShading() {
 		for (int faceIdx = 0; faceIdx < faces.size(); faceIdx++) {
 			final int[] idxConnexeFaces = getConnexeFaces(faceIdx);
-			for (int idxConnexeFace = 0; idxConnexeFace < idxConnexeFaces.length; idxConnexeFace++) {
-				if (getAngleBetweenFaces(faces.get(idxConnexeFaces[idxConnexeFace]),
-						faces.get(faceIdx)) > SMOOTH_SHADING_ANGLE) {
-					splitFaces(faceIdx, idxConnexeFaces[idxConnexeFace]);
+			for (final int idxConnexeFace2 : idxConnexeFaces) {
+				if (getAngleBetweenFaces(faces.get(idxConnexeFace2), faces.get(faceIdx)) > SMOOTH_SHADING_ANGLE) {
+					splitFaces(faceIdx, idxConnexeFace2);
 				} else {
-					saveEdgeToSmooth(idxConnexeFaces[idxConnexeFace], faceIdx);
+					saveEdgeToSmooth(idxConnexeFace2, faceIdx);
 				}
 			}
 		}
@@ -430,7 +435,7 @@ abstract class AbstractTransformer {
 			}
 			faceIsClockwise[i] = Utils.isClockwise(coordsOfFace);
 		}
-		if (type.equals("SPHERE")) {
+		if (type.equals(IShape.Type.SPHERE)) {
 			faceIsClockwise = new boolean[0];
 		}
 
@@ -442,12 +447,12 @@ abstract class AbstractTransformer {
 			float sum = 0;
 
 			final int[][] vtxNeighbours = getVertexNeighbours(vIdx);
-			for (int i = 0; i < vtxNeighbours.length; i++) {
+			for (final int[] vtxNeighbour : vtxNeighbours) {
 				final float[] vtxCoord = new float[] { coords[vIdx * 3], coords[vIdx * 3 + 1], coords[vIdx * 3 + 2] };
-				final float[] vtxCoordBefore = new float[] { coords[vtxNeighbours[i][0] * 3],
-						coords[vtxNeighbours[i][0] * 3 + 1], coords[vtxNeighbours[i][0] * 3 + 2] };
-				final float[] vtxCoordAfter = new float[] { coords[vtxNeighbours[i][1] * 3],
-						coords[vtxNeighbours[i][1] * 3 + 1], coords[vtxNeighbours[i][1] * 3 + 2] };
+				final float[] vtxCoordBefore = new float[] { coords[vtxNeighbour[0] * 3],
+						coords[vtxNeighbour[0] * 3 + 1], coords[vtxNeighbour[0] * 3 + 2] };
+				final float[] vtxCoordAfter = new float[] { coords[vtxNeighbour[1] * 3],
+						coords[vtxNeighbour[1] * 3 + 1], coords[vtxNeighbour[1] * 3 + 2] };
 				final float[] vec1 = new float[] { vtxCoordBefore[0] - vtxCoord[0], vtxCoordBefore[1] - vtxCoord[1],
 						vtxCoordBefore[2] - vtxCoord[2] };
 				final float[] vec2 = new float[] { vtxCoordAfter[0] - vtxCoord[0], vtxCoordAfter[1] - vtxCoord[1],
@@ -503,27 +508,29 @@ abstract class AbstractTransformer {
 	}
 
 	protected ArrayList<DrawingEntity> getTriangulationDrawingEntity() {
-		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		final ArrayList<DrawingEntity> result = new ArrayList<>();
 
 		// configure the drawing entity for the border
 		final DrawingEntity borderEntity =
 				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(TRIANGULATE_COLOR, coords));
 
-		if (borderEntity != null)
+		if (borderEntity != null) {
 			result.add(borderEntity);
+		}
 
 		return result;
 	}
 
 	protected ArrayList<DrawingEntity> getWireframeDrawingEntity() {
-		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		final ArrayList<DrawingEntity> result = new ArrayList<>();
 
 		// configure the drawing entity for the border
 		final DrawingEntity borderEntity =
 				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(borderColor, coords));
 
-		if (borderEntity != null)
+		if (borderEntity != null) {
 			result.add(borderEntity);
+		}
 
 		return result;
 	}
@@ -531,14 +538,15 @@ abstract class AbstractTransformer {
 	protected ArrayList<DrawingEntity> get1DDrawingEntity() {
 		// particular case if the geometry is a point or a line : we only draw
 		// the "borders" with the color "color" (and not the "bordercolor" !!)
-		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		final ArrayList<DrawingEntity> result = new ArrayList<>();
 
 		// configure the drawing entity for the border
 		final DrawingEntity borderEntity =
 				createBorderEntity(coordsForBorder, idxForBorder, getColorArray(color, coordsForBorder));
 
-		if (borderEntity != null)
+		if (borderEntity != null) {
 			result.add(borderEntity);
+		}
 
 		return result;
 	}
@@ -547,7 +555,7 @@ abstract class AbstractTransformer {
 		// the number of drawing entity is equal to the number of textured
 		// applied + 1 if there is a border.
 		// If no texture is used, return 1 (+1 if there is a border).
-		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		final ArrayList<DrawingEntity> result = new ArrayList<>();
 
 		if (borderColor != null) {
 			// if there is a border
@@ -556,8 +564,9 @@ abstract class AbstractTransformer {
 			final DrawingEntity borderEntity =
 					createBorderEntity(coordsForBorder, idxForBorder, getColorArray(borderColor, coordsForBorder));
 
-			if (borderEntity != null)
+			if (borderEntity != null) {
 				result.add(borderEntity);
+			}
 		}
 
 		if (textureIDs == null && color == null) {
@@ -581,8 +590,9 @@ abstract class AbstractTransformer {
 					// if (texturePaths != null)
 					// filledEntity.setTexturePath(texturePaths[0]);
 					// else
-					if (bufferedImageValue != null)
+					if (bufferedImageValue != null) {
 						filledEntity.setBufferedImageTextureValue(bufferedImageValue);
+					}
 					filledEntity.setTextureID(textureIDs[0]);
 					filledEntity.setUvMapping(uvMapping);
 				}
@@ -613,8 +623,9 @@ abstract class AbstractTransformer {
 				int vtxNumber = 0;
 				for (int i = 0; i < idxBuffer.length; i++) {
 					botTopIndices[i] = idxBuffer[i];
-					if (vtxNumber <= botTopIndices[i])
+					if (vtxNumber <= botTopIndices[i]) {
 						vtxNumber = (int) botTopIndices[i] + 1;
+					}
 				}
 				final float[] botTopCoords = new float[vtxNumber * 3];
 				for (int i = 0; i < vtxNumber; i++) {
@@ -681,10 +692,11 @@ abstract class AbstractTransformer {
 		borderEntity.setIndices(idxArray);
 		borderEntity.setColors(colorArray);
 		borderEntity.setMaterial(new Material(this.material.getDamper(), this.material.getReflectivity(), false));
-		if (coordsArray.length > 3)
+		if (coordsArray.length > 3) {
 			borderEntity.type = DrawingEntity.Type.LINE;
-		else
+		} else {
 			borderEntity.type = DrawingEntity.Type.POINT;
+		}
 		if (borderEntity.getIndices().length == 0) {
 			// if the list of indices is empty, return null.
 			return null;
@@ -700,7 +712,7 @@ abstract class AbstractTransformer {
 		// return a int[][2] array with at each time the vertex before
 		// and the vertex after the one designed with "idx".
 
-		final ArrayList<int[]> list = new ArrayList<int[]>();
+		final ArrayList<int[]> list = new ArrayList<>();
 
 		for (int faceIdx = 0; faceIdx < faces.size(); faceIdx++) {
 			final int[] face = faces.get(faceIdx);
@@ -733,7 +745,7 @@ abstract class AbstractTransformer {
 	private int[] getConnexeFaces(final int faceIdx) {
 		// return the array of idx of faces which are connexe to the face
 		// faces.get(faceIdx)
-		final ArrayList<Integer> list = new ArrayList<Integer>();
+		final ArrayList<Integer> list = new ArrayList<>();
 		final int[] face = faces.get(faceIdx);
 		for (int faceIdxToCompare = 0; faceIdxToCompare < faces.size(); faceIdxToCompare++) {
 			if (faceIdxToCompare != faceIdx) {
@@ -788,19 +800,19 @@ abstract class AbstractTransformer {
 	private void splitFaces(final int idxFace1, final int idxFace2) {
 		final int[] connexeVertexIdx = getMutualVertexIdx(idxFace1, idxFace2);
 		// all those connexeVertex have to be duplicated in the coords list !
-		final HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+		final HashMap<Integer, Integer> map = new HashMap<>();
 		// this map will contain [initialIdx :: newIdx]
-		for (int i = 0; i < connexeVertexIdx.length; i++) {
+		for (final int element : connexeVertexIdx) {
 			// create a new vertex
 			final float[] newVertex = new float[3];
-			newVertex[0] = coords[connexeVertexIdx[i] * 3];
-			newVertex[1] = coords[connexeVertexIdx[i] * 3 + 1];
-			newVertex[2] = coords[connexeVertexIdx[i] * 3 + 2];
+			newVertex[0] = coords[element * 3];
+			newVertex[1] = coords[element * 3 + 1];
+			newVertex[2] = coords[element * 3 + 2];
 			// add a new coordinate at the end of the array
 			coords = Utils.concatFloatArrays(coords, newVertex);
 			// we get the new idx of this vertex, and we store it in the map
 			final int newIdx = (coords.length - 3) / 3;
-			map.put(connexeVertexIdx[i], newIdx);
+			map.put(element, newIdx);
 		}
 		// we change the values of the idx in the faces list ( /!\ we start the
 		// changes from faces.get(idxFace1+1) !!)
@@ -816,7 +828,7 @@ abstract class AbstractTransformer {
 			}
 		}
 		// report the idx changes to the map "mapOfOriginalIdx"
-		final HashMap<Integer, Integer> mapCopy = new HashMap<Integer, Integer>(mapOfOriginalIdx); // create
+		final HashMap<Integer, Integer> mapCopy = new HashMap<>(mapOfOriginalIdx); // create
 																									// a
 																									// copy
 																									// to
@@ -847,10 +859,10 @@ abstract class AbstractTransformer {
 		}
 		final int[] result = new int[cpt];
 		cpt = 0;
-		for (int i = 0; i < face1.length; i++) {
-			for (int j = 0; j < face2.length; j++) {
-				if (face1[i] == face2[j]) {
-					result[cpt] = face1[i];
+		for (final int element : face1) {
+			for (final int element2 : face2) {
+				if (element == element2) {
+					result[cpt] = element;
 					cpt++;
 				}
 			}
