@@ -21,13 +21,10 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.KeyboardFocusManager;
-import java.awt.SecondaryLoop;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -507,38 +504,38 @@ public final class AwtEnvironment {
 
 	/// SYNCHRONIZES SWT AND AWR EVENT LOOP
 	/// SEE: https://tomsondev.bestsolution.at/2014/02/10/embedding-swing-into-swt-on-java8/
-
-	public static class SWTDispatcher implements sun.awt.FwDispatcher {
-
-		@Override
-		public SecondaryLoop createSecondaryLoop() {
-			return null;
-		}
-
-		@Override
-		public boolean isDispatchThread() {
-			return getDisplay().getThread() == Thread.currentThread();
-		}
-
-		@Override
-		public void scheduleDispatch(final Runnable runnable) {
-			getDisplay().asyncExec(runnable);
-		}
-
-		Display getDisplay() {
-			final Display display = Display.getCurrent();
-			return (display != null) ? display : Display.getDefault();
-		}
-	}
-
-	static void TRIAL() {
-		sun.awt.AWTAccessor.getEventQueueAccessor().setFwDispatcher(getEventQueue(), new SWTDispatcher());
-
-	}
-
-	private static final EventQueue getEventQueue() {
-		return (EventQueue) AccessController
-				.doPrivileged((PrivilegedAction) () -> java.awt.Toolkit.getDefaultToolkit().getSystemEventQueue());
-	}
+	//
+	// public static class SWTDispatcher implements sun.awt.FwDispatcher {
+	//
+	// @Override
+	// public SecondaryLoop createSecondaryLoop() {
+	// return null;
+	// }
+	//
+	// @Override
+	// public boolean isDispatchThread() {
+	// return getDisplay().getThread() == Thread.currentThread();
+	// }
+	//
+	// @Override
+	// public void scheduleDispatch(final Runnable runnable) {
+	// getDisplay().asyncExec(runnable);
+	// }
+	//
+	// Display getDisplay() {
+	// final Display display = Display.getCurrent();
+	// return (display != null) ? display : Display.getDefault();
+	// }
+	// }
+	//
+	// static void TRIAL() {
+	// sun.awt.AWTAccessor.getEventQueueAccessor().setFwDispatcher(getEventQueue(), new SWTDispatcher());
+	//
+	// }
+	//
+	// private static final EventQueue getEventQueue() {
+	// return (EventQueue) AccessController
+	// .doPrivileged((PrivilegedAction) () -> java.awt.Toolkit.getDefaultToolkit().getSystemEventQueue());
+	// }
 
 }
