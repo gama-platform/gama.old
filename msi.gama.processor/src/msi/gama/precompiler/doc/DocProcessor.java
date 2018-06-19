@@ -85,8 +85,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final doc action, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final doc action,
+			final org.w3c.dom.Element node) {
 		// Nothing to do, as this processor is a bit different from the others
 	}
 
@@ -102,16 +102,19 @@ public class DocProcessor extends ElementProcessor<doc> {
 	}
 
 	@Override
+	protected String getRootName() {
+		return "doc";
+	}
+
+	@Override
 	public void processXML(final ProcessorContext context) {
-		if (!context.shouldProduceDoc())
-			return;
-		document = getBuilder().newDocument();
+		if (!context.shouldProduceDoc()) { return; }
+		// document = getBuilder().newDocument();
 		// if (!firstParsing)
 		// return;
 		// firstParsing = false;
 		mes = context.getMessager();
-
-		final org.w3c.dom.Element root = document.createElement("doc");
+		final org.w3c.dom.Element root = getRootNode(document);
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Constants Categories
@@ -131,15 +134,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
-		@SuppressWarnings ("unchecked") 
-		final Set<? extends ExecutableElement> setOperatorsCategories =
+		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperatorsCategories =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
-		@SuppressWarnings ("unchecked") 
-		final Set<? extends ExecutableElement> setOperators =
+		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperators =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLOperators(setOperators));
 
@@ -184,7 +185,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files to get operators
 		final Set<? extends Element> setFilesOperators = context.getElementsAnnotatedWith(file.class);
-		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles = this.processDocXMLOperatorsFromFiles(setFilesOperators);
+		final ArrayList<org.w3c.dom.Element> listEltOperatorsFromFiles =
+				this.processDocXMLOperatorsFromFiles(setFilesOperators);
 
 		for (final org.w3c.dom.Element eltOp : listEltOperatorsFromFiles) {
 			eltOperators.appendChild(eltOp);
@@ -192,11 +194,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Files
-		
+
 		// TODO : manage to get the documentation...
 		final Set<? extends Element> setFiles = context.getElementsAnnotatedWith(file.class);
-		root.appendChild(this.processDocXMLTypes(setFiles));	
-		
+		root.appendChild(this.processDocXMLTypes(setFiles));
+
 		// ////////////////////////////////////////////////
 		// /// Parsing of Types
 		final Set<? extends Element> setTypes = context.getElementsAnnotatedWith(type.class);
@@ -204,7 +206,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// //////////////////////
 		// Final step:
-		document.appendChild(root);
+		// document.appendChild(root);
 
 		// ////////////////////////////////////////////////
 
@@ -215,7 +217,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 			transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1"); // "UTF-8");//
 			transformer.transform(new DOMSource(document), new StreamResult(out));
 		} catch (final TransformerException e) {
-			context.emitError("XML Error when producing the documentation: " + e.getMessage(), null);
+			context.emitError("XML Error when producing the documentation: " + e.getMessage(), e);
 		}
 	}
 
@@ -276,7 +278,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		// creation d'ojets types dans le XML
 		// ajout d'
 
-		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<org.w3c.dom.Element>();
+		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<>();
 		for (final Element e : set) {
 			// Operators to be created:
 			// - name_type: converts the parameter into the type name_type
@@ -291,39 +293,38 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		return eltOpFromTypes;
 	}
-	
+
 	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setFiles) {
 		final org.w3c.dom.Element files = document.createElement(XMLElements.FILES);
 
-/*@file (
-		name = "csv",
-		extensions = { "csv", "tsv" },
-		buffer_type = IType.MATRIX,
-		buffer_index = IType.POINT,
-		concept = { IConcept.CSV, IConcept.FILE },
-		doc = @doc ("A type of text file that contains comma-separated values"))
-*/		
-		
+		/*
+		 * @file ( name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX, buffer_index = IType.POINT,
+		 * concept = { IConcept.CSV, IConcept.FILE }, doc = @doc
+		 * ("A type of text file that contains comma-separated values"))
+		 */
+
 		for (final Element e : setFiles) {
 			if (e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) {
 				// Just omit it
 			} else {
 				final org.w3c.dom.Element file = document.createElement(XMLElements.FILE);
 				file.setAttribute(XMLElements.ATT_FILE_NAME, e.getAnnotation(file.class).name());
-				file.setAttribute(XMLElements.ATT_FILE_BUFFER_TYPE, tc.getProperType(""+e.getAnnotation(file.class).buffer_type()));
-				file.setAttribute(XMLElements.ATT_FILE_BUFFER_INDEX, tc.getProperType(""+e.getAnnotation(file.class).buffer_index()));
-				file.setAttribute(XMLElements.ATT_FILE_BUFFER_CONTENT, tc.getProperType(""+e.getAnnotation(file.class).buffer_content()));
-				
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_TYPE,
+						tc.getProperType("" + e.getAnnotation(file.class).buffer_type()));
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_INDEX,
+						tc.getProperType("" + e.getAnnotation(file.class).buffer_index()));
+				file.setAttribute(XMLElements.ATT_FILE_BUFFER_CONTENT,
+						tc.getProperType("" + e.getAnnotation(file.class).buffer_content()));
+
 				// Parsing extensions
-				org.w3c.dom.Element extensions = document.createElement(XMLElements.EXTENSIONS);
-				for(final String ext : e.getAnnotation(file.class).extensions()) {
+				final org.w3c.dom.Element extensions = document.createElement(XMLElements.EXTENSIONS);
+				for (final String ext : e.getAnnotation(file.class).extensions()) {
 					final org.w3c.dom.Element extElt = document.createElement(XMLElements.EXTENSION);
 					extElt.setAttribute(XMLElements.ATT_NAME, ext);
-					extensions.appendChild(extElt);					
+					extensions.appendChild(extElt);
 				}
 				file.appendChild(extensions);
-				
-				
+
 				// Parsing of concept
 				org.w3c.dom.Element conceptsElt;
 				if (file.getElementsByTagName(XMLElements.CONCEPTS).getLength() == 0) {
@@ -333,16 +334,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 							(org.w3c.dom.Element) file.getElementsByTagName(XMLElements.CONCEPTS).item(0), tc);
 				}
 				file.appendChild(conceptsElt);
-				
+
 				files.appendChild(file);
 			}
 		}
 		return files;
-	}	
+	}
 
 	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(final Set<? extends Element> set) {
 
-		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<org.w3c.dom.Element>();
+		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<>();
 		for (final Element e : set) {
 			// Operators to be created:
 			// - "is_"+name : test whether the operand parameter is of the given
@@ -831,7 +832,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 	private org.w3c.dom.Element processDocXMLStatementsInsideSymbol(final Set<? extends Element> setStatement) {
 		final org.w3c.dom.Element statementsInsideSymbolElt = document.createElement(XMLElements.INSIDE_STAT_SYMBOLS);
-		final ArrayList<String> insideStatementSymbol = new ArrayList<String>();
+		final ArrayList<String> insideStatementSymbol = new ArrayList<>();
 
 		for (final Element e : setStatement) {
 			if (e.getAnnotation(symbol.class).internal() == true
@@ -861,7 +862,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 	private org.w3c.dom.Element processDocXMLStatementsInsideKind(final Set<? extends Element> setStatement) {
 		final org.w3c.dom.Element statementsInsideKindElt = document.createElement(XMLElements.INSIDE_STAT_KINDS);
-		final ArrayList<String> insideStatementKind = new ArrayList<String>();
+		final ArrayList<String> insideStatementKind = new ArrayList<>();
 
 		for (final Element e : setStatement) {
 			if (e.getAnnotation(symbol.class).internal() == true
@@ -892,7 +893,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 	private Node processDocXMLStatementsKinds(final Set<? extends Element> setStatements) {
 		final org.w3c.dom.Element statementsKindsElt = document.createElement(XMLElements.STATEMENT_KINDS);
-		final ArrayList<String> statementKinds = new ArrayList<String>();
+		final ArrayList<String> statementKinds = new ArrayList<>();
 
 		for (final Element e : setStatements) {
 			if (e.getAnnotation(symbol.class).internal() == true
@@ -1247,8 +1248,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 		for (final String n : constant.altNames()) {
 			names = "".equals(names) ? PREFIX_CONSTANT + n : names + "," + PREFIX_CONSTANT + n;
 		}
-		if (!"".equals(names))
+		if (!"".equals(names)) {
 			constantElt.setAttribute(XMLElements.ATT_CST_NAMES, names);
+		}
 
 		constantElt.appendChild(getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));
 
@@ -1400,7 +1402,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 	public org.w3c.dom.Element getCategories(final Element e, final Document doc,
 			final org.w3c.dom.Element categoriesElt, final TypeConverter tc) {
-		final ArrayList<String> categories = new ArrayList<String>();
+		final ArrayList<String> categories = new ArrayList<>();
 		String[] categoriesTab = null;
 		final NodeList nL = categoriesElt.getElementsByTagName(XMLElements.CATEGORY);
 		for (int i = 0; i < nL.getLength(); i++) {
@@ -1416,7 +1418,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		if (e.getAnnotation(operator.class) != null && e.getAnnotation(operator.class).category().length > 0
 				|| e.getAnnotation(constant.class) != null && e.getAnnotation(constant.class).category().length > 0) {
-			if (categoriesTab != null)
+			if (categoriesTab != null) {
 				for (final String categoryName : categoriesTab) {
 					if (!categories.contains(categoryName)) {
 						categories.add(categoryName);
@@ -1426,6 +1428,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 						appendChild(categoriesElt, catElt);
 					}
 				}
+			}
 		} else {
 			if (!categories.contains(tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString()))) {
 				final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
@@ -1453,7 +1456,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 	public org.w3c.dom.Element getConcepts(final Element e, final Document doc, final org.w3c.dom.Element conceptElt,
 			final TypeConverter tc) {
-		final ArrayList<String> concepts = new ArrayList<String>();
+		final ArrayList<String> concepts = new ArrayList<>();
 		String[] conceptsTab = null;
 		final NodeList nL = conceptElt.getElementsByTagName(XMLElements.CONCEPT);
 		for (int i = 0; i < nL.getLength(); i++) {
@@ -1481,7 +1484,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 				|| e.getAnnotation(skill.class) != null && e.getAnnotation(skill.class).concept().length > 0
 				|| e.getAnnotation(species.class) != null && e.getAnnotation(species.class).concept().length > 0
 				|| e.getAnnotation(symbol.class) != null && e.getAnnotation(symbol.class).concept().length > 0) {
-			if (conceptsTab != null)
+			if (conceptsTab != null) {
 				for (final String conceptName : conceptsTab) {
 					if (!concepts.contains(conceptName)) {
 						concepts.add(conceptName);
@@ -1491,6 +1494,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 						conceptElt.appendChild(catElt);
 					}
 				}
+			}
 		}
 
 		// We had a particular category that is red from the iterator

@@ -46,14 +46,13 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		context.setRoundEnvironment(env);
 
-		if (!context.processingOver()) {
-			try {
-				processors.values().forEach(p -> p.processXML(context));
-			} catch (final Exception e) {
-				context.emitWarning("An exception occured in the parsing of GAML annotations: " + e.getMessage(), null);
-				throw e;
-			}
-		} else {
+		try {
+			processors.values().forEach(p -> p.processXML(context));
+		} catch (final Exception e) {
+			context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
+			throw e;
+		}
+		if (context.processingOver()) {
 			final FileObject file = context.createSource();
 			generateJavaSource(file);
 			generateTests();
@@ -69,12 +68,12 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 				tp.writeTests(context, sourceBuilder);
 				source.append(sourceBuilder.toString());
 			} catch (final IOException e) {
-				context.emitWarning("An exception occured in the generation of test files: " + e.getMessage(), null);
+				context.emitWarning("An exception occured in the generation of test files: ", e);
 			}
 		}
 		// We pass the current document of the documentation processor to avoir re-reading it
 		final DocProcessor dp = (DocProcessor) processors.get(doc.class);
-		ExamplesToTests.createTests(context, ElementProcessor.getBuilder(), dp.getDocument(context));
+		ExamplesToTests.createTests(context, dp.document);
 	}
 
 	public void generateJavaSource(final FileObject file) {
@@ -86,14 +85,14 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 				source.append(sourceBuilder);
 			}
 		} catch (final IOException io) {
-			context.emitWarning("An IO exception occured in the generation of Java files: " + io.getMessage(), null);
+			context.emitWarning("An IO exception occured in the generation of Java files: ", io);
 		} catch (final Exception e) {
-			context.emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
+			context.emitWarning("An exception occured in the generation of Java files: ", e);
 			throw e;
 		}
 	}
 
-	protected void writeJavaHeader(final StringBuilder sb) {
+	protected static void writeJavaHeader(final StringBuilder sb) {
 		sb.append("package ").append(PACKAGE_NAME).append(';');
 		for (final String element : IMPORTS) {
 			sb.append(ln).append("import ").append(element).append(".*;");
@@ -110,8 +109,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
 		processors.values().forEach(p -> {
 			final String method = p.getInitializationMethodName();
-			if (method != null)
+			if (method != null) {
 				sb.append(ln).append(tab).append(method).append("();");
+			}
 		});
 
 		sb.append(ln).append('}');

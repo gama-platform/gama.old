@@ -2,15 +2,13 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import org.w3c.dom.Document;
-
 import msi.gama.precompiler.GamlAnnotations.factory;
 
 public class FactoryProcessor extends ElementProcessor<factory> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final factory factory, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final factory factory,
+			final org.w3c.dom.Element node) {
 		node.setAttribute("class", rawNameOf(context, e));
 		node.setAttribute("kinds", arrayToString(factory.handles()));
 	}

@@ -7,7 +7,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -16,7 +15,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 public class FileProcessor extends ElementProcessor<file> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc, final file f,
+	protected void populateElement(final ProcessorContext context, final Element e, final file f,
 			final org.w3c.dom.Element node) {
 		final doc[] docs = f.doc();
 		doc d;
@@ -47,7 +46,7 @@ public class FileProcessor extends ElementProcessor<file> {
 				for (int i = 1; i < n; i++) {
 					args[i - 1] = rawNameOf(context, argParams.get(i));
 				}
-				final org.w3c.dom.Element child = doc.createElement("constructor");
+				final org.w3c.dom.Element child = document.createElement("constructor");
 				child.setAttribute("args", arrayToString(args));
 				appendChild(node, child);
 

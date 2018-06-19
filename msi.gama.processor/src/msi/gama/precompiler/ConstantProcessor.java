@@ -3,16 +3,14 @@ package msi.gama.precompiler;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 
-import org.w3c.dom.Document;
-
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 
 public class ConstantProcessor extends ElementProcessor<constant> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final constant constant, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final constant constant,
+			final org.w3c.dom.Element node) {
 		final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 		if (documentation == null) {
 			context.emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
@@ -24,7 +22,7 @@ public class ConstantProcessor extends ElementProcessor<constant> {
 		node.setAttribute("name", constantName);
 		node.setAttribute("value", String.valueOf(valueConstant));
 		for (final String s : constant.altNames()) {
-			final org.w3c.dom.Element alt = doc.createElement("alt");
+			final org.w3c.dom.Element alt = document.createElement("alt");
 			alt.setAttribute("name", s);
 			appendChild(node, alt);
 		}

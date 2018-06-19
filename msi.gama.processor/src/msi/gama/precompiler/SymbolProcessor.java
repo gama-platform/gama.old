@@ -13,7 +13,6 @@ import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,28 +26,34 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 public class SymbolProcessor extends ElementProcessor<symbol> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final symbol symbol, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final symbol symbol,
+			final org.w3c.dom.Element node) {
 		addValidator(context, e, node);
 		addSerializer(context, e, node);
 		node.setAttribute("names", arrayToString(symbol.name()));
 		node.setAttribute("kind", String.valueOf(symbol.kind()));
 		node.setAttribute("class", rawNameOf(context, e));
-		if (symbol.remote_context())
+		if (symbol.remote_context()) {
 			node.setAttribute("remote", "true");
-		if (symbol.with_args())
+		}
+		if (symbol.with_args()) {
 			node.setAttribute("args", "true");
-		if (symbol.with_scope())
+		}
+		if (symbol.with_scope()) {
 			node.setAttribute("scope", "true");
-		if (symbol.with_sequence())
+		}
+		if (symbol.with_sequence()) {
 			node.setAttribute("sequence", "true");
-		if (symbol.unique_in_context())
+		}
+		if (symbol.unique_in_context()) {
 			node.setAttribute("unique", "true");
-		if (symbol.unique_name())
+		}
+		if (symbol.unique_name()) {
 			node.setAttribute("unique_name", "true");
+		}
 		final inside inside = e.getAnnotation(inside.class);
 		if (inside != null) {
-			final org.w3c.dom.Element child = doc.createElement("inside");
+			final org.w3c.dom.Element child = document.createElement("inside");
 			child.setAttribute("symbols", arrayToString(inside.symbols()));
 			child.setAttribute("kinds", arrayToString(inside.kinds()));
 			appendChild(node, child);
@@ -57,29 +62,37 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 		final Set<String> undocumented = new HashSet<>();
 		if (facets != null) {
 			for (final facet facet : facets.value()) {
-				final org.w3c.dom.Element child = doc.createElement("facet");
+				final org.w3c.dom.Element child = document.createElement("facet");
 				child.setAttribute("name", facet.name());
 				child.setAttribute("types", arrayToString(facet.type()));
-				if (facet.of() != 0)
+				if (facet.of() != 0) {
 					child.setAttribute("contents", String.valueOf(facet.of()));
-				if (facet.index() != 0)
+				}
+				if (facet.index() != 0) {
 					child.setAttribute("index", String.valueOf(facet.index()));
-				if (facet.values().length > 0)
+				}
+				if (facet.values().length > 0) {
 					child.setAttribute("values", arrayToString(facet.values()));
-				if (facet.optional())
+				}
+				if (facet.optional()) {
 					child.setAttribute("optional", "true");
-				if (facet.internal())
+				}
+				if (facet.internal()) {
 					child.setAttribute("internal", "true");
+				}
 				final doc[] d = facet.doc();
 				if (d == null || d.length == 0) {
-					if (!facet.internal())
+					if (!facet.internal()) {
 						undocumented.add(facet.name());
-				} else
+					}
+				} else {
 					child.setAttribute("doc", docToString(facet.doc()));
+				}
 				appendChild(node, child);
 			}
-			if (!undocumented.isEmpty())
+			if (!undocumented.isEmpty()) {
 				context.emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
+			}
 			node.setAttribute("omissible", facets.omissible());
 		}
 
@@ -117,8 +130,9 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 		} catch (final MirroredTypesException e1) {
 			type_validator = e1.getTypeMirrors().get(0);
 		}
-		if (type_validator != null)
+		if (type_validator != null) {
 			node.setAttribute("validator", rawNameOf(context, type_validator));
+		}
 	}
 
 	public void addSerializer(final ProcessorContext context, final Element e, final org.w3c.dom.Element node) {
@@ -145,8 +159,9 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 		} catch (final MirroredTypesException e1) {
 			type_serializer = e1.getTypeMirrors().get(0);
 		}
-		if (type_serializer != null)
+		if (type_serializer != null) {
 			node.setAttribute("serializer", rawNameOf(context, type_serializer));
+		}
 	}
 
 	@Override
@@ -242,13 +257,10 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 	}
 
 	protected List<org.w3c.dom.Element> findChildrenNamed(final org.w3c.dom.Element node, final String name) {
-		if (node == null)
-			return Collections.EMPTY_LIST;
-		if (name == null)
-			return Collections.EMPTY_LIST;
+		if (node == null) { return Collections.EMPTY_LIST; }
+		if (name == null) { return Collections.EMPTY_LIST; }
 		final NodeList list = node.getElementsByTagName(name);
-		if (list.getLength() == 0)
-			return Collections.EMPTY_LIST;
+		if (list.getLength() == 0) { return Collections.EMPTY_LIST; }
 		final List<org.w3c.dom.Element> result = new ArrayList<>();
 		for (int i = 0; i < list.getLength(); i++) {
 			final org.w3c.dom.Element child = (org.w3c.dom.Element) list.item(i);

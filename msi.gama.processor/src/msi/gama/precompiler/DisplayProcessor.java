@@ -2,15 +2,13 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import org.w3c.dom.Document;
-
 import msi.gama.precompiler.GamlAnnotations.display;
 
 public class DisplayProcessor extends ElementProcessor<display> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final display action, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final display action,
+			final org.w3c.dom.Element node) {
 		node.setAttribute("type", action.value());
 		node.setAttribute("class", rawNameOf(context, e));
 	}

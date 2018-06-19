@@ -7,12 +7,9 @@ import java.util.Map;
 
 import javax.lang.model.element.Element;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.ElementProcessor;
-import msi.gama.precompiler.GamlAnnotations;
-import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -25,22 +22,32 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.ProcessorContext;
 
 public class TestProcessor extends ElementProcessor<tests> {
+
+	final Map<String, List<org.w3c.dom.Element>> testIndex = new HashMap<>();
 
 	@Override
 	public void processXML(final ProcessorContext context) {
 		// Processes tests annotations
 		super.processXML(context);
 		// Special case for lone test annotations
-		final Document doc = getDocument(context);
-		final List<? extends Element> elements = context.sortElements(test.class);
-		if (elements.isEmpty())
-			return;
-		for (final Element e : elements) {
-			final org.w3c.dom.Element node = doc.createElement(getElementName());
-			populateElement(context, e, doc, createFrom(e.getAnnotation(test.class)), node);
-			appendChild(getRootNode(doc), node);
+		final Map<String, List<Element>> elements = context.groupElements(test.class);
+		final org.w3c.dom.Element root = getRootNode(document);
+		for (final Map.Entry<String, List<Element>> entry : elements.entrySet()) {
+			final List<org.w3c.dom.Element> list = clearAndGetFrom(entry.getKey(), testIndex);
+			for (final Element e : entry.getValue()) {
+				try {
+					final org.w3c.dom.Element node = document.createElement(getElementName());
+					populateElement(context, e, createFrom(e.getAnnotation(test.class)), node);
+					list.add(node);
+					root.appendChild(node);
+				} catch (final Exception exception) {
+					context.emitError("Exception in processor: " + exception.getMessage(), e);
+				}
+
+			}
 		}
 	}
 
@@ -60,19 +67,19 @@ public class TestProcessor extends ElementProcessor<tests> {
 	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final tests tests, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final tests tests,
+			final org.w3c.dom.Element node) {
 		final String name = determineName(context, e, tests);
 		node.setAttribute("name", name);
 		for (final test test : tests.value()) {
-			final org.w3c.dom.Element child = doc.createElement("test");
+			final org.w3c.dom.Element child = document.createElement("test");
 			child.setAttribute("value", determineText(context, test));
 			appendChild(node, child);
 		}
 	}
 
 	public boolean hasTests(final ProcessorContext context) {
-		final NodeList list = getRootNode(getDocument(context)).getElementsByTagName("tests");
+		final NodeList list = getRootNode(document).getElementsByTagName("tests");
 		return list.getLength() > 0;
 	}
 
@@ -81,10 +88,10 @@ public class TestProcessor extends ElementProcessor<tests> {
 		final int lastSemiColon = text.lastIndexOf(';');
 		String lastAssert = text.substring(lastSemiColon + 1);
 		text = text.substring(0, lastSemiColon + 1);
-		if (lastAssert.isEmpty())
-			return text;
-		if (test.warning())
+		if (lastAssert.isEmpty()) { return text; }
+		if (test.warning()) {
 			lastAssert += " warning: true";
+		}
 		return text + "assert " + lastAssert + ";";
 	}
 
@@ -94,14 +101,15 @@ public class TestProcessor extends ElementProcessor<tests> {
 		for (final test test : tests.value()) {
 			final String individualName = test.name();
 			if (!individualName.isEmpty()) {
-				if (testName == null)
+				if (testName == null) {
 					testName = individualName;
-				else
+				} else {
 					testName += " and " + individualName;
+				}
 			}
 		}
 		// No named tests, proceed by inferring the name from the GAML artefact (if present)
-		if (testName == null)
+		if (testName == null) {
 			for (final Annotation a : context.getUsefulAnnotationsOn(e)) {
 				switch (a.annotationType().getSimpleName()) {
 					case "operator":
@@ -134,9 +142,11 @@ public class TestProcessor extends ElementProcessor<tests> {
 					case "setter":
 						testName = "Setting " + ((setter) a).value();
 				}
-				if (testName != null)
+				if (testName != null) {
 					break;
+				}
 			}
+		}
 		// No named tests and no GAML artefact present; grab the name of the Java element as a last call
 		if (testName == null) {
 			testName = e.getSimpleName().toString();
@@ -156,7 +166,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 	}
 
 	public void writeTests(final ProcessorContext context, final StringBuilder sb) {
-		final NodeList list = getRootNode(getDocument(context)).getElementsByTagName("tests");
+		final NodeList list = getRootNode(document).getElementsByTagName("tests");
 		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
 		for (int i = 0; i < list.getLength(); i++) {
 			sb.append(ln);

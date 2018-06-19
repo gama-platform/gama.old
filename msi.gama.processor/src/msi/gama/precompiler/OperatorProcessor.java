@@ -8,18 +8,14 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 
-import org.w3c.dom.Document;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 
 public class OperatorProcessor extends ElementProcessor<operator> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element method, final Document doc,
-			final operator op, final org.w3c.dom.Element node) {
-
-		// context.emitWarning("Defining " + method.toString(), method);
+	protected void populateElement(final ProcessorContext context, final Element method, final operator op,
+			final org.w3c.dom.Element node) {
 
 		final String names[] = op.value();
 		if (names == null) {
@@ -30,8 +26,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		doc documentation = method.getAnnotation(doc.class);
 		if (documentation == null) {
 			final doc[] docs = op.doc();
-			if (docs.length > 0)
+			if (docs.length > 0) {
 				documentation = op.doc()[0];
+			}
 		}
 
 		if (documentation == null && !op.internal()) {
@@ -42,7 +39,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final boolean isStatic = modifiers.contains(Modifier.STATIC);
 
 		if (!modifiers.contains(Modifier.PUBLIC)) {
-			context.emitError("GAML operators can only be implemented by public (or public static) methods", method);
+			context.emitError("GAML: operators can only be implemented by public (or public static) methods", method);
 			return;
 		}
 		final String declClass = rawNameOf(context, method.getEnclosingElement());
@@ -53,7 +50,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			switch (ve.asType().getKind()) {
 				case ARRAY:
 					context.emitError(
-							"GAML: operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (list or matrix) ",
+							"GAML: operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (IList or IMatrix) ",
 							ve);
 					return;
 				case CHAR:
@@ -87,7 +84,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				classes[begin + i] = args[i + shift];
 			}
 		} catch (final Exception e1) {
-			context.emitError("An exception occurred in the processor: " + e1.getMessage(), method);
+			context.emitError("An exception occured in the processing of operators: ", e1, method);
 			return;
 		}
 
@@ -97,7 +94,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		switch (((ExecutableElement) method).getReturnType().getKind()) {
 			case ARRAY:
 				context.emitError(
-						"GAML operators cannot return Java arrays. Please wrap this result in a GAML container type (list or matrix) ",
+						"GAML: operators cannot return Java arrays. Please wrap this result in a GAML container type (IList or IMatrix) ",
 						method);
 				return;
 			case VOID: // does not seem to be recognized
@@ -109,7 +106,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			case CHAR:
 			case BYTE:
 			case SHORT:
-				context.emitWarning("The return type of this operator will be casted to integer in GAML", method);
+				context.emitWarning("GAML: the return type of this operator will be casted to integer", method);
 				break;
 			case EXECUTABLE:
 				context.emitError("GAML: operators cannot return Java executables", method);
@@ -135,6 +132,11 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		node.setAttribute("static", String.valueOf(isStatic));
 		node.setAttribute("contextual", String.valueOf(scope));
 		node.setAttribute("names", arrayToString(names));
+	}
+
+	@Override
+	protected boolean isEqual(final org.w3c.dom.Element existingNode, final org.w3c.dom.Element newNode) {
+		return existingNode.isEqualNode(newNode);
 	}
 
 	@Override
@@ -172,18 +174,18 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 	}
 
-	protected String buildNAry(final String[] classes, final String name, final String retClass, final boolean stat,
-			final boolean scope) {
+	protected static String buildNAry(final String[] classes, final String name, final String retClass,
+			final boolean stat, final boolean scope) {
 		final String ret = checkPrim(retClass);
-		final int index = stat ? 0 : 1;
+		final int start = stat ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
 		String body = stat ? concat("{return ", name, "(", firstArg) : concat("{return o[0]", " == null?",
 				returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(", firstArg);
-		if (index < classes.length) {
+		if (start < classes.length) {
 			if (scope) {
 				body += ",";
 			}
-			for (int i = index; i < classes.length; i++) {
+			for (int i = start; i < classes.length; i++) {
 				body += param(classes[i], "o[" + i + "]") + (i != classes.length - 1 ? "," : "");
 			}
 		}
@@ -196,14 +198,14 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		return "throws SecurityException, NoSuchMethodException";
 	}
 
-	protected String buildMethodCall(final String[] classes, final String name, final boolean stat,
+	protected static String buildMethodCall(final String[] classes, final String name, final boolean stat,
 			final boolean scope) {
-		final int index = stat ? 0 : 1;
+		final int start = stat ? 0 : 1;
 		final String methodName = extractMethod(name, stat);
 		final String className = toClassObject(extractClass(name, classes[0], stat));
 		String result = className + ".getMethod(" + toJavaString(methodName) + ", ";
 		result += scope ? toClassObject(ISCOPE) + "," : "";
-		for (int i = index; i < classes.length; i++) {
+		for (int i = start; i < classes.length; i++) {
 			result += toClassObject(classes[i]) + ",";
 		}
 		if (result.endsWith(",")) {
@@ -213,7 +215,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		return result;
 	}
 
-	protected final String toArrayOfClasses(final String array) {
+	protected final static String toArrayOfClasses(final String array) {
 		if (array == null || array.equals("")) { return "{}"; }
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split("\\,", -1);

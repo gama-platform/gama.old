@@ -9,7 +9,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -18,7 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 public class TypeProcessor extends ElementProcessor<type> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc, final type t,
+	protected void populateElement(final ProcessorContext context, final Element e, final type t,
 			final org.w3c.dom.Element node) {
 		node.setAttribute("name", t.name());
 		node.setAttribute("id", String.valueOf(t.id()));
@@ -37,7 +36,7 @@ public class TypeProcessor extends ElementProcessor<type> {
 		}
 		for (final TypeMirror tm : wraps) {
 			final String type = rawNameOf(context, tm);
-			final org.w3c.dom.Element child = doc.createElement("wraps");
+			final org.w3c.dom.Element child = document.createElement("wraps");
 			child.setAttribute("class", type);
 			appendChild(node, child);
 		}

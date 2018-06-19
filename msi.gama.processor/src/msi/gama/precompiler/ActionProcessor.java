@@ -9,7 +9,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -25,42 +24,43 @@ public class ActionProcessor extends ElementProcessor<action> {
 	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final action action, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final action action,
+			final org.w3c.dom.Element node) {
 		final ExecutableElement ex = (ExecutableElement) e;
 		node.setAttribute("name", action.name());
 		node.setAttribute("method", ex.getSimpleName().toString());
 		node.setAttribute("class", rawNameOf(context, ex.getEnclosingElement()));
 		node.setAttribute("returns", getReturnType(context, ex));
-		if (action.virtual())
+		if (action.virtual()) {
 			node.setAttribute("virtual", "true");
+		}
 		node.setAttribute("name", action.name());
 		final arg[] args = action.args();
-		for (int i = 0; i < args.length; i++) {
-			appendChild(node, buildArg(context, e, doc, args[i]));
+		for (final arg arg : args) {
+			appendChild(node, buildArg(context, e, arg));
 		}
 
 	}
 
-	private final org.w3c.dom.Element buildArg(final ProcessorContext context, final Element e, final Document doc,
-			final arg arg) {
+	private final org.w3c.dom.Element buildArg(final ProcessorContext context, final Element e, final arg arg) {
 		final String argName = arg.name();
 		if (RESERVED_FACETS.contains(argName)) {
-			context.emitWarning(
-					"Argument '" + argName
-							+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+			context.emitWarning("Argument '" + argName
+					+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
 					e);
 		}
-		final org.w3c.dom.Element child = doc.createElement("arg");
+		final org.w3c.dom.Element child = document.createElement("arg");
 		child.setAttribute("name", argName);
 		child.setAttribute("type", String.valueOf(arg.type()));
-		if (arg.optional())
+		if (arg.optional()) {
 			child.setAttribute("optional", "true");
+		}
 		final doc[] docs = arg.doc();
 		if (docs.length == 0) {
 			context.emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
-		} else
+		} else {
 			child.setAttribute("doc", docToString(arg.doc()));
+		}
 		return child;
 	}
 

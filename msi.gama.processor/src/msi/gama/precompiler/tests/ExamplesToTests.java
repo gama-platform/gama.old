@@ -17,6 +17,8 @@ import java.net.URL;
 import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -41,7 +43,7 @@ public class ExamplesToTests {
 
 	public static final String ATT_NAME_FILE = "fileName";
 
-	public static void createTests(final ProcessorContext context, final DocumentBuilder builder, final Document doc) {
+	public static void createTests(final ProcessorContext context, final Document doc) {
 		// Document document;
 		// try (InputStream docFile = context.getInputStream("docGAMA.xml")) {
 		// document = XMLUtils.createDoc(docFile);
@@ -50,11 +52,11 @@ public class ExamplesToTests {
 		// return;
 		// }
 		final Document document = cleanDocumentTest(doc);
-		createOperatorsTests(context, document, builder, "testGaml-Operators-xml2test.xsl");
+		createOperatorsTests(context, document, "testGaml-Operators-xml2test.xsl");
 	}
 
 	private static void createOperatorsTests(final ProcessorContext context, final Document document,
-			final DocumentBuilder builder, final String xsl) {
+			final String xsl) {
 
 		final NodeList nLCategoriesOp = document.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES);
 		final NodeList nLCategories =
@@ -67,8 +69,12 @@ public class ExamplesToTests {
 			System.out.println("Processing category " + eltCategory.getAttribute("id"));
 			final String nameFileSpecies = eltCategory.getAttribute("id");
 			// System.out.println(nameFileSpecies);
-
-			final Document docTemp = builder.newDocument();
+			DocumentBuilder builder = null;
+			try {
+				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			} catch (final ParserConfigurationException e1) {}
+			final Document docTemp = builder == null ? null : builder.newDocument();
+			if (docTemp == null) { return; }
 			final org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);
 			root.setAttribute(ATT_NAME_FILE, nameFileSpecies);
 			final org.w3c.dom.Element rootOperators = docTemp.createElement(XMLElements.OPERATORS);
@@ -102,13 +108,12 @@ public class ExamplesToTests {
 
 		try (final Writer writer = context.createTestWriter(targetFile);) {
 			// If no writer can be created, just abort
-			if (writer == null)
-				return;
+			if (writer == null) { return; }
 			final URL url =
 					GamaProcessor.class.getClassLoader().getResource("msi/gama/precompiler/resources/" + xslFileName);
 			if (url == null) {
 				System.err.println("Impossible to read XML transformer");
-				context.emitError("Impossible to read XML transformer", null);
+				context.emitError("Impossible to read XML transformer");
 				return;
 			}
 			final Source source = new DOMSource(doc);
@@ -121,11 +126,11 @@ public class ExamplesToTests {
 				transformer = factoryT.newTransformer(stylesource);
 			} catch (final TransformerConfigurationException e) {
 				e.printStackTrace();
-				context.emitError("Impossible to create XML transformer: " + e.getMessage(), null);
+				context.emitError("Impossible to create XML transformer: ", e);
 				return;
 			} catch (final IOException e2) {
 				e2.printStackTrace();
-				context.emitError("Impossible to read XML transformer: " + e2.getMessage(), null);
+				context.emitError("Impossible to read XML transformer: ", e2);
 				return;
 			}
 			transformer.setOutputProperty(OutputKeys.METHOD, "text");
@@ -133,10 +138,10 @@ public class ExamplesToTests {
 				transformer.transform(source, result);
 			} catch (final TransformerException e) {
 				e.printStackTrace();
-				context.emitError("Impossible to transform XML: " + e.getMessage(), null);
+				context.emitError("Impossible to transform XML: ", e);
 			}
 		} catch (final IOException e1) {
-			context.emitError("Impossible to open file for writing: " + e1.getMessage(), null);
+			context.emitError("Impossible to open file for writing: ", e1);
 		}
 	}
 
@@ -195,7 +200,7 @@ public class ExamplesToTests {
 		}
 
 		private HashMap<String, String> initProperNameOperatorMap() {
-			final HashMap<String, String> hm = new HashMap<String, String>();
+			final HashMap<String, String> hm = new HashMap<>();
 			hm.put("*", "Multiply");
 			hm.put("-", "Minus");
 			hm.put("/", "Divide");

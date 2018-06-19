@@ -1,5 +1,7 @@
 package msi.gama.precompiler;
 
+import static java.util.Collections.sort;
+
 // import static msi.gama.precompiler.GamlProperties.GAML;
 
 import java.io.IOException;
@@ -10,11 +12,11 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.FilerException;
@@ -23,6 +25,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -62,8 +65,25 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	public List<? extends Element> sortElements(final Class<? extends Annotation> annotationClass) {
 		final Set<? extends Element> elements = getElementsAnnotatedWith(annotationClass);
 		final List<? extends Element> result = new ArrayList<>(elements);
-		Collections.sort(result, (o1, o2) -> o1.toString().compareTo(o2.toString()));
+		sort(result, (o1, o2) -> o1.toString().compareTo(o2.toString()));
 		return result;
+	}
+
+	public final Map<String, List<Element>> groupElements(final Class<? extends Annotation> annotationClass) {
+		final Map<String, List<Element>> result = getElementsAnnotatedWith(annotationClass).stream()
+				.collect(Collectors.groupingBy((k) -> getRootClassOf(k)));
+		result.forEach((s, l) -> sort(l, (o1, o2) -> o1.toString().compareTo(o2.toString())));
+		return result;
+	}
+
+	private String getRootClassOf(final Element e) {
+		final ElementKind kind = e.getKind();
+		final Element enclosing = e.getEnclosingElement();
+		final ElementKind enclosingKind = enclosing.getKind();
+		if ((kind == ElementKind.CLASS || kind == ElementKind.INTERFACE)
+				&& !(enclosingKind == ElementKind.CLASS || enclosingKind == ElementKind.INTERFACE)) { return e
+						.toString(); }
+		return getRootClassOf(enclosing);
 	}
 
 	public void verifyClassTypeCompatibility(final String string, final Element ve) {
@@ -141,22 +161,56 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return delegate.getLocale();
 	}
 
+	public void emitWarning(final String s) {
+		emitWarning(s, (Element) null);
+	}
+
+	public void emitError(final String s) {
+		emitError(s, (Element) null);
+	}
+
 	public void emitWarning(final String s, final Element e) {
-		if (!PRODUCES_WARNING)
-			return;
-		if (e == null)
-			getMessager().printMessage(Kind.WARNING, s);
-		else
-			getMessager().printMessage(Kind.WARNING, s, e);
+		emit(Kind.WARNING, s, e);
 	}
 
 	public void emitError(final String s, final Element e) {
-		if (!PRODUCES_WARNING)
-			return;
-		if (e == null)
-			getMessager().printMessage(Kind.ERROR, s);
-		else
-			getMessager().printMessage(Kind.ERROR, s, e);
+		emit(Kind.ERROR, s, e);
+	}
+
+	public void emit(final Kind kind, final String s, final Element e) {
+		if (!PRODUCES_WARNING) { return; }
+		if (e == null) {
+			getMessager().printMessage(kind, s);
+		} else {
+			getMessager().printMessage(kind, s, e);
+		}
+	}
+
+	public void emitError(final String s, final Exception e1) {
+		emit(Kind.ERROR, s, e1, null);
+	}
+
+	public void emitWarning(final String s, final Exception e1) {
+		emit(Kind.WARNING, s, e1, null);
+	}
+
+	public void emitError(final String s, final Exception e1, final Element element) {
+		emit(Kind.ERROR, s, e1, element);
+	}
+
+	public void emitWarning(final String s, final Exception e1, final Element element) {
+		emit(Kind.WARNING, s, e1, element);
+	}
+
+	public void emit(final Kind kind, final String s, final Exception e1, final Element element) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(s);
+		sb.append(e1.getMessage());
+		for (final StackTraceElement t : e1.getStackTrace()) {
+			sb.append("\n");
+			sb.append(t.toString());
+		}
+		emit(kind, sb.toString(), element);
 	}
 
 	public void setRoundEnvironment(final RoundEnvironment env) {
@@ -194,7 +248,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			emitWarning(e.getMessage(), null);
+			emitWarning("", e);
 		}
 		return null;
 	}
@@ -228,7 +282,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			return writer;
 		} catch (final Exception e) {
 			e.printStackTrace();
-			emitWarning("Impossible to create test file " + fileName + ": " + e.getMessage(), null);
+			emitWarning("Impossible to create test file " + fileName + ": ", e);
 		}
 		return null;
 	}
@@ -252,7 +306,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			return;
 		} catch (final IOException e) {
 			// More serious problem
-			emitWarning("Cannot create tests folder: " + e.getMessage(), null);
+			emitWarning("Cannot create tests folder: ", e);
 			return;
 		}
 		try (final OutputStream output = obj.openOutputStream();
@@ -268,7 +322,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 					+ "		<nature>msi.gama.application.testNature</nature>\n" + "	</natures>\n"
 					+ "</projectDescription>\n" + "");
 		} catch (final IOException t) {
-			emitWarning(t.getMessage(), null);
+			emitWarning("", t);
 		}
 	}
 
@@ -278,7 +332,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			emitWarning(e.getMessage(), null);
+			emitWarning("", e);
 		}
 		return null;
 	}
@@ -295,8 +349,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		final List<Annotation> result = new ArrayList<>();
 		for (final Class<? extends Annotation> clazz : processors.keySet()) {
 			final Annotation a = e.getAnnotation(clazz);
-			if (a != null)
+			if (a != null) {
 				result.add(a);
+			}
 		}
 		return result;
 	}

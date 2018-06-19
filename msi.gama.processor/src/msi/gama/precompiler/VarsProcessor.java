@@ -9,7 +9,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -21,7 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 public class VarsProcessor extends ElementProcessor<vars> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc, final vars vars,
+	protected void populateElement(final ProcessorContext context, final Element e, final vars vars,
 			final org.w3c.dom.Element node) {
 
 		boolean isField;
@@ -31,7 +30,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 		final Set<String> undocumented = new HashSet<>();
 		for (final var s : vars.value()) {
-			final org.w3c.dom.Element child = doc.createElement("var");
+			final org.w3c.dom.Element child = document.createElement("var");
 			final doc[] docs = s.doc();
 			if (docs.length == 0 && !s.internal()) {
 				undocumented.add(s.name());
@@ -44,12 +43,15 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			child.setAttribute("name", s.name());
 			final String varName = s.name();
 			child.setAttribute("class", rawNameOf(context, e));
-			if (s.constant())
+			if (s.constant()) {
 				child.setAttribute("const", "true");
-			if (s.depends_on().length > 0)
+			}
+			if (s.depends_on().length > 0) {
 				child.setAttribute("depends_on", arrayToString(s.depends_on()));
-			if (s.init().length() > 0)
+			}
+			if (s.init().length() > 0) {
 				child.setAttribute("init", s.init());
+			}
 
 			/**
 			 * 
@@ -82,8 +84,8 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			}
 			child.setAttribute("facets", sb.toString());
 
-			addGetter(context, e, isField, s.name(), child, doc);
-			addSetter(context, e, isField, s.name(), child, doc);
+			addGetter(context, e, isField, s.name(), child);
+			addSetter(context, e, isField, s.name(), child);
 
 			String d;
 			if (docs.length == 0) {
@@ -101,7 +103,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 	}
 
 	private void addSetter(final ProcessorContext context, final Element e, final boolean isField, final String name,
-			final org.w3c.dom.Element node, final Document doc) {
+			final org.w3c.dom.Element node) {
 		for (final Element m : e.getEnclosedElements()) {
 			final setter setter = m.getAnnotation(setter.class);
 			if (setter != null && setter.value().equals(name)) {
@@ -118,14 +120,16 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				}
 
 				final boolean scope = n > 0 && args[0].contains("IScope");
-				final org.w3c.dom.Element child = doc.createElement("setter");
+				final org.w3c.dom.Element child = document.createElement("setter");
 				child.setAttribute("method", ex.getSimpleName().toString());
 				final boolean isDynamic = !scope && n == 2 || scope && n == 3;
 				child.setAttribute("param_class", isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
-				if (isDynamic)
+				if (isDynamic) {
 					child.setAttribute("dynamic", String.valueOf(isDynamic));
-				if (scope)
+				}
+				if (scope) {
 					child.setAttribute("scope", "true");
+				}
 				appendChild(node, child); // method
 				break;
 			}
@@ -133,7 +137,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 	}
 
 	public void addGetter(final ProcessorContext context, final Element e, final boolean isField, final String varName,
-			final org.w3c.dom.Element node, final Document doc) {
+			final org.w3c.dom.Element node) {
 		for (final Element m : e.getEnclosedElements()) {
 			final getter getter = m.getAnnotation(getter.class);
 			if (getter != null && getter.value().equals(varName)) {
@@ -146,17 +150,20 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final int n = args.length;
 				final boolean scope = n > 0 && args[0].contains("IScope");
 
-				final org.w3c.dom.Element child = doc.createElement("getter");
+				final org.w3c.dom.Element child = document.createElement("getter");
 
 				child.setAttribute("method", ex.getSimpleName().toString());
 				child.setAttribute("returns", rawNameOf(context, ex.getReturnType()));
 				child.setAttribute("dynamic", String.valueOf(!scope && n > 0 || scope && n > 1));
-				if (isField)
+				if (isField) {
 					child.setAttribute("field", "true");
-				if (scope)
+				}
+				if (scope) {
 					child.setAttribute("scope", "true");
-				if (getter.initializer())
+				}
+				if (getter.initializer()) {
 					child.setAttribute("initializer", "true");
+				}
 				appendChild(node, child); // method
 				break;
 			}

@@ -2,16 +2,14 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import org.w3c.dom.Document;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 
 public class SpeciesProcessor extends ElementProcessor<species> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final Document doc,
-			final species spec, final org.w3c.dom.Element node) {
+	protected void populateElement(final ProcessorContext context, final Element e, final species spec,
+			final org.w3c.dom.Element node) {
 		node.setAttribute("name", spec.name());
 		node.setAttribute("class", rawNameOf(context, e));
 		node.setAttribute("skills", arrayToString(spec.skills()));
