@@ -574,7 +574,7 @@ public class MovingSkill extends Skill {
 			// ((GamaSpatialMatrix)topo.getPlaces()).getAgentAt(source).getLocation();
 			goal = ((GamaSpatialMatrix) topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
 		}
-		if (source.equals(goal)) {
+		if (source.equals(goal.getLocation())) {
 			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
 					false); }
 			return null;
@@ -604,7 +604,7 @@ public class MovingSkill extends Skill {
 					}
 
 				} else {
-					path = topo.pathBetween(scope, source, goal);
+					path = topo.pathBetween(scope, agent, goal);
 				}
 			}
 		} else {
@@ -612,7 +612,7 @@ public class MovingSkill extends Skill {
 			if (topo instanceof GraphTopology) {
 				if (((GraphTopology) topo).getPlaces() != path.getGraph()
 						|| recomputePath && ((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion()) {
-					path = topo.pathBetween(scope, source, goal);
+					path = topo.pathBetween(scope, agent, goal);
 				}
 			}
 		}

@@ -92,7 +92,8 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape sourceShape, final IShape target) {
+		ILocation source = sourceShape.getLocation();
 		final GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
 		IShape sourceN = source;
 		IShape targetN = target;
@@ -141,11 +142,12 @@ public class GraphTopology extends AbstractTopology {
 		final boolean optimization = graph.edgeSet().size() > 1000;
 		final double dist =
 				optimization ? Math.sqrt(scope.getSimulation().getArea()) / graph.edgeSet().size() * 100 : -1;
-
+		
 		if (graph.isAgentEdge()) {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
+			
 			if (!sourceNode) {
-				edgeS = getPathEdge(scope, source);
+				edgeS = getPathEdge(scope, sourceShape);
 				if (edgeS == null) {
 					if (optimizedClosestTo) {
 						edgeS = optimizedClosestTo(source, getPlaces().getEdges());
@@ -171,7 +173,7 @@ public class GraphTopology extends AbstractTopology {
 				if (edgeS == null) { return null; }
 			}
 			if (!targetNode) {
-				edgeT = getPathEdge(scope, target);
+				//edgeT = getPathEdge(scope, target);
 				if (edgeT == null) {
 					if (optimizedClosestTo) {
 						edgeT = optimizedClosestTo(target, getPlaces().getEdges());
@@ -199,12 +201,12 @@ public class GraphTopology extends AbstractTopology {
 		} else {
 			double distSMin = Double.MAX_VALUE;
 			double distTMin = Double.MAX_VALUE;
-			edgeS = getPathEdge(scope, source);
+			edgeS = getPathEdge(scope, sourceShape);
 			if (edgeS != null)
 				distSMin = 0;
-			edgeT = getPathEdge(scope, target);
+			/*edgeT = getPathEdge(scope, target);
 			if (edgeT != null)
-				distTMin = 0;
+				distTMin = 0;*/
 			if (distSMin > 0 && !sourceNode || distTMin > 0 && !targetNode) {
 				
 				for (final Object e : graph.getEdges()) {
@@ -236,6 +238,9 @@ public class GraphTopology extends AbstractTopology {
 
 	public IShape getPathEdge(final IScope scope, final IShape ref) {
 		if (ref.getAgent() != null) {
+			final IShape edge = (IShape) ref.getAgent().getAttribute("current_edge");
+			if (edge != null && this.getPlaces().containsEdge(edge) && ref.getLocation().euclidianDistanceTo(edge) < 0.1) 
+				return edge;
 			final IPath path = (GamaPath) ref.getAgent().getAttribute("current_path");
 			if (path != null && path.getTopology(scope) != null && path.getTopology(scope).equals(this)
 					&& ((IShape) path.getStartVertex()).getLocation().equals(ref.getLocation())) {
