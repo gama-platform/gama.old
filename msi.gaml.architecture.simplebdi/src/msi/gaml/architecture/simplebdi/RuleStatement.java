@@ -583,7 +583,7 @@ public class RuleStatement extends AbstractStatement {
 																tempNewDesire
 																		.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 															}
-															SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
+															SimpleBdiArchitecture.addBelief(scope, tempNewDesire);
 														}
 													} else {
 														final Predicate newBel = (Predicate) newBelief.value(scope);
@@ -632,7 +632,7 @@ public class RuleStatement extends AbstractStatement {
 																tempNewDesire
 																		.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 															}
-															SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
+															SimpleBdiArchitecture.addUncertainty(scope, tempNewDesire);
 														}
 													} else {
 														final Predicate newUncert = (Predicate) newUncertainty.value(scope);
@@ -678,7 +678,7 @@ public class RuleStatement extends AbstractStatement {
 																tempNewDesire
 																		.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 															}
-															SimpleBdiArchitecture.addDesire(scope, null, tempNewDesire);
+															SimpleBdiArchitecture.addIdeal(scope, tempNewDesire);
 														}
 													} else {
 														final Predicate newIde = (Predicate) newIdeal.value(scope);
@@ -912,7 +912,7 @@ public class RuleStatement extends AbstractStatement {
 															tempIdeals.setLifeTime(
 																	Cast.asInt(scope, lifetime.value(scope)));
 														}
-														SimpleBdiArchitecture.addDesire(scope, null, tempIdeals);
+														SimpleBdiArchitecture.addIdeal(scope, tempIdeals);
 													}
 												}
 												if (removeBeliefs != null) {
@@ -955,7 +955,7 @@ public class RuleStatement extends AbstractStatement {
 													for (final Predicate removeIde : removeIdes) {
 														final MentalState tempRemoveIdeals =
 																new MentalState("Ideal", removeIde);
-														SimpleBdiArchitecture.removeDesire(scope, tempRemoveIdeals);
+														SimpleBdiArchitecture.removeIdeal(scope, tempRemoveIdeals);
 													}
 												}
 												if (removeObligations != null) {
@@ -964,7 +964,7 @@ public class RuleStatement extends AbstractStatement {
 													for (final Predicate removeObl : removeObls) {
 														final MentalState tempRemoveObligations =
 																new MentalState("Obligation", removeObl);
-														SimpleBdiArchitecture.removeDesire(scope, tempRemoveObligations);
+														SimpleBdiArchitecture.removeObligation(scope, tempRemoveObligations);
 													}
 												}
 											}

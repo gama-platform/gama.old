@@ -1331,8 +1331,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					examples = { @example ("get_current_plan()") }))
 	public BDIPlan getCurrentPlans(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
-		SimpleBdiPlanStatement plan = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
-		BDIPlan result = new BDIPlan(plan);
+		BDIPlan result = (BDIPlan) agent.getAttribute(CURRENT_PLAN);
 		return result;
 	}
 
