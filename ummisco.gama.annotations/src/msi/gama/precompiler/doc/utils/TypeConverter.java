@@ -160,7 +160,8 @@ public class TypeConverter {
 		hm.put("msi.gaml.architecture.simplebdi.Predicate", "predicate");
 		hm.put("msi.gaml.architecture.simplebdi.BDIPlan", "BDIPlan");
 		hm.put("msi.gaml.architecture.simplebdi.Emotion", "emotion");
-
+		hm.put("msi.gaml.architecture.simplebdi.MentalState", "mental_state");
+		
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
 		hm.put("msi.gaml.extensions.fipa.Message", "message");

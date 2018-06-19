@@ -64,8 +64,8 @@ species firefighter skills: [moving] control: simple_bdi{
 	}
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
-	perceive target:fireArea in: 15{
-		focus id:fireLocation var:location strength:10.0; 
+	perceive target:fireArea in: 15{ 
+		focus id:"fireLocation" var:location strength:10.0; 
 		ask myself{
 			do remove_intention(patrol_desire, true);
 		} 
