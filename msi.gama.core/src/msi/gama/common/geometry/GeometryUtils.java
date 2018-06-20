@@ -398,25 +398,7 @@ public class GeometryUtils {
 		return geometryDecomposition(geom, x_size, y_size);
 	}
 
-	public static IList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
-		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-		final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
-
-		final Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
-		final double sizeTol = FastMath.sqrt(points.getEnvelope().getArea()) / 100.0;
-
-		dtb.setSites(points);
-		dtb.setConstraints(points);
-		dtb.setTolerance(sizeTol);
-		final GeometryCollection tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
-		final int nb = tri.getNumGeometries();
-		for (int i = 0; i < nb; i++) {
-			final Geometry gg = tri.getGeometryN(i);
-			geoms.add(new GamaShape(gg));
-		}
-		return geoms;
-	}
-
+	
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
@@ -445,33 +427,54 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static void simplifiedTriangulation(final Polygon polygon, final Collection<Polygon> geoms) {
-		final double elevation = getContourCoordinates(polygon).averageZ();
-		final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
-		final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
-		GeometryCollection tri = null;
-		try {
-			dtb.setSites(polygon);
-			dtb.setTolerance(sizeTol);
-			tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
-		} catch (final LocateFailureException | ConstraintEnforcementException e) {
-			final IScope scope = GAMA.getRuntimeScope();
-			GamaRuntimeException.warning("Impossible to triangulate: " + new WKTWriter().write(polygon), scope);
-			geoms.clear();
-			simplifiedTriangulation((Polygon) DouglasPeuckerSimplifier.simplify(polygon, 0.1), geoms);
-			return;
+	
+	public static IList<IShape> triangulation(final IScope scope, final Geometry geom, double toleranceTriangulation,double toleranceClip) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+		if (geom instanceof GeometryCollection) {
+			final GeometryCollection gc = (GeometryCollection) geom;
+			for (int i = 0; i < gc.getNumGeometries(); i++) {
+				geoms.addAll(triangulation(scope, gc.getGeometryN(i),toleranceTriangulation, toleranceClip));
+			}
+		} else  {
+			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+			dtb.setTolerance(toleranceTriangulation);
+			GeometryCollection tri = null;
+			try {
+				dtb.setSites(geom);
+				dtb.setConstraints(geom);
+				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
+			} catch (final LocateFailureException | ConstraintEnforcementException e) {
+				dtb.setTolerance(toleranceTriangulation + 0.1);
+				dtb.setSites(geom);
+				dtb.setConstraints(geom);
+				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
+			}
+			if (tri != null)
+				geoms.addAll(filterGeoms(tri, geom, toleranceClip));
+			
 		}
-		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
+		return geoms;
+	}
+	
+	private static IList<IShape> filterGeoms(final GeometryCollection geom, final Geometry clip, final double sizeTol) {
+		if (geom == null) return null;
+		final double elevation = getContourCoordinates(clip).averageZ();
+		final boolean setZ = (elevation != 0.0);
+		final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
+		final Geometry bufferClip = clip.buffer(sizeTol, 5, 0);
+		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
-		applyToInnerGeometries(tri, (gg) -> {
+		applyToInnerGeometries(geom, (gg) -> {
 			final ICoordinates cc = getContourCoordinates(gg);
 			if (cc.isCoveredBy(env) && buffered.covers(gg)) {
-				cc.setAllZ(elevation);
-				gg.geometryChanged();
-				geoms.add((Polygon) gg);
+				if (setZ) {
+					cc.setAllZ(elevation);
+					gg.geometryChanged();
+				}
+				result.add(new GamaShape(gg));
 			}
 		});
-
+		return result;
 	}
 
 	public static void iterateOverTriangles(final Polygon polygon, final Consumer<Geometry> action) {
@@ -498,52 +501,12 @@ public class GeometryUtils {
 			return;
 		}
 	}
+	
 
-	public static IList<IShape> triangulation(final IScope scope, final Geometry geom) {
-		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-		if (geom instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) geom;
-			for (int i = 0; i < gc.getNumGeometries(); i++) {
-				geoms.addAll(triangulation(scope, gc.getGeometryN(i)));
-			}
-		} else if (geom instanceof Polygon) {
-			final Polygon polygon = (Polygon) geom;
-			final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
-			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
-			GeometryCollection tri = null;
-			try {
-				dtb.setSites(polygon);
-				dtb.setConstraints(polygon);
-				dtb.setTolerance(sizeTol);
-				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
-			} catch (final LocateFailureException e) {
-				GamaRuntimeException.warning("Impossible to triangulate Geometry: " + new WKTWriter().write(geom),
-						scope);
-				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
-			} catch (final ConstraintEnforcementException e) {
-				/* GAMA.reportError(scope, */GamaRuntimeException.warning(
-						"Impossible to triangulate Geometry: " + new WKTWriter().write(geom), scope)/* , false) */;
-				return triangulation(scope, DouglasPeuckerSimplifier.simplify(geom, 0.1));
-			}
-			final PreparedGeometry pg = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
-			final PreparedGeometry env = PREPARED_GEOMETRY_FACTORY.create(pg.getGeometry().getEnvelope());
-			final int nb = tri.getNumGeometries();
-			for (int i = 0; i < nb; i++) {
-
-				final Geometry gg = tri.getGeometryN(i);
-
-				if (env.covers(gg) && pg.covers(gg) && gg.intersects(polygon)
-						&& gg.intersection(polygon).getArea() > 0.2 * gg.getArea()) {
-					geoms.add(new GamaShape(gg));
-				}
-			}
-		}
-		return geoms;
-	}
-
-	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
+	
+	public static List<LineString> squeletisation(final IScope scope, final Geometry geom,  double toleranceTriangulation,double toleranceClip) {
 		final List<LineString> network = new ArrayList<LineString>();
-		final IList polys = GeometryUtils.triangulation(scope, geom);
+		final IList polys = GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 		final Collection<GamaShape> nodes = graph.vertexSet();
 		for (final GamaShape node : nodes) {

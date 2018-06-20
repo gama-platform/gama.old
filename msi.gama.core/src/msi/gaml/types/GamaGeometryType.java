@@ -22,6 +22,7 @@ import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
 import static msi.gama.metamodel.shape.IShape.Type.TEAPOT;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -29,12 +30,14 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.CoordinateSequences;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.operation.linemerge.LineMerger;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import com.vividsolutions.jts.util.AssertionFailedException;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
@@ -559,6 +562,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final List<Geometry> geoms = new ArrayList(ags.length(scope));
 		// int cpt = 0;
 		boolean is_polygon = true;
+		boolean is_polyline = true;
 		for (final IShape ent : ags.iterable(scope)) {
 			if (ent == null) {
 				continue;
@@ -568,6 +572,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if (is_polygon && !(geom instanceof Polygon)) {
 				is_polygon = false;
 			}
+			if (is_polyline && !(geom instanceof LineString)) {
+				is_polyline = false;
+			}
 			// cpt++;
 		}
 		if (geoms.size() == 1) { return new GamaShape(geoms.get(0)); }
@@ -575,6 +582,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if (is_polygon) {
 				final Geometry geom = CascadedPolygonUnion.union(geoms);
 				if (geom != null && !geom.isEmpty()) { return new GamaShape(geom); }
+			} else if (is_polyline){
+				LineMerger merger = new LineMerger();
+				 for (Geometry g : geoms) {
+				      merger.add(g);
+				   }
+				 Collection<LineString> collection = merger.getMergedLineStrings();
+
+				 Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(collection.toArray(new Geometry[0]));
+				 geom = geom.union();
+				if (!geom.isEmpty()) { return new GamaShape(geom); }
+				  
 			} else {
 				Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(geoms.toArray(new Geometry[0]));
 				geom = geom.union();

@@ -2225,7 +2225,67 @@ public abstract class Spatial {
 		}
 
 		@operator (
-				value = "triangulate",
+				value = "skeletonize",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping and for the triangulation",
+				examples = { @example (
+						value = "skeletonize(self)",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance, final Double triangulationTolerance) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance );
+			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for (final LineString ls : netw) {
+				geoms.add(new GamaShape(ls));
+			}
+			return geoms;
+		}
+		
+		@operator (
+				value = "skeletonize",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping",
+				examples = { @example (
+						value = "skeletonize(self)",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,clippingTolerance );
+			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for (final LineString ls : netw) {
+				geoms.add(new GamaShape(ls));
+			}
+			return geoms;
+		}
+		
+		@operator (
+				value = "skeletonize",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
+				examples = { @example (
+						value = "skeletonize(self)",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,0.0 );
+			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for (final LineString ls : netw) {
+				geoms.add(new GamaShape(ls));
+			}
+			return geoms;
+		}
+		
+		@operator (
+				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
@@ -2238,24 +2298,46 @@ public abstract class Spatial {
 						test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, 0.0);
 		}
 
+		
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = {})
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand list of geometries",
+				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point) with the given tolerance for the clipping",
+				masterDoc = true,
 				examples = { @example (
-						value = "triangulate(self)",
+						value = "triangulate(self, 0.1)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
-		public static IList<IShape> triangulate(final IScope scope, final IList<IShape> ls) {
-			return GeometryUtils.triangulation(scope, ls);
+		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance) {
+			if (g == null) { return null; }
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance);
 		}
 
+		
+		@operator (
+				value = { "triangulate", "to_triangles" },
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point) with the given tolerance for the clipping and for the triangulation",
+				masterDoc = true,
+				examples = { @example (
+						value = "triangulate(self,0.1, 1.0)",
+						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance, final Double triangulationTolerance) {
+			if (g == null) { return null; }
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance);
+		}
+
+		
 		@operator (
 				value = "voronoi",
 				content_type = IType.GEOMETRY,
@@ -2661,25 +2743,7 @@ public abstract class Spatial {
 			return split_lines;
 		}
 
-		@operator (
-				value = "skeletonize",
-				content_type = IType.GEOMETRY,
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
-		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
-				examples = { @example (
-						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
-						test = false) })
-		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry());
-			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-			for (final LineString ls : netw) {
-				geoms.add(new GamaShape(ls));
-			}
-			return geoms;
-		}
+		
 
 		@operator (
 				value = "clean",
