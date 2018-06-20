@@ -112,7 +112,7 @@ experiment triangles_voronoi type: gui {
 		display triangles type: opengl{
 			graphics "init_geom" {draw init_geom color: #black;}
 			graphics "triangles" transparency: 0.5{
-				loop g over: triangulate(init_geom) {
+				loop g over: triangulate(init_geom, 0.01) {
 					draw g color: rnd_color(255);
 				}
 			} 

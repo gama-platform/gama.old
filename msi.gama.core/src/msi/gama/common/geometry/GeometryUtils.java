@@ -427,6 +427,24 @@ public class GeometryUtils {
 		return geoms;
 	}
 
+	public static IList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
+		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+		final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+
+		final Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
+		dtb.setSites(points);
+		dtb.setConstraints(points);
+		final GeometryCollection tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
+		final int nb = tri.getNumGeometries();
+		for (int i = 0; i < nb; i++) {
+			final Geometry gg = tri.getGeometryN(i);
+			geoms.add(new GamaShape(gg));
+		}
+		return geoms;
+	}
+
+
+	
 	
 	public static IList<IShape> triangulation(final IScope scope, final Geometry geom, double toleranceTriangulation,double toleranceClip) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);

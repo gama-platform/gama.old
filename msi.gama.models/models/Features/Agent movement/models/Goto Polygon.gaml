@@ -19,7 +19,7 @@ global {
 		object the_object <- first(object);
 		
 		//triangulation of the object to get the different triangles of the polygons
-		list<geometry> triangles <- list(triangulate(the_object));
+		list<geometry> triangles <- list(triangulate(the_object, 0.01));
 		
 		loop trig over: triangles {
 			create triangle_obj {
@@ -28,7 +28,7 @@ global {
 		}
 		
 		//creation of a list of skeleton from the object 
-		list<geometry> skeletons <- list(skeletonize(the_object));
+		list<geometry> skeletons <- list(skeletonize(the_object, 0.01));
 		
 		//Split of the skeletons list according to their intersection points
 		list<geometry> skeletons_split  <- split_lines(skeletons);

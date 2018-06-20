@@ -2318,6 +2318,24 @@ public abstract class Spatial {
 			if (g == null) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance);
 		}
+		
+		@operator (
+				value = { "triangulate", "to_triangles" },
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation computed from the list of polylines",
+				masterDoc = true,
+				examples = { @example (
+						value = "triangulate([line([{0,50},{100,50}]), line([{50,0},{50,100}]))",
+						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> triangulate(final IScope scope, final IList<IShape> gs) {
+			if (gs == null || gs.isEmpty()) { return null; }
+			return GeometryUtils.triangulation(scope, gs);
+		} 
+
 
 		
 		@operator (
