@@ -121,10 +121,10 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		methodName = isStatic ? declClass + "." + methodName : methodName;
 		node.setAttribute("args", arrayToString(classes));
 		node.setAttribute("const", String.valueOf(op.can_be_const()));
-		node.setAttribute("type", String.valueOf(op.type()));
-		node.setAttribute("contents", String.valueOf(op.content_type()));
-		node.setAttribute("contents_content_type", String.valueOf(op.content_type_content_type()));
-		node.setAttribute("index", String.valueOf(op.index_type()));
+		node.setAttribute("type", "" + (op.type()));
+		node.setAttribute("contents", "" + (op.content_type()));
+		node.setAttribute("contents_content_type", "" + (op.content_type_content_type()));
+		node.setAttribute("index", "" + (op.index_type()));
 		node.setAttribute("iterator", String.valueOf(op.iterator()));
 		node.setAttribute("expected_contents", arrayToString(op.expected_content_type()));
 		node.setAttribute("returns", ret);
@@ -167,8 +167,8 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				" s,Object... o)", buildNAry(classes, m, ret, stat, scope), "}");
 
 		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',')
-				.append(buildMethodCall(classes, m, stat, scope)).append(',').append(classNames).append(",")
-				.append(content_type_expected).append(",").append(toClassObject(ret)).append(',').append(canBeConst)
+				.append(buildMethodCall(classes, m, stat, scope)).append(',').append(classNames).append(',')
+				.append(content_type_expected).append(',').append(toClassObject(ret)).append(',').append(canBeConst)
 				.append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',')
 				.append(contentTypeContentType).append(',').append(helper).append(");");
 
@@ -217,17 +217,18 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 	protected final static String toArrayOfClasses(final String array) {
 		if (array == null || array.equals("")) { return "{}"; }
+		final StringBuilder sb = new StringBuilder();
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split("\\,", -1);
-		String result = "C(";
+		sb.append("C(");
 		for (int i = 0; i < segments.length; i++) {
 			if (i > 0) {
-				result += ",";
+				sb.append(',');
 			}
-			result += toClassObject(segments[i]);
+			sb.append(toClassObject(segments[i]));
 		}
-		result += ")";
-		return result;
+		sb.append(")");
+		return sb.toString();
 	}
 
 }

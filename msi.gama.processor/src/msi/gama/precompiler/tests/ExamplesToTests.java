@@ -51,6 +51,7 @@ public class ExamplesToTests {
 		// context.emitError("Impossible to parse documentation: " + e.getMessage(), null);
 		// return;
 		// }
+		if (doc == null || !doc.hasChildNodes()) { return; }
 		final Document document = cleanDocumentTest(doc);
 		createOperatorsTests(context, document, "testGaml-Operators-xml2test.xsl");
 	}

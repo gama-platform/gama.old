@@ -190,18 +190,32 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return result == null ? s + ".class" : result;
 	}
 
+	final static String[] EMPTY_ARGS = new String[0];
+
 	protected final static String[] splitInClassObjects(final String array) {
-		if (array == null || array.equals("")) { return new String[0]; }
+		if (array == null || array.equals("")) { return EMPTY_ARGS; }
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split("\\,", -1);
-		for (int i = 0; i < segments.length; i++) {
-			segments[i] = segments[i];
-		}
+		// for (int i = 0; i < segments.length; i++) {
+		// segments[i] = (segments[i]);
+		// }
 		return segments;
 	}
 
 	protected final static String toArrayOfStrings(final String array) {
-		return toArrayOfStrings(array, "\\,");
+		if (array == null || array.equals("")) { return "AS"; }
+		final StringBuilder sb = new StringBuilder();
+		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
+		final String[] segments = array.split("\\,", -1);
+		sb.append("S(");
+		for (int i = 0; i < segments.length; i++) {
+			if (i > 0) {
+				sb.append(',');
+			}
+			sb.append(toJavaString(segments[i]));
+		}
+		sb.append(')');
+		return sb.toString();
 	}
 
 	protected final static String toArrayOfInts(final String array) {
@@ -209,27 +223,16 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return "I(" + array + ")";
 	}
 
-	protected final static String toArrayOfStrings(final String array, final String regex) {
-		if (array == null || array.equals("")) { return "AS"; }
-		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
-		final String[] segments = array.split(regex, -1);
-		String result = "S(";
-		for (int i = 0; i < segments.length; i++) {
-			if (i > 0) {
-				result += ",";
-			}
-			result += toJavaString(segments[i]);
-		}
-		result += ")";
-		return result;
-	}
+	static final StringBuilder CONCAT = new StringBuilder();
 
 	protected final static String concat(final String... array) {
-		final StringBuilder concat = new StringBuilder();
+		// final StringBuilder concat = new StringBuilder();
 		for (final String element : array) {
-			concat.append(element);
+			CONCAT.append(element);
 		}
-		return concat.toString();
+		final String result = CONCAT.toString();
+		CONCAT.setLength(0);
+		return result;
 	}
 
 	protected static String checkPrim(final String c) {
