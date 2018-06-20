@@ -80,9 +80,9 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
 	protected void computeProjection(final IScope scope, final Envelope3D env) {
-		if (scope == null) { return; }
+		if (scope == null ) { return; }
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
-		final ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
+		final ProjectionFactory pf = scope.getSimulation() == null ?  new ProjectionFactory() : scope.getSimulation().getProjectionFactory();
 		gis = pf.fromCRS(scope, crs, env);
 	}
 

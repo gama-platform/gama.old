@@ -486,7 +486,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	public String getGeometryType(final List<? extends IShape> agents) {
+	public static String getGeometryType(final List<? extends IShape> agents) {
 		String geomType = "";
 		for (final IShape be : agents) {
 			final IShape geom = be.getGeometry();
@@ -511,7 +511,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return geomType;
 	}
 
-	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
+	public void  saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
 			throws GamaRuntimeException {
 		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
 			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
@@ -545,13 +545,38 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			saveShapeFile(scope, path, agents, specs.toString(), attributes);
+			
+			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 
+	}
+	
+	public IProjection defineProjection(IScope scope, String path) {
+		String code = null;
+		if (crsCode != null) {
+			final IType type = crsCode.getType();
+			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
+				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
+			} else if (type.id() == IType.STRING) {
+				code = (String) crsCode.value(scope);
+			}
+		}
+		IProjection gis;
+		if (code == null) {
+			gis = scope.getSimulation().getProjectionFactory().getWorld();
+		} else {
+			try {
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+			} catch (final FactoryException e1) {
+				throw GamaRuntimeException.error("The code " + code
+						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+			}
+		}
+		return gis;
 	}
 
 	public void saveText(final String type, final File fileTxt, final boolean header, final IScope scope)
@@ -697,7 +722,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	private Geometry fixesPolygonCWS(final Geometry g) {
+	private static Geometry fixesPolygonCWS(final Geometry g) {
 		if (g instanceof Polygon) {
 			final Polygon p = (Polygon) g;
 			final boolean clockwise = CGAlgorithms.isCCW(p.getExteriorRing().getCoordinates());
@@ -739,31 +764,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
-	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes)
+	public static void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
+			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes, IProjection gis)
 			throws IOException, SchemaException, GamaRuntimeException {
-
-		String code = null;
-		if (crsCode != null) {
-			final IType type = crsCode.getType();
-			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
-				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
-			} else if (type.id() == IType.STRING) {
-				code = (String) crsCode.value(scope);
-			}
-		}
-		IProjection gis;
-		if (code == null) {
-			gis = scope.getSimulation().getProjectionFactory().getWorld();
-		} else {
-			try {
-				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-			} catch (final FactoryException e1) {
-				throw GamaRuntimeException.error("The code " + code
-						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
-			}
-		}
-
 		// AD 11/02/15 Added to allow saving to new directories
 		final File f = new File(path);
 		createParents(f);
@@ -828,7 +831,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	private void writePRJ(final IScope scope, final String path, final IProjection gis) {
+	private static void writePRJ(final IScope scope, final String path, final IProjection gis) {
 		final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
 		if (crs != null) {
 			try (FileWriter fw = new FileWriter(path.replace(".shp", ".prj"))) {
