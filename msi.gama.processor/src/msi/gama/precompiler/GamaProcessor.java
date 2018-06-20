@@ -36,9 +36,16 @@ import msi.gama.precompiler.tests.TestProcessor;
 public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
+	public static final String JAVA_HEADER;
 	int count;
 	long begin = 0;
 	long complete = 0;
+
+	static {
+		final StringBuilder sb = new StringBuilder();
+		writeJavaHeader(sb);
+		JAVA_HEADER = sb.toString();
+	}
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -99,10 +106,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	public void generateJavaSource(final FileObject file) {
 		try (Writer source = context.createSourceWriter(file)) {
 			if (source != null) {
-				final StringBuilder sourceBuilder = new StringBuilder();
-				writeJavaHeader(sourceBuilder);
-				writeJavaBody(sourceBuilder);
-				source.append(sourceBuilder);
+				source.append(writeJavaBody());
 			}
 		} catch (final IOException io) {
 			context.emitWarning("An IO exception occured in the generation of Java files: ", io);
@@ -137,12 +141,12 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append(ln).append('}');
 	}
 
-	public String writeJavaBody(final StringBuilder sb) {
-
+	public StringBuilder writeJavaBody() {
+		final StringBuilder sb = new StringBuilder(JAVA_HEADER);
 		processors.values().forEach(p -> {
 			final String method = p.getInitializationMethodName();
 			if (method != null) {
-				sb.append("public void " + method + "() " + p.getExceptions() + " {");
+				sb.append("public void ").append(method).append("() ").append(p.getExceptions()).append(" {");
 				p.writeTo(context, sb);
 				sb.append(ln);
 				sb.append("}");
@@ -150,7 +154,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		});
 
 		sb.append(ln).append('}');
-		return sb.toString();
+		return sb;
 	}
 
 }

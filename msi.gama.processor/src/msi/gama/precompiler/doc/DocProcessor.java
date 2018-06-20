@@ -22,9 +22,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -111,11 +108,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 	@Override
 	public void processXML(final ProcessorContext context) {
 		if (!context.shouldProduceDoc()) { return; }
-		DocumentBuilder builder = null;
-		try {
-			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (final ParserConfigurationException e1) {}
-		document = builder == null ? null : builder.newDocument();
+		document = context.getBuilder().newDocument();
 		// if (!firstParsing)
 		// return;
 		// firstParsing = false;

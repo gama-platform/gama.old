@@ -10,9 +10,6 @@ import java.util.regex.Matcher;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -24,11 +21,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	final Map<String, List<org.w3c.dom.Element>> index = new HashMap<>();
 
 	public ElementProcessor() {
-		DocumentBuilder builder = null;
-		try {
-			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (final ParserConfigurationException e1) {}
-		document = builder == null ? null : builder.newDocument();
+		document = ProcessorContext.xmlBuilder.newDocument();
 	}
 
 	@Override
@@ -193,27 +186,26 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	protected final static String[] splitInClassObjects(final String array) {
 		if (array == null || array.equals("")) { return EMPTY_ARGS; }
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
-		final String[] segments = array.split("\\,", -1);
-		// for (int i = 0; i < segments.length; i++) {
-		// segments[i] = (segments[i]);
-		// }
-		return segments;
+		return array.split("\\,", -1);
 	}
+
+	public final static StringBuilder STRING_ARRAY_BUILDER = new StringBuilder();
 
 	protected final static String toArrayOfStrings(final String array) {
 		if (array == null || array.equals("")) { return "AS"; }
-		final StringBuilder sb = new StringBuilder();
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split("\\,", -1);
-		sb.append("S(");
+		STRING_ARRAY_BUILDER.append("S(");
 		for (int i = 0; i < segments.length; i++) {
 			if (i > 0) {
-				sb.append(',');
+				STRING_ARRAY_BUILDER.append(',');
 			}
-			sb.append(toJavaString(segments[i]));
+			STRING_ARRAY_BUILDER.append(toJavaString(segments[i]));
 		}
-		sb.append(')');
-		return sb.toString();
+		STRING_ARRAY_BUILDER.append(')');
+		final String result = STRING_ARRAY_BUILDER.toString();
+		STRING_ARRAY_BUILDER.setLength(0);
+		return result;
 	}
 
 	protected final static String toArrayOfInts(final String array) {

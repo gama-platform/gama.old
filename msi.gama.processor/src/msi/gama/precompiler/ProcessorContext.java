@@ -34,6 +34,9 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment, Constants {
 	private final static boolean PRODUCES_DOC = true;
@@ -46,9 +49,22 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private TypeMirror iSkill, iAgent;
 	public volatile String currentPlugin;
 	public List<String> roots;
+	public static final DocumentBuilder xmlBuilder;
+
+	static {
+		DocumentBuilder temp = null;
+		try {
+			temp = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		} catch (final ParserConfigurationException e) {}
+		xmlBuilder = temp;
+	}
 
 	ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
+	}
+
+	public DocumentBuilder getBuilder() {
+		return xmlBuilder;
 	}
 
 	public String nameOf(final TypeElement e) {

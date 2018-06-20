@@ -16,9 +16,6 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -42,6 +39,7 @@ import msi.gama.precompiler.doc.utils.XMLElements;
 public class ExamplesToTests {
 
 	public static final String ATT_NAME_FILE = "fileName";
+	static final TransformerFactory factoryT = TransformerFactory.newInstance();
 
 	public static void createTests(final ProcessorContext context, final Document doc) {
 		// Document document;
@@ -59,37 +57,29 @@ public class ExamplesToTests {
 	private static void createOperatorsTests(final ProcessorContext context, final Document document,
 			final String xsl) {
 
-		final NodeList nLCategoriesOp = document.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES);
-		final NodeList nLCategories =
-				((org.w3c.dom.Element) nLCategoriesOp.item(0)).getElementsByTagName(XMLElements.CATEGORY);
+		final NodeList operatorsCategories = document.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES);
+		final NodeList categories =
+				((org.w3c.dom.Element) operatorsCategories.item(0)).getElementsByTagName(XMLElements.CATEGORY);
 
-		final NodeList nLOperators = document.getElementsByTagName(XMLElements.OPERATOR);
+		final NodeList operators = document.getElementsByTagName(XMLElements.OPERATOR);
 
-		for (int i = 0; i < nLCategories.getLength(); i++) {
-			final org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
-			// System.out.println("Processing category " + eltCategory.getAttribute("id"));
-			final String nameFileSpecies = eltCategory.getAttribute("id");
-			// System.out.println(nameFileSpecies);
-			DocumentBuilder builder = null;
-			try {
-				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			} catch (final ParserConfigurationException e1) {}
-			final Document docTemp = builder == null ? null : builder.newDocument();
-			if (docTemp == null) { return; }
-			final org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);
+		for (int i = 0; i < categories.getLength(); i++) {
+			final org.w3c.dom.Element categoryElement = (org.w3c.dom.Element) categories.item(i);
+			final String category = categoryElement.getAttribute(XMLElements.ATT_CAT_ID);
+			final String nameFileSpecies = categoryElement.getAttribute("id");
+			final Document tempDocument = context.getBuilder().newDocument();
+			final org.w3c.dom.Element root = tempDocument.createElement(XMLElements.DOC);
 			root.setAttribute(ATT_NAME_FILE, nameFileSpecies);
-			final org.w3c.dom.Element rootOperators = docTemp.createElement(XMLElements.OPERATORS);
+			final org.w3c.dom.Element rootOperators = tempDocument.createElement(XMLElements.OPERATORS);
 
-			for (int j = 0; j < nLOperators.getLength(); j++) {
-				final org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);
-				final NodeList nLOperatorCategories = eltOperator.getElementsByTagName(XMLElements.CATEGORY);
-
+			for (int j = 0; j < operators.getLength(); j++) {
+				final org.w3c.dom.Element operatorElement = (org.w3c.dom.Element) operators.item(j);
+				final NodeList operatorCategories = operatorElement.getElementsByTagName(XMLElements.CATEGORY);
 				int k = 0;
 				boolean categoryFound = false;
-				while (k < nLOperatorCategories.getLength() && !categoryFound) {
-					if (eltCategory.getAttribute(XMLElements.ATT_CAT_ID)
-							.equals(((org.w3c.dom.Element) nLOperatorCategories.item(k)).getAttribute("id"))) {
-						final Node importedOpElt = docTemp.importNode(eltOperator.cloneNode(true), true);
+				while (k < operatorCategories.getLength() && !categoryFound) {
+					if (category.equals(((org.w3c.dom.Element) operatorCategories.item(k)).getAttribute("id"))) {
+						final Node importedOpElt = tempDocument.importNode(operatorElement.cloneNode(true), true);
 						rootOperators.appendChild(importedOpElt);
 						categoryFound = true;
 					}
@@ -98,9 +88,9 @@ public class ExamplesToTests {
 
 			}
 			root.appendChild(rootOperators);
-			docTemp.appendChild(root);
+			tempDocument.appendChild(root);
 
-			transformDocument(context, docTemp, xsl, nameFileSpecies + ".experiment");
+			transformDocument(context, tempDocument, xsl, nameFileSpecies + ".experiment");
 		}
 	}
 
@@ -113,13 +103,11 @@ public class ExamplesToTests {
 			final URL url =
 					GamaProcessor.class.getClassLoader().getResource("msi/gama/precompiler/resources/" + xslFileName);
 			if (url == null) {
-				System.err.println("Impossible to read XML transformer");
 				context.emitError("Impossible to read XML transformer");
 				return;
 			}
 			final Source source = new DOMSource(doc);
 			final Result result = new StreamResult(writer);
-			final TransformerFactory factoryT = TransformerFactory.newInstance();
 
 			Transformer transformer = null;
 			try (final InputStream xsl = url.openStream();) {
