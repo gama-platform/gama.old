@@ -332,7 +332,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			emitWarning("", e);
+			emitWarning("Error in creating source writer", e);
 		}
 		return null;
 	}

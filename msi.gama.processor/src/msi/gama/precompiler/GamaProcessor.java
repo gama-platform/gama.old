@@ -46,11 +46,13 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
 		context.setRoundEnvironment(env);
 
-		try {
-			processors.values().forEach(p -> p.processXML(context));
-		} catch (final Exception e) {
-			context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
-			throw e;
+		if (env.getRootElements().size() > 0) {
+			try {
+				processors.values().forEach(p -> p.processXML(context));
+			} catch (final Exception e) {
+				context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
+				throw e;
+			}
 		}
 		if (context.processingOver()) {
 			final FileObject file = context.createSource();
