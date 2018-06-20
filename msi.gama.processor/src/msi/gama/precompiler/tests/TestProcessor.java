@@ -33,6 +33,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 		// Processes tests annotations
 		super.processXML(context);
 		// Special case for lone test annotations
+		cleanIndex(context, testIndex);
 		final Map<String, List<Element>> elements = context.groupElements(test.class);
 		final org.w3c.dom.Element root = getRootNode(document);
 		for (final Map.Entry<String, List<Element>> entry : elements.entrySet()) {
@@ -42,7 +43,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 					final org.w3c.dom.Element node = document.createElement(getElementName());
 					populateElement(context, e, createFrom(e.getAnnotation(test.class)), node);
 					list.add(node);
-					root.appendChild(node);
+					appendChild(root, node);
 				} catch (final Exception exception) {
 					context.emitError("Exception in processor: " + exception.getMessage(), e);
 				}

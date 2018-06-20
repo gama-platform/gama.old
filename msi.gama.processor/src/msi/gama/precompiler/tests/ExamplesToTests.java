@@ -67,7 +67,7 @@ public class ExamplesToTests {
 
 		for (int i = 0; i < nLCategories.getLength(); i++) {
 			final org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
-			System.out.println("Processing category " + eltCategory.getAttribute("id"));
+			// System.out.println("Processing category " + eltCategory.getAttribute("id"));
 			final String nameFileSpecies = eltCategory.getAttribute("id");
 			// System.out.println(nameFileSpecies);
 			DocumentBuilder builder = null;

@@ -19,7 +19,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -35,6 +37,8 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	private ProcessorContext context;
 	int count;
+	long begin = 0;
+	long complete = 0;
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -44,20 +48,34 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
+		if (complete == 0) {
+			complete = System.currentTimeMillis();
+		}
 		context.setRoundEnvironment(env);
 
 		if (env.getRootElements().size() > 0) {
 			try {
+				begin = System.currentTimeMillis();
 				processors.values().forEach(p -> p.processXML(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
 				throw e;
+			} finally {
+				// context.emit(Kind.NOTE, "GAML Processor: XML Trees produced", (Element) null);
 			}
 		}
 		if (context.processingOver()) {
 			final FileObject file = context.createSource();
 			generateJavaSource(file);
+			context.emit(Kind.NOTE, "GAML Processor: Java sources produced for " + context.currentPlugin + " in "
+					+ (System.currentTimeMillis() - begin) + "ms", (Element) null);
+			begin = System.currentTimeMillis();
 			generateTests();
+			context.emit(Kind.NOTE, "GAML Processor: GAMA tests produced for " + context.currentPlugin + " in "
+					+ (System.currentTimeMillis() - begin) + "ms", (Element) null);
+			context.emit(Kind.NOTE, "GAML Processor: Complete processing of " + context.currentPlugin + " in "
+					+ (System.currentTimeMillis() - complete) + "ms", (Element) null);
+			complete = 0;
 		}
 		return true;
 	}

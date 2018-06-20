@@ -45,6 +45,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private RoundEnvironment round;
 	private TypeMirror iSkill, iAgent;
 	public volatile String currentPlugin;
+	public List<String> roots;
 
 	ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
@@ -72,7 +73,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	public final Map<String, List<Element>> groupElements(final Class<? extends Annotation> annotationClass) {
 		final Map<String, List<Element>> result = getElementsAnnotatedWith(annotationClass).stream()
 				.collect(Collectors.groupingBy((k) -> getRootClassOf(k)));
-		result.forEach((s, l) -> sort(l, (o1, o2) -> o1.toString().compareTo(o2.toString())));
+		// result.forEach((s, l) -> sort(l, (o1, o2) -> o1.toString().compareTo(o2.toString())));
 		return result;
 	}
 
@@ -215,6 +216,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 
 	public void setRoundEnvironment(final RoundEnvironment env) {
 		round = env;
+		roots = round.getRootElements().stream().map(e -> e.toString()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -354,6 +356,10 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			}
 		}
 		return result;
+	}
+
+	public List<String> getRoots() {
+		return roots;
 	}
 
 }

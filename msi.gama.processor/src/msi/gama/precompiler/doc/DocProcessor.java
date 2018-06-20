@@ -22,7 +22,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.tools.Diagnostic.Kind;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -109,7 +111,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 	@Override
 	public void processXML(final ProcessorContext context) {
 		if (!context.shouldProduceDoc()) { return; }
-		// document = getBuilder().newDocument();
+		DocumentBuilder builder = null;
+		try {
+			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		} catch (final ParserConfigurationException e1) {}
+		document = builder == null ? null : builder.newDocument();
 		// if (!firstParsing)
 		// return;
 		// firstParsing = false;
@@ -502,14 +508,14 @@ public class DocProcessor extends ElementProcessor<doc> {
 								// Show an error in the case where two
 								// alternative names do not refer to
 								// the same operator
-								if (!e.getAnnotation(operator.class).value()[0]
-										.equals(altElt.getAttribute(XMLElements.ATT_OP_ALT_NAME))) {
-									mes.printMessage(Kind.WARNING,
-											"The alternative name __" + name
-													+ "__ is used for two different operators: "
-													+ e.getAnnotation(operator.class).value()[0] + " and "
-													+ altElt.getAttribute("alternativeNameOf"));
-								}
+								// if (!e.getAnnotation(operator.class).value()[0]
+								// .equals(altElt.getAttribute(XMLElements.ATT_OP_ALT_NAME))) {
+								// mes.printMessage(Kind.WARNING,
+								// "The alternative name __" + name
+								// + "__ is used for two different operators: "
+								// + e.getAnnotation(operator.class).value()[0] + " and "
+								// + altElt.getAttribute("alternativeNameOf"));
+								// }
 							}
 						}
 					}

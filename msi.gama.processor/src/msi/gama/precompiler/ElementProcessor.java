@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
@@ -21,7 +20,7 @@ import org.w3c.dom.NodeList;
 import msi.gama.precompiler.GamlAnnotations.doc;
 
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
-	public final Document document;
+	public Document document;
 	final Map<String, List<org.w3c.dom.Element>> index = new HashMap<>();
 
 	public ElementProcessor() {
@@ -37,7 +36,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		if (document == null) { return; }
 		final Class<T> a = getAnnotationClass();
 		if (a == null) { return; }
-		cleanIndex(context);
+		cleanIndex(context, index);
 		for (final Map.Entry<String, List<Element>> entry : context.groupElements(a).entrySet()) {
 			final List<org.w3c.dom.Element> list = clearAndGetFrom(entry.getKey(), index);
 			for (final Element e : entry.getValue()) {
@@ -54,10 +53,9 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		}
 	}
 
-	private void cleanIndex(final ProcessorContext context) {
-		final List<String> keys =
-				context.getRootElements().stream().map(e -> e.toString()).collect(Collectors.toList());
-		for (final String k : keys) {
+	protected void cleanIndex(final ProcessorContext context, final Map<String, List<org.w3c.dom.Element>> index) {
+
+		for (final String k : context.getRoots()) {
 			final List<org.w3c.dom.Element> nodes = index.get(k);
 			if (nodes != null) {
 				nodes.forEach(n -> n.getParentNode().removeChild(n));
