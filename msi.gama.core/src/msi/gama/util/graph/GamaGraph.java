@@ -90,7 +90,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected final IContainerType type;
 	protected Map<Pair<V, V>, IList<IList<E>>> shortestPathComputed = null;
 	protected VertexRelationship vertexRelation;
-
+	protected GamaIntMatrix shortestPathMatrix = null;
+	
 	public enum shortestPathAlgorithm {
 		FloydWarshall,
 		BellmannFord,
@@ -740,6 +741,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public IList<E> computeBestRouteBetween(final IScope scope, final V source, final V target) {
 		if (source.equals(target))
 			return GamaListFactory.create(getType().getContentType());
+		if (shortestPathMatrix != null) {
+			IList<E> edges = getShortestPathFromMatrix(source,target);
+			if (saveComputedShortestPaths) {
+				saveShortestPaths(edges, source, target);
+			}
+			return edges;
+		}
 		if (pathFindingAlgo == shortestPathAlgorithm.FloydWarshall) {
 				if (optimizer == null) {
 					optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
@@ -1260,6 +1268,43 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public void loadShortestPaths(final IScope scope, final GamaMatrix matrix) {
+		shortestPathMatrix = GamaIntMatrix.from(scope, matrix);
+		
+	}
+	
+	public IList<E> getShortestPathFromMatrix(V s, V t) {
+		final GamaList<V> vertices = (GamaList<V>) getVertices();
+		final IList<E> edges = GamaListFactory.create(getType().getContentType());
+		V vs = s;
+		int indexS = vertices.indexOf(vs);
+		int indexT = vertices.indexOf(t);
+		int previous = indexS;
+		Integer next = shortestPathMatrix.get(scope, indexT, previous);
+		if (previous == next) {
+			return edges;
+		}
+		do {
+			if (next == -1) return GamaListFactory.create(getType().getContentType()); 
+			final V vn = vertices.get(next);
+			
+			final Set<E> eds = this.getAllEdges(vs, vn);
+			E edge = null;
+			for (final E ed : eds) {
+				if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
+					edge = ed;
+				}
+			}
+			if (edge == null) {
+				return GamaListFactory.create(getType().getContentType());
+			}
+			edges.add(edge);
+			previous = next;
+			next = shortestPathMatrix.get(scope, indexT, next);
+			vs = vn;
+		} while (previous != indexT);
+		return edges;
+	}
+	/*public void loadShortestPaths(final IScope scope, final GamaMatrix matrix) {
 		final GamaList<V> vertices = (GamaList<V>) getVertices();
 		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new ConcurrentHashMap<Pair<V, V>, IList<IList<E>>>();
@@ -1322,7 +1367,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				shortestPathComputed.put(vv, spl);
 			}
 		}
-	}
+	}*/
 
 	public IList getPath(final int M[], final GamaList vertices, final int nbvertices, final Object v1, final Object vt,
 			final int i, final int j) {
