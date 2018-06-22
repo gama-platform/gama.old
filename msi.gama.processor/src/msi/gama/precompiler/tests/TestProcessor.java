@@ -1,13 +1,12 @@
 package msi.gama.precompiler.tests;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.element.Element;
-
-import org.w3c.dom.NodeList;
 
 import msi.gama.precompiler.ElementProcessor;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -23,27 +22,29 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.ProcessorContext;
+import msi.gama.precompiler.tests.TestProcessor.Te;
 
-public class TestProcessor extends ElementProcessor<tests> {
+public class TestProcessor extends ElementProcessor<tests, Te> {
 
-	final Map<String, List<org.w3c.dom.Element>> testIndex = new HashMap<>();
+	public static class Te {
+
+		public String name;
+		public List<String> tests = new ArrayList<>();
+
+	}
 
 	@Override
-	public void processXML(final ProcessorContext context) {
+	public void process(final ProcessorContext context) {
 		// Processes tests annotations
-		super.processXML(context);
+		super.process(context);
 		// Special case for lone test annotations
-		cleanIndex(context, testIndex);
 		final Map<String, List<Element>> elements = context.groupElements(test.class);
-		final org.w3c.dom.Element root = getRootNode(document);
 		for (final Map.Entry<String, List<Element>> entry : elements.entrySet()) {
-			final List<org.w3c.dom.Element> list = clearAndGetFrom(entry.getKey(), testIndex);
+			final List<Te> list = get(entry.getKey(), opIndex);
 			for (final Element e : entry.getValue()) {
 				try {
-					final org.w3c.dom.Element node = document.createElement(getElementName());
-					populateElement(context, e, createFrom(e.getAnnotation(test.class)), node);
+					final Te node = createElement(context, e, createFrom(e.getAnnotation(test.class)));
 					list.add(node);
-					appendChild(root, node);
 				} catch (final Exception exception) {
 					context.emitError("Exception in processor: " + exception.getMessage(), e);
 				}
@@ -68,20 +69,18 @@ public class TestProcessor extends ElementProcessor<tests> {
 	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final tests tests,
-			final org.w3c.dom.Element node) {
+	public Te createElement(final ProcessorContext context, final Element e, final tests tests) {
+		final Te node = new Te();
 		final String name = determineName(context, e, tests);
-		node.setAttribute("name", name);
+		node.name = name;
 		for (final test test : tests.value()) {
-			final org.w3c.dom.Element child = document.createElement("test");
-			child.setAttribute("value", determineText(context, test));
-			appendChild(node, child);
+			node.tests.add(determineText(context, test));
 		}
+		return node;
 	}
 
-	public boolean hasTests(final ProcessorContext context) {
-		final NodeList list = getRootNode(document).getElementsByTagName("tests");
-		return list.getLength() > 0;
+	public boolean hasTests() {
+		return opIndex.size() > 0;
 	}
 
 	private String determineText(final ProcessorContext context, final test test) {
@@ -161,18 +160,15 @@ public class TestProcessor extends ElementProcessor<tests> {
 	}
 
 	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
-
-	}
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Te node) {}
 
 	public void writeTests(final ProcessorContext context, final StringBuilder sb) {
-		final NodeList list = getRootNode(document).getElementsByTagName("tests");
 		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
-		for (int i = 0; i < list.getLength(); i++) {
-			sb.append(ln);
-			final org.w3c.dom.Element child = (org.w3c.dom.Element) list.item(i);
-			populateGaml(context, sb, child);
+		for (final List<Te> tests : opIndex.values()) {
+			for (final Te child : tests) {
+				sb.append(ln);
+				populateGaml(context, sb, child);
+			}
 		}
 		sb.append(ln).append('}');
 		namesAlreadyUsed.clear();
@@ -192,14 +188,13 @@ public class TestProcessor extends ElementProcessor<tests> {
 		return toJavaString(result);
 	}
 
-	public void populateGaml(final ProcessorContext context, final StringBuilder sb, final org.w3c.dom.Element node) {
+	public void populateGaml(final ProcessorContext context, final StringBuilder sb, final Te node) {
 		// Output the header of the test statement
-		sb.append(ln).append(tab).append("test ").append(getTestName(node.getAttribute("name"))).append(" {");
+		sb.append(ln).append(tab).append("test ").append(getTestName(node.name)).append(" {");
 		// Output the text of all individual assertions found
-		final NodeList list = node.getElementsByTagName("test");
-		for (int i = 0; i < list.getLength(); i++) {
-			final org.w3c.dom.Element child = (org.w3c.dom.Element) list.item(i);
-			final String[] lines = child.getAttribute("value").split(";");
+		for (int i = 0; i < node.tests.size(); i++) {
+			final String child = node.tests.get(i);
+			final String[] lines = child.split(";");
 			for (final String line : lines) {
 				if (!line.isEmpty()) {
 					sb.append(ln).append(tab).append(tab).append(line).append(';');

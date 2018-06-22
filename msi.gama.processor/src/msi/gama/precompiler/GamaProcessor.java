@@ -63,7 +63,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		if (env.getRootElements().size() > 0) {
 			try {
 				begin = System.currentTimeMillis();
-				processors.values().forEach(p -> p.processXML(context));
+				processors.forEach((s, p) -> p.process(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
 				throw e;
@@ -88,8 +88,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	}
 
 	public void generateTests() {
+		final long begin = System.currentTimeMillis();
 		final TestProcessor tp = (TestProcessor) processors.get(tests.class);
-		if (tp.hasTests(context)) {
+		if (tp.hasTests()) {
 			try (Writer source = context.createTestWriter()) {
 				final StringBuilder sourceBuilder = new StringBuilder();
 				tp.writeTests(context, sourceBuilder);
@@ -100,6 +101,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		}
 		// We pass the current document of the documentation processor to avoir re-reading it
 		final DocProcessor dp = (DocProcessor) processors.get(doc.class);
+		context.emit(Kind.NOTE,
+				"    GAML Tests: lone tests serialization took " + (System.currentTimeMillis() - begin) + "ms",
+				(Element) null);
 		ExamplesToTests.createTests(context, dp.document);
 	}
 
@@ -147,7 +151,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 			final String method = p.getInitializationMethodName();
 			if (method != null) {
 				sb.append("public void ").append(method).append("() ").append(p.getExceptions()).append(" {");
-				p.writeTo(context, sb);
+				p.serialize(context, sb);
 				sb.append(ln);
 				sb.append("}");
 			}

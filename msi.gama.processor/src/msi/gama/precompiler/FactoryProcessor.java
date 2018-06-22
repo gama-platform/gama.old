@@ -2,15 +2,14 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
+import msi.gama.precompiler.FactoryProcessor.Fac;
 import msi.gama.precompiler.GamlAnnotations.factory;
 
-public class FactoryProcessor extends ElementProcessor<factory> {
+public class FactoryProcessor extends ElementProcessor<factory, Fac> {
 
-	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final factory factory,
-			final org.w3c.dom.Element node) {
-		node.setAttribute("class", rawNameOf(context, e));
-		node.setAttribute("kinds", arrayToString(factory.handles()));
+	public static class Fac {
+		String clazz;
+		int[] kinds;
 	}
 
 	@Override
@@ -19,13 +18,25 @@ public class FactoryProcessor extends ElementProcessor<factory> {
 	}
 
 	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
-		final String clazz = node.getAttribute("class");
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Fac op) {
 		sb.append(in);
 		sb.append("_factories(");
-		sb.append("new ").append(clazz);
-		sb.append("(").append("Arrays.asList(").append(node.getAttribute("kinds")).append(")));");
+		sb.append("new ").append(op.clazz);
+		sb.append("(").append("Arrays.asList(");
+		for (final int i : op.kinds) {
+			sb.append(i).append(",");
+		}
+		sb.setLength(sb.length() - 1);
+		sb.append(")));");
+
+	}
+
+	@Override
+	public Fac createElement(final ProcessorContext context, final Element e, final factory factory) {
+		final Fac fac = new Fac();
+		fac.clazz = rawNameOf(context, e.asType());
+		fac.kinds = factory.handles();
+		return fac;
 	}
 
 }

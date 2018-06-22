@@ -11,33 +11,44 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 
-public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
-	public Document document;
-	final Map<String, List<org.w3c.dom.Element>> index = new HashMap<>();
+public abstract class ElementProcessor<T extends Annotation, Result> implements IProcessor<T>, Constants {
 
-	public ElementProcessor() {
-		document = ProcessorContext.xmlBuilder.newDocument();
+	protected final Map<String, List<Result>> opIndex = new HashMap<>();
+
+	public ElementProcessor() {}
+
+	protected void clean(final ProcessorContext context, final Map<String, List<Result>> map) {
+		for (final String k : context.getRoots()) {
+			map.remove(k);
+		}
+	}
+
+	protected <T> List<T> get(final String root, final Map<String, List<T>> index) {
+		List<T> list = index.get(root);
+		if (list == null) {
+			list = new ArrayList<>();
+			index.put(root, list);
+		} else {
+			list.clear();
+		}
+		return list;
+
 	}
 
 	@Override
-	public void processXML(final ProcessorContext context) {
-		if (document == null) { return; }
+	public void process(final ProcessorContext context) {
 		final Class<T> a = getAnnotationClass();
-		if (a == null) { return; }
-		cleanIndex(context, index);
+		clean(context, opIndex);
 		for (final Map.Entry<String, List<Element>> entry : context.groupElements(a).entrySet()) {
-			final List<org.w3c.dom.Element> list = clearAndGetFrom(entry.getKey(), index);
+			final List<Result> list = get(entry.getKey(), opIndex);
 			for (final Element e : entry.getValue()) {
 				try {
-					final org.w3c.dom.Element node = document.createElement(getElementName());
-					populateElement(context, e, e.getAnnotation(a), node);
-					list.add(node);
-					getRootNode(document).appendChild(node);
+					final Result node = createElement(context, e, e.getAnnotation(a));
+					if (node != null) {
+						list.add(node);
+					}
 				} catch (final Exception exception) {
 					context.emitError("Exception in processor: " + exception.getMessage(), e);
 				}
@@ -46,120 +57,20 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		}
 	}
 
-	protected void cleanIndex(final ProcessorContext context, final Map<String, List<org.w3c.dom.Element>> index) {
-
-		for (final String k : context.getRoots()) {
-			final List<org.w3c.dom.Element> nodes = index.get(k);
-			if (nodes != null) {
-				nodes.forEach(n -> n.getParentNode().removeChild(n));
-				index.remove(k);
-			}
-
-		}
+	@Override
+	public void serialize(final ProcessorContext context, final StringBuilder sb) {
+		opIndex.forEach((s, list) -> list.forEach(op -> createJava(context, sb, op)));
 	}
 
-	protected List<org.w3c.dom.Element> clearAndGetFrom(final String key,
-			final Map<String, List<org.w3c.dom.Element>> currentIndex) {
-		List<org.w3c.dom.Element> list = index.get(key);
-		if (list == null) {
-			list = new ArrayList<>();
-			currentIndex.put(key, list);
-		} else {
-			list.forEach(n -> n.getParentNode().removeChild(n));
-			list.clear();
-		}
-		return list;
-	}
+	public abstract void createJava(final ProcessorContext context, final StringBuilder sb, final Result op);
 
-	protected abstract void populateElement(final ProcessorContext context, final Element e, final T action,
-			final org.w3c.dom.Element node);
+	public abstract Result createElement(ProcessorContext context, Element e, T annotation);
 
 	protected abstract Class<T> getAnnotationClass();
 
-	protected String getRootName() {
-		final String element = getElementName();
-		if (element == null) { return null; }
-		return element + "s";
-	}
-
-	protected String getElementName() {
-		final Class<T> c = getAnnotationClass();
-		if (c == null) { return null; }
-		return c.getSimpleName();
-	}
-
 	@Override
 	public final String getInitializationMethodName() {
-		return "initialize" + Constants.capitalizeFirstLetter(getElementName());
-	}
-
-	@Override
-	public void writeTo(final ProcessorContext context, final StringBuilder sb) {
-		final org.w3c.dom.Element node = document.getDocumentElement();
-		if (node == null) { return; }
-		final NodeList nl = node.getElementsByTagName(getElementName());
-		for (int i = 0; i < nl.getLength(); i++) {
-			populateJava(context, sb, (org.w3c.dom.Element) nl.item(i));
-		}
-	}
-
-	protected abstract void populateJava(ProcessorContext context, StringBuilder sb, org.w3c.dom.Element node);
-
-	/**
-	 * 
-	 * Utilities used by subclasses
-	 */
-
-	protected org.w3c.dom.Element getRootNode(final Document doc) {
-		org.w3c.dom.Element root = null;
-		if (doc.hasChildNodes()) {
-			root = (org.w3c.dom.Element) doc.getElementsByTagName(getRootName()).item(0);
-		}
-		if (root == null) {
-			root = doc.createElement(getRootName());
-			doc.appendChild(root);
-		}
-		return root;
-	}
-
-	protected static org.w3c.dom.Element findFirstChildNamed(final org.w3c.dom.Element node, final String name) {
-		if (node == null) { return null; }
-		if (name == null) { return null; }
-		final NodeList list = node.getElementsByTagName(name);
-		if (list.getLength() == 0) { return null; }
-		return (org.w3c.dom.Element) list.item(0);
-	}
-
-	protected void appendChild(final org.w3c.dom.Element node, final org.w3c.dom.Element child) {
-		// final NodeList list = node.getElementsByTagName(child.getTagName());
-		// for (int i = 0; i < list.getLength(); i++) {
-		// final org.w3c.dom.Element candidate = (org.w3c.dom.Element) list.item(i);
-		// if (isEqual(candidate, (child))) { return; }
-		// }
-		node.appendChild(child);
-	}
-
-	/**
-	 * Compares two nodes. By default, node equality is being used, but subclasses may redefine if necessary
-	 * 
-	 * @param existingNode
-	 *            the existing node to compare newNode with
-	 * @param newNode
-	 *            the node to be inserted
-	 * @return true if they are to be considered as equal, false otherwise
-	 */
-	protected boolean isEqual(final org.w3c.dom.Element existingNode, final org.w3c.dom.Element newNode) {
-		return existingNode.isEqualNode(newNode);
-	}
-
-	protected static String extractMethod(final String s, final boolean stat) {
-		if (!stat) { return s; }
-		return s.substring(s.lastIndexOf('.') + 1);
-	}
-
-	protected static String extractClass(final String name, final String string, final boolean stat) {
-		if (stat) { return name.substring(0, name.lastIndexOf('.')); }
-		return string;
+		return "initialize" + Constants.capitalizeFirstLetter(getAnnotationClass().getSimpleName());
 	}
 
 	protected static String toJavaString(final String s) {
@@ -168,61 +79,25 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return i == -1 ? "\"" + s + "\"" : ss2.get(i);
 	}
 
-	protected static String toBoolean(final String s) {
-		return s.equals("true") ? "true" : "false";
-	}
-
-	protected static String toType(final String s) {
-		return s.isEmpty() ? "0" : s;
-	}
-
 	protected final static String toClassObject(final String s) {
 		final String result = CLASS_NAMES.get(s);
 		return result == null ? s + ".class" : result;
 	}
 
-	final static String[] EMPTY_ARGS = new String[0];
-
-	protected final static String[] splitInClassObjects(final String array) {
-		if (array == null || array.equals("")) { return EMPTY_ARGS; }
-		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
-		return array.split("\\,", -1);
-	}
-
-	public final static StringBuilder STRING_ARRAY_BUILDER = new StringBuilder();
-
-	protected final static String toArrayOfStrings(final String array) {
-		if (array == null || array.equals("")) { return "AS"; }
-		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
-		final String[] segments = array.split("\\,", -1);
-		STRING_ARRAY_BUILDER.append("S(");
+	protected final static StringBuilder toArrayOfStrings(final String[] segments, final StringBuilder sb) {
+		if (segments == null || segments.length == 0) {
+			sb.append("AS");
+			return sb;
+		}
+		sb.append("S(");
 		for (int i = 0; i < segments.length; i++) {
 			if (i > 0) {
-				STRING_ARRAY_BUILDER.append(',');
+				sb.append(',');
 			}
-			STRING_ARRAY_BUILDER.append(toJavaString(segments[i]));
+			sb.append(toJavaString(segments[i]));
 		}
-		STRING_ARRAY_BUILDER.append(')');
-		final String result = STRING_ARRAY_BUILDER.toString();
-		STRING_ARRAY_BUILDER.setLength(0);
-		return result;
-	}
-
-	protected final static String toArrayOfInts(final String array) {
-		if (array == null || array.length() == 0) { return "AI"; }
-		return "I(" + array + ")";
-	}
-
-	static final StringBuilder CONCAT = new StringBuilder();
-
-	protected final static String concat(final String... array) {
-		// final StringBuilder concat = new StringBuilder();
-		for (final String element : array) {
-			CONCAT.append(element);
-		}
-		final String result = CONCAT.toString();
-		CONCAT.setLength(0);
-		return result;
+		sb.append(')');
+		return sb;
 	}
 
 	protected static String checkPrim(final String c) {
@@ -235,49 +110,47 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return result == null ? " null" : result;
 	}
 
-	protected static String param(final String c, final String par) {
+	protected static void param(final StringBuilder sb, final String c, final String par) {
 		final String jc = checkPrim(c);
 		switch (jc) {
 			case DOUBLE:
-				return concat("asFloat(s,", par, ")");
+				sb.append("asFloat(s,").append(par).append(')');
+				break;
 			case INTEGER:
-				return concat("asInt(s,", par, ")");
+				sb.append("asInt(s,").append(par).append(')');
+				break;
 			case BOOLEAN:
-				return concat("asBool(s,", par, ")");
+				sb.append("asBool(s,").append(par).append(')');
+				break;
 			case OBJECT:
-				return par;
+				sb.append(par);
+				break;
 			default:
-				return concat("((", jc, ")", par, ")");
+				sb.append("((").append(jc).append(")").append(par).append(')');
+
 		}
 	}
 
 	protected static String escapeDoubleQuotes(final String input) {
+		if (input == null) { return ""; }
 		return input.replaceAll("\"", Matcher.quoteReplacement("\\\""));
 	}
 
-	public static String arrayToString(final int[] array) {
-		if (array.length == 0) { return ""; }
-		final StringBuilder sb = new StringBuilder();
+	public static StringBuilder toArrayOfInts(final int[] array, final StringBuilder sb) {
+		if (array == null || array.length == 0) {
+			sb.append("AI");
+			return sb;
+		}
+		sb.append("I(");
 		for (final int i : array) {
 			sb.append(i).append(",");
 		}
 		sb.setLength(sb.length() - 1);
-		return sb.toString();
+		sb.append(")");
+		return sb;
 	}
 
-	static String arrayToString(final String[] array) {
-		if (array.length == 0) { return ""; }
-		final StringBuilder sb = new StringBuilder();
-		for (final String i : array) {
-			sb.append(replaceCommas(i)).append(",");
-		}
-		sb.setLength(sb.length() - 1);
-		return sb.toString();
-	}
-
-	static String replaceCommas(final String s) {
-		return s.replace(",", "COMMA");
-	}
+	final static StringBuilder DOC_BUILDER = new StringBuilder();
 
 	/**
 	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses
@@ -289,19 +162,13 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	 */
 	static String docToString(final doc[] docs) {
 		if (docs == null || docs.length == 0) { return ""; }
-		return docToString(docs[0]);
-	}
-
-	static String docToString(final doc doc) {
-		if (doc == null) { return ""; }
-		final StringBuilder sb = new StringBuilder();
-		sb.append(doc.value()).append(DOC_SEP);
-		sb.append(doc.deprecated());
-		return sb.toString();
-	}
-
-	static String rawNameOf(final ProcessorContext context, final Element e) {
-		return rawNameOf(context, e.asType());
+		final doc doc1 = docs[0];
+		if (doc1 == null) { return ""; }
+		DOC_BUILDER.append(doc1.value()).append(DOC_SEP);
+		DOC_BUILDER.append(doc1.deprecated());
+		final String result = DOC_BUILDER.toString();
+		DOC_BUILDER.setLength(0);
+		return result;
 	}
 
 	static String rawNameOf(final ProcessorContext context, final TypeMirror t) {

@@ -1,5 +1,6 @@
 package msi.gama.precompiler;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,58 +10,144 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.NodeList;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.VarsProcessor.Vars;
+import msi.gama.precompiler.VarsProcessor.Vars.Getter;
+import msi.gama.precompiler.VarsProcessor.Vars.Setter;
+import msi.gama.precompiler.VarsProcessor.Vars.Var;
 
-public class VarsProcessor extends ElementProcessor<vars> {
+public class VarsProcessor extends ElementProcessor<vars, Vars> {
+
+	public static class Vars {
+		List<Var> vars = new ArrayList<>();
+
+		public static class Var {
+			String name, clazz, init;
+			int type, contents, index;
+			boolean isConst;
+			String[] dependsOn;
+			public String facets;
+			public String doc;
+			public Setter setter;
+			public Getter getter;
+		}
+
+		public static class Getter {
+
+			public String method;
+			public String returns;
+			public boolean dynamic;
+			public boolean isField;
+			public boolean scope;
+			public boolean initializer;
+
+		}
+
+		public static class Setter {
+
+			public String method;
+			public String param_class;
+			public boolean dynamic;
+			public boolean scope;
+
+		}
+
+	}
+
+	static final StringBuilder CONCAT = new StringBuilder();
+
+	protected final static String concat(final String... array) {
+		for (final String element : array) {
+			CONCAT.append(element);
+		}
+		final String result = CONCAT.toString();
+		CONCAT.setLength(0);
+		return result;
+	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final vars vars,
-			final org.w3c.dom.Element node) {
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Vars vars) {
+		for (final Var node : vars.vars) {
+			String getterHelper = null;
+			String initerHelper = null;
+			String setterHelper = null;
+			// getter
+			final Getter getter = node.getter;
+			if (getter != null) {
 
-		boolean isField;
+				if (getter.isField) {
+					getterHelper = concat("new GamaHelper(){", OVERRIDE, "public ", checkPrim(getter.returns), " run(",
+							ISCOPE, " scope, ", OBJECT, "... v){return (v==null||v.length==0)?",
+							returnWhenNull(checkPrim(getter.returns)), ":((", node.clazz, ") v[0]).", getter.method,
+							getter.scope ? "(scope);}}" : "();}}");
+				} else {
+					getterHelper = concat("new GamaHelper(", toClassObject(node.clazz), "){", OVERRIDE, "public ",
+							checkPrim(getter.returns), " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT,
+							" t, Object... v) {return t == null?", returnWhenNull(checkPrim(getter.returns)), ":((",
+							node.clazz, ")t).", getter.method, "(", getter.scope ? "scope" : "",
+							getter.dynamic ? (getter.scope ? "," : "") + "a);}}" : ");}}");
+				}
+
+				// initer
+				if (getter.initializer) {
+					initerHelper = getterHelper;
+				}
+
+			}
+
+			// setter
+			final Setter setter = node.setter;
+			if (setter != null) {
+				final String param = checkPrim(setter.param_class);
+				setterHelper = concat("new GamaHelper(", toClassObject(node.clazz), ")", "{", OVERRIDE,
+						"public Object ", " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT, " t, Object... arg)",
+						" {if (t != null) ((", node.clazz, ") t).", setter.method, "(", setter.scope ? "scope," : "",
+						setter.dynamic ? "a, " : "", "(" + param + ") arg[0]); return null; }}");
+			}
+			final boolean isField = getter != null && getter.isField;
+			sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(node.clazz)).append(",")
+					.append(toJavaString(escapeDoubleQuotes(node.doc))).append(",");
+			if (isField) {
+				sb.append("new OperatorProto(").append(toJavaString(node.name)).append(", null, ").append(getterHelper)
+						.append(", false, true, ").append(node.type).append(",").append(toClassObject(node.clazz))
+						.append(", false, ").append(node.type).append(",").append(node.contents).append(",")
+						.append(node.index).append(",").append("AI").append(")");
+			} else {
+				sb.append("desc(").append(node.type).append(",");
+				toOwnArrayOfStrings(node.facets, sb).append("),").append(getterHelper).append(',').append(initerHelper)
+						.append(',').append(setterHelper);
+			}
+			sb.append(");");
+		}
+
+	}
+
+	@Override
+	public Vars createElement(final ProcessorContext context, final Element e, final vars vars) {
+		final Vars result = new Vars();
 		final TypeMirror clazz = e.asType();
-		isField = !context.getTypeUtils().isAssignable(clazz, context.getISkill())
+		final boolean isField = !context.getTypeUtils().isAssignable(clazz, context.getISkill())
 				&& !context.getTypeUtils().isAssignable(clazz, context.getIAgent());
-
 		final Set<String> undocumented = new HashSet<>();
 		for (final var s : vars.value()) {
-			final org.w3c.dom.Element child = document.createElement("var");
-			final doc[] docs = s.doc();
-			if (docs.length == 0 && !s.internal()) {
-				undocumented.add(s.name());
-			}
-			child.setAttribute("type", String.valueOf(s.type()));
-			final int type = s.type();
-			child.setAttribute("contents", String.valueOf(s.of()));
-			final int contentType = s.of();
-			child.setAttribute("index", String.valueOf(s.index()));
-			child.setAttribute("name", s.name());
-			final String varName = s.name();
-			child.setAttribute("class", rawNameOf(context, e));
-			if (s.constant()) {
-				child.setAttribute("const", "true");
-			}
-			if (s.depends_on().length > 0) {
-				child.setAttribute("depends_on", arrayToString(s.depends_on()));
-			}
-			if (s.init().length() > 0) {
-				child.setAttribute("init", s.init());
-			}
+			final Vars.Var child = new Var();
 
-			/**
-			 * 
-			 */
+			child.type = s.type();
+			child.contents = s.of();
+			child.index = s.index();
+			child.name = s.name();
+			child.clazz = rawNameOf(context, e.asType());
+			child.isConst = s.constant();
+			child.dependsOn = s.depends_on();
+			child.init = s.init();
 
 			final StringBuilder sb = new StringBuilder();
-			sb.append("type").append(',').append(type).append(',');
-			sb.append("name").append(',').append(varName).append(',');
-			sb.append("const").append(',').append(s.constant() ? "true" : "false");
+			sb.append("type").append(',').append(child.type).append(',').append("name").append(',').append(child.name)
+					.append(',').append("const").append(',').append(s.constant());
 
 			final String[] dependencies = s.depends_on();
 			if (dependencies.length > 0) {
@@ -75,35 +162,39 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				depends += "]";
 				sb.append(',').append("depends_on").append(',').append(depends);
 			}
-			if (contentType != 0) {
-				sb.append(',').append("of").append(',').append(contentType);
+			if (child.contents != 0) {
+				sb.append(',').append("of").append(',').append(child.contents);
 			}
-			final String init = s.init();
+			final String init = child.init;
 			if (!"".equals(init)) {
-				sb.append(',').append("init").append(',').append(replaceCommas(init));
+				sb.append(',').append("init").append(',').append(init.replace(",", "COMMA"));
 			}
-			child.setAttribute("facets", sb.toString());
+			child.facets = sb.toString();
 
 			addGetter(context, e, isField, s.name(), child);
 			addSetter(context, e, isField, s.name(), child);
 
+			final doc[] docs = s.doc();
 			String d;
 			if (docs.length == 0) {
+				if (!s.internal()) {
+					undocumented.add(s.name());
+				}
 				d = "";
 			} else {
 				d = docs[0].value();
-				child.setAttribute("doc", d);
+				child.doc = d;
 			}
-			appendChild(node, child);
+			result.vars.add(child);
 		}
 		if (!undocumented.isEmpty()) {
 			context.emitWarning("GAML: vars '" + undocumented + "' are not documented", e);
 		}
-
+		return result;
 	}
 
 	private void addSetter(final ProcessorContext context, final Element e, final boolean isField, final String name,
-			final org.w3c.dom.Element node) {
+			final Var var) {
 		for (final Element m : e.getEnclosedElements()) {
 			final setter setter = m.getAnnotation(setter.class);
 			if (setter != null && setter.value().equals(name)) {
@@ -111,33 +202,30 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final List<? extends VariableElement> argParams = ex.getParameters();
 				final int n = argParams.size();
 				if (n == 0) {
-					context.emitError("Setters must declare at least one argument (or 2 if the scope is passed", ex);
+					context.emitError("GAML: Setters must declare at least one argument (or 2 if the scope is passed",
+							ex);
 					return;
 				}
 				final String[] args = new String[n];
 				for (int i = 0; i < args.length; i++) {
-					args[i] = rawNameOf(context, argParams.get(i));
+					args[i] = rawNameOf(context, argParams.get(i).asType());
 				}
 
 				final boolean scope = n > 0 && args[0].contains("IScope");
-				final org.w3c.dom.Element child = document.createElement("setter");
-				child.setAttribute("method", ex.getSimpleName().toString());
+				final Setter child = new Setter();
+				child.method = ex.getSimpleName().toString();
 				final boolean isDynamic = !scope && n == 2 || scope && n == 3;
-				child.setAttribute("param_class", isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
-				if (isDynamic) {
-					child.setAttribute("dynamic", String.valueOf(isDynamic));
-				}
-				if (scope) {
-					child.setAttribute("scope", "true");
-				}
-				appendChild(node, child); // method
+				child.param_class = isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1];
+				child.dynamic = isDynamic;
+				child.scope = scope;
+				var.setter = child;
 				break;
 			}
 		}
 	}
 
 	public void addGetter(final ProcessorContext context, final Element e, final boolean isField, final String varName,
-			final org.w3c.dom.Element node) {
+			final Var var) {
 		for (final Element m : e.getEnclosedElements()) {
 			final getter getter = m.getAnnotation(getter.class);
 			if (getter != null && getter.value().equals(varName)) {
@@ -145,26 +233,20 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final List<? extends VariableElement> argParams = ex.getParameters();
 				final String[] args = new String[argParams.size()];
 				for (int i = 0; i < args.length; i++) {
-					args[i] = rawNameOf(context, argParams.get(i));
+					args[i] = rawNameOf(context, argParams.get(i).asType());
 				}
 				final int n = args.length;
 				final boolean scope = n > 0 && args[0].contains("IScope");
 
-				final org.w3c.dom.Element child = document.createElement("getter");
+				final Getter child = new Getter();
 
-				child.setAttribute("method", ex.getSimpleName().toString());
-				child.setAttribute("returns", rawNameOf(context, ex.getReturnType()));
-				child.setAttribute("dynamic", String.valueOf(!scope && n > 0 || scope && n > 1));
-				if (isField) {
-					child.setAttribute("field", "true");
-				}
-				if (scope) {
-					child.setAttribute("scope", "true");
-				}
-				if (getter.initializer()) {
-					child.setAttribute("initializer", "true");
-				}
-				appendChild(node, child); // method
+				child.method = ex.getSimpleName().toString();
+				child.returns = rawNameOf(context, ex.getReturnType());
+				child.dynamic = !scope && n > 0 || scope && n > 1;
+				child.isField = isField;
+				child.scope = scope;
+				child.initializer = getter.initializer();
+				var.getter = child;
 				break;
 			}
 		}
@@ -175,108 +257,30 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		return vars.class;
 	}
 
-	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element vars) {
-
-		final NodeList list = vars.getElementsByTagName("var");
-		for (int i = 0; i < list.getLength(); i++) {
-			final org.w3c.dom.Element node = (org.w3c.dom.Element) list.item(i);
-			final String type = toType(node.getAttribute("type"));
-			final String contentType = toType(node.getAttribute("contents"));
-			final String keyType = toType(node.getAttribute("index"));
-			final String name = toJavaString(node.getAttribute("name"));
-			final String clazz = node.getAttribute("class");
-			// final String facets = segments[5];
-			String getterHelper = null;
-			String initerHelper = null;
-			String setterHelper = null;
-			boolean isField = false;
-			// getter
-			final org.w3c.dom.Element getter = findFirstChildNamed(node, "getter");
-			if (getter != null) {
-				final String getterName = getter.getAttribute("method");
-
-				final String ret = checkPrim(getter.getAttribute("returns"));
-				final boolean dynamic = getter.getAttribute("dynamic").equals("true");
-				isField = getter.getAttribute("field").equals("true");
-				final boolean scope = getter.getAttribute("scope").equals("true");
-
-				if (isField) {
-					getterHelper = concat("new GamaHelper(){", OVERRIDE, "public ", ret, " run(", ISCOPE, " scope, ",
-							OBJECT, "... v){return (v==null||v.length==0)?", returnWhenNull(ret), ":((", clazz,
-							") v[0]).", getterName, scope ? "(scope);}}" : "();}}");
-				} else {
-					getterHelper = concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ", ret,
-							" run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT,
-							" t, Object... v) {return t == null?", returnWhenNull(ret), ":((", clazz, ")t).",
-							getterName, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") + "a);}}" : ");}}");
-				}
-
-				// initer
-				final boolean init = getter.getAttribute("initializer").equals("true");
-				if (init) {
-					initerHelper = getterHelper;
-				}
-
-			}
-
-			// setter
-			final org.w3c.dom.Element setter = findFirstChildNamed(node, "setter");
-			if (setter != null) {
-				final String setterName = setter.getAttribute("method");
-
-				final String param = checkPrim(setter.getAttribute("param_class"));
-				final boolean dyn = setter.getAttribute("dynamic").equals("true");
-				final boolean scope = setter.getAttribute("scope").equals("true");
-				setterHelper = concat("new GamaHelper(", toClassObject(clazz), ")", "{", OVERRIDE, "public Object ",
-						" run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT, " t, Object... arg)",
-						" {if (t != null) ((", clazz, ") t).", setterName, "(", scope ? "scope," : "", dyn ? "a, " : "",
-						"(" + param + ") arg[0]); return null; }}");
-
-			}
-			sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz)).append(",")
-					.append(toJavaString(escapeDoubleQuotes(node.getAttribute("doc")))).append(",");
-			if (isField) {
-				sb.append("new OperatorProto(").append(name).append(", null, ").append(getterHelper)
-						.append(", false, true, ").append(type).append(",").append(toClassObject(clazz))
-						.append(", false, ").append(type).append(",").append(contentType).append(",").append(keyType)
-						.append(",").append("AI").append(")");
-			} else {
-				sb.append("desc(").append(type).append(",").append(toOwnArrayOfStrings(node.getAttribute("facets")))
-						.append("),").append(getterHelper).append(',').append(initerHelper).append(',')
-						.append(setterHelper);
-			}
-			sb.append(");");
+	protected StringBuilder toOwnArrayOfStrings(final String array, final StringBuilder sb) {
+		if (array == null || array.equals("")) {
+			sb.append("AS");
+			return sb;
 		}
-
-	}
-
-	protected String toOwnArrayOfStrings(final String array) {
-		if (array == null || array.equals("")) { return "AS"; }
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split("\\,", -1);
-		String result = "S(";
-		for (int i = 0; i < segments.length; i++) {
-			if (i > 0) {
-				result += ",";
+		sb.append("S(");
+		for (final String segment : segments) {
+			if (segment.isEmpty()) {
+				sb.append("(String)null");
+			} else {
+				final int i = ss1.indexOf(segment);
+				if (i == -1) {
+					sb.append("\"").append(segment.replace("COMMA", ",").replace("\"", "\\\"")).append("\"");
+				} else {
+					sb.append(ss2.get(i));
+				}
 			}
-			result += toOwnJavaString(segments[i]);
+			sb.append(',');
 		}
-		result += ")";
-		return result;
-	}
-
-	protected String toOwnJavaString(final String s) {
-		if (s == null || s.isEmpty()) { return "(String)null"; }
-		final int i = ss1.indexOf(s);
-		return i == -1 ? "\"" + ownReplaceCommas(s) + "\"" : ss2.get(i);
-	}
-
-	private String ownReplaceCommas(final String s) {
-		String result = s.replace("COMMA", ",");
-		result = result.replace("\"", "\\\"");
-		return result;
+		sb.setLength(sb.length() - 1);
+		sb.append(')');
+		return sb;
 	}
 
 }

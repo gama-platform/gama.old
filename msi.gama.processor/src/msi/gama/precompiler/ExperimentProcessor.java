@@ -2,15 +2,14 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
+import msi.gama.precompiler.ExperimentProcessor.Exp;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 
-public class ExperimentProcessor extends ElementProcessor<experiment> {
+public class ExperimentProcessor extends ElementProcessor<experiment, Exp> {
 
-	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final experiment exp,
-			final org.w3c.dom.Element node) {
-		node.setAttribute("name", exp.value());
-		node.setAttribute("class", rawNameOf(context, e));
+	public static class Exp {
+		String name;
+		String clazz;
 	}
 
 	@Override
@@ -19,16 +18,19 @@ public class ExperimentProcessor extends ElementProcessor<experiment> {
 	}
 
 	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Exp node) {
+		sb.append(in).append("_experiment(").append(toJavaString(node.name)).append(',')
+				.append(toClassObject(node.clazz)).append(", new IExperimentAgentCreator(){").append(OVERRIDE)
+				.append("public IExperimentAgent create(IPopulation pop){return new ").append(node.clazz)
+				.append("(pop);}}").append(");");
+	}
 
-		final String name = node.getAttribute("name");
-		final String clazz = node.getAttribute("class");
-		sb.append(concat(in, "_experiment(", toJavaString(name), ",", toClassObject(clazz),
-				", new IExperimentAgentCreator(){", OVERRIDE,
-				"public IExperimentAgent create(IPopulation pop){return new ", clazz, "(pop);}}"));
-		sb.append(");");
-
+	@Override
+	public Exp createElement(final ProcessorContext context, final Element e, final experiment exp) {
+		final Exp result = new Exp();
+		result.name = exp.value();
+		result.clazz = rawNameOf(context, e.asType());
+		return result;
 	}
 
 }

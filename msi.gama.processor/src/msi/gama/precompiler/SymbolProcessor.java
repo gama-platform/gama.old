@@ -1,7 +1,6 @@
 package msi.gama.precompiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +12,6 @@ import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import org.w3c.dom.NodeList;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -22,89 +19,164 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.SymbolProcessor.Sy;
+import msi.gama.precompiler.SymbolProcessor.Sy.Facet;
 
-public class SymbolProcessor extends ElementProcessor<symbol> {
+public class SymbolProcessor extends ElementProcessor<symbol, Sy> {
+
+	public static class Sy {
+
+		public String validator;
+		public String serializer;
+		public String[] names;
+		public int kind;
+		public String clazz;
+		public boolean remote;
+		public boolean withArgs;
+		public boolean scope;
+		public boolean sequence;
+		public boolean unique;
+		public boolean uniqueName;
+		public String[] insideSymbols;
+		public int[] insideKinds;
+		public List<Facet> facets = new ArrayList<>();
+		public String omissible;
+
+		public static class Facet {
+
+			public String name;
+			public int[] types;
+			public int contents;
+			public int index;
+			public String[] values;
+			public boolean optional;
+			public boolean internal;
+			public String doc;
+
+		}
+	}
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final symbol symbol,
-			final org.w3c.dom.Element node) {
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Sy node) {
+		String validator = node.validator;
+		if (validator == null || validator.isEmpty()) {
+			validator = "null";
+		} else {
+			validator = "new " + validator + "()";
+		}
+		String serializer = node.serializer;
+		if (serializer == null || serializer.isEmpty()) {
+			serializer = "null";
+		} else {
+			serializer = "new " + serializer + "()";
+		}
+		final StringBuilder constants = new StringBuilder();
+		final StringBuilder fb = new StringBuilder();
+		if (node.facets.isEmpty()) {
+			fb.append("null");
+		} else {
+			fb.append("P(");
+			for (int i = 0; i < node.facets.size(); i++) {
+				final Facet child = node.facets.get(i);
+				if (i > 0) {
+					fb.append(',');
+				}
+				fb.append("new FacetProto(").append(toJavaString(child.name)).append(',');
+				toArrayOfInts(child.types, fb).append(',').append(child.contents).append(',').append(child.index)
+						.append(',');
+				final String[] values = child.values;
+				if (values != null && values.length > 0) {
+					toArrayOfStrings(values, constants).append(',');
+				}
+				toArrayOfStrings(values, fb).append(',').append(child.optional).append(',').append(child.internal)
+						.append(',').append(toJavaString(escapeDoubleQuotes(child.doc))).append(')');
+			}
+			fb.append(')');
+		}
+
+		sb.append(in).append("_symbol(");
+		toArrayOfStrings(node.names, sb).append(',').append(toClassObject(node.clazz)).append(",");
+		sb.append(validator).append(',').append(serializer);
+		sb.append(",").append(node.kind).append(',').append(node.remote).append(',').append(node.withArgs).append(',')
+				.append(node.scope).append(',');
+		sb.append(node.sequence).append(',').append(node.unique).append(',').append(node.uniqueName).append(',');
+		toArrayOfStrings(node.insideSymbols, sb).append(",");
+		toArrayOfInts(node.insideKinds, sb).append(',').append(fb).append(',').append(toJavaString(node.omissible))
+				.append(',').append("new ISymbolConstructor() {").append(OVERRIDE).append("public ISymbol create(")
+				.append(IDESC).append(" d) {return new ").append(node.clazz).append("(d);}}");
+		sb.append(");");
+		if (constants.length() > 0) {
+			constants.setLength(constants.length() - 1);
+			sb.append(ln).append("_constants(").append(constants).append(");");
+		}
+
+	}
+
+	final static Set<String> UNDOCUMENTED = new HashSet<>();
+
+	@Override
+	public Sy createElement(final ProcessorContext context, final Element e, final symbol symbol) {
+		final Sy node = new Sy();
 		addValidator(context, e, node);
 		addSerializer(context, e, node);
-		node.setAttribute("names", arrayToString(symbol.name()));
-		node.setAttribute("kind", String.valueOf(symbol.kind()));
-		node.setAttribute("class", rawNameOf(context, e));
-		if (symbol.remote_context()) {
-			node.setAttribute("remote", "true");
-		}
-		if (symbol.with_args()) {
-			node.setAttribute("args", "true");
-		}
-		if (symbol.with_scope()) {
-			node.setAttribute("scope", "true");
-		}
-		if (symbol.with_sequence()) {
-			node.setAttribute("sequence", "true");
-		}
-		if (symbol.unique_in_context()) {
-			node.setAttribute("unique", "true");
-		}
-		if (symbol.unique_name()) {
-			node.setAttribute("unique_name", "true");
-		}
+		node.names = symbol.name();
+		node.kind = symbol.kind();
+		node.clazz = rawNameOf(context, e.asType());
+		node.remote = symbol.remote_context();
+		node.withArgs = symbol.with_args();
+		node.scope = symbol.with_scope();
+		node.sequence = symbol.with_sequence();
+		node.unique = symbol.unique_in_context();
+		node.uniqueName = symbol.unique_name();
+
 		final inside inside = e.getAnnotation(inside.class);
 		if (inside != null) {
-			final org.w3c.dom.Element child = document.createElement("inside");
-			child.setAttribute("symbols", arrayToString(inside.symbols()));
-			child.setAttribute("kinds", arrayToString(inside.kinds()));
-			appendChild(node, child);
+			node.insideSymbols = inside.symbols();
+			node.insideKinds = inside.kinds();
 		}
 		final facets facets = e.getAnnotation(facets.class);
-		final Set<String> undocumented = new HashSet<>();
+
 		if (facets != null) {
+			node.omissible = facets.omissible();
 			for (final facet facet : facets.value()) {
-				final org.w3c.dom.Element child = document.createElement("facet");
-				child.setAttribute("name", facet.name());
-				child.setAttribute("types", arrayToString(facet.type()));
-				if (facet.of() != 0) {
-					child.setAttribute("contents", String.valueOf(facet.of()));
-				}
-				if (facet.index() != 0) {
-					child.setAttribute("index", String.valueOf(facet.index()));
-				}
+				final Facet child = new Facet();
+				child.name = facet.name();
+				child.types = facet.type();
+				child.contents = facet.of();
+				child.index = facet.index();
 				if (facet.values().length > 0) {
-					child.setAttribute("values", arrayToString(facet.values()));
+					child.values = facet.values();
 				}
-				if (facet.optional()) {
-					child.setAttribute("optional", "true");
-				}
-				if (facet.internal()) {
-					child.setAttribute("internal", "true");
-				}
+				child.optional = facet.optional();
+				child.internal = facet.internal();
 				final doc[] d = facet.doc();
 				if (d == null || d.length == 0) {
 					if (!facet.internal()) {
-						undocumented.add(facet.name());
+						UNDOCUMENTED.add(facet.name());
 					}
 				} else {
-					child.setAttribute("doc", docToString(facet.doc()));
+					child.doc = docToString(facet.doc());
 				}
-				appendChild(node, child);
+				node.facets.add(child);
 			}
-			if (!undocumented.isEmpty()) {
-				context.emitWarning("GAML: facets '" + undocumented + "' are not documented", e);
+			if (!UNDOCUMENTED.isEmpty()) {
+				context.emitWarning("GAML: facets '" + UNDOCUMENTED + "' are not documented", e);
+				UNDOCUMENTED.clear();
 			}
-			node.setAttribute("omissible", facets.omissible());
 		}
+		verifyDoc(context, e, symbol);
+		return node;
+	}
 
+	private void verifyDoc(final ProcessorContext context, final Element e, final symbol symbol) {
 		final doc d = e.getAnnotation(doc.class);
 
 		if (d == null && !symbol.internal()) {
 			context.emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
 		}
-
 	}
 
-	public void addValidator(final ProcessorContext context, final Element e, final org.w3c.dom.Element node) {
+	public void addValidator(final ProcessorContext context, final Element e, final Sy node) {
 		validator validator = e.getAnnotation(validator.class);
 		TypeMirror sup = ((TypeElement) e).getSuperclass();
 		// Workaround for bug
@@ -131,11 +203,11 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			type_validator = e1.getTypeMirrors().get(0);
 		}
 		if (type_validator != null) {
-			node.setAttribute("validator", rawNameOf(context, type_validator));
+			node.validator = rawNameOf(context, type_validator);
 		}
 	}
 
-	public void addSerializer(final ProcessorContext context, final Element e, final org.w3c.dom.Element node) {
+	public void addSerializer(final ProcessorContext context, final Element e, final Sy node) {
 		TypeMirror sup;
 		sup = ((TypeElement) e).getSuperclass();
 		serializer serializer = e.getAnnotation(serializer.class);
@@ -160,113 +232,13 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			type_serializer = e1.getTypeMirrors().get(0);
 		}
 		if (type_serializer != null) {
-			node.setAttribute("serializer", rawNameOf(context, type_serializer));
+			node.serializer = rawNameOf(context, type_serializer);
 		}
 	}
 
 	@Override
 	protected Class<symbol> getAnnotationClass() {
 		return symbol.class;
-	}
-
-	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
-
-		String validator = node.getAttribute("validator");
-		if (validator.isEmpty()) {
-			validator = "null";
-		} else {
-			validator = "new " + validator + "()";
-		}
-		String serializer = node.getAttribute("serializer");
-		if (serializer.isEmpty()) {
-			serializer = "null";
-		} else {
-			serializer = "new " + serializer + "()";
-		}
-		final String names = toArrayOfStrings(node.getAttribute("names"));
-		final String kind = node.getAttribute("kind");
-		final String clazz = node.getAttribute("class");
-		final String remote = toBoolean(node.getAttribute("remote"));
-		final String args = toBoolean(node.getAttribute("args"));
-		final String scope = toBoolean(node.getAttribute("scope"));
-		final String sequence = toBoolean(node.getAttribute("sequence"));
-		final String unique = toBoolean(node.getAttribute("unique"));
-		final String name_unique = toBoolean(node.getAttribute("unique_name"));
-		String parentSymbols = "AI", parentKinds = "AS";
-		final org.w3c.dom.Element inside = findFirstChildNamed(node, "inside");
-		if (inside != null) {
-			parentSymbols = toArrayOfStrings(inside.getAttribute("symbols"));
-			parentKinds = toArrayOfInts(inside.getAttribute("kinds"));
-		}
-		String facets;
-		String constants = "";
-
-		final List<org.w3c.dom.Element> nodes = findChildrenNamed(node, "facet");
-		if (nodes.isEmpty()) {
-			facets = "null";
-		} else {
-			facets = "P(";
-			for (int i = 0; i < nodes.size(); i++) {
-				final org.w3c.dom.Element child = nodes.get(i);
-				if (i > 0) {
-					facets += ",";
-				}
-				facets += "new FacetProto(";
-				facets += toJavaString(child.getAttribute("name")) + ',';
-				facets += toArrayOfInts(child.getAttribute("types")) + ",";
-				facets += toType(child.getAttribute("contents")) + ",";
-				facets += toType(child.getAttribute("index")) + ",";
-				final String values = child.getAttribute("values");
-				if (!values.isEmpty()) {
-					constants += toArrayOfStrings(values) + ",";
-				}
-				facets += toArrayOfStrings(values) + ",";
-				facets += toBoolean(child.getAttribute("optional")) + ',';
-				facets += toBoolean(child.getAttribute("internal")) + ',';
-				facets += toJavaString(escapeDoubleQuotes(child.getAttribute("doc")));
-				facets += ")";
-			}
-			facets += ")";
-		}
-
-		final String omissible = node.getAttribute("omissible");
-
-		final String sc = concat("new ISymbolConstructor() {", OVERRIDE,
-				"public ISymbol create(" + IDESC + " d) {return new ", clazz, "(d);}}");
-		sb.append(in).append("_symbol(").append(names).append(',').append(toClassObject(clazz)).append(",");
-		sb.append(validator).append(',').append(serializer);
-		sb.append(",").append(kind).append(',').append(remote).append(',').append(args).append(',').append(scope)
-				.append(',');
-		sb.append(sequence).append(',').append(unique).append(',').append(name_unique).append(',').append(parentSymbols)
-				.append(",");
-		sb.append(parentKinds).append(',').append(facets).append(',').append(toJavaString(omissible)).append(',')
-				.append(sc);
-		// ???? if (segments.length > pointer) {
-		// for (int i = pointer; i < segments.length; i++) {
-		// sb.append(',').append(toJavaString(segments[i]));
-		// }
-		// }
-		sb.append(");");
-		if (!constants.isEmpty()) {
-			constants = constants.substring(0, constants.length() - 1);
-			sb.append(ln).append("_constants(").append(constants).append(");");
-		}
-
-	}
-
-	protected List<org.w3c.dom.Element> findChildrenNamed(final org.w3c.dom.Element node, final String name) {
-		if (node == null) { return Collections.EMPTY_LIST; }
-		if (name == null) { return Collections.EMPTY_LIST; }
-		final NodeList list = node.getElementsByTagName(name);
-		if (list.getLength() == 0) { return Collections.EMPTY_LIST; }
-		final List<org.w3c.dom.Element> result = new ArrayList<>();
-		for (int i = 0; i < list.getLength(); i++) {
-			final org.w3c.dom.Element child = (org.w3c.dom.Element) list.item(i);
-			result.add(child);
-		}
-		return result;
 	}
 
 }

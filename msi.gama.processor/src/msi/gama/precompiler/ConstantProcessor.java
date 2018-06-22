@@ -1,32 +1,11 @@
 package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.VariableElement;
 
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 
-public class ConstantProcessor extends ElementProcessor<constant> {
-
-	@Override
-	protected void populateElement(final ProcessorContext context, final Element e, final constant constant,
-			final org.w3c.dom.Element node) {
-		final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
-		if (documentation == null) {
-			context.emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
-		}
-		final String ret = rawNameOf(context, e.asType());
-		final String constantName = constant.value();
-		final Object valueConstant = ((VariableElement) e).getConstantValue();
-		node.setAttribute("returns", ret);
-		node.setAttribute("name", constantName);
-		node.setAttribute("value", String.valueOf(valueConstant));
-		for (final String s : constant.altNames()) {
-			final org.w3c.dom.Element alt = document.createElement("alt");
-			alt.setAttribute("name", s);
-			appendChild(node, alt);
-		}
-	}
+public class ConstantProcessor extends ElementProcessor<constant, Object> {
 
 	@Override
 	protected Class<constant> getAnnotationClass() {
@@ -34,9 +13,19 @@ public class ConstantProcessor extends ElementProcessor<constant> {
 	}
 
 	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
-		// Seems nothing is done.
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Object op) {}
+
+	@Override
+	public Object createElement(final ProcessorContext context, final Element e, final constant constant) {
+		verifyDoc(context, e, constant);
+		return null;
+	}
+
+	private void verifyDoc(final ProcessorContext context, final Element e, final constant constant) {
+		final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
+		if (documentation == null) {
+			context.emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
+		}
 	}
 
 }

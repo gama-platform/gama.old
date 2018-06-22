@@ -281,7 +281,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			System.out.println("CURRENT PLUGIN = " + currentPlugin);
 			return obj;
 		} catch (final Exception e) {
-			// emitWarning(e.getMessage(), null);
+			emitWarning("Exception raised while creating the source file: " + e.getMessage(), e);
 		}
 		return null;
 	}

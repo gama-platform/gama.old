@@ -10,68 +10,57 @@ import javax.lang.model.element.VariableElement;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.OperatorProcessor.Op;
 
-public class OperatorProcessor extends ElementProcessor<operator> {
+public class OperatorProcessor extends ElementProcessor<operator, Op> {
 
 	@Override
-	protected void populateElement(final ProcessorContext context, final Element method, final operator op,
-			final org.w3c.dom.Element node) {
-
+	public Op createElement(final ProcessorContext context, final Element method, final operator op) {
+		// NAMES
 		final String names[] = op.value();
 		if (names == null) {
 			context.emitError("GAML operators need to have at least one name", method);
-			return;
+			return null;
 		}
-		final String name = op.value()[0];
-		doc documentation = method.getAnnotation(doc.class);
-		if (documentation == null) {
-			final doc[] docs = op.doc();
-			if (docs.length > 0) {
-				documentation = op.doc()[0];
-			}
-		}
-
-		if (documentation == null && !op.internal()) {
-			context.emitWarning("GAML: operator '" + name + "' is not documented", method);
-		}
+		// DOC
+		verifyDoc(context, method, op);
+		// MODIFIERS
 		final Set<Modifier> modifiers = method.getModifiers();
-
-		final boolean isStatic = modifiers.contains(Modifier.STATIC);
 
 		if (!modifiers.contains(Modifier.PUBLIC)) {
 			context.emitError("GAML: operators can only be implemented by public (or public static) methods", method);
-			return;
+			return null;
 		}
-		final String declClass = rawNameOf(context, method.getEnclosingElement());
+
+		final String declClass = rawNameOf(context, method.getEnclosingElement().asType());
 		final List<? extends VariableElement> argParams = ((ExecutableElement) method).getParameters();
 		final String[] args = new String[argParams.size()];
 		for (int i = 0; i < args.length; i++) {
 			final VariableElement ve = argParams.get(i);
 			switch (ve.asType().getKind()) {
 				case ARRAY:
-					context.emitError(
-							"GAML: operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (IList or IMatrix) ",
-							ve);
-					return;
+					context.emitError("GAML: arrays should be wrapped in a GAML container (IList or IMatrix) ", ve);
+					return null;
 				case CHAR:
 				case BYTE:
 				case SHORT:
-					context.emitWarning("GAML: The type of this argument will be casted to int", ve);
+					context.emitWarning("GAML: This argument will be casted to int", ve);
 					break;
 				default:
 			}
-			args[i] = rawNameOf(context, argParams.get(i));
+			args[i] = rawNameOf(context, argParams.get(i).asType());
 			context.verifyClassTypeCompatibility(args[i], ve);
 
 		}
 		final int n = args.length;
 		final boolean scope = n > 0 && args[0].contains("IScope");
+		final boolean isStatic = modifiers.contains(Modifier.STATIC);
 		if (n == 0 && !isStatic || isStatic && scope && n == 1) {
 			context.emitError("GAML: an operator needs to have at least one operand", method);
-			return;
+			return null;
 		}
 		final int actual_args_number = n + (scope ? -1 : 0) + (!isStatic ? 1 : 0);
-		String methodName = method.getSimpleName().toString();
+
 		final String[] classes = new String[actual_args_number];
 		int begin = 0;
 		if (!isStatic) {
@@ -85,7 +74,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			}
 		} catch (final Exception e1) {
 			context.emitError("An exception occured in the processing of operators: ", e1, method);
-			return;
+			return null;
 		}
 
 		final String ret = rawNameOf(context, ((ExecutableElement) method).getReturnType());
@@ -93,50 +82,67 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 		switch (((ExecutableElement) method).getReturnType().getKind()) {
 			case ARRAY:
-				context.emitError(
-						"GAML: operators cannot return Java arrays. Please wrap this result in a GAML container type (IList or IMatrix) ",
-						method);
-				return;
+				context.emitError("GAML: Wrap the returned array in a GAML container (IList or IMatrix) ", method);
+				return null;
 			case VOID: // does not seem to be recognized
 			case NULL:
 			case NONE:
 			case ERROR:
 				context.emitError("GAML operators need to return a value.", method);
-				return;
+				return null;
 			case CHAR:
 			case BYTE:
 			case SHORT:
-				context.emitWarning("GAML: the return type of this operator will be casted to integer", method);
+				context.emitWarning("GAML: the return type will be casted to integer", method);
 				break;
 			case EXECUTABLE:
 				context.emitError("GAML: operators cannot return Java executables", method);
-				return;
+				return null;
 			default:
 		}
 		if (ret.equals("void")) {
 			context.emitError("GAML: operators need to return a value", method);
-			return;
+			return null;
 		}
+		final Op node = new Op();
+		node.method = isStatic ? declClass + "." + method.getSimpleName() : method.getSimpleName().toString();
+		node.args = classes;
+		node.isConst = op.can_be_const();
+		node.type = op.type();
+		node.contentsType = op.content_type();
+		node.contents_contentsType = op.content_type_content_type();
+		node.indexType = op.index_type();
+		node.iterator = op.iterator();
+		node.expectedContentsType = op.expected_content_type();
+		node.returns = ret;
+		node.contextual = scope;
+		node.isStatic = isStatic;
+		node.names = names;
 
-		methodName = isStatic ? declClass + "." + methodName : methodName;
-		node.setAttribute("args", arrayToString(classes));
-		node.setAttribute("const", String.valueOf(op.can_be_const()));
-		node.setAttribute("type", "" + (op.type()));
-		node.setAttribute("contents", "" + (op.content_type()));
-		node.setAttribute("contents_content_type", "" + (op.content_type_content_type()));
-		node.setAttribute("index", "" + (op.index_type()));
-		node.setAttribute("iterator", String.valueOf(op.iterator()));
-		node.setAttribute("expected_contents", arrayToString(op.expected_content_type()));
-		node.setAttribute("returns", ret);
-		node.setAttribute("method", methodName);
-		node.setAttribute("static", String.valueOf(isStatic));
-		node.setAttribute("contextual", String.valueOf(scope));
-		node.setAttribute("names", arrayToString(names));
+		return node;
 	}
 
-	@Override
-	protected boolean isEqual(final org.w3c.dom.Element existingNode, final org.w3c.dom.Element newNode) {
-		return existingNode.isEqualNode(newNode);
+	private void verifyDoc(final ProcessorContext context, final Element method, final operator op) {
+		doc documentation = method.getAnnotation(doc.class);
+		if (documentation == null) {
+			final doc[] docs = op.doc();
+			if (docs.length > 0) {
+				documentation = op.doc()[0];
+			}
+		}
+
+		if (documentation == null && !op.internal()) {
+			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", method);
+		}
+	}
+
+	static class Op {
+		String[] args, names;
+		boolean isConst, iterator, isStatic, contextual;
+		int type, contentsType, contents_contentsType, indexType;
+		int[] expectedContentsType;
+		String returns;
+		String method;
 	}
 
 	@Override
@@ -145,52 +151,42 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	}
 
 	@Override
-	protected void populateJava(final ProcessorContext context, final StringBuilder sb,
-			final org.w3c.dom.Element node) {
-
-		final String[] classes = splitInClassObjects(node.getAttribute("args"));
-		final String classNames = toArrayOfClasses(node.getAttribute("args"));
-		final String kw = toArrayOfStrings(node.getAttribute("names"));
-		final String content_type_expected = toArrayOfInts(node.getAttribute("expected_contents"));
-		final String canBeConst = toBoolean(node.getAttribute("const"));
-		final String type = node.getAttribute("type");
-		final String contentType = toType(node.getAttribute("contents"));
-		final String contentTypeContentType = toType(node.getAttribute("contents_content_type"));
-		final String indexType = toType(node.getAttribute("index"));
-		final boolean iterator = node.getAttribute("iterator").equals("true");
-		final String ret = node.getAttribute("returns");
-		final String m = node.getAttribute("method");
-		final boolean stat = node.getAttribute("static").equals("true");
-		final boolean scope = node.getAttribute("contextual").equals("true");
-
-		final String helper = concat("new GamaHelper(){", OVERRIDE, "public ", checkPrim(ret), " run(", ISCOPE,
-				" s,Object... o)", buildNAry(classes, m, ret, stat, scope), "}");
-
-		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',')
-				.append(buildMethodCall(classes, m, stat, scope)).append(',').append(classNames).append(',')
-				.append(content_type_expected).append(',').append(toClassObject(ret)).append(',').append(canBeConst)
-				.append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',')
-				.append(contentTypeContentType).append(',').append(helper).append(");");
-
+	public void createJava(final ProcessorContext context, final StringBuilder sb, final Op node) {
+		sb.append(in).append(node.iterator ? "_iterator(" : "_operator(");
+		toArrayOfStrings(node.names, sb).append(',');
+		buildMethodCall(sb, node.args, node.method, node.isStatic, node.contextual);
+		sb.append(',');
+		toArrayOfClasses(sb, node.args).append(',');
+		toArrayOfInts(node.expectedContentsType, sb).append(',').append(toClassObject(node.returns)).append(',')
+				.append(node.isConst).append(',').append(node.type).append(',').append(node.contentsType).append(',')
+				.append(node.indexType).append(',').append(node.contents_contentsType).append(',');
+		sb.append("new GamaHelper(){").append(OVERRIDE).append("public ").append(checkPrim(node.returns))
+				.append(" run(").append(ISCOPE).append(" s,Object... o)");
+		buildNAry(sb, node.args, node.method, node.returns, node.isStatic, node.contextual);
+		sb.append("});");
 	}
 
-	protected static String buildNAry(final String[] classes, final String name, final String retClass,
-			final boolean stat, final boolean scope) {
+	protected static void buildNAry(final StringBuilder sb, final String[] classes, final String name,
+			final String retClass, final boolean stat, final boolean scope) {
 		final String ret = checkPrim(retClass);
 		final int start = stat ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
-		String body = stat ? concat("{return ", name, "(", firstArg) : concat("{return o[0]", " == null?",
-				returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(", firstArg);
+		if (stat) {
+			sb.append("{return ").append(name).append("(").append(firstArg);
+		} else {
+			sb.append("{return o[0] == null?").append(returnWhenNull(ret)).append(":((").append(classes[0])
+					.append(")o[0]).").append(name).append('(').append(firstArg);
+		}
 		if (start < classes.length) {
 			if (scope) {
-				body += ",";
+				sb.append(',');
 			}
 			for (int i = start; i < classes.length; i++) {
-				body += param(classes[i], "o[" + i + "]") + (i != classes.length - 1 ? "," : "");
+				param(sb, classes[i], "o[" + i + "]");
+				sb.append(i != classes.length - 1 ? "," : "");
 			}
 		}
-		body += ");}";
-		return body;
+		sb.append(");}");
 	}
 
 	@Override
@@ -198,28 +194,37 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		return "throws SecurityException, NoSuchMethodException";
 	}
 
-	protected static String buildMethodCall(final String[] classes, final String name, final boolean stat,
-			final boolean scope) {
-		final int start = stat ? 0 : 1;
-		final String methodName = extractMethod(name, stat);
-		final String className = toClassObject(extractClass(name, classes[0], stat));
-		String result = className + ".getMethod(" + toJavaString(methodName) + ", ";
-		result += scope ? toClassObject(ISCOPE) + "," : "";
-		for (int i = start; i < classes.length; i++) {
-			result += toClassObject(classes[i]) + ",";
-		}
-		if (result.endsWith(",")) {
-			result = result.substring(0, result.length() - 1);
-		}
-		result += ")";
-		return result;
+	protected static String extractMethod(final String s, final boolean stat) {
+		if (!stat) { return s; }
+		return s.substring(s.lastIndexOf('.') + 1);
 	}
 
-	protected final static String toArrayOfClasses(final String array) {
-		if (array == null || array.equals("")) { return "{}"; }
-		final StringBuilder sb = new StringBuilder();
-		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
-		final String[] segments = array.split("\\,", -1);
+	protected static String extractClass(final String name, final String string, final boolean stat) {
+		if (stat) { return name.substring(0, name.lastIndexOf('.')); }
+		return string;
+	}
+
+	protected static void buildMethodCall(final StringBuilder sb, final String[] classes, final String name,
+			final boolean stat, final boolean scope) {
+		final int start = stat ? 0 : 1;
+		sb.append(toClassObject(extractClass(name, classes[0], stat)));
+		sb.append(".getMethod(").append(toJavaString(extractMethod(name, stat))).append(", ");
+		if (scope) {
+			sb.append(toClassObject(ISCOPE)).append(',');
+		}
+		for (int i = start; i < classes.length; i++) {
+			sb.append(toClassObject(classes[i]));
+			sb.append(',');
+		}
+		sb.setLength(sb.length() - 1);
+		sb.append(')');
+	}
+
+	protected final static StringBuilder toArrayOfClasses(final StringBuilder sb, final String[] segments) {
+		if (segments == null || segments.length == 0) {
+			sb.append("{}");
+			return sb;
+		}
 		sb.append("C(");
 		for (int i = 0; i < segments.length; i++) {
 			if (i > 0) {
@@ -228,7 +233,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			sb.append(toClassObject(segments[i]));
 		}
 		sb.append(")");
-		return sb.toString();
+		return sb;
 	}
 
 }
