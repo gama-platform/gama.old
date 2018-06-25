@@ -11,9 +11,9 @@ package msi.gama.outputs;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -65,7 +65,7 @@ public class LayeredDisplayData {
 		void changed(Changes property, Object value);
 	}
 
-	public final Set<DisplayDataListener> listeners = new HashSet<>();
+	public final Set<DisplayDataListener> listeners = new CopyOnWriteArraySet<>();
 
 	public void addListener(final DisplayDataListener listener) {
 		listeners.add(listener);
@@ -288,7 +288,7 @@ public class LayeredDisplayData {
 
 	// Change lights to a possibly null structure instead of generating an array for each data
 	public List<LightPropertiesStructure> getDiffuseLights() {
-		final ArrayList<LightPropertiesStructure> result = new ArrayList<LightPropertiesStructure>();
+		final ArrayList<LightPropertiesStructure> result = new ArrayList<>();
 		for (final LightPropertiesStructure lightProp : lights) {
 			if (lightProp != null) {
 				// TODO : check if the light is active
@@ -391,16 +391,17 @@ public class LayeredDisplayData {
 	 *            the cameraPos to set
 	 */
 	public void setCameraPos(final GamaPoint point) {
-		if (point == null)
-			return;
+		if (point == null) { return; }
 		final GamaPoint c = point.withPrecision(3);
-		if (cameraPos != null)
-			if (c.equals(cameraPos))
+		if (cameraPos != null) {
+			if (c.equals(cameraPos)) {
 				return;
-			else
+			} else {
 				cameraPos.setLocation(c);
-		else
+			}
+		} else {
 			cameraPos = new GamaPoint(c);
+		}
 
 		notifyListeners(Changes.CAMERA_POS, cameraPos);
 	}
@@ -417,16 +418,17 @@ public class LayeredDisplayData {
 	 *            the cameraLookPos to set
 	 */
 	public void setCameraLookPos(final GamaPoint point) {
-		if (point == null)
-			return;
+		if (point == null) { return; }
 		final GamaPoint c = point.withPrecision(3);
-		if (cameraLookPos != null)
-			if (c.x == cameraLookPos.x && c.y == cameraLookPos.y && c.z == cameraLookPos.z)
+		if (cameraLookPos != null) {
+			if (c.x == cameraLookPos.x && c.y == cameraLookPos.y && c.z == cameraLookPos.z) {
 				return;
-			else
+			} else {
 				cameraLookPos.setLocation(c);
-		else
+			}
+		} else {
 			cameraLookPos = new GamaPoint(c);
+		}
 
 		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
 	}
@@ -443,16 +445,17 @@ public class LayeredDisplayData {
 	 *            the cameraUpVector to set
 	 */
 	public void setCameraUpVector(final GamaPoint point, final boolean notify) {
-		if (point == null)
-			return;
+		if (point == null) { return; }
 		final GamaPoint c = point.withPrecision(3);
-		if (cameraUpVector != null)
-			if (c.x == cameraUpVector.x && c.y == cameraUpVector.y && c.z == cameraUpVector.z)
+		if (cameraUpVector != null) {
+			if (c.x == cameraUpVector.x && c.y == cameraUpVector.y && c.z == cameraUpVector.z) {
 				return;
-			else
+			} else {
 				cameraUpVector.setLocation(c);
-		else
+			}
+		} else {
 			cameraUpVector = new GamaPoint(c);
+		}
 
 		notifyListeners(Changes.CAMERA_UP, cameraUpVector);
 	}
@@ -612,10 +615,11 @@ public class LayeredDisplayData {
 
 	public void setLayerSplitted(final boolean s) {
 		isSplittingLayers = s;
-		if (s)
+		if (s) {
 			notifyListeners(Changes.SPLIT_LAYER, splitDistance);
-		else
+		} else {
 			notifyListeners(Changes.SPLIT_LAYER, 0d);
+		}
 	}
 
 	public Double getSplitDistance() {
@@ -624,8 +628,9 @@ public class LayeredDisplayData {
 
 	public void setSplitDistance(final Double s) {
 		splitDistance = s;
-		if (isSplittingLayers)
+		if (isSplittingLayers) {
 			notifyListeners(Changes.SPLIT_LAYER, s);
+		}
 	}
 
 	public boolean isSynchronized() {
@@ -650,8 +655,9 @@ public class LayeredDisplayData {
 	public void setZoomLevel(final Double zoomLevel, final boolean notify) {
 		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) { return; }
 		this.zoomLevel = zoomLevel;
-		if (notify)
+		if (notify) {
 			notifyListeners(Changes.ZOOM, this.zoomLevel);
+		}
 	}
 
 	public int fullScreen() {
@@ -663,15 +669,13 @@ public class LayeredDisplayData {
 	}
 
 	public void setKeystone(final List<GamaPoint> value) {
-		if (value == null)
-			return;
+		if (value == null) { return; }
 		this.keystone.setTo(value.toArray(new GamaPoint[4]));
 		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
 
 	public void setKeystone(final ICoordinates value) {
-		if (value == null)
-			return;
+		if (value == null) { return; }
 		this.keystone.setTo(value.toCoordinateArray());
 		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
@@ -852,8 +856,9 @@ public class LayeredDisplayData {
 			int monitor;
 			if (fs.getType() == Types.BOOL) {
 				monitor = Cast.asBool(scope, fs.value(scope)) ? 0 : -1;
-			} else
+			} else {
 				monitor = Cast.asInt(scope, fs.value(scope));
+			}
 			setFullScreen(monitor);
 		}
 
@@ -936,9 +941,10 @@ public class LayeredDisplayData {
 			final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
 			if (camera != null) {
 				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
-				if (location != null)
+				if (location != null) {
 					location.y = -location.y; // y component need to be
-												// reverted
+				}
+				// reverted
 				setCameraPos(location);
 			}
 			// graphics.setCameraPosition(getCameraPos());
@@ -948,9 +954,10 @@ public class LayeredDisplayData {
 			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
 			if (cameraLook != null) {
 				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
-				if (location != null)
+				if (location != null) {
 					location.setY(-location.getY()); // y component need to be
-														// reverted
+				}
+				// reverted
 				setCameraLookPos(location);
 			}
 		}
