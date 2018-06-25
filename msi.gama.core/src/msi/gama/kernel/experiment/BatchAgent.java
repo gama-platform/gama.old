@@ -162,7 +162,8 @@ public class BatchAgent extends ExperimentAgent {
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
 		scope.getGui().getStatus(scope).informStatus(endStatus());
-		dispose();
+		// Issue #2426: the agent is killed  too soon
+		 dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
 	}
@@ -178,8 +179,7 @@ public class BatchAgent extends ExperimentAgent {
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
-		if (pop == null) // interrupted
-			return 0d;
+		if (pop == null) { return 0d; }
 		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
@@ -198,16 +198,18 @@ public class BatchAgent extends ExperimentAgent {
 		// We then create a number of simulations with the same solution
 
 		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
-		if (numberOfCores == 0)
+		if (numberOfCores == 0) {
 			numberOfCores = 1;
+		}
 		int repeatIndex = 0;
 		while (repeatIndex < getSeeds().length) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
 				setSeed(getSeeds()[repeatIndex]);
 				createSimulation(currentSolution, true);
 				repeatIndex++;
-				if (repeatIndex == getSeeds().length)
+				if (repeatIndex == getSeeds().length) {
 					break;
+				}
 			}
 			int i = 0;
 			while (pop.hasScheduledSimulations()) {
@@ -225,8 +227,9 @@ public class BatchAgent extends ExperimentAgent {
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
-						if (!getSpecies().keepsSimulations())
+						if (!getSpecies().keepsSimulations()) {
 							memorizeFitnessAndCloseSimulation(agent);
+						}
 					}
 				}
 				// We inform the status line
