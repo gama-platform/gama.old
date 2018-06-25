@@ -176,7 +176,7 @@ public class GamaToolbarFactory {
 		buildToolbar(view, tb);
 
 		// Creating the toggles
-		final Action toggle = new ToggleAction() {
+		final ToggleAction toggle = new ToggleAction() {
 
 			@Override
 			public void run() {
@@ -187,6 +187,8 @@ public class GamaToolbarFactory {
 				setIcon();
 			}
 		};
+
+		tb.setToogleAction(toggle);
 
 		// Install the toogles in the view site
 		final IWorkbenchSite site = view.getSite();
@@ -213,8 +215,9 @@ public class GamaToolbarFactory {
 			tm.update(true);
 		}
 
-		if (!view.toolbarVisible())
+		if (!view.toolbarVisible()) {
 			toggle.run();
+		}
 		return childComposite;
 	}
 

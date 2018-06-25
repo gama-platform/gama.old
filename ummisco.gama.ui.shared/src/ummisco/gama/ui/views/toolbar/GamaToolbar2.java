@@ -31,6 +31,7 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 
 /**
  * Class GamaToolbar. A declarative wrapper around 2 toolbars (left, right).
@@ -297,6 +298,22 @@ public class GamaToolbar2 extends Composite {
 
 	public void updateItems() {
 
+	}
+
+	private ToggleAction toggle;
+
+	public void setToogleAction(final ToggleAction toggle) {
+		this.toggle = toggle;
+	}
+
+	public void hide() {
+		toggle.show = true; // force to true
+		toggle.run(); // will make it false
+	}
+
+	public void show() {
+		toggle.show = true; // force to false
+		toggle.run(); // will make it true
 	}
 
 }
