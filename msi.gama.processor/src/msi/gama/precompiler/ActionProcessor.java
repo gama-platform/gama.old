@@ -23,10 +23,10 @@ public class ActionProcessor extends ElementProcessor<action> {
 		final String method = e.getSimpleName().toString();
 		final String clazz = rawNameOf(context, e.getEnclosingElement().asType());
 		final String ret = checkPrim(getReturnType(context, (ExecutableElement) e));
-		sb.append(in).append("_action(").append(toJavaString(method)).append(',').append(toClassObject(clazz))
-
-				.append(", (s,a,t,v)->").append(!ret.equals("void") ? "" : "{").append(" ((").append(clazz)
-				.append(") t).").append(method).append("(s)").append(ret.equals("void") ? "; return null;}," : ",");
+		sb.append(in).append("_action(").append(toJavaString(method)).append(", new GamaHelper(")
+				.append(toClassObject(clazz)).append(",(s,a,t,v)->").append(!ret.equals("void") ? "" : "{")
+				.append(" ((").append(clazz).append(") t).").append(method).append("(s)")
+				.append(ret.equals("void") ? "; return null;})," : "),");
 
 		// .append(",new GamaHelper(").append(toClassObject(clazz)).append("){").append(OVERRIDE).append("public ")
 		// .append(ret.equals("void") ? "Object" : ret).append(" run(").append(ISCOPE).append(" s, ")

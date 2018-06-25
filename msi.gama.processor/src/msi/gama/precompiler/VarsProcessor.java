@@ -118,11 +118,9 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					final boolean isDynamic = !scope && n == 2 || scope && n == 3;
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
-					setterHelper = concat("new GamaHelper(", toClassObject(clazz), ")", "{", OVERRIDE, "public Object ",
-							" run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT, " t, Object... arg)",
-							" {if (t != null) ((", clazz, ") t).", method, "(", scope ? "scope," : "",
-							isDynamic ? "a, " : "", "(" + param_class + ") arg[0]); return null; }}");
-
+					setterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)-> {if (t != null) ((",
+							clazz, ") t).", method, "(", scope ? "s," : "", isDynamic ? "a, " : "",
+							"(" + param_class + ") v[0]); return null; })");
 				}
 			}
 		}
@@ -143,13 +141,16 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final boolean dynamic = !scope && n > 0 || scope && n > 1;
 
 				if (isField) {
-					getterHelper = concat("(scope, v) -> (v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
-							":((", clazz, ") v[0]).", method, scope ? "(scope)" : "()");
+					getterHelper = concat("(s, v) -> (v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
+							":((", clazz, ") v[0]).", method, scope ? "(s)" : "()");
 				} else {
-					getterHelper = concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ",
-							checkPrim(returns), " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT,
-							" t, Object... v) {return t == null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
-							")t).", method, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") + "a);}}" : ");}}");
+					getterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)-> t==null?",
+							returnWhenNull(checkPrim(returns)), ":((", clazz, ")t).", method, "(", scope ? "s" : "",
+							dynamic ? (scope ? "," : "") + "a))" : "))");
+					// getterHelper = concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ",
+					// checkPrim(returns), " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT,
+					// " t, Object... v) {return t == null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
+					// ")t).", method, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") + "a);}}" : ");}}");
 				}
 				if (ex.getAnnotation(getter.class).initializer()) {
 					initerHelper = getterHelper;

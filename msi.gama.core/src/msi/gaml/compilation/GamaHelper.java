@@ -22,20 +22,14 @@ import msi.gaml.skills.Skill;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public abstract class GamaHelper<T> implements IGamaHelper<T> {
+public class GamaHelper<T> implements IGamaHelper<T> {
 
-	final Class skillClass;
+	Class skillClass;
+	IGamaHelper<T> delegate;
 
-	public GamaHelper() {
-		this(null);
-	}
-
-	public GamaHelper(final Class clazz) {
-		if (clazz != null && Skill.class.isAssignableFrom(clazz)) {
-			skillClass = clazz;
-		} else {
-			skillClass = null;
-		}
+	public GamaHelper(final Class clazz, final IGamaHelper<T> delegate) {
+		setSkillClass(clazz);
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -44,6 +38,18 @@ public abstract class GamaHelper<T> implements IGamaHelper<T> {
 	}
 
 	@Override
-	public abstract T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-			final Object... values);
+	public void setSkillClass(final Class clazz) {
+		if (clazz != null && Skill.class.isAssignableFrom(clazz)) {
+			skillClass = clazz;
+		} else {
+			skillClass = null;
+		}
+	}
+
+	@Override
+	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object... values) {
+		if (delegate == null) { return null; }
+		return delegate.run(scope, agent, skill, values);
+	}
+
 }

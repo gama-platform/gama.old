@@ -284,11 +284,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return desc(t.toString(), facets);
 	}
 
-	protected void _action(final String methodName, final Class clazz, final IGamaHelper e, final IDescription desc,
+	protected void _action(final String methodName, final IGamaHelper e, final IDescription desc,
 			final AccessibleObject method) {
 		((PrimitiveDescription) desc).setHelper(e, method);
 		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		add(clazz, desc);
+		add(e.getSkillClass(), desc);
 	}
 
 	public static void initType(final String keyword, final IType<?> typeInstance, final int id, final int varKind,
