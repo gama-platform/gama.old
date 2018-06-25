@@ -124,26 +124,35 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	void runPostEventActions() {
 		WorkbenchHelper.run(() -> {
 			try {
-				for (final Runnable r : postEventActions)
+				for (final Runnable r : postEventActions) {
 					r.run();
+				}
 			} finally {
 				postEventActions.clear();
 			}
 			try {
-				for (final VirtualContent<?> r : toRefresh)
-					viewer.refresh(r);
+				for (final VirtualContent<?> r : toRefresh) {
+					if (!viewer.getControl().isDisposed()) {
+						viewer.refresh(r);
+					}
+				}
 			} finally {
 				toRefresh.clear();
 			}
 			try {
-				for (final VirtualContent<?> r : toUpdate)
-					viewer.update(r, null);
+				for (final VirtualContent<?> r : toUpdate) {
+					if (!viewer.getControl().isDisposed()) {
+						viewer.update(r, null);
+					}
+				}
 			} finally {
 				toUpdate.clear();
 			}
 			if (toReveal != null) {
 				final VirtualContent<?> vc = findWrappedInstanceOf(toReveal);
-				viewer.setSelection(new StructuredSelection(vc), true);
+				if (!viewer.getControl().isDisposed()) {
+					viewer.setSelection(new StructuredSelection(vc), true);
+				}
 				toReveal = null;
 			}
 		});
@@ -151,30 +160,27 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public static void DEBUG(final String s) {
-		if (DEBUG)
+		if (DEBUG) {
 			System.out.println(s);
+		}
 	}
 
 	public static IResource getResource(final Object target) {
-		if (target instanceof IResource)
-			return (IResource) target;
+		if (target instanceof IResource) { return (IResource) target; }
 		if (target instanceof IAdaptable) {
 			final IAdaptable adapter = (IAdaptable) target;
 			final IResource r = adapter.getAdapter(IResource.class);
-			if (r != null)
-				return r;
+			if (r != null) { return r; }
 		}
 		return null;
 	}
 
 	public static IFile getFile(final Object target) {
-		if (target instanceof IFile)
-			return (IFile) target;
+		if (target instanceof IFile) { return (IFile) target; }
 		if (target instanceof IAdaptable) {
 			final IAdaptable adapter = (IAdaptable) target;
 			final IFile r = adapter.getAdapter(IFile.class);
-			if (r != null)
-				return r;
+			if (r != null) { return r; }
 		}
 		return null;
 	}
@@ -195,8 +201,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			BLOCKED_EVENTS.add(event);
 			return;
 		}
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("========= New Event =========");
+		}
 		try {
 			// begin();
 			final int type = event.getType();
@@ -210,13 +217,15 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 					}
 					break;
 				case IResourceChangeEvent.PRE_REFRESH:
-					if (DEBUG)
+					if (DEBUG) {
 						DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
+					}
 					break;
 				case PRE_CLOSE:
 				case PRE_DELETE:
-					if (DEBUG)
+					if (DEBUG) {
 						DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
+					}
 					break;
 				default:
 
@@ -253,8 +262,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileAdded(final IFile file) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("File " + file.getName() + " has been added");
+		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
 		wrap(parent, file);
 		if (parent != null) {
@@ -272,15 +282,15 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	public TopLevelFolder chooseFolderForPasting(final IProject project) {
 		if (currentSelection != null && !currentSelection.isEmpty()) {
 			final Object o = currentSelection.getFirstElement();
-			if (o instanceof VirtualContent)
-				return ((VirtualContent<?>) o).getTopLevelFolder();
+			if (o instanceof VirtualContent) { return ((VirtualContent<?>) o).getTopLevelFolder(); }
 		}
 		return NavigatorRoot.INSTANCE.getUserFolder();
 	}
 
 	public void projectAdded(final IProject project) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Project " + project.getName() + " has been added");
+		}
 		if (!IN_INITIALIZATION_PHASE) {
 			final TopLevelFolder root = chooseFolderForPasting(project);
 			final String nature = root.getNature();
@@ -296,8 +306,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectOpened(final IProject res) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Project " + res.getName() + " has been opened");
+		}
 		final WrappedProject p = findWrappedInstanceOf(res);
 		if (p == null) {
 			projectAdded(res);
@@ -310,8 +321,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectClosed(final IProject res) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Project " + res.getName() + " has been closed");
+		}
 		final WrappedProject p = findWrappedInstanceOf(res);
 		p.initializeChildren();
 		p.invalidateModelsCount();
@@ -322,8 +334,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderAdded(final IFolder folder) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Folder " + folder.getName() + " has been added");
+		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(folder.getParent());
 		final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
 		parent.initializeChildren();
@@ -354,8 +367,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileRemoved(final IFile file) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("File " + file.getName() + " has been removed");
+		}
 		cache.invalidate(file);
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
 		if (parent != null) {
@@ -365,8 +379,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderRemoved(final IFolder folder) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Folder " + folder.getName() + " has been removed");
+		}
 		final WrappedFolder wc = (WrappedFolder) findWrappedInstanceOf(folder);
 		cache.invalidate(folder);
 		if (wc != null) {
@@ -376,8 +391,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void projectRemoved(final IProject project) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Project " + project.getName() + " has been removed");
+		}
 		final WrappedProject wp = findWrappedInstanceOf(project);
 		cache.invalidate(project);
 		final TopLevelFolder tp = (TopLevelFolder) wp.getParent();
@@ -391,10 +407,11 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		boolean update = false;
 		switch (delta.getKind()) {
 			case IResourceDelta.OPEN:
-				if (res.isAccessible())
+				if (res.isAccessible()) {
 					update = projectOpened((IProject) res);
-				else
+				} else {
 					update = projectClosed((IProject) res);
+				}
 				break;
 			case IResourceDelta.ADDED:
 				update = processAddition(res);
@@ -407,14 +424,17 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				if ((flags & IResourceDelta.MARKERS) != 0) {
 					update = processMarkersChanged(res);
 				} else if ((flags & IResourceDelta.TYPE) != 0) {
-					if (DEBUG)
+					if (DEBUG) {
 						DEBUG("Resource type changed: " + res);
+					}
 				} else if ((flags & IResourceDelta.CONTENT) != 0) {
-					if (DEBUG)
+					if (DEBUG) {
 						DEBUG("Resource contents changed: " + res);
+					}
 				} else if ((flags & IResourceDelta.SYNC) != 0) {
-					if (DEBUG)
+					if (DEBUG) {
 						DEBUG("Resource sync info changed: " + res);
+					}
 				}
 				break;
 		}
@@ -425,8 +445,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean processMarkersChanged(final IResource res) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("File " + res.getName() + " markers have changed");
+		}
 		invalidateSeverityCache(res);
 		if (res.getType() == IResource.FILE) {
 			final WrappedFile file = (WrappedFile) findWrappedInstanceOf(res);
@@ -439,14 +460,12 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private void updateResource(final IResource res) {
-		if (res == null)
-			return;
+		if (res == null) { return; }
 		updateResource(findWrappedInstanceOf(res));
 	}
 
 	private void updateResource(final VirtualContent<?> res) {
-		if (res == null)
-			return;
+		if (res == null) { return; }
 		VirtualContent<?> resource = res;
 		while (resource != null) {
 			toUpdate.add(resource);
@@ -460,39 +479,37 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 
 	private void invalidateSeverityCache(final IResource resource) {
 		final WrappedResource<?, ?> p = findWrappedInstanceOf(resource);
-		if (p != null)
+		if (p != null) {
 			p.invalidateSeverity();
-		else {
+		} else {
 			// If not found, maybe the parent is registered
 			final IResource parent = resource.getParent();
-			if (parent != null)
+			if (parent != null) {
 				invalidateSeverityCache(parent);
+			}
 		}
 	}
 
 	private void invalidateModelsCountCache(final IContainer container) {
 		final WrappedContainer<?> p = findWrappedInstanceOf(container);
-		if (p != null)
+		if (p != null) {
 			p.invalidateModelsCount();
+		}
 	}
 
 	public WrappedResource<?, ?> findWrappedInstanceOf(final Object resource) {
-		if (resource == null)
-			return null;
-		if (resource instanceof WrappedResource)
-			return (WrappedResource<?, ?>) resource;
+		if (resource == null) { return null; }
+		if (resource instanceof WrappedResource) { return (WrappedResource<?, ?>) resource; }
 		return cache.getIfPresent(resource);
 	}
 
 	public WrappedContainer<?> findWrappedInstanceOf(final IContainer shape) {
-		if (shape == null)
-			return null;
+		if (shape == null) { return null; }
 		return (WrappedContainer<?>) cache.getIfPresent(shape);
 	}
 
 	public WrappedProject findWrappedInstanceOf(final IProject parent) {
-		if (parent == null)
-			return null;
+		if (parent == null) { return null; }
 		return (WrappedProject) cache.getIfPresent(parent);
 	}
 
@@ -506,8 +523,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private static WrappedResource<?, ?> privateCreateWrapping(final VirtualContent<?> parent, final IResource child) {
-		if (DEBUG)
+		if (DEBUG) {
 			DEBUG("Creation of the wrapped instance of " + child.getName());
+		}
 		switch (child.getType()) {
 			case IResource.FILE:
 				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId(
