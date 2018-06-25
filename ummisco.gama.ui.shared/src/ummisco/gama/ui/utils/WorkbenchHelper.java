@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -37,6 +40,7 @@ import com.google.common.cache.LoadingCache;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
+import one.util.streamex.StreamEx;
 import ummisco.gama.ui.views.IGamlEditor;
 
 public class WorkbenchHelper {
@@ -164,6 +168,13 @@ public class WorkbenchHelper {
 		if (ref == null) { return null; }
 		final IViewPart part = ref.getView(restore);
 		return part;
+	}
+
+	public static List<IGamaView.Display> getDisplayViews() {
+		final IWorkbenchPage page = WorkbenchHelper.getPage();
+		if (page == null) { return Collections.EMPTY_LIST; } // Closing the workbench
+		return StreamEx.of(page.getViewReferences()).map(v -> v.getView(false)).select(IGamaView.Display.class)
+				.toList();
 	}
 
 	public static void setWorkbenchWindowTitle(final String title) {
