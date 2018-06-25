@@ -53,6 +53,10 @@ public interface IGamaView {
 
 		void toggleOverlay();
 
+		void hideToolbar();
+
+		void showToolbar();
+
 		LayeredDisplayOutput getOutput();
 
 		default int getIndex() {

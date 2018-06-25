@@ -198,8 +198,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			updateThread.interrupt();
 		}
 
-		if (decorator != null)
+		if (decorator != null) {
 			decorator.dispose();
+		}
 
 		super.widgetDisposed(e);
 	}
@@ -225,20 +226,23 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public void zoomIn() {
-		if (getDisplaySurface() != null)
+		if (getDisplaySurface() != null) {
 			getDisplaySurface().zoomIn();
+		}
 	}
 
 	@Override
 	public void zoomOut() {
-		if (getDisplaySurface() != null)
+		if (getDisplaySurface() != null) {
 			getDisplaySurface().zoomOut();
+		}
 	}
 
 	@Override
 	public void zoomFit() {
-		if (getDisplaySurface() != null)
+		if (getDisplaySurface() != null) {
 			getDisplaySurface().zoomFit();
+		}
 	}
 
 	@Override
@@ -269,8 +273,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 		// Fix for issue #1693
 		final boolean oldSync = output.isSynchronized();
-		if (output.isInInitPhase())
+		if (output.isInInitPhase()) {
 			output.setSynchronized(false);
+		}
 		// end fix
 		if (updateThread == null) {
 			updateThread = new Thread(() -> {
@@ -343,8 +348,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public void removeOutput(final IDisplayOutput output) {
-		if (output == null)
-			return;
+		if (output == null) { return; }
 		if (output == getOutput()) {
 			if (isFullScreen()) {
 				WorkbenchHelper.run(() -> toggleFullScreen());
@@ -381,6 +385,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		decorator.createToolItems(tb);
+	}
+
+	@Override
+	public void showToolbar() {
+		toolbar.show();
+	}
+
+	@Override
+	public void hideToolbar() {
+		toolbar.hide();
 	}
 
 }
