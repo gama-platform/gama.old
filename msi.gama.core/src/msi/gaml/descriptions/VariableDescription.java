@@ -25,7 +25,7 @@ import msi.gama.util.Collector;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.statements.Facets;
@@ -51,7 +51,7 @@ public class VariableDescription extends SymbolDescription {
 	private final boolean _isGlobal, _isNotModifiable;
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
-	private GamaHelper<?> get, init, set;
+	private IGamaHelper<?> get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
@@ -311,21 +311,21 @@ public class VariableDescription extends SymbolDescription {
 	// return
 	// }
 
-	public void addHelpers(final GamaHelper<?> get, final GamaHelper<?> init, final GamaHelper<?> set) {
+	public void addHelpers(final IGamaHelper<?> get, final IGamaHelper<?> init, final IGamaHelper<?> set) {
 		this.get = get;
 		this.set = set;
 		this.init = init;
 	}
 
-	public GamaHelper<?> getGetter() {
+	public IGamaHelper<?> getGetter() {
 		return get;
 	}
 
-	public GamaHelper<?> getIniter() {
+	public IGamaHelper<?> getIniter() {
 		return init;
 	}
 
-	public GamaHelper<?> getSetter() {
+	public IGamaHelper<?> getSetter() {
 		return set;
 	}
 

@@ -74,7 +74,7 @@ public class BinaryOperator extends NAryOperator {
 		try {
 			leftVal = prototype.lazy[0] ? exprs[0] : exprs[0].value(scope);
 			rightVal = prototype.lazy[1] ? exprs[1] : exprs[1].value(scope);
-			final Object result = prototype.helper.run(scope, leftVal, rightVal);
+			final Object result = prototype.helper.get(scope, leftVal, rightVal);
 			return result;
 		} catch (final GamaRuntimeException ge) {
 			throw ge;

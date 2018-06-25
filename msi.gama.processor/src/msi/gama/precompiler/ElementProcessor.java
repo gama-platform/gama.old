@@ -1,11 +1,13 @@
 package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
@@ -13,28 +15,27 @@ import javax.lang.model.type.TypeMirror;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 
-public abstract class ElementProcessor<T extends Annotation, Result> implements IProcessor<T>, Constants {
+public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
 
-	protected final Map<String, List<Result>> opIndex = new HashMap<>();
+	protected final Map<String, StringBuilder> opIndex = new HashMap<>();
+	static final Pattern CLASS_PARAM = Pattern.compile("<.*>");
+	static final Pattern SINGLE_QUOTE = Pattern.compile("\"");
+	static final String QUOTE_MATCHER = Matcher.quoteReplacement("\\\"");
+	final static StringBuilder DOC_BUILDER = new StringBuilder();
+	protected String initializationMethodName;
+	final static Set<String> UNDOCUMENTED = new HashSet<>();
 
 	public ElementProcessor() {}
 
-	protected void clean(final ProcessorContext context, final Map<String, List<Result>> map) {
+	protected void clean(final ProcessorContext context, final Map<String, StringBuilder> map) {
 		for (final String k : context.getRoots()) {
 			map.remove(k);
 		}
 	}
 
-	protected <T> List<T> get(final String root, final Map<String, List<T>> index) {
-		List<T> list = index.get(root);
-		if (list == null) {
-			list = new ArrayList<>();
-			index.put(root, list);
-		} else {
-			list.clear();
-		}
-		return list;
-
+	@Override
+	public boolean hasElements() {
+		return opIndex.size() > 0;
 	}
 
 	@Override
@@ -42,35 +43,45 @@ public abstract class ElementProcessor<T extends Annotation, Result> implements 
 		final Class<T> a = getAnnotationClass();
 		clean(context, opIndex);
 		for (final Map.Entry<String, List<Element>> entry : context.groupElements(a).entrySet()) {
-			final List<Result> list = get(entry.getKey(), opIndex);
-			for (final Element e : entry.getValue()) {
+			final List<Element> elements = entry.getValue();
+			if (elements.size() == 0) {
+				continue;
+			}
+			final StringBuilder sb = new StringBuilder();
+			for (final Element e : elements) {
 				try {
-					final Result node = createElement(context, e, e.getAnnotation(a));
-					if (node != null) {
-						list.add(node);
-					}
+					createElement(sb, context, e, e.getAnnotation(a));
 				} catch (final Exception exception) {
 					context.emitError("Exception in processor: " + exception.getMessage(), e);
 				}
 
+			}
+			if (sb.length() > 0) {
+				opIndex.put(entry.getKey(), sb);
 			}
 		}
 	}
 
 	@Override
 	public void serialize(final ProcessorContext context, final StringBuilder sb) {
-		opIndex.forEach((s, list) -> list.forEach(op -> createJava(context, sb, op)));
+		opIndex.forEach((s, builder) -> {
+			if (builder != null) {
+				sb.append(builder);
+			}
+		});
 	}
 
-	public abstract void createJava(final ProcessorContext context, final StringBuilder sb, final Result op);
-
-	public abstract Result createElement(ProcessorContext context, Element e, T annotation);
+	public abstract void createElement(StringBuilder sb, ProcessorContext context, Element e, T annotation);
 
 	protected abstract Class<T> getAnnotationClass();
 
 	@Override
 	public final String getInitializationMethodName() {
-		return "initialize" + Constants.capitalizeFirstLetter(getAnnotationClass().getSimpleName());
+		if (initializationMethodName == null) {
+			initializationMethodName =
+					"initialize" + Constants.capitalizeFirstLetter(getAnnotationClass().getSimpleName());
+		}
+		return initializationMethodName;
 	}
 
 	protected static String toJavaString(final String s) {
@@ -133,7 +144,7 @@ public abstract class ElementProcessor<T extends Annotation, Result> implements 
 
 	protected static String escapeDoubleQuotes(final String input) {
 		if (input == null) { return ""; }
-		return input.replaceAll("\"", Matcher.quoteReplacement("\\\""));
+		return SINGLE_QUOTE.matcher(input).replaceAll(QUOTE_MATCHER);
 	}
 
 	public static StringBuilder toArrayOfInts(final int[] array, final StringBuilder sb) {
@@ -150,8 +161,6 @@ public abstract class ElementProcessor<T extends Annotation, Result> implements 
 		return sb;
 	}
 
-	final static StringBuilder DOC_BUILDER = new StringBuilder();
-
 	/**
 	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses
 	 * its own separator (DOC_SEP)
@@ -164,8 +173,7 @@ public abstract class ElementProcessor<T extends Annotation, Result> implements 
 		if (docs == null || docs.length == 0) { return ""; }
 		final doc doc1 = docs[0];
 		if (doc1 == null) { return ""; }
-		DOC_BUILDER.append(doc1.value()).append(DOC_SEP);
-		DOC_BUILDER.append(doc1.deprecated());
+		DOC_BUILDER.append(doc1.value()).append(DOC_SEP).append(doc1.deprecated());
 		final String result = DOC_BUILDER.toString();
 		DOC_BUILDER.setLength(0);
 		return result;
@@ -173,30 +181,20 @@ public abstract class ElementProcessor<T extends Annotation, Result> implements 
 
 	static String rawNameOf(final ProcessorContext context, final TypeMirror t) {
 		if (t.getKind().equals(TypeKind.VOID)) { return "void"; }
-		final String init = context.getTypeUtils().erasure(t).toString();
-		final String[] segments = init.split("\\.");
-		final StringBuilder sb = new StringBuilder();
-		int index = 0;
-		for (final String segment : segments) {
-			final int i = segment.indexOf('<');
-			final int j = segment.lastIndexOf('>');
-			final String string = i > -1 ? segment.substring(0, i) + segment.substring(j + 1) : segment;
-			if (index++ > 0) {
-				sb.append(".");
-			}
-			sb.append(string);
-		}
-		String clazz = sb.toString();
+		String type = context.getTypeUtils().erasure(t).toString();
+		type = CLASS_PARAM.matcher(type).replaceAll("");
 		for (final String element : IMPORTS) {
-			if (clazz.startsWith(element)) {
+			if (type.startsWith(element)) {
 				// AD: false
-				final String temp = clazz.replace(element + ".", "");
+				final String temp = type.replace(element + ".", "");
 				if (!temp.contains(".")) {
-					clazz = temp;
+					type = temp;
+					break;
 				}
+
 			}
 		}
-		return clazz;
+		return type;
 	}
 
 }

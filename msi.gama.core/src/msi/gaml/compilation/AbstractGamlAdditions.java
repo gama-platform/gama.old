@@ -12,6 +12,7 @@ package msi.gaml.compilation;
 import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword._DOT;
+import static msi.gaml.compilation.kernel.GamaBundleLoader.CURRENT_PLUGIN_NAME;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.lang.reflect.AccessibleObject;
@@ -59,8 +60,6 @@ import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.extensions.genstar.IGamaPopulationsLinker;
-import msi.gaml.extensions.genstar.IGamaPopulationsLinkerConstructor;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
 import msi.gaml.types.GamaFileType;
@@ -85,8 +84,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = input -> ADDITIONS.get(input);
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
-	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
-			new THashMap<>();
+	// public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<>();
 	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new THashMap<>();
 
 	protected static String[] S(final String... strings) {
@@ -127,14 +125,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
 		CONSTANTS.add(string);
-		final DisplayDescription dd = new DisplayDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		final DisplayDescription dd = new DisplayDescription(d, string, CURRENT_PLUGIN_NAME);
 		IGui.DISPLAYS.put(string, dd);
 	}
 
 	public void _experiment(final String string, final Class class1, final IExperimentAgentCreator d) {
 		CONSTANTS.add(string);
-		final ExperimentAgentDescription ed =
-				new ExperimentAgentDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string, CURRENT_PLUGIN_NAME);
 		GamaMetaModel.INSTANCE.addExperimentAgentCreator(string, ed);
 	}
 
@@ -148,17 +145,16 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?>> helper,
+	protected void _file(final String string, final Class clazz, final GamaGetter<IGamaFile<?, ?>> helper,
 			final int innerType, final int keyType, final int contentType, final String[] s) {
-		helper.setSkillClass(clazz);
+		// helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
-				clazz, helper, s, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+				clazz, helper, s, CURRENT_PLUGIN_NAME);
 		VARTYPE2KEYWORDS.put(ISymbolKind.Variable.CONTAINER, string + "_file");
 	}
 
 	protected void _skill(final String name, final Class clazz, final String... species) {
-		GamaSkillRegistry.INSTANCE.register(name, clazz,
-				GamaBundleLoader.CURRENT_PLUGIN_NAME, ADDITIONS.get(clazz), species);
+		GamaSkillRegistry.INSTANCE.register(name, clazz, CURRENT_PLUGIN_NAME, ADDITIONS.get(clazz), species);
 	}
 
 	protected void _factories(final SymbolFactory... factories) {
@@ -184,14 +180,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
 				contextKinds, remote, unique, name_unique, sc, validator, serializer,
-				names == null || names.length == 0 ? "variable declaration" : names[0],
-						GamaBundleLoader.CURRENT_PLUGIN_NAME);
+				names == null || names.length == 0 ? "variable declaration" : names[0], CURRENT_PLUGIN_NAME);
 		DescriptionFactory.addProto(md, keywords);
 	}
 
 	public void _iterator(final String[] keywords, final Method method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
-			final int index, final int contentContentType, final GamaHelper helper) {
+			final int index, final int contentContentType, final GamaGetter helper) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
 		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, contentContentType,
 				helper);
@@ -199,7 +194,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
-			final int content, final int index, final int contentContentType, final GamaHelper helper) {
+			final int content, final int index, final int contentContentType, final GamaGetter helper) {
 		final Signature signature = new Signature(classes);
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
@@ -244,18 +239,18 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	// For files
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
-			final GamaHelper helper/* , final int doc */) {
+			final GamaGetter helper) {
 		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
 		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE,
 				ITypeProvider.NONE, ITypeProvider.NONE, ITypeProvider.NONE, helper);
 	}
 
-	protected void _populationsLinker(final String name, final Class clazz,
-			final IGamaPopulationsLinkerConstructor helper) {
-		final IGamaPopulationsLinker linker = helper.newInstance();
-		if (POPULATIONS_LINKERS.get(name) != null) {} // TODO inform duplication
-		POPULATIONS_LINKERS.put(name, linker);
-	}
+	// protected void _populationsLinker(final String name, final Class clazz,
+	// final IGamaPopulationsLinkerConstructor helper) {
+	// final IGamaPopulationsLinker linker = helper.newInstance();
+	// if (POPULATIONS_LINKERS.get(name) != null) {} // TODO inform duplication
+	// POPULATIONS_LINKERS.put(name, linker);
+	// }
 
 	private void add(final Class clazz, final IDescription desc) {
 		ADDITIONS.put(clazz, desc);
@@ -263,8 +258,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// final mettre documentation ?
 	}
 
-	protected void _var(final Class clazz, final String doc, final IDescription desc, final GamaHelper get,
-			final GamaHelper init, final GamaHelper set) {
+	protected void _var(final Class clazz, final String doc, final IDescription desc, final IGamaHelper get,
+			final IGamaHelper init, final IGamaHelper set) {
 		add(clazz, desc);
 		((VariableDescription) desc).addHelpers(get, init, set);
 		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(desc.getName(), doc);
@@ -289,7 +284,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return desc(t.toString(), facets);
 	}
 
-	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc,
+	protected void _action(final String methodName, final Class clazz, final IGamaHelper e, final IDescription desc,
 			final AccessibleObject method) {
 		((PrimitiveDescription) desc).setHelper(e, method);
 		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);

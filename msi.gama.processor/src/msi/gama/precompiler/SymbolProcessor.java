@@ -1,10 +1,5 @@
 package msi.gama.precompiler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
@@ -19,91 +14,65 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.SymbolProcessor.Sy;
-import msi.gama.precompiler.SymbolProcessor.Sy.Facet;
 
-public class SymbolProcessor extends ElementProcessor<symbol, Sy> {
-
-	public static class Sy {
-
-		public String validator;
-		public String serializer;
-		public String[] names;
-		public int kind;
-		public String clazz;
-		public boolean remote;
-		public boolean withArgs;
-		public boolean scope;
-		public boolean sequence;
-		public boolean unique;
-		public boolean uniqueName;
-		public String[] insideSymbols;
-		public int[] insideKinds;
-		public List<Facet> facets = new ArrayList<>();
-		public String omissible;
-
-		public static class Facet {
-
-			public String name;
-			public int[] types;
-			public int contents;
-			public int index;
-			public String[] values;
-			public boolean optional;
-			public boolean internal;
-			public String doc;
-
-		}
-	}
+public class SymbolProcessor extends ElementProcessor<symbol> {
 
 	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Sy node) {
-		String validator = node.validator;
-		if (validator == null || validator.isEmpty()) {
-			validator = "null";
-		} else {
-			validator = "new " + validator + "()";
-		}
-		String serializer = node.serializer;
-		if (serializer == null || serializer.isEmpty()) {
-			serializer = "null";
-		} else {
-			serializer = "new " + serializer + "()";
-		}
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final symbol symbol) {
+		final String clazz = rawNameOf(context, e.asType());
+		verifyDoc(context, e, symbol);
 		final StringBuilder constants = new StringBuilder();
-		final StringBuilder fb = new StringBuilder();
-		if (node.facets.isEmpty()) {
-			fb.append("null");
+
+		sb.append(in).append("_symbol(");
+		toArrayOfStrings(symbol.name(), sb).append(',').append(toClassObject(clazz)).append(",");
+		sb.append(getValidator(context, e)).append(',').append(getSerializer(context, e));
+		sb.append(",").append(symbol.kind()).append(',').append(symbol.remote_context()).append(',')
+				.append(symbol.with_args()).append(',').append(symbol.with_scope()).append(',');
+		sb.append(symbol.with_sequence()).append(',').append(symbol.unique_in_context()).append(',')
+				.append(symbol.unique_name()).append(',');
+		final inside inside = e.getAnnotation(inside.class);
+		if (inside != null) {
+			toArrayOfStrings(inside.symbols(), sb).append(',');
+			toArrayOfInts(inside.kinds(), sb).append(',');
+		}
+		final facets facets = e.getAnnotation(facets.class);
+		String omissible = "";
+		if (facets == null) {
+			sb.append("null");
 		} else {
-			fb.append("P(");
-			for (int i = 0; i < node.facets.size(); i++) {
-				final Facet child = node.facets.get(i);
+			omissible = facets.omissible();
+			sb.append("P(");
+			for (int i = 0; i < facets.value().length; i++) {
+				final facet child = facets.value()[i];
 				if (i > 0) {
-					fb.append(',');
+					sb.append(',');
 				}
-				fb.append("new FacetProto(").append(toJavaString(child.name)).append(',');
-				toArrayOfInts(child.types, fb).append(',').append(child.contents).append(',').append(child.index)
+				sb.append("new FacetProto(").append(toJavaString(child.name())).append(',');
+				toArrayOfInts(child.type(), sb).append(',').append(child.of()).append(',').append(child.index())
 						.append(',');
-				final String[] values = child.values;
+				final String[] values = child.values();
 				if (values != null && values.length > 0) {
 					toArrayOfStrings(values, constants).append(',');
 				}
-				toArrayOfStrings(values, fb).append(',').append(child.optional).append(',').append(child.internal)
-						.append(',').append(toJavaString(escapeDoubleQuotes(child.doc))).append(')');
+				toArrayOfStrings(values, sb).append(',').append(child.optional()).append(',').append(child.internal())
+						.append(',');
+				final doc[] d = child.doc();
+				String doc = "";
+				if (d == null || d.length == 0) {
+					if (!child.internal()) {
+						UNDOCUMENTED.add(child.name());
+					}
+				} else {
+					doc = docToString(child.doc());
+				}
+				sb.append(toJavaString(escapeDoubleQuotes(doc))).append(')');
 			}
-			fb.append(')');
+			sb.append(')');
 		}
-
-		sb.append(in).append("_symbol(");
-		toArrayOfStrings(node.names, sb).append(',').append(toClassObject(node.clazz)).append(",");
-		sb.append(validator).append(',').append(serializer);
-		sb.append(",").append(node.kind).append(',').append(node.remote).append(',').append(node.withArgs).append(',')
-				.append(node.scope).append(',');
-		sb.append(node.sequence).append(',').append(node.unique).append(',').append(node.uniqueName).append(',');
-		toArrayOfStrings(node.insideSymbols, sb).append(",");
-		toArrayOfInts(node.insideKinds, sb).append(',').append(fb).append(',').append(toJavaString(node.omissible))
-				.append(',').append("new ISymbolConstructor() {").append(OVERRIDE).append("public ISymbol create(")
-				.append(IDESC).append(" d) {return new ").append(node.clazz).append("(d);}}");
+		sb.append(',').append(toJavaString(omissible)).append(',').append("new ISymbolConstructor() {").append(OVERRIDE)
+				.append("public ISymbol create(").append(IDESC).append(" d) {return new ").append(clazz)
+				.append("(d);}}");
 		sb.append(");");
 		if (constants.length() > 0) {
 			constants.setLength(constants.length() - 1);
@@ -112,71 +81,14 @@ public class SymbolProcessor extends ElementProcessor<symbol, Sy> {
 
 	}
 
-	final static Set<String> UNDOCUMENTED = new HashSet<>();
-
-	@Override
-	public Sy createElement(final ProcessorContext context, final Element e, final symbol symbol) {
-		final Sy node = new Sy();
-		addValidator(context, e, node);
-		addSerializer(context, e, node);
-		node.names = symbol.name();
-		node.kind = symbol.kind();
-		node.clazz = rawNameOf(context, e.asType());
-		node.remote = symbol.remote_context();
-		node.withArgs = symbol.with_args();
-		node.scope = symbol.with_scope();
-		node.sequence = symbol.with_sequence();
-		node.unique = symbol.unique_in_context();
-		node.uniqueName = symbol.unique_name();
-
-		final inside inside = e.getAnnotation(inside.class);
-		if (inside != null) {
-			node.insideSymbols = inside.symbols();
-			node.insideKinds = inside.kinds();
-		}
-		final facets facets = e.getAnnotation(facets.class);
-
-		if (facets != null) {
-			node.omissible = facets.omissible();
-			for (final facet facet : facets.value()) {
-				final Facet child = new Facet();
-				child.name = facet.name();
-				child.types = facet.type();
-				child.contents = facet.of();
-				child.index = facet.index();
-				if (facet.values().length > 0) {
-					child.values = facet.values();
-				}
-				child.optional = facet.optional();
-				child.internal = facet.internal();
-				final doc[] d = facet.doc();
-				if (d == null || d.length == 0) {
-					if (!facet.internal()) {
-						UNDOCUMENTED.add(facet.name());
-					}
-				} else {
-					child.doc = docToString(facet.doc());
-				}
-				node.facets.add(child);
-			}
-			if (!UNDOCUMENTED.isEmpty()) {
-				context.emitWarning("GAML: facets '" + UNDOCUMENTED + "' are not documented", e);
-				UNDOCUMENTED.clear();
-			}
-		}
-		verifyDoc(context, e, symbol);
-		return node;
-	}
-
 	private void verifyDoc(final ProcessorContext context, final Element e, final symbol symbol) {
 		final doc d = e.getAnnotation(doc.class);
-
 		if (d == null && !symbol.internal()) {
 			context.emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
 		}
 	}
 
-	public void addValidator(final ProcessorContext context, final Element e, final Sy node) {
+	public String getValidator(final ProcessorContext context, final Element e) {
 		validator validator = e.getAnnotation(validator.class);
 		TypeMirror sup = ((TypeElement) e).getSuperclass();
 		// Workaround for bug
@@ -202,12 +114,11 @@ public class SymbolProcessor extends ElementProcessor<symbol, Sy> {
 		} catch (final MirroredTypesException e1) {
 			type_validator = e1.getTypeMirrors().get(0);
 		}
-		if (type_validator != null) {
-			node.validator = rawNameOf(context, type_validator);
-		}
+		if (type_validator != null) { return "new " + rawNameOf(context, type_validator) + "()"; }
+		return "null";
 	}
 
-	public void addSerializer(final ProcessorContext context, final Element e, final Sy node) {
+	public String getSerializer(final ProcessorContext context, final Element e) {
 		TypeMirror sup;
 		sup = ((TypeElement) e).getSuperclass();
 		serializer serializer = e.getAnnotation(serializer.class);
@@ -231,9 +142,8 @@ public class SymbolProcessor extends ElementProcessor<symbol, Sy> {
 		} catch (final MirroredTypesException e1) {
 			type_serializer = e1.getTypeMirrors().get(0);
 		}
-		if (type_serializer != null) {
-			node.serializer = rawNameOf(context, type_serializer);
-		}
+		if (type_serializer != null) { return "new " + rawNameOf(context, type_serializer) + "()"; }
+		return "null";
 	}
 
 	@Override

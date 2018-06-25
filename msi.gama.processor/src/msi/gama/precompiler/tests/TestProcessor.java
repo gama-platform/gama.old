@@ -1,7 +1,8 @@
 package msi.gama.precompiler.tests;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,16 +23,11 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.ProcessorContext;
-import msi.gama.precompiler.tests.TestProcessor.Te;
 
-public class TestProcessor extends ElementProcessor<tests, Te> {
+public class TestProcessor extends ElementProcessor<tests> {
 
-	public static class Te {
-
-		public String name;
-		public List<String> tests = new ArrayList<>();
-
-	}
+	@Override
+	public void serialize(final ProcessorContext context, final StringBuilder sb) {}
 
 	@Override
 	public void process(final ProcessorContext context) {
@@ -40,17 +36,22 @@ public class TestProcessor extends ElementProcessor<tests, Te> {
 		// Special case for lone test annotations
 		final Map<String, List<Element>> elements = context.groupElements(test.class);
 		for (final Map.Entry<String, List<Element>> entry : elements.entrySet()) {
-			final List<Te> list = get(entry.getKey(), opIndex);
+			final StringBuilder sb = opIndex.getOrDefault(entry.getKey(), new StringBuilder());
 			for (final Element e : entry.getValue()) {
 				try {
-					final Te node = createElement(context, e, createFrom(e.getAnnotation(test.class)));
-					list.add(node);
+					createElement(sb, context, e, createFrom(e.getAnnotation(test.class)));
 				} catch (final Exception exception) {
 					context.emitError("Exception in processor: " + exception.getMessage(), e);
 				}
 
 			}
+			opIndex.put(entry.getKey(), sb);
 		}
+	}
+
+	@Override
+	public boolean outputToJava() {
+		return false;
 	}
 
 	private tests createFrom(final test test) {
@@ -69,18 +70,30 @@ public class TestProcessor extends ElementProcessor<tests, Te> {
 	}
 
 	@Override
-	public Te createElement(final ProcessorContext context, final Element e, final tests tests) {
-		final Te node = new Te();
-		final String name = determineName(context, e, tests);
-		node.name = name;
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final tests tests) {
+		final String name = getTestName(determineName(context, e, tests));
+		sb.append(ln).append(tab).append("test ").append(name).append(" {");
 		for (final test test : tests.value()) {
-			node.tests.add(determineText(context, test));
+			final String[] lines = determineText(context, test).split(";");
+			for (final String line : lines) {
+				if (!line.isEmpty()) {
+					sb.append(ln).append(tab).append(tab).append(line).append(';');
+				}
+			}
 		}
-		return node;
+		// Output the footer
+		sb.append(ln).append(tab).append("}").append(ln);
 	}
 
-	public boolean hasTests() {
-		return opIndex.size() > 0;
+	public void writeTests(final ProcessorContext context, final Writer sb) throws IOException {
+		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
+		for (final StringBuilder tests : opIndex.values()) {
+			sb.append(ln);
+			sb.append(tests);
+		}
+		sb.append(ln).append('}');
+		namesAlreadyUsed.clear();
 	}
 
 	private String determineText(final ProcessorContext context, final test test) {
@@ -159,21 +172,6 @@ public class TestProcessor extends ElementProcessor<tests, Te> {
 		return tests.class;
 	}
 
-	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Te node) {}
-
-	public void writeTests(final ProcessorContext context, final StringBuilder sb) {
-		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
-		for (final List<Te> tests : opIndex.values()) {
-			for (final Te child : tests) {
-				sb.append(ln);
-				populateGaml(context, sb, child);
-			}
-		}
-		sb.append(ln).append('}');
-		namesAlreadyUsed.clear();
-	}
-
 	final Map<String, Integer> namesAlreadyUsed = new HashMap<>();
 
 	private String getTestName(final String name) {
@@ -188,20 +186,4 @@ public class TestProcessor extends ElementProcessor<tests, Te> {
 		return toJavaString(result);
 	}
 
-	public void populateGaml(final ProcessorContext context, final StringBuilder sb, final Te node) {
-		// Output the header of the test statement
-		sb.append(ln).append(tab).append("test ").append(getTestName(node.name)).append(" {");
-		// Output the text of all individual assertions found
-		for (int i = 0; i < node.tests.size(); i++) {
-			final String child = node.tests.get(i);
-			final String[] lines = child.split(";");
-			for (final String line : lines) {
-				if (!line.isEmpty()) {
-					sb.append(ln).append(tab).append(tab).append(line).append(';');
-				}
-			}
-		}
-		// Output the footer
-		sb.append(ln).append(tab).append("}").append(ln);
-	}
 }

@@ -22,8 +22,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator.NullValidator;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
@@ -71,7 +71,7 @@ public class PrimitiveStatement extends ActionStatement {
 	// Declaring a null validator because primites dont need to be checked
 
 	private ISkill skill = null;
-	private final GamaHelper helper;
+	private final IGamaHelper helper;
 
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
@@ -99,8 +99,9 @@ public class PrimitiveStatement extends ActionStatement {
 
 	@Override
 	public void setEnclosing(final ISymbol enclosing) {
-		if (enclosing instanceof AbstractSpecies)
+		if (enclosing instanceof AbstractSpecies) {
 			skill = ((AbstractSpecies) enclosing).getSkillInstanceFor(helper.getSkillClass());
+		}
 	}
 
 }

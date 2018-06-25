@@ -17,14 +17,14 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
 @SuppressWarnings ({ "rawtypes" })
 public class PrimitiveDescription extends ActionDescription {
 
-	private GamaHelper helper;
+	private IGamaHelper helper;
 	private AccessibleObject method;
 	private String plugin;
 
@@ -51,10 +51,11 @@ public class PrimitiveDescription extends ActionDescription {
 		if (d == null) {
 			documentation = "";
 		} else {
-			if (d.deprecated().isEmpty())
+			if (d.deprecated().isEmpty()) {
 				documentation = d.value() + Strings.LN;
-			else
+			} else {
 				documentation = d.deprecated() + Strings.LN;
+			}
 		}
 		// Only arguments
 		return documentation + super.getArgDocumentation();
@@ -67,8 +68,9 @@ public class PrimitiveDescription extends ActionDescription {
 		} else {
 			if (method != null && method.isAnnotationPresent(action.class)) {
 				final doc[] docs = method.getAnnotation(action.class).doc();
-				if (docs.length > 0)
+				if (docs.length > 0) {
 					d = docs[0];
+				}
 			}
 		}
 		return d;
@@ -87,7 +89,7 @@ public class PrimitiveDescription extends ActionDescription {
 	//
 	// }
 
-	public GamaHelper getHelper() {
+	public IGamaHelper getHelper() {
 		return helper;
 	}
 
@@ -96,7 +98,7 @@ public class PrimitiveDescription extends ActionDescription {
 		return this;
 	}
 
-	public void setHelper(final GamaHelper helper, final AccessibleObject method) {
+	public void setHelper(final IGamaHelper helper, final AccessibleObject method) {
 		this.helper = helper;
 		this.method = method;
 	}

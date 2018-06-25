@@ -61,7 +61,7 @@ import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
-public class DocProcessor extends ElementProcessor<doc, Object> {
+public class DocProcessor extends ElementProcessor<doc> {
 
 	Messager mes;
 	TypeConverter tc;
@@ -85,12 +85,13 @@ public class DocProcessor extends ElementProcessor<doc, Object> {
 	}
 
 	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Object op) {}
+	public boolean outputToJava() {
+		return false;
+	}
 
 	@Override
-	public Object createElement(final ProcessorContext context, final Element e, final doc annotation) {
-		return null;
-	}
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final doc annotation) {}
 
 	@Override
 	protected Class<doc> getAnnotationClass() {

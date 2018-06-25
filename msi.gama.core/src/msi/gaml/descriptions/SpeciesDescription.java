@@ -24,7 +24,6 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
-import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -34,14 +33,12 @@ import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGri
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
@@ -90,10 +87,10 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected void addSkill(final SkillDescription sk) {
-		if (sk == null)
-			return;
-		if (skills == null)
+		if (sk == null) { return; }
+		if (skills == null) {
 			skills = new TLinkedHashSet();
+		}
 		skills.add(sk);
 	}
 
@@ -162,25 +159,23 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public boolean redefinesAttribute(final String theName) {
-		if (super.redefinesAttribute(theName))
-			return true;
-		if (skills != null)
+		if (super.redefinesAttribute(theName)) { return true; }
+		if (skills != null) {
 			for (final SkillDescription skill : skills) {
-				if (skill.hasAttribute(theName))
-					return true;
+				if (skill.hasAttribute(theName)) { return true; }
 			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean redefinesAction(final String theName) {
-		if (super.redefinesAction(theName))
-			return true;
-		if (skills != null)
+		if (super.redefinesAction(theName)) { return true; }
+		if (skills != null) {
 			for (final SkillDescription skill : skills) {
-				if (skill.hasAction(theName, false))
-					return true;
+				if (skill.hasAction(theName, false)) { return true; }
 			}
+		}
 		return false;
 	}
 
@@ -226,8 +221,9 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(),
 				Iterables.transform(getSkills(), TO_CLASS))) {
-			if (isBuiltIn())
+			if (isBuiltIn()) {
 				v.setOriginName("built-in species " + getName());
+			}
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
 				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
@@ -238,8 +234,9 @@ public class SpeciesDescription extends TypeDescription {
 						if (existing == null || !existing.getOriginName().equals(v.getOriginName())) {
 							toAdd = true;
 						}
-					} else
+					} else {
 						toAdd = true;
+					}
 				}
 				if (toAdd) {
 					final VariableDescription var = (VariableDescription) v.copy(this);
@@ -248,9 +245,9 @@ public class SpeciesDescription extends TypeDescription {
 
 			} else {
 				boolean toAdd = false;
-				if (parent == null)
+				if (parent == null) {
 					toAdd = true;
-				else if (parent != this) {
+				} else if (parent != this) {
 					final StatementDescription existing = parent.getAction(v.getName());
 					if (existing == null || !existing.getOriginName().equals(v.getOriginName())) {
 						toAdd = true;
@@ -302,19 +299,16 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected boolean useMinimalAgents() {
-		if (!canUseMinimalAgents)
-			return false;
-		if (parent != null && parent != this && !getParent().useMinimalAgents())
-			return false;
-		if (!hasFacet("use_regular_agents"))
-			return GamaPreferences.External.AGENT_OPTIMIZATION.getValue();
+		if (!canUseMinimalAgents) { return false; }
+		if (parent != null && parent != this && !getParent().useMinimalAgents()) { return false; }
+		if (!hasFacet("use_regular_agents")) { return GamaPreferences.External.AGENT_OPTIMIZATION.getValue(); }
 		return FALSE.equals(getLitteral("use_regular_agents"));
 	}
 
 	protected void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
 		if (behaviors == null) {
-			behaviors = new TOrderedHashMap<String, StatementDescription>();
+			behaviors = new TOrderedHashMap<>();
 		}
 		final StatementDescription existing = behaviors.get(behaviorName);
 		if (existing != null) {
@@ -332,8 +326,9 @@ public class SpeciesDescription extends TypeDescription {
 
 	public StatementDescription getBehavior(final String aName) {
 		StatementDescription ownBehavior = behaviors == null ? null : behaviors.get(aName);
-		if (ownBehavior == null && parent != null && parent != this)
+		if (ownBehavior == null && parent != null && parent != this) {
 			ownBehavior = getParent().getBehavior(aName);
+		}
 		return ownBehavior;
 	}
 
@@ -347,30 +342,33 @@ public class SpeciesDescription extends TypeDescription {
 			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if (aspects == null) {
-			aspects = new THashMap<String, StatementDescription>();
+			aspects = new THashMap<>();
 		}
 		aspects.put(aspectName, ce);
 	}
 
 	public StatementDescription getAspect(final String aName) {
 		StatementDescription ownAspect = aspects == null ? null : aspects.get(aName);
-		if (ownAspect == null && parent != null && parent != this)
+		if (ownAspect == null && parent != null && parent != this) {
 			ownAspect = getParent().getAspect(aName);
+		}
 		return ownAspect;
 	}
 
 	public Collection<String> getBehaviorNames() {
 		final Collection<String> ownNames =
 				behaviors == null ? new LinkedHashSet() : new LinkedHashSet(behaviors.keySet());
-		if (parent != null && parent != this)
+		if (parent != null && parent != this) {
 			ownNames.addAll(getParent().getBehaviorNames());
+		}
 		return ownNames;
 	}
 
 	public Collection<String> getAspectNames() {
 		final Collection<String> ownNames = aspects == null ? new LinkedHashSet() : new LinkedHashSet(aspects.keySet());
-		if (parent != null && parent != this)
+		if (parent != null && parent != this) {
 			ownNames.addAll(getParent().getAspectNames());
+		}
 		return ownNames;
 
 	}
@@ -456,8 +454,9 @@ public class SpeciesDescription extends TypeDescription {
 						+ ") is not a subclass of its parent species " + parent.getName() + " base class ("
 						+ parent.getJavaBase().getSimpleName() + ")", IGamlIssue.GENERAL);
 			}
-			if (!parent.isBuiltIn())
+			if (!parent.isBuiltIn()) {
 				inheritMicroSpecies(parent);
+			}
 
 		}
 		super.inheritFromParent();
@@ -468,12 +467,13 @@ public class SpeciesDescription extends TypeDescription {
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
 		// Takes care of invalid species (see Issue 711)
 		if (parent == null || parent == this) { return; }
-		if (parent.hasMicroSpecies())
+		if (parent.hasMicroSpecies()) {
 			for (final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet()) {
 				if (!getMicroSpecies().containsKey(entry.getKey())) {
 					getMicroSpecies().put(entry.getKey(), entry.getValue());
 				}
 			}
+		}
 	}
 
 	public boolean isGrid() {
@@ -505,8 +505,9 @@ public class SpeciesDescription extends TypeDescription {
 
 		}
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills))
+		if (!Iterables.isEmpty(skills)) {
 			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
+		}
 		sb.append(getAttributeDocumentation());
 		sb.append("<br/>");
 		sb.append(getActionDocumentation());
@@ -556,19 +557,19 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
-		if (!hasMicroSpecies())
-			return true;
+		if (!hasMicroSpecies()) { return true; }
 		return getMicroSpecies().forEachValue(visitor);
 	}
 
 	@Override
 	public void setParent(final TypeDescription parent) {
 		super.setParent(parent);
-		if (!isBuiltIn())
+		if (!isBuiltIn()) {
 			if (!verifyParent()) {
 				super.setParent(null);
 				return;
 			}
+		}
 		if (parent instanceof SpeciesDescription && parent != this && !canUseMinimalAgents && !parent.isBuiltIn()) {
 			((SpeciesDescription) parent).invalidateMinimalAgents();
 		}
@@ -619,8 +620,9 @@ public class SpeciesDescription extends TypeDescription {
 				if (desc == parent) {
 					result[0] = true;
 					return false;
-				} else
+				} else {
 					desc.visitMicroSpecies(this);
+				}
 				return true;
 			}
 		});
@@ -642,14 +644,14 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected boolean parentIsVisible() {
-		if (getParent().isExperiment())
-			return false;
+		if (getParent().isExperiment()) { return false; }
 		SpeciesDescription host = getMacroSpecies();
 		while (host != null) {
 			if (host == parent || host.getMicroSpecies(parent.getName()) != null) {
 				return true;
-			} else
+			} else {
 				host = host.getMacroSpecies();
+			}
 		}
 		return false;
 	}
@@ -674,8 +676,7 @@ public class SpeciesDescription extends TypeDescription {
 
 			@Override
 			public boolean visit(final SpeciesDescription microSpec) {
-				if (!microSpec.finalizeDescription())
-					return false;
+				if (!microSpec.finalizeDescription()) { return false; }
 				if (!microSpec.isExperiment() && !isBuiltIn) {
 					final String n = microSpec.getName();
 					if (hasAttribute(n) && !getAttribute(n).isSyntheticSpeciesContainer()) {
@@ -689,34 +690,14 @@ public class SpeciesDescription extends TypeDescription {
 					var.setSyntheticSpeciesContainer();
 					var.setFacet(OF, GAML.getExpressionFactory()
 							.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
-					final GamaHelper get = new GamaHelper() {
-
-						@Override
-						public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-								final Object... values) throws GamaRuntimeException {
-							// TODO Make a test ?
-							return ((IMacroAgent) agent).getMicroPopulation(microSpec.getName());
-						}
+					final IGamaHelper get = (scope, agent, skill, values) -> ((IMacroAgent) agent)
+							.getMicroPopulation(microSpec.getName());
+					final IGamaHelper set = (scope, agent, skill, values) -> null;
+					final IGamaHelper init = (scope, agent, skill, values) -> {
+						((IMacroAgent) agent).initializeMicroPopulation(scope, microSpec.getName());
+						return ((IMacroAgent) agent).getMicroPopulation(microSpec.getName());
 					};
-					final GamaHelper set = new GamaHelper() {
 
-						@Override
-						public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport target,
-								final Object... value) throws GamaRuntimeException {
-							return null;
-						}
-
-					};
-					final GamaHelper init = new GamaHelper(null) {
-
-						@Override
-						public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-								final Object... values) throws GamaRuntimeException {
-							((IMacroAgent) agent).initializeMicroPopulation(scope, microSpec.getName());
-							return ((IMacroAgent) agent).getMicroPopulation(microSpec.getName());
-						}
-
-					};
 					var.addHelpers(get, init, set);
 					addChild(var);
 				}
@@ -725,9 +706,9 @@ public class SpeciesDescription extends TypeDescription {
 		};
 
 		// recursively finalize the sorted micro-species
-		if (!visitMicroSpecies(visitor))
-			return false;
+		if (!visitMicroSpecies(visitor)) { return false;
 		// Calling sortAttributes later (in compilation)
+		}
 
 		compact();
 
@@ -735,16 +716,21 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	void compact() {
-		if (attributes != null)
+		if (attributes != null) {
 			attributes.compact();
-		if (actions != null)
+		}
+		if (actions != null) {
 			actions.compact();
-		if (aspects != null)
+		}
+		if (aspects != null) {
 			aspects.compact();
-		if (behaviors != null)
+		}
+		if (behaviors != null) {
 			behaviors.compact();
-		if (microSpecies != null)
+		}
+		if (microSpecies != null) {
 			microSpecies.compact();
+		}
 	}
 
 	/**
@@ -799,7 +785,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	public TOrderedHashMap<String, SpeciesDescription> getMicroSpecies() {
 		if (microSpecies == null) {
-			microSpecies = new TOrderedHashMap<String, SpeciesDescription>();
+			microSpecies = new TOrderedHashMap<>();
 		}
 		return microSpecies;
 	}
@@ -809,11 +795,9 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public Boolean implementsSkill(final String skill) {
-		if (skills == null)
-			return false;
+		if (skills == null) { return false; }
 		for (final SkillDescription sk : skills) {
-			if (sk.getName().equals(skill))
-				return true;
+			if (sk.getName().equals(skill)) { return true; }
 		}
 		return false;
 	}
@@ -863,19 +847,17 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (!super.visitOwnChildren(visitor))
-			return false;
+		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (microSpecies != null) {
-			if (!microSpecies.forEachValue(visitor))
-				return false;
+			if (!microSpecies.forEachValue(visitor)) { return false; }
 		}
-		if (behaviors != null)
-			if (!behaviors.forEachValue(visitor))
-				return false;
+		if (behaviors != null) {
+			if (!behaviors.forEachValue(visitor)) { return false; }
+		}
 
-		if (aspects != null)
-			if (!aspects.forEachValue(visitor))
-				return false;
+		if (aspects != null) {
+			if (!aspects.forEachValue(visitor)) { return false; }
+		}
 		return true;
 	}
 
@@ -890,22 +872,18 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
 		boolean result = super.visitChildren(visitor);
-		if (!result)
-			return false;
+		if (!result) { return false; }
 		if (hasMicroSpecies()) {
 			result &= microSpecies.forEachValue(visitor);
 		}
-		if (!result)
-			return false;
+		if (!result) { return false; }
 		for (final IDescription d : getBehaviors()) {
 			result &= visitor.visit(d);
-			if (!result)
-				return false;
+			if (!result) { return false; }
 		}
 		for (final IDescription d : getAspects()) {
 			result &= visitor.visit(d);
-			if (!result)
-				return false;
+			if (!result) { return false; }
 		}
 		return result;
 	}
@@ -932,8 +910,7 @@ public class SpeciesDescription extends TypeDescription {
 	public Iterable<SkillDescription> getSkills() {
 		final List<SkillDescription> base =
 				control == null ? Collections.EMPTY_LIST : Collections.singletonList(control);
-		if (skills == null)
-			return base;
+		if (skills == null) { return base; }
 		return Iterables.concat(skills, base);
 	}
 

@@ -80,7 +80,7 @@ public class NAryOperator extends AbstractNAryOperator {
 			for (int i = 0; i < values.length; i++) {
 				values[i] = prototype.lazy[i] ? exprs[i] : exprs[i].value(scope);
 			}
-			final Object result = prototype.helper.run(scope, values);
+			final Object result = prototype.helper.get(scope, values);
 			return result;
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));

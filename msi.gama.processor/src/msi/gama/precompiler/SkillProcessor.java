@@ -4,14 +4,8 @@ import javax.lang.model.element.Element;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.SkillProcessor.Sk;
 
-public class SkillProcessor extends ElementProcessor<skill, Sk> {
-
-	public static class Sk {
-		String name, clazz;
-		String[] attach;
-	}
+public class SkillProcessor extends ElementProcessor<skill> {
 
 	@Override
 	protected Class<skill> getAnnotationClass() {
@@ -19,20 +13,12 @@ public class SkillProcessor extends ElementProcessor<skill, Sk> {
 	}
 
 	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Sk node) {
-		sb.append(in).append("_skill(").append(toJavaString(node.name)).append(',').append(toClassObject(node.clazz))
-				.append(',');
-		(toArrayOfStrings(node.attach, sb)).append(");");
-	}
-
-	@Override
-	public Sk createElement(final ProcessorContext context, final Element e, final skill skill) {
-		final Sk sk = new Sk();
-		sk.name = skill.name();
-		sk.clazz = rawNameOf(context, e.asType());
-		sk.attach = skill.attach_to();
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final skill skill) {
 		verifyDoc(context, e, skill);
-		return sk;
+		sb.append(in).append("_skill(").append(toJavaString(skill.name())).append(',')
+				.append(toClassObject(rawNameOf(context, e.asType()))).append(',');
+		toArrayOfStrings(skill.attach_to(), sb).append(");");
 	}
 
 	private void verifyDoc(final ProcessorContext context, final Element e, final skill skill) {

@@ -2,15 +2,9 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import msi.gama.precompiler.DisplayProcessor.Dis;
 import msi.gama.precompiler.GamlAnnotations.display;
 
-public class DisplayProcessor extends ElementProcessor<display, Dis> {
-
-	public static class Dis {
-		String clazz;
-		String name;
-	}
+public class DisplayProcessor extends ElementProcessor<display> {
 
 	@Override
 	protected Class<display> getAnnotationClass() {
@@ -18,19 +12,11 @@ public class DisplayProcessor extends ElementProcessor<display, Dis> {
 	}
 
 	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Dis node) {
-		sb.append(in).append("_display(").append(toJavaString(node.name)).append(',').append(toClassObject(node.clazz))
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final display d) {
+		final String clazz = rawNameOf(context, e.asType());
+		sb.append(in).append("_display(").append(toJavaString(d.value())).append(',').append(toClassObject(clazz))
 				.append(", new IDisplayCreator(){").append(OVERRIDE)
-				.append("public IDisplaySurface create(Object...args){return new ").append(node.clazz)
-				.append("(args);}});");
+				.append("public IDisplaySurface create(Object...args){return new ").append(clazz).append("(args);}});");
 	}
-
-	@Override
-	public Dis createElement(final ProcessorContext context, final Element e, final display d) {
-		final Dis dis = new Dis();
-		dis.name = d.value();
-		dis.clazz = rawNameOf(context, e.asType());
-		return dis;
-	}
-
 }

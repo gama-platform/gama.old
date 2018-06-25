@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IGamlAdditions.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IGamlAdditions.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,7 +18,9 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
@@ -81,6 +82,8 @@ public interface IGamlAdditions {
 	public final static Class<?> GF = IGamaFile.class;
 	public final static Class<?> MSK = MovingSkill.class;
 	public final static Class<?> GSK = GridSkill.class;
+	public final static Class<?> SC = IScope.class;
+	public final static Class<?> GD = GamaDate.class;
 
 	public void initialize() throws SecurityException, NoSuchMethodException;
 

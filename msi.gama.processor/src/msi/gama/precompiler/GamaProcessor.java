@@ -43,7 +43,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	static {
 		final StringBuilder sb = new StringBuilder();
-		writeJavaHeader(sb);
+		writeImmutableHeader(sb);
 		JAVA_HEADER = sb.toString();
 	}
 
@@ -60,15 +60,13 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		}
 		context.setRoundEnvironment(env);
 
-		if (env.getRootElements().size() > 0) {
+		if (context.getRoots().size() > 0) {
 			try {
 				begin = System.currentTimeMillis();
 				processors.forEach((s, p) -> p.process(context));
 			} catch (final Exception e) {
 				context.emitWarning("An exception occured in the parsing of GAML annotations: ", e);
 				throw e;
-			} finally {
-				// context.emit(Kind.NOTE, "GAML Processor: XML Trees produced", (Element) null);
 			}
 		}
 		if (context.processingOver()) {
@@ -88,22 +86,19 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	}
 
 	public void generateTests() {
-		final long begin = System.currentTimeMillis();
 		final TestProcessor tp = (TestProcessor) processors.get(tests.class);
-		if (tp.hasTests()) {
+		if (tp.hasElements()) {
 			try (Writer source = context.createTestWriter()) {
-				final StringBuilder sourceBuilder = new StringBuilder();
-				tp.writeTests(context, sourceBuilder);
-				source.append(sourceBuilder.toString());
+				tp.writeTests(context, source);
 			} catch (final IOException e) {
 				context.emitWarning("An exception occured in the generation of test files: ", e);
 			}
 		}
 		// We pass the current document of the documentation processor to avoir re-reading it
 		final DocProcessor dp = (DocProcessor) processors.get(doc.class);
-		context.emit(Kind.NOTE,
-				"    GAML Tests: lone tests serialization took " + (System.currentTimeMillis() - begin) + "ms",
-				(Element) null);
+		// context.emit(Kind.NOTE,
+		// " GAML Tests: lone tests serialization took " + (System.currentTimeMillis() - begin) + "ms",
+		// (Element) null);
 		ExamplesToTests.createTests(context, dp.document);
 	}
 
@@ -120,7 +115,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		}
 	}
 
-	protected static void writeJavaHeader(final StringBuilder sb) {
+	protected static void writeImmutableHeader(final StringBuilder sb) {
 		sb.append("package ").append(PACKAGE_NAME).append(';');
 		for (final String element : IMPORTS) {
 			sb.append(ln).append("import ").append(element).append(".*;");
@@ -131,14 +126,19 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
 		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
-		sb.append(ln).append("	@SuppressWarnings({ \"rawtypes\", \"unchecked\" })");
+		sb.append(ln).append("	@SuppressWarnings({ \"rawtypes\", \"unchecked\", \"unused\" })");
 		sb.append(ln).append(ln).append("public class GamlAdditions extends AbstractGamlAdditions").append(" {");
 		sb.append(ln).append(tab);
 		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
+	}
+
+	protected void writeMutableHeader(final StringBuilder sb) {
 		processors.values().forEach(p -> {
-			final String method = p.getInitializationMethodName();
-			if (method != null) {
-				sb.append(ln).append(tab).append(method).append("();");
+			if (p.outputToJava() && p.hasElements()) {
+				final String method = p.getInitializationMethodName();
+				if (method != null) {
+					sb.append(ln).append(tab).append(method).append("();");
+				}
 			}
 		});
 
@@ -147,13 +147,15 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	public StringBuilder writeJavaBody() {
 		final StringBuilder sb = new StringBuilder(JAVA_HEADER);
+		writeMutableHeader(sb);
 		processors.values().forEach(p -> {
-			final String method = p.getInitializationMethodName();
-			if (method != null) {
-				sb.append("public void ").append(method).append("() ").append(p.getExceptions()).append(" {");
-				p.serialize(context, sb);
-				sb.append(ln);
-				sb.append("}");
+			if (p.outputToJava() && p.hasElements()) {
+				final String method = p.getInitializationMethodName();
+				if (method != null) {
+					sb.append("public void ").append(method).append("() ").append(p.getExceptions()).append(" {");
+					p.serialize(context, sb);
+					sb.append(ln).append("}");
+				}
 			}
 		});
 

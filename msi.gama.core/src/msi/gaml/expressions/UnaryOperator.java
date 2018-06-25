@@ -75,7 +75,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		final Object childValue = prototype.lazy[0] ? child : child.value(scope);
 		try {
-			return prototype.helper.run(scope, childValue);
+			return prototype.helper.get(scope, childValue);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;

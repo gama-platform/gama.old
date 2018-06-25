@@ -28,8 +28,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.ConstantExpressionDescription;
@@ -332,7 +332,7 @@ public class Variable extends Symbol implements IVariable {
 	protected IType type/* , contentType */;
 	protected boolean isNotModifiable /* , doUpdate */;
 	// private final int definitionOrder;
-	public GamaHelper getter, initer, setter;
+	public IGamaHelper getter, initer, setter;
 	private IExecutable on_changer;
 	protected String /* gName, sName, iName, */ pName, cName;
 	protected ISkill gSkill/* , iSkill */, sSkill;

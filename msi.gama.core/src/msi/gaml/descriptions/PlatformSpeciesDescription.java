@@ -15,15 +15,11 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
@@ -62,33 +58,12 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key, entry.getTitle());
 		final VariableDescription var = (VariableDescription) DescriptionFactory.create(entry.getType().toString(),
 				PlatformSpeciesDescription.this, NAME, key);
-		final GamaHelper<?> get = new GamaHelper<Object>() {
-
-			@Override
-			public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-					final Object... values) throws GamaRuntimeException {
-				return GamaPreferences.get(key).getValue();
-			}
+		final IGamaHelper<?> get = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();
+		final IGamaHelper<?> set = (scope, agent, skill, values) -> {
+			GamaPreferences.get(key).setValue(scope, values[0]);
+			return this;
 		};
-		final GamaHelper<?> set = new GamaHelper<Object>() {
-
-			@Override
-			public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport target,
-					final Object... value) throws GamaRuntimeException {
-				GamaPreferences.get(key).setValue(scope, value[0]);
-				return this;
-			}
-
-		};
-		final GamaHelper<?> init = new GamaHelper<Object>(null) {
-
-			@Override
-			public Object run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-					final Object... values) throws GamaRuntimeException {
-				return GamaPreferences.get(key).getValue();
-			}
-
-		};
+		final IGamaHelper<?> init = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();
 		var.addHelpers(get, init, set);
 		addChild(var);
 
@@ -102,8 +77,9 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 	@Override
 	public IVarDescriptionProvider getDescriptionDeclaringVar(final String name) {
 		IVarDescriptionProvider provider = super.getDescriptionDeclaringVar(name);
-		if (provider == null && alternateVarProvider != null && alternateVarProvider.hasAttribute(name))
+		if (provider == null && alternateVarProvider != null && alternateVarProvider.hasAttribute(name)) {
 			provider = alternateVarProvider;
+		}
 		return provider;
 	}
 

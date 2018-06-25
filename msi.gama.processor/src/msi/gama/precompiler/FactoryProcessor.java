@@ -2,15 +2,9 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import msi.gama.precompiler.FactoryProcessor.Fac;
 import msi.gama.precompiler.GamlAnnotations.factory;
 
-public class FactoryProcessor extends ElementProcessor<factory, Fac> {
-
-	public static class Fac {
-		String clazz;
-		int[] kinds;
-	}
+public class FactoryProcessor extends ElementProcessor<factory> {
 
 	@Override
 	protected Class<factory> getAnnotationClass() {
@@ -18,25 +12,14 @@ public class FactoryProcessor extends ElementProcessor<factory, Fac> {
 	}
 
 	@Override
-	public void createJava(final ProcessorContext context, final StringBuilder sb, final Fac op) {
-		sb.append(in);
-		sb.append("_factories(");
-		sb.append("new ").append(op.clazz);
-		sb.append("(").append("Arrays.asList(");
-		for (final int i : op.kinds) {
+	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
+			final factory factory) {
+		sb.append("_factories(new ").append(rawNameOf(context, e.asType())).append("(Arrays.asList(");
+		for (final int i : factory.handles()) {
 			sb.append(i).append(",");
 		}
 		sb.setLength(sb.length() - 1);
 		sb.append(")));");
-
-	}
-
-	@Override
-	public Fac createElement(final ProcessorContext context, final Element e, final factory factory) {
-		final Fac fac = new Fac();
-		fac.clazz = rawNameOf(context, e.asType());
-		fac.kinds = factory.handles();
-		return fac;
 	}
 
 }

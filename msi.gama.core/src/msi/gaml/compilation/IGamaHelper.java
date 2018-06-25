@@ -12,7 +12,6 @@ package msi.gaml.compilation;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gaml.skills.Skill;
 
 /**
  * Written by drogoul Modified on 14 ao�t 2010. Modified on 23 Apr. 2013. A general purpose helper that can be
@@ -22,28 +21,13 @@ import msi.gaml.skills.Skill;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public abstract class GamaHelper<T> implements IGamaHelper<T> {
+@FunctionalInterface
+public interface IGamaHelper<T> {
 
-	final Class skillClass;
-
-	public GamaHelper() {
-		this(null);
+	default Class getSkillClass() {
+		return null;
 	}
 
-	public GamaHelper(final Class clazz) {
-		if (clazz != null && Skill.class.isAssignableFrom(clazz)) {
-			skillClass = clazz;
-		} else {
-			skillClass = null;
-		}
-	}
-
-	@Override
-	public Class getSkillClass() {
-		return skillClass;
-	}
-
-	@Override
 	public abstract T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
 			final Object... values);
 }

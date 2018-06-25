@@ -103,32 +103,6 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return getRootClassOf(enclosing);
 	}
 
-	public void verifyClassTypeCompatibility(final String string, final Element ve) {
-		String warning = null;
-		switch (string) {
-			case "Map":
-				warning = "it is safer to use the GamaMap type";
-				break;
-			case "ArrayList":
-			case "List":
-				warning = "it is safer to use the IList type";
-				break;
-			case "short":
-			case "long":
-			case "Long":
-			case "Short":
-				warning = "it is safer to use the Integer type";
-				break;
-			case "Color":
-				warning = "it is safer to use the GamaColor type";
-				break;
-		}
-		if (warning != null) {
-			emitWarning("GAML: " + warning, ve);
-		}
-
-	}
-
 	public TypeMirror getISkill() {
 		if (iSkill == null) {
 			iSkill = delegate.getElementUtils().getTypeElement("msi.gama.common.interfaces.ISkill").asType();
@@ -278,7 +252,6 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 			final String plugin2 = obj.toUri().toASCIIString().replace("/target/gaml/additions/GamlAdditions.java", "")
 					.replace("/gaml/gaml/additions/GamlAdditions.java", "");
 			currentPlugin = plugin2.substring(plugin2.lastIndexOf('/') + 1);
-			System.out.println("CURRENT PLUGIN = " + currentPlugin);
 			return obj;
 		} catch (final Exception e) {
 			emitWarning("Exception raised while creating the source file: " + e.getMessage(), e);

@@ -31,7 +31,7 @@ import msi.gama.util.file.GamaGifFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.GamaGetter;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -64,7 +64,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 *            an array of allowed extensions for files of this type
 	 */
 	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
-			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?>> builder,
+			final IType<?> contentType, final Class clazz, final GamaGetter<IGamaFile<?, ?>> builder,
 			final String[] extensions, final String plugin) {
 		// Added to ensure that extensions do not begin with a "." or contain
 		// blank characters
@@ -133,14 +133,13 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 			final IModifiableContainer contents) {
 		if (new File(path).isDirectory()) { return null; }
 		if (path.endsWith(".gif") || path.endsWith(".GIF")) {
-			if (contents == null)
+			if (contents == null) {
 				return new GamaGifFile(scope, path);
-			else if (contents instanceof IMatrix)
-				return new GamaGifFile(scope, path, (IMatrix<Integer>) contents);
-		} else if (contents == null)
+			} else if (contents instanceof IMatrix) { return new GamaGifFile(scope, path,
+					(IMatrix<Integer>) contents); }
+		} else if (contents == null) {
 			return new GamaImageFile(scope, path);
-		else if (contents instanceof IMatrix)
-			return new GamaImageFile(scope, path, (IMatrix<Integer>) contents);
+		} else if (contents instanceof IMatrix) { return new GamaImageFile(scope, path, (IMatrix<Integer>) contents); }
 		return null;
 	}
 

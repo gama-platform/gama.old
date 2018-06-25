@@ -61,12 +61,7 @@ public interface Constants {
 			final Character c = cuttingLettersOperatorDoc[i];
 
 			if (i == 0 && name.compareTo(c.toString()) < 0
-					|| name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0) { // name
-																											// is
-																											// <
-																											// to
-																											// cutting
-																											// letter
+					|| name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0) {
 				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
 			}
 		}
@@ -90,21 +85,19 @@ public interface Constants {
 			ISIMULATION = "ISimulation", ISKILL = "ISkill", ISUPPORT = "IVarAndActionSupport", ISYMBOL = "ISymbol",
 			IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
 			IEXPRESSION = "IExpression", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
-	public final static String[] IMPORTS =
-			new String[] { "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
-					"msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
-					"msi.gama.outputs.layers.charts", "msi.gaml.architecture.reflex",
-					"msi.gaml.architecture.finite_state_machine", "msi.gaml.species", "msi.gama.metamodel.shape",
-					"msi.gaml.expressions", "msi.gama.metamodel.topology", "msi.gaml.statements.test",
-					"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util",
-					"msi.gaml.statements.draw", " msi.gama.metamodel.shape", "msi.gama.common.interfaces",
-					"msi.gama.runtime", "java.lang", "msi.gama.metamodel.agent", "msi.gaml.types",
-					"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.file",
-					"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
-					"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-					"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators",
-					"msi.gaml.extensions.genstar", "msi.gama.common.interfaces", "msi.gama.extensions.messaging",
-					"msi.gama.metamodel.population" },
+	public final static String[] IMPORTS = new String[] { "msi.gama.outputs.layers", "msi.gama.outputs",
+			"msi.gama.kernel.batch", "msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks",
+			"msi.gaml.architecture.user", "msi.gama.outputs.layers.charts", "msi.gaml.architecture.reflex",
+			"msi.gaml.architecture.finite_state_machine", "msi.gaml.species", "msi.gama.metamodel.shape",
+			"msi.gaml.expressions", "msi.gama.metamodel.topology", "msi.gaml.statements.test",
+			"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util", "msi.gaml.statements.draw",
+			" msi.gama.metamodel.shape", "msi.gama.common.interfaces", "msi.gama.runtime", "java.lang",
+			"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
+			"msi.gaml.descriptions", "msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph",
+			"msi.gama.util.path", "msi.gama.util", "msi.gama.runtime.exceptions", "msi.gaml.factories",
+			"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables", "msi.gama.kernel.experiment",
+			"msi.gaml.operators", "msi.gaml.extensions.genstar", "msi.gama.common.interfaces",
+			"msi.gama.extensions.messaging", "msi.gama.metamodel.population" },
 			EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 					"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -139,6 +132,8 @@ public interface Constants {
 			put("ITopology", "IT");
 			put("GamlAgent", "GA");
 			put("ISpecies", "SP");
+			put("IScope", "SC");
+			put("GamaDate", "GD");
 
 		}
 	};

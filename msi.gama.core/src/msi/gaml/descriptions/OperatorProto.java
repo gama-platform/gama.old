@@ -27,7 +27,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.GamaGetter;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
@@ -59,7 +59,7 @@ public class OperatorProto extends AbstractProto {
 
 	public final boolean isVarOrField, canBeConst;
 	public final IType returnType;
-	public final GamaHelper helper;
+	public final GamaGetter helper;
 	public Signature signature;
 	public final boolean[] lazy;
 	public final int typeProvider, contentTypeProvider, keyTypeProvider;
@@ -102,7 +102,7 @@ public class OperatorProto extends AbstractProto {
 		}
 	}
 
-	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaGetter helper,
 			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
 			final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 			final int keyTypeProvider, final int contentTypeContentTypeProvider, final int[] expectedContentType,
@@ -140,7 +140,7 @@ public class OperatorProto extends AbstractProto {
 		return result;
 	}
 
-	public OperatorProto(final String name, final AnnotatedElement method, final GamaHelper helper,
+	public OperatorProto(final String name, final AnnotatedElement method, final GamaGetter helper,
 			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
 			final Class signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 			final int keyTypeProvider, final int[] expectedContentType) {
@@ -168,8 +168,7 @@ public class OperatorProto extends AbstractProto {
 
 	@Override
 	public String getDocumentation() {
-		if (!isVarOrField)
-			return super.getDocumentation();
+		if (!isVarOrField) { return super.getDocumentation(); }
 		final vars annot = getSupport().getAnnotation(vars.class);
 		if (annot != null) {
 			final var[] allVars = annot.value();
