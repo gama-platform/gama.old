@@ -28,8 +28,6 @@ public interface IGamaHelper<T> {
 		return null;
 	}
 
-	default void setSkillClass(final Class clazz) {}
-
 	public abstract T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
 			final Object... values);
 

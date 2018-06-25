@@ -12,7 +12,6 @@ package msi.gaml.compilation;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gaml.skills.Skill;
 
 /**
  * Written by drogoul Modified on 14 ao�t 2010. Modified on 23 Apr. 2013. A general purpose helper that can be
@@ -24,26 +23,17 @@ import msi.gaml.skills.Skill;
 @SuppressWarnings ({ "rawtypes" })
 public class GamaHelper<T> implements IGamaHelper<T> {
 
-	Class skillClass;
-	IGamaHelper<T> delegate;
+	final Class skillClass;
+	final IGamaHelper<T> delegate;
 
 	public GamaHelper(final Class clazz, final IGamaHelper<T> delegate) {
-		setSkillClass(clazz);
+		skillClass = clazz;
 		this.delegate = delegate;
 	}
 
 	@Override
 	public Class getSkillClass() {
 		return skillClass;
-	}
-
-	@Override
-	public void setSkillClass(final Class clazz) {
-		if (clazz != null && Skill.class.isAssignableFrom(clazz)) {
-			skillClass = clazz;
-		} else {
-			skillClass = null;
-		}
 	}
 
 	@Override
