@@ -82,22 +82,22 @@ public interface Constants {
 	static String tab = "\t";
 	static String in = ln;
 	final static String OVERRIDE = " @Override ", IAGENT = "IAgent", IPOPULATION = "IPopulation",
-			ISIMULATION = "ISimulation", ISKILL = "ISkill", ISUPPORT = "IVarAndActionSupport", ISYMBOL = "ISymbol",
-			IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
-			IEXPRESSION = "IExpression", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
-	public final static String[] IMPORTS = new String[] { "msi.gama.outputs.layers", "msi.gama.outputs",
-			"msi.gama.kernel.batch", "msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks",
+			ISIMULATION = "ISimulation", ISKILL = "ISkill", ISYMBOL = "ISymbol", IDESC = "IDescription",
+			ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue", IEXPRESSION = "IExpression", INTEGER = "Integer",
+			DOUBLE = "Double", BOOLEAN = "Boolean";
+	public final static String[] IMPORTS = new String[] { "msi.gama.outputs.layers.charts", "msi.gama.outputs.layers",
+			"msi.gama.outputs", "msi.gama.kernel.batch", "msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks",
 			"msi.gaml.architecture.user", "msi.gama.outputs.layers.charts", "msi.gaml.architecture.reflex",
 			"msi.gaml.architecture.finite_state_machine", "msi.gaml.species", "msi.gama.metamodel.shape",
 			"msi.gaml.expressions", "msi.gama.metamodel.topology", "msi.gaml.statements.test",
 			"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util", "msi.gaml.statements.draw",
 			" msi.gama.metamodel.shape", "msi.gama.common.interfaces", "msi.gama.runtime", "java.lang",
 			"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
-			"msi.gaml.descriptions", "msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph",
-			"msi.gama.util.path", "msi.gama.util", "msi.gama.runtime.exceptions", "msi.gaml.factories",
-			"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables", "msi.gama.kernel.experiment",
-			"msi.gaml.operators", "msi.gaml.extensions.genstar", "msi.gama.common.interfaces",
-			"msi.gama.extensions.messaging", "msi.gama.metamodel.population" },
+			"msi.gaml.descriptions", "msi.gama.util.tree", "msi.gama.util.file", "msi.gama.util.matrix",
+			"msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util", "msi.gama.runtime.exceptions",
+			"msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables",
+			"msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar",
+			"msi.gama.common.interfaces", "msi.gama.extensions.messaging", "msi.gama.metamodel.population" },
 			EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 					"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -134,6 +134,10 @@ public interface Constants {
 			put("ISpecies", "SP");
 			put("IScope", "SC");
 			put("GamaDate", "GD");
+			put("SimulationAgent", "SA");
+			put("ExperimentAgent", "EA");
+			put("DeprecatedOperators", "DO");
+			put("PlatformAgent", "PA");
 
 		}
 	};

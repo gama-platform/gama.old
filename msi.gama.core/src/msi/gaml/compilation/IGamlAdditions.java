@@ -9,8 +9,12 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import java.util.Arrays;
 import java.util.Collections;
 
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.root.PlatformAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -32,22 +36,27 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.IPath;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.DeprecatedOperators;
 import msi.gaml.skills.GridSkill;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 
 public interface IGamlAdditions {
 
-	public static class ChildrenProvider {
+	public static class Children {
 
 		private final Iterable<IDescription> children;
 
-		public ChildrenProvider(final Iterable<IDescription> descs) {
-			children = descs;
+		public Children(final IDescription... descs) {
+			if (descs == null || descs.length == 0) {
+				children = Collections.emptyList();
+			} else {
+				children = Arrays.asList(descs);
+			}
 		}
 
 		public Iterable<IDescription> getChildren() {
-			return children == null ? Collections.EMPTY_LIST : children;
+			return children;
 		}
 
 	}
@@ -84,6 +93,10 @@ public interface IGamlAdditions {
 	public final static Class<?> GSK = GridSkill.class;
 	public final static Class<?> SC = IScope.class;
 	public final static Class<?> GD = GamaDate.class;
+	public final static Class<?> SA = SimulationAgent.class;
+	public final static Class<?> EA = ExperimentAgent.class;
+	public final static Class<?> DO = DeprecatedOperators.class;
+	public final static Class<?> PA = PlatformAgent.class;
 
 	public void initialize() throws SecurityException, NoSuchMethodException;
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IAgentConstructor.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IAgentConstructor.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,7 +24,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
+@FunctionalInterface
 public interface IAgentConstructor<T extends IAgent> {
 
 	public static class Minimal implements IAgentConstructor<MinimalAgent> {
@@ -52,13 +52,14 @@ public interface IAgentConstructor<T extends IAgent> {
 
 	}
 
-	public static Map<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>> CONSTRUCTORS = new HashMap<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>>() {
+	public static Map<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>> CONSTRUCTORS =
+			new HashMap<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>>() {
 
-		{
-			put(GamlAgent.class, new Gaml());
-			put(MinimalAgent.class, new Minimal());
-		}
-	};
+				{
+					put(GamlAgent.class, new Gaml());
+					put(MinimalAgent.class, new Minimal());
+				}
+			};
 
 	public <T extends IAgent> T createOneAgent(IPopulation<T> manager) throws GamaRuntimeException;
 

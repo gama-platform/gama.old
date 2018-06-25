@@ -187,10 +187,10 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 			if (type.startsWith(element)) {
 				// AD: false
 				final String temp = type.replace(element + ".", "");
-				if (!temp.contains(".")) {
-					type = temp;
-					break;
-				}
+				// if (!temp.contains(".")) {
+				type = temp;
+				break;
+				// }
 
 			}
 		}

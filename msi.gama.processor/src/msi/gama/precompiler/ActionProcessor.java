@@ -22,23 +22,17 @@ public class ActionProcessor extends ElementProcessor<action> {
 			final action action) {
 		final String method = e.getSimpleName().toString();
 		final String clazz = rawNameOf(context, e.getEnclosingElement().asType());
+		final String clazzObject = toClassObject(clazz);
 		final String ret = checkPrim(getReturnType(context, (ExecutableElement) e));
-		sb.append(in).append("_action(").append(toJavaString(method)).append(", new GamaHelper(")
-				.append(toClassObject(clazz)).append(",(s,a,t,v)->").append(!ret.equals("void") ? "" : "{")
-				.append(" ((").append(clazz).append(") t).").append(method).append("(s)")
-				.append(ret.equals("void") ? "; return null;})," : "),");
-
-		// .append(",new GamaHelper(").append(toClassObject(clazz)).append("){").append(OVERRIDE).append("public ")
-		// .append(ret.equals("void") ? "Object" : ret).append(" run(").append(ISCOPE).append(" s, ")
-		// .append(IAGENT).append(" a, ").append(ISUPPORT).append(" t, Object... v){ ")
-		// .append(!ret.equals("void") ? "return" : "").append(" ((").append(clazz).append(") t).").append(method)
-		// .append("(s); ").append(ret.equals("void") ? "return null;" : "").append("} },")
+		sb.append(in).append("_action(").append(toJavaString(method)).append(", new GamaHelper(").append(clazzObject)
+				.append(",(s,a,t,v)->").append(!ret.equals("void") ? "" : "{").append(" ((").append(clazz)
+				.append(") t).").append(method).append("(s)").append(ret.equals("void") ? "; return null;})," : "),");
 		sb.append("desc(PRIMITIVE, null, ");
 		buildArgs(context, e, action.args(), sb).append(", NAME, ").append(toJavaString(action.name()))
 				.append(",TYPE, Ti(").append(toClassObject(ret)).append("), VIRTUAL,")
-				.append(toJavaString(String.valueOf(action.virtual()))).append(')').append(',')
-				.append(toClassObject(clazz)).append(".getMethod(").append(toJavaString(method)).append(',')
-				.append(toClassObject(ISCOPE)).append("));");
+				.append(toJavaString(String.valueOf(action.virtual()))).append(')').append(',').append(clazzObject)
+				.append(".getMethod(").append(toJavaString(method)).append(',').append(toClassObject(ISCOPE))
+				.append("));");
 	}
 
 	@Override
@@ -48,7 +42,7 @@ public class ActionProcessor extends ElementProcessor<action> {
 
 	private final StringBuilder buildArgs(final ProcessorContext context, final Element e, final arg[] args,
 			final StringBuilder sb) {
-		sb.append("new ChildrenProvider(Arrays.asList(");
+		sb.append("new Children(");
 		// TODO Argument types not taken into account when declaring them
 		for (int i = 0; i < args.length; i++) {
 			final arg arg = args[i];
@@ -65,11 +59,11 @@ public class ActionProcessor extends ElementProcessor<action> {
 			if (docs.length == 0) {
 				context.emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
 			}
-			sb.append("desc(ARG,NAME,").append(toJavaString(argName)).append(", TYPE, ")
-					.append(toJavaString(String.valueOf(arg.type()))).append(", \"optional\", ")
+			sb.append("desc(ARG,NAME,").append(toJavaString(argName)).append(",TYPE, ")
+					.append(toJavaString(String.valueOf(arg.type()))).append(",\"optional\",")
 					.append(toJavaString(String.valueOf(arg.optional()))).append(')');
 		}
-		sb.append("))");
+		sb.append(")");
 		return sb;
 
 	}

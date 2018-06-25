@@ -67,17 +67,17 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				d = docs[0].value();
 			}
 			final String clazz = rawNameOf(context, e.asType());
+			final String clazzObject = toClassObject(clazz);
 
-			sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz)).append(",")
+			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject).append(",")
 					.append(toJavaString(escapeDoubleQuotes(d))).append(",");
 			if (isField) {
-				sb.append("new OperatorProto(").append(toJavaString(node.name())).append(", null, ");
+				sb.append("new OperatorProto(").append(toJavaString(node.name())).append(",null,");
 				writeHelpers(sb, context, node, clazz, e, isField, true);
-				sb.append(", false, true, ").append(node.type()).append(",").append(toClassObject(clazz))
-						.append(", false, ").append(node.type()).append(",").append(node.of()).append(",")
-						.append(node.index()).append(",").append("AI").append(")");
+				sb.append(",F,T,").append(node.type()).append(',').append(clazzObject).append(",F,").append(node.type())
+						.append(",").append(node.of()).append(',').append(node.index()).append(',').append("AI)");
 			} else {
-				sb.append("desc(").append(node.type()).append(",");
+				sb.append("desc(").append(node.type()).append(',');
 				writeFacets(sb, node);
 				sb.append("),");
 				writeHelpers(sb, context, node, clazz, e, isField, false);
@@ -118,7 +118,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					final boolean isDynamic = !scope && n == 2 || scope && n == 3;
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
-					setterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)-> {if (t != null) ((",
+					setterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)->{if (t != null) ((",
 							clazz, ") t).", method, "(", scope ? "s," : "", isDynamic ? "a, " : "",
 							"(" + param_class + ") v[0]); return null; })");
 				}
@@ -141,16 +141,12 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final boolean dynamic = !scope && n > 0 || scope && n > 1;
 
 				if (isField) {
-					getterHelper = concat("(s, v) -> (v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
-							":((", clazz, ") v[0]).", method, scope ? "(s)" : "()");
+					getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)), ":((",
+							clazz, ")v[0]).", method, scope ? "(s)" : "()");
 				} else {
-					getterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)-> t==null?",
+					getterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)->t==null?",
 							returnWhenNull(checkPrim(returns)), ":((", clazz, ")t).", method, "(", scope ? "s" : "",
 							dynamic ? (scope ? "," : "") + "a))" : "))");
-					// getterHelper = concat("new GamaHelper(", toClassObject(clazz), "){", OVERRIDE, "public ",
-					// checkPrim(returns), " run(", ISCOPE, " scope, ", IAGENT, " a, ", ISUPPORT,
-					// " t, Object... v) {return t == null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
-					// ")t).", method, "(", scope ? "scope" : "", dynamic ? (scope ? "," : "") + "a);}}" : ");}}");
 				}
 				if (ex.getAnnotation(getter.class).initializer()) {
 					initerHelper = getterHelper;

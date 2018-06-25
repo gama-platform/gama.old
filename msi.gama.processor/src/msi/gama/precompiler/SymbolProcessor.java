@@ -27,10 +27,10 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 		sb.append(in).append("_symbol(");
 		toArrayOfStrings(symbol.name(), sb).append(',').append(toClassObject(clazz)).append(",");
 		sb.append(getValidator(context, e)).append(',').append(getSerializer(context, e));
-		sb.append(",").append(symbol.kind()).append(',').append(symbol.remote_context()).append(',')
-				.append(symbol.with_args()).append(',').append(symbol.with_scope()).append(',');
-		sb.append(symbol.with_sequence()).append(',').append(symbol.unique_in_context()).append(',')
-				.append(symbol.unique_name()).append(',');
+		sb.append(",").append(symbol.kind()).append(',').append(toBoolean(symbol.remote_context())).append(',')
+				.append(toBoolean(symbol.with_args())).append(',').append(toBoolean(symbol.with_scope())).append(',');
+		sb.append(toBoolean(symbol.with_sequence())).append(',').append(toBoolean(symbol.unique_in_context()))
+				.append(',').append(toBoolean(symbol.unique_name())).append(',');
 		final inside inside = e.getAnnotation(inside.class);
 		if (inside != null) {
 			toArrayOfStrings(inside.symbols(), sb).append(',');
@@ -70,15 +70,19 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			}
 			sb.append(')');
 		}
-		sb.append(',').append(toJavaString(omissible)).append(',').append("new ISymbolConstructor() {").append(OVERRIDE)
-				.append("public ISymbol create(").append(IDESC).append(" d) {return new ").append(clazz)
-				.append("(d);}}");
+		sb.append(',').append(toJavaString(omissible)).append(',').append("(d)->new ").append(clazz).append("(d)");
+		// sb.append("new ISymbolConstructor() {").append("public ISymbol create(").append(IDESC)
+		// .append(" d) {return new ").append(clazz).append("(d);}}");
 		sb.append(");");
 		if (constants.length() > 0) {
 			constants.setLength(constants.length() - 1);
 			sb.append(ln).append("_constants(").append(constants).append(");");
 		}
 
+	}
+
+	private String toBoolean(final boolean b) {
+		return b ? "T" : "F";
 	}
 
 	private void verifyDoc(final ProcessorContext context, final Element e, final symbol symbol) {

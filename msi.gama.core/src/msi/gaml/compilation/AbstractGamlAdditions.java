@@ -270,7 +270,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		FIELDS.put(clazz, getter);
 	}
 
-	protected IDescription desc(final String keyword, final IDescription superDesc, final ChildrenProvider children,
+	protected IDescription desc(final String keyword, final IDescription superDesc, final Children children,
 			final String... facets) {
 		return DescriptionFactory.create(keyword, superDesc, children.getChildren(), facets);
 	}

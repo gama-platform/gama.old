@@ -13,8 +13,7 @@ public class SpeciesProcessor extends ElementProcessor<species> {
 		final String clazz = rawNameOf(context, e.asType());
 		verifyDoc(context, e, spec);
 		sb.append(in).append("_species(").append(toJavaString(spec.name())).append(",").append(toClassObject(clazz))
-				.append(", new IAgentConstructor(){" + OVERRIDE + "public ").append(IAGENT).append(" createOneAgent(")
-				.append(IPOPULATION).append(" p) {return new ").append(clazz).append("(p);}},");
+				.append(",(p)->").append("new ").append(clazz).append("(p),");
 		toArrayOfStrings(spec.skills(), sb).append(");");
 	}
 
