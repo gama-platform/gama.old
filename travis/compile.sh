@@ -3,7 +3,7 @@
 function mvn_install() {
 	echo "Building " $1
 	cd $1
-	mvn clean install 
+	mvn clean install -Dcheckstyle.skip
 	res=$?
 	if [[ $res -gt 0 ]]; then
 		exit $res
@@ -13,7 +13,7 @@ function mvn_install() {
 function mvn_compile() {
 	echo "Building " $1
 	cd $1
-	mvn clean compile 
+	mvn clean compile -Dcheckstyle.skip
 	res=$?
 	if [[ $res -gt 0 ]]; then
 		exit $res
