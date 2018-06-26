@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic.Kind;
 
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
 
@@ -162,40 +161,21 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return sb;
 	}
 
-	/**
-	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses
-	 * its own separator (DOC_SEP)
-	 *
-	 * @param docs
-	 *            an Array of @doc annotations (only the 1st is significant)
-	 * @return aString containing the documentation formatted using the format above
-	 */
-	// static String docToString(final doc[] docs) {
-	// if (docs == null || docs.length == 0) { return ""; }
-	// final doc doc1 = docs[0];
-	// if (doc1 == null) { return ""; }
-	// DOC_BUILDER.append(doc1.value()).append(DOC_SEP).append(doc1.deprecated());
-	// final String result = DOC_BUILDER.toString();
-	// DOC_BUILDER.setLength(0);
-	// return result;
-	// }
-
 	static String rawNameOf(final ProcessorContext context, final TypeMirror t) {
 		if (t.getKind().equals(TypeKind.VOID)) { return "void"; }
 		final String key = t.toString();
 		if (NAME_CACHE.containsKey(key)) { return NAME_CACHE.get(key); }
-
 		String type = context.getTypeUtils().erasure(t).toString();
-
+		// As a workaround for ECJ/javac discrepancies regarding erasure
 		type = CLASS_PARAM.matcher(type).replaceAll("");
-
+		// Reduction by considering the imports written in the header
 		for (final String element : GamaProcessor.IMPORTS) {
 			if (type.startsWith(element)) {
 				type = type.replace(element + ".", "");
 				break;
 			}
 		}
-		context.emit(Kind.NOTE, "Type to convert : " + key + " | Reduction: " + type, null);
+		// context.emit(Kind.NOTE, "Type to convert : " + key + " | Reduction: " + type, null);
 		NAME_CACHE.put(key, type);
 		return type;
 	}
