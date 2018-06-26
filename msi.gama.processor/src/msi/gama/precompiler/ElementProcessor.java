@@ -19,7 +19,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	protected static final Map<String, String> NAME_CACHE = new HashMap<>();
 
 	protected final Map<String, StringBuilder> opIndex = new HashMap<>();
-	static final Pattern CLASS_PARAM = Pattern.compile("<.*>");
+	static final Pattern CLASS_PARAM = Pattern.compile("<.*?>");
 	static final Pattern SINGLE_QUOTE = Pattern.compile("\"");
 	static final String QUOTE_MATCHER = Matcher.quoteReplacement("\\\"");
 	// final static StringBuilder DOC_BUILDER = new StringBuilder();
@@ -187,7 +187,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 		String type = context.getTypeUtils().erasure(t).toString();
 
-		// String type2 = CLASS_PARAM.matcher(type).replaceAll("");
+		type = CLASS_PARAM.matcher(type).replaceAll("");
 
 		for (final String element : GamaProcessor.IMPORTS) {
 			if (type.startsWith(element)) {
