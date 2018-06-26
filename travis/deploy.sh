@@ -4,7 +4,7 @@
 function mvn_deploy() {
 	echo "Deploying " $1
 	cd $1
-	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+	mvn deploy -DskipTests -Dcheckstyle.skip -T 8C -P p2Repo --settings ../settings.xml
 	res=$?
 	if [[ $res -gt 0 ]]; then
 		exit $res
