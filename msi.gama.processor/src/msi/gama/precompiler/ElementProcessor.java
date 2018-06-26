@@ -12,8 +12,11 @@ import java.util.regex.Pattern;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic.Kind;
 
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
+
+	protected static final Map<String, String> NAME_CACHE = new HashMap<>();
 
 	protected final Map<String, StringBuilder> opIndex = new HashMap<>();
 	static final Pattern CLASS_PARAM = Pattern.compile("<.*>");
@@ -179,19 +182,21 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	static String rawNameOf(final ProcessorContext context, final TypeMirror t) {
 		if (t.getKind().equals(TypeKind.VOID)) { return "void"; }
-		String type = context.getTypeUtils().erasure(t).toString();
-		type = CLASS_PARAM.matcher(type).replaceAll("");
-		for (final String element : IMPORTS) {
-			if (type.startsWith(element)) {
-				// AD: false
-				final String temp = type.replace(element + ".", "");
-				// if (!temp.contains(".")) {
-				type = temp;
-				break;
-				// }
+		final String key = t.toString();
+		if (NAME_CACHE.containsKey(key)) { return NAME_CACHE.get(key); }
 
+		String type = context.getTypeUtils().erasure(t).toString();
+
+		// String type2 = CLASS_PARAM.matcher(type).replaceAll("");
+
+		for (final String element : GamaProcessor.IMPORTS) {
+			if (type.startsWith(element)) {
+				type = type.replace(element + ".", "");
+				break;
 			}
 		}
+		context.emit(Kind.NOTE, "Type to convert : " + key + " | Reduction: " + type, null);
+		NAME_CACHE.put(key, type);
 		return type;
 	}
 

@@ -57,27 +57,27 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 		for (final var node : vars.value()) {
 			final doc[] docs = node.doc();
-			String d = "";
+			// String d = "";
 			if (docs.length == 0) {
 				if (!node.internal()) {
 					UNDOCUMENTED.add(node.name());
 				}
 			} else if (!isField) { // documentation of fields is not used
-				d = docs[0].value();
+				// d = docs[0].value();
 			}
 			final String clazz = rawNameOf(context, e.asType());
 			final String clazzObject = toClassObject(clazz);
 
 			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject);
-			if (!isField) {
-				sb.append(",").append(toJavaString(escapeDoubleQuotes(d)));
-			}
+			// if (!isField) {
+			// sb.append(",").append(toJavaString(escapeDoubleQuotes(d)));
+			// }
 			sb.append(",");
 			if (isField) {
-				sb.append("new OperatorProto(").append(toJavaString(node.name())).append(",null,");
+				sb.append("_proto(").append(toJavaString(node.name())).append(',');
 				writeHelpers(sb, context, node, clazz, e, isField, true);
-				sb.append(",F,T,").append(node.type()).append(',').append(clazzObject).append(",F,").append(node.type())
-						.append(",").append(node.of()).append(',').append(node.index()).append(',').append("AI)");
+				sb.append(',').append(node.type()).append(',').append(clazzObject).append(',').append(node.type())
+						.append(",").append(node.of()).append(',').append(node.index()).append(')');
 			} else {
 				sb.append("desc(").append(node.type()).append(',');
 				writeFacets(sb, node);
@@ -120,9 +120,8 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					final boolean isDynamic = !scope && n == 2 || scope && n == 3;
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
-					setterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)->{if (t != null) ((",
-							clazz, ") t).", method, "(", scope ? "s," : "", isDynamic ? "a, " : "",
-							"(" + param_class + ") v[0]); return null; })");
+					setterHelper = concat("(s,a,t,v)->{if (t != null) ((", clazz, ") t).", method, "(",
+							scope ? "s," : "", isDynamic ? "a, " : "", "(" + param_class + ") v[0]); return null; }");
 				}
 			}
 		}
@@ -146,9 +145,8 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)), ":((",
 							clazz, ")v[0]).", method, scope ? "(s)" : "()");
 				} else {
-					getterHelper = concat("new GamaHelper(", toClassObject(clazz), ",(s,a,t,v)->t==null?",
-							returnWhenNull(checkPrim(returns)), ":((", clazz, ")t).", method, "(", scope ? "s" : "",
-							dynamic ? (scope ? "," : "") + "a))" : "))");
+					getterHelper = concat("(s,a,t,v)->t==null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
+							")t).", method, "(", scope ? "s" : "", dynamic ? (scope ? "," : "") + "a)" : ")");
 				}
 				if (ex.getAnnotation(getter.class).initializer()) {
 					initerHelper = getterHelper;
@@ -165,8 +163,10 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 	private void writeFacets(final StringBuilder sb, final var s) {
 		sb.append("S(\"type\"").append(',').append(toJavaString(String.valueOf(s.type()))).append(',')
-				.append("\"name\"").append(',').append(toJavaString(String.valueOf(s.name()))).append(',')
-				.append("\"const\"").append(',').append(toJavaString(String.valueOf(s.constant())));
+				.append("\"name\"").append(',').append(toJavaString(s.name()));
+		if (s.constant()) {
+			sb.append(',').append("\"const\"").append(',').append(toJavaString(String.valueOf(s.constant())));
+		}
 
 		final String[] dependencies = s.depends_on();
 		if (dependencies.length > 0) {

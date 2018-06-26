@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ModelFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ModelFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -31,12 +30,17 @@ import msi.gaml.statements.Facets;
  *
  * @todo Description
  */
-@factory(handles = { ISymbolKind.MODEL })
+@factory (
+		handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory {
 
 	final ModelAssembler assembler = new ModelAssembler();
 
 	public ModelFactory(final List<Integer> handles) {
+		super(handles);
+	}
+
+	public ModelFactory(final int... handles) {
 		super(handles);
 	}
 
@@ -46,7 +50,7 @@ public class ModelFactory extends SymbolFactory {
 		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
 		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null, null,

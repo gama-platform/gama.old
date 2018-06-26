@@ -28,6 +28,10 @@ public class PlatformFactory extends SpeciesFactory {
 		super(handles);
 	}
 
+	public PlatformFactory(final int... handles) {
+		super(handles);
+	}
+
 	@Override
 	public SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
 			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,

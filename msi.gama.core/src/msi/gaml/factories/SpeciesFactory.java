@@ -39,6 +39,10 @@ public class SpeciesFactory extends SymbolFactory {
 		super(handles);
 	}
 
+	public SpeciesFactory(final int... handles) {
+		super(handles);
+	}
+
 	@Override
 	protected TypeDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 			final Iterable<IDescription> children, final IDescription sd, final SymbolProto proto) {

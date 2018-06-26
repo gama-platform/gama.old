@@ -11,6 +11,7 @@ package msi.gama.precompiler;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -35,6 +36,20 @@ import msi.gama.precompiler.tests.TestProcessor;
 @SupportedSourceVersion (SourceVersion.RELEASE_8)
 public class GamaProcessor extends AbstractProcessor implements Constants {
 
+	public final static String[] IMPORTS = new String[] { "msi.gaml.extensions.multi_criteria",
+			"msi.gama.outputs.layers.charts", "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
+			"msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
+			"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
+			"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
+			"msi.gaml.statements.test", "msi.gama.metamodel.population", "msi.gama.kernel.simulation",
+			"msi.gama.kernel.model", "java.util", "msi.gaml.statements.draw", " msi.gama.metamodel.shape",
+			"msi.gama.common.interfaces", "msi.gama.runtime", "java.lang", "msi.gama.metamodel.agent", "msi.gaml.types",
+			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.tree",
+			"msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
+			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
+			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar",
+			"msi.gama.common.interfaces", "msi.gama.extensions.messaging", "msi.gama.metamodel.population" };
+
 	private ProcessorContext context;
 	public static final String JAVA_HEADER;
 	int count;
@@ -45,6 +60,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		final StringBuilder sb = new StringBuilder();
 		writeImmutableHeader(sb);
 		JAVA_HEADER = sb.toString();
+		Arrays.sort(IMPORTS, (a, b) -> b.compareTo(a));
 	}
 
 	@Override

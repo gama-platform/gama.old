@@ -25,6 +25,7 @@ import msi.gama.util.Collector;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -322,6 +323,13 @@ public class VariableDescription extends SymbolDescription {
 		this.get = get;
 		this.set = set;
 		this.init = init;
+	}
+
+	public void addHelpers(final Class skill, final IGamaHelper<?> get, final IGamaHelper<?> init,
+			final IGamaHelper<?> set) {
+		this.get = get != null ? new GamaHelper(skill, get) : null;
+		this.set = set != null ? new GamaHelper(skill, set) : null;
+		this.init = init != null ? new GamaHelper(skill, init) : null;
 	}
 
 	public IGamaHelper<?> getGetter() {

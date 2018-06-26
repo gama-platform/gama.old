@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SymbolFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SymbolFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,6 +30,10 @@ public abstract class SymbolFactory {
 	protected final TIntHashSet kindsHandled;
 
 	public SymbolFactory(final List<Integer> handles) {
+		kindsHandled = new TIntHashSet(handles);
+	}
+
+	public SymbolFactory(final int... handles) {
 		kindsHandled = new TIntHashSet(handles);
 	}
 

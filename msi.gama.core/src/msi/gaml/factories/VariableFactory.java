@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'VariableFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'VariableFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,11 +32,16 @@ import msi.gaml.statements.Facets;
  *
  * @todo Description
  */
-@factory(handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
-		ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
+@factory (
+		handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
+				ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 
 	public VariableFactory(final List<Integer> handles) {
+		super(handles);
+	}
+
+	public VariableFactory(final int... handles) {
 		super(handles);
 	}
 
@@ -52,8 +56,9 @@ public class VariableFactory extends SymbolFactory {
 			final VariableDescription targetedVar = enclosing.getModelDescription().getAttribute(facets.getLabel(VAR));
 			if (targetedVar != null) {
 				for (final String key : possibleFacets.keySet()) {
-					if (key.equals(ON_CHANGE))
+					if (key.equals(ON_CHANGE)) {
 						continue;
+					}
 					final IExpressionDescription expr = targetedVar.getFacet(key);
 					if (expr != null) {
 						facets.putIfAbsent(key, expr);

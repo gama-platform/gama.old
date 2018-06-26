@@ -22,20 +22,15 @@ public class ActionProcessor extends ElementProcessor<action> {
 			final action action) {
 		final String method = e.getSimpleName().toString();
 		final String clazz = rawNameOf(context, e.getEnclosingElement().asType());
-		final String clazzObject = toClassObject(clazz);
 		final String ret = checkPrim(getReturnType(context, (ExecutableElement) e));
-		sb.append(in).append("_action(")
-				// methodName is not used in _action()
-				// .append(toJavaString(method))
-				.append("new GamaHelper(").append(clazzObject).append(",(s,a,t,v)->")
-				.append(!ret.equals("void") ? "" : "{").append("((").append(clazz).append(") t).").append(method)
-				.append("(s)").append(ret.equals("void") ? ";return null;})," : "),");
-		sb.append("desc(PRIMITIVE, null, ");
-		buildArgs(context, e, action.args(), sb).append(", NAME, ").append(toJavaString(action.name()))
+		sb.append(in).append("_action(").append("(s,a,t,v)->").append(!ret.equals("void") ? "" : "{").append("((")
+				.append(clazz).append(") t).").append(method).append("(s)")
+				.append(ret.equals("void") ? ";return null;}," : ",").append("desc(PRIM,");
+		buildArgs(context, e, action.args(), sb).append(",NAME,").append(toJavaString(action.name()))
 				.append(",TYPE,Ti(").append(toClassObject(ret)).append("),VIRTUAL,")
-				.append(toJavaString(String.valueOf(action.virtual()))).append(')').append(',').append(clazzObject)
-				.append(".getMethod(").append(toJavaString(method)).append(',').append(toClassObject(ISCOPE))
-				.append("));");
+				.append(toJavaString(String.valueOf(action.virtual()))).append(')').append(',')
+				.append(toClassObject(clazz)).append(".getMethod(").append(toJavaString(method)).append(',')
+				.append(toClassObject(ISCOPE)).append("));");
 	}
 
 	@Override
@@ -55,7 +50,7 @@ public class ActionProcessor extends ElementProcessor<action> {
 			final String argName = arg.name();
 			if (RESERVED_FACETS.contains(argName)) {
 				context.emitWarning("Argument '" + argName
-						+ "' will prevent this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+						+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
 						e);
 			}
 			final doc[] docs = arg.doc();

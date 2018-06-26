@@ -163,10 +163,10 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final int start = stat ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
 		if (stat) {
-			sb.append("{return ").append(name).append("(").append(firstArg);
+			sb.append(name).append('(').append(firstArg);
 		} else {
-			sb.append("{return o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0])
-					.append(")o[0]).").append(name).append('(').append(firstArg);
+			sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
+					.append(name).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
 			if (scope) {
@@ -177,7 +177,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				sb.append(i != classes.length - 1 ? "," : "");
 			}
 		}
-		sb.append(");}");
+		sb.append(")");
 		return sb;
 	}
 

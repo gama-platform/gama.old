@@ -40,6 +40,9 @@ import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescrip
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.util.JavaUtils;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.TOrderedHashMap;
@@ -262,21 +265,46 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// final mettre documentation ?
 	}
 
-	protected void _var(final Class clazz, final String doc, final IDescription desc, final IGamaHelper get,
-			final IGamaHelper init, final IGamaHelper set) {
+	protected void _var(final Class clazz, final IDescription desc, final IGamaHelper get, final IGamaHelper init,
+			final IGamaHelper set) {
 		add(clazz, desc);
-		((VariableDescription) desc).addHelpers(get, init, set);
-		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.putIfAbsent(desc.getName(), doc);
+		((VariableDescription) desc).addHelpers(clazz, get, init, set);
+		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.putIfAbsent(desc.getName(), getVarDoc(desc.getName(), clazz));
 		((VariableDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
+	}
+
+	private String getVarDoc(final String name, final Class<?> clazz) {
+		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
+		for (final var v : vars.value()) {
+			if (v.name().equals(name)) {
+				final doc[] docs = v.doc();
+				final String d = "";
+				if (docs.length > 0) {
+					// documentation of fields is not used
+					return docs[0].value();
+				}
+			}
+		}
+		return "";
+	}
+
+	protected FacetProto _facet(final String name, final int[] types, final int ct, final int kt, final String[] values,
+			final boolean optional, final boolean internal) {
+		return new FacetProto(name, types, ct, kt, values, optional, internal);
+	}
+
+	protected OperatorProto _proto(final String name, final GamaGetter helper, final int returnType,
+			final Class signature, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider) {
+		return new OperatorProto(name, null, helper, false, true, returnType, signature, false, typeProvider,
+				contentTypeProvider, keyTypeProvider, AI);
 	}
 
 	protected void _field(final Class clazz, final OperatorProto getter) {
 		FIELDS.put(clazz, getter);
 	}
 
-	protected IDescription desc(final String keyword, final IDescription superDesc, final Children children,
-			final String... facets) {
-		return DescriptionFactory.create(keyword, superDesc, children.getChildren(), facets);
+	protected IDescription desc(final String keyword, final Children children, final String... facets) {
+		return DescriptionFactory.create(keyword, null, children.getChildren(), facets);
 	}
 
 	protected IDescription desc(final String keyword, final String... facets) {
@@ -295,10 +323,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return desc(t.toString(), facets);
 	}
 
-	protected void _action(final IGamaHelper e, final IDescription desc, final AccessibleObject method) {
-		((PrimitiveDescription) desc).setHelper(e, method);
+	protected void _action(final IGamaHelper e, final IDescription desc, final Method method) {
+		final Class clazz = method.getDeclaringClass();
+		((PrimitiveDescription) desc).setHelper(new GamaHelper(clazz, e), method);
 		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		add(e.getSkillClass(), desc);
+		add(clazz, desc);
 	}
 
 	public static void initType(final String keyword, final IType<?> typeInstance, final int id, final int varKind,

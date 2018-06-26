@@ -12,6 +12,7 @@ package msi.gaml.compilation;
 import java.util.Arrays;
 import java.util.Collections;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -65,6 +66,7 @@ public interface IGamlAdditions {
 	public final static String[] AS = new String[0];
 	public final static boolean F = false;
 	public final static boolean T = true;
+	public final static String PRIM = IKeyword.PRIMITIVE;
 	public final static Class<?> IA = IAgent.class;
 	public final static Class<?> IT = ITopology.class;
 	public final static Class<?> SP = ISpecies.class;
@@ -97,6 +99,9 @@ public interface IGamlAdditions {
 	public final static Class<?> EA = ExperimentAgent.class;
 	public final static Class<?> DO = DeprecatedOperators.class;
 	public final static Class<?> PA = PlatformAgent.class;
+	public final static Class<?> i = int.class;
+	public final static Class<?> d = double.class;
+	public final static Class<?> b = boolean.class;
 
 	public void initialize() throws SecurityException, NoSuchMethodException;
 

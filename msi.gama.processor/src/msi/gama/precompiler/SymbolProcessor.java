@@ -48,7 +48,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				if (i > 0) {
 					sb.append(',');
 				}
-				sb.append("new FacetProto(").append(toJavaString(child.name())).append(',');
+				sb.append("_facet(").append(toJavaString(child.name())).append(',');
 				toArrayOfInts(child.type(), sb).append(',').append(child.of()).append(',').append(child.index())
 						.append(',');
 				final String[] values = child.values();
@@ -57,24 +57,17 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				}
 				toArrayOfStrings(values, sb).append(',').append(toBoolean(child.optional())).append(',')
 						.append(toBoolean(child.internal()));
-				// sb.append(',');
 				final doc[] d = child.doc();
-				// String doc = "";
 				if (d == null || d.length == 0) {
 					if (!child.internal()) {
 						UNDOCUMENTED.add(child.name());
 					}
-				} else {
-					// doc = docToString(child.doc());
-				}
-				// sb.append(toJavaString(escapeDoubleQuotes(doc)));
+				} else {}
 				sb.append(')');
 			}
 			sb.append(')');
 		}
-		sb.append(',').append(toJavaString(omissible)).append(',').append("(d)->new ").append(clazz).append("(d)");
-		// sb.append("new ISymbolConstructor() {").append("public ISymbol create(").append(IDESC)
-		// .append(" d) {return new ").append(clazz).append("(d);}}");
+		sb.append(',').append(toJavaString(omissible)).append(',').append("(x)->new ").append(clazz).append("(x)");
 		sb.append(");");
 		if (constants.length() > 0) {
 			constants.setLength(constants.length() - 1);

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,10 +28,15 @@ import msi.gaml.statements.Facets;
  *
  * @author drogoul
  */
-@factory(handles = { ISymbolKind.EXPERIMENT })
+@factory (
+		handles = { ISymbolKind.EXPERIMENT })
 public class ExperimentFactory extends SpeciesFactory {
 
 	public ExperimentFactory(final List<Integer> handles) {
+		super(handles);
+	}
+
+	public ExperimentFactory(final int... handles) {
 		super(handles);
 	}
 
