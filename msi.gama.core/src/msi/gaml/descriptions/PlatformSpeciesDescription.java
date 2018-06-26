@@ -55,9 +55,9 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 
 	public void addPref(final String key, final Pref<?> entry) {
 
-		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key, entry.getTitle());
 		final VariableDescription var = (VariableDescription) DescriptionFactory.create(entry.getType().toString(),
 				PlatformSpeciesDescription.this, NAME, key);
+		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key, entry.getTitle());
 		final IGamaHelper<?> get = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();
 		final IGamaHelper<?> set = (scope, agent, skill, values) -> {
 			GamaPreferences.get(key).setValue(scope, values[0]);
@@ -84,10 +84,10 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 	}
 
 	public IExpression getFakePrefExpression(final String key) {
-		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key,
-				"This preference is not available in the current configuration of GAMA");
 		final VariableDescription var = (VariableDescription) DescriptionFactory.create(IKeyword.UNKNOWN,
 				PlatformSpeciesDescription.this, NAME, key);
+		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key,
+				"This preference is not available in the current configuration of GAMA");
 		return var.getVarExpr(true);
 	}
 

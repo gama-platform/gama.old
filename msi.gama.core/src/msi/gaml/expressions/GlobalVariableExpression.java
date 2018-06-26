@@ -16,7 +16,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -65,8 +64,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 					final ITopLevelAgent root = agentScope.getRoot();
 					if (root != null) {
 						final IScope globalScope = root.getScope();
-						if (globalScope != null)
-							return globalScope.getGlobalVarValue(getName());
+						if (globalScope != null) { return globalScope.getGlobalVarValue(getName()); }
 					}
 				}
 			}
@@ -82,8 +80,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 			scope.setGlobalVarValue(name, v);
 		} else {
 			final IAgent sc = scope.getAgent();
-			if (sc != null)
+			if (sc != null) {
 				sc.getScope().getRoot().getScope().setGlobalVarValue(name, v);
+			}
 		}
 	}
 
@@ -99,12 +98,19 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	@Override
 	public String getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
+		String doc = null;
 		String s = "Type " + type.getTitle();
-		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(name);
-		if (doc != null)
-			s += "<br>" + doc;
-		if (desc == null)
+		if (desc != null) {
+			final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
+			if (var != null) {
+				doc = var.getBuiltInDoc();
+			}
+		} else {
 			return s;
+		}
+		if (doc != null) {
+			s += "<br>" + doc;
+		}
 		final String quality =
 				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
 						+ desc.getTitle();
@@ -114,8 +120,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		if (species.equals(this.getDefinitionDescription().getSpeciesContext()))
+		if (species.equals(this.getDefinitionDescription().getSpeciesContext())) {
 			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
+		}
 	}
 
 }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExperimentAgentCreator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExperimentAgentCreator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,6 +14,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
 
+@FunctionalInterface
 public interface IExperimentAgentCreator {
 
 	public static class ExperimentAgentDescription implements IExperimentAgentCreator, IGamlDescription {
@@ -55,8 +55,7 @@ public interface IExperimentAgentCreator {
 		 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
 		 */
 		@Override
-		public void setName(final String newName) {
-		}
+		public void setName(final String newName) {}
 
 		/**
 		 * Method serialize()

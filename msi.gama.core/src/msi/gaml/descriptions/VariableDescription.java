@@ -41,6 +41,14 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
+	// public static class BuiltIn extends VariableDescription {
+	//
+	// public BuiltIn(final String keyword, final IDescription superDesc, final EObject source, final Facets facets) {
+	// super(keyword, superDesc, source, facets);
+	// }
+	//
+	// }
+
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
 	private static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
@@ -265,19 +273,10 @@ public class VariableDescription extends SymbolDescription {
 		return pName;
 	}
 
-	// @Override
-	// public TypeDescription getEnclosingDescription() {
-	// return (TypeDescription) super.getEnclosingDescription();
-	// }
-
 	@Override
 	public String getTitle() {
-		// final boolean isRedefinition = getEnclosingDescription() != null
-		// && getEnclosingDescription().redefinesAttribute(getName())
-		// && AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.containsKey(getName()) && !isBuiltIn();
-		final String title = getType().getTitle() +
-		// (isRedefinition ? "Redefinition of " : "Definition of ")
-				(isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
+		final String title = getType().getTitle()
+				+ (isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
 		if (getEnclosingDescription() == null) { return title; }
 		final String s = title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
 		return s;
@@ -285,31 +284,39 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getDocumentation() {
-		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
+		final String doc = getBuiltInDoc();
 		if (isBuiltIn()) { return doc == null ? "Not yet documented" : doc; }
 		String s = "";
-		if (getEnclosingDescription() instanceof TypeDescription
-				&& ((TypeDescription) getEnclosingDescription()).redefinesAttribute(getName()) && doc != null) {
+		if (doc != null) {
 			s += doc + "<br/>";
 		}
 		return s + getMeta().getFacetsDocumentation();
 	}
 
 	public String getShortDescription() {
-		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
 		String s = ", of type " + getType().getTitle();
-		if (getEnclosingDescription() instanceof TypeDescription
-				&& (((TypeDescription) getEnclosingDescription()).redefinesAttribute(getName()) || isBuiltIn())
-				&& doc != null) {
+		final String doc = getBuiltInDoc();
+		if (doc != null) {
 			s += ": " + doc;
 		}
 		return s;
-
 	}
 
-	// public String getVarDocumentation() {
-	// return
-	// }
+	public String getBuiltInDoc() {
+		final VariableDescription builtIn = getBuiltInAncestor();
+		if (builtIn == null) { return null; }
+		return AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(builtIn.getName());
+	}
+
+	private VariableDescription getBuiltInAncestor() {
+		if (getEnclosingDescription() instanceof SpeciesDescription) {
+			final SpeciesDescription td = (SpeciesDescription) getEnclosingDescription();
+			if (td.isBuiltIn()) { return this; }
+			if (td.getParent() != null && td.getParent()
+					.hasAttribute(name)) { return td.getParent().getAttribute(name).getBuiltInAncestor(); }
+		}
+		return null;
+	}
 
 	public void addHelpers(final IGamaHelper<?> get, final IGamaHelper<?> init, final IGamaHelper<?> set) {
 		this.get = get;

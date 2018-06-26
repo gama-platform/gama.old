@@ -123,13 +123,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return Types.get(c);
 	}
 
-	public void _display(final String string, final Class class1, final IDisplayCreator d) {
+	public void _display(final String string, final IDisplayCreator d) {
 		CONSTANTS.add(string);
 		final DisplayDescription dd = new DisplayDescription(d, string, CURRENT_PLUGIN_NAME);
 		IGui.DISPLAYS.put(string, dd);
 	}
 
-	public void _experiment(final String string, final Class class1, final IExperimentAgentCreator d) {
+	public void _experiment(final String string, final IExperimentAgentCreator d) {
 		CONSTANTS.add(string);
 		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string, CURRENT_PLUGIN_NAME);
 		GamaMetaModel.INSTANCE.addExperimentAgentCreator(string, ed);
@@ -163,7 +163,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	// doc missing
 	protected void _symbol(final String[] names, final Class c, final IDescriptionValidator validator,
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
@@ -176,6 +175,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			keywords.remove(SPECIES);
 		} else {
 			keywords = Arrays.asList(names);
+		}
+		if (fmd != null) {
+			for (final FacetProto f : fmd) {
+				f.buildDoc(c);
+			}
 		}
 
 		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
@@ -262,11 +266,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final IGamaHelper init, final IGamaHelper set) {
 		add(clazz, desc);
 		((VariableDescription) desc).addHelpers(get, init, set);
-		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(desc.getName(), doc);
+		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.putIfAbsent(desc.getName(), doc);
 		((VariableDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
-	protected void _field(final Class clazz, final String doc, final OperatorProto getter) {
+	protected void _field(final Class clazz, final OperatorProto getter) {
 		FIELDS.put(clazz, getter);
 	}
 
@@ -279,13 +283,19 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return DescriptionFactory.create(keyword, facets);
 	}
 
+	/**
+	 * Creates a VariableDescription
+	 * 
+	 * @param keyword
+	 * @param facets
+	 * @return
+	 */
 	protected IDescription desc(final int keyword, final String... facets) {
 		final IType t = Types.get(keyword);
 		return desc(t.toString(), facets);
 	}
 
-	protected void _action(final String methodName, final IGamaHelper e, final IDescription desc,
-			final AccessibleObject method) {
+	protected void _action(final IGamaHelper e, final IDescription desc, final AccessibleObject method) {
 		((PrimitiveDescription) desc).setHelper(e, method);
 		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		add(e.getSkillClass(), desc);

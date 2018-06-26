@@ -14,9 +14,7 @@ public class DisplayProcessor extends ElementProcessor<display> {
 	@Override
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
 			final display d) {
-		final String clazz = rawNameOf(context, e.asType());
-		sb.append(in).append("_display(").append(toJavaString(d.value())).append(',').append(toClassObject(clazz))
-				.append(", new IDisplayCreator(){").append(OVERRIDE)
-				.append("public IDisplaySurface create(Object...args){return new ").append(clazz).append("(args);}});");
+		sb.append(in).append("_display(").append(toJavaString(d.value())).append(",(a)->new ")
+				.append(rawNameOf(context, e.asType())).append("(a));");
 	}
 }

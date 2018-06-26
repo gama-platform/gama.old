@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.precompiler.GamlProperties;
 
+@FunctionalInterface
 public interface IDisplayCreator {
 
 	public static class DisplayDescription implements IDisplayCreator, IGamlDescription {
@@ -32,8 +33,7 @@ public interface IDisplayCreator {
 		 */
 		@Override
 		public IDisplaySurface create(final Object... args) {
-			if (original != null)
-				return original.create(args);
+			if (original != null) { return original.create(args); }
 			return new NullDisplaySurface();
 		}
 

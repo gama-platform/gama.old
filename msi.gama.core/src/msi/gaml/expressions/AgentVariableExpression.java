@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AgentVariableExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AgentVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,7 +13,6 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
@@ -45,12 +43,19 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	@Override
 	public String getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
+		String doc = null;
 		String s = "Type " + type.getTitle();
-		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(name);
-		if (doc != null)
-			s += "<br>" + doc;
-		if (desc == null)
+		if (desc != null) {
+			final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
+			if (var != null) {
+				doc = var.getBuiltInDoc();
+			}
+		} else {
 			return s;
+		}
+		if (doc != null) {
+			s += "<br>" + doc;
+		}
 		final String quality =
 				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
 						+ desc.getTitle();
@@ -72,8 +77,9 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		if (species.equals(this.getDefinitionDescription().getSpeciesContext()))
+		if (species.equals(this.getDefinitionDescription().getSpeciesContext())) {
 			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
+		}
 	}
 
 }

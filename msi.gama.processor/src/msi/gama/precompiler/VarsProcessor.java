@@ -57,20 +57,22 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 		for (final var node : vars.value()) {
 			final doc[] docs = node.doc();
-			String d;
+			String d = "";
 			if (docs.length == 0) {
 				if (!node.internal()) {
 					UNDOCUMENTED.add(node.name());
 				}
-				d = "";
-			} else {
+			} else if (!isField) { // documentation of fields is not used
 				d = docs[0].value();
 			}
 			final String clazz = rawNameOf(context, e.asType());
 			final String clazzObject = toClassObject(clazz);
 
-			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject).append(",")
-					.append(toJavaString(escapeDoubleQuotes(d))).append(",");
+			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject);
+			if (!isField) {
+				sb.append(",").append(toJavaString(escapeDoubleQuotes(d)));
+			}
+			sb.append(",");
 			if (isField) {
 				sb.append("new OperatorProto(").append(toJavaString(node.name())).append(",null,");
 				writeHelpers(sb, context, node, clazz, e, isField, true);

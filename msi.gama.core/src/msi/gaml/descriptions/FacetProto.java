@@ -14,6 +14,9 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -37,7 +40,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public String owner;
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
-			final boolean optional, final boolean internal, final String doc) {
+			final boolean optional, final boolean internal) {
 		this.name = name;
 		this.typesDescribers = types;
 		isNewTemp = typesDescribers[0] == IType.NEW_TEMP_ID;
@@ -53,16 +56,16 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
 		this.values = values.length == 0 ? null : ImmutableSet.copyOf(values);
-		if (doc != null) {
-			final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
-			this.doc = strings[0];
-			if (strings.length > 1) {
-				this.deprecated = strings[1];
-				if (deprecated.length() == 0) {
-					deprecated = null;
-				}
-			}
-		}
+		// if (doc != null) {
+		// final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
+		// this.doc = strings[0];
+		// if (strings.length > 1) {
+		// this.deprecated = strings[1];
+		// if (deprecated.length() == 0) {
+		// deprecated = null;
+		// }
+		// }
+		// }
 	}
 
 	boolean isLabel() {
@@ -203,6 +206,27 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {}
+
+	public void buildDoc(final Class<?> c) {
+		final facets facets = c.getAnnotation(facets.class);
+		if (facets != null) {
+			final facet[] array = facets.value();
+			for (final facet f : array) {
+				if (name.equals(f.name())) {
+					final doc[] docs = f.doc();
+					if (docs != null && docs.length > 0) {
+						final doc d = docs[0];
+						doc = d.value();
+						deprecated = d.deprecated();
+						if (deprecated.length() == 0) {
+							deprecated = null;
+						}
+					}
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * @return

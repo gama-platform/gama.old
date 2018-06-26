@@ -13,15 +13,13 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
-
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
 
 	protected final Map<String, StringBuilder> opIndex = new HashMap<>();
 	static final Pattern CLASS_PARAM = Pattern.compile("<.*>");
 	static final Pattern SINGLE_QUOTE = Pattern.compile("\"");
 	static final String QUOTE_MATCHER = Matcher.quoteReplacement("\\\"");
-	final static StringBuilder DOC_BUILDER = new StringBuilder();
+	// final static StringBuilder DOC_BUILDER = new StringBuilder();
 	protected String initializationMethodName;
 	final static Set<String> UNDOCUMENTED = new HashSet<>();
 
@@ -169,15 +167,15 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	 *            an Array of @doc annotations (only the 1st is significant)
 	 * @return aString containing the documentation formatted using the format above
 	 */
-	static String docToString(final doc[] docs) {
-		if (docs == null || docs.length == 0) { return ""; }
-		final doc doc1 = docs[0];
-		if (doc1 == null) { return ""; }
-		DOC_BUILDER.append(doc1.value()).append(DOC_SEP).append(doc1.deprecated());
-		final String result = DOC_BUILDER.toString();
-		DOC_BUILDER.setLength(0);
-		return result;
-	}
+	// static String docToString(final doc[] docs) {
+	// if (docs == null || docs.length == 0) { return ""; }
+	// final doc doc1 = docs[0];
+	// if (doc1 == null) { return ""; }
+	// DOC_BUILDER.append(doc1.value()).append(DOC_SEP).append(doc1.deprecated());
+	// final String result = DOC_BUILDER.toString();
+	// DOC_BUILDER.setLength(0);
+	// return result;
+	// }
 
 	static String rawNameOf(final ProcessorContext context, final TypeMirror t) {
 		if (t.getKind().equals(TypeKind.VOID)) { return "void"; }
@@ -195,6 +193,10 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 			}
 		}
 		return type;
+	}
+
+	protected String toBoolean(final boolean b) {
+		return b ? "T" : "F";
 	}
 
 }

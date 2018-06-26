@@ -106,9 +106,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		buildMethodCall(sb, classes, met, isStatic, scope).append(',');
 		toArrayOfClasses(sb, classes).append(',');
 		toArrayOfInts(op.expected_content_type(), sb).append(',').append(toClassObject(ret)).append(',')
-				.append(op.can_be_const()).append(',').append(op.type()).append(',').append(op.content_type())
-				.append(',').append(op.index_type()).append(',').append(op.content_type_content_type()).append(',')
-				.append("(s,o)->");
+				.append(toBoolean(op.can_be_const())).append(',').append(op.type()).append(',')
+				.append(op.content_type()).append(',').append(op.index_type()).append(',')
+				.append(op.content_type_content_type()).append(',').append("(s,o)->");
 		buildNAry(sb, classes, met, ret, isStatic, scope).append(");");
 	}
 
@@ -165,7 +165,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		if (stat) {
 			sb.append("{return ").append(name).append("(").append(firstArg);
 		} else {
-			sb.append("{return o[0] == null?").append(returnWhenNull(ret)).append(":((").append(classes[0])
+			sb.append("{return o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0])
 					.append(")o[0]).").append(name).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
@@ -200,7 +200,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			final boolean stat, final boolean scope) {
 		final int start = stat ? 0 : 1;
 		sb.append(toClassObject(extractClass(name, classes[0], stat)));
-		sb.append(".getMethod(").append(toJavaString(extractMethod(name, stat))).append(", ");
+		sb.append(".getMethod(").append(toJavaString(extractMethod(name, stat))).append(',');
 		if (scope) {
 			sb.append(toClassObject(ISCOPE)).append(',');
 		}

@@ -55,18 +55,20 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				if (values != null && values.length > 0) {
 					toArrayOfStrings(values, constants).append(',');
 				}
-				toArrayOfStrings(values, sb).append(',').append(child.optional()).append(',').append(child.internal())
-						.append(',');
+				toArrayOfStrings(values, sb).append(',').append(toBoolean(child.optional())).append(',')
+						.append(toBoolean(child.internal()));
+				// sb.append(',');
 				final doc[] d = child.doc();
-				String doc = "";
+				// String doc = "";
 				if (d == null || d.length == 0) {
 					if (!child.internal()) {
 						UNDOCUMENTED.add(child.name());
 					}
 				} else {
-					doc = docToString(child.doc());
+					// doc = docToString(child.doc());
 				}
-				sb.append(toJavaString(escapeDoubleQuotes(doc))).append(')');
+				// sb.append(toJavaString(escapeDoubleQuotes(doc)));
+				sb.append(')');
 			}
 			sb.append(')');
 		}
@@ -79,10 +81,6 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			sb.append(ln).append("_constants(").append(constants).append(");");
 		}
 
-	}
-
-	private String toBoolean(final boolean b) {
-		return b ? "T" : "F";
 	}
 
 	private void verifyDoc(final ProcessorContext context, final Element e, final symbol symbol) {
