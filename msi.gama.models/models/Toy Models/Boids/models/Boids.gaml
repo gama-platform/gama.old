@@ -67,7 +67,7 @@ species boids_goal skills: [moving] {
 	
 	//If the mouse is not used, then the goal just wander
 	reflex wander {  
-		do  wander amplitude: 45 speed: 20.0;  
+		do  wander amplitude: 45.0 speed: 20.0;  
 	}
 	
 	aspect default {
@@ -198,7 +198,7 @@ species obstacle skills: [moving] {
 			do goto target: one_of(boids);
 		} 
 		else{ 
-			do wander amplitude: 360;   
+			do wander amplitude: 360.0;   
 		}
 	}
 	aspect default {

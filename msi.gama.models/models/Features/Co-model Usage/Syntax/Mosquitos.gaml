@@ -25,7 +25,7 @@ species Mosquito skills: [moving]
 	int durability<- rnd(100);
 	reflex dolive
 	{	
-		do wander amplitude:rnd(30) speed:0.5;		
+		do wander amplitude:rnd(30.0) speed:0.5;		
 	}
 
 	aspect default

@@ -25,7 +25,7 @@ species Fly skills: [moving]
 	int durability<- rnd(100);
 	reflex dolive
 	{	
-		do wander amplitude:200;		
+		do wander amplitude:200.0;		
 	}
 
 	aspect default

@@ -415,8 +415,8 @@ public abstract class Spatial {
 						"square", "triangle" })
 		public static IShape cone(final IScope scope, final Integer p1, final Integer p2) {
 			if (p1 == null || p2 == null) { return null; }
-			final Integer min_angle = Maths.checkHeading(p1);
-			final Integer max_angle = Maths.checkHeading(p2);
+			final Double min_angle = Maths.checkHeading(p1);
+			final Double max_angle = Maths.checkHeading(p2);
 			final IAgent a = scope.getAgent();
 			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			final double originx = origin.getX();
@@ -964,7 +964,7 @@ public abstract class Spatial {
 			if (P0 == null || P1 == null ) { return null; }
 			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x)*proportion,P0.y + (P1.y - P0.y)*proportion,P0.z + (P1.z - P0.z)*proportion);
 			double val = coefficient * P0.euclidianDistanceTo(P1);
-			int heading = Relations.towards(scope, P0, P1) ;
+			double heading = Relations.towards(scope, P0, P1) ;
 			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
 			return BezierCurve(scope,P0,P01,P1,nbPoints);
 		}
@@ -1637,7 +1637,7 @@ public abstract class Spatial {
 			return complexMinGeom;
 		}
 
-		private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
+		/*private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
 			int index = -1;
 			final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(coord);
 			double distMin = Double.MAX_VALUE;
@@ -1656,7 +1656,7 @@ public abstract class Spatial {
 			}
 			if (geom.getCoordinates()[geom.getCoordinates().length - 1].equals(coord)) { return -1; }
 			return index;
-		}
+		}*/
 
 		@operator (
 				value = "masked_by",
@@ -2948,7 +2948,7 @@ public abstract class Spatial {
 						equals = "the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator",
 						isExecutable = false) },
 				see = { "distance_between", "distance_to", "direction_between", "path_between", "path_to" })
-		public static Integer towards(final IScope scope, final IShape agent, final IShape target) {
+		public static Double towards(final IScope scope, final IShape agent, final IShape target) {
 			return scope.getTopology().directionInDegreesTo(scope, agent, target);
 		}
 
@@ -2992,10 +2992,10 @@ public abstract class Spatial {
 						equals = "the direction between ag1 and ag2 considering the topology my_topology",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
-		public static Integer direction_between(final IScope scope, final ITopology t,
+		public static Double direction_between(final IScope scope, final ITopology t,
 				final IContainer<?, IShape> geometries) throws GamaRuntimeException {
 			final int size = geometries.length(scope);
-			if (size == 0 || size == 1) { return 0; }
+			if (size == 0 || size == 1) { return 0.0; }
 			final IShape g1 = geometries.firstValue(scope);
 			final IShape g2 = geometries.lastValue(scope);
 			return t.directionInDegreesTo(scope, g1, g2);
@@ -3756,7 +3756,7 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "angle_between({5,5},{10,5},{5,10})",
 						equals = "90") })
-		public static Integer angleInDegreesBetween(final IScope scope, final GamaPoint p0, final GamaPoint p1,
+		public static Double angleInDegreesBetween(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final GamaPoint p2) {
 			final double Xa = p1.x - p0.x;
 			final double Ya = p1.y - p0.y;
@@ -3768,7 +3768,7 @@ public abstract class Spatial {
 			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
 			final double S = Xa * Yb - Ya * Xb;
 			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
-			return Maths.checkHeading((int) result);
+			return Maths.checkHeading(result);
 		}
 
 	}

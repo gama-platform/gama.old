@@ -87,7 +87,7 @@ species prey skills: [moving] control: fsm {
 			speed <- prey_invisible_speed;
 			color <- prey_invisible_color;
 			invisible_time <- int(time);
-			heading <- rnd (359) ;
+			heading <- rnd (360.0) ;
 		}
 		do move; 
 		transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );

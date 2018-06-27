@@ -118,7 +118,7 @@ species ant skills: [moving] control: fsm {
 	}
 	//Initial state to make the ant wander 
 	state wandering initial: true {
-		do wander(amplitude: 75);
+		do wander(amplitude: 75.0);
 		float pr <- (ant_grid(location)).road;
 		transition to: carryingFood when: has_food;
 		transition to: followingRoad when: (pr > 0.05) and (pr < 4);

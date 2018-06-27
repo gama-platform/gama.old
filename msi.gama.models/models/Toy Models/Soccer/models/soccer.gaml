@@ -460,7 +460,7 @@ species ball skills:[moving]{
 				do reinit_phase;
 			}
 		}
-		do wander amplitude:1;
+		do wander amplitude:1.0;
 	}
 	action shooted (point target_position, float speed_atr) {
 		speed <- speed_atr;

@@ -95,7 +95,7 @@ species TexturedGeometry3D{
 
 species lightMoving skills:[moving] {
 	reflex update {
-		do wander amplitude:180;
+		do wander amplitude:180.0;
 	}
 }
 

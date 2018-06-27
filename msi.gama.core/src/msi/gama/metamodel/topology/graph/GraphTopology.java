@@ -717,7 +717,7 @@ public class GraphTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
+	public Double directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
 		// WARNING As it is computed every time the location of an agent is set,
 		// and as the source and target in that
 		// case do not correspond to existing nodes, it may be safer (and

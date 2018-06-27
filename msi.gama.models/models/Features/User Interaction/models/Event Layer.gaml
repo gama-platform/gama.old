@@ -59,7 +59,7 @@ species cell skills: [moving]
 	bool is_square <- false;
 	reflex mm
 	{
-		do wander amplitude: 30;
+		do wander amplitude: 30.0;
 	}
 
 	aspect default

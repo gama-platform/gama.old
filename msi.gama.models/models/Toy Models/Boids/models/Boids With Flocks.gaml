@@ -116,7 +116,7 @@ species flock skills: [moving] {
 	}
 	//Reflex to make the flock follow the goal
 	reflex chase_goal {
-		int direction_to_nearest_ball <- (self towards (first(boids_goal)));
+		float direction_to_nearest_ball <- (self towards (first(boids_goal)));
 		float step_distance <- speed * step;
 		float dx <- step_distance * (cos(direction_to_nearest_ball));
 		float dy <- step_distance * (sin(direction_to_nearest_ball));

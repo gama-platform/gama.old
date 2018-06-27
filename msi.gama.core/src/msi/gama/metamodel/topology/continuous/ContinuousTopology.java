@@ -19,7 +19,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.Types;
 
 /**
@@ -82,7 +81,7 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Integer directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
+	public Double directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
 		// TODO Attention : calcul fait uniquement sur les locations. Il
 		// conviendrait plutot de
 		// faire une DistanceOp().getNearestPoints()
@@ -103,7 +102,7 @@ public class ContinuousTopology extends AbstractTopology {
 		// AD 21/03/15: Fixes two long-standing bugs (see Issue 1177) + problems
 		// in MovingSkill.move().
 		final double result = Maths.atan2(dy, dx);
-		return (int) FastMath.round(Maths.checkHeading(result));
+		return Maths.checkHeading(result);
 	}
 
 	@Override

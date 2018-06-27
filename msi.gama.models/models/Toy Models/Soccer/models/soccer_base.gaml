@@ -349,7 +349,7 @@ species ball_sp skills:[moving] {
 			future_speed <- future_speed*0.9;
 		}
 		ball_direction <- line([location,tmpPos]);
-		do wander amplitude:1;
+		do wander amplitude:1.0;
 		
 		// anticipation of the ball position to detect a goal
 		if ((location.y+sin(heading)*speed) > 120) {

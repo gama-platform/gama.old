@@ -191,9 +191,9 @@ species bullet skills:[moving]
 	//Previous location of the bullet, used to compute trajectory of the bullet
 	point oldLocation;
 	//Original heading of the bullet
-	int headingT;
+	float headingT;
 	//Heading of the bullet
-	int heading;
+	float heading;
 	//Status of the bullet (dead or not)
 	bool dead<-false;
 	

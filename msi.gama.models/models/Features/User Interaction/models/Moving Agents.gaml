@@ -93,7 +93,7 @@ species being skills: [moving]
 	{
 		if (!(moved_agents contains self))
 		{
-			do wander amplitude: 30;
+			do wander amplitude: 30.0;
 		}
 
 	}

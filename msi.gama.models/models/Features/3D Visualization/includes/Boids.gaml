@@ -73,7 +73,7 @@ species boids_goal skills: [moving] {
 	float size  <- 10.0;
 	
 	reflex wander {  
-		do  wander amplitude: 45 speed: 20.0;  
+		do  wander amplitude: 45.0 speed: 20.0;  
 		goal <- location;
 	}
 	
@@ -86,7 +86,7 @@ species boids_goal skills: [moving] {
 species boids skills: [moving] {
 	float speed max: maximal_speed <- maximal_speed;
 	float range <- minimal_distance * 2;
-	int heading ;
+	float heading ;
 	point velocity <- {0,0};
 	int size <- 5;
 		
@@ -182,7 +182,7 @@ species obstacle skills: [moving] {
 			do goto target: one_of(boids);
 		} 
 		else{ 
-			do wander amplitude: 360;   
+			do wander amplitude: 360.0;   
 		}
 	}
 	aspect default {

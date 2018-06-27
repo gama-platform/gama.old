@@ -116,7 +116,7 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
+	public abstract ILocation getDestination(final ILocation source, final double direction, final double distance,
 			boolean nullIfOutside);
 
 	/**
@@ -133,7 +133,7 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	public abstract ILocation getDestination3D(final ILocation source, final int heading, final int pitch,
+	public abstract ILocation getDestination3D(final ILocation source, final double heading, final double pitch,
 			final double distance, boolean nullIfOutside);
 
 	/**
@@ -203,7 +203,7 @@ public interface ITopology extends IValue {
 	 * @param target
 	 * @return the direction or null if one these two geometries are invalid in this topology
 	 */
-	public abstract Integer directionInDegreesTo(IScope scope, IShape source, IShape target);
+	public abstract Double directionInDegreesTo(IScope scope, IShape source, IShape target);
 
 	public abstract IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
 

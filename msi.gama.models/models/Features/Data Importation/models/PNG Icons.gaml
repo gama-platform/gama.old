@@ -55,7 +55,7 @@ species people skills: [moving]
 	// The default behavior of people is to move around
 	reflex default
 	{
-		do wander amplitude: 100;
+		do wander amplitude: 100.0;
 	}
 
 	// The default aspect will be used when no other aspect is invoked in displays

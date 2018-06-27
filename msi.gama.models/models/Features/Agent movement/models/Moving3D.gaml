@@ -97,7 +97,7 @@ species movingAgent  parent:abstractAgent{
 
 species wanderAgent parent:abstractAgent{ 
 	reflex wander{
-	  do wander amplitude:90;
+	  do wander amplitude:90.0;
 	}
 }
 

@@ -283,7 +283,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ILocation getDestination(final ILocation source, final int direction, final double distance,
+	public ILocation getDestination(final ILocation source, final double direction, final double distance,
 			final boolean nullIfOutside) {
 		final double cos = distance * Maths.cos(direction);
 		final double sin = distance * Maths.sin(direction);
@@ -291,7 +291,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch, final double distance,
+	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch, final double distance,
 			final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);

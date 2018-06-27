@@ -21,7 +21,7 @@ species object skills: [moving]{
 	int size <- rnd(10) + 1;
 	int rot <- 1000 + rnd(1000);
 	reflex m when: every(100#cycles) {
-		do wander amplitude: 30 speed: 0.001;
+		do wander amplitude: 30.0 speed: 0.001;
 	}
 	aspect obj {
 		draw obj_file("../includes/teapot.obj") color: color size: size rotate: cycle/rot::{0,1,0} ;

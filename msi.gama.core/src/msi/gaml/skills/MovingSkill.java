@@ -84,8 +84,8 @@ import msi.gaml.types.Types;
 				doc = @doc ("Represents the speed of the agent (in meter/second)")),
 		@var (
 				name = IKeyword.HEADING,
-				type = IType.INT,
-				init = "rnd(359)",
+				type = IType.FLOAT,
+				init = "rnd(360.0)",
 				doc = @doc ("Represents the absolute heading of the agent in degrees.")),
 		@var (
 				name = "current_path",
@@ -109,25 +109,25 @@ import msi.gaml.types.Types;
 				depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
 				doc = @doc ("Represents the next location of the agent if it keeps its current speed and heading (read-only)")) })
 @skill (
-		name = IKeyword.MOVING_SKILL,
+		name = IKeyword.MOVING_SKILL, 
 		concept = { IConcept.SKILL, IConcept.AGENT_MOVEMENT })
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MovingSkill extends Skill {
 
 	@getter (IKeyword.HEADING)
-	public Integer getHeading(final IAgent agent) {
-		Integer h = (Integer) agent.getAttribute(IKeyword.HEADING);
+	public Double getHeading(final IAgent agent) {
+		Double h = (Double) agent.getAttribute(IKeyword.HEADING);
 		if (h == null) {
-			h = agent.getScope().getRandom().between(0, 359);
+			h = agent.getScope().getRandom().next() * 360;
 			setHeading(agent, h);
 		}
 		return Maths.checkHeading(h);
 	}
 
 	@setter (IKeyword.HEADING)
-	public void setHeading(final IAgent agent, final int heading) {
+	public void setHeading(final IAgent agent, final double heading) {
 		if (agent == null) { return; }
-		final int headingValue = heading % 360;
+		final double headingValue = heading % 360;
 		agent.setAttribute(IKeyword.HEADING, headingValue);
 	}
 
@@ -184,7 +184,7 @@ public class MovingSkill extends Skill {
 		final ITopology topology = getTopology(agent);
 		final ILocation oldLocation = agent.getLocation();
 		if (!topology.isTorus() && p != null && !p.equals(oldLocation)) {
-			final Integer newHeading = topology.directionInDegreesTo(agent.getScope(), oldLocation, p);
+			final Double newHeading = topology.directionInDegreesTo(agent.getScope(), oldLocation, p);
 			if (newHeading != null) {
 				setHeading(agent, newHeading);
 			}
@@ -248,14 +248,14 @@ public class MovingSkill extends Skill {
 	 * @return the path followed
 	 */
 
-	protected int computeHeadingFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		final int ampl = scope.hasArg("amplitude") ? scope.getIntArg("amplitude") : 359;
-		setHeading(agent, getHeading(agent) + scope.getRandom().between(-ampl / 2, ampl / 2));
+	protected double computeHeadingFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		final double ampl = scope.hasArg("amplitude") ? scope.getFloatArg("amplitude") : 359;
+		setHeading(agent, getHeading(agent) + scope.getRandom().between(-ampl / 2.0, ampl / 2.0));
 		return getHeading(agent);
 	}
 
-	protected int computeHeading(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		final Integer heading = scope.hasArg(IKeyword.HEADING) ? scope.getIntArg(IKeyword.HEADING) : null;
+	protected double computeHeading(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		final Double heading = scope.hasArg(IKeyword.HEADING) ? scope.getFloatArg(IKeyword.HEADING) : null;
 		if (heading != null) {
 			setHeading(agent, heading);
 		}
@@ -304,7 +304,7 @@ public class MovingSkill extends Skill {
 					doc = @doc ("the speed to use for this move (replaces the current value of speed)")),
 					@arg (
 							name = "amplitude",
-							type = IType.INT,
+							type = IType.FLOAT,
 							optional = true,
 							doc = @doc ("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 					@arg (
@@ -328,7 +328,7 @@ public class MovingSkill extends Skill {
 	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
-		final int heading = computeHeadingFromAmplitude(scope, agent);
+		final double heading = computeHeadingFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
 
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
@@ -337,7 +337,7 @@ public class MovingSkill extends Skill {
 			// pathFollowed = null;
 		} else {
 			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
-			Integer newHeading = null;
+			Double newHeading = null;
 			if (on != null && on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
 				GamaMap<IShape, Double> probaDeplacement = null;
@@ -391,7 +391,7 @@ public class MovingSkill extends Skill {
 					doc = @doc ("the speed to use for this move (replaces the current value of speed)")),
 					@arg (
 							name = IKeyword.HEADING,
-							type = IType.INT,
+							type = IType.FLOAT,
 							optional = true,
 							doc = @doc ("the angle (in degree) of the target direction.")),
 					@arg (
@@ -409,7 +409,7 @@ public class MovingSkill extends Skill {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final double dist = computeDistance(scope, agent);
-		final int heading = computeHeading(scope, agent);
+		final double heading = computeHeading(scope, agent);
 
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 		if (loc == null) {

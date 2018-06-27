@@ -212,7 +212,7 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
+	public Double directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
 		// TODO compute from the path
 		return root.directionInDegreesTo(scope, source, target);
 	}

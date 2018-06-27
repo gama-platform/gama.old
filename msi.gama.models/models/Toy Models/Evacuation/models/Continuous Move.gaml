@@ -57,7 +57,7 @@ species people skills:[moving]{
 	//Velocity of the agent
 	point velocity <- {0,0};
 	//Direction of the agent taking in consideration the maximal turn an agent is able to make
-	int heading max: heading + maximal_turn min: heading - maximal_turn;
+	float heading max: heading + maximal_turn min: heading - maximal_turn;
 	
 	//Size of the agent
 	float size <- people_size; 

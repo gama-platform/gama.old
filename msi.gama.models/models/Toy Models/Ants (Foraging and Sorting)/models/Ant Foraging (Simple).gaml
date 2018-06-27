@@ -79,7 +79,7 @@ species ant skills: [ moving ] {
    }
 	//Reflex to wander while the ant has no food
 	reflex wandering when: ( ! hasFood ) and ( ! hasRoad ) and ( place . food = 0) {
-		do wander amplitude: 120 speed: 1.0;
+		do wander amplitude: 120.0 speed: 1.0;
 	}
 	//Reflex to search food when the agent has no food nor pheromon road close
 	reflex looking when: ( ! hasFood ) and ( hasRoad ) and ( place . food = 0 ) { 

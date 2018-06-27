@@ -41,7 +41,7 @@ species center skills: [moving] {
 	rgb color <- rnd_color(255); 
 	//Make the center of the cluster wander in the environment       
 	reflex wander {
-		do wander amplitude: 90;
+		do wander amplitude: 90.0;
 	}  
 	aspect default {
 		draw circle(1.0) color: color border: #black ;

@@ -141,7 +141,7 @@ global {
 			float repulsive_dy <- 0.0 ;
 			loop nb over: nearby_balls { 
 				float repulsive_distance <- ball_separation - ( location distance_to ( nb).location ) ;
-				int repulsive_direction <- ((nb).location) towards (location) ;
+				float repulsive_direction <- ((nb).location) towards (location) ;
 				repulsive_dx <- repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
 				repulsive_dy <- repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 			}
@@ -180,7 +180,7 @@ global {
 				time_in_chaos_state <- 10 + (rnd(10)) ;
 				color <- chaos_ball_color ;
 				speed <- chaos_ball_speed ;
-				heading <- rnd(359) ;
+				heading <- rnd(360.0) ;
 			}
 			
 			float step_distance <- speed * step ;
@@ -237,7 +237,7 @@ global {
 				float repulsive_dy <- 0.0 ;
 				loop nb over: nearby_balls { 
 					float repulsive_distance <- ball_separation - ( (ball_in_group (com)).location distance_to nb.location ) ;
-					int repulsive_direction <- (nb.location) direction_to ((ball_in_group (com)).location) ;
+					float repulsive_direction <- (nb.location) direction_to ((ball_in_group (com)).location) ;
 					repulsive_dx <- repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
 					repulsive_dy <- repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 				}
@@ -300,7 +300,7 @@ global {
 		
 		//Reflex to chase a target agent 
 		reflex chase_target when: (target != nil) {
-			int direction_to_nearest_ball <- (self towards (target)) ;
+			float direction_to_nearest_ball <- (self towards (target)) ;
 			float step_distance <- speed * step ;
 			float dx <- step_distance * (cos (direction_to_nearest_ball)) ;
 			float dy <- step_distance * (sin (direction_to_nearest_ball)) ;
@@ -412,7 +412,7 @@ global {
 			}
 			
 			if (target_group != nil) {
-				int direction_target <- self towards(target_group);
+				float direction_target <- self towards(target_group);
 				
 				loop m over: members {
 					ask m as group_delegation {

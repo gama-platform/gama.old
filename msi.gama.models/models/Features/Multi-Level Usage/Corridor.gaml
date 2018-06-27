@@ -79,7 +79,7 @@ species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall
 	geometry shape <-  circle (pedestrian_size);
 	point initial_location;
 	point target_location;
-	int heading;
+	float heading;
 	float speed <- 2.0;
 	
 	action init_location (point loc) {
@@ -91,7 +91,7 @@ species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall
 	
 	//Reflex to make the agent move to its target_location
 	reflex move_left {
-		int update_heading <- (self) towards (target_location);
+		float update_heading <- (self) towards (target_location);
 		
 		point current_location <- location;
 		

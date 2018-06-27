@@ -1253,8 +1253,8 @@ public class Maths {
 	 *
 	 * @return the integer
 	 */
-	public static int checkHeading(final int newHeading) {
-		int result = newHeading;
+	public static double checkHeading(final int newHeading) {
+		double result = newHeading;
 		while (result < 0) {
 			result += PRECISION;
 		}

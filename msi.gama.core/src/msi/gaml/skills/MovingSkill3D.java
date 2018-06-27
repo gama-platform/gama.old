@@ -82,7 +82,7 @@ public class MovingSkill3D extends MovingSkill {
 	}
 
 	@getter (IKeyword.PITCH)
-	public Integer getPitch(final IAgent agent) {
+	public Double getPitch(final IAgent agent) {
 		Integer p = (Integer) agent.getAttribute(IKeyword.PITCH);
 		if (p == null) {
 			p = agent.getScope().getRandom().between(0, 359);
@@ -92,32 +92,32 @@ public class MovingSkill3D extends MovingSkill {
 	}
 
 	@setter (IKeyword.PITCH)
-	public void setPitch(final IAgent agent, final Integer newPitch) {
+	public void setPitch(final IAgent agent, final double newPitch) {
 		agent.setAttribute(IKeyword.PITCH, newPitch);
 	}
 
 	@getter (IKeyword.ROLL)
-	public Integer getRoll(final IAgent agent) {
-		Integer r = (Integer) agent.getAttribute(IKeyword.ROLL);
+	public Double getRoll(final IAgent agent) {
+		Double r = (Double) agent.getAttribute(IKeyword.ROLL);
 		if (r == null) {
-			r = agent.getScope().getRandom().between(0, 359);
+			r = agent.getScope().getRandom().next() * 360;
 			setRoll(agent, r);
 		}
 		return Maths.checkHeading(r);
 	}
 
 	@setter (IKeyword.ROLL)
-	public void setRoll(final IAgent agent, final Integer newRoll) {
+	public void setRoll(final IAgent agent, final Double newRoll) {
 		agent.setAttribute(IKeyword.ROLL, newRoll);
 	}
 
-	protected int computePitchFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	protected double computePitchFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final int ampl = scope.hasArg("amplitude") ? scope.getIntArg("amplitude") : 359;
 		setPitch(agent, getPitch(agent) + scope.getRandom().between(-ampl / 2, ampl / 2));
 		return getPitch(agent);
 	}
 
-	protected int computePitch(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	protected double computePitch(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Integer pitch = scope.hasArg(IKeyword.PITCH) ? scope.getIntArg(IKeyword.PITCH) : null;
 		if (pitch != null) {
 			setPitch(agent, pitch);
@@ -161,8 +161,8 @@ public class MovingSkill3D extends MovingSkill {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
 		final double dist = computeDistance(scope, agent);
-		final int heading = computeHeading(scope, agent);
-		final int pitch = computePitch(scope, agent);
+		final double heading = computeHeading(scope, agent);
+		final double pitch = computePitch(scope, agent);
 		final ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
@@ -185,10 +185,10 @@ public class MovingSkill3D extends MovingSkill {
 
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation location = agent.getLocation();
-		final int heading = computeHeadingFromAmplitude(scope, agent);
-		final int pitch = computePitchFromAmplitude(scope, agent);
+		final double heading = computeHeadingFromAmplitude(scope, agent);
+		final double pitch = computePitchFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-		Integer newHeading = null;
+		Double newHeading = null;
 		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
@@ -263,7 +263,7 @@ public class MovingSkill3D extends MovingSkill {
 			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
 		} else {
 			setPitch(agent,
-					(int) (FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
+					(FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
 		}
 
 		return null;

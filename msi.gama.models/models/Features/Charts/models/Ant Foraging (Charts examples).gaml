@@ -92,7 +92,7 @@ species ant skills: [moving] control: fsm {
 	
 	//Initial state of the ant : wander until it finds food or find a road to follow
 	state wandering initial: true {
-		do wander amplitude:120 ;
+		do wander amplitude:120.0 ;
 		transition to: carryingFood when: place.food > 0 {
 			do pick ;
 		}

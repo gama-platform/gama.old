@@ -184,7 +184,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */
 	@Override
-	public ILocation getDestination(final ILocation source, final int direction, final double distance,
+	public ILocation getDestination(final ILocation source, final double direction, final double distance,
 			final boolean nullIfOutside) {
 		final double cos = distance * Maths.cos(direction);
 		final double sin = distance * Maths.sin(direction);
@@ -196,7 +196,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */
 	@Override
-	public ILocation getDestination3D(final ILocation source, final int heading, final int pitch, final double distance,
+	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch, final double distance,
 			final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
@@ -287,7 +287,7 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
+	public Double directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
 		final ILocation source = g1.getLocation();
 		final ILocation target = g2.getLocation();
 		final double x2 = /* translateX(source.x, target.x); */target.getX();
@@ -295,7 +295,7 @@ public class AmorphousTopology implements ITopology {
 		final double dx = x2 - source.getX();
 		final double dy = y2 - source.getY();
 		final double result = Maths.atan2(dy, dx);
-		return Maths.checkHeading((int) result);
+		return Maths.checkHeading( result);
 	}
 
 	/**

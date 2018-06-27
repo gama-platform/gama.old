@@ -42,7 +42,7 @@ species cell skills: [moving] {
 	//Speed of the cell
 	float speed const: true <- speed_of_agents;   
 	//Heading of the cell, the direction it 'watches'
-	int heading <- rnd(359);
+	float heading <- rnd(360.0);
 	
 	//Reflex to make the cell agent fo to the center, calling the derivated action move
 	reflex go_to_center {
