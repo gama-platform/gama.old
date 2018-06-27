@@ -344,10 +344,7 @@ public class Maths {
 			special_cases = "Operand values out of the range [0-359] are normalized.",
 			see = { "sin", "tan" })
 	public static Double cos(final Double rv) {
-		final int i = rv.intValue();
-		if (i == rv) { return cos(i); }
-		final double rad = toRad * rv;
-		return FastMath.cos(rad);
+		return FastMath.cos(rv * toRad);
 	}
 
 	@operator (
@@ -386,10 +383,7 @@ public class Maths {
 					equals = "0.0") },
 			see = { "cos", "tan" })
 	public static Double sin(final Double rv) {
-		final int i = rv.intValue();
-		if (i == rv) { return sin(i); }
-		final double rad = toRad * rv;
-		return FastMath.sin(rad);
+		return FastMath.sin(rv * toRad);
 	}
 
 	@operator (
@@ -423,8 +417,7 @@ public class Maths {
 							value = "The tangent is only defined for any real number except 90 + k `*` 180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity).") },
 			see = { "cos", "sin" })
 	public static Double tan(final Double v) {
-		final double rad = toRad * v;
-		return FastMath.tan(rad);
+		return FastMath.tan(toRad * v);
 	}
 
 	@operator (
@@ -441,8 +434,7 @@ public class Maths {
 							value = "tan(90)",
 							equals = "1.633123935319537E16") })
 	public static Double tan(final Integer v) {
-		final double rad = toRad * v;
-		return FastMath.tan(rad);
+		return FastMath.tan(toRad * v);
 	}
 
 	@operator (
