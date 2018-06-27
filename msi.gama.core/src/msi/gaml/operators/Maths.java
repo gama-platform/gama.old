@@ -42,18 +42,17 @@ public class Maths {
 							value = "Various examples of power",
 							examples = { @example (
 									value = "2 ^ 3",
-									equals = "8.0")
-							}) },
+									equals = "8.0") }) },
 			see = { "*", "sqrt" })
-	@test("4.0^2 = 16.0")
-	@test("4.0^0.5 = 2.0")
-	@test("8^0 = 1.0")
-	@test("8.0^0 = 1.0")
-	@test("8.0^1 = 8.0")
-	@test("8^1.0 = 8.0")
-	@test("2^0.5 = sqrt(2)")
-	@test("8.0^1.0 = 8.0")
-	@test("16.81^0.5 = sqrt(16.81)")
+	@test ("4.0^2 = 16.0")
+	@test ("4.0^0.5 = 2.0")
+	@test ("8^0 = 1.0")
+	@test ("8.0^0 = 1.0")
+	@test ("8.0^1 = 8.0")
+	@test ("8^1.0 = 8.0")
+	@test ("2^0.5 = sqrt(2)")
+	@test ("8.0^1.0 = 8.0")
+	@test ("16.81^0.5 = sqrt(16.81)")
 	public static Double pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
@@ -111,10 +110,10 @@ public class Maths {
 					examples = { @example (
 							value = "abs (200 * -1 + 0.5)",
 							equals = "199.5") }) })
-	@test("abs(1.7) = 1.7")
-	@test("abs(-2.0) = 2.0")
-	@test("abs(0.0) = 0.0")
-	@test("abs(-0.0) = 0.0")
+	@test ("abs(1.7) = 1.7")
+	@test ("abs(-2.0) = 2.0")
+	@test ("abs(0.0) = 0.0")
+	@test ("abs(-0.0) = 0.0")
 	public static Double abs(final Double rv) {
 		return Math.abs(rv);
 	}
@@ -138,10 +137,10 @@ public class Maths {
 									value = "abs (-0)",
 									equals = "0",
 									isTestOnly = true) }) })
-	@test("abs(1) = 1")
-	@test("abs(-2) = 2")
-	@test("abs(0) = 0")
-	@test("abs(-0) = 0")
+	@test ("abs(1) = 1")
+	@test ("abs(-2) = 2")
+	@test ("abs(0) = 0")
+	@test ("abs(-0) = 0")
 	public static Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
@@ -160,11 +159,11 @@ public class Maths {
 					value = "acos (0)",
 					equals = "90.0"),
 			see = { "asin", "atan", "cos" })
-	@test("acos(0.0) = 90.0")
-	@test("acos(-1.0) = 180.0")
-	@test("acos(1.0) = 0.0")
-	@test("not(is_number(acos(-10.0)))")
-	@test("not(is_number(acos(10.0)))")
+	@test ("acos(0.0) = 90.0")
+	@test ("acos(-1.0) = 180.0")
+	@test ("acos(1.0) = 0.0")
+	@test ("not(is_number(acos(-10.0)))")
+	@test ("not(is_number(acos(10.0)))")
 	public static Double acos(final Double rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -176,11 +175,11 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the arccos of the operand ")
-	@test("acos(0) = 90.0")
-	@test("acos(-1) = 180.0")
-	@test("acos(1) = 0.0")
-	@test("not(is_number(acos(-10)))")
-	@test("not(is_number(acos(10)))")
+	@test ("acos(0) = 90.0")
+	@test ("acos(-1) = 180.0")
+	@test ("acos(1) = 0.0")
+	@test ("not(is_number(acos(-10)))")
+	@test ("not(is_number(acos(10)))")
 	public static Double acos(final Integer rv) {
 		return FastMath.acos(rv) * toDeg;
 	}
@@ -198,11 +197,11 @@ public class Maths {
 					value = "asin (0)",
 					equals = "0.0"),
 			see = { "acos", "atan", "sin" })
-	@test("asin(0.0) = 0.0")
-	@test("asin(-1.0) = -90.0")
-	@test("asin(1.0) = 90.0")
-	@test("not(is_number(asin(-10.0)))")
-	@test("not(is_number(asin(10.0)))")
+	@test ("asin(0.0) = 0.0")
+	@test ("asin(-1.0) = -90.0")
+	@test ("asin(1.0) = 90.0")
+	@test ("not(is_number(asin(-10.0)))")
+	@test ("not(is_number(asin(10.0)))")
 	public static Double asin(final Double rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -217,13 +216,14 @@ public class Maths {
 			masterDoc = true,
 			examples = @example (
 					value = "asin (90)",
-					equals = "#nan", test = false),
+					equals = "#nan",
+					test = false),
 			see = { "acos", "atan" })
-	@test("asin(0) = 0.0")
-	@test("asin(-1) = -90.0")
-	@test("asin(1) = 90.0")
-	@test("not(is_number(asin(-10)))")
-	@test("not(is_number(asin(10)))")
+	@test ("asin(0) = 0.0")
+	@test ("asin(-1) = -90.0")
+	@test ("asin(1) = 90.0")
+	@test ("not(is_number(asin(-10)))")
+	@test ("not(is_number(asin(10)))")
 	public static Double asin(final Integer rv) {
 		return FastMath.asin(rv) * toDeg;
 	}
@@ -240,9 +240,9 @@ public class Maths {
 					value = "atan (1)",
 					equals = "45.0"),
 			see = { "acos", "asin", "tan" })
-	@test("atan(0) = 0.0")
-	@test("atan(-1) = -45.0")
-	@test("atan(1) = 45.0")
+	@test ("atan(0) = 0.0")
+	@test ("atan(-1) = -45.0")
+	@test ("atan(1) = 45.0")
 	public static Double atan(final Double rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
@@ -293,7 +293,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
-			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
+			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in radians). ",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
 			see = { "sin", "tan" })
@@ -307,13 +307,13 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
-			value = "Returns the value (in [-1,1]) of the sinus of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
+			value = "Returns the value (in [-1,1]) of the sinus of the operand (in radians). ",
 			masterDoc = true,
-			usages = @usage ("Operand values out of the range [0-359] are normalized."),
 			examples = { @example (
 					value = "sin_rad(#pi)",
-					equals = "0.0", test = false) },
-			see = { "cos", "tan" })
+					equals = "0.0",
+					test = false) },
+			see = { "cos_rad", "tan_rad" })
 	public static Double sin_rad(final Double rv) {
 		return FastMath.sin(rv);
 	}
@@ -324,13 +324,9 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
-			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
+			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in radians). ",
 			masterDoc = true,
-			usages = { @usage (
-					value = "Operand values out of the range [0-359] are normalized. Notice that tan(360) does not return 0.0 but -2.4492935982947064E-16"),
-					@usage (
-							value = "The tangent is only defined for any real number except 90 + k `*` 180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity).") },
-			see = { "cos", "sin" })
+			see = { "cos_rad", "sin_rad" })
 	public static Double tan_rad(final Double v) {
 		return FastMath.tan(v);
 	}
@@ -419,7 +415,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
-			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). The argument is casted to an int before being evaluated.",
+			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in decimal degrees). ",
 			masterDoc = true,
 			usages = { @usage (
 					value = "Operand values out of the range [0-359] are normalized. Notice that tan(360) does not return 0.0 but -2.4492935982947064E-16"),
@@ -712,9 +708,9 @@ public class Maths {
 							equals = "0.6") }) },
 			special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception",
 			see = { IKeyword.PLUS, IKeyword.MINUS, IKeyword.MULTIPLY })
-	@test("0/1=0")
-	@test("is_error(1/0)")
-	@test("3/5=0.6")
+	@test ("0/1=0")
+	@test ("is_error(1/0)")
+	@test ("3/5=0.6")
 	public static Double opDivide(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
@@ -728,9 +724,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
-	@test("0.2/2=0.1")
-	@test("is_error(1.5/0)")
-	@test("0.0/5=0.0")
+	@test ("0.2/2=0.1")
+	@test ("is_error(1.5/0)")
+	@test ("0.0/5=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
 		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b.doubleValue();
@@ -744,9 +740,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
-	@test("0.2/0.5=0.4")
-	@test("is_error(1.5/0.0)")
-	@test("0.0/1.0=0.0")
+	@test ("0.2/0.5=0.4")
+	@test ("is_error(1.5/0.0)")
+	@test ("0.0/1.0=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a / b;
@@ -760,9 +756,9 @@ public class Maths {
 	@doc (
 			value = "Returns a float, equal to the division of the left-hand operand by the right-hand operand.",
 			see = "*")
-	@test("1/0.5=2.0")
-	@test("is_error(2/0.0)")
-	@test("0/0.3=0.0")
+	@test ("1/0.5=2.0")
+	@test ("is_error(2/0.0)")
+	@test ("0/0.3=0.0")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
 		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return a.doubleValue() / b.doubleValue();
@@ -876,12 +872,13 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the sum, union or concatenation of the two operands.", 
-			examples = {
-					@example ( value = "1.0 + 1", equals = "2.0"),
+			value = "the sum, union or concatenation of the two operands.",
+			examples = { @example (
+					value = "1.0 + 1",
+					equals = "2.0"),
 					@example (
 							value = "1.0 + 2.5",
-							equals = "3.5")})
+							equals = "3.5") })
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
@@ -951,7 +948,7 @@ public class Maths {
 					value = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.",
 					examples = { @example (
 							value = "1 - 1",
-							equals = "0")}) },
+							equals = "0") }) },
 			see = { IKeyword.PLUS, IKeyword.MULTIPLY, IKeyword.DIVIDE })
 	public static Integer opMinus(final Integer a, final Integer b) {
 		return a - b;
@@ -964,10 +961,15 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the difference of the two operands",
-			examples = {
-					@example (value = "1.0 - 1", equals = "0.0"),
-					@example (value = "3.7 - 1.2", equals = "2.5"),
-					@example (value = "3 - 1.2", equals = "1.8") })		
+			examples = { @example (
+					value = "1.0 - 1",
+					equals = "0.0"),
+					@example (
+							value = "3.7 - 1.2",
+							equals = "2.5"),
+					@example (
+							value = "3 - 1.2",
+							equals = "1.8") })
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
