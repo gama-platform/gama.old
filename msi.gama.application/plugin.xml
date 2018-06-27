@@ -12,10 +12,10 @@
          <property
                name="windowImages"
                value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
-         </property>
+         </property> 
          <property
                name="aboutText"
-               value="GAMA Platform - V1.7.0&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;&#x0A;Visit http://gama-platform.org">
+               value="GAMA Platform - V1.8.0 http://gama-platform.org&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;(c) 2018            UMI 209 UMMISCO IRD/SU &amp; Partners">
          </property>
          <property
                name="aboutImage"
@@ -111,7 +111,7 @@
                </property>
                <property
                      name="aboutText"
-                     value="GAMA Platform - V1.7.0&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;&#x0A;Visit http://gama-platform.org">
+                     value="GAMA Platform - V1.8.0 - http://gama-platform.org&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;(c) 2018            UMI 209 UMMISCO IRD/SU &amp; Partners">
                </property>
                <property
                      name="aboutImage"

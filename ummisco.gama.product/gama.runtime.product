@@ -6,13 +6,12 @@
    <aboutInfo>
       <image path="branding_icons/icon128.png"/>
       <text>
-         GAMA Platform - V1.7.0
+         GAMA Platform - V1.8.0 - http://gama-platform.org
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
-(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners
-
-Visit http://gama-platform.org
+(c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners
+(c) 2018            UMI 209 UMMISCO IRD/SU &amp; Partners
       </text>
    </aboutInfo>
 
@@ -72,6 +71,7 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
