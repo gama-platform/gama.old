@@ -162,8 +162,8 @@ public class BatchAgent extends ExperimentAgent {
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
 		scope.getGui().getStatus(scope).informStatus(endStatus());
-		// Issue #2426: the agent is killed  too soon
-		 dispose();
+		// Issue #2426: the agent is killed too soon
+		dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
 	}
@@ -202,17 +202,17 @@ public class BatchAgent extends ExperimentAgent {
 			numberOfCores = 1;
 		}
 		int repeatIndex = 0;
-		while (repeatIndex < getSeeds().length) {
+		while (repeatIndex < getSeeds().length && !dead) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
 				setSeed(getSeeds()[repeatIndex]);
 				createSimulation(currentSolution, true);
 				repeatIndex++;
-				if (repeatIndex == getSeeds().length) {
+				if (repeatIndex == getSeeds().length || dead) {
 					break;
 				}
 			}
 			int i = 0;
-			while (pop.hasScheduledSimulations()) {
+			while (pop.hasScheduledSimulations() && !dead) {
 				// We step all the simulations
 				pop.step(getScope());
 				// String cycles = "";
@@ -223,7 +223,7 @@ public class BatchAgent extends ExperimentAgent {
 					// cycles += " " + simulation.getClock().getCycle();
 					// test the condition first in case it is paused
 					final boolean stopConditionMet =
-							Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim).getValue());
+							dead || Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim).getValue());
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
@@ -233,11 +233,13 @@ public class BatchAgent extends ExperimentAgent {
 					}
 				}
 				// We inform the status line
-
-				getScope().getGui().getStatus(getScope())
-						.setStatus("Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
-								+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-								"small.batch" + i / 5);
+				if (!dead) {
+					getScope().getGui().getStatus(getScope())
+							.setStatus(
+									"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
+											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
+									"small.batch" + i / 5);
+				}
 				if (++i == 20) {
 					i = 0;
 				}
