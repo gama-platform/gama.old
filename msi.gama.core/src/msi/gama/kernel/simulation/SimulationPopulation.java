@@ -25,6 +25,7 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 import msi.gama.runtime.concurrent.SimulationRunner;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
@@ -41,8 +42,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	public int getMaxNumberOfConcurrentSimulations() {
-		if (getHost().getSpecies().isHeadless())
-			return 1;
+		if (getHost().getSpecies().isHeadless()) { return 1; }
 		return GamaExecutorService.getParallelism(getHost().getScope(), getSpecies().getConcurrency(),
 				Caller.SIMULATION);
 	}
@@ -80,6 +80,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	public IList<SimulationAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled) throws GamaRuntimeException {
+		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 		for (int i = 0; i < number; i++) {
 			scope.getGui().getStatus(scope).waitStatus("Initializing simulation");
 			currentSimulation = new SimulationAgent(this);
@@ -93,8 +94,11 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			if (toBeScheduled) {
 				runner.add(currentSimulation);
 			}
+			result.add(currentSimulation);
 		}
-		return this;
+		// Linked to Issue #2430. Should not return this, but the newly created simulations
+		// return this;
+		return result;
 	}
 
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
