@@ -74,7 +74,7 @@ public interface Constants {
 
 	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
 
-	public static final Character[] cuttingLettersOperatorDoc = { 'c', 'i', 'o', 't' };
+	public static final Character[] cuttingLettersOperatorDoc = { 'b', 'd', 'i', 'n', 's' };
 
 	public final static String DOC_SEP = "~";
 
