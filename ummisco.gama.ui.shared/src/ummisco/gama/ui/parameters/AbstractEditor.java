@@ -45,6 +45,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import msi.gaml.variables.Variable;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
@@ -241,7 +242,12 @@ public abstract class AbstractEditor<T>
 			if (a == null) {
 				param.setValue(null, newValue);
 			} else {
-				param.setValue(a.getScope(), newValue);
+				if (param instanceof Variable) {
+					((Variable) param).setVal(scope, a, newValue);
+				} else {
+					// a.setDirectVarValue(scope, param.getName(), newValue);
+					param.setValue(a.getScope(), newValue);
+				}
 			}
 		}
 	}
