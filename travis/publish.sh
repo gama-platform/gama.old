@@ -45,12 +45,12 @@ clean(){
 
 deploy(){	
 	echo "Deploy to p2 update site"	
-	bash ./deploy.sh
+	bash ./travis/deploy.sh
 }
 
 release(){
 	echo "Upload continuous release to github"		
-	bash ./githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
+	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
