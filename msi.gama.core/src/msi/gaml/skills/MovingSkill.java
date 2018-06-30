@@ -107,9 +107,11 @@ import msi.gaml.types.Types;
 				name = IKeyword.DESTINATION,
 				type = IType.POINT,
 				depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
-				doc = @doc ("Represents the next location of the agent if it keeps its current speed and heading (read-only)")) })
+				doc = @doc (
+						deprecated = "This attribute is going to be removed in a future version of GAMA",
+						value = "Represents the next location of the agent if it keeps its current speed and heading (read-only). ** Only correct in continuous topologies and may return nil values if the destination is outside the environment **")) })
 @skill (
-		name = IKeyword.MOVING_SKILL, 
+		name = IKeyword.MOVING_SKILL,
 		concept = { IConcept.SKILL, IConcept.AGENT_MOVEMENT })
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MovingSkill extends Skill {
@@ -135,9 +137,10 @@ public class MovingSkill extends Skill {
 	public ILocation getDestination(final IAgent agent) {
 		if (agent == null) { return null; }
 		final ILocation actualLocation = agent.getLocation();
-		final double dist = getSpeed(agent);
+		final double dist = computeDistance(agent.getScope(), agent);
 		final ITopology topology = getTopology(agent);
-		return topology.getDestination(actualLocation, getHeading(agent), dist, false);
+		final ILocation dest = topology.getDestination(actualLocation, getHeading(agent), dist, false);
+		return dest;
 	}
 
 	@setter (IKeyword.DESTINATION)
