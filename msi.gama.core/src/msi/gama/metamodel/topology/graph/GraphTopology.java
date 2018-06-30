@@ -230,7 +230,22 @@ public class GraphTopology extends AbstractTopology {
 			if (!sourceNode && edgeS == null || !targetNode && edgeT == null) { return null; }
 		}
 
-		if (getPlaces().isDirected()) { return pathBetweenCommonDirected(scope, edgeS, edgeT, sourceN, targetN,
+		if (getPlaces().isDirected()) { 
+			List<IShape> edgesS = new ArrayList<>();
+			List<IShape> edgesT = new ArrayList<>();
+			edgesS.add(edgeS);
+			if (! sourceNode) {
+				IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeS), graph.getEdgeSource(edgeS));
+				if (edgeRev != null && (edgeRev.euclidianDistanceTo(source) <= edgeS.euclidianDistanceTo(source)))
+					edgesS.add(edgeRev);
+			}
+			edgesT.add(edgeT);
+			if (! targetNode) {
+				IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeT), graph.getEdgeSource(edgeT));
+				if (edgeRev != null && (edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)))
+					edgesT.add(edgeRev);
+			}
+			return pathBetweenCommonDirected(scope, edgesS, edgesT, sourceN, targetN,
 				sourceNode, targetNode); }
 
 		return pathBetweenCommon(scope, graph, edgeS, edgeT, sourceN, targetN, sourceNode, targetNode);
@@ -552,6 +567,26 @@ public class GraphTopology extends AbstractTopology {
 		final double dist = source.getLocation().euclidianDistanceTo(target.getLocation());
 		return dist == 0 ? 0
 				: getPlaces().getWeightOf(edge) * location.euclidianDistanceTo(target.getLocation()) / dist;
+	}
+	
+	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final List<IShape> edgeS, final List<IShape> edgeT,
+			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
+		if (edgeS.size() == 1 && edgeT.size() == 1) return pathBetweenCommonDirected(scope,edgeS,edgeT,source,target,sourceNode,targetNode);
+		double wMin = Double.MAX_VALUE;
+		GamaSpatialPath shortestPath = null;
+		for (IShape eS : edgeS) {
+			for (IShape eT : edgeT) {
+				GamaSpatialPath path = pathBetweenCommonDirected(scope,eS,eT,source,target,sourceNode,targetNode);
+				if (path == null) continue;
+				double weight = path.getWeight();
+				if (weight < wMin) {
+					wMin = weight;
+					shortestPath = path;
+				}
+			}
+		}
+		return shortestPath;
+		
 	}
 
 	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
