@@ -17,6 +17,8 @@ import java.util.Map;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -95,9 +97,9 @@ import msi.gaml.types.Types;
 		omissible = IKeyword.NAME)
 @doc (
 		value = "`" + IKeyword.INSPECT + "` (and `" + IKeyword.BROWSE
-		+ "`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `"
-		+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
-		+ "` is used, type: default value is agent.",
+				+ "`) statements allows modeler to inspect a set of agents, in a table with agents and all their attributes or an agent inspector per agent, depending on the type: chosen. Modeler can choose which attributes to display. When `"
+				+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
+				+ "` is used, type: default value is agent.",
 		usages = { @usage (
 				value = "An example of syntax is:",
 				examples = { @example (
@@ -161,6 +163,17 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		lastValue = a;
 	}
 
+	public InspectDisplayOutput(final IExperimentAgent a) {
+		// Opens directly an inspector
+		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, StringUtils.toGamlString("Inspect: "),
+				IKeyword.TYPE, types.get(INSPECT_TABLE), IKeyword.VALUE, "experiment.simulations").validate());
+
+		final SimulationPopulation sp = a.getSimulationPopulation();
+		setValue(GAML.getExpressionFactory().createConst(sp, sp.getType()));
+		lastValue = sp;
+		rootAgent = a;
+	}
+
 	InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
 		this(DescriptionFactory
@@ -191,7 +204,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	public void launch(final IScope scope) throws GamaRuntimeException {
 		if (!scope.init(InspectDisplayOutput.this).passed()) { return; }
-		// What to do in case of multi-simulations ???
+		// TODO What to do in case of multi-simulations ???
 		if (scope.getSimulation() != null) {
 			scope.getSimulation().addOutput(InspectDisplayOutput.this);
 		} else if (scope.getExperiment() != null) {
@@ -253,8 +266,11 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	}
 
 	public ISpecies getSpecies() {
-		if (getValue() == null) { return null; }
-		final SpeciesDescription sd = getValue().getType().getContentType().getSpecies();
+		final IExpression value = getValue();
+		if (value == null) { return null; }
+		final IType type = value.getType().getContentType();
+		if (type == Types.get(IKeyword.MODEL)) { return getScope().getModel().getSpecies(); }
+		final SpeciesDescription sd = type.getSpecies();
 		if (sd == null) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
 		if (sd.equals(getScope().getModel().getDescription())) { return getScope().getModel().getSpecies(); }
 		String speciesName = sd.getName();

@@ -77,7 +77,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public List<Geometry> listToroidalGeometries(final Geometry geom) {
 		final Geometry copy = (Geometry) geom.clone();
-		final List<Geometry> geoms = new ArrayList<Geometry>();
+		final List<Geometry> geoms = new ArrayList<>();
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
 		for (int cnt = 0; cnt < 8; cnt++) {
@@ -88,7 +88,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
-		final List<Geometry> geoms = new ArrayList<Geometry>();
+		final List<Geometry> geoms = new ArrayList<>();
 		final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(loc);
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(pt);
@@ -287,12 +287,13 @@ public abstract class AbstractTopology implements ITopology {
 			final boolean nullIfOutside) {
 		final double cos = distance * Maths.cos(direction);
 		final double sin = distance * Maths.sin(direction);
-		return normalizeLocation(new GamaPoint(source.getX() + cos, source.getY() + sin), nullIfOutside);
+		final ILocation result = source.toGamaPoint().plus(cos, sin, 0);
+		return normalizeLocation(result, nullIfOutside);
 	}
 
 	@Override
-	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch, final double distance,
-			final boolean nullIfOutside) {
+	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch,
+			final double distance, final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
 		final double z = distance * Maths.sin(pitch);
@@ -422,7 +423,7 @@ public abstract class AbstractTopology implements ITopology {
 		// FOR TORUS ENVIRONMENTS ONLY
 
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
-		final Set<IAgent> agents = new THashSet<IAgent>();
+		final Set<IAgent> agents = new THashSet<>();
 		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);
 		final IAgent sourceAgent = source.getAgent();
 		for (final Geometry g1 : agentsMap.keySet()) {
@@ -466,8 +467,7 @@ public abstract class AbstractTopology implements ITopology {
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
 			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			shapes.removeIf(each -> {
-				if (each.dead())
-					return true;
+				if (each.dead()) { return true; }
 				final Geometry geom = each.getInnerGeometry();
 				return !(covered ? pg.covers(geom) : pg.intersects(geom));
 			});

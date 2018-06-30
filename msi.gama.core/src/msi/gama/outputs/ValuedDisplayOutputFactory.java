@@ -3,6 +3,8 @@ package msi.gama.outputs;
 import java.util.Collection;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -24,11 +26,11 @@ public class ValuedDisplayOutputFactory {
 			for (final IAgent agent : agents) {
 				final IPopulation<?> agentPop = agent.getPopulation();
 				root = agentPop.getHost();
-				if (root != null)
+				if (root != null) {
 					break;
+				}
 			}
-			if (root == null)
-				return;
+			if (root == null) { return; }
 			browse(root, agents);
 		}
 	}
@@ -49,8 +51,7 @@ public class ValuedDisplayOutputFactory {
 			if (result == null) {
 				result = a.getHost();
 			} else {
-				if (a.getHost() != result)
-					return null;
+				if (a.getHost() != result) { return null; }
 			}
 		}
 		return result;
@@ -58,6 +59,12 @@ public class ValuedDisplayOutputFactory {
 	}
 
 	public static void browse(final IMacroAgent root, final ISpecies species) {
+		if (root instanceof IExperimentAgent && species instanceof GamlModelSpecies) {
+			// special case to be able to browse simulations, as their species is not contained in the experiment
+			// species
+			new InspectDisplayOutput(root, species).launch(root.getScope());
+			return;
+		}
 		if (!root.getSpecies().getMicroSpecies().contains(species)) {
 			if (root instanceof ExperimentAgent) {
 				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
@@ -91,6 +98,11 @@ public class ValuedDisplayOutputFactory {
 			return;
 		}
 		new InspectDisplayOutput(root, expr).launch(root.getScope());
+	}
+
+	public static void browseSimulations(final ExperimentAgent host) {
+		new InspectDisplayOutput(host).launch(host.getScope());
+
 	}
 
 }
