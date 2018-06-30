@@ -142,7 +142,7 @@ Note that due to the fact that actions are written by modelers, the general func
 </xsl:template>
  
 <xsl:template name="buildOperatorsByCategories">
-	<xsl:for-each select="doc/operatorsCategories/category">
+	<xsl:for-each select="//doc/operatorsCategories/category[not(@id = (preceding-sibling::*/@id))]">
 		<xsl:sort select="@id"/>
 		<xsl:variable name="categoryGlobal" select="@id"/> 
 		<xsl:text>
@@ -158,7 +158,8 @@ Note that due to the fact that actions are written by modelers, the general func
 			<xsl:for-each select="operatorCategories/category">
 				<xsl:variable name="catItem" select="@id"/>
 				<xsl:if test="$catItem = $categoryGlobal "> 
-					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text><xsl:choose>
+					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text>
+					<xsl:choose>
 					<xsl:when test="$alphabetOrderOp = $aa">
 						<xsl:value-of select="$fileAA"/>
 					</xsl:when>

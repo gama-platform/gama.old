@@ -1,0 +1,1 @@
+java -cp "libs/jdom-2.0.1.jar;target/classes;../ummisco.gama.annotations/target/classes"  msi.gama.doc.MainGenerateWiki -online
