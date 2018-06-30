@@ -571,7 +571,7 @@ public class GraphTopology extends AbstractTopology {
 	
 	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final List<IShape> edgeS, final List<IShape> edgeT,
 			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
-		if (edgeS.size() == 1 && edgeT.size() == 1) return pathBetweenCommonDirected(scope,edgeS,edgeT,source,target,sourceNode,targetNode);
+		if (edgeS.size() == 1 && edgeT.size() == 1) return pathBetweenCommonDirected(scope,edgeS.get(0),edgeT.get(0),source,target,sourceNode,targetNode);
 		double wMin = Double.MAX_VALUE;
 		GamaSpatialPath shortestPath = null;
 		for (IShape eS : edgeS) {
