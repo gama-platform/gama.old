@@ -76,7 +76,7 @@ public class MovingSkill3D extends MovingSkill {
 	@getter (IKeyword.DESTINATION)
 	public ILocation getDestination(final IAgent agent) {
 		final ILocation actualLocation = agent.getLocation();
-		final double dist = getSpeed(agent);
+		final double dist = this.computeDistance(agent.getScope(), agent);
 		final ITopology topology = getTopology(agent);
 		return topology.getDestination3D(actualLocation, getHeading(agent), getPitch(agent), dist, false);
 	}
@@ -262,8 +262,7 @@ public class MovingSkill3D extends MovingSkill {
 			final int signumZ = Maths.signum(diff.z);
 			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
 		} else {
-			setPitch(agent,
-					(FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
+			setPitch(agent, (FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
 		}
 
 		return null;

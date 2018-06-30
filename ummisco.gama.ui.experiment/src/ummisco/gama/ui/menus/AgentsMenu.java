@@ -90,7 +90,11 @@ public class AgentsMenu extends ContributionItem {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				ValuedDisplayOutputFactory.browse(pop);
+				if (pop instanceof SimulationPopulation) {
+					ValuedDisplayOutputFactory.browseSimulations(((SimulationPopulation) pop).getHost());
+				} else {
+					ValuedDisplayOutputFactory.browse(pop);
+				}
 			}
 
 		});
@@ -156,10 +160,11 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if (a != null && !a.dead()) {
 				final IGui gui = a.getScope().getGui();
-				if (gui.getHighlightedAgent() != a)
+				if (gui.getHighlightedAgent() != a) {
 					gui.setHighlightedAgent(a);
-				else
+				} else {
 					gui.setHighlightedAgent(null);
+				}
 				GAMA.getExperiment().refreshAllOutputs();
 			}
 		}
@@ -174,12 +179,13 @@ public class AgentsMenu extends ContributionItem {
 			final List<IDisplaySurface> surfaces = SwtGui.allDisplaySurfaces();
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			for (final IDisplaySurface surface : surfaces)
+			for (final IDisplaySurface surface : surfaces) {
 				if (a instanceof ITopLevelAgent) {
 					surface.zoomFit();
 				} else if (a != null && !a.dead()) {
 					surface.focusOn(a);
 				}
+			}
 			GAMA.getExperiment().refreshAllOutputs();
 		}
 	}
@@ -246,9 +252,10 @@ public class AgentsMenu extends ContributionItem {
 		if (agent == null) { return; }
 		GamaMenu.separate(menu, "Actions");
 		final boolean simulation = agent instanceof SimulationAgent;
-		if (withInspect)
+		if (withInspect) {
 			actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
 					"Inspect" + (topLevel ? simulation ? " simulation" : " experiment" : ""));
+		}
 		if (!topLevel) {
 			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 					"Focus on all displays");
@@ -257,8 +264,9 @@ public class AgentsMenu extends ContributionItem {
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
-				if (ma != null)
+				if (ma != null) {
 					actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
+				}
 			}
 		}
 		final Collection<UserCommandStatement> commands = agent.getSpecies().getUserCommands();
@@ -304,8 +312,9 @@ public class AgentsMenu extends ContributionItem {
 			GamaMenu.separate(menu, "Actions");
 		}
 
-		if (size > 1)
+		if (size > 1) {
 			browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image());
+		}
 
 		if (size > 1 && !isSimulations) {
 			GamaMenu.separate(menu);
@@ -347,8 +356,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static MenuAction getHighlightActionFor(final IAgent a) {
-		if (a == null)
-			return null;
+		if (a == null) { return null; }
 		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
 				a.getScope().getGui().getHighlightedAgent() == a ? "Remove highlight" : "Highlight");
 	}

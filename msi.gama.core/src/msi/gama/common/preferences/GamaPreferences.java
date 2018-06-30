@@ -29,6 +29,7 @@ import java.util.prefs.Preferences;
 import org.geotools.referencing.CRS;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
@@ -64,9 +65,9 @@ public class GamaPreferences {
 	public static final List<String> GENERATOR_NAMES =
 			Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
 
-	public static final GamaColor[] BASIC_COLORS =
-			new GamaColor[] { new GamaColor(74, 97, 144), new GamaColor(66, 119, 42), new GamaColor(83, 95, 107),
-					new GamaColor(195, 98, 43), new GamaColor(150, 132, 106) };
+	public static final ValueProvider<GamaColor>[] BASIC_COLORS = new ValueProvider[] {
+			() -> new GamaColor(74, 97, 144), () -> new GamaColor(66, 119, 42), () -> new GamaColor(83, 95, 107),
+			() -> new GamaColor(195, 98, 43), () -> new GamaColor(150, 132, 106) };
 
 	/**
 	 * 
@@ -308,9 +309,9 @@ public class GamaPreferences {
 				create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL).in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_BACKGROUND =
 				create("pref_display_background_color", "Default background color ('background' facet of 'display')",
-						GamaColor.getNamed("white"), IType.COLOR).in(NAME, DRAWING);
+						() -> GamaColor.getNamed("white"), IType.COLOR).in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_HIGHLIGHT = create("pref_display_highlight_color",
-				"Default highlight color", new GamaColor(0, 200, 200), IType.COLOR).in(NAME, DRAWING);
+				"Default highlight color", () -> new GamaColor(0, 200, 200), IType.COLOR).in(NAME, DRAWING);
 		public static final Pref<String> CORE_SHAPE =
 				create("pref_display_default_shape", "Defaut shape of agents", "shape", IType.STRING)
 						.among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(NAME, DRAWING);
@@ -318,7 +319,7 @@ public class GamaPreferences {
 				create("pref_display_default_size", "Default size of agents", 1.0, IType.FLOAT).between(0.01, null)
 						.in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_COLOR = create("pref_display_default_color", "Default color of agents",
-				GamaColor.getNamed("yellow"), IType.COLOR).in(NAME, DRAWING);
+				() -> GamaColor.getNamed("yellow"), IType.COLOR).in(NAME, DRAWING);
 		/**
 		 * Options
 		 */
@@ -408,10 +409,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL).in(NAME,
 						OPTIMIZATIONS);
-		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION =
-				create("pref_optimize_path_computation", "Optimize the path computation operators and goto action (but with possible 'jump' issues)", false, IType.BOOL).in(NAME,
-						OPTIMIZATIONS);
-		
+		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION = create("pref_optimize_path_computation",
+				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
+				IType.BOOL).in(NAME, OPTIMIZATIONS);
+
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME,
 						OPTIMIZATIONS);
@@ -422,13 +423,13 @@ public class GamaPreferences {
 		public static final String PATHS = "External libraries support";
 		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
 				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
-						new GenericFile("Enter path", false), IType.FILE).in(NAME, PATHS);
-		public static final String jriFile = System.getProperty("os.name").startsWith("Mac") ? "libjri.jnilib" : 
-			(System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll"); 
+						() -> new GenericFile("Enter path", false), IType.FILE).in(NAME, PATHS);
+		public static final String jriFile = System.getProperty("os.name").startsWith("Mac") ? "libjri.jnilib"
+				: (System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll");
 
-		public static final Pref<? extends IGamaFile> LIB_R =
-				create("pref_lib_r", "Path to JRI library ($R_HOME/library/rJava/jri/"+jriFile+") (http://www.r-project.org)",
-						new GenericFile(getDefaultRPath(), false), IType.FILE).in(NAME, PATHS);
+		public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
+				"Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
+				() -> new GenericFile(getDefaultRPath(), false), IType.FILE).in(NAME, PATHS);
 		/**
 		 * GeoTools
 		 */
@@ -506,7 +507,6 @@ public class GamaPreferences {
 			return "";
 		}
 	}
-	
 
 	// TAB NAMES
 
@@ -554,6 +554,25 @@ public class GamaPreferences {
 		return e;
 	}
 
+	/**
+	 * Lazy create (tries not to compute immediately the value)
+	 * 
+	 * @param key
+	 * @param title
+	 * @param value
+	 * @param type
+	 * @return
+	 */
+	public static <T> Pref<T> create(final String key, final String title, final ValueProvider<T> provider,
+			final int type) {
+		if (key.contains(".") || key.contains(" ")) {
+			System.out.println("WARNING. Preference " + key + " cannot be used as a variable");
+		}
+		final Pref<T> e = new Pref<T>(key, type).named(title).in(Interface.NAME, "").init(provider);
+		register(e);
+		return e;
+	}
+
 	private static void register(final Pref gp) {
 		// System.out.println("+++ Registering preference " + gp.key + " in
 		// store");
@@ -567,83 +586,93 @@ public class GamaPreferences {
 				if (storeKeys.contains(key)) {
 					final String val = store.get(key, GamaStringType.staticCast(scope, value, false));
 					gp.setValue(scope, GamaPointType.staticCast(scope, val, false));
-				} else {
-					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
+				// else {
+				// store.put(key, GamaStringType.staticCast(scope, value, false));
+				// }
 				break;
 			case IType.INT:
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope, store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false)));
-				} else {
-					store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 				}
+				// else {
+				// store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
+				// }
 				break;
 			case IType.FLOAT:
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope, store.getDouble(key, GamaFloatType.staticCast(scope, value, null, false)));
-				} else {
-					store.putDouble(key, GamaFloatType.staticCast(scope, value, null, false));
 				}
+				// else {
+				// store.putDouble(key, GamaFloatType.staticCast(scope, value, null, false));
+				// }
 				break;
 			case IType.BOOL:
 				value = GamaBoolType.staticCast(scope, value, null, false);
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope, store.getBoolean(key, (Boolean) value));
-				} else {
-					store.putBoolean(key, (Boolean) value);
 				}
+				// else {
+				// store.putBoolean(key, (Boolean) value);
+				// }
 				break;
 			case IType.STRING:
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope,
 							store.get(key, StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false))));
-				} else {
-					store.put(key, StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false)));
 				}
+				// else {
+				// store.put(key, StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false)));
+				// }
 				break;
 			case IType.FILE:
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope, new GenericFile(store.get(key, ""), false));
-				} else {
-					store.put(key, value == null ? "" : ((IGamaFile) value).getPath(scope));
 				}
+				// else {
+				// store.put(key, value == null ? "" : ((IGamaFile) value).getPath(scope));
+				// }
 				break;
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				if (storeKeys.contains(key)) {
 					final int val = store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 					gp.setValue(scope, GamaColor.getInt(val));
-				} else {
-					store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
 				}
+				// else {
+				// store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
+				// }
 				break;
 			case IType.FONT:
 				if (storeKeys.contains(key)) {
 					final String val = store.get(key, GamaStringType.staticCast(scope, value, false));
 					gp.setValue(scope, GamaFontType.staticCast(scope, val, false));
-				} else {
-					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
+				// else {
+				// store.put(key, GamaStringType.staticCast(scope, value, false));
+				// }
 				break;
 			case IType.DATE:
 				if (storeKeys.contains(key)) {
 					final String val = toJavaString(store.get(key, GamaStringType.staticCast(scope, value, false)));
 					gp.setValue(scope, fromISOString(val));
-				} else {
-					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
+				// else {
+				// store.put(key, GamaStringType.staticCast(scope, value, false));
+				// }
 				break;
 			default:
 				if (storeKeys.contains(key)) {
 					gp.setValue(scope, store.get(key, GamaStringType.staticCast(scope, value, false)));
-				} else {
-					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
+				// else {
+				// store.put(key, GamaStringType.staticCast(scope, value, false));
+				// }
 		}
 		try {
 			store.flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
+		} catch (final BackingStoreException ex) {
+			ex.printStackTrace();
 		}
 		// Adds the preferences to the platform species if it is already created
 		final PlatformSpeciesDescription spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
@@ -744,7 +773,7 @@ public class GamaPreferences {
 			if (e == null) {
 				continue;
 			}
-			modelValues.put(name, e.initial);
+			modelValues.put(name, e.getInitialValue(null));
 			e.set(e.initial);
 		}
 
@@ -802,13 +831,13 @@ public class GamaPreferences {
 
 	// To force preferences to load
 
-	static Interface i = new Interface();
-	static Modeling m = new Modeling();
-	static Runtime r = new Runtime();
-	static Experiments e = new Experiments();
-	static Simulations s = new Simulations();
-	static Displays d = new Displays();
+	static Interface i_ = new Interface();
+	static Modeling m_ = new Modeling();
+	static Runtime r_ = new Runtime();
+	static Experiments e_ = new Experiments();
+	static Simulations s_ = new Simulations();
+	static Displays d_ = new Displays();
 	// static OpenGL o = new OpenGL();
-	static External ext = new External();
+	static External ext_ = new External();
 
 }

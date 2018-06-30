@@ -2,8 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:import href="docGama-OperatorsSplitted-xml2md.xsl"/>
 
-<xsl:variable name="alphabetID" select="'ch'"/>
-<xsl:variable name="fileName" select="'Operators (C to H)'"/>
+<xsl:variable name="alphabetID" select="'aa'"/>
+<xsl:variable name="fileName" select="'Operators (A to A)'"/>
 
  
 </xsl:stylesheet>
