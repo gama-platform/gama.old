@@ -163,7 +163,8 @@ public class BatchAgent extends ExperimentAgent {
 		// killed.
 		scope.getGui().getStatus(scope).informStatus(endStatus());
 		// Issue #2426: the agent is killed too soon
-		dispose();
+		getScope().setInterrupted();
+		// dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
 	}
