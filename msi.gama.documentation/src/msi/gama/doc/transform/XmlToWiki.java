@@ -47,20 +47,23 @@ public class XmlToWiki {
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAB-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAB"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAA-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAA"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsCH-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsCH"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsBC-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsBC"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsIN-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsIN"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsDH-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsDH"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsOS-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsOS"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsIM-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsIM"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsTZ-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsTZ"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsNR-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsNR"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsSZ-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsSZ"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		

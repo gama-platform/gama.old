@@ -4,11 +4,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:import href="docGama-utils-xml2md.xsl" />
 
 
-<xsl:variable name="fileOperatorsAB" select="'OperatorsAB'" />
-<xsl:variable name="fileOperatorsCH" select="'OperatorsCH'" />
-<xsl:variable name="fileOperatorsIN" select="'OperatorsIN'" />
-<xsl:variable name="fileOperatorsOS" select="'OperatorsOS'" />
-<xsl:variable name="fileOperatorsTZ" select="'OperatorsTZ'" />
+<xsl:variable name="fileOperatorsAA" select="'OperatorsAA'" />
+<xsl:variable name="fileOperatorsBC" select="'OperatorsBC'" />
+<xsl:variable name="fileOperatorsDH" select="'OperatorsDH'" />
+<xsl:variable name="fileOperatorsIM" select="'OperatorsIM'" />
+<xsl:variable name="fileOperatorsNR" select="'OperatorsNR'" />
+<xsl:variable name="fileOperatorsSZ" select="'OperatorsSZ'" />
 <xsl:variable name="fileStatements" select="'Statements'" />
 <xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'" />
 <xsl:variable name="fileControl" select="'BuiltInControlArchitectures'" />
@@ -32,20 +33,23 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:value-of select="@name" />
 	<xsl:text>](</xsl:text>
 	<xsl:choose>
-		<xsl:when test="@alphabetOrder = 'ab'">
-			<xsl:value-of select="$fileOperatorsAB" />
+		<xsl:when test="@alphabetOrder = 'aa'">
+			<xsl:value-of select="$fileOperatorsAA" />
 		</xsl:when>
-		<xsl:when test="@alphabetOrder = 'ch'">
-			<xsl:value-of select="$fileOperatorsCH" />
+		<xsl:when test="@alphabetOrder = 'bc'">
+			<xsl:value-of select="$fileOperatorsBC" />
 		</xsl:when>
-		<xsl:when test="@alphabetOrder = 'in'">
-			<xsl:value-of select="$fileOperatorsIN" />
+		<xsl:when test="@alphabetOrder = 'dh'">
+			<xsl:value-of select="$fileOperatorsDH" />
 		</xsl:when>
-		<xsl:when test="@alphabetOrder = 'os'">
-			<xsl:value-of select="$fileOperatorsOS" />
+		<xsl:when test="@alphabetOrder = 'im'">
+			<xsl:value-of select="$fileOperatorsIM" />
+		</xsl:when>
+		<xsl:when test="@alphabetOrder = 'nr'">
+			<xsl:value-of select="$fileOperatorsNR" />
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:value-of select="$fileOperatorsTZ" />
+			<xsl:value-of select="$fileOperatorsSZ" />
 		</xsl:otherwise>
 	</xsl:choose>
 	<xsl:text>#</xsl:text>
