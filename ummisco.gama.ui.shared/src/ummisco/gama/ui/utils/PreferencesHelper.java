@@ -43,34 +43,36 @@ import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class PreferencesHelper {
 
-	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL =
-			GamaPreferences
-					.create("pref_shapefile_background_color", "Shapefile viewer fill color",
-							GamaColor.getNamed("lightgray"), IType.COLOR)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
-
-	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
-			.create("pref_shapefile_line_color", "Shapefile viewer line color", GamaColor.getNamed("black"),
-					IType.COLOR)
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
+			.create("pref_shapefile_background_color", "Shapefile viewer fill color",
+					() -> GamaColor.getNamed("lightgray"), IType.COLOR)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
+
+	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
+			GamaPreferences
+					.create("pref_shapefile_line_color", "Shapefile viewer line color",
+							() -> GamaColor.getNamed("black"), IType.COLOR)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
 			.create("pref_error_text_color", "Text color of errors",
-					GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
+					() -> GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	public static final Pref<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
 			.create("pref_warning_text_color", "Text color of warnings",
-					GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
+					() -> GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
-	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND = GamaPreferences.create("pref_image_background_color",
-			"Image viewer background color", GamaColor.getNamed("white"), IType.COLOR)
-			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
+	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND =
+			GamaPreferences
+					.create("pref_image_background_color", "Image viewer background color",
+							() -> GamaColor.getNamed("white"), IType.COLOR)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 			.create("pref_button_font", "Font of buttons and dialogs",
-					new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
+					() -> new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
 			.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
 
@@ -222,8 +224,9 @@ public class PreferencesHelper {
 							}
 							String trim = s;
 							trim = trim.replace("-Xmx", "");
-							if (unit)
+							if (unit) {
 								trim = trim.substring(0, trim.length() - 1);
+							}
 							final int result = Integer.parseInt(trim);
 							return (int) (result / divider);
 
@@ -274,13 +277,14 @@ public class PreferencesHelper {
 	private static URL HOME_URL;
 
 	public static URL getWelcomePageURL() {
-		if (HOME_URL == null)
+		if (HOME_URL == null) {
 			try {
 				HOME_URL = FileLocator
 						.toFileURL(Platform.getBundle("ummisco.gama.ui.shared").getEntry("/welcome/welcome.html"));
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
+		}
 		return HOME_URL;
 	}
 

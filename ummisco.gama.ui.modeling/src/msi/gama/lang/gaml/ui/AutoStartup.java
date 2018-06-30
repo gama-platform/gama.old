@@ -74,7 +74,7 @@ public class AutoStartup implements IStartup {
 			GamaPreferences.create("pref_editor_show_toolbar", "Show edition toolbar by default", true, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).hidden();
 	static final Pref<GamaFont> EDITOR_BASE_FONT =
-			GamaPreferences.create("pref_editor_font", "Font of editors", getDefaultFontData(), IType.FONT)
+			GamaPreferences.create("pref_editor_font", "Font of editors", () -> getDefaultFontData(), IType.FONT)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
 					.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
 
@@ -92,25 +92,24 @@ public class AutoStartup implements IStartup {
 							} catch (final Exception e) {}
 						}
 					});
-	public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
-			GamaPreferences
-					.create("pref_editor_background_color", "Background color of editors", getDefaultBackground(),
-							IType.COLOR)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
-					.addChangeListener(new IPreferenceChangeListener<GamaColor>() {
+	public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = GamaPreferences
+			.create("pref_editor_background_color", "Background color of editors", () -> getDefaultBackground(),
+					IType.COLOR)
+			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
+			.addChangeListener(new IPreferenceChangeListener<GamaColor>() {
 
-						@Override
-						public boolean beforeValueChange(final GamaColor newValue) {
-							return true;
-						}
+				@Override
+				public boolean beforeValueChange(final GamaColor newValue) {
+					return true;
+				}
 
-						@Override
-						public void afterValueChange(final GamaColor c) {
-							final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
-							PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
-									AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-						}
-					});
+				@Override
+				public void afterValueChange(final GamaColor c) {
+					final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
+					PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
+							AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
+				}
+			});
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()

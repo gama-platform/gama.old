@@ -17,6 +17,12 @@ import msi.gaml.types.Types;
 
 public class Pref<T> implements IParameter {
 
+	@FunctionalInterface
+	public static interface ValueProvider<T> {
+
+		T get();
+	}
+
 	static int ORDER = 0;
 
 	private final int order = ORDER++;
@@ -24,6 +30,7 @@ public class Pref<T> implements IParameter {
 	String key, title, tab, group, comment;
 	boolean disabled = false; // by default
 	boolean hidden = false; // by default;
+	ValueProvider<T> initialProvider;
 	T value, initial;
 	final int type;
 	List<T> values;
@@ -117,6 +124,11 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
+	public Pref<T> init(final ValueProvider<T> p) {
+		initialProvider = p;
+		return this;
+	}
+
 	public Pref<T> set(final T value) {
 		if (isValueChanged(value) && acceptChange(value)) {
 			this.value = value;
@@ -140,6 +152,10 @@ public class Pref<T> implements IParameter {
 	}
 
 	public T getValue() {
+		if (initialProvider != null) {
+			init(initialProvider.get());
+			initialProvider = null;
+		}
 		return value;
 	}
 
@@ -212,6 +228,10 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public Object getInitialValue(final IScope scope) {
+		if (initialProvider != null) {
+			init(initialProvider.get());
+			initialProvider = null;
+		}
 		return initial;
 	}
 
@@ -259,15 +279,18 @@ public class Pref<T> implements IParameter {
 	}
 
 	protected void afterChange(final T newValue) {
+		initialProvider = null;
 		for (final IPreferenceChangeListener<T> listener : listeners) {
 			listener.afterValueChange(newValue);
 		}
 	}
 
+	@Override
 	public String[] getEnablement() {
 		return this.enables;
 	}
 
+	@Override
 	public String[] getDisablement() {
 		return this.disables;
 	}

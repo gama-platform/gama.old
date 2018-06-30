@@ -55,9 +55,8 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 			final FontData f = fd == null ? null : fd[0];
 			GamaPreferences.create("pref_" + id + "_font", name + " font", get(f), IType.FONT).in(Modeling.NAME, NAME);
 		});
-		c.configure((id, name, style) -> GamaPreferences
-				.create("pref_" + id + "_color", name + " color", GamaColors.toGamaColor(style.getColor()), IType.COLOR)
-				.in(Modeling.NAME, NAME));
+		c.configure((id, name, style) -> GamaPreferences.create("pref_" + id + "_color", name + " color",
+				() -> GamaColors.toGamaColor(style.getColor()), IType.COLOR).in(Modeling.NAME, NAME));
 	}
 
 	public static final String OPERATOR_ID = "binary";
