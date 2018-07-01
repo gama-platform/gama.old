@@ -60,8 +60,8 @@ public interface Constants {
 			final Character previousChar = i == 0 ? 'a' : cuttingLettersOperatorDoc[i - 1];
 			final Character c = cuttingLettersOperatorDoc[i];
 
-			if (i == 0 && name.compareTo(c.toString()) < 0
-					|| name.compareTo(previousChar.toString()) >= 0 && name.compareTo(c.toString()) < 0) {
+			if (i == 0 && name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0
+					|| name.toLowerCase().compareTo(previousChar.toString().toLowerCase()) >= 0 && name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0) {
 				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
 			}
 		}
