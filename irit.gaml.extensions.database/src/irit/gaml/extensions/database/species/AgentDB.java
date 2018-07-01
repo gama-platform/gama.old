@@ -61,8 +61,8 @@ public class AgentDB extends GamlAgent {
 	static final boolean DEBUG = false; // Change DEBUG = false for release
 										// version
 
-	public AgentDB(final IPopulation s) throws GamaRuntimeException {
-		super(s);
+	public AgentDB(final IPopulation s, final int index) throws GamaRuntimeException {
+		super(s, index);
 	}
 
 	@action (
@@ -81,9 +81,8 @@ public class AgentDB extends GamlAgent {
 			// e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString(), scope);
 		} catch (final NullPointerException npe) {
-			if(conn == null) {
-				throw GamaRuntimeException.error("AgentDB.close error: cannot close a database connection that does not exist." , scope);				
-			}
+			if (conn == null) { throw GamaRuntimeException
+					.error("AgentDB.close error: cannot close a database connection that does not exist.", scope); }
 		}
 		return null;
 

@@ -72,10 +72,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public void postStartup() {
 		super.postStartup();
 		final String[] args = Platform.getApplicationArgs();
-		if ( args.length > 0 && args[0].contains("launcher.defaultAction") )
-		{
-			return;
-			// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return;
+		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
 		}
 
 		if ( args.length >= 1 ) {
@@ -167,6 +165,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		try {
 			saveEclipsePreferences();
 			GAMA.closeAllExperiments(true, true);
+			PerspectiveHelper.deleteLastSimulationPerspective();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -202,7 +201,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	private void saveEclipsePreferences() {
 		final IPreferencesService service = Platform.getPreferencesService();
 
-		try (final FileOutputStream outputStream = new FileOutputStream(Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf")){
+		try (final FileOutputStream outputStream =
+			new FileOutputStream(Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf")) {
 			service.exportPreferences(service.getRootNode(), WorkspacePreferences.getPreferenceFilters(), outputStream);
 		} catch (final CoreException | IOException e1) {}
 
@@ -219,9 +219,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			@Override
 			public void handle(final StatusAdapter statusAdapter, final int style) {
 				final int severity = statusAdapter.getStatus().getSeverity();
-				if ( severity == IStatus.INFO || severity == IStatus.CANCEL ) {
-					return;
-				}
+				if ( severity == IStatus.INFO || severity == IStatus.CANCEL ) { return; }
 				final Throwable e = statusAdapter.getStatus().getException();
 				final String message = statusAdapter.getStatus().getMessage();
 				// Stupid Eclipse

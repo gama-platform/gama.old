@@ -43,6 +43,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	long lastEnterTime;
 	Point lastEnterPosition = new Point(0, 0);
 	final DisplayKeyListener delegate = new DisplayKeyListener();
+	private boolean suppressNextEnter;
 
 	private class DisplayKeyListener implements KeyListener {
 
@@ -64,14 +65,16 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 					break;
 				case 'k':
 					if (GamaKeyBindings.ctrl(e)) {
-						if (view.isFullScreen())
+						if (view.isFullScreen()) {
 							view.toggleInteractiveConsole();
+						}
 					}
 					break;
 				case 't':
 					if (GamaKeyBindings.ctrl(e)) {
-						if (view.isFullScreen())
+						if (view.isFullScreen()) {
 							view.toggleSimulationControls();
+						}
 					}
 			}
 
@@ -93,8 +96,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	}
 
 	public void dispose() {
-		if (control == null || control.isDisposed())
-			return;
+		if (control == null || control.isDisposed()) { return; }
 		control.removeKeyListener(this);
 		control.removeMouseListener(this);
 		control.removeMenuDetectListener(this);
@@ -106,35 +108,36 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		surface.dispatchKeyEvent(e.character);
 		WorkbenchHelper.asyncRun(view.displayOverlay);
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		delegate.keyReleased(e);
 	}
 
 	@Override
 	public void mouseScrolled(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 	}
 
 	@Override
 	public void mouseEnter(final MouseEvent e) {
-		if (!ok())
+		if (suppressNextEnter) {
+			System.out.println("One mouse enter suppressed");
+			suppressNextEnter = false;
 			return;
-		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
-			return;
+		}
+		if (!ok()) { return; }
+		if ((e.stateMask & SWT.MODIFIER_MASK) != 0) { return; }
 
 		setMousePosition(e.x, e.y);
-		if (e.button > 0)
-			return;
+		if (e.button > 0) { return; }
+		final long currentTime = System.currentTimeMillis();
+		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y) { return; }
 		lastEnterTime = System.currentTimeMillis();
 		lastEnterPosition = new Point(e.x, e.y);
 		// System.out.println("Mouse entering " + e);
@@ -143,37 +146,36 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseExit(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		final long currentTime = System.currentTimeMillis();
 		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y) { return; }
 		setMousePosition(-1, -1);
-		if (e.button > 0)
-			return;
+		if (e.button > 0) { return; }
 		// System.out.println("Mouse exiting " + e);
-		if (!view.isFullScreen())
-			WorkaroundForIssue1353.showShell();
 		surface.dispatchMouseEvent(SWT.MouseExit);
+		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
+			// suppressNextEnter = true;
+			System.out.println("Invoking WorkaroundForIssue1353");
+			WorkaroundForIssue1353.showShell();
+		}
+
 	}
 
 	@Override
 	public void mouseHover(final MouseEvent e) {
-		if (!ok())
-			return;
-		if (e.button > 0)
-			return;
+		if (!ok()) { return; }
+		if (e.button > 0) { return; }
 		// System.out.println("Mouse hovering on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseHover);
 	}
 
 	@Override
 	public void mouseMove(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		WorkbenchHelper.asyncRun(view.displayOverlay);
-		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
-			return;
+		if ((e.stateMask & SWT.MODIFIER_MASK) != 0) { return;
 		// System.out.println("Mouse moving on " + view.getPartName());
+		}
 
 		if (mouseIsDown) {
 			surface.draggedTo(e.x, e.y);
@@ -187,21 +189,18 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseDoubleClick(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 	}
 
 	@Override
 	public void mouseDown(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		setMousePosition(e.x, e.y);
 		if (inMenu) {
 			inMenu = false;
 			return;
 		}
-		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
-			return;
+		if ((e.stateMask & SWT.MODIFIER_MASK) != 0) { return; }
 		mouseIsDown = true;
 		// System.out.println("Mouse down on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseDown);
@@ -209,28 +208,24 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void mouseUp(final MouseEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 
 		// In case the mouse has moved (for example on a menu)
-		if (!mouseIsDown)
-			return;
+		if (!mouseIsDown) { return; }
 		setMousePosition(e.x, e.y);
-		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
-			return;
+		if ((e.stateMask & SWT.MODIFIER_MASK) != 0) { return; }
 		mouseIsDown = false;
 		// System.out.println("Mouse up on " + view.getPartName());
-		if (!view.isFullScreen())
+		if (!view.isFullScreen()) {
 			WorkaroundForIssue1353.showShell();
+		}
 		surface.dispatchMouseEvent(SWT.MouseUp);
 	}
 
 	@Override
 	public void menuDetected(final MenuDetectEvent e) {
-		if (!ok())
-			return;
-		if (inMenu) // In case a double event is sent
-			return;
+		if (!ok()) { return; }
+		if (inMenu) { return; }
 		// System.out.println("Menu detected on " + view.getPartName());
 		final Point p = control.toControl(e.x, e.y);
 		final int x = p.x;
@@ -242,8 +237,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void dragDetected(final DragDetectEvent e) {
-		if (!ok())
-			return;
+		if (!ok()) { return; }
 		// System.out.println("Mouse drag detected on " + view.getPartName());
 		// surface.draggedTo(e.x, e.y);
 		surface.dispatchMouseEvent(SWT.DragDetect);
@@ -251,31 +245,35 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		if (!ok())
-			return;
+		// if (!ok()) { return; }
+		// if (suppressNextEnter) {
+		// System.out.println("One mouse enter suppressed");
+		// suppressNextEnter = false;
+		// return;
+		// }
 		// System.out.println("Control has gained focus");
-		surface.dispatchMouseEvent(SWT.MouseEnter);
+		// surface.dispatchMouseEvent(SWT.MouseEnter);
 		// Thread.dumpStack();
 	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
-		// if ( !ok() )
-		// return;
+		// if (!ok()) { return; }
+		// surface.dispatchMouseEvent(SWT.MouseExit);
+
 		// System.out.println("Control has lost focus");
 		// Thread.dumpStack();
 	}
 
 	private boolean ok() {
 		final boolean viewOk = view != null && !view.view.disposed;
-		if (!viewOk)
-			return false;
+		if (!viewOk) { return false; }
 		final boolean controlOk = control != null && !control.isDisposed();
-		if (!controlOk)
-			return false;
+		if (!controlOk) { return false; }
 		final boolean surfaceOk = surface != null && !surface.isDisposed();
-		if (!control.isFocusControl())
+		if (!control.isFocusControl()) {
 			control.forceFocus();
+		}
 		if (WorkbenchHelper.getActivePart() != view) {
 			WorkbenchHelper.getPage().activate(view.view);
 		}

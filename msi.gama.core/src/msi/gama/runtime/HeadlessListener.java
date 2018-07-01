@@ -54,7 +54,7 @@ public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 	static Level LEVEL = Level.ALL;
-	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<BufferedWriter>();
+	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
 
 	static {
 
@@ -398,15 +398,17 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void run(final IScope scope, final Runnable opener) {
-		if (opener != null)
+		if (opener != null) {
 			opener.run();
+		}
 	}
 
 	@Override
 	public void setFocusOn(final IShape o) {}
 
 	@Override
-	public void applyLayout(final IScope scope, final int layout) {}
+	public void applyLayout(final IScope scope, final Object layout, final boolean keepTabs,
+			final boolean keepToolbars) {}
 
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
@@ -473,6 +475,18 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void refreshNavigator() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void hideScreen() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void showScreen() {
 		// TODO Auto-generated method stub
 
 	}

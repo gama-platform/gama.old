@@ -9,13 +9,15 @@
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
 
+import static msi.gama.common.interfaces.IKeyword.LAYOUT;
+import static msi.gaml.operators.Displays.HORIZONTAL;
+import static msi.gaml.operators.Displays.VERTICAL;
 import static org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE;
 import static org.eclipse.e4.ui.workbench.modeling.EModelService.IN_ACTIVE_PERSPECTIVE;
 import static ummisco.gama.ui.utils.WorkbenchHelper.findDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -29,34 +31,43 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
+import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
-import msi.gama.util.tree.GamaTreeNode;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
-	public static boolean keepTabs = true;
+	public static final String LAYOUT_KEY = "msi.gama.displays.layout";
 
-	public static final String LAYOUT = "msi.gama.displays.layout";
+	static final String DISPLAY_INDEX_KEY = "GamaIndex";
 
 	@Override
 	public Object execute(final ExecutionEvent e) {
-		final String layout = e.getParameter(LAYOUT);
+		final String layout = e.getParameter(LAYOUT_KEY);
 		final int orientation = GamaPreferences.Displays.LAYOUTS.indexOf(layout);
 		execute(orientation);
 		return true;
 	}
 
+	@SuppressWarnings ("unchecked")
+	public static void execute(final Object layout) {
+		if (layout instanceof Integer) {
+			execute(((Integer) layout).intValue());
+		} else if (layout instanceof GamaTree) {
+			execute((GamaTree<String>) layout);
+		} else if (layout instanceof GamaNode) {
+			final GamaTree<String> tree = LayoutTreeConverter.newLayoutTree();
+			((GamaNode<String>) layout).attachTo(tree.getRoot());
+			execute(tree);
+		}
+	}
+
 	public static void execute(final int layout) {
-		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) { return; }
-		//
-		final GamaTree<String> tree = new LayoutTreeConverter().convert(layout);
-		if (tree == null) { return; }
-		//
-		execute(tree);
+		execute(new LayoutTreeConverter().convert(layout));
 	}
 
 	private static EPartService getPartService() {
@@ -72,69 +83,109 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final GamaTree<String> tree) {
-		final Map<String, MPlaceholder> holders = listDisplayViews();
-		final List<MPartStack> stacks = getModelService().findElements(getApplication(), MPartStack.class,
-				IN_ACTIVE_PERSPECTIVE, element -> "displays".equals(element.getElementId()));
-		final MPartStack displayStack = stacks.isEmpty() ? null : stacks.get(0);
-		if (displayStack == null) { return; }
-		clearDisplays(displayStack, holders);
-		process(displayStack.getParent(), tree.getRoot().getChildren().get(0), holders);
-		activateDisplays(holders);
+		if (tree == null) { return; }
+		final List<MPlaceholder> holders = listDisplayViews();
+		final MPartStack displayStack = getDisplaysPlaceholder();
+		final MElementContainer<?> root = displayStack.getParent();
+		hideDisplays(displayStack, holders);
+		process(root, tree.getRoot().getChildren().get(0), holders);
+		showDisplays(root, holders);
 	}
 
-	private static void activateDisplays(final Map<String, MPlaceholder> holders) {
-		holders.forEach((i, ph) -> getPartService().activate((MPart) ph.getRef(), false));
+	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
+		holders.forEach((ph) -> getPartService().activate((MPart) ph.getRef(), focus));
 	}
 
-	public static void clearDisplays(final MPartStack displayStack, final Map<String, MPlaceholder> holders) {
+	public static MPartStack getDisplaysPlaceholder() {
+		final Object displayStack = getModelService().find("displays", getApplication());
+		return (displayStack instanceof MPartStack) ? (MPartStack) displayStack : null;
+	}
+
+	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
+		root.setVisible(true);
+		WorkbenchHelper.getDisplayViews().forEach(v -> {
+			if (PerspectiveHelper.keepToolbars()) {
+				v.showToolbar();
+			} else {
+				v.hideToolbar();
+			}
+		});
+		holders.forEach((ph) -> ph.setVisible(true));
+		activateDisplays(holders, true);
+	}
+
+	public static void hideDisplays(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		final MElementContainer<MUIElement> parent = displayStack.getParent();
-		for (final MPlaceholder holder : holders.values()) {
-			displayStack.getChildren().add(holder);
-		}
-		activateDisplays(holders);
+		parent.setVisible(false);
+		holders.forEach((ph) -> {
+			ph.setVisible(false);
+			displayStack.getChildren().add(ph);
+		});
+		activateDisplays(holders, false);
 		for (final MUIElement element : new ArrayList<>(parent.getChildren())) {
-			if (element.getTransientData().containsKey("Layout")) {
+			if (element.getTransientData().containsKey(LAYOUT)) {
+				element.setVisible(false);
 				element.setToBeRendered(false);
 				parent.getChildren().remove(element);
 			}
 		}
 	}
 
-	public static void process(final MElementContainer uiRoot, final GamaTreeNode<String> treeRoot,
-			final Map<String, MPlaceholder> holders) {
+	static boolean isPartOfLayout(final MUIElement e) {
+		return e.getTransientData().containsKey(LAYOUT);
+	}
+
+	public static void process(final MElementContainer uiRoot, final GamaNode<String> treeRoot,
+			final List<MPlaceholder> holders) {
 		final String data = treeRoot.getData();
 		final String weight = String.valueOf(treeRoot.getWeight());
-		final Boolean dir = !data.equals("horizontal") && !data.equals("vertical") ? null : data.equals("horizontal");
-		final MPlaceholder holder = holders.get(data);
+		final Boolean dir = !data.equals(HORIZONTAL) && !data.equals(VERTICAL) ? null : data.equals(HORIZONTAL);
+		final MPlaceholder holder = StreamEx.of(holders)
+				.findFirst(h -> h.getTransientData().get(DISPLAY_INDEX_KEY).equals(data)).orElse(null);
 		final MElementContainer container = create(uiRoot, weight, dir);
 		if (holder != null) {
 			container.getChildren().add(holder);
 		} else {
-			for (final GamaTreeNode<String> node : treeRoot.getChildren()) {
+			for (final GamaNode<String> node : treeRoot.getChildren()) {
 				process(container, node, holders);
 			}
 		}
 	}
 
-	static final Map<String, MPlaceholder> listDisplayViews() {
+	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
 				IN_ACTIVE_PERSPECTIVE, e -> findDisplay(e.getElementId()) != null);
-		return StreamEx.of(holders).toMap(e -> String.valueOf(findDisplay(e.getElementId()).getIndex()), k -> k);
+		holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
+				String.valueOf(findDisplay(h.getElementId()).getIndex())));
+		return holders;
 	}
 
 	static MElementContainer create(final MElementContainer root, final String weight, final Boolean dir) {
-		if (dir == null && (root instanceof MPartStack || !keepTabs)) {// stack
-			return root;
+		if (dir == null) { // stacks cannot be stacked
+			if (root instanceof MPartStack && isPartOfLayout(root)) { return root; }
 		}
+		if (dir == null && (root instanceof MPartStack || !PerspectiveHelper.keepTabs())) { return root; }
 		final MElementContainer c = dir != null ? INSTANCE.createPartSashContainer() : INSTANCE.createPartStack();
 		c.getTransientData().put("Dynamic", true);
-		c.getTransientData().put("Layout", true);
+		c.getTransientData().put(LAYOUT, true);
 		c.setContainerData(weight);
 		if (dir != null) {
 			((MPartSashContainer) c).setHorizontal(dir);
 		}
-		root.getChildren().add(c);
+		if (root != null) {
+			root.getChildren().add(c);
+		}
 		return c;
+	}
+
+	public static void hideScreen() {
+		// final MPartStack displayStack = getDisplaysPlaceholder();
+		// displayStack.setVisible(false);
+	}
+
+	public static void showScreen() {
+		// final MPartStack displayStack = getDisplaysPlaceholder();
+		// displayStack.setVisible(true);
 	}
 
 }

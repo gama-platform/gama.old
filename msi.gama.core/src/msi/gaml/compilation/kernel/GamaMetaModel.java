@@ -68,8 +68,8 @@ public class GamaMetaModel {
 
 	private GamaMetaModel() {}
 
-	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop) {
-		return (ExperimentAgent) experimentCreators.get(name).create(pop);
+	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop, final int index) {
+		return (ExperimentAgent) experimentCreators.get(name).create(pop, index);
 	}
 
 	public void addExperimentAgentCreator(final String key, final IExperimentAgentCreator creator) {
@@ -135,12 +135,13 @@ public class GamaMetaModel {
 					plugin);
 		} else {
 			if (!isGlobal) {
-				if (isExperiment)
+				if (isExperiment) {
 					desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
 							allSkills, plugin);
-				else
+				} else {
 					desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper,
 							allSkills, plugin);
+				}
 			} else {
 				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
 			}
@@ -164,8 +165,8 @@ public class GamaMetaModel {
 
 	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
 		final IType platform = Types.get(IKeyword.PLATFORM);
-		if (platform != null && platform != Types.NO_TYPE)
-			return (PlatformSpeciesDescription) platform.getSpecies();
+		if (platform != null
+				&& platform != Types.NO_TYPE) { return (PlatformSpeciesDescription) platform.getSpecies(); }
 		return null;
 	}
 

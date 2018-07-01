@@ -23,19 +23,31 @@ import msi.gaml.operators.Strings;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaTree<T> {
 
+	public static <T> GamaTree<T> withRoot(final GamaNode<T> root) {
+		final GamaTree<T> tree = new GamaTree<>();
+		tree.setRoot(root);
+		return tree;
+	}
+
+	public static <T> GamaTree<T> withRoot(final T root) {
+		final GamaTree<T> tree = new GamaTree<>();
+		tree.setRoot(root);
+		return tree;
+	}
+
 	public static enum Order {
 		PRE_ORDER, POST_ORDER
 	}
 
-	private GamaTreeNode<T> root;
+	private GamaNode<T> root;
 
-	public GamaTree() {
-		super();
-	}
-
-	public GamaTree(final T root) {
-		setRoot(root, GamaTreeNode.DEFAULT_WEIGHT);
-	}
+	// public GamaTree() {
+	// super();
+	// }
+	//
+	// public GamaTree(final T root) {
+	// setRoot(root, GamaTreeNode.DEFAULT_WEIGHT);
+	// }
 
 	// public GamaTree(final GamaTreeNode<T> root) {
 	// setRoot(root);
@@ -45,20 +57,20 @@ public class GamaTree<T> {
 	// setRoot(new GamaTreeNode(root));
 	// }
 
-	public GamaTreeNode<T> getRoot() {
+	public GamaNode<T> getRoot() {
 		return this.root;
 	}
 
-	public void setRoot(final GamaTreeNode<T> root) {
+	public void setRoot(final GamaNode<T> root) {
 		this.root = root;
 	}
 
 	public void setRoot(final T data) {
-		setRoot(data, GamaTreeNode.DEFAULT_WEIGHT);
+		setRoot(data, GamaNode.DEFAULT_WEIGHT);
 	}
 
-	public GamaTreeNode<T> setRoot(final T root, final Double weight) {
-		final GamaTreeNode<T> result = new GamaTreeNode(root, weight);
+	public GamaNode<T> setRoot(final T root, final Integer weight) {
+		final GamaNode<T> result = new GamaNode(root, weight);
 		setRoot(result);
 		return result;
 	}
@@ -74,10 +86,10 @@ public class GamaTree<T> {
 		return numberOfNodes;
 	}
 
-	private int auxiliaryGetNumberOfNodes(final GamaTreeNode<T> node) {
+	private int auxiliaryGetNumberOfNodes(final GamaNode<T> node) {
 		int numberOfNodes = node.getNumberOfChildren();
 
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			numberOfNodes += auxiliaryGetNumberOfNodes(child);
 		}
 
@@ -88,8 +100,8 @@ public class GamaTree<T> {
 		return find(dataToFind) != null;
 	}
 
-	public GamaTreeNode<T> find(final T dataToFind) {
-		GamaTreeNode<T> returnNode = null;
+	public GamaNode<T> find(final T dataToFind) {
+		GamaNode<T> returnNode = null;
 
 		if (root != null) {
 			returnNode = auxiliaryFind(root, dataToFind);
@@ -98,8 +110,8 @@ public class GamaTree<T> {
 		return returnNode;
 	}
 
-	private GamaTreeNode<T> auxiliaryFind(final GamaTreeNode<T> currentNode, final T dataToFind) {
-		GamaTreeNode<T> returnNode = null;
+	private GamaNode<T> auxiliaryFind(final GamaNode<T> currentNode, final T dataToFind) {
+		GamaNode<T> returnNode = null;
 		final int i = 0;
 
 		if (currentNode.getData().equals(dataToFind)) {
@@ -107,7 +119,7 @@ public class GamaTree<T> {
 		}
 
 		else if (currentNode.hasChildren()) {
-			for (final GamaTreeNode<T> node : currentNode.getChildren()) {
+			for (final GamaNode<T> node : currentNode.getChildren()) {
 				returnNode = auxiliaryFind(node, dataToFind);
 				if (returnNode != null) {
 					break;
@@ -127,8 +139,8 @@ public class GamaTree<T> {
 		return root == null;
 	}
 
-	public List<GamaTreeNode<T>> build(final Order traversalOrder) {
-		List<GamaTreeNode<T>> returnList = null;
+	public List<GamaNode<T>> build(final Order traversalOrder) {
+		List<GamaNode<T>> returnList = null;
 
 		if (root != null) {
 			returnList = build(root, traversalOrder);
@@ -137,8 +149,8 @@ public class GamaTree<T> {
 		return returnList;
 	}
 
-	public List<GamaTreeNode<T>> build(final GamaTreeNode<T> node, final Order traversalOrder) {
-		final List<GamaTreeNode<T>> traversalResult = new ArrayList<>();
+	public List<GamaNode<T>> build(final GamaNode<T> node, final Order traversalOrder) {
+		final List<GamaNode<T>> traversalResult = new ArrayList<>();
 
 		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrder(node, traversalResult);
@@ -151,7 +163,7 @@ public class GamaTree<T> {
 		return traversalResult;
 	}
 
-	public List<T> getAllElements(final GamaTreeNode<T> node, final Order traversalOrder) {
+	public List<T> getAllElements(final GamaNode<T> node, final Order traversalOrder) {
 
 		if (node == null) { return Collections.EMPTY_LIST; }
 		final List<T> traversalResult = new ArrayList<>();
@@ -178,7 +190,7 @@ public class GamaTree<T> {
 
 	public List<T> getAllElements(final T data, final Order traversalOrder) {
 		final List<T> traversalResult = new ArrayList<>();
-		final GamaTreeNode<T> node = find(data);
+		final GamaNode<T> node = find(data);
 		if (node == null) { return Collections.EMPTY_LIST; }
 		if (traversalOrder == Order.PRE_ORDER) {
 			getAllPreOrder(node, traversalResult);
@@ -192,40 +204,40 @@ public class GamaTree<T> {
 
 	}
 
-	private void buildPreOrder(final GamaTreeNode<T> node, final List<GamaTreeNode<T>> traversalResult) {
+	private void buildPreOrder(final GamaNode<T> node, final List<GamaNode<T>> traversalResult) {
 		traversalResult.add(node);
 
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			buildPreOrder(child, traversalResult);
 		}
 	}
 
-	private void getAllPreOrder(final GamaTreeNode<T> node, final List<T> traversalResult) {
+	private void getAllPreOrder(final GamaNode<T> node, final List<T> traversalResult) {
 		traversalResult.add(node.getData());
 
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			getAllPreOrder(child, traversalResult);
 		}
 	}
 
-	private void getAllPostOrder(final GamaTreeNode<T> node, final List<T> traversalResult) {
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+	private void getAllPostOrder(final GamaNode<T> node, final List<T> traversalResult) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			getAllPostOrder(child, traversalResult);
 		}
 
 		traversalResult.add(node.getData());
 	}
 
-	private void buildPostOrder(final GamaTreeNode<T> node, final List<GamaTreeNode<T>> traversalResult) {
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+	private void buildPostOrder(final GamaNode<T> node, final List<GamaNode<T>> traversalResult) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			buildPostOrder(child, traversalResult);
 		}
 
 		traversalResult.add(node);
 	}
 
-	public Map<GamaTreeNode<T>, Integer> buildWithDepth(final Order traversalOrder) {
-		Map<GamaTreeNode<T>, Integer> returnMap = null;
+	public Map<GamaNode<T>, Integer> buildWithDepth(final Order traversalOrder) {
+		Map<GamaNode<T>, Integer> returnMap = null;
 
 		if (root != null) {
 			returnMap = buildWithDepth(root, traversalOrder);
@@ -234,8 +246,8 @@ public class GamaTree<T> {
 		return returnMap;
 	}
 
-	public Map<GamaTreeNode<T>, Integer> buildWithDepth(final GamaTreeNode<T> node, final Order traversalOrder) {
-		final Map<GamaTreeNode<T>, Integer> traversalResult = new TOrderedHashMap<>();
+	public Map<GamaNode<T>, Integer> buildWithDepth(final GamaNode<T> node, final Order traversalOrder) {
+		final Map<GamaNode<T>, Integer> traversalResult = new TOrderedHashMap<>();
 
 		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrderWithDepth(node, traversalResult, 0);
@@ -248,18 +260,18 @@ public class GamaTree<T> {
 		return traversalResult;
 	}
 
-	private void buildPreOrderWithDepth(final GamaTreeNode<T> node, final Map<GamaTreeNode<T>, Integer> traversalResult,
+	private void buildPreOrderWithDepth(final GamaNode<T> node, final Map<GamaNode<T>, Integer> traversalResult,
 			final int depth) {
 		traversalResult.put(node, depth);
 
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			buildPreOrderWithDepth(child, traversalResult, depth + 1);
 		}
 	}
 
-	private void buildPostOrderWithDepth(final GamaTreeNode<T> node,
-			final Map<GamaTreeNode<T>, Integer> traversalResult, final int depth) {
-		for (final GamaTreeNode<T> child : node.getChildren()) {
+	private void buildPostOrderWithDepth(final GamaNode<T> node,
+			final Map<GamaNode<T>, Integer> traversalResult, final int depth) {
+		for (final GamaNode<T> child : node.getChildren()) {
 			buildPostOrderWithDepth(child, traversalResult, depth + 1);
 		}
 
@@ -277,9 +289,9 @@ public class GamaTree<T> {
 		 */
 
 		if (root != null) {
-			final Map<GamaTreeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
+			final Map<GamaNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
 			final StringBuilder sb = new StringBuilder();
-			for (final GamaTreeNode<T> t : map.keySet()) {
+			for (final GamaNode<T> t : map.keySet()) {
 				for (int i = 0; i < map.get(t); i++) {
 					sb.append(Strings.TAB);
 				}

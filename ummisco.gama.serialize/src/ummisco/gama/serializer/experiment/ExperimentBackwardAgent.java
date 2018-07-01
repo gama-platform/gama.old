@@ -23,8 +23,8 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
-import msi.gama.util.tree.GamaTreeNode;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gaml.ReverseOperators;
@@ -33,10 +33,10 @@ import ummisco.gama.serializer.gaml.ReverseOperators;
 public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	GamaTree<String> historyTree;
-	GamaTreeNode<String> currentNode;
+	GamaNode<String> currentNode;
 
-	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 		historyTree = new GamaTree<>();
 	}
 
@@ -76,7 +76,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	@Override
 	public boolean backward(final IScope scope) {
 		final boolean result = true;
-		GamaTreeNode<String> previousNode;
+		GamaNode<String> previousNode;
 
 		try {
 			if (canStepBack()) {

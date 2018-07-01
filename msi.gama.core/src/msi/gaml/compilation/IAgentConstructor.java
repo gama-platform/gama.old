@@ -37,8 +37,8 @@ public interface IAgentConstructor<T extends IAgent> {
 		 */
 
 		@Override
-		public MinimalAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
-			return new MinimalAgent(manager);
+		public MinimalAgent createOneAgent(final IPopulation manager, final int index) throws GamaRuntimeException {
+			return new MinimalAgent(manager, index);
 		}
 
 	}
@@ -46,8 +46,8 @@ public interface IAgentConstructor<T extends IAgent> {
 	public static class Gaml implements IAgentConstructor<GamlAgent> {
 
 		@Override
-		public GamlAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
-			return new GamlAgent(manager);
+		public GamlAgent createOneAgent(final IPopulation manager, final int index) throws GamaRuntimeException {
+			return new GamlAgent(manager, index);
 		}
 
 	}
@@ -61,6 +61,6 @@ public interface IAgentConstructor<T extends IAgent> {
 				}
 			};
 
-	public <T extends IAgent> T createOneAgent(IPopulation<T> manager) throws GamaRuntimeException;
+	public <T extends IAgent> T createOneAgent(IPopulation<T> manager, int index) throws GamaRuntimeException;
 
 }

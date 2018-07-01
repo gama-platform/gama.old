@@ -70,8 +70,8 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 
 	}
 
-	public AbstractGraphNodeAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public AbstractGraphNodeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 	}
 
 	IStatement.WithArgs getAction() {

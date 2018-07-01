@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.util.tree.GamaTree;
 import msi.gama.util.tree.GamaTree.Order;
-import msi.gama.util.tree.GamaTreeNode;
+import msi.gama.util.tree.GamaNode;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -223,7 +223,7 @@ public class Types {
 
 	public static void init() {
 		final GamaTree<IType> hierarchy = buildHierarchy();
-		for (final GamaTreeNode<IType> node : hierarchy.build(Order.PRE_ORDER)) {
+		for (final GamaNode<IType> node : hierarchy.build(Order.PRE_ORDER)) {
 			final IType type = node.getData();
 			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
 			final Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
@@ -234,7 +234,7 @@ public class Types {
 	}
 
 	private static GamaTree<IType> buildHierarchy() {
-		final GamaTreeNode<IType> root = new GamaTreeNode(NO_TYPE);
+		final GamaNode<IType> root = new GamaNode(NO_TYPE);
 		final GamaTree<IType> hierarchy = new GamaTree();
 		hierarchy.setRoot(root);
 		final List<IType>[] depths = typesWithDepths();
@@ -270,10 +270,10 @@ public class Types {
 	}
 
 	private static void place(final IType t, final GamaTree<IType> hierarchy) {
-		final Map<GamaTreeNode<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
+		final Map<GamaNode<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
 		int max = 0;
-		GamaTreeNode<IType> parent = hierarchy.getRoot();
-		for (final GamaTreeNode<IType> current : map.keySet()) {
+		GamaNode<IType> parent = hierarchy.getRoot();
+		for (final GamaNode<IType> current : map.keySet()) {
 			if (current.getData().isAssignableFrom(t) && map.get(current) > max) {
 				max = map.get(current);
 				parent = current;

@@ -56,20 +56,20 @@ import msi.gaml.types.Types;
 		type = IType.BOOL,
 		init = "true",
 		doc = @doc ("Define if the physical world has a gravity or not")),
-	@var (
-			name = IKeyword.AGENTS,
-			type = IType.LIST,
-			of = IType.AGENT,
-			init = "[]",
-			doc = { @doc ("The list of agents registered in this physical world") }) })
+		@var (
+				name = IKeyword.AGENTS,
+				type = IType.LIST,
+				of = IType.AGENT,
+				init = "[]",
+				doc = { @doc ("The list of agents registered in this physical world") }) })
 public class Physical3DWorldAgent extends MinimalAgent {
 
 	private final IList<IAgent> registeredAgents = GamaListFactory.create(Types.AGENT);
 	private final HashMap<IAgent, RigidBody> registeredMap = new HashMap<>();
 	private final PhysicsWorldJBullet world;
 
-	public Physical3DWorldAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public Physical3DWorldAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 		world = new PhysicsWorldJBullet(true);
 	}
 

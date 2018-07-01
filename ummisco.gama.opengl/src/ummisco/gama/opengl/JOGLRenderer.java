@@ -398,6 +398,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
+		if (gl == null) { return GamaPoint.NULL_POINT; }
 		int realy = 0;// GL y coord pos
 		final double[] wcoord = new double[4];
 		final int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();

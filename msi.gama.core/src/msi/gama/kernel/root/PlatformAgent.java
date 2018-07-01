@@ -109,11 +109,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	public PlatformAgent() {
 		this(new GamaPopulation<PlatformAgent>(null,
-				GamaMetaModel.INSTANCE.getAbstractModelSpecies().getMicroSpecies(IKeyword.PLATFORM)));
+				GamaMetaModel.INSTANCE.getAbstractModelSpecies().getMicroSpecies(IKeyword.PLATFORM)), 0);
 	}
 
-	public PlatformAgent(final IPopulation<PlatformAgent> pop) {
-		super(pop);
+	public PlatformAgent(final IPopulation<PlatformAgent> pop, final int index) {
+		super(pop, index);
 		scope = new ExecutionScope(this, "Gama platform scope");
 	}
 
@@ -166,8 +166,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public IOutputManager getOutputManager() {
-		if (getExperiment() != null)
-			return getExperiment().getOutputManager();
+		if (getExperiment() != null) { return getExperiment().getOutputManager(); }
 		return null;
 	}
 
@@ -198,8 +197,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public IExperimentAgent getExperiment() {
-		if (GAMA.getExperiment() != null)
-			return GAMA.getExperiment().getAgent();
+		if (GAMA.getExperiment() != null) { return GAMA.getExperiment().getAgent(); }
 		return null;
 	}
 

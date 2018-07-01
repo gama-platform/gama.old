@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -54,11 +52,12 @@ public class MinimalAgent extends AbstractAgent {
 	 * @param s
 	 *            the population used to prototype the agent.
 	 */
-	public MinimalAgent(final IPopulation<? extends IAgent> s) {
-		this(s, new GamaShape((Geometry) null));
+	public MinimalAgent(final IPopulation<? extends IAgent> s, final int index) {
+		this(s, index, new GamaShape((Geometry) null));
 	}
 
-	protected MinimalAgent(final IPopulation<? extends IAgent> population, final IShape geometry) {
+	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
+		super(index);
 		this.population = population;
 		this.geometry = geometry;
 		geometry.setAgent(this);

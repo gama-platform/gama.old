@@ -518,8 +518,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			int i = getPlaceIndexAt(xx, yy);
 			if (matrix[i] == null) { return -1; }
 			if (matrix[i].getLocation() == p) { return i; }
-			final TIntHashSet toObserve = ((GridHexagonalNeighborhood) getNeighborhood())
-					.getNeighborsAtRadius1(i, numCols, numRows, isTorus);
+			final TIntHashSet toObserve =
+					((GridHexagonalNeighborhood) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;
@@ -1749,8 +1749,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// HIERARCHY
 
 			public GamlGridAgent(final int index) {
-				super(GridPopulation.this, matrix[index].getGeometry());
-				setIndex(index);
+				super(GridPopulation.this, index, matrix[index].getGeometry());
+				// setIndex(index);
 				// geometry = matrix[getIndex()].getGeometry(); // TODO Verify
 				// this
 			}
@@ -1822,7 +1822,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			private final IShape geometry;
 
 			public MinimalGridAgent(final int index) {
-				setIndex(index);
+				super(index);
 				geometry = matrix[index].getGeometry();
 			}
 

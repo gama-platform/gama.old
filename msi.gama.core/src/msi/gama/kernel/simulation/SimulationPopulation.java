@@ -83,8 +83,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 		for (int i = 0; i < number; i++) {
 			scope.getGui().getStatus(scope).waitStatus("Initializing simulation");
-			currentSimulation = new SimulationAgent(this);
-			currentSimulation.setIndex(currentAgentIndex++);
+			currentSimulation = new SimulationAgent(this, currentAgentIndex++);
 			currentSimulation.setScheduled(toBeScheduled);
 			currentSimulation.setName("Simulation " + currentSimulation.getIndex());
 			add(currentSimulation);

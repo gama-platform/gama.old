@@ -13,7 +13,7 @@ public class SpeciesProcessor extends ElementProcessor<species> {
 		final String clazz = rawNameOf(context, e.asType());
 		verifyDoc(context, e, spec);
 		sb.append(in).append("_species(").append(toJavaString(spec.name())).append(",").append(toClassObject(clazz))
-				.append(",(p)->").append("new ").append(clazz).append("(p),");
+				.append(",(p, i)->").append("new ").append(clazz).append("(p, i),");
 		toArrayOfStrings(spec.skills(), sb).append(");");
 	}
 

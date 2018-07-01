@@ -27,8 +27,8 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	int failedModels = 0;
 	TestExperimentSummary summary;
 
-	public TestAgent(final IPopulation p) throws GamaRuntimeException {
-		super(p);
+	public TestAgent(final IPopulation p, final int index) throws GamaRuntimeException {
+		super(p, index);
 	}
 
 	@Override
@@ -63,8 +63,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 	@Override
 	public void dispose() {
-		if (dead)
-			return;
+		if (dead) { return; }
 		getScope().getGui().displayTestsResults(getScope(), summary);
 		getScope().getGui().endTestDisplay();
 		super.dispose();
@@ -100,8 +99,9 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 					dim = dim * entryDim;
 					result += String.valueOf(entryDim) + ") * ";
 				}
-				if (!result.isEmpty())
+				if (!result.isEmpty()) {
 					result = result.substring(0, result.length() - 2);
+				}
 				result += " = " + dim;
 				return result;
 			}
@@ -140,8 +140,9 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	public Collection<? extends WithTestSummary<?>> getSubElements() {
 		final List<TestStatement> tests = getModel().getAllTests();
 		final Consumer<IStatement> filter = t -> {
-			if (t instanceof TestStatement)
+			if (t instanceof TestStatement) {
 				tests.add((TestStatement) t);
+			}
 		};
 		getSpecies().getBehaviors().forEach(filter);
 		return tests;

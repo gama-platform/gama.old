@@ -146,7 +146,7 @@ public interface IGui {
 
 	void setFocusOn(IShape o);
 
-	void applyLayout(IScope scope, int layout);
+	void applyLayout(IScope scope, Object layout, boolean keepTabs, boolean keepToolbars);
 
 	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
 
@@ -178,5 +178,9 @@ public interface IGui {
 	boolean toggleFullScreenMode();
 
 	void refreshNavigator();
+
+	void hideScreen();
+
+	void showScreen();
 
 }

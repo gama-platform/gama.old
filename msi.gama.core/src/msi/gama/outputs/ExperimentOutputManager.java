@@ -9,8 +9,11 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
+import static msi.gama.common.interfaces.IKeyword.LAYOUT;
+import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
+import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -23,9 +26,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -38,13 +39,24 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
 		concept = { IConcept.BATCH, IConcept.DISPLAY })
+
 @facets (
-		omissible = IKeyword.LAYOUT,
+		omissible = LAYOUT,
 		value = { @facet (
-				name = IKeyword.LAYOUT,
-				type = IType.INT,
+				name = LAYOUT,
+				type = IType.NONE,
 				optional = true,
-				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views")) })
+				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal(), vertical() and stack() operators")),
+				@facet (
+						name = "toolbars",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the displays should keep their toolbar or not")),
+				@facet (
+						name = "tabs",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the displays should keep their tab or not")) })
 
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
@@ -79,23 +91,19 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
 	}
 
-	// private IScope scope;
-	private int layout =
-			GamaPreferences.Displays.LAYOUTS.indexOf(GamaPreferences.Displays.CORE_DISPLAY_LAYOUT.getValue());
-
 	public ExperimentOutputManager(final IDescription desc) {
 		super(desc);
 	}
 
 	@Override
 	public boolean init(final IScope scope) {
-		// this.scope = scope;
-		final IExpression exp = getFacet(IKeyword.LAYOUT);
-		if (exp != null) {
-			layout = Cast.asInt(scope, exp.value(scope));
-		}
+		final Object layout = getFacetValue(scope, LAYOUT, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+		final boolean tabs = getFacetValue(scope, "tabs", true);
+		final boolean toolbars = getFacetValue(scope, "toolbars", true);
+		scope.getGui().hideScreen();
 		if (super.init(scope)) {
-			scope.getGui().applyLayout(scope, getLayout());
+			scope.getGui().applyLayout(scope, layout, tabs, toolbars);
+			scope.getGui().showScreen();
 			if (scope.getExperiment().getSpecies().isAutorun()) {
 				GAMA.startFrontmostExperiment();
 			}
@@ -104,16 +112,11 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		return false;
 	}
 
-	protected int getLayout() {
-		return layout;
-	}
-
 	// We dont allow permanent outputs for batch experiments to do their first step (to fix Issue
 	// #1273) -- Conflicts with Issue #2204
 	@Override
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		if (scope.getExperiment().getSpecies().isBatch())
-			return true;
+		if (scope.getExperiment().getSpecies().isBatch()) { return true; }
 		return super.initialStep(scope, output);
 	}
 

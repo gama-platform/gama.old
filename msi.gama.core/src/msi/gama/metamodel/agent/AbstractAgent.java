@@ -11,8 +11,8 @@ package msi.gama.metamodel.agent;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
@@ -68,9 +68,15 @@ import msi.gaml.variables.IVariable;
  */
 public abstract class AbstractAgent implements IAgent {
 
-	private volatile int index;
+	private final int index;
+	private final int hashCode;
 	protected volatile boolean dead = false;
 	protected volatile boolean dying = false;
+
+	public AbstractAgent(final int index) {
+		this.index = index;
+		this.hashCode = Objects.hash(getPopulation(), index);
+	}
 
 	@Override
 	public abstract IPopulation<? extends IAgent> getPopulation();
@@ -248,8 +254,9 @@ public abstract class AbstractAgent implements IAgent {
 		try {
 			return result = preStep(scope) ? doStep(scope) : false;
 		} finally {
-			if (result)
+			if (result) {
 				postStep(scope);
+			}
 		}
 	}
 
@@ -302,8 +309,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		if (getHost() == null)
-			return GamaListFactory.create();
+		if (getHost() == null) { return GamaListFactory.create(); }
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
@@ -363,10 +369,10 @@ public abstract class AbstractAgent implements IAgent {
 		return index;
 	}
 
-	@Override
-	public final void setIndex(final int index) {
-		this.index = index;
-	}
+	// @Override
+	// public final void setIndex(final int index) {
+	// this.index = index;
+	// }
 
 	@Override
 	public String getSpeciesName() {
@@ -542,8 +548,7 @@ public abstract class AbstractAgent implements IAgent {
 			name = "die",
 			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		if (dying)
-			return null;
+		if (dying) { return null; }
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
 		scope.interruptAgent();
@@ -610,28 +615,20 @@ public abstract class AbstractAgent implements IAgent {
 			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());
 		}
 
-	}	
-	
+	}
+
 	@Override
 	public boolean equals(final Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof AbstractAgent))
-			return false;
-		final AbstractAgent other = (AbstractAgent) o;
-		if (other.getIndex() == index && other.getPopulation().equals(getPopulation()))
-			return true;
-		return false;
+		if (o == this) { return true; }
+		if (!(o instanceof AbstractAgent)) { return false; }
+		return ((AbstractAgent) o).hashCode == hashCode;
+		// final AbstractAgent other = (AbstractAgent) o;
+		// return (other.index == index && other.getPopulation().equals(getPopulation()));
 	}
 
 	@Override
 	public int hashCode() {
-		final IPopulation<?> p = getPopulation();
-		int ph = Objects.hashCode(p.getName());
-		final IAgent a = p.getHost();
-		if (a != null)
-			ph += Objects.hashCode(a.getName());
-		return ph + index;
+		return hashCode;
 	}
 
 }

@@ -10,18 +10,18 @@
  **********************************************************************************************/
 package msi.gama.application.workbench;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
@@ -33,6 +33,7 @@ public class PerspectiveHelper {
 	public static final String PERSPECTIVE_SIMULATION_FRAGMENT = "Simulation";
 
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
+	public static IPerspectiveDescriptor currentSimulationPerspective = null;
 
 	// private static void cleanPerspectives() {
 	// final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -44,8 +45,8 @@ public class PerspectiveHelper {
 	// }
 	// }
 
-	public static PerspectiveRegistry getPerspectiveRegistry() {
-		return (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();
+	public static IPerspectiveRegistry getPerspectiveRegistry() {
+		return PlatformUI.getWorkbench().getPerspectiveRegistry();
 	}
 
 	public static boolean isModelingPerspective() {
@@ -69,8 +70,12 @@ public class PerspectiveHelper {
 	}
 
 	private static IPerspectiveDescriptor findOrBuildPerspectiveWithId(final String id) {
-		IPerspectiveDescriptor tempDescriptor = getPerspectiveRegistry().findPerspectiveWithId(id);
+		if ( currentSimulationPerspective != null &&
+			currentSimulationPerspective.getId().equals(id) ) { return currentSimulationPerspective; }
+		final PerspectiveRegistry pr = ((PerspectiveRegistry) getPerspectiveRegistry());
+		IPerspectiveDescriptor tempDescriptor = pr.findPerspectiveWithId(id);
 		if ( tempDescriptor == null ) {
+			// tempDescriptor = pr.createPerspective(id, getSimulationDescriptor());
 			tempDescriptor = new SimulationPerspectiveDescriptor(id);
 		}
 		return tempDescriptor;
@@ -79,7 +84,7 @@ public class PerspectiveHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static void dirtySavePerspective(final SimulationPerspectiveDescriptor sp) {
 		try {
-			final Field descField = PerspectiveRegistry.class.getDeclaredField("descriptors");
+			final java.lang.reflect.Field descField = PerspectiveRegistry.class.getDeclaredField("descriptors");
 			descField.setAccessible(true);
 			final Map m = (Map) descField.get(getPerspectiveRegistry());
 			m.put(sp.getId(), sp);
@@ -90,21 +95,19 @@ public class PerspectiveHelper {
 
 	public static boolean openPerspective(final String perspectiveId, final boolean immediately,
 		final boolean withAutoSave) {
-		if ( perspectiveId == null )
-			return false;
-		if ( perspectiveId.equals(currentPerspectiveId) )
-			return true;
+		if ( perspectiveId == null ) { return false; }
+		if ( perspectiveId.equals(currentPerspectiveId) ) { return true; }
 
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if ( activePage == null )
+		if ( activePage == null ) {
 			try {
 				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
 			} catch (final WorkbenchException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		if ( activePage == null )
-			return false;
+		}
+		if ( activePage == null ) { return false; }
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
@@ -120,9 +123,15 @@ public class PerspectiveHelper {
 			activateAutoSave(withAutoSave);
 			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
 				page.closePerspective(oldDescriptor, false, false);
+				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
+
 			currentPerspectiveId = perspectiveId;
-			// System.out.println("Perspective " + perspectiveId + " opened ");
+			if ( isSimulationPerspective(perspectiveId) && !descriptor.equals(currentSimulationPerspective) ) {
+				deleteLastSimulationPerspective();
+				currentSimulationPerspective = descriptor;
+			}
+			System.out.println("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
 			Display.getDefault().syncExec(r);
@@ -150,7 +159,44 @@ public class PerspectiveHelper {
 
 	}
 
-	private static class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
+	public final static boolean keepTabs() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return ((SimulationPerspectiveDescriptor) d).keepTabs;
+		} else {
+			return true;
+		}
+	}
+
+	public final static boolean keepToolbars() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return ((SimulationPerspectiveDescriptor) d).keepToolbars;
+		} else {
+			return true;
+		}
+	}
+
+	public static class SimulationPerspectiveFactory implements IPerspectiveFactory {
+
+		final IPerspectiveFactory original;
+
+		SimulationPerspectiveFactory(final IPerspectiveFactory original) {
+			this.original = original;
+		}
+
+		@Override
+		public void createInitialLayout(final IPageLayout layout) {
+			original.createInitialLayout(layout);
+			// TODO do the rest... See SimulationPerspective
+		}
+
+	}
+
+	public static class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
+
+		boolean keepTabs = true;
+		boolean keepToolbars = true;
 
 		SimulationPerspectiveDescriptor(final String id) {
 			super(id, id, getSimulationDescriptor());
@@ -159,9 +205,10 @@ public class PerspectiveHelper {
 
 		@Override
 		public IPerspectiveFactory createFactory() {
+
 			try {
-				return (IPerspectiveFactory) getSimulationDescriptor().getConfigElement()
-					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+				return new SimulationPerspectiveFactory(
+					(IPerspectiveFactory) getConfigElement().createExecutableExtension("class"));
 			} catch (final CoreException e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
@@ -175,7 +222,7 @@ public class PerspectiveHelper {
 
 		@Override
 		public boolean isPredefined() {
-			return true;
+			return false;
 		}
 
 		@Override
@@ -198,10 +245,51 @@ public class PerspectiveHelper {
 			return getSimulationDescriptor().getPluginId();
 		}
 
+		public boolean keepTabs() {
+			return keepTabs;
+		}
+
+		public void keepTabs(final boolean b) {
+			keepTabs = b;
+		}
+
+		public boolean keepToolbars() {
+			return keepTabs;
+		}
+
+		public void keepToolbars(final boolean b) {
+			keepTabs = b;
+		}
+
 	}
 
 	public static String getNewPerspectiveName(final String model, final String experiment) {
 		return PERSPECTIVE_SIMULATION_FRAGMENT + ":" + model + ":" + experiment;
+	}
+
+	public static void deleteLastSimulationPerspective() {
+		if ( currentSimulationPerspective != null ) {
+			// final IPerspectiveDescriptor formerDescriptor =
+			// getPerspectiveRegistry().findPerspectiveWithId(formerSimulationPerspectiveId);
+			// if ( formerDescriptor != null ) {
+			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			if ( page != null ) {
+				page.closePerspective(currentSimulationPerspective, false, false);
+				// System.out.println("Perspective destroyed: " + currentSimulationPerspective.getId());
+			}
+			// getPerspectiveRegistry().deletePerspective(formerDescriptor);
+			// }
+		}
+
+	}
+
+	public static SimulationPerspectiveDescriptor getActiveSimulationPerspective() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return (SimulationPerspectiveDescriptor) d;
+		} else {
+			return null;
+		}
 	}
 
 }

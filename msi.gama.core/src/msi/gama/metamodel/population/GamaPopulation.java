@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -94,6 +95,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
 	protected final IArchitecture architecture;
+	private final int hashCode;
 
 	/**
 	 * Listeners, created in a lazy way
@@ -140,6 +142,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(IKeyword.EXPERIMENT)
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
+		hashCode = Objects.hash(getSpecies(), getHost());
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
@@ -292,9 +295,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (final IShape geom : geometries.iterable(scope)) {
 			// WARNING Should be redefined somehow
-			final T a = constr.createOneAgent(this);
-			final int ind = currentAgentIndex++;
-			a.setIndex(ind);
+			final T a = constr.createOneAgent(this, currentAgentIndex++);
+			// final int ind = currentAgentIndex++;
+			// a.setIndex(ind);
 			a.setGeometry(geom);
 			list.add(a);
 		}
@@ -335,9 +338,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final IList<T> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (int i = 0; i < number; i++) {
-			@SuppressWarnings ("unchecked") final T a = constr.createOneAgent(this);
-			final int ind = currentAgentIndex++;
-			a.setIndex(ind);
+			@SuppressWarnings ("unchecked") final T a = constr.createOneAgent(this, currentAgentIndex++);
+			// final int ind = currentAgentIndex++;
+			// a.setIndex(ind);
 			// Try to grab the location earlier
 			if (initialValues != null && !initialValues.isEmpty()) {
 				final Map<String, Object> init = initialValues.get(i);
@@ -562,12 +565,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public boolean equals(final Object o) {
-		return this == o;
+		if (!(o instanceof GamaPopulation)) { return false; }
+		return ((GamaPopulation<?>) o).hashCode == hashCode;
 	}
 
 	@Override
 	public int hashCode() {
-		return System.identityHashCode(this);
+		return hashCode;
 	}
 
 	@Override

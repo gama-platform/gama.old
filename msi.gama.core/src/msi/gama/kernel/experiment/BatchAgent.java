@@ -54,8 +54,8 @@ public class BatchAgent extends ExperimentAgent {
 	private Double[] seeds;
 	final List<Double> fitnessValues = new ArrayList<>();
 
-	public BatchAgent(final IPopulation p) throws GamaRuntimeException {
-		super(p);
+	public BatchAgent(final IPopulation p, final int index) throws GamaRuntimeException {
+		super(p, index);
 		final IScope scope = getSpecies().getExperimentScope();
 		final IExpression expr = getSpecies().getFacet(IKeyword.REPEAT);
 		int innerLoopRepeat = 1;

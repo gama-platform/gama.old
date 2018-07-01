@@ -14,28 +14,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GamaTreeNode<T> {
+public class GamaNode<T> {
 
-	static Double DEFAULT_WEIGHT = null;
+	static Integer DEFAULT_WEIGHT = null;
 	private T data;
-	private final Double weight;
-	private List<GamaTreeNode<T>> children;
-	private GamaTreeNode<T> parent;
+	private Integer weight;
+	private List<GamaNode<T>> children;
+	private GamaNode<T> parent;
 
-	public GamaTreeNode(final T data) {
+	public GamaNode(final T data) {
 		this(data, DEFAULT_WEIGHT);
 	}
 
-	public GamaTreeNode(final T data, final Double weight) {
+	public GamaNode(final T data, final Integer weight) {
 		this.weight = weight;
 		setData(data);
 	}
 
-	public GamaTreeNode<T> getParent() {
+	public GamaNode<T> getParent() {
 		return parent;
 	}
 
-	public List<GamaTreeNode<T>> getChildren() {
+	public List<GamaNode<T>> getChildren() {
 		if (children == null) { return Collections.EMPTY_LIST; }
 		return children;
 	}
@@ -47,12 +47,8 @@ public class GamaTreeNode<T> {
 	public boolean hasChildren() {
 		return getNumberOfChildren() > 0;
 	}
-	//
-	// public void addChild(final GamaTreeNode<T> child) {
-	// addChild(child, DEFAULT_WEIGHT);
-	// }
 
-	private void addChild(final GamaTreeNode<T> child) {
+	private void addChild(final GamaNode<T> child) {
 		child.parent = this;
 		if (children == null) {
 			children = new ArrayList<>();
@@ -60,13 +56,13 @@ public class GamaTreeNode<T> {
 		children.add(child);
 	}
 
-	public GamaTreeNode<T> addChild(final T child) {
-		final GamaTreeNode<T> result = addChild(child, DEFAULT_WEIGHT);
+	public GamaNode<T> addChild(final T child) {
+		final GamaNode<T> result = addChild(child, DEFAULT_WEIGHT);
 		return result;
 	}
 
-	public GamaTreeNode<T> addChild(final T child, final Double weight) {
-		final GamaTreeNode<T> result = new GamaTreeNode<>(child, weight);
+	public GamaNode<T> addChild(final T child, final Integer w) {
+		final GamaNode<T> result = new GamaNode<>(child, w);
 		addChild(result);
 		return result;
 	}
@@ -82,7 +78,7 @@ public class GamaTreeNode<T> {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		toString(sb);
+		toString(sb, 0);
 		return sb.toString();
 	}
 
@@ -91,7 +87,7 @@ public class GamaTreeNode<T> {
 		if (this == obj) { return true; }
 		if (obj == null) { return false; }
 		if (getClass() != obj.getClass()) { return false; }
-		final GamaTreeNode<?> other = (GamaTreeNode<?>) obj;
+		final GamaNode<?> other = (GamaNode<?>) obj;
 		if (data == null) {
 			if (other.data != null) { return false; }
 		} else if (!data.equals(other.data)) { return false; }
@@ -108,16 +104,24 @@ public class GamaTreeNode<T> {
 		return super.hashCode();
 	}
 
-	public void toString(final StringBuilder sb) {
+	private void toString(final StringBuilder sb, final int level) {
+		// sb.append(Strings.LN);
+		// for (int i = 0; i < level; i++) {
+		// sb.append(Strings.TAB);
+		// }
 		sb.append(getData());
 		if (children != null) {
-			sb.append('(');
-			for (final GamaTreeNode<T> node : children) {
-				node.toString(sb);
+			sb.append("([");
+			for (final GamaNode<T> node : children) {
+				node.toString(sb, level + 1);
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
-			sb.append(')');
+			// sb.append(Strings.LN);
+			// for (int i = 0; i < level; i++) {
+			// sb.append(Strings.TAB);
+			// }
+			sb.append("])");
 		}
 		if (weight != null) {
 			sb.append("::").append(getWeight());
@@ -128,24 +132,40 @@ public class GamaTreeNode<T> {
 	public void dispose() {
 		parent = null;
 		if (children != null) {
-			for (final GamaTreeNode<T> node : children) {
+			for (final GamaNode<T> node : children) {
 				node.dispose();
 			}
 			children.clear();
 		}
 	}
 
-	public GamaTreeNode<T> copy() {
-		final GamaTreeNode<T> result = new GamaTreeNode<>(getData(), weight);
+	public GamaNode<T> copy() {
+		final GamaNode<T> result = new GamaNode<>(getData(), weight);
 		if (children != null) {
-			for (final GamaTreeNode<T> node : children) {
+			for (final GamaNode<T> node : children) {
 				result.addChild(node.copy());
 			}
 		}
 		return result;
 	}
 
-	public Double getWeight() {
+	public Integer getWeight() {
 		return weight;
+	}
+
+	public void setWeight(final Integer w) {
+		weight = w;
+	}
+
+	public void attachTo(final GamaNode<T> node) {
+		if (parent != null) {
+			parent.removeChild(this);
+		}
+		node.addChild(this);
+
+	}
+
+	private void removeChild(final GamaNode<T> gamaTreeNode) {
+		children.remove(gamaTreeNode);
 	}
 }

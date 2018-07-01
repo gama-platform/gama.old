@@ -52,24 +52,22 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 * @param s
 	 *            the population used to prototype the agent.
 	 */
-	public GamlAgent(final IPopulation<? extends IAgent> s) {
-		super(s);
+	public GamlAgent(final IPopulation<? extends IAgent> s, final int index) {
+		super(s, index);
 	}
 
 	/**
 	 * @param gridPopulation
 	 * @param geometry
 	 */
-	public GamlAgent(final IPopulation<? extends IAgent> gridPopulation, final IShape geometry) {
-		super(gridPopulation, geometry);
+	public GamlAgent(final IPopulation<? extends IAgent> gridPopulation, final int index, final IShape geometry) {
+		super(gridPopulation, index, geometry);
 	}
 
 	private Boolean isPopulation(final String name) {
 		final IVariable v = getSpecies().getVar(name);
-		if (v == null)
-			return false;
-		if (v.isMicroPopulation())
-			return true;
+		if (v == null) { return false; }
+		if (v.isMicroPopulation()) { return true; }
 		return false;
 	}
 
@@ -81,8 +79,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 					Iterables.transform(Iterables.filter(getAttributes().keySet(), input -> isPopulation(input)),
 							input -> (IPopulation<?>) getAttributes().get(input)),
 					IPopulation.class);
-			if (microPopulations.length == 0)
+			if (microPopulations.length == 0) {
 				microPopulations = NO_POP;
+			}
 			Arrays.sort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
 		}
 		return microPopulations;
@@ -91,8 +90,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	protected boolean stepSubPopulations(final IScope scope) {
 		for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
-			if (!scope.step(pop).passed())
-				return false;
+			if (!scope.step(pop).passed()) { return false; }
 		}
 		return true;
 	}
@@ -235,8 +233,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public synchronized IPopulation<? extends IAgent> getMicroPopulation(final String microSpeciesName) {
 		if (getAttributes() == null) { return null; }
 		final Object o = getAttributes().get(microSpeciesName);
-		if (o instanceof IPopulation)
-			return (IPopulation<? extends IAgent>) o;
+		if (o instanceof IPopulation) { return (IPopulation<? extends IAgent>) o; }
 		return null;
 	}
 
@@ -321,7 +318,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				microPopulation = getHost().getPopulationFor(species);
 			}
 		} else {
-			microPopulation = this.getScope().getSimulation().getExternMicroPopulationFor(micro.getAlias() + "." + species.getName());
+			microPopulation = this.getScope().getSimulation()
+					.getExternMicroPopulationFor(micro.getAlias() + "." + species.getName());
 		}
 		// end-hqnghi
 		return microPopulation;

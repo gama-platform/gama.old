@@ -37,8 +37,8 @@ import msi.gaml.types.IType;
 				doc = @doc ("The target agent of this edge")) })
 public class AbstractGraphEdgeAgent extends GamlAgent {
 
-	public AbstractGraphEdgeAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public AbstractGraphEdgeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 	}
 
 	@Override

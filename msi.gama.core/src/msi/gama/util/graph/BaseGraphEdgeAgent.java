@@ -20,8 +20,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 		doc = @doc ("A built-in species for agents representing the edges of a graph, from which one can inherit"))
 public class BaseGraphEdgeAgent extends AbstractGraphEdgeAgent {
 
-	public BaseGraphEdgeAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public BaseGraphEdgeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 	}
 
 }

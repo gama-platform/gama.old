@@ -76,8 +76,7 @@ public class EventLayer extends AbstractLayer {
 	// We explicitly translate by the origin of the surface
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		if (xOnScreen == -1 && yOnScreen == -1)
-			return new GamaPoint(0, 0);
+		if (xOnScreen == -1 && yOnScreen == -1) { return new GamaPoint(0, 0); }
 		return g.getModelCoordinates();
 	}
 
@@ -173,7 +172,7 @@ public class EventLayer extends AbstractLayer {
 			if (pp == null) { return; }
 			if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
 					|| pp.getY() >= surface.getEnvHeight()) {
-				if (MOUSE_EXITED != listenedEvent) { return; }
+				if (MOUSE_EXITED != listenedEvent && MOUSE_ENTERED != listenedEvent) { return; }
 			}
 			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 

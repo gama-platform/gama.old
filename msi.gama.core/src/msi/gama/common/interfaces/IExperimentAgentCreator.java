@@ -35,8 +35,8 @@ public interface IExperimentAgentCreator {
 		 * @see msi.gama.common.interfaces.IExperimentAgentCreator#create(java.lang.Object[])
 		 */
 		@Override
-		public IExperimentAgent create(final IPopulation<? extends IAgent> pop) {
-			return original.create(pop);
+		public IExperimentAgent create(final IPopulation<? extends IAgent> pop, final int index) {
+			return original.create(pop, index);
 		}
 
 		/**
@@ -108,6 +108,6 @@ public interface IExperimentAgentCreator {
 		}
 	}
 
-	IExperimentAgent create(IPopulation<? extends IAgent> pop);
+	IExperimentAgent create(IPopulation<? extends IAgent> pop, int index);
 
 }

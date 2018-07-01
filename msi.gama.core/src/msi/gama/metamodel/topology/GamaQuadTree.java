@@ -100,8 +100,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		// random procedures and removing duplicates
 		final ICollector<IAgent> list = new Collector.UniqueOrdered<>();
 		root.findIntersects(r, list);
-		if (list.isEmpty())
-			return Collections.EMPTY_LIST;
+		if (list.isEmpty()) { return Collections.EMPTY_LIST; }
 		filter.filter(scope, source, list);
 		scope.getRandom().shuffle2(list);
 		return list;
@@ -115,8 +114,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Collection<IAgent> result = findIntersects(scope, source, env, f);
-		if (result.isEmpty())
-			return Collections.EMPTY_LIST;
+		if (result.isEmpty()) { return Collections.EMPTY_LIST; }
 		result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 		return result;
 	}
@@ -127,8 +125,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
-		if (in_square.isEmpty())
-			return null;
+		if (in_square.isEmpty()) { return null; }
 		double min_distance = dist;
 		IAgent min_agent = null;
 		for (final IAgent a : in_square) {
@@ -184,20 +181,23 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public void remove(final Coordinate p, final IShape a) {
-			if (nodes == null)
+			if (nodes == null) {
 				objects.remove(a);
-			else
+			} else {
 				nodes[quadrant(p)].remove(p, a);
+			}
 		}
 
 		public void remove(final Envelope env, final IShape a) {
 			if (nodes == null) {
 				objects.remove(a);
-			} else
-				for (final QuadNode node : nodes)
+			} else {
+				for (final QuadNode node : nodes) {
 					if (node.bounds.intersects(env)) {
 						node.remove(env, a);
 					}
+				}
+			}
 		}
 
 		public boolean shouldSplit() {
@@ -210,8 +210,9 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 			if (nodes == null) {
 				objects.put(a, Envelope3D.of(p));
-			} else
+			} else {
 				nodes[quadrant(p)].add(p, a);
+			}
 		}
 
 		public void add(final Envelope env, final IAgent a) {
@@ -220,11 +221,13 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 			if (nodes == null) {
 				objects.put(a, env);
-			} else
-				for (final QuadNode node : nodes)
+			} else {
+				for (final QuadNode node : nodes) {
 					if (node.bounds.intersects(env)) {
 						node.add(env, a);
 					}
+				}
+			}
 		}
 
 		int quadrant(final Coordinate p) {
@@ -259,14 +262,16 @@ public class GamaQuadTree implements ISpatialIndex {
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (bounds.intersects(r)) {
 				objects.forEachEntry((a, env) -> {
-					if (env.intersects(r))
+					if (env != null && env.intersects(r)) {
 						result.add(a);
+					}
 					return true;
 				});
 				// }
 				if (nodes != null) {
-					for (final QuadNode node : nodes)
+					for (final QuadNode node : nodes) {
 						node.findIntersects(r, result);
+					}
 				}
 			}
 

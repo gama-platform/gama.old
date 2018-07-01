@@ -156,8 +156,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold = false;
 
-	public ExperimentAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
-		super(s);
+	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
+		super(s, index);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		scope = new ExperimentAgentScope();
 		clock = new ExperimentClock(scope);
@@ -237,8 +237,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		if (scope.interrupted()) { return null; }
-		if (automaticallyCreateFirstSimulation())
+		if (automaticallyCreateFirstSimulation()) {
 			createSimulation(getParameterValues(), scheduled);
+		}
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
 		return this;
@@ -267,8 +268,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	@Override
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		if (dying)
-			return null;
+		if (dying) { return null; }
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
 		GAMA.closeExperiment(getSpecies());
@@ -461,10 +461,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 					doc = { @doc ("Whether or not to force the outputs to make a computation step") }) })
 	public Object updateDisplays(final IScope scope) {
 		final Boolean force = scope.getBoolArg("recompute");
-		if (force)
+		if (force) {
 			getSpecies().recomputeAndRefreshAllOutputs();
-		else
+		} else {
 			getSpecies().refreshAllOutputs();
+		}
 		return this;
 	}
 
@@ -553,8 +554,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	@getter (IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
-		if (getSimulationPopulation() != null)
-			return getSimulationPopulation().lastSimulationCreated();
+		if (getSimulationPopulation() != null) { return getSimulationPopulation().lastSimulationCreated(); }
 		return null;
 	}
 
@@ -575,8 +575,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
 		if (species == getModel()) { return getSimulationPopulation(); }
 		final SimulationAgent sim = getSimulation();
-		if (sim == null)
-			return IPopulation.createEmpty(species);
+		if (sim == null) { return IPopulation.createEmpty(species); }
 		return sim.getPopulationFor(species.getName());
 
 	}
@@ -694,14 +693,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public boolean hasAccessToGlobalVar(final String name) {
-			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name))
-				return true;
-			if (this.getModel().getSpecies().hasVar(name))
-				return true;
-			if (getSpecies().hasParameter(name))
-				return true;
-			if (extraParametersMap.containsKey(name))
-				return true;
+			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name)) { return true; }
+			if (this.getModel().getSpecies().hasVar(name)) { return true; }
+			if (getSpecies().hasParameter(name)) { return true; }
+			if (extraParametersMap.containsKey(name)) { return true; }
 			return false;
 		}
 
@@ -747,9 +742,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
 		final SimulationPopulation pop = getSimulationPopulation();
-		if (pop != null)
-			return Iterables.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
-					Collections.singletonList(getOutputManager())), ContainerHelper.NOT_NULL);
+		if (pop != null) { return Iterables
+				.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
+						Collections.singletonList(getOutputManager())), ContainerHelper.NOT_NULL); }
 		return Collections.EMPTY_LIST;
 	}
 

@@ -64,8 +64,15 @@ public class WorkbenchHelper {
 	public final static String TEST_NATURE = WorkspaceModelsManager.TEST_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
-	public final static Clipboard CLIPBOARD = new Clipboard(getDisplay());
-	public final static Transfer[] TRANSFERS = new Transfer[] { TextTransfer.getInstance() };
+	private static Clipboard CLIPBOARD;
+	private final static Transfer[] TRANSFERS = new Transfer[] { TextTransfer.getInstance() };
+
+	public static Clipboard getClipboard() {
+		if (CLIPBOARD == null) {
+			CLIPBOARD = new Clipboard(getDisplay());
+		}
+		return CLIPBOARD;
+	}
 
 	public static void asyncRun(final Runnable r) {
 		final Display d = getDisplay();
@@ -217,7 +224,7 @@ public class WorkbenchHelper {
 	}
 
 	public static void copy(final String o) {
-		CLIPBOARD.setContents(new String[] { o }, TRANSFERS);
+		getClipboard().setContents(new String[] { o }, TRANSFERS);
 	}
 
 	/**

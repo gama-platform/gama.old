@@ -368,6 +368,11 @@
                      </reference>
                   </and>
                </visibleWhen>
+               <command
+                     commandId="ummisco.gama.ui.experiment.copyLayout"
+                     label="Copy Layout to Clipboard"
+                     style="push">
+               </command>
             </menu>
             <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.other.png"
@@ -765,6 +770,20 @@
             </and>
          </activeWhen>
       </handler>
+      <handler
+            class="ummisco.gama.ui.commands.CopyLayout"
+            commandId="ummisco.gama.ui.experiment.copyLayout">
+         <activeWhen>
+            <and>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+            </and>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -1020,6 +1039,10 @@
       <command
             id="msi.gama.application.toggleDisplayTabs"
             name="Toggle Display Tabs">
+      </command>
+      <command
+            id="ummisco.gama.ui.experiment.copyLayout"
+            name="Copy Layout">
       </command>
    </extension>
    <extension

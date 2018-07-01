@@ -181,23 +181,24 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		@Override
 		public void validate(final IDescription desc) {
 			final String type = desc.getLitteral(TYPE);
-//			if (type.equals(MEMORIZE)) {
-//				desc.warning("The memorize experiment is still in development. It should not be used.",
-//						IGamlIssue.DEPRECATED);
-//			}
+			// if (type.equals(MEMORIZE)) {
+			// desc.warning("The memorize experiment is still in development. It should not be used.",
+			// IGamlIssue.DEPRECATED);
+			// }
 			if (!type.equals(BATCH)) {
 				if (desc.getChildWithKeyword(METHOD) != null) {
 					desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
 							METHOD);
 				}
 			}
-			if (type.equals(BATCH))
+			if (type.equals(BATCH)) {
 				if (!desc.hasFacet(UNTIL)) {
 					desc.warning(
 							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
 									+ type + " experiment",
 							IGamlIssue.MISSING_FACET);
 				}
+			}
 		}
 	}
 
@@ -231,8 +232,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 				final boolean toBeScheduled) throws GamaRuntimeException {
 			for (int i = 0; i < number; i++) {
-				agent = GamaMetaModel.INSTANCE.createExperimentAgent(getExperimentType(), this);
-				agent.setIndex(currentAgentIndex++);
+				agent = GamaMetaModel.INSTANCE.createExperimentAgent(getExperimentType(), this, currentAgentIndex++);
+				// agent.setIndex(currentAgentIndex++);
 				add(agent);
 				scope.push(agent);
 				createVariables(scope, agent, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
@@ -303,15 +304,17 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			setHeadless(true);
 		}
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
-		if (expr != null && expr.isConst())
+		if (expr != null && expr.isConst()) {
 			keepSeed = Cast.asBool(scope, expr.value(scope));
-		else
+		} else {
 			keepSeed = false;
+		}
 		final IExpression ksExpr = getFacet(IKeyword.KEEP_SIMULATIONS);
-		if (ksExpr != null && ksExpr.isConst())
+		if (ksExpr != null && ksExpr.isConst()) {
 			keepSimulations = Cast.asBool(scope, ksExpr.value(scope));
-		else
+		} else {
 			keepSimulations = true;
+		}
 		final IExpression ar = getFacet(IKeyword.AUTORUN);
 		if (ar == null) {
 			autorun = GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
@@ -550,8 +553,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public IParameter.Batch getParameterByTitle(final String title) {
 		for (final IParameter p : parameters.values()) {
-			if (p.getTitle().equals(title) && p instanceof IParameter.Batch)
-				return (IParameter.Batch) p;
+			if (p.getTitle().equals(title) && p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
 		}
 		return null;
 	}
@@ -747,8 +749,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public Iterable<IOutputManager> getActiveOutputManagers() {
-		if (agent == null)
-			return Collections.EMPTY_LIST;
+		if (agent == null) { return Collections.EMPTY_LIST; }
 		return Iterables.concat(agent.getAllSimulationOutputs(), Arrays.asList(experimentOutputs));
 
 	}

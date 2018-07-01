@@ -182,12 +182,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private final ActionExecuter executer;
 	private RootTopology topology;
 
-	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
-		this((SimulationPopulation) pop);
+	public SimulationAgent(final IPopulation<? extends IAgent> pop, final int index) {
+		this((SimulationPopulation) pop, index);
 	}
 
-	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
-		super(pop);
+	public SimulationAgent(final SimulationPopulation pop, final int index) throws GamaRuntimeException {
+		super(pop, index);
 		clock = new SimulationClock(getScope());
 		executer = new ActionExecuter(getScope());
 		projectionFactory = new ProjectionFactory();
@@ -202,8 +202,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@getter (IKeyword.EXPERIMENT)
 	public IExperimentAgent getExperiment() {
 		final IMacroAgent agent = getHost();
-		if (agent instanceof IExperimentAgent)
-			return (IExperimentAgent) agent;
+		if (agent instanceof IExperimentAgent) { return (IExperimentAgent) agent; }
 		return null;
 	}
 
@@ -214,8 +213,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public void setTopology(final RootTopology topology2) {
-		if (topology != null)
+		if (topology != null) {
 			topology.dispose();
+		}
 		topology = topology2;
 
 	}
@@ -236,8 +236,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void setName(final String name) {
 		super.setName(name);
 		final SimulationOutputManager m = getOutputManager();
-		if (m != null)
+		if (m != null) {
 			m.updateDisplayOutputsName(this);
+		}
 	}
 
 	public void setScheduled(final Boolean scheduled) {
@@ -323,8 +324,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
 
-		if (externMicroPopulations != null)
+		if (externMicroPopulations != null) {
 			externMicroPopulations.clear();
+		}
 
 		if (outputs != null) {
 			outputs.dispose();
@@ -366,8 +368,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		IShape geom = g;
-		if (geom == null)
+		if (geom == null) {
 			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
+		}
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
