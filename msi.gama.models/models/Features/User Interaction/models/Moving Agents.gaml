@@ -3,7 +3,7 @@
 * Author: drogoul
 * Description: Shows how to move agents using two event layers : 
 * 
-* Click to grab an group of agents, click again to drop them. Press the keys "k" to kill the agents in the selection, and "d" to duplicate them.
+* Click to grab an group of agents, click again to drop them. Press the keys "r" to kill the agents in the selection, and "c" to duplicate them.
 * Tags: gui
 */
 model MovingAgents
