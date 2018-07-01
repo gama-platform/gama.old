@@ -37,6 +37,7 @@ import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.LayoutStatement;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -205,8 +206,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected IExperimentController controller;
 	// An original copy of the simualtion outputs (which will be eventually
 	// duplicated in all the simulations)
-	protected IOutputManager originalSimulationOutputs;
-	protected IOutputManager experimentOutputs;
+	protected SimulationOutputManager originalSimulationOutputs;
+	protected ExperimentOutputManager experimentOutputs;
 	// private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
@@ -415,14 +416,17 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		super.setChildren(children);
 
 		BatchOutput fileOutputDescription = null;
+		LayoutStatement layout = null;
 		for (final ISymbol s : children) {
-			if (s instanceof IExploration) {
+			if (s instanceof LayoutStatement) {
+				layout = (LayoutStatement) s;
+			} else if (s instanceof IExploration) {
 				exploration = (IExploration) s;
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if (s instanceof SimulationOutputManager) {
 				if (originalSimulationOutputs != null) {
-					((SimulationOutputManager) originalSimulationOutputs).setChildren((SimulationOutputManager) s);
+					originalSimulationOutputs.setChildren((SimulationOutputManager) s);
 				} else {
 					originalSimulationOutputs = (SimulationOutputManager) s;
 				}
@@ -443,7 +447,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			} else if (s instanceof ExperimentOutputManager) {
 				if (experimentOutputs != null) {
-					((ExperimentOutputManager) experimentOutputs).setChildren((ExperimentOutputManager) s);
+					experimentOutputs.setChildren((ExperimentOutputManager) s);
 				} else {
 					experimentOutputs = (ExperimentOutputManager) s;
 				}
@@ -454,6 +458,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		if (experimentOutputs == null) {
 			experimentOutputs = ExperimentOutputManager.createEmpty();
+		}
+		if (layout != null) {
+			experimentOutputs.setLayout(layout);
 		}
 		if (fileOutputDescription != null) {
 			createOutput(fileOutputDescription);

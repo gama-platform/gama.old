@@ -75,7 +75,6 @@ public class PerspectiveHelper {
 		final PerspectiveRegistry pr = ((PerspectiveRegistry) getPerspectiveRegistry());
 		IPerspectiveDescriptor tempDescriptor = pr.findPerspectiveWithId(id);
 		if ( tempDescriptor == null ) {
-			// tempDescriptor = pr.createPerspective(id, getSimulationDescriptor());
 			tempDescriptor = new SimulationPerspectiveDescriptor(id);
 		}
 		return tempDescriptor;
@@ -103,7 +102,6 @@ public class PerspectiveHelper {
 			try {
 				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
 			} catch (final WorkbenchException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -122,13 +120,14 @@ public class PerspectiveHelper {
 			}
 			activateAutoSave(withAutoSave);
 			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
+				System.out.println("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
 
 			currentPerspectiveId = perspectiveId;
 			if ( isSimulationPerspective(perspectiveId) && !descriptor.equals(currentSimulationPerspective) ) {
-				deleteLastSimulationPerspective();
+				deleteCurrentSimulationPerspective();
 				currentSimulationPerspective = descriptor;
 			}
 			System.out.println("Perspective " + perspectiveId + " opened ");
@@ -254,11 +253,11 @@ public class PerspectiveHelper {
 		}
 
 		public boolean keepToolbars() {
-			return keepTabs;
+			return keepToolbars;
 		}
 
 		public void keepToolbars(final boolean b) {
-			keepTabs = b;
+			keepToolbars = b;
 		}
 
 	}
@@ -267,18 +266,15 @@ public class PerspectiveHelper {
 		return PERSPECTIVE_SIMULATION_FRAGMENT + ":" + model + ":" + experiment;
 	}
 
-	public static void deleteLastSimulationPerspective() {
+	public static void deleteCurrentSimulationPerspective() {
 		if ( currentSimulationPerspective != null ) {
-			// final IPerspectiveDescriptor formerDescriptor =
-			// getPerspectiveRegistry().findPerspectiveWithId(formerSimulationPerspectiveId);
-			// if ( formerDescriptor != null ) {
 			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if ( page != null ) {
 				page.closePerspective(currentSimulationPerspective, false, false);
-				// System.out.println("Perspective destroyed: " + currentSimulationPerspective.getId());
+				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
+				System.out.println("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
-			// getPerspectiveRegistry().deletePerspective(formerDescriptor);
-			// }
+			currentSimulationPerspective = null;
 		}
 
 	}

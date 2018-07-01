@@ -25,6 +25,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
@@ -38,6 +39,7 @@ import msi.gaml.types.IType;
 		name = IKeyword.PERMANENT,
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
+		unique_in_context = true,
 		concept = { IConcept.BATCH, IConcept.DISPLAY })
 
 @facets (
@@ -46,17 +48,17 @@ import msi.gaml.types.IType;
 				name = LAYOUT,
 				type = IType.NONE,
 				optional = true,
-				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal(), vertical() and stack() operators")),
+				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal() and vertical() operators")),
 				@facet (
 						name = "toolbars",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Whether the displays should keep their toolbar or not")),
+						doc = @doc ("Whether the displays should show their toolbar or not")),
 				@facet (
 						name = "tabs",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Whether the displays should keep their tab or not")) })
+						doc = @doc ("Whether the displays should show their tab or not")) })
 
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
@@ -86,6 +88,7 @@ import msi.gaml.types.IType;
 								value = "}",
 								isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
+	LayoutStatement layout;
 
 	public static ExperimentOutputManager createEmpty() {
 		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
@@ -97,12 +100,15 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		final Object layout = getFacetValue(scope, LAYOUT, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-		final boolean tabs = getFacetValue(scope, "tabs", true);
-		final boolean toolbars = getFacetValue(scope, "toolbars", true);
+		final Symbol layoutDefinition = layout == null ? this : layout;
+		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
+		final Object layoutObject =
+				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+		final boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
+		final boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", true);
 		scope.getGui().hideScreen();
 		if (super.init(scope)) {
-			scope.getGui().applyLayout(scope, layout, tabs, toolbars);
+			scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars);
 			scope.getGui().showScreen();
 			if (scope.getExperiment().getSpecies().isAutorun()) {
 				GAMA.startFrontmostExperiment();
@@ -130,6 +136,10 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	public synchronized void dispose(final IScope scope) {
 		GAMA.getGui().cleanAfterExperiment(scope);
 		super.dispose();
+	}
+
+	public void setLayout(final LayoutStatement layout) {
+		this.layout = layout;
 	}
 
 }

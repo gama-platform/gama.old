@@ -507,8 +507,10 @@ public class SwtGui implements IGui {
 				}
 			}
 			if (openModelingPerspective) {
+				PerspectiveHelper.deleteCurrentSimulationPerspective();
 				PerspectiveHelper.openModelingPerspective(immediately);
 			}
+
 			getStatus(scope).neutralStatus("No simulation running");
 		});
 

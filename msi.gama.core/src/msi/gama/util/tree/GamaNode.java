@@ -40,12 +40,8 @@ public class GamaNode<T> {
 		return children;
 	}
 
-	public int getNumberOfChildren() {
-		return children.size();
-	}
-
 	public boolean hasChildren() {
-		return getNumberOfChildren() > 0;
+		return children != null && children.size() > 0;
 	}
 
 	private void addChild(final GamaNode<T> child) {
@@ -137,16 +133,6 @@ public class GamaNode<T> {
 			}
 			children.clear();
 		}
-	}
-
-	public GamaNode<T> copy() {
-		final GamaNode<T> result = new GamaNode<>(getData(), weight);
-		if (children != null) {
-			for (final GamaNode<T> node : children) {
-				result.addChild(node.copy());
-			}
-		}
-		return result;
 	}
 
 	public Integer getWeight() {

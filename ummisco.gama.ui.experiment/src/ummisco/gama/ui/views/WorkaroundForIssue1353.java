@@ -61,7 +61,7 @@ public class WorkaroundForIssue1353 {
 	public static void showShell() {
 		if (shell != null) {
 			WorkbenchHelper.asyncRun(() -> {
-				System.out.println("Showing shell");
+				// System.out.println("Showing shell");
 				getShell().open();
 				getShell().setVisible(false);
 

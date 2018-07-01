@@ -165,7 +165,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		try {
 			saveEclipsePreferences();
 			GAMA.closeAllExperiments(true, true);
-			PerspectiveHelper.deleteLastSimulationPerspective();
+			PerspectiveHelper.deleteCurrentSimulationPerspective();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

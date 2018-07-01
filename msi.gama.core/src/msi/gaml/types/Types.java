@@ -223,7 +223,7 @@ public class Types {
 
 	public static void init() {
 		final GamaTree<IType> hierarchy = buildHierarchy();
-		for (final GamaNode<IType> node : hierarchy.build(Order.PRE_ORDER)) {
+		for (final GamaNode<IType> node : hierarchy.list(Order.PRE_ORDER)) {
 			final IType type = node.getData();
 			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
 			final Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
@@ -270,7 +270,7 @@ public class Types {
 	}
 
 	private static void place(final IType t, final GamaTree<IType> hierarchy) {
-		final Map<GamaNode<IType>, Integer> map = hierarchy.buildWithDepth(Order.PRE_ORDER);
+		final Map<GamaNode<IType>, Integer> map = hierarchy.mapByDepth(Order.PRE_ORDER);
 		int max = 0;
 		GamaNode<IType> parent = hierarchy.getRoot();
 		for (final GamaNode<IType> current : map.keySet()) {

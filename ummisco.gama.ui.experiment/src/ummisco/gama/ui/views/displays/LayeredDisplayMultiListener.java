@@ -47,6 +47,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 
 	private class DisplayKeyListener implements KeyListener {
 
+		public DisplayKeyListener() {}
+
 		@Override
 		public void keyPressed(final KeyEvent e) {}
 
@@ -127,7 +129,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	@Override
 	public void mouseEnter(final MouseEvent e) {
 		if (suppressNextEnter) {
-			System.out.println("One mouse enter suppressed");
+			// System.out.println("One mouse enter suppressed");
 			suppressNextEnter = false;
 			return;
 		}
@@ -155,7 +157,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		surface.dispatchMouseEvent(SWT.MouseExit);
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
 			// suppressNextEnter = true;
-			System.out.println("Invoking WorkaroundForIssue1353");
+			// System.out.println("Invoking WorkaroundForIssue1353");
 			WorkaroundForIssue1353.showShell();
 		}
 
