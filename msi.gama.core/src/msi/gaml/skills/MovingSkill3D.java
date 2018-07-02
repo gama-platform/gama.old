@@ -49,18 +49,18 @@ import msi.gaml.types.IType;
 		doc = @doc ("the speed of the agent (in meter/second)")),
 		@var (
 				name = IKeyword.HEADING,
-				type = IType.INT,
-				init = "rnd(359)",
+				type = IType.FLOAT,
+				init = "rnd(360.0)",
 				doc = @doc ("the absolute heading of the agent in degrees (in the range 0-359)")),
 		@var (
 				name = IKeyword.PITCH,
-				type = IType.INT,
-				init = "rnd(359)",
+				type = IType.FLOAT,
+				init = "rnd(360.0)",
 				doc = @doc ("the absolute pitch of the agent in degrees (in the range 0-359)")),
 		@var (
 				name = IKeyword.ROLL,
-				type = IType.INT,
-				init = "rnd(359)",
+				type = IType.FLOAT,
+				init = "rnd(360.0)",
 				doc = @doc ("the absolute roll of the agent in degrees (in the range 0-359)")),
 		@var (
 				name = IKeyword.DESTINATION,
@@ -83,9 +83,9 @@ public class MovingSkill3D extends MovingSkill {
 
 	@getter (IKeyword.PITCH)
 	public Double getPitch(final IAgent agent) {
-		Integer p = (Integer) agent.getAttribute(IKeyword.PITCH);
-		if (p == null) {
-			p = agent.getScope().getRandom().between(0, 359);
+		Double p = (Double) agent.getAttribute(IKeyword.PITCH);
+		if (p == null) {		
+			p = agent.getScope().getRandom().next() * 360;
 			setPitch(agent, p);
 		}
 		return Maths.checkHeading(p);
