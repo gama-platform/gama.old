@@ -39,6 +39,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
@@ -106,8 +107,11 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 					if (desc != null) { return desc.getUserData("doc"); }
 				}
 			}
-		} else if (o instanceof UnitName) { return IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName())
-				.getDocumentation(); }
+		} else if (o instanceof UnitName) {
+			final String name = ((UnitName) o).getRef().getName();
+			final UnitConstantExpression exp = IUnits.UNITS_EXPR.get(name);
+			if (exp != null) { return exp.getDocumentation(); }
+		}
 
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 

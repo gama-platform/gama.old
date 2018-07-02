@@ -144,6 +144,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				.findFirst(h -> h.getTransientData().get(DISPLAY_INDEX_KEY).equals(data)).orElse(null);
 		final MElementContainer container = create(uiRoot, weight, dir);
 		if (holder != null) {
+			if (container.equals(uiRoot)) {
+				holder.setContainerData(weight);
+			}
 			container.getChildren().add(holder);
 		} else {
 			for (final GamaNode<String> node : treeRoot.getChildren()) {
