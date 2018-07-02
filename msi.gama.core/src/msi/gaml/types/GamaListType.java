@@ -48,15 +48,16 @@ public class GamaListType extends GamaContainerType<IList> {
 	public static IList staticCast(final IScope scope, final Object obj, final IType ct, final boolean copy)
 			throws GamaRuntimeException {
 		final IType contentsType = ct == null ? Types.NO_TYPE : ct;
-		// BG fix issue ##2338 
-		//if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
+		// BG fix issue ##2338
+		// if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
 		if (obj == null) { return GamaListFactory.create(ct, 0); }
-		
+
 		if (obj instanceof GamaDate) { return ((GamaDate) obj).listValue(scope, ct); }
 		if (obj instanceof IContainer) {
-			if (obj instanceof IPopulation)
+			if (obj instanceof IPopulation) {
 				// Explicitly set copy to true if we deal with a population
 				return ((IPopulation) obj).listValue(scope, contentsType, true);
+			}
 			return ((IContainer) obj).listValue(scope, contentsType, copy);
 		}
 		// Dont copy twice the collection
@@ -83,6 +84,7 @@ public class GamaListType extends GamaContainerType<IList> {
 	public IType contentsTypeIfCasting(final IExpression expr) {
 		switch (expr.getType().id()) {
 			case COLOR:
+			case DATE:
 				return Types.get(INT);
 			case POINT:
 				return Types.get(FLOAT);

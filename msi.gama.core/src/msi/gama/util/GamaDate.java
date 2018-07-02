@@ -285,8 +285,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	public IList<?> listValue(final IScope scope, final IType<?> ct) {
 		final LocalDateTime ld = LocalDateTime.from(internal);
-		return GamaListFactory.create(scope, ct, ld.getYear(), ld.getMonthValue(), ld.getDayOfWeek(), ld.getHour(),
-				ld.getMinute(), ld.getSecond());
+		return GamaListFactory.create(scope, ct, ld.getYear(), ld.getMonthValue(), ld.getDayOfWeek().getValue(),
+				ld.getHour(), ld.getMinute(), ld.getSecond());
 	}
 
 	private static LocalDateTime computeFromList(final IScope scope, final IList<?> vals) {
