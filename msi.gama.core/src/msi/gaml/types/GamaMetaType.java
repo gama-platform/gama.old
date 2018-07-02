@@ -9,13 +9,14 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 @type (
-		name = "type definition",
+		name = IKeyword.TYPE,
 		id = IType.TYPE,
 		wraps = { IType.class },
 		doc = @doc ("Metatype of all types in GAML"))
