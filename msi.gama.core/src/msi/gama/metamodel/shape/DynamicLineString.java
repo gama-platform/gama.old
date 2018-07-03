@@ -1,14 +1,15 @@
 /*********************************************************************************************
  *
- * 'DynamicLineString.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DynamicLineString.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
+
+import java.util.Objects;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
@@ -176,25 +177,19 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts.
-	 * geom.Geometry, double)
+	 * @see com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts. geom.Geometry, double)
 	 */
 	@Override
 	public boolean equalsExact(final Geometry other, final double tolerance) {
-		if (!(other instanceof DynamicLineString)) {
-			return false;
-		}
+		if (!(other instanceof DynamicLineString)) { return false; }
 		final DynamicLineString dls = (DynamicLineString) other;
-		return dls.source == source && dls.target == target;
+		return Objects.equals(dls.source, source) && Objects.equals(dls.target, target);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
-	 * CoordinateFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateFilter)
 	 */
 	@Override
 	public void apply(final CoordinateFilter filter) {
@@ -205,17 +200,13 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
-	 * CoordinateSequenceFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateSequenceFilter)
 	 */
 	@Override
 	public void apply(final CoordinateSequenceFilter filter) {
 		final CoordinateSequence points = getCoordinateSequence();
 		filter.filter(points, 0);
-		if (filter.isDone()) {
-			return;
-		}
+		if (filter.isDone()) { return; }
 		filter.filter(points, 1);
 		if (filter.isGeometryChanged()) {
 			geometryChanged();
@@ -225,9 +216,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
-	 * GeometryFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryFilter)
 	 */
 	@Override
 	public void apply(final GeometryFilter filter) {
@@ -237,9 +226,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
-	 * GeometryComponentFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryComponentFilter)
 	 */
 	@Override
 	public void apply(final GeometryComponentFilter filter) {
@@ -262,8 +249,7 @@ public class DynamicLineString extends LineString {
 	 * @see com.vividsolutions.jts.geom.Geometry#normalize()
 	 */
 	@Override
-	public void normalize() {
-	}
+	public void normalize() {}
 
 	@Override
 	public Object clone() {
@@ -286,24 +272,20 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
+	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o) {
 		final DynamicLineString line = (DynamicLineString) o;
 		final int comparison = source.getLocation().compareTo(line.source.getLocation());
-		if (comparison != 0) {
-			return comparison;
-		}
+		if (comparison != 0) { return comparison; }
 		return target.getLocation().compareTo(line.target.getLocation());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
+	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
 	 * com.vividsolutions.jts.geom.CoordinateSequenceComparator)
 	 */
 	@Override
@@ -329,23 +311,15 @@ public class DynamicLineString extends LineString {
 
 	@Override
 	public Point getPointN(final int n) {
-		if (n == 0) {
-			return getFactory().createPoint(getCoordinate());
-		}
-		if (n == 1) {
-			return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
-		}
+		if (n == 0) { return getFactory().createPoint(getCoordinate()); }
+		if (n == 1) { return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation())); }
 		return null;
 	}
 
 	@Override
 	public Coordinate getCoordinateN(final int n) {
-		if (n == 0) {
-			return getCoordinate();
-		}
-		if (n == 1) {
-			return GeometryUtils.toCoordinate(target.getLocation());
-		}
+		if (n == 0) { return getCoordinate(); }
+		if (n == 1) { return GeometryUtils.toCoordinate(target.getLocation()); }
 		return null;
 
 	}
