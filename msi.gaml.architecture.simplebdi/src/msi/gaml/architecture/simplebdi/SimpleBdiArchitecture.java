@@ -1255,7 +1255,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			addThoughts(scope, "no more subintention for" + intention);
 			/* Must remove the current plan to change for a new one */
 			final IAgent agent = getCurrentAgent(scope);
-			SimpleBdiPlanStatement _persistentTask = (SimpleBdiPlanStatement) agent.getAttribute(CURRENT_PLAN);
+			BDIPlan _persistentTask = (BDIPlan) agent.getAttribute(CURRENT_PLAN);
 			_persistentTask = null;
 			agent.setAttribute(CURRENT_PLAN, _persistentTask);
 			return false;
