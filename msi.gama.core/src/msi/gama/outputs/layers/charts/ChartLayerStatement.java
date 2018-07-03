@@ -191,7 +191,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
 				@facet (
 						name = IKeyword.NAME,
-						type = IType.LABEL,
+						type = IType.STRING,
 						optional = false,
 						doc = @doc ("the identifier of the chart layer")),
 				@facet (
@@ -436,6 +436,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	// What can not change at eery step
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
+		setName(getChartName(scope));
 		lastValues.clear();
 
 		// chartParameters.clear();
@@ -520,6 +521,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		chartoutput.updateOutput(scope);
 
 		return true;
+	}
+
+	private String getChartName(final IScope scope) {
+		return Cast.asString(scope, getFacetValue(scope, IKeyword.NAME));
 	}
 
 	// what can be updated at each step
@@ -742,8 +747,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void saveHistory() {
-		if (!getDataSet().keepsHistory())
-			return;
+		if (!getDataSet().keepsHistory()) { return; }
 		final IScope scope = this.getDisplayOutput().getScope().copy("Save");
 		if (scope == null) { return; }
 		try {
