@@ -311,12 +311,7 @@
             </menu>
             <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
-                  label="Layout Displays...">
-               <command
-                     commandId="msi.gama.application.toggleDisplayTabs"
-                     label="Toggle Tabs"
-                     style="push">
-               </command>
+                  label="Layout Displays... (Experimental)">
                <command
                      commandId="msi.gama.application.layoutDisplays"
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
@@ -368,6 +363,15 @@
                      </reference>
                   </and>
                </visibleWhen>
+               <separator
+                     name="msi.gama.application.separator3"
+                     visible="true">
+               </separator>
+               <command
+                     commandId="msi.gama.application.toggleDisplayTabs"
+                     label="Toggle Tabs"
+                     style="push">
+               </command>
                <command
                      commandId="ummisco.gama.ui.experiment.copyLayout"
                      label="Copy Layout to Clipboard"
