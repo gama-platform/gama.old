@@ -118,7 +118,7 @@ experiment RelationTests type: test {
 
 	test "towards" {
 		float angle <- dummy(8) towards dummy(9);
-		assert angle = 306;
+		assert angle = 305.65532809790034;
 	}
 } 
 
