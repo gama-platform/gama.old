@@ -86,6 +86,7 @@ public class NewProjectWizardPage extends WizardPage {
 	public void createControl(final Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NULL);
 		initializeDialogUnits(parent);
+		parent.setLayout(new GridLayout());
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createProjectNameGroup(composite);
@@ -95,7 +96,7 @@ public class NewProjectWizardPage extends WizardPage {
 		setMessage(null);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		getShell().setSize(500, 200);
+		// getShell().setSize(composite.computeSize(500, SWT.DEFAULT));
 	}
 
 	/**
