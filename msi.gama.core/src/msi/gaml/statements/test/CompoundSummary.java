@@ -34,8 +34,9 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 	@SuppressWarnings ("unchecked")
 	public CompoundSummary(final S symbol) {
 		super(symbol);
-		if (symbol != null)
+		if (symbol != null) {
 			symbol.getSubElements().forEach(a -> addSummary((T) a.getSummary()));
+		}
 
 	}
 
@@ -78,12 +79,19 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 	}
 
 	public void addSummary(final T summary) {
-		summaries.put(summary.getTitle(), summary);
+		final String originalKey = summary.getTitle();
+		String key = originalKey;
+		int i = 2;
+		while (summaries.containsKey(key)) {
+			key = originalKey + "[" + i++ + "]";
+		}
+		summaries.put(key, summary);
 	}
 
-	public void addSummaries(final Collection<T> summaries) {
-		for (final T s : summaries)
+	public void addSummaries(final Collection<T> sum) {
+		for (final T s : sum) {
 			addSummary(s);
+		}
 	}
 
 	@Override
@@ -95,15 +103,13 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean equals(final Object o) {
-		if (!getClass().isInstance(o))
-			return false;
+		if (!getClass().isInstance(o)) { return false; }
 		return Objects.equal(((AbstractSummary<?>) o).getTitle(), getTitle());
 	}
 
 	@Override
 	public TestState getState() {
-		if (aborted)
-			return TestState.ABORTED;
+		if (aborted) { return TestState.ABORTED; }
 		TestState state = TestState.NOT_RUN;
 		for (final AbstractSummary<?> a : summaries.values()) {
 			final TestState s = a.getState();
@@ -114,12 +120,14 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 					state = TestState.FAILED;
 					break;
 				case PASSED:
-					if (state.equals(TestState.NOT_RUN))
+					if (state.equals(TestState.NOT_RUN)) {
 						state = TestState.PASSED;
+					}
 					break;
 				case WARNING:
-					if (state.equals(TestState.PASSED) || state.equals(TestState.NOT_RUN))
+					if (state.equals(TestState.PASSED) || state.equals(TestState.NOT_RUN)) {
 						state = TestState.WARNING;
+					}
 					break;
 				case ABORTED:
 					return TestState.ABORTED;
@@ -136,17 +144,16 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 
 	public void getSubSummariesBelongingTo(final URI fileURI, final List<AbstractSummary<?>> collector) {
 		getSummaries().values().forEach(s -> {
-			if (matches(s.getURI(), fileURI))
+			if (matches(s.getURI(), fileURI)) {
 				collector.add(s);
-			else if (s instanceof CompoundSummary) {
+			} else if (s instanceof CompoundSummary) {
 				((CompoundSummary) s).getSubSummariesBelongingTo(fileURI, collector);
 			}
 		});
 	}
 
 	private boolean matches(final URI summary, final URI query) {
-		if (summary == null)
-			return false;
+		if (summary == null) { return false; }
 		final String s = summary.toString();
 		final String q = query.toString();
 		return s.startsWith(q);
@@ -174,8 +181,9 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		});
 		String message = "" + size[0] + " tests";
 		for (final TestState s : map.keySet()) {
-			if (map.get(s) == 0)
+			if (map.get(s) == 0) {
 				continue;
+			}
 			message += ", " + map.get(s) + " " + s;
 		}
 		return message;
