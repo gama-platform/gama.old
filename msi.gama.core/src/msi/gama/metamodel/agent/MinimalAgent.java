@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.util.Objects;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -61,6 +62,7 @@ public class MinimalAgent extends AbstractAgent {
 		this.population = population;
 		this.geometry = geometry;
 		geometry.setAgent(this);
+		updateHashCode();
 	}
 
 	@Override

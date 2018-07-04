@@ -44,6 +44,7 @@ experiment QueryTests type: test {
 		using topology(world) {
 			closest_dummy <- dummy closest_to dummy(8);
 		}
+		write closest_dummy;
 		assert closest_dummy = dummy(4);
 		using topology(cell) {
 			closest_dummy <- dummy closest_to dummy(8);

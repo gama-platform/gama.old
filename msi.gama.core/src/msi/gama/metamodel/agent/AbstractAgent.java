@@ -69,12 +69,16 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractAgent implements IAgent {
 
 	private final int index;
-	private final int hashCode;
+	private int hashCode;
 	protected volatile boolean dead = false;
 	protected volatile boolean dying = false;
 
 	public AbstractAgent(final int index) {
 		this.index = index;
+		updateHashCode();
+	}
+	
+	public void updateHashCode() {
 		this.hashCode = Objects.hash(getPopulation(), index);
 	}
 
