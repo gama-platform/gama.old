@@ -62,6 +62,13 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	}
 
 	@Override
+	public boolean step(final IScope scope) {
+		super.step(scope);
+		dispose();
+		return true;
+	}
+
+	@Override
 	public void dispose() {
 		if (dead) { return; }
 		getScope().getGui().displayTestsResults(getScope(), summary);
