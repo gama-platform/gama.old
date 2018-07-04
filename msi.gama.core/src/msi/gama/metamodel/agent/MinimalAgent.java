@@ -48,6 +48,7 @@ public class MinimalAgent extends AbstractAgent {
 	protected final IPopulation<? extends IAgent> population;
 	protected String name;
 	protected final IShape geometry;
+	private final int hashCode;
 
 	/**
 	 * @param s
@@ -60,9 +61,9 @@ public class MinimalAgent extends AbstractAgent {
 	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
 		super(index);
 		this.population = population;
+		this.hashCode = Objects.hash(getPopulation(), index);
 		this.geometry = geometry;
 		geometry.setAgent(this);
-		updateHashCode();
 	}
 
 	@Override
@@ -369,5 +370,10 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public boolean isMultiple() {
 		return geometry.isMultiple();
+	}
+
+	@Override
+	public int hashCode() {
+		return hashCode;
 	}
 }

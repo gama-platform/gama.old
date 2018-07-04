@@ -12,7 +12,6 @@ package msi.gama.metamodel.agent;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
@@ -69,17 +68,11 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractAgent implements IAgent {
 
 	private final int index;
-	private int hashCode;
 	protected volatile boolean dead = false;
 	protected volatile boolean dying = false;
 
 	public AbstractAgent(final int index) {
 		this.index = index;
-		updateHashCode();
-	}
-	
-	public void updateHashCode() {
-		this.hashCode = Objects.hash(getPopulation(), index);
 	}
 
 	@Override
@@ -625,14 +618,12 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean equals(final Object o) {
 		if (o == this) { return true; }
 		if (!(o instanceof AbstractAgent)) { return false; }
-		return ((AbstractAgent) o).hashCode == hashCode;
+		return ((AbstractAgent) o).hashCode() == hashCode();
 		// final AbstractAgent other = (AbstractAgent) o;
 		// return (other.index == index && other.getPopulation().equals(getPopulation()));
 	}
 
 	@Override
-	public int hashCode() {
-		return hashCode;
-	}
+	public abstract int hashCode();
 
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -1820,10 +1821,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public class MinimalGridAgent extends AbstractAgent implements IGridAgent {
 
 			private final IShape geometry;
+			private final int hashCode;
 
 			public MinimalGridAgent(final int index) {
 				super(index);
 				geometry = matrix[index].getGeometry();
+				hashCode = Objects.hash(getPopulation(), index);
 			}
 
 			@Override
@@ -2022,6 +2025,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					return bd;
 				}
 				return bands.get(getIndex());
+			}
+
+			@Override
+			public int hashCode() {
+				return hashCode;
 			}
 		}
 
