@@ -142,7 +142,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(IKeyword.EXPERIMENT)
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
-		hashCode = Objects.hash(getSpecies(), getHost());
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
@@ -159,6 +158,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			host.getScope().getSimulation()
 					.postEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
+		hashCode = Objects.hash(getSpecies(), getHost());
+		
 
 	}
 
