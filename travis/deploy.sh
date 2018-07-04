@@ -4,7 +4,7 @@
 function mvn_deploy() {
 	echo "Deploying " $1
 	cd $1
-	mvn deploy -DskipTests -Dcheckstyle.skip -T 8C -P p2Repo --settings ../settings.xml
+	mvn deploy -DskipTests -Dcheckstyle.skip -T 8C -P p2Repo --settings ../travis/settings.xml
 	res=$?
 	if [[ $res -gt 0 ]]; then
 		exit $res
@@ -32,7 +32,7 @@ fi
 
 if [[ $MSG == *"ci fullbuild"* ]]; then		
 	cd msi.gama.parent 
-	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../travis/settings.xml
 	cd -
 	return 0
 fi
@@ -267,7 +267,7 @@ fi
 
 
 cd msi.gama.parent 
-mvn deploy -f tiny_pom.xml -DskipTests -T 8C -P p2Repo --settings ../settings.xml
+mvn deploy -f tiny_pom.xml -DskipTests -T 8C -P p2Repo --settings ../travis/settings.xml
 cd -
 
 
