@@ -78,7 +78,7 @@ global
 		{
 			ask pt
 			{
-				mycenter <- (centroids) closest_to self;
+				mycenter <- centroids with_min_of(each distance_to self);
 				color_kmeans <- mycenter.color_kmeans;
 				add self to: mycenter.mypoints;
 			}
@@ -95,7 +95,6 @@ global
 	//We give a random color to each group (i.e. to each datapoints agents of the group)
 		loop center over: centroids
 		{
-		//old code... center.location <- geometry(center.mypoints).location;
 			center.location <- mean(center.mypoints collect each.location);
 		}
 
