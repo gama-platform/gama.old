@@ -65,8 +65,7 @@ public class GamaKeyBindings implements Listener {
 			}
 			return;
 		}
-		if (event.stateMask == 0)
-			return;
+		if (event.stateMask == 0) { return; }
 
 		switch (event.keyCode) {
 
@@ -131,6 +130,10 @@ public class GamaKeyBindings implements Listener {
 
 	public static boolean ctrl(final KeyEvent e) {
 		return (e.stateMask & COMMAND) != 0;
+	}
+
+	public static boolean ctrl(final java.awt.event.KeyEvent e) {
+		return e.isControlDown(); // TODO Command ?
 	}
 
 	public static boolean ctrl(final MouseEvent e) {

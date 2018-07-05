@@ -57,6 +57,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	private static Shell shell;
+	private static final PartListener listener = new PartListener();
 
 	public static void showShell() {
 		if (shell != null) {
@@ -89,13 +90,26 @@ public class WorkaroundForIssue1353 {
 		if (!PlatformHelper.isCocoa()) { return; }
 		if (shell != null) { return; }
 		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " installed");
-		createShell();
-		WorkbenchHelper.getPage().addPartListener(new PartListener());
+		WorkbenchHelper.run(() -> {
+			createShell();
+			WorkbenchHelper.getPage().addPartListener(listener);
+		});
 
 	}
 
 	public static boolean isInstalled() {
 		return shell != null;
+	}
+
+	public static void remove() {
+
+		if (shell == null) { return; }
+		WorkbenchHelper.run(() -> {
+			shell.dispose();
+			shell = null;
+			WorkbenchHelper.getPage().removePartListener(listener);
+		});
+		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " removed");
 	}
 
 }

@@ -32,11 +32,13 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.WorkaroundForIssue1353;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
@@ -83,6 +85,11 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final GamaTree<String> tree) {
+		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
+		if (!WorkaroundForIssue1353.isInstalled()
+				&& StreamEx.of(displays).anyMatch((d) -> (!d.getOutput().getData().isOpenGL()))) {
+			WorkaroundForIssue1353.install();
+		}
 		if (tree == null) { return; }
 		final List<MPlaceholder> holders = listDisplayViews();
 		final MPartStack displayStack = getDisplaysPlaceholder();

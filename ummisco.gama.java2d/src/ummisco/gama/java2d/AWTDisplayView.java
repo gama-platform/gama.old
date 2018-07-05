@@ -22,7 +22,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.WorkaroundForIssue1353;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 public class AWTDisplayView extends LayeredDisplayView {
@@ -69,10 +68,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 			}
 
 			@Override
-			public void afterComponentCreatedSWTThread() {
-				WorkaroundForIssue1353.install();
-
-			}
+			public void afterComponentCreatedSWTThread() {}
 
 			@Override
 			public void checkWidget() {

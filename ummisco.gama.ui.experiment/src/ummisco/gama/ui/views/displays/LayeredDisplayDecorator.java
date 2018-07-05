@@ -35,7 +35,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
 public class LayeredDisplayDecorator implements DisplayDataListener {
 
-	protected LayeredDisplayMultiListener keyAndMouseListener;
+	protected SWTLayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected final LayeredDisplayView view;
 	ToolItem fs = null;
@@ -84,10 +84,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
 			adaptToolbarToFullScreen(false);
-			if (interactiveConsoleVisible)
+			if (interactiveConsoleVisible) {
 				toggleInteractiveConsole();
-			if (simulationControlsVisible)
+			}
+			if (simulationControlsVisible) {
 				toggleSimulationControls();
+			}
 			view.controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
@@ -102,8 +104,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			view.getZoomableControls()[0].forceFocus();
-			if (GamaPreferences.Displays.DISPLAY_TOOLBAR_FULLSCREEN.getValue())
+			if (GamaPreferences.Displays.DISPLAY_TOOLBAR_FULLSCREEN.getValue()) {
 				toggleSimulationControls();
+			}
 		}
 	}
 
@@ -118,8 +121,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(runExperiment, SWT.LEFT);
 			toolbar.button(stepExperiment, SWT.LEFT);
 			toolbar.button(closeExperiment, SWT.LEFT);
-		} else
+		} else {
 			toolbar.wipe(SWT.LEFT, true);
+		}
 	}
 
 	public void createOverlay() {
@@ -129,8 +133,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			overlay.dispose();
 		}
 		overlay = new DisplayOverlay(view, view.surfaceComposite, view.getOutput().getOverlayProvider());
-		if (wasVisible)
+		if (wasVisible) {
 			overlay.setVisible(true);
+		}
 		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 		if (overlay.isVisible()) {
 			overlay.update();
@@ -154,7 +159,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		side.fill(sidePanel, view);
 		createOverlay();
 		addPerspectiveListener();
-		keyAndMouseListener = new LayeredDisplayMultiListener(this, view.getDisplaySurface());
+		keyAndMouseListener = new SWTLayeredDisplayMultiListener(this, view.getDisplaySurface());
 		menuManager = new DisplaySurfaceMenu(view.getDisplaySurface(), view.getParentComposite(), presentationMenu());
 		if (view.getOutput().getData().fullScreen() > -1) {
 			toggleFullScreen();
@@ -206,8 +211,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	}
 
 	private void destroyFullScreenShell() {
-		if (fullScreenShell == null)
-			return;
+		if (fullScreenShell == null) { return; }
 		fullScreenShell.close();
 		fullScreenShell.dispose();
 		fullScreenShell = null;
@@ -219,8 +223,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	};
 
 	protected void updateOverlay() {
-		if (overlay == null)
-			return;
+		if (overlay == null) { return; }
 		if (view.forceOverlayVisibility()) {
 			if (!overlay.isVisible()) {
 				isOverlayTemporaryVisible = true;
@@ -232,8 +235,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				overlay.setVisible(false);
 			}
 		}
-		if (overlay.isVisible())
+		if (overlay.isVisible()) {
 			overlay.update();
+		}
 
 	}
 
@@ -254,12 +258,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	}
 
 	public void toggleInteractiveConsole() {
-		if (!sideControlsVisible)
+		if (!sideControlsVisible) {
 			toggleSideControls();
+		}
 		final InteractiveConsoleView view =
 				(InteractiveConsoleView) WorkbenchHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
-		if (view == null)
-			return;
+		if (view == null) { return; }
 		if (interactiveConsoleVisible) {
 			view.getControlToDisplayInFullScreen().setParent(view.getParentOfControlToDisplayFullScreen());
 			view.getParentOfControlToDisplayFullScreen().layout();
@@ -305,8 +309,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 			@Override
 			public void run() {
-				if (isFullScreen())
+				if (isFullScreen()) {
 					toggleSimulationControls();
+				}
 			}
 		});
 		return mm;
