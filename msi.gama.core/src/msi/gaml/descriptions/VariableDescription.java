@@ -52,7 +52,7 @@ public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
 	private static Set<String> INIT_DEPENDENCIES_FACETS =
-			ImmutableSet.<String> builder().add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
+			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE).build();
 	private static Set<String> UPDATE_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
 	private String plugin;
