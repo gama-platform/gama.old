@@ -52,6 +52,10 @@ release(){
 	echo "Upload continuous release to github"		
 	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
+releaseJDK(){
+	echo "Upload continuous release to github"		
+	bash ./travis/github_release _withjdk.sh "$TRAVIS_COMMIT" 
+}
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
@@ -84,5 +88,8 @@ else
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
 		release 
+	fi	
+	if  [[ ${MESSAGE} == *"ci releaseJDK"* ]] || [[ $MSG == *"ci releaseJDK"* ]]; then	
+		releaseJDK 
 	fi	
 fi
