@@ -54,7 +54,7 @@ release(){
 }
 JDKrelease(){
 	echo "Upload continuous release to github with JRE"		
-	bash ./travis/github_release _withjdk.sh "$TRAVIS_COMMIT" 
+	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 }
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
