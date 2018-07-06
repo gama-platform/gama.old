@@ -57,13 +57,13 @@ git config --global user.name "Travis CI"
 git config --global push.default simple		
 cd ..
 git clone --depth=50 --branch=master https://github.com/gama-platform/gama-docker.git  gama-docker	
-cp -R gama-docker/jre/linux_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+sudo cp -R gama-docker/jre/linux_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-cp -R gama-docker/jre/win_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo cp -R gama-docker/jre/win_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 	
-zip -r RELEASEFILES[5] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+sudo zip -q -r RELEASEFILES[5] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-zip -r RELEASEFILES[6] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo zip -q -r RELEASEFILES[6] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
 i=0
 for (( i=0; i<7; i++ ))
