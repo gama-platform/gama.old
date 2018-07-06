@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
+import static ummisco.gama.ui.bindings.GamaKeyBindings.ctrl;
+import static ummisco.gama.ui.bindings.GamaKeyBindings.shift;
+
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -25,6 +28,8 @@ import java.util.function.Supplier;
 import javax.swing.JComponent;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -78,6 +83,36 @@ public class AWTLayeredDisplayMultiListener
 	@Override
 	public void keyTyped(final KeyEvent e) {
 		if (!ok.get()) { return; }
+		switch (e.getKeyCode()) {
+
+			case 'h':
+				if (ctrl(e) && shift(e)) {
+					GamlSearchField.INSTANCE.search();
+				}
+				return;
+			// Handles START & RELOAD
+			case 'p':
+				if (ctrl(e) && shift(e)) {
+					GAMA.stepFrontmostExperiment();
+				} else if (ctrl(e)) {
+					GAMA.startPauseFrontmostExperiment();
+				}
+				return;
+			// Handles PAUSE & STEP
+			case 'r':
+				if (ctrl(e) && shift(e)) {
+					GAMA.relaunchFrontmostExperiment();
+				} else if (ctrl(e)) {
+					GAMA.reloadFrontmostExperiment();
+				}
+				return;
+			// Handles CLOSE
+			case 'x':
+				if (ctrl(e) && shift(e)) {
+					GAMA.closeAllExperiments(true, false);
+				}
+				return;
+		}
 		delegate.keyPressed(e.getKeyChar());
 		delegate.keyReleased(e.getKeyCode(), GamaKeyBindings.ctrl(e));
 	}
