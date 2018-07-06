@@ -52,8 +52,8 @@ release(){
 	echo "Upload continuous release to github"		
 	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
-releaseJDK(){
-	echo "Upload continuous release to github"		
+JDKrelease(){
+	echo "Upload continuous release to github with JRE"		
 	bash ./travis/github_release _withjdk.sh "$TRAVIS_COMMIT" 
 }
 
@@ -89,7 +89,7 @@ else
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
 		release 
 	fi	
-	if  [[ ${MESSAGE} == *"ci releaseJDK"* ]] || [[ $MSG == *"ci releaseJDK"* ]]; then	
-		releaseJDK 
+	if  [[ ${MESSAGE} == *"ci JDKrelease"* ]] || [[ $MSG == *"ci JDKrelease"* ]]; then	
+		JDKrelease 
 	fi	
 fi
