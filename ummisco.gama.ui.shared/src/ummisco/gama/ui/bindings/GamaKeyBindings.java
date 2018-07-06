@@ -144,6 +144,10 @@ public class GamaKeyBindings implements Listener {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
+	public static boolean shift(final java.awt.event.KeyEvent e) {
+		return e.isShiftDown();
+	}
+
 	public static boolean shift(final KeyEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
