@@ -72,6 +72,8 @@ do
 	NFILE="${NEWFILES[$i]}"
 	echo $FILE
 	echo $NFILE
+	ls -sh $FILE
+	ls -sh $NFILE
 done
 
 
