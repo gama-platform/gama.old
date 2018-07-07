@@ -441,8 +441,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				for (final IShape ent : segments) {
 					pts.addAll(ent.getPoints());
 				}
-				pts = Containers.remove_duplicates(GAMA.getRuntimeScope(), pts);
-				shape = GamaGeometryType.buildPolyline(pts);
+				if (pts.size() > 0) {
+					pts = Containers.remove_duplicates(GAMA.getRuntimeScope(), pts);
+					shape = GamaGeometryType.buildPolyline(pts);
+				} 
 			}
 			
 
