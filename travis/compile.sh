@@ -3,9 +3,10 @@
 function mvn_install() {
 	echo "Building " $1
 	cd $1
-	mvn clean install -Dcheckstyle.skip
-	res=$?
-	if [[ $res -gt 0 ]]; then
+	mvn clean install
+	res=${PIPESTATUS[0]}
+	echo "return code $res"
+	if [[ $res -ne 0 ]]; then
 		exit $res
 	fi
 	cd -
@@ -13,9 +14,9 @@ function mvn_install() {
 function mvn_compile() {
 	echo "Building " $1
 	cd $1
-	mvn clean compile -Dcheckstyle.skip
+	mvn clean compile
 	res=$?
-	if [[ $res -gt 0 ]]; then
+	if [[ $res -ne 0 ]]; then
 		exit $res
 	fi
 	cd -
