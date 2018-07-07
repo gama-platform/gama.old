@@ -57,19 +57,18 @@ sudo cp -R gama-docker/jre/linux_64/jre /home/travis/build/gama-platform/gama/um
 
 sudo cp -R gama-docker/jre/win_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 	
-sudo zip -r RELEASEFILES[5] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+sudo zip -q -r "${RELEASEFILES[5]}" /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-sudo zip -r RELEASEFILES[6] /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo zip -q -r "${RELEASEFILES[6]}" /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+
 
 i=0
 for (( i=0; i<7; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
-	echo $FILE
-	echo $NFILE
 	ls -sh $FILE
-	ls -sh $NFILE
+	echo $NFILE
 done
 
 
