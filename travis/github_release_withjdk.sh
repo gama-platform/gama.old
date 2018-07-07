@@ -54,8 +54,8 @@ NEWFILES[$n]='GAMA1.8_Win_64_withJDK'$SUFFIX
 
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
-git config --global push.default simple		
-cd ..
+git config --global push.default simple
+
 git clone --depth=50 --branch=master https://github.com/gama-platform/gama-docker.git  gama-docker	
 sudo cp -R gama-docker/jre/linux_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
