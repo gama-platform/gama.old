@@ -315,7 +315,8 @@ public class Random {
 		return -1;
 	}
 
-	@operator(value = "sample", category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
+	@operator(value = "sample", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement", examples = {
 			@example(value = "sample([2,10,1],2,false)", equals = "[1,2]", test = false) })
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement) {
@@ -336,7 +337,8 @@ public class Random {
 		return result;
 	}
 
-	@operator(value = "sample", category = { IOperatorCategory.RANDOM }, concept = {})
+	@operator(value = "sample", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement with given weights", examples = {
 			@example(value = "sample([2,10,1],2,false,[0.1,0.7,0.2])", equals = "[10,2]", test = false) })
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement,
