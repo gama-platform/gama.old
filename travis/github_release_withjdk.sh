@@ -69,7 +69,7 @@ sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.p
 	
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-sudo zip -r "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
+sudo zip -qr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
 
 cd ../../../../../../../
 
@@ -78,7 +78,7 @@ cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
-sudo zip -r "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
+sudo zip -qr "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
 
 cd ../../../../../../../
 
@@ -88,7 +88,7 @@ cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
 
-sudo zip -r "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
+sudo zip -qr "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
 
 cd ../../../../../../../
 
