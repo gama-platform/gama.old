@@ -101,7 +101,7 @@ public class NavigatorSearchControl {
 		}
 	}
 
-	private static final String EMPTY = "\nFind model..."; //$NON-NLS-1$
+	private static final String EMPTY = "Find model..."; //$NON-NLS-1$
 	private String pattern;
 	GamaNavigator navigator;
 	CommonViewer treeViewer;
