@@ -4,7 +4,7 @@ function mvn_install() {
 	echo "Building " $1
 	cd $1
 	mvn clean install
-	res=$?
+	res=${PIPESTATUS[0]}
 	echo "return code $res"
 	if [[ $res -ne 0 ]]; then
 		exit $res
