@@ -50,12 +50,21 @@ NEWFILES[$n]='GAMA1.8_Linux_64_withJDK'$SUFFIX
 n=6
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA1.8_Win_64_withJDK'$SUFFIX
+n=7
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA1.8_Mac_64_withJDK'$SUFFIX
 
 
-git clone --depth=50 --branch=master https://github.com/gama-platform/gama-docker.git  gama-docker	
-sudo cp -R gama-docker/jre/linux_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
 
-sudo cp -R gama-docker/jre/win_64/jre /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo cp -R jdk/linux/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+sudo cp jdk/linux/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+
+sudo cp -R jdk/win/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo cp jdk/win/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+
+sudo cp -R jdk/mac/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
+sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
 	
 	
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
@@ -64,6 +73,9 @@ sudo zip -q -r "${RELEASEFILES[5]}" .
 
 cd ../../../../../../../
 
+
+
+
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
 sudo zip -q -r "${RELEASEFILES[6]}" .
@@ -71,8 +83,18 @@ sudo zip -q -r "${RELEASEFILES[6]}" .
 cd ../../../../../../../
 
 
+
+
+
+cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
+
+sudo zip -q -r "${RELEASEFILES[7]}" .
+
+cd ../../../../../../../
+
+
 i=0
-for (( i=0; i<7; i++ ))
+for (( i=0; i<8; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
@@ -143,7 +165,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<7; i++ ))
+for (( i=0; i<8; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
