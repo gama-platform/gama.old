@@ -22,29 +22,16 @@ public class WorkaroundForIssue1594 {
 	public static void installOn(final AWTDisplayView view, final Composite parent, final Composite surfaceComposite,
 			final Java2DDisplaySurface displaySurface) {
 		// Install only on Windows
-
+		if (!ummisco.gama.ui.utils.PlatformHelper.isWin32()) {
+			return;
+		}
 		final IPartService ps = view.getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 
 			@Override
 			public void partActivated(final IWorkbenchPartReference partRef) {
-			}
-
-			@Override
-			public void partClosed(final IWorkbenchPartReference partRef) {
-			}
-
-			@Override
-			public void partDeactivated(final IWorkbenchPartReference partRef) {
-			}
-
-			@Override
-			public void partOpened(final IWorkbenchPartReference partRef) {
 				final IPartListener2 listener = this;
-				if (!ummisco.gama.ui.utils.PlatformHelper.isWin32()) {
-					ps.removePartListener(listener);
-					return;
-				}
+				
 				// Fix for Issue #1594
 				if (partRef.getPart(false).equals(view)) {
 					// AD: Reworked to address Issue 535. It seems necessary to
@@ -84,7 +71,19 @@ public class WorkaroundForIssue1594 {
 
 					});
 				}
+			
 			}
+
+			@Override
+			public void partClosed(final IWorkbenchPartReference partRef) {
+			}
+
+			@Override
+			public void partDeactivated(final IWorkbenchPartReference partRef) {
+			}
+
+			@Override
+			public void partOpened(final IWorkbenchPartReference partRef) {}
 
 			@Override
 			public void partBroughtToTop(final IWorkbenchPartReference part) {

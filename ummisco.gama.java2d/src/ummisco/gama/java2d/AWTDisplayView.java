@@ -94,7 +94,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 	@Override
 	public void waitToBeRealized() {
-		if (PlatformHelper.isWin32()) { return; }
+		//if (PlatformHelper.isWin32()) { return; }
 		final long start = System.currentTimeMillis();
 		long now = start;
 		boolean openable = false;
