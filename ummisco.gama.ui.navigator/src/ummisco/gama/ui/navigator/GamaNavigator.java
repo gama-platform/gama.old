@@ -43,6 +43,7 @@ import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -251,9 +252,17 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		this.toolbar = tb;
 		// tb.menu(importCommand, SWT.RIGHT);
 		// tb.menu(newCommand, SWT.RIGHT);
-		tb.sep(32, SWT.RIGHT);
-		findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
-		linkItem = tb.check(linkCommand, SWT.RIGHT);
+		//tb.sep(24, SWT.RIGHT);
+		if (PlatformHelper.isWin32())  {
+			tb.sep(24, SWT.RIGHT);
+			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
+			linkItem = tb.check(linkCommand, SWT.RIGHT);
+			
+		} else {
+			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
+			tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
+			linkItem = tb.check(linkCommand, SWT.RIGHT);
+		}
 	}
 
 	/**

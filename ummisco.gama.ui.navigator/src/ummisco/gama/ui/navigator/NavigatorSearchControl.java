@@ -24,6 +24,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.progress.UIJob;
@@ -35,6 +37,7 @@ import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.VirtualContent.VirtualContentType;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 /**
@@ -98,7 +101,7 @@ public class NavigatorSearchControl {
 		}
 	}
 
-	private static final String EMPTY = "Find model..."; //$NON-NLS-1$
+	private static final String EMPTY = "\nFind model..."; //$NON-NLS-1$
 	private String pattern;
 	GamaNavigator navigator;
 	CommonViewer treeViewer;
@@ -113,18 +116,28 @@ public class NavigatorSearchControl {
 	}
 
 	public NavigatorSearchControl fill(final GamaToolbarSimple toolbar) {
+		Composite parent = toolbar;
+		if (PlatformHelper.isWin32()) {
+			parent = new Composite(toolbar, SWT.NONE);
+			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			data.heightHint = 24;
+			data.widthHint = 100;
+			parent.setData(data);
+			GridLayout layout = new GridLayout();
+			parent.setLayout(layout);
+		}
 
-		final Text find = new Text(toolbar, SWT.SEARCH | SWT.ICON_SEARCH);
+		final Text find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final IFocusService focusService = navigator.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(find, "search");
-		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.heightHint = 24;
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.heightHint = 16;
 		data.widthHint = 100;
 		find.setLayoutData(data);
 		find.setBackground(IGamaColors.WHITE.color());
 		find.setForeground(IGamaColors.BLACK.color());
 		find.setMessage(EMPTY);
-		toolbar.control(find, 100);
+		toolbar.control(parent == toolbar ? find: parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 
