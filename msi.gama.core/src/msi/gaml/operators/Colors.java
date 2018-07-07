@@ -206,6 +206,17 @@ public class Colors {
 		return new GamaColor(r.between(0, realMax), r.between(0, realMax), r.between(0, realMax), 255);
 	}
 
+	@operator(value = "rnd_color", category = { IOperatorCategory.COLOR }, concept = { IConcept.COLOR,
+			IConcept.RANDOM })
+	@doc(value = "rgb color", comment = "Return a random color equivalent to rgb(rnd(first_op, last_op),rnd(first_op, last_op),rnd(first_op, last_op))", examples = @example(value = "rnd_color(100, 200)", equals = "a random color, equivalent to rgb(rnd(100, 200),rnd(100, 200),rnd(100, 200))", test = false), see = {
+			"rgb", "hsb" })
+	public static GamaColor random_color(final IScope scope, final Integer min, final Integer max) {
+		final RandomUtils r = scope.getRandom();
+		final int realMax = CmnFastMath.max(0, CmnFastMath.min(max, 255));
+		final int realMin = CmnFastMath.max(0, CmnFastMath.min(min, realMax));
+		return new GamaColor(r.between(realMin, realMax), r.between(realMin, realMax), r.between(realMin, realMax), 255);
+	}
+
 	@operator(value = "blend", can_be_const = true, category = { IOperatorCategory.COLOR }, concept = {
 			IConcept.COLOR })
 	@doc(value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1", masterDoc = true, examples = {
