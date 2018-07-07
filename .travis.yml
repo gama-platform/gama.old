@@ -16,7 +16,8 @@ cache:
   - "$HOME/.m2"
 addons:
     apt:
-        packages:
+        packages:      
+            - oracle-java8-installer
             - sshpass
     ssh_known_hosts:
       - 51.255.46.42
