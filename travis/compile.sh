@@ -5,6 +5,7 @@ function mvn_install() {
 	cd $1
 	mvn clean install
 	res=$?
+	echo "return code $res"
 	if [[ $res -ne 0 ]]; then
 		exit $res
 	fi
@@ -13,7 +14,7 @@ function mvn_install() {
 function mvn_compile() {
 	echo "Building " $1
 	cd $1
-	mvn clean compile -Dcheckstyle.skip
+	mvn clean compile
 	res=$?
 	if [[ $res -ne 0 ]]; then
 		exit $res
