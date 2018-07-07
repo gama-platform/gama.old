@@ -60,13 +60,13 @@ sudo cp -R gama-docker/jre/win_64/jre /home/travis/build/gama-platform/gama/ummi
 	
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-sudo zip -q -r "../../../../../../../${RELEASEFILES[5]}" .
+sudo zip -q -r "../../../../../../..${RELEASEFILES[5]}" .
 
 cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
-sudo zip -q -r "../../../../../../../${RELEASEFILES[6]}" .
+sudo zip -q -r "../../../../../../..${RELEASEFILES[6]}" .
 
 cd ../../../../../../../
 
