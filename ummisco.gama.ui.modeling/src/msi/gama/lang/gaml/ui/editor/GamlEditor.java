@@ -119,6 +119,7 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -319,6 +320,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		toolbar.sep(4, SWT.LEFT);
 
 		findControl = new EditorSearchControls(this).fill(toolbar.getToolbar(SWT.RIGHT));
+		toolbar.sep(4, SWT.RIGHT);
 
 		toolbar.refresh(true);
 	}
@@ -496,6 +498,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
+				if (PlatformHelper.isWin32()) toolbar.sep(4, SWT.LEFT);
 
 				final GamaUIColor c = state.getColor();
 				String msg = state.getStatus();
