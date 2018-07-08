@@ -29,12 +29,15 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 /**
@@ -56,8 +59,18 @@ public class EditorSearchControls {
 	}
 
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
-
-		find = new Text(toolbar, SWT.SEARCH | SWT.ICON_SEARCH);
+		Composite parent = toolbar;
+		if (PlatformHelper.isWin32()) ((ummisco.gama.ui.views.toolbar.GamaToolbar2) toolbar.getParent()).sep(4, SWT.RIGHT);
+		if (PlatformHelper.isWin32()) {
+			parent = new Composite(toolbar, SWT.NONE);
+			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			data.heightHint = 24;
+			data.widthHint = 100;
+			parent.setData(data);
+			GridLayout layout = new GridLayout();
+			parent.setLayout(layout);
+		}
+		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(find, "search");
 
@@ -81,7 +94,7 @@ public class EditorSearchControls {
 			}
 		});
 
-		toolbar.control(find, 100);
+		toolbar.control(parent == toolbar ? find:parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 
