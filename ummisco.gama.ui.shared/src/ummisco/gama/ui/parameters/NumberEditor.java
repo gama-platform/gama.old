@@ -11,6 +11,7 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
@@ -61,7 +62,7 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 	@Override
 	protected void checkButtons() {
 		super.checkButtons();
-		final ToolItem t = items[DEFINE];
+		final Button t = items[DEFINE];
 		if (t == null || t.isDisposed()) {
 			return;
 		}

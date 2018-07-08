@@ -11,6 +11,7 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -56,7 +57,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix<?>> {
 
 	@Override
 	protected void checkButtons() {
-		final ToolItem edit = items[EDIT];
+		final Button edit = items[EDIT];
 		if (edit != null && !edit.isDisposed()) {
 			edit.setEnabled(true);
 		}

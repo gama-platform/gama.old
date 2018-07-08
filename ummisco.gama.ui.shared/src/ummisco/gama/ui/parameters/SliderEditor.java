@@ -167,6 +167,15 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 		toolbar.setLayoutData(data);
 		toolbar.layout();
 	}
+	
+	protected Composite createToolbar2() {
+		Composite t = super.createToolbar2();
+		t.setBackground(getNormalBackground());
+		for (Control c: t.getChildren()) {
+			c.setBackground(getNormalBackground());
+		}
+		return t;
+	}
 
 	@Override
 	protected void addToolbarHiders(final Control... c) {}
