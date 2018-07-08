@@ -26,6 +26,7 @@ public interface IKeyword {
 	public static final String AGENTS = "agents";
 	public static final String AGGREGATION = "aggregation";
 	public static final String ALL = "all";
+	public static final String ANCHOR = "anchor";
 	public static final String AMBIENT_LIGHT = "ambient_light";
 	public static final String AMONG = "among";
 	public static final String ANNEALING = "annealing";

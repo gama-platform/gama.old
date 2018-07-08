@@ -293,8 +293,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		perspective = getFacet("bitmap", PERSPECTIVE);
 		lineWidth = getFacet(WIDTH);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
-		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, empty, border, color, font,
-				texture, material, perspective, lineWidth));
+		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, getFacet(IKeyword.ANCHOR), empty,
+				border, color, font, texture, material, perspective, lineWidth));
 		if (item == null) {
 			executer = null;
 		} else {
