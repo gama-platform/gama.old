@@ -61,64 +61,64 @@ public interface IUnits {
 			value = "center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the text to draw")) public final static int center =
-					0;
+			doc = @doc ("Represents an anchor situated at the center of the text to draw")) public final static GamaPoint center =
+					new GamaPoint(0.5, 0.5);
 
 	@constant (
 			value = "top_left",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the top left corner of the text to draw")) public final static int top_left =
-					1;
+			doc = @doc ("Represents an anchor situated at the top left corner of the text to draw")) public final static GamaPoint top_left =
+					new GamaPoint(0, 1);
 
 	@constant (
 			value = "left_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the left side of the text to draw")) public final static int left_center =
-					2;
+			doc = @doc ("Represents an anchor situated at the center of the left side of the text to draw")) public final static GamaPoint left_center =
+					new GamaPoint(0, 0.5);
 
 	@constant (
 			value = "bottom_left",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the bottom left corner of the text to draw")) public final static int bottom_left =
-					3;
+			doc = @doc ("Represents an anchor situated at the bottom left corner of the text to draw")) public final static GamaPoint bottom_left =
+					new GamaPoint(0, 0);
 
 	@constant (
 			value = "bottom_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) public final static int bottom_center =
-					4;
+			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) public final static GamaPoint bottom_center =
+					new GamaPoint(0.5, 0);
 
 	@constant (
 			value = "bottom_right",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the bottom right corner of the text to draw")) public final static int bottom_right =
-					5;
+			doc = @doc ("Represents an anchor situated at the bottom right corner of the text to draw")) public final static GamaPoint bottom_right =
+					new GamaPoint(1, 0);
 
 	@constant (
 			value = "right_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the right side of the text to draw")) public final static int right_center =
-					6;
+			doc = @doc ("Represents an anchor situated at the center of the right side of the text to draw")) public final static GamaPoint right_center =
+					new GamaPoint(1, 0.5);
 
 	@constant (
 			value = "top_right",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the top right corner of the text to draw")) public final static int top_right =
-					7;
+			doc = @doc ("Represents an anchor situated at the top right corner of the text to draw")) public final static GamaPoint top_right =
+					new GamaPoint(1, 1);
 
 	@constant (
 			value = "top_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) public final static int top_center =
-					8;
+			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) public final static GamaPoint top_center =
+					new GamaPoint(0.5, 1);
 
 	/**
 	 * Layout constants

@@ -29,7 +29,6 @@ import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaColorType;
 import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaFontType;
-import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.GamaMaterialType;
 import msi.gaml.types.GamaPairType;
@@ -106,7 +105,7 @@ public class DrawingData {
 	final Attribute<GamaFloatType, Double> depth;
 	final Attribute<GamaPairType, GamaPair<Double, GamaPoint>> rotation;
 	final Attribute<GamaPointType, GamaPoint> location;
-	final Attribute<GamaIntegerType, Integer> anchor;
+	final Attribute<GamaPointType, GamaPoint> anchor;
 	final Attribute<GamaBoolType, Boolean> empty;
 	final Attribute<GamaColorType, GamaColor> border;
 	private final Attribute<GamaListType, IList<GamaColor>> colors;
@@ -145,7 +144,7 @@ public class DrawingData {
 				return currentRotation;
 			}
 		}, Types.PAIR, null);
-		this.anchor = create(anchorExp, Types.INT, IUnits.bottom_left);
+		this.anchor = create(anchorExp, (scope) -> anchorExp.value(scope), Types.POINT, IUnits.bottom_left);
 		this.location = create(locationExp, Types.POINT, null);
 		this.empty = create(emptyExp, Types.BOOL, false);
 		this.border = create(borderExp, (scope) -> {
@@ -180,8 +179,8 @@ public class DrawingData {
 		this.material = create(materialExp, Types.MATERIAL, null);
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
 		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
-		ATTRIBUTES = new Attribute[] { size, location, depth, colors, rotation, empty, border, font, texture, material,
-				perspective, lineWidth };
+		ATTRIBUTES = new Attribute[] { size, location, anchor, depth, colors, rotation, empty, border, font, texture,
+				material, perspective, lineWidth };
 	}
 
 	public DrawingData computeAttributes(final IScope scope) {
