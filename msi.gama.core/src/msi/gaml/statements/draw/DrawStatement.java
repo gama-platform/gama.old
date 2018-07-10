@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
+import static msi.gama.common.interfaces.IKeyword.ANCHOR;
 import static msi.gama.common.interfaces.IKeyword.ASPECT;
 import static msi.gama.common.interfaces.IKeyword.AT;
 import static msi.gama.common.interfaces.IKeyword.BORDER;
@@ -95,6 +96,11 @@ import msi.gaml.types.Types;
 						type = IType.POINT,
 						optional = true,
 						doc = @doc ("location where the shape/text/icon is drawn")),
+				@facet (
+						name = ANCHOR,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("the anchor point of the location with respect to the envelope of the text to draw, can take one of the following values: #center, #top_left, #left_center, #bottom_left, #bottom_center, #bottom_right, #right_center, #top_right, #top_center")),
 				@facet (
 						name = SIZE,
 						type = { IType.FLOAT, IType.POINT },
@@ -287,8 +293,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		perspective = getFacet("bitmap", PERSPECTIVE);
 		lineWidth = getFacet(WIDTH);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
-		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, empty, border, color, font,
-				texture, material, perspective, lineWidth));
+		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, getFacet(IKeyword.ANCHOR), empty,
+				border, color, font, texture, material, perspective, lineWidth));
 		if (item == null) {
 			executer = null;
 		} else {

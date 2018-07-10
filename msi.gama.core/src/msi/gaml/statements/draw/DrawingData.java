@@ -24,6 +24,7 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.IUnits;
 import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaColorType;
 import msi.gaml.types.GamaFloatType;
@@ -104,6 +105,7 @@ public class DrawingData {
 	final Attribute<GamaFloatType, Double> depth;
 	final Attribute<GamaPairType, GamaPair<Double, GamaPoint>> rotation;
 	final Attribute<GamaPointType, GamaPoint> location;
+	final Attribute<GamaPointType, GamaPoint> anchor;
 	final Attribute<GamaBoolType, Boolean> empty;
 	final Attribute<GamaColorType, GamaColor> border;
 	private final Attribute<GamaListType, IList<GamaColor>> colors;
@@ -116,9 +118,10 @@ public class DrawingData {
 	final Attribute[] ATTRIBUTES;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
-			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
-			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
-			final IExpression materialExp, final IExpression perspectiveExp, final IExpression lineWidthExp) {
+			final IExpression locationExp, final IExpression anchorExp, final IExpression emptyExp,
+			final IExpression borderExp, final IExpression colorExp, final IExpression fontExp,
+			final IExpression textureExp, final IExpression materialExp, final IExpression perspectiveExp,
+			final IExpression lineWidthExp) {
 		this.size = create(sizeExp, (scope) -> {
 			if (sizeExp.getType().isNumber()) {
 				final double val = Cast.asFloat(scope, sizeExp.value(scope));
@@ -141,6 +144,7 @@ public class DrawingData {
 				return currentRotation;
 			}
 		}, Types.PAIR, null);
+		this.anchor = create(anchorExp, (scope) -> anchorExp.value(scope), Types.POINT, IUnits.bottom_left);
 		this.location = create(locationExp, Types.POINT, null);
 		this.empty = create(emptyExp, Types.BOOL, false);
 		this.border = create(borderExp, (scope) -> {
@@ -175,8 +179,8 @@ public class DrawingData {
 		this.material = create(materialExp, Types.MATERIAL, null);
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
 		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
-		ATTRIBUTES = new Attribute[] { size, location, depth, colors, rotation, empty, border, font, texture, material,
-				perspective, lineWidth };
+		ATTRIBUTES = new Attribute[] { size, location, anchor, depth, colors, rotation, empty, border, font, texture,
+				material, perspective, lineWidth };
 	}
 
 	public DrawingData computeAttributes(final IScope scope) {
@@ -187,14 +191,12 @@ public class DrawingData {
 	}
 
 	public GamaColor getCurrentColor() {
-		if (colors.value == null || colors.value.isEmpty())
-			return null;
+		if (colors.value == null || colors.value.isEmpty()) { return null; }
 		return colors.value.get(0);
 	}
 
 	public List<GamaColor> getColors() {
-		if (colors.value == null || colors.value.isEmpty() || colors.value.size() == 1)
-			return null;
+		if (colors.value == null || colors.value.isEmpty() || colors.value.size() == 1) { return null; }
 		return colors.value;
 	}
 

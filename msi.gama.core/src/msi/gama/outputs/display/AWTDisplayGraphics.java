@@ -118,12 +118,15 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (currentRenderer != null)
+		if (currentRenderer != null) {
 			currentRenderer.dispose();
-		if (normalRenderer != null)
+		}
+		if (normalRenderer != null) {
 			normalRenderer.dispose();
-		if (overlayRenderer != null)
+		}
+		if (overlayRenderer != null) {
 			overlayRenderer.dispose();
+		}
 	}
 
 	@Override
@@ -246,17 +249,21 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curY = yFromModelUnitsToPixels(attributes.getLocation().getY());
 		}
 		currentRenderer.setFont(attributes.font);
+		final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
+		final double rWidth = r.getWidth();
+		final double rHeight = r.getHeight();
+		curX -= rWidth * attributes.anchor.x;
+		curY += rHeight * attributes.anchor.y;
 		final AffineTransform saved = currentRenderer.getTransform();
 		if (attributes.getAngle() != null) {
-			final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
 			currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + r.getWidth() / 2,
 					curY + r.getHeight() / 2);
 		}
+
 		currentRenderer.drawString(string, (int) curX, (int) curY);
 		currentRenderer.setTransform(saved);
-		final Rectangle2D result = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
-		result.setFrame(curX, curY, result.getWidth(), result.getHeight());
-		return result;
+		r.setFrame(curX, curY, r.getWidth(), r.getHeight());
+		return r;
 	}
 
 	@Override
@@ -275,8 +282,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		if (highlight) {
 			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
-			if (border != null)
+			if (border != null) {
 				border = attributes.getColor();
+			}
 		}
 		final Shape s = sw.toShape(geometry);
 		try {
@@ -426,10 +434,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public void accumulateTemporaryEnvelope(final Rectangle2D env) {
-		if (temporaryEnvelope == null)
+		if (temporaryEnvelope == null) {
 			temporaryEnvelope = env;
-		else
+		} else {
 			temporaryEnvelope.add(env);
+		}
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
+import msi.gaml.operators.IUnits;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.Abstract3DRenderer;
@@ -46,16 +47,17 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	@Override
 	public void setScale(final GamaPoint s) {
-		if (s == null)
+		if (s == null) {
 			scale = DEFAULT_SCALE;
-		else
+		} else {
 			super.setScale(s);
+		}
 	}
 
 	@Override
 	void fillWithObjects(final List<AbstractObject> list) {
 		final double size = renderer.getMaxEnvDim();
-		if (renderer.useShader())
+		if (renderer.useShader()) {
 			for (int i = 0; i < 3; i++) {
 				final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
 
@@ -66,7 +68,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 				// build labels
 				final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.
 				final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(Scaling3D.of(1, 1, 1), null,
-						p.times(1.2).yNegated(), COLORS[i], font, false);
+						p.times(1.2).yNegated(), IUnits.bottom_left, COLORS[i], font, false);
 				final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr);
 				list.add(strObj);
 
@@ -75,7 +77,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 						COLORS[i], IShape.Type.POLYGON, false);
 				list.add(arrow);
 			}
-		else
+		} else {
 			for (int i = 0; i < 3; i++) {
 				final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
 				final GamaShape axis2 = (GamaShape) GamaGeometryType.buildLineCylinder(origin, p, size / 40);
@@ -87,7 +89,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 				// build labels
 				final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.
 				final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(Scaling3D.of(1), null,
-						p.times(1.3).yNegated(), COLORS[i], font, false);
+						p.times(1.3).yNegated(), IUnits.bottom_left, COLORS[i], font, false);
 				final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr);
 				list.add(strObj);
 
@@ -99,5 +101,6 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 				list.add(arrow);
 			}
+		}
 	}
 }

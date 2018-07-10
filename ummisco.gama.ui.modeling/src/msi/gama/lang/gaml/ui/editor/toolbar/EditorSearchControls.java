@@ -66,7 +66,7 @@ public class EditorSearchControls {
 			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 24;
 			data.widthHint = 100;
-			parent.setData(data);
+			parent.setLayoutData(data);
 			GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
 		}

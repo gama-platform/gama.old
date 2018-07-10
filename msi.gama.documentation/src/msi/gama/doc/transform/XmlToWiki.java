@@ -44,6 +44,9 @@ public class XmlToWiki {
 
 		System.out.print("Creation of the wiki page for Operators.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsSplitted-xml2md.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "OperatorsSplitted"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,

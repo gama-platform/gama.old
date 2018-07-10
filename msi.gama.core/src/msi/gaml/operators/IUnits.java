@@ -55,6 +55,72 @@ public interface IUnits {
 					3;
 
 	/**
+	 * Anchor constants
+	 */
+	@constant (
+			value = "center",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the center of the text to draw")) public final static GamaPoint center =
+					new GamaPoint(0.5, 0.5);
+
+	@constant (
+			value = "top_left",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the top left corner of the text to draw")) public final static GamaPoint top_left =
+					new GamaPoint(0, 1);
+
+	@constant (
+			value = "left_center",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the center of the left side of the text to draw")) public final static GamaPoint left_center =
+					new GamaPoint(0, 0.5);
+
+	@constant (
+			value = "bottom_left",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the bottom left corner of the text to draw")) public final static GamaPoint bottom_left =
+					new GamaPoint(0, 0);
+
+	@constant (
+			value = "bottom_center",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) public final static GamaPoint bottom_center =
+					new GamaPoint(0.5, 0);
+
+	@constant (
+			value = "bottom_right",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the bottom right corner of the text to draw")) public final static GamaPoint bottom_right =
+					new GamaPoint(1, 0);
+
+	@constant (
+			value = "right_center",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the center of the right side of the text to draw")) public final static GamaPoint right_center =
+					new GamaPoint(1, 0.5);
+
+	@constant (
+			value = "top_right",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the top right corner of the text to draw")) public final static GamaPoint top_right =
+					new GamaPoint(1, 1);
+
+	@constant (
+			value = "top_center",
+			category = { IConstantCategory.GRAPHIC },
+			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) public final static GamaPoint top_center =
+					new GamaPoint(0.5, 1);
+
+	/**
 	 * Layout constants
 	 *
 	 */
@@ -685,8 +751,9 @@ public interface IUnits {
 
 		for (final Field f : IUnits.class.getDeclaredFields()) {
 			try {
-				if (f.getName().equals("UNITS_EXPR"))
+				if (f.getName().equals("UNITS_EXPR")) {
 					continue;
+				}
 				final Object v = f.get(IUnits.class);
 				String[] names = null;
 				final constant annotation = f.getAnnotation(constant.class);
@@ -700,8 +767,9 @@ public interface IUnits {
 						final doc d = ds[0];
 						documentation += d.value();
 						deprecated = d.deprecated();
-						if (deprecated.isEmpty())
+						if (deprecated.isEmpty()) {
 							deprecated = null;
+						}
 					}
 					final String[] e = annotation.category();
 					isTime = Arrays.asList(e).contains(IConstantCategory.TIME);

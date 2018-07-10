@@ -293,6 +293,29 @@
             </visibleWhen>
            
          </menu>
+         <separator
+               name="ummisco.gama.ui.navigator.separator2"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.eclipse.ui.ide.showInSystemExplorer"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchfile2.png"
+               label="Reveal in OS"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
