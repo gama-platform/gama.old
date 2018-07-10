@@ -88,7 +88,7 @@ cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
 
-sudo zip -qr "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
+sudo zip -qyr "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
 
 cd ../../../../../../../
 
