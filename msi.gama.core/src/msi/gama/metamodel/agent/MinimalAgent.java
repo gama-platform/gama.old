@@ -373,7 +373,7 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return hashCode;
 	}
 }

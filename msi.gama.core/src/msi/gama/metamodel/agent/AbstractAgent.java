@@ -615,12 +615,8 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (o == this) { return true; }
-		if (!(o instanceof AbstractAgent)) { return false; }
-		return ((AbstractAgent) o).hashCode() == hashCode();
-		// final AbstractAgent other = (AbstractAgent) o;
-		// return (other.index == index && other.getPopulation().equals(getPopulation()));
+	public final boolean equals(final Object o) {
+		return o == this;
 	}
 
 	@Override

@@ -159,7 +159,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					.postEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
-		
 
 	}
 
@@ -565,13 +564,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (!(o instanceof GamaPopulation)) { return false; }
-		return ((GamaPopulation<?>) o).hashCode == hashCode;
+	public final boolean equals(final Object o) {
+		return o == this;
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return hashCode;
 	}
 

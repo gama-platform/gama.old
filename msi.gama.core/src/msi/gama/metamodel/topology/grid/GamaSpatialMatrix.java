@@ -2028,7 +2028,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
-			public int hashCode() {
+			public final int hashCode() {
 				return hashCode;
 			}
 		}
