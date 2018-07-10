@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.processing.Filer;
+
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -26,6 +28,7 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -43,6 +46,7 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Maths;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -56,13 +60,15 @@ public abstract class AbstractTopology implements ITopology {
 	protected IShape environment;
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
-
+	protected List<ISpecies> speciesInserted;
+	
 	// VARIABLES USED IN TORUS ENVIRONMENT
 	protected double[] adjustedXVector;
 	protected double[] adjustedYVector;
 
 	public AbstractTopology(final IScope scope, final IShape env, final RootTopology root) {
 		setRoot(scope, root);
+		speciesInserted = new ArrayList<>();
 		environment = env;
 		if (isTorus()) {
 			createVirtualEnvironments();
@@ -220,6 +226,16 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public void updateAgent(final Envelope previous, final IAgent agent) {
+		if(GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+			if (speciesInserted.contains(agent.getSpecies())) {
+				updateAgentBase(previous,agent);
+			}
+		}
+		else {
+			updateAgentBase(previous,agent);
+		}
+	}
+	public void updateAgentBase(final Envelope previous, final IAgent agent) {
 		if (previous != null && !previous.isNull()) {
 			getSpatialIndex().remove(previous, agent);
 		}
@@ -344,9 +360,34 @@ public abstract class AbstractTopology implements ITopology {
 	public IContainer<?, IShape> getPlaces() {
 		return places;
 	}
+	
+	protected void insertSpecies(IScope scope, ISpecies species) {
+		if (!this.speciesInserted.contains(species)) {
+			this.speciesInserted.add(species);
+			for (IAgent ag : species.getPopulation(scope)) {
+				getSpatialIndex().insert(ag);
+			}
+		}
+	}
+	
+	protected void insertAgents(IScope scope, final IAgentFilter filter) {
+		if(GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+			if(filter.getSpecies() != null) insertSpecies(scope,filter.getSpecies());
+			else {
+				for (IAgent ag : filter.getPopulation(scope)) {
+					if (!this.speciesInserted.contains(ag.getSpecies())) {
+						this.speciesInserted.add(ag.getSpecies());
+						getSpatialIndex().insert(ag);
+					}
+				}
+			}
+		}
+	}
+
 
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
+		insertAgents(scope,filter);
 		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter); }
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
@@ -418,6 +459,8 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
 			final IAgentFilter filter) throws GamaRuntimeException {
+		insertAgents(scope,filter);
+		
 		if (!isTorus()) { return getSpatialIndex().allAtDistance(scope, source, distance, filter); }
 
 		// FOR TORUS ENVIRONMENTS ONLY
@@ -462,6 +505,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
 			final boolean covered) {
 		if (source == null) { return Collections.EMPTY_SET; }
+		insertAgents(scope,f);
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
