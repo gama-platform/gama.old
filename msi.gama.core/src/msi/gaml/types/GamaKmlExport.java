@@ -67,48 +67,35 @@ public class GamaKmlExport{
 		return kf;
 	}
 
-	public void addLabel(IScope scope, ILocation loc,
-			String beginDate, String endDate, String name, String description,
-			String styleName) {
-		getDefaultFolder().addLabel(scope,loc, beginDate, endDate,
-				name, description, styleName);
-	}
-
-	public void addLabel(IScope scope, ILocation loc, double ypos, double height,
+	
+	public void addLabel(IScope scope, GamaPoint loc, 
 			GamaDate beginDate, GamaDate endDate, String name, String description,
 			String styleName) {
 		getDefaultFolder().addLabel(scope,loc, dateToKml(beginDate),
 				dateToKml(endDate), name, description, styleName);
 	}
 
-	public void addLabel(IScope scope, ILocation loc, String foldname, double xpos, double ypos,
-			double height, String beginDate, String endDate, String name,
-			String description, String styleName) {
-		getFolder(foldname).addLabel(scope,loc, beginDate, endDate,
-				name, description, styleName);
-	}
-
 	
-	public void addLabel(IScope scope, String foldname, ILocation loc, GamaDate beginDate, GamaDate endDate, String name,
+	public void addLabel(IScope scope, String foldname, GamaPoint loc, GamaDate beginDate, GamaDate endDate, String name,
 			String description, String styleName) {
 		getFolder(foldname).addLabel(scope,loc, dateToKml(beginDate),
 				dateToKml(endDate), name, description, styleName);
 	}
 
-	public void add3DModel(IScope scope, ILocation loc, double orientation,
+	public void add3DModel(IScope scope, GamaPoint loc, double orientation,
 			double scale, String beginDate, String endDate, String daefile) {
 		getDefaultFolder().add3DModel(scope,loc, orientation, scale,
 				beginDate, endDate, daefile);
 	}
 
 
-	public void add3DModel(IScope scope, ILocation loc, double orientation,
+	public void add3DModel(IScope scope, GamaPoint loc, double orientation,
 			double scale, GamaDate beginDate, GamaDate endDate, String daefile) {
 		getDefaultFolder().add3DModel(scope,loc, orientation, scale,
 				dateToKml(beginDate), dateToKml(endDate), daefile);
 	}
 
-	public void add3DModel(IScope scope, String foldname,ILocation loc,
+	public void add3DModel(IScope scope, String foldname,GamaPoint loc,
 			double orientation, double scale, String beginDate, String endDate,
 			String daefile) {
 		getFolder(foldname).add3DModel(scope,loc, orientation, scale,
@@ -116,7 +103,7 @@ public class GamaKmlExport{
 	}
 
 	
-	public void add3DModel(IScope scope,String foldname, ILocation loc,
+	public void add3DModel(IScope scope,String foldname, GamaPoint loc,
 			double orientation, double scale, GamaDate beginDate, GamaDate endDate,
 			String daefile) {
 		getFolder(foldname).add3DModel(scope,loc, orientation, scale,

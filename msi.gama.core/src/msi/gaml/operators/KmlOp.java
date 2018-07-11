@@ -1,5 +1,7 @@
 package msi.gaml.operators;
 
+import msi.gama.common.util.FileUtils;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -18,9 +20,8 @@ public class KmlOp {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "a bool value, equal to the logical xor between the left-hand operand and the right-hand operand. False when they are equal",
-			comment = "both operands are always casted to bool before applying the operator. Thus, an expression like 1 xor 0 is accepted and returns true.",
-			see = { "or", "and", "!" })
+			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, linecolor,fillcolor)",
+			see = { "add_3Dmodel", "add_icon", "add_label"})
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			double lineWidth, GamaColor lineColor, GamaColor fillColor) throws GamaRuntimeException {
 		if (kml == null || shape == null) return kml;
@@ -28,7 +29,42 @@ public class KmlOp {
 		String styleName = shape.stringValue(scope) + ":" + currentDate.toString(); 
 		kml.defStyle(styleName, lineWidth, lineColor,fillColor);
 		GamaDate endDate = Dates.plusDuration(scope, currentDate, scope.getClock().getStepInSeconds());
-		kml.addGeometry(scope, shape.toString(), currentDate, endDate, shape, styleName, shape.getHeight());
+		kml.addGeometry(scope, shape.toString(), currentDate, endDate, shape, styleName, shape.getDepth() == null ? 0.0 : shape.getDepth());
+		return kml;
+	}
+	
+	@operator (
+			value = "add_3Dmodel",
+			category = IOperatorCategory.LOGIC,
+			concept = { IConcept.LOGICAL })
+	@doc (
+			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
+			see = { "add_geometry", "add_icon", "add_label"})
+	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
+			double orientation, double scale, String file) throws GamaRuntimeException {
+		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
+		GamaDate currentDate = scope.getClock().getCurrentDate();
+		GamaDate endDate = Dates.plusDuration(scope, currentDate, scope.getClock().getStepInSeconds());
+		 kml.add3DModel(scope, loc, orientation, scale, currentDate, endDate, file);
+		return kml;
+	}
+	
+	@operator (
+			value = "add_icon",
+			category = IOperatorCategory.LOGIC,
+			concept = { IConcept.LOGICAL })
+	@doc (
+			value = "the kml export manager with new icons: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
+			see = { "add_geometry", "add_icon"})
+	public static GamaKmlExport addIcon(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
+			double orientation, double scale, String file) throws GamaRuntimeException {
+		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
+		String styleName = loc.stringValue(scope) + ":" + loc.toString(); 
+		kml.defIconStyle(styleName,FileUtils.constructAbsoluteFilePath(scope, file, true),scale, orientation);  
+		
+		GamaDate currentDate = scope.getClock().getCurrentDate();
+		GamaDate endDate = Dates.plusDuration(scope, currentDate, scope.getClock().getStepInSeconds());
+		kml.addLabel(scope, loc, currentDate, endDate, "", "", styleName);
 		return kml;
 	}
 }
