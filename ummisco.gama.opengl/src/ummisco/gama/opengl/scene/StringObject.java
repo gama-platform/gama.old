@@ -12,6 +12,7 @@ package ummisco.gama.opengl.scene;
 import java.awt.Color;
 import java.awt.Font;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
@@ -24,6 +25,10 @@ public class StringObject extends AbstractObject {
 	public StringObject(final String string, final DrawingAttributes attributes) {
 		super(attributes);
 		this.string = string;
+	}
+
+	public GamaPoint getAnchor() {
+		return attributes.getAnchor();
 	}
 
 	public Font getFont() {

@@ -144,7 +144,12 @@ public class DrawingData {
 				return currentRotation;
 			}
 		}, Types.PAIR, null);
-		this.anchor = create(anchorExp, (scope) -> anchorExp.value(scope), Types.POINT, IUnits.bottom_left);
+		this.anchor = create(anchorExp, (scope) -> {
+			final GamaPoint p = (GamaPoint) anchorExp.value(scope);
+			p.x = Math.min(1d, Math.max(p.x, 0d));
+			p.y = Math.min(1d, Math.max(p.y, 0d));
+			return p;
+		}, Types.POINT, IUnits.bottom_left);
 		this.location = create(locationExp, Types.POINT, null);
 		this.empty = create(emptyExp, Types.BOOL, false);
 		this.border = create(borderExp, (scope) -> {

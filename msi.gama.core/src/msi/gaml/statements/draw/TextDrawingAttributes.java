@@ -55,4 +55,9 @@ public class TextDrawingAttributes extends DrawingAttributes {
 		return Type.POLYGON;
 	}
 
+	@Override
+	public GamaPoint getAnchor() {
+		return anchor;
+	}
+
 }

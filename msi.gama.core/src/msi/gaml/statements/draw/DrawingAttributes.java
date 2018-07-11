@@ -23,6 +23,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
+import msi.gaml.operators.IUnits;
 
 public abstract class DrawingAttributes {
 
@@ -77,10 +78,11 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setEmpty(final Boolean b) {
-		if (b == null || !b)
+		if (b == null || !b) {
 			colorProperties.toFilled();
-		else
+		} else {
 			colorProperties.toEmpty();
+		}
 	}
 
 	public void setBorder(final GamaColor border) {
@@ -96,15 +98,14 @@ public abstract class DrawingAttributes {
 			geometryProperties = geometryProperties.withRotation(null);
 		} else if (axis == null) {
 			geometryProperties = geometryProperties.withRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
-		} else
+		} else {
 			geometryProperties = geometryProperties.withRotation(new AxisAngle(axis, angle));
+		}
 	}
 
 	public final GamaColor getColor() {
-		if (selected)
-			return SELECTED_COLOR;
-		if (highlight != null)
-			return highlight;
+		if (selected) { return SELECTED_COLOR; }
+		if (highlight != null) { return highlight; }
 		return colorProperties.getFillColor();
 	}
 
@@ -179,10 +180,11 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setTexture(final Object o) {
-		if (o == null)
+		if (o == null) {
 			colorProperties.withTextures(null);
-		else
+		} else {
 			colorProperties.withTextures(Arrays.asList(o));
+		}
 
 	}
 
@@ -204,6 +206,10 @@ public abstract class DrawingAttributes {
 
 	public int getAverageDelay() {
 		return colorProperties.getAverageDelay();
+	}
+
+	public GamaPoint getAnchor() {
+		return IUnits.bottom_left;
 	}
 
 }

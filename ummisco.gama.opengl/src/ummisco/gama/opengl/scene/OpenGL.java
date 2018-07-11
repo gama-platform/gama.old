@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.DoubleBuffer;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -142,6 +145,8 @@ public class OpenGL {
 
 	// World
 	final double worldX, worldY;
+	final Function<GamaPoint, GamaPoint> pixelToWorldScaler;
+	final Supplier<Double> zoomLevel;
 
 	// Working objects
 	final GamaPoint workingPoint = new GamaPoint();
@@ -200,7 +205,8 @@ public class OpenGL {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, adapter);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, adapter);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-
+		pixelToWorldScaler = (pixelCoord) -> renderer.getOpenGLPointFromWindowPoint(pixelCoord);
+		zoomLevel = () -> renderer.getZoomLevel();
 	}
 
 	public void dispose() {
@@ -864,18 +870,26 @@ public class OpenGL {
 	 * @param scale
 	 *            the scale to apply
 	 */
-	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z) {
-		final TextRenderer r =
-				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
+	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z,
+			final GamaPoint anchor) {
+
+		final TextRenderer r = textRendererCache.get(font.getName(), (int) Math.round(font.getSize() / zoomLevel.get()),
+				font.getStyle());
 		if (r == null) { return; }
-		r.setUseVertexArrays(false);
 
 		if (getCurrentColor() != null) {
 			r.setColor(getCurrentColor());
 		}
-		final float scale = 1f / (float) (viewHeight / getWorldHeight());
 		r.begin3DRendering();
-		r.draw3D(string, (float) x, (float) y, (float) (z + currentZTranslation), scale);
+		final Rectangle2D bounds = r.getBounds(string);
+		final float scale = 0.15f;
+		// final float scale = 1f / (float) (viewHeight / getWorldHeight());
+		// final float scalex = 1f / (float) (viewWidth / getWorldWidth());
+		// final GamaPoint boundsPoint = pixelToWorldScaler.apply(new GamaPoint(bounds.getWidth(), bounds.getHeight()));
+		final double curX = x - bounds.getWidth() * scale * anchor.x;
+		final double curY = y + bounds.getY() * scale * anchor.y;
+
+		r.draw3D(string, (float) curX, (float) curY, (float) (z + currentZTranslation), scale);
 		r.flush();
 		r.end3DRendering();
 	}
@@ -885,7 +899,6 @@ public class OpenGL {
 		final TextRenderer r =
 				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
 		if (r == null) { return; }
-		r.setUseVertexArrays(false);
 		if (getCurrentColor() != null) {
 			r.setColor(getCurrentColor());
 		}

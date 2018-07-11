@@ -48,7 +48,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			}
 			if (s.getFont() != null && s.iisInPerspective()) {
 				final Font f = s.getFont();
-				gl.perspectiveText(s.string, f, p.x, p.y, p.z);
+				gl.perspectiveText(s.string, f, p.x, p.y, p.z, s.getAnchor());
 			} else {
 				int fontToUse = GLUT.BITMAP_HELVETICA_18;
 				final Font f = s.getFont();

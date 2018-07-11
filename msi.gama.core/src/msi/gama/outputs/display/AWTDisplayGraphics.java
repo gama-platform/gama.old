@@ -250,10 +250,14 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		currentRenderer.setFont(attributes.font);
 		final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
+		final float ascent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getAscent();
+		final float descent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getDescent();
+		r.setFrame(r.getX(), r.getY(), r.getWidth(), Math.min(r.getHeight(), (ascent + descent)));
+
 		final double rWidth = r.getWidth();
 		final double rHeight = r.getHeight();
 		curX -= rWidth * attributes.anchor.x;
-		curY += rHeight * attributes.anchor.y;
+		curY += (rHeight - descent) * attributes.anchor.y;
 		final AffineTransform saved = currentRenderer.getTransform();
 		if (attributes.getAngle() != null) {
 			currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + r.getWidth() / 2,
@@ -261,6 +265,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 
 		currentRenderer.drawString(string, (int) curX, (int) curY);
+		// currentRenderer.drawRect((int) curX, (int) (curY - rHeight), (int) rWidth, (int) rHeight);
 		currentRenderer.setTransform(saved);
 		r.setFrame(curX, curY, r.getWidth(), r.getHeight());
 		return r;

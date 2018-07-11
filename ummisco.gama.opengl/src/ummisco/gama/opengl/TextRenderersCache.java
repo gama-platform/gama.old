@@ -10,11 +10,16 @@
 package ummisco.gama.opengl;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.awt.TextRenderer.RenderDelegate;
 
 /**
  * Global text renderers. Does not allow renderers to be created for text bigger than 200 pixels
@@ -23,6 +28,42 @@ import com.jogamp.opengl.util.awt.TextRenderer;
  *
  */
 public class TextRenderersCache {
+
+	static class GamaRenderDelegate implements RenderDelegate {
+
+		@Override
+		public boolean intensityOnly() {
+			return false;
+		}
+
+		@Override
+		public Rectangle2D getBounds(final String str, final Font font, final FontRenderContext frc) {
+			return font.getStringBounds(str, frc);
+		}
+
+		@Override
+		public Rectangle2D getBounds(final CharSequence str, final Font font, final FontRenderContext frc) {
+			return font.getStringBounds(str.toString(), frc);
+		}
+
+		@Override
+		public Rectangle2D getBounds(final GlyphVector gv, final FontRenderContext frc) {
+			return gv.getVisualBounds();
+		}
+
+		@Override
+		public void draw(final Graphics2D graphics, final String str, final int x, final int y) {
+			graphics.drawString(str, x, y);
+
+		}
+
+		@Override
+		public void drawGlyphVector(final Graphics2D graphics, final GlyphVector str, final int x, final int y) {
+			graphics.drawGlyphVector(str, x, y);
+
+		}
+
+	}
 
 	Map<String, Map<Integer, Map<Integer, TextRenderer>>> cache = new LinkedHashMap<>();
 
@@ -45,8 +86,8 @@ public class TextRenderersCache {
 		}
 		TextRenderer r = map2.get(style);
 		if (r == null) {
-			r = new TextRenderer(new Font(font, style, size), true, false, null, true);
-			r.setSmoothing(false);
+			r = new TextRenderer(new Font(font, style, size), true, true, new GamaRenderDelegate(), true);
+			r.setSmoothing(true);
 			r.setUseVertexArrays(false);
 			map2.put(style, r);
 		}

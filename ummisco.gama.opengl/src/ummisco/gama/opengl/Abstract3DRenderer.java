@@ -201,6 +201,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return canvas;
 	}
 
+	public GamaPoint getOpenGLPointFromWindowPoint(final GamaPoint p) {
+		return getRealWorldPointFromWindowPoint(new Point((int) p.x, (int) p.y));
+	}
+
 	protected void initializeCanvasListeners() {
 
 		WorkbenchHelper.asyncRun(() -> {
@@ -480,8 +484,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	protected void preloadTextures(final DrawingAttributes attributes) {
-		if (!preloadTextures())
-			return;
+		if (!preloadTextures()) { return; }
 		final List<?> textures = attributes.getTextures();
 		if (textures != null && !textures.isEmpty()) {
 			for (final Object img : textures) {
@@ -499,15 +502,17 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
 		final double size = distance / 10; // the size of the displayed axis
-		if (currentScene != null)
+		if (currentScene != null) {
 			currentScene.startDrawRotationHelper(pos, size);
+		}
 	}
 
 	public void stopDrawRotationHelper() {
 		rotationHelperPosition = null;
 		drawRotationHelper = false;
-		if (currentScene != null)
+		if (currentScene != null) {
 			currentScene.stopDrawRotationHelper();
+		}
 	}
 
 	public void defineROI(final Point start, final Point end) {
@@ -517,8 +522,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public void cancelROI() {
-		if (camera.isROISticky())
-			return;
+		if (camera.isROISticky()) { return; }
 		ROIEnvelope = null;
 	}
 
@@ -580,8 +584,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	@Override
 	public boolean isNotReadyToUpdate() {
-		if (data.isSynchronized())
-			return false;
+		if (data.isSynchronized()) { return false; }
 		return sceneBuffer.isNotReadyToUpdate();
 	}
 

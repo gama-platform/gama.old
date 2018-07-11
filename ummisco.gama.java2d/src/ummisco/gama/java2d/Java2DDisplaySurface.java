@@ -416,6 +416,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			focusOn(geometry);
 			return;
 		}
+
+		// TODO Verify that the following expressions should not be also included in the "focus" block
 		g2d.dispose();
 		frames++;
 		rendered = true;
