@@ -97,6 +97,7 @@ import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.GamaFileType;
+import msi.gaml.types.GamaKmlExport;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -114,7 +115,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image" },
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml"},
 				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
@@ -359,6 +360,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (species == null || !species.isGrid()) { return null; }
 
 			saveRasterImage(species, path, scope, type.equals("geotiff"));
+		} else if (type.equals("kml")) {
+			GamaKmlExport kml;
+			if (item == null || !(item.value(scope) instanceof GamaKmlExport)) { return null; }
+			System.out.println("item:" + item.value(scope));
+			kml = (GamaKmlExport) item.value(scope);
+			System.out.println("kml:" + kml);
+			
+			if (kml == null) { return null; }
+
+			exportKML(scope,kml, path);
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -381,6 +392,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return Cast.asString(scope, file.value(scope));
 	}
 
+	private static void exportKML(IScope scope, GamaKmlExport kml, String path) {
+		kml.saveAsKml(scope, path);
+	}
 	private static void createParents(final File outputFile) {
 		final File parent = outputFile.getParentFile();
 		if (!parent.exists()) {

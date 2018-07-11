@@ -60,6 +60,7 @@ Export-Package: com.kitfox.svg;
    org.openstreetmap.osmosis.core.plugin,
    org.openstreetmap.osmosis.osmbinary,
    org.openstreetmap.osmosis.core.domain.v0_6",
+ de.micromata.opengis.kml.v_2_2_0,
  geodb,
  gnu.trove,
  gnu.trove.function,
@@ -938,5 +939,6 @@ Bundle-ClassPath: .,
  geotools 14.5/core-0.26.jar,
  streamex 0.6.2/streamex-0.6.4.jar,
  jgrapht 1.0.1/jgrapht-core-1.0.1.jar,
- jgrapht 1.0.1/jgrapht-ext-1.0.1.jar
+ jgrapht 1.0.1/jgrapht-ext-1.0.1.jar,
+ kml/jars/JavaAPIforKml-2.2.1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

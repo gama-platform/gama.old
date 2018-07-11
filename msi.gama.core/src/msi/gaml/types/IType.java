@@ -64,6 +64,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public final static int MATERIAL = 25;
 	public final static int ACTION = 26;
 	public final static int ATTRIBUTES = 27;
+
+	public final static int KML = 29;
 	// Represents the meta-type (type of values type)
 	public final static int TYPE = 28;
 	public final static int AVAILABLE_TYPES = 50;

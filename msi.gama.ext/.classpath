@@ -167,5 +167,10 @@
 	<classpathentry exported="true" kind="lib" path="prefuse 2007-10-21/jars/prefuse.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="kml/jars/JavaAPIforKml-2.2.1.jar" sourcepath="kml/JavaAPIforKml-2.2.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/msi.gama.ext/kml/JavaAPIforKml-2.2.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
