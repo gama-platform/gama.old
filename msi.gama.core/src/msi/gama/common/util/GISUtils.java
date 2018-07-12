@@ -11,6 +11,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class GISUtils {
 
+	//ugly method to manage Google CRS.... hoping that it is better managed by the next versions of Geotools
 	public static CoordinateReferenceSystem manageGoogleCRS(URL url)  {
 		CoordinateReferenceSystem crs = null;
 		try {
