@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.util.GISUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -88,10 +92,17 @@ public class GamaShapeFile extends GamaGisFile {
 				final SimpleFeatureCollection features = source.getFeatures();
 				try {
 					crs1 = source.getInfo().getCRS();
+					
 				} catch (final Exception e) {
 					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
 				}
 				env = source.getBounds();
+				if (crs1 == null) {
+					crs1 = GISUtils.manageGoogleCRS(url);
+					if (crs1 != null)
+						env = new ReferencedEnvelope(env, crs1);
+				}
+				
 				if (crs1 != null) {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
@@ -287,8 +298,12 @@ public class GamaShapeFile extends GamaGisFile {
 	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
 		ShapefileDataStore store = null;
 		try {
-			store = getDataStore(getFile(scope).toURI().toURL());
-			return store.getFeatureSource().getInfo().getCRS();
+			URL url = getFile(scope).toURI().toURL();
+			store = getDataStore(url);
+			CoordinateReferenceSystem crs = store.getFeatureSource().getInfo().getCRS();
+			if (crs == null) 
+				crs = GISUtils.manageGoogleCRS(url);
+			return crs;
 		} catch (final IOException e) {
 			return null;
 		} finally {

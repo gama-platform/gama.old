@@ -41,7 +41,7 @@ public class KmlOp {
 			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
 			see = { "add_geometry", "add_icon", "add_label"})
 	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
-			double orientation, double scale, String file) throws GamaRuntimeException {
+			double scale , double orientation, String file) throws GamaRuntimeException {
 		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
 		GamaDate currentDate = scope.getClock().getCurrentDate();
 		GamaDate endDate = Dates.plusDuration(scope, currentDate, scope.getClock().getStepInSeconds());
@@ -57,7 +57,7 @@ public class KmlOp {
 			value = "the kml export manager with new icons: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
 			see = { "add_geometry", "add_icon"})
 	public static GamaKmlExport addIcon(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
-			double orientation, double scale, String file) throws GamaRuntimeException {
+			double scale, double orientation , String file) throws GamaRuntimeException {
 		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
 		String styleName = loc.stringValue(scope) + ":" + loc.toString(); 
 		kml.defIconStyle(styleName,FileUtils.constructAbsoluteFilePath(scope, file, true),scale, orientation);  

@@ -51,15 +51,7 @@ public class GamaKmlExport{
 		doc = kml.createAndSetDocument();
 		folders = new HashMap<String, KmlFolder>();
 	}
-
-	public KmlFolder addFolder(String label, String beginDate, String endDate) {
-		KmlFolder kf = new KmlFolder(doc, label, beginDate, endDate);
-		folders.put(label, kf);
-		return kf;
-	}
-
 	
-
 	public KmlFolder addFolder(String label, GamaDate beginDate, GamaDate endDate) {
 		KmlFolder kf = new KmlFolder(doc, label, dateToKml(beginDate),
 				dateToKml(endDate));
@@ -67,46 +59,10 @@ public class GamaKmlExport{
 		return kf;
 	}
 
-	
-	public void addLabel(IScope scope, GamaPoint loc, 
-			GamaDate beginDate, GamaDate endDate, String name, String description,
-			String styleName) {
-		getDefaultFolder().addLabel(scope,loc, dateToKml(beginDate),
-				dateToKml(endDate), name, description, styleName);
-	}
-
-	
-	public void addLabel(IScope scope, String foldname, GamaPoint loc, GamaDate beginDate, GamaDate endDate, String name,
-			String description, String styleName) {
-		getFolder(foldname).addLabel(scope,loc, dateToKml(beginDate),
-				dateToKml(endDate), name, description, styleName);
-	}
-
-	public void add3DModel(IScope scope, GamaPoint loc, double orientation,
-			double scale, String beginDate, String endDate, String daefile) {
-		getDefaultFolder().add3DModel(scope,loc, orientation, scale,
-				beginDate, endDate, daefile);
-	}
-
 
 	public void add3DModel(IScope scope, GamaPoint loc, double orientation,
 			double scale, GamaDate beginDate, GamaDate endDate, String daefile) {
 		getDefaultFolder().add3DModel(scope,loc, orientation, scale,
-				dateToKml(beginDate), dateToKml(endDate), daefile);
-	}
-
-	public void add3DModel(IScope scope, String foldname,GamaPoint loc,
-			double orientation, double scale, String beginDate, String endDate,
-			String daefile) {
-		getFolder(foldname).add3DModel(scope,loc, orientation, scale,
-				beginDate, endDate, daefile);
-	}
-
-	
-	public void add3DModel(IScope scope,String foldname, GamaPoint loc,
-			double orientation, double scale, GamaDate beginDate, GamaDate endDate,
-			String daefile) {
-		getFolder(foldname).add3DModel(scope,loc, orientation, scale,
 				dateToKml(beginDate), dateToKml(endDate), daefile);
 	}
 
@@ -117,20 +73,7 @@ public class GamaKmlExport{
 				dateToKml(endDate), geom, styleName, height);
 	}
 
-	public void addGeometry(IScope scope, String foldname, String label, String beginDate,
-			String endDate, IShape geom, String styleName, double height) {
-		getFolder(foldname).addGeometry(scope,label, beginDate, endDate, geom,
-				styleName, height);
-	}
 
-	public void addGeometry(IScope scope, String foldname, String label, GamaDate beginDate,
-			GamaDate endDate, IShape geom, String styleName, double height) {
-		getFolder(foldname).addGeometry(scope,label, dateToKml(beginDate),
-				dateToKml(endDate), geom, styleName, height);
-	}
-
-	
-	
 
 	/**
 	 * Defines a new style to be used with addStyledRecord
@@ -258,7 +201,19 @@ public class GamaKmlExport{
 	}
 
 	
+	public void addLabel(IScope scope, GamaPoint loc, 
+			GamaDate beginDate, GamaDate endDate, String name, String description,
+			String styleName) {
+		getDefaultFolder().addLabel(scope,loc, dateToKml(beginDate),
+				dateToKml(endDate), name, description, styleName);
+	}
+
 	
+	public void addLabel(IScope scope, String foldname, GamaPoint loc, GamaDate beginDate, GamaDate endDate, String name,
+			String description, String styleName) {
+		getFolder(foldname).addLabel(scope,loc, dateToKml(beginDate),
+				dateToKml(endDate), name, description, styleName);
+	}
 	public class KmlFolder {
 		public Folder fold;
 		static final String ERR_HEADER = "Kml Export: ";
@@ -354,6 +309,7 @@ public class GamaKmlExport{
 					"#" + styleName);
 			placemark.setName(label);
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
+			
 			IShape shapeTM = Spatial.Projections.transform_CRS(scope, shape, "EPSG:4326");
 			Geometry geom = shapeTM.getInnerGeometry();
 			

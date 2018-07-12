@@ -363,9 +363,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} else if (type.equals("kml")) {
 			GamaKmlExport kml;
 			if (item == null || !(item.value(scope) instanceof GamaKmlExport)) { return null; }
-			System.out.println("item:" + item.value(scope));
 			kml = (GamaKmlExport) item.value(scope);
-			System.out.println("kml:" + kml);
 			
 			if (kml == null) { return null; }
 
