@@ -115,7 +115,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml"},
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz"},
 				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
@@ -368,6 +368,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (kml == null) { return null; }
 
 			exportKML(scope,kml, path);
+		} else if (type.equals("kmz")) {
+			GamaKmlExport kml;
+			if (item == null || !(item.value(scope) instanceof GamaKmlExport)) { return null; }
+			kml = (GamaKmlExport) item.value(scope);
+			
+			if (kml == null) { return null; }
+
+			exportKMZ(scope,kml, path);
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -392,6 +400,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	private static void exportKML(IScope scope, GamaKmlExport kml, String path) {
 		kml.saveAsKml(scope, path);
+	}
+	
+	private static void exportKMZ(IScope scope, GamaKmlExport kml, String path) {
+		kml.saveAsKmz(scope, path);
 	}
 	private static void createParents(final File outputFile) {
 		final File parent = outputFile.getParentFile();
