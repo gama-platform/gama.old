@@ -73,7 +73,7 @@ species Host {
 	//Location of the agent among the grid
 	sir_grid myPlace;
 	//Count of neighbors infected 
-    int ngb_infected_number function: {self neighbors_at(neighbours_size) count(each.is_infected)};
+    int ngb_infected_number function: self neighbors_at(neighbours_size) count(each.is_infected);
 	
 	init {
 		//The location is chosen randomly

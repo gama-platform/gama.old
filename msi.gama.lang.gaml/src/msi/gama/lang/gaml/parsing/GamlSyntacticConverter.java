@@ -153,8 +153,9 @@ public class GamlSyntacticConverter {
 		final File path = GamlResourceServices.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
 		final SyntacticModelElement model =
 				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), path/* , imps */);
-		if (prgm != null)
+		if (prgm != null) {
 			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
+		}
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getStatementsOf(m), errors);
 		// model.printStats();
@@ -179,8 +180,7 @@ public class GamlSyntacticConverter {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) { return null; }
 		final List<Pragma> pragmas = m.getPragmas();
 		final List<String> result = new ArrayList<>();
-		if (pragmas.isEmpty())
-			return null;
+		if (pragmas.isEmpty()) { return null; }
 		for (int i = 0; i < pragmas.size(); i++) {
 			final String pragma = pragmas.get(i).getName();
 			result.add(pragma);
@@ -254,7 +254,7 @@ public class GamlSyntacticConverter {
 				// "action ID1 type: type1 { arg ID2 type: type2; arg ID3 type:
 				// type3; ...}"
 				final Block b = def.getBlock();
-				if (b != null && b.getFunction() == null) {
+				if (b != null /* && b.getFunction() == null */) {
 					elt.setKeyword(ACTION);
 					keyword = ACTION;
 				}
@@ -344,14 +344,14 @@ public class GamlSyntacticConverter {
 
 	public void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
 		if (block != null) {
-			final Expression function = block.getFunction();
-			if (function != null) {
-				// If it is a function (and not a regular block), we add it as a
-				// facet
-				addFacet(elt, FUNCTION, convExpr(function, errors), errors);
-			} else {
-				convStatements(elt, EGaml.getStatementsOf(block), errors);
-			}
+			// final Expression function = block.getFunction();
+			// if (function != null) {
+			// // If it is a function (and not a regular block), we add it as a
+			// // facet
+			// addFacet(elt, FUNCTION, convExpr(function, errors), errors);
+			// } else {
+			convStatements(elt, EGaml.getStatementsOf(block), errors);
+			// }
 		}
 	}
 
@@ -362,8 +362,9 @@ public class GamlSyntacticConverter {
 			// addWarning("Double definition of facet " + key + ". Only the last one will be considered",
 			// e.getElement(),
 			// errors);
-		} else
+		} else {
 			e.setFacet(key, expr);
+		}
 	}
 
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
@@ -534,8 +535,9 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription ed = findExpr(stm, errors);
 		addFacet(elt, NAME, ed, errors);
 		addFacet(elt, TITLE, ed, errors);
-		if (!elt.hasFacet(TYPE))
+		if (!elt.hasFacet(TYPE)) {
 			addFacet(elt, TYPE, convertToLabel(null, HEADLESS_UI), errors);
+		}
 	}
 
 	private String convertKeyword(final String k, final String upper) {

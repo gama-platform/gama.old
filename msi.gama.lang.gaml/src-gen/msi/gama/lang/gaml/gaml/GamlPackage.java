@@ -216,22 +216,13 @@ public interface GamlPackage extends EPackage
   int BLOCK__STATEMENTS = 0;
 
   /**
-   * The feature id for the '<em><b>Function</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BLOCK__FUNCTION = 1;
-
-  /**
    * The number of structural features of the '<em>Block</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int BLOCK_FEATURE_COUNT = 2;
+  int BLOCK_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl <em>Definition</em>}' class.
@@ -4067,17 +4058,6 @@ public interface GamlPackage extends EPackage
   EReference getBlock_Statements();
 
   /**
-   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Block#getFunction <em>Function</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Function</em>'.
-   * @see msi.gama.lang.gaml.gaml.Block#getFunction()
-   * @see #getBlock()
-   * @generated
-   */
-  EReference getBlock_Function();
-
-  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Import <em>Import</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5467,14 +5447,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference BLOCK__STATEMENTS = eINSTANCE.getBlock_Statements();
-
-    /**
-     * The meta object literal for the '<em><b>Function</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference BLOCK__FUNCTION = eINSTANCE.getBlock_Function();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ImportImpl <em>Import</em>}' class.

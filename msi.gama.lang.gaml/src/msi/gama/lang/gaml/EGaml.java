@@ -172,13 +172,15 @@ public class EGaml {
 		@Override
 		public Boolean caseStatement(final Statement object) {
 			return ((StatementImpl) object).eIsSet(GamlPackage.STATEMENT__BLOCK)
-					&& ((StatementImpl) object).getBlock().getFunction() == null;
+			// && ((StatementImpl) object).getBlock().getFunction() == null
+			;
 		}
 
 		@Override
 		public Boolean caseHeadlessExperiment(final HeadlessExperiment object) {
 			return ((HeadlessExperimentImpl) object).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__BLOCK)
-					&& object.getBlock().getFunction() == null;
+			// && object.getBlock().getFunction() == null
+			;
 		}
 
 		@Override

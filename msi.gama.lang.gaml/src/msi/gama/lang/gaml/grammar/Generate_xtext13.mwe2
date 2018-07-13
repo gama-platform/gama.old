@@ -29,8 +29,8 @@ Workflow {
 			project = model.project.StandardProjectConfig {
 				baseName = "msi.gama.lang.gaml"
 				rootPath = ".."
+				
 				runtime = {
-
 					name = runtimeProject
 				}
 				runtimeTest = {

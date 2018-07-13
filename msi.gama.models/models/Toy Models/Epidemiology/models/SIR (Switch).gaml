@@ -113,7 +113,7 @@ species new_scheduler schedules: (Host + IBM_model + Math_model + switch_model) 
 species switch_model schedules: [] {
 	int threshold_to_IBM <- 45; // threshold under which the model swith to IBM
 	int threshold_to_Maths <- 50; // threshold under which the model swith to Maths model 
-	bool start_with_IBM function: { (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) };
+	bool start_with_IBM function:  (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) ;
 
 	//Switch the model used to IBM when the threshold is higher than the population
 	reflex switch_to_IBM when: (current_model.model_type = 'Maths') {
@@ -251,9 +251,9 @@ species Host schedules: [] skills: [moving] {
 	sir_grid myPlace;
 	
 	/* next function computes the number of neighbours of the agent */
-	int ngb_number function: {
+	int ngb_number function: 
 		length(((self) neighbors_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
-	};
+	;
 	
 	init {
 		myPlace <- one_of(sir_grid as list);

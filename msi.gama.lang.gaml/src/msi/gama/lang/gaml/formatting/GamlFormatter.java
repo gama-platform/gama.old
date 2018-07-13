@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlFormatter.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlFormatter.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,25 +24,24 @@ import msi.gama.lang.gaml.services.GamlGrammarAccess.BlockElements;
 /**
  * This class contains custom formatting description.
  * 
- * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#formatting
- * on how and when to use it
+ * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#formatting on how and when to use it
  * 
- * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an
- * example
+ * Also see {@link org.eclipse.xtext.xtext.XtextFormattingTokenSerializer} as an example
  */
 public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 	@Override
 	public ITokenStream createFormatterStream(final EObject context, final String indent, final ITokenStream out,
 			final boolean preserveWhitespaces) {
-		if (context == null || !context.eResource().getErrors().isEmpty())
+		if (context == null || !context.eResource().getErrors().isEmpty()) {
 			// Fixes #2018
 			return out;
+		}
 		return super.createFormatterStream(context, indent, out, preserveWhitespaces);
 	}
 
-	static String[] keywords1SpaceAround = new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-",
-			"/", "*" };
+	static String[] keywords1SpaceAround =
+			new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-", "/", "*" };
 	static String[] keywordNoSpaceAfter = new String[] { ".", "[", "(", "::", "°", "!" };
 	static String[] keywordNoSpaceBefore = new String[] { "]", ".", ")", ",", ":", "::" };
 	static String[] keyword1SpaceAfter = new String[] { ",", ":" };
@@ -109,7 +107,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 		// Regular blocks
 		final BlockElements elem = g.getBlockAccess();
-		handleBlock(c, elem.getLeftCurlyBracketKeyword_1(), elem.getRightCurlyBracketKeyword_2_1_1(), 2);
+		handleBlock(c, elem.getLeftCurlyBracketKeyword_1(), elem.getRightCurlyBracketKeyword_2_1(), 2);
 		handleBlock(c, g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1(),
 				g.getDisplayBlockAccess().getRightCurlyBracketKeyword_3(), 2);
 		// handleBlock(c,
@@ -121,7 +119,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		handleBlock(c, g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0(),
 				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2(), 2);
 		// Functions
-		handleBlockTermination(c, g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1(), 1);
+		handleBlockTermination(c, g.getBlockAccess().getRightCurlyBracketKeyword_2_1(), 1);
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
 		// Double '}' closing elements should not be separated by 2 linewraps
@@ -129,8 +127,8 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		//
 		// c.setNoLinewrap().between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1(),
 		// g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
-		c.setLinewrap(1).between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1(),
-				g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		c.setLinewrap(1).between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1(),
+				g.getBlockAccess().getRightCurlyBracketKeyword_2_1());
 		c.setLinewrap(2).after(g.getS_SpeciesRule());
 		c.setLinewrap(2).after(g.getS_ExperimentRule());
 		c.setLinewrap(3).before(g.getS_GlobalRule());

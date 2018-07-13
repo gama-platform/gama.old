@@ -9,6 +9,10 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import static msi.gaml.descriptions.VariableDescription.FUNCTION_DEPENDENCIES_FACETS;
+import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
+import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -268,14 +272,14 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public List<String> getUpdatableAttributeNames() {
-		return Lists.newArrayList(
-				Iterables.filter(getOrderedAttributeNames(false), input -> getAttribute(input).isUpdatable()));
+		return Lists.newArrayList(Iterables.filter(getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS),
+				input -> getAttribute(input).isUpdatable()));
 	}
 
-	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
+	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
 		// TODO Do it once for built-in species
-		final Collection<String> accumulator =
-				parent != null && parent != this ? parent.getOrderedAttributeNames(forInit) : new TLinkedHashSet<>();
+		final Collection<String> accumulator = parent != null && parent != this
+				? parent.getOrderedAttributeNames(facetsToConsider) : new TLinkedHashSet<>();
 		if (attributes == null) { return accumulator; }
 		if (attributes.size() <= 1) {
 			accumulator.addAll(attributes.keySet());
@@ -284,7 +288,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 		final VariableDescription shape = attributes.get(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_SET : shape.getDependencies(forInit);
+				shape == null ? Collections.EMPTY_SET : shape.getDependencies(facetsToConsider, false, true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
@@ -292,7 +296,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		attributes.forEachEntry((name, var) -> {
 
 			dependencies.addVertex(var);
-			final Collection<VariableDescription> varDependencies = var.getDependencies(forInit);
+			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
 			for (final VariableDescription newVar : varDependencies) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
@@ -332,7 +336,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 		final VariableDescription shape = attributes.get(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_SET : shape.getDependencies(true);
+				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
@@ -344,7 +348,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				dependencies.addEdge(shape, var);
 			}
 
-			for (final VariableDescription newVar : var.getDependencies(true)) {
+			for (final VariableDescription newVar : var.getDependencies(INIT_DEPENDENCIES_FACETS, false, true)) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
 					dependencies.addEdge(newVar, var);
@@ -352,6 +356,49 @@ public abstract class TypeDescription extends SymbolDescription {
 			}
 			return true;
 		});
+
+		final DirectedGraph<VariableDescription, Object> functionDependencies =
+				new DefaultDirectedGraph<>(Object.class);
+		attributes.forEachEntry((aName, var) -> {
+			if (!var.hasFacet(FUNCTION)) { return true; }
+			functionDependencies.addVertex(var);
+
+			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
+				if (attributes.containsValue(newVar)) {
+					functionDependencies.addVertex(newVar);
+					functionDependencies.addEdge(newVar, var);
+				}
+			}
+			return true;
+		});
+
+		// Verifying functions
+		// attributes.forEachEntry((aName, var) -> {
+		// if (var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false).contains(var)) {
+		// var.error("Attributes declared as functions cannot contain references to themselves in their function",
+		// FUNCTION, FUNCTION);
+		// return false;
+		// }
+		// return true;
+		// });
+
+		if (!functionDependencies.vertexSet().isEmpty()) {
+			final CycleDetector functionCycleDetector = new CycleDetector<>(functionDependencies);
+			if (functionCycleDetector.detectCycles()) {
+				final Set<VariableDescription> inCycles = functionCycleDetector.findCycles();
+				final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
+				for (final VariableDescription vd : inCycles) {
+					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
+						continue;
+					}
+					final Collection<String> strings = new HashSet(names);
+					vd.error("Cycle detected between " + vd.getName() + " and these variables: " + strings
+							+ "; attributes declared as functions cannot contain references to themselves in their function");
+				}
+				return false;
+
+			}
+		}
 
 		final CycleDetector cycleDetector = new CycleDetector<>(dependencies);
 		if (cycleDetector.detectCycles()) {

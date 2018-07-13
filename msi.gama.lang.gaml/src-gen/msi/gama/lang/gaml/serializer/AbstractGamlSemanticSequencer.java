@@ -537,7 +537,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (
 	 *         ((key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression) | 
 	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
-	 *         ((key='function:' | key='->') expr=Expression) | 
+	 *         (key='->' (expr=Expression | expr=Expression)) | 
 	 *         (key=TypeFacetKey (expr=TypeRef | expr=Expression)) | 
 	 *         (key=ActionFacetKey (expr=ActionRef | block=Block)) | 
 	 *         (key=VarFacetKey expr=VariableRef)
@@ -798,7 +798,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     Block returns Block
 	 *
 	 * Constraint:
-	 *     (function=Expression | statements+=Statement+)?
+	 *     statements+=Statement*
 	 */
 	protected void sequence_Block(ISerializationContext context, Block semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1054,7 +1054,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     FunctionFacet returns Facet
 	 *
 	 * Constraint:
-	 *     ((key='function:' | key='->') expr=Expression)
+	 *     (key='->' (expr=Expression | expr=Expression))
 	 */
 	protected void sequence_FunctionFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1373,7 +1373,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     displayStatement returns Statement
 	 *
 	 * Constraint:
-	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? (expr=Expression | expr=TypeRef) facets+=Facet* block=Block?)
+	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? expr=Expression facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_1Expr_Facets_BlockOrEnd(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

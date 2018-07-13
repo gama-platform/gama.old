@@ -110,7 +110,11 @@ public class GamaShapeFile extends GamaGisFile {
 						throw e;
 					}
 				}
-				number = features.size();
+				try {
+					number = features.size();
+				} catch (final Exception e) {
+					System.out.println("Error in loading shapefile: " + e.getMessage());
+				}
 				final java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
 				for (final AttributeDescriptor desc : att_list) {
 					String type;

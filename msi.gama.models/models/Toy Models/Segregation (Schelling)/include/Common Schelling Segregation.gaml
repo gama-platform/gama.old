@@ -64,14 +64,14 @@ species base {
 	//List of all the neighbours agents
 	list<base> my_neighbours;
 	//computation of the similar neighbours
-	int similar_nearby -> {
+	int similar_nearby -> 
 		(my_neighbours count (each.color = color))
-	};
+	;
 	//Computation of the total neighbours nearby
-	int total_nearby -> {
+	int total_nearby -> 
 		length (my_neighbours)
-	};
+	;
 	//Boolean to know if the agent is happy or not
-	bool is_happy -> {similar_nearby >= (percent_similar_wanted * total_nearby )} ;
+	bool is_happy -> similar_nearby >= (percent_similar_wanted * total_nearby ) ;
 }
 

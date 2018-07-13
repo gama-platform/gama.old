@@ -43,7 +43,7 @@ global  {
 //Species ant that will move and follow a final state machine
 species ant skills: [ moving ] control: fsm { 
 	rgb color <- #white ; 
-	ant_grid place -> {ant_grid (location)} ;
+	ant_grid place -> ant_grid (location) ;
 	
 	//Reflex to make the ant wander
 	reflex wandering { 

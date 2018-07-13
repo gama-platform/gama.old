@@ -54,7 +54,7 @@ species people parent: base {
 	//Building in which the agent lives
 	space current_building <- nil;
 	//List of all the neighbour people agents
-	list<people> my_neighbours -> {people at_distance neighbours_distance}; 
+	list<people> my_neighbours -> people at_distance neighbours_distance; 
 	
 	//Action to move to a new place
 	action move_to_new_place {  

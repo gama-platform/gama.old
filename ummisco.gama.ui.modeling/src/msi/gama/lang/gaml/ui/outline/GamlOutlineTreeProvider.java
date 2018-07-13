@@ -46,7 +46,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 
 	@Override
 	public void createChildren(final IOutlineNode parentNode, final EObject stm) {
-		if (stm != null && parentNode.hasChildren())
+		if (stm != null && parentNode.hasChildren()) {
 			new GamlSwitch<Object>() {
 
 				@Override
@@ -92,6 +92,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 				}
 
 			}.doSwitch(stm);
+		}
 	}
 
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Block block) {
@@ -137,7 +138,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 		if (!(s instanceof S_Definition)) { return false; }
 		final String key = EGaml.getKeyOf(s);
 		if (IKeyword.ACTION.equals(key)) { return false; }
-		if (s.getBlock() != null && s.getBlock().getFunction() == null) { return false; }
+		// if (s.getBlock() != null && s.getBlock().getFunction() == null) { return false; }
 		final SymbolProto p = DescriptionFactory.getStatementProto(key);
 		if (p != null && p.getKind() == ISymbolKind.BATCH_METHOD) { return false; }
 		return true;

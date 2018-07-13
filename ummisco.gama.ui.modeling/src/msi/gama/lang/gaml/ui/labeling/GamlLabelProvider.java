@@ -125,7 +125,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		String type = EGaml.getKeyOf(ele);
 		String key = type.equals(IKeyword.CONST) ? type : null;
 		final Map<String, Facet> map = EGaml.getFacetsMapOf(ele);
-		if (ele.getBlock() != null && ele.getBlock().getFunction() != null) {
+		if (ele.getBlock() != null /* && ele.getBlock().getFunction() != null */) {
 			key = "function";
 		} else {
 			if (map.containsKey(IKeyword.FUNCTION) || map.containsKey("->")) {
@@ -242,8 +242,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	// Statement : keyword.value
 	public String image(final Statement ele) {
 		final String kw = EGaml.getKeyOf(ele);
-		if (kw == null)
-			return null;
+		if (kw == null) { return null; }
 		if (kw.equals(IKeyword.PARAMETER)) { return parameterImage(ele); }
 		if (kw.equals(IKeyword.VAR) || kw.equals(IKeyword.CONST)) {
 			for (final Facet f : EGaml.getFacetsOf(ele)) {

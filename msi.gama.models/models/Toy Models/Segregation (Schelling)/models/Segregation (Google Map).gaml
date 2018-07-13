@@ -52,7 +52,7 @@ grid space width: dimensions height: dimensions neighbors: 8 use_individual_shap
 species people parent: base  {
 	rgb color <- colors at (rnd (number_of_groups - 1));
 	//List of all the neighbours
-	list<people> my_neighbours -> {(self neighbors_at neighbours_distance) of_species people};
+	list<people> my_neighbours -> (self neighbors_at neighbours_distance) of_species people;
 	
 	//Launched at the initialization of the agent
 	init {

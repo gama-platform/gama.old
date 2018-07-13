@@ -21,7 +21,6 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Block">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/function"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Import">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Import/importURI"/>

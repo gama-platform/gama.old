@@ -66,7 +66,7 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 	
 	/**
 	 * Ambiguous syntax:
-	 *     '<-' | 'value:'
+	 *     'value:' | '<-'
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     expr=Expression (ambiguity) value=Expression

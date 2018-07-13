@@ -13,9 +13,9 @@ global {
 			S<-S-(int(self)*10000);
 		}
 	}
-	list S_3d->{aSIR collect each.S};
-	list I_3d->{aSIR collect each.I};
-	list R_3d->{aSIR collect each.R};
+	list S_3d->aSIR collect each.S;
+	list I_3d->aSIR collect each.I;
+	list R_3d->aSIR collect each.R;
 	reflex ss when: cycle>=40{
     	do pause;
 		

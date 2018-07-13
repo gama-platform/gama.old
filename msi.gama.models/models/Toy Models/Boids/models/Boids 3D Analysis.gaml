@@ -158,7 +158,7 @@ species flock
 	//Species that will represent the boids agents captured or inside a flock
 	species boids_delegation parent: boids topology: topology(world.shape)  
 	{
-		list<boids> others -> {( (boids_delegation overlapping (shape + range))) - self};
+		list<boids> others -> ( (boids_delegation overlapping (shape + range))) - self;
  
  		//Action to compute the mass center of the flock
 		action compute_mass_center type: point 

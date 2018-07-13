@@ -69,7 +69,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 //Species ant that will move
 species ant skills: [ moving ] {     
 	rgb color <- #red;
-	ant_grid place function: {ant_grid ( location )};
+	ant_grid place function: ant_grid ( location );
 	bool hasFood <- false; 
 	bool hasRoad <- false update: place . road > 0.05;
 	

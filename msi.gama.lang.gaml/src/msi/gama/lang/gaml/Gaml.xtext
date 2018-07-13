@@ -64,7 +64,7 @@ Statement:
 	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try | S_Equations))) | S_Display ;
 
 S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? (=>expr=Expression | expr=TypeRef) (facets+=Facet)* (block=Block | ";");
+	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? (expr=Expression) (facets+=Facet)* (block=Block | ";");
 
 S_Do:
 	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
@@ -73,10 +73,10 @@ S_Loop:
 	key="loop" (name=ID)? (facets+=Facet)* block=Block;
 
 S_If:
-	key='if' (firstFacet="condition:")? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
+	key='if' (firstFacet="condition:")? expr=Expression block=Block (-> 'else' else=(S_If | Block))?;
 	
 S_Try:
-	key='try' block=Block (=> 'catch' catch=Block) ?
+	key='try' block=Block (-> 'catch' catch=Block) ?
 ;
 
 S_Other:
@@ -90,7 +90,7 @@ S_Return:
  * DECLARATIONS
  */
 S_Declaration:
-	=>S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
+	->S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
 
 S_Reflex:
 	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
@@ -144,27 +144,7 @@ S_Display:
 displayBlock returns Block:
 	{Block} '{' (statements+=displayStatement)* '}'
 ;
-//
-//ExperimentBlock returns Block:
-//	{Block} '{' (statements+=Statement)* '}'
-//;
 
-//experimentStatement returns Statement:
-//	Statement | S_Output
-//;
-//
-//
-//S_Output returns Statement:
-//	key=("output"|"permanent") (facets+=Facet)* block=outputBlock?
-//;
-
-//outputBlock returns Block:
-//	{Block} '{' (statements += outputStatement)* '}'
-//;
-
-//outputStatement returns Statement:
-//	Statement | S_Display 
-//;
 displayStatement returns Statement:
 	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
 ;
@@ -191,7 +171,7 @@ _ExperimentKey:
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status" | "highlight" | "focus_on" ;
+	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status" | "highlight" | "focus_on" | "layout" ;
 
 _LayerKey:
 	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
@@ -224,7 +204,7 @@ ArgumentDefinition:
  * Facets
  */
 Facet:
-	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | VarFacet | ActionFacet;
+	ActionFacet | DefinitionFacet  | ClassicFacet | TypeFacet | VarFacet | FunctionFacet  ;
 
 FirstFacetKey:
 	DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
@@ -239,7 +219,7 @@ TypeFacetKey:
 
 
 SpecialFacetKey:
-	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
+	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "layout:" | 
 	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
 ActionFacetKey:
@@ -252,13 +232,14 @@ ClassicFacet returns Facet:
 	(key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression;
 
 DefinitionFacet returns Facet:
-	((=> key=DefinitionFacetKey) name=(Valid_ID | STRING));
+	((-> key=DefinitionFacetKey) name=(Valid_ID | STRING));
 
-FunctionFacet returns Facet:
-	(key='function:' | key='->') '{' expr=Expression '}';
+FunctionFacet returns Facet: 
+	key = '->' (=>(expr= Expression) | ('{' expr=Expression '}'))
+;
 
 TypeFacet returns Facet:
-	key=TypeFacetKey (=>(expr=TypeRef) | expr= Expression);
+	key=TypeFacetKey (->(expr=TypeRef) | expr= Expression);
 
 ActionFacet returns Facet:
 	key=ActionFacetKey (expr=ActionRef | block=Block);
@@ -271,8 +252,7 @@ VarFacet returns Facet:
  * Blocks. An ordered list of statements inside curly brackets
  */
 Block:
-	{Block} '{'
-	(=> ((function=Expression) '}') | ((statements+=Statement)* '}'));
+	{Block} '{' ((statements+=Statement)* '}');
 
 	/**
  * Expressions
@@ -352,9 +332,6 @@ Unary returns Expression:
 	{Unary} ((op=('°'|'#') right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
 
-//Access returns Expression:
-//	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
-//;
 Access returns Expression:
 	Primary ({Access.left = current} (
 		(op='[' args=ExpressionList? ']') | (op="." right=AbstractRef) | (op="." named_exp=STRING)
@@ -400,7 +377,7 @@ TypeRef returns Expression:
 	 {TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) ;
 
 TypeInfo:
-	('<' first=TypeRef ("," second=TypeRef)? =>'>') 
+	('<' first=TypeRef ("," second=TypeRef)? ->'>') 
 ;
 SkillRef returns Expression:
 	{SkillRef} ref=[SkillFakeDefinition|ID];
@@ -463,8 +440,6 @@ TerminalExpression:
 terminal KEYWORD:
 	'each' | 'self' | 'myself' | 'nil' | 'super' ;
 
-//terminal INTEGER : ('0'..'9')+;
-
 terminal INTEGER:
 	'0' | ('1'..'9' ('0'..'9')*);
 
@@ -480,9 +455,6 @@ terminal COLOR:
 terminal DOUBLE:
 	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' |
 '-')? '0'..'9'+)?;
-//DOUBLE hidden(): INTEGER '.' (EXP_INT | INTEGER); // INT ? '.' (EXT_INT | INT);
-
-//terminal EXP_INT: INTEGER ('e'|'E')('-'|'+')? INTEGER;
 
 terminal STRING:
 	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\\') | !('\\' | '"'))* '"' | "'" ('\\' ('b' | 't' | 'n' | 'f' |

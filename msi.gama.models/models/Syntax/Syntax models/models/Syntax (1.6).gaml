@@ -41,11 +41,11 @@ global skills: [moving] control: fsm {
 	list<float> f <- list_with(2000,0.0);
 
 	// Functions can be declared using the regular facet "->" / "function:" 
-	int b1 -> { 100 + length(a1) };
-	int b2 function: { 100 + length(a1) };
+	int b1 ->  100 + length(a1) ;
+	int b2 -> { 100 + length(a1) };
 	// ... or using a block (like a statement -- note the absence of semi-column at the end)
 	int b3 {
-		100 + length(a1)
+		return 100 + length(a1);
 	}
 	state first_state initial: true {
 	//...
@@ -317,7 +317,7 @@ species species1 mirrors: species0 skills: [moving] {
 	float speed1 update: self compute_speed_using_an_action (); // No parameter as "max" is defaulted
 	float speed2 update: compute_speed_using_a_functional_attribute;
 	float compute_speed_using_a_functional_attribute {
-		speed of target
+		return speed of target;
 	}
 	float compute_speed_using_an_action (int max <- 100) {
 		return min([max, int(speed of target)]);

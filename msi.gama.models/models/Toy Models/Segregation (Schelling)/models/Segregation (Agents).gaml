@@ -40,7 +40,7 @@ species people parent: base  {
 	//Color of the people agent
 	rgb color <- colors at (rnd (number_of_groups - 1));
 	//List of all the neighbours of the agent
-	list<people> my_neighbours -> {people at_distance neighbours_distance} ;
+	list<people> my_neighbours -> people at_distance neighbours_distance ;
 	//Cell representing the place of the agent
 	space my_place;
 	init {

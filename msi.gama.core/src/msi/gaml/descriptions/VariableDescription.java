@@ -51,10 +51,11 @@ public class VariableDescription extends SymbolDescription {
 	// }
 
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
-	private static Set<String> INIT_DEPENDENCIES_FACETS =
+	public static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE).build();
-	private static Set<String> UPDATE_DEPENDENCIES_FACETS =
+	public static Set<String> UPDATE_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
+	public static Set<String> FUNCTION_DEPENDENCIES_FACETS = ImmutableSet.<String> builder().add(FUNCTION).build();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -208,7 +209,8 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	public Collection<VariableDescription> getDependencies(final boolean forInit) {
+	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
+			final boolean includingSpecies) {
 
 		final ICollector<VariableDescription> result = new Collector.Unique<>();
 		final Collection<String> deps = dependencies.get(getName());
@@ -221,10 +223,10 @@ public class VariableDescription extends SymbolDescription {
 			}
 		}
 
-		this.visitFacets(forInit ? INIT_DEPENDENCIES_FACETS : UPDATE_DEPENDENCIES_FACETS, new FacetVisitor() {
+		this.visitFacets(facetsToVisit, new FacetVisitor() {
 
 			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
+			public boolean visit(final String fName, final IExpressionDescription exp) {
 				final IExpression expression = exp.getExpression();
 				if (expression != null) {
 					expression.collectUsedVarsOf(getSpeciesContext(), result);
@@ -237,7 +239,12 @@ public class VariableDescription extends SymbolDescription {
 			final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
 			sd.collectUsedVarsOf(mySpecies, result);
 		}
-		result.remove(this);
+		if (!includingThis) {
+			result.remove(this);
+		}
+		if (!includingSpecies) {
+			result.removeIf(v -> v.isSyntheticSpeciesContainer());
+		}
 		result.remove(null);
 		return result.items();
 	}

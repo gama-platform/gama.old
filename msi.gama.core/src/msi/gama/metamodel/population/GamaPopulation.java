@@ -9,6 +9,23 @@
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
+import static java.util.Collections.EMPTY_LIST;
+import static java.util.Collections.EMPTY_MAP;
+import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
+import static msi.gama.common.interfaces.IKeyword.CELL_WIDTH;
+import static msi.gama.common.interfaces.IKeyword.EDGE_SPECIES;
+import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
+import static msi.gama.common.interfaces.IKeyword.FILE;
+import static msi.gama.common.interfaces.IKeyword.FILES;
+import static msi.gama.common.interfaces.IKeyword.LOCATION;
+import static msi.gama.common.interfaces.IKeyword.MIRRORS;
+import static msi.gama.common.interfaces.IKeyword.NEIGHBORS;
+import static msi.gama.common.interfaces.IKeyword.NEIGHBOURS;
+import static msi.gama.common.interfaces.IKeyword.SHAPE;
+import static msi.gama.common.interfaces.IKeyword.TARGET;
+import static msi.gama.common.interfaces.IKeyword.WIDTH;
+import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,7 +135,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final Set<IAgent> targets = new THashSet<IAgent>(Cast.asList(scope, listOfTargetAgents.value(scope)));
 			final List<IAgent> toKill = new ArrayList<>();
 			for (final IAgent agent : pop.iterable(scope)) {
-				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
+				final IAgent target = Cast.asAgent(scope, agent.getAttribute(TARGET));
 				if (targets.contains(target)) {
 					targets.remove(target);
 				} else {
@@ -131,7 +148,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final List<Map<String, Object>> attributes = new ArrayList<>();
 			for (final IAgent target : targets) {
 				final Map<String, Object> att = new THashMap<>();
-				att.put("target", target);
+				att.put(TARGET, target);
 				attributes.add(att);
 			}
 			return pop.createAgents(scope, targets.size(), attributes, false, true);
@@ -140,13 +157,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	}
 
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
-		super(0, host == null ? Types.get(IKeyword.EXPERIMENT)
+		super(0, host == null ? Types.get(EXPERIMENT)
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
 		final TypeDescription ecd = species.getDescription();
-		orderedVarNames = ecd.getOrderedAttributeNames(true).toArray(new String[0]);
+		orderedVarNames = ecd.getOrderedAttributeNames(INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
 		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();
 		final int updatableVarsSize = updatableVarNames.size();
 		updatableVars = new IVariable[updatableVarsSize];
@@ -155,8 +172,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			updatableVars[i] = species.getVar(s);
 		}
 		if (species.isMirror() && host != null) {
-			host.getScope().getSimulation()
-					.postEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
+			host.getScope().getSimulation().postEndAction(new MirrorPopulationManagement(species.getFacet(MIRRORS)));
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
 
@@ -307,7 +323,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			a.schedule(scope);
 			// a.scheduleAndExecute(null);
 		}
-		createVariablesFor(scope, list, Collections.EMPTY_LIST);
+		createVariablesFor(scope, list, EMPTY_LIST);
 		fireAgentsAdded(scope, list);
 		return list;
 
@@ -344,17 +360,17 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			// Try to grab the location earlier
 			if (initialValues != null && !initialValues.isEmpty()) {
 				final Map<String, Object> init = initialValues.get(i);
-				if (init.containsKey(IKeyword.SHAPE)) {
-					final Object val = init.get(IKeyword.SHAPE);
+				if (init.containsKey(SHAPE)) {
+					final Object val = init.get(SHAPE);
 					if (val instanceof GamaPoint) {
 						a.setGeometry(new GamaShape((IShape) val));
 					} else {
 						a.setGeometry((IShape) val);
 					}
-					init.remove(IKeyword.SHAPE);
-				} else if (init.containsKey(IKeyword.LOCATION)) {
-					a.setLocation((GamaPoint) init.get(IKeyword.LOCATION));
-					init.remove(IKeyword.LOCATION);
+					init.remove(SHAPE);
+				} else if (init.containsKey(LOCATION)) {
+					a.setLocation((GamaPoint) init.get(LOCATION));
+					init.remove(LOCATION);
 				}
 			}
 			list.add(a);
@@ -388,7 +404,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		for (int i = 0, n = agents.size(); i < n; i++) {
 			final IAgent a = agents.get(i);
 			if (empty) {
-				inits = Collections.EMPTY_MAP;
+				inits = EMPTY_MAP;
 			} else {
 				inits = initialValues.get(i);
 			}
@@ -476,7 +492,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		if (species.isGrid()) {
 			topology = buildGridTopology(scope, species, getHost());
 		} else if (species.isGraph()) {
-			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
+			final IExpression spec = species.getFacet(EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
 			final ISpecies edgeSpecies = scope.getModel().getSpecies(edgeName);
 			final IType<?> edgeType = scope.getType(edgeName);
@@ -494,15 +510,16 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	}
 
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
-		IExpression exp = species.getFacet(IKeyword.WIDTH);
+		IExpression exp = species.getFacet(WIDTH);
 		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
-		final int rows = exp == null ? species.hasFacet(IKeyword.CELL_WIDTH)
-				? (int) (env.getWidth() / Cast.asFloat(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
+		final int rows = exp == null
+				? species.hasFacet(CELL_WIDTH)
+						? (int) (env.getWidth() / Cast.asFloat(scope, species.getFacet(CELL_WIDTH).value(scope))) : 100
 				: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
-		final int columns = exp == null ? species.hasFacet(IKeyword.CELL_HEIGHT)
-				? (int) (env.getHeight() / Cast.asFloat(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
-				: 100 : Cast.asInt(scope, exp.value(scope));
+		final int columns = exp == null ? species.hasFacet(CELL_HEIGHT)
+				? (int) (env.getHeight() / Cast.asFloat(scope, species.getFacet(CELL_HEIGHT).value(scope))) : 100
+				: Cast.asInt(scope, exp.value(scope));
 
 		final boolean isTorus = host.getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
@@ -515,13 +532,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		exp = species.getFacet("optimizer");
 		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));
 
-		exp = species.getFacet(IKeyword.NEIGHBORS);
+		exp = species.getFacet(NEIGHBORS);
 		if (exp == null) {
-			exp = species.getFacet(IKeyword.NEIGHBOURS);
+			exp = species.getFacet(NEIGHBOURS);
 		}
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-		exp = species.getFacet(IKeyword.FILES);
+		exp = species.getFacet(FILES);
 		// AD WARNING: The following line is really UNSAFE !!!
 		final IList<GamaGridFile> files = (IList<GamaGridFile>) (exp != null ? exp.value(scope) : null);
 		GridTopology result;
@@ -529,7 +546,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			result = new GridTopology(scope, host, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
 					optimizer);
 		} else {
-			exp = species.getFacet(IKeyword.FILE);
+			exp = species.getFacet(FILE);
 			final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
 			if (file == null) {
 				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, horizontalOrientation,
@@ -794,6 +811,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * @return
 	 */
 	public static <T extends IAgent> Iterable<T> allLivingAgents(final Iterable<T> iterable) {
-		return Iterables.filter(iterable, GamaPopulation.isLiving);
+		return Iterables.filter(iterable, isLiving);
 	}
 }
