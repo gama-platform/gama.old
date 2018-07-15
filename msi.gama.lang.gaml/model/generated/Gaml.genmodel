@@ -99,12 +99,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Expression/right"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//ArgumentPair"/>
-    <genClasses ecoreClass="Gaml.ecore#//Function">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/action"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/parameters"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/type"/>
-    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//ExpressionList">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ExpressionList/exprs"/>
     </genClasses>
@@ -148,6 +142,12 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Point">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Point/z"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Function">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/action"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Parameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Parameter/builtInFacetKey"/>

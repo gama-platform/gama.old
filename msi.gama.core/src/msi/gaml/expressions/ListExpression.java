@@ -47,17 +47,23 @@ public class ListExpression extends AbstractExpression {
 		return u;
 	}
 
+	public static IExpression create(final IExpression... elements) {
+		return new ListExpression(elements);
+	}
+
 	final IExpression[] elements;
+
 	// private final Object[] values;
 	// private boolean isConst;
 	// private boolean computed;
 
-	ListExpression(final Iterable<? extends IExpression> elements) {
-		this.elements = Iterables.toArray(elements, IExpression.class);
-		// final int n = this.elements.length;
-		// values = new Object[n];
+	ListExpression(final IExpression... elements) {
+		this.elements = elements;
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
-		// isConst();
+	}
+
+	ListExpression(final Iterable<? extends IExpression> elements) {
+		this(Iterables.toArray(elements, IExpression.class));
 	}
 
 	public IExpression[] getElements() {

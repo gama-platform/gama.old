@@ -348,14 +348,10 @@ Primary returns Expression:
 	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
 
 AbstractRef returns Expression:
-	Function | (=>CastingFunction | VariableRef);
+	=>Function | VariableRef;
 
 Function returns Expression:
-	{Function} (action=ActionRef) '(' (parameters=Parameters | args=ExpressionList) ')';
-
-CastingFunction returns Function:
-	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
-
+	{Function} (action=ActionRef) (type=TypeInfo)? '(' (parameters=Parameters | args=ExpressionList) ')';
 
 Parameter returns Expression:
 	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey)) |

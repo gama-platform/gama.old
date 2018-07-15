@@ -10,22 +10,24 @@
 package msi.gaml.operators;
 
 import static com.google.common.collect.Iterables.toArray;
-import static msi.gama.util.ContainerHelper.function;
-import static msi.gama.util.ContainerHelper.inContainer;
-import static msi.gama.util.ContainerHelper.withPredicate;
 import static msi.gama.util.GAML.notNull;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -47,7 +49,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ContainerHelper;
+import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
@@ -79,11 +81,56 @@ import one.util.streamex.StreamEx;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Containers {
 
-	private static <T> Function<T, T> self() {
-		return Function.identity();
+	private static class InterleavingIterator extends AbstractIterator {
+
+		private final Queue<Iterator> queue = new ArrayDeque<>();
+
+		public InterleavingIterator(final Object... objects) {
+			for (final Object object : objects) {
+				if (object instanceof Iterator) {
+					queue.add((Iterator) object);
+				} else if (object instanceof Iterable) {
+					queue.add(((Iterable) object).iterator());
+				} else {
+					queue.add(Iterators.singletonIterator(object));
+				}
+			}
+		}
+
+		@Override
+		protected Object computeNext() {
+			while (!queue.isEmpty()) {
+				final Iterator topIter = queue.poll();
+				if (topIter.hasNext()) {
+					final Object result = topIter.next();
+					queue.offer(topIter);
+					return result;
+				}
+			}
+			return endOfData();
+		}
 	}
 
-	private static Function<?, IList> toLists =
+	public static <T> Function<Object, T> with(final IScope scope, final IExpression filter) {
+		return (t) -> {
+			scope.setEach(t);
+			return (T) filter.value(scope);
+		};
+	}
+
+	public static <T> Predicate<T> by(final IScope scope, final IExpression filter) {
+		return (final T t) -> {
+			scope.setEach(t);
+			return (Boolean) filter.value(scope);
+		};
+	}
+
+	public static <T> Predicate<T> inContainer(final IScope scope, final IContainer l) {
+		final IContainer c = GAML.notNull(scope, l);
+		return (t) -> c.contains(scope, t);
+	}
+
+	private static Function<Object, IList<?>> toLists =
 			(a) -> a instanceof IList ? (IList) a : GamaListFactory.createWithoutCasting(Types.NO_TYPE, a);
 
 	private static StreamEx stream(final IScope scope, final IContainer c) {
@@ -120,8 +167,7 @@ public class Containers {
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from zero to the argument. The range can be increasing or decreasing. Passing 0 will return a singleton list with 0")
 		public static IList range(final IScope scope, final Integer end) {
-			if (end == 0)
-				return GamaListFactory.createWithoutCasting(Types.INT, Integer.valueOf(0));
+			if (end == 0) { return GamaListFactory.createWithoutCasting(Types.INT, Integer.valueOf(0)); }
 			return range(scope, 0, end);
 		}
 
@@ -145,10 +191,8 @@ public class Containers {
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception")
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
-			if (step == 0)
-				throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope);
-			if (start.equals(end))
-				return GamaListFactory.createWithoutCasting(Types.INT, start);
+			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
+			if (start.equals(end)) { return GamaListFactory.createWithoutCasting(Types.INT, start); }
 			if (end > start) {
 				if (step < 0) { throw GamaRuntimeException.error("Negative step would result in an infinite range",
 						scope); }
@@ -168,8 +212,8 @@ public class Containers {
 		@doc (
 				value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
 		public static IList every(final IScope scope, final IList source, final Integer step) {
-			if (step <= 0)
-				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
+			if (step <= 0) { throw GamaRuntimeException.error("The step value in `every` should be strictly positive",
+					scope); }
 			return IntStreamEx.range(0, notNull(scope, source).size(), step).mapToObj(source::get)
 					.toCollection(listLike(source));
 		}
@@ -840,7 +884,7 @@ public class Containers {
 			see = { "first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getType().getContentType();
-		return (GamaMap) stream(scope, c).groupingTo(function(scope, e), asMapOf(e.getType(), Types.LIST.of(ct)),
+		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getType(), Types.LIST.of(ct)),
 				listOf(ct));
 	}
 
@@ -879,7 +923,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "group_by", "first_with", "where" })
 	public static Object last_with(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).filter(withPredicate(scope, filter)).reduce((a, b) -> b).orElse(null);
+		return stream(scope, c).filter(by(scope, filter)).reduce((a, b) -> b).orElse(null);
 	}
 
 	@operator (
@@ -918,7 +962,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "group_by", "last_with", "where" })
 	public static Object first_with(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).findFirst(withPredicate(scope, filter)).orElse(null);
+		return stream(scope, c).findFirst(by(scope, filter)).orElse(null);
 	}
 
 	@operator (
@@ -952,7 +996,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "min_of" })
 	public static Object max_of(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).map(function(scope, filter)).maxBy(self()).orElse(null);
+		return stream(scope, c).map(with(scope, filter)).maxBy(Function.identity()).orElse(null);
 	}
 
 	@operator (
@@ -1031,10 +1075,11 @@ public class Containers {
 		Stream s = stream(scope, container);
 		IType t;
 		if (filter != null) {
-			s = s.map(function(scope, filter));
+			s = s.map(with(scope, filter));
 			t = filter.getType();
-		} else
+		} else {
 			t = container.getType().getContentType();
+		}
 		s = s.map(each -> t.cast(scope, each, null, false));
 		switch (t.id()) {
 			case IType.INT:
@@ -1094,8 +1139,9 @@ public class Containers {
 
 		final Object s = Containers.sum(scope, l);
 		int size = l.length(scope);
-		if (size == 0)
+		if (size == 0) {
 			size = 1;
+		}
 		if (s instanceof Number) { return ((Number) s).doubleValue() / size; }
 		if (s instanceof ILocation) { return Points.divide(scope, (GamaPoint) s, size); }
 		if (s instanceof GamaColor) { return Colors.divide((GamaColor) s, size); }
@@ -1168,7 +1214,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "max_of" })
 	public static Object min_of(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).map(function(scope, filter)).minBy(self()).orElse(null);
+		return stream(scope, c).map(with(scope, filter)).minBy(Function.identity()).orElse(null);
 	}
 
 	@operator (
@@ -1202,10 +1248,11 @@ public class Containers {
 	public static IList among(final IScope scope, final Integer number, final IContainer c)
 			throws GamaRuntimeException {
 		if (number <= 0) {
-			if (number < 0)
+			if (number < 0) {
 				GAMA.reportAndThrowIfNeeded(scope,
 						GamaRuntimeException.warning("'among' expects a positive number (not " + number + ")", scope),
 						false);
+			}
 			return listLike(c).get();
 		}
 		final IList l = notNull(scope, c).listValue(scope, c.getType().getContentType(), false);
@@ -1252,7 +1299,7 @@ public class Containers {
 							equals = "[2, 4, 6]") },
 			see = { "group_by" })
 	public static IList sort(final IScope scope, final IContainer c, final IExpression filter) {
-		return (IList) stream(scope, c).sortedBy(function(scope, filter)).toCollection(listLike(c));
+		return (IList) stream(scope, c).sortedBy(with(scope, filter)).toCollection(listLike(c));
 	}
 
 	@operator (
@@ -1288,7 +1335,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "first_with", "last_with", "where" })
 	public static IList where(final IScope scope, final IContainer c, final IExpression filter) {
-		return (IList) stream(scope, c).filter(withPredicate(scope, filter)).toCollection(listLike(c));
+		return (IList) stream(scope, c).filter(by(scope, filter)).toCollection(listLike(c));
 	}
 
 	@operator (
@@ -1321,7 +1368,7 @@ public class Containers {
 							equals = "6") },
 			see = { "where", "with_min_of" })
 	public static Object with_max_of(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).maxBy(function(scope, filter)).orElse(null);
+		return stream(scope, c).maxBy(with(scope, filter)).orElse(null);
 	}
 
 	@operator (
@@ -1354,7 +1401,7 @@ public class Containers {
 							equals = "2") },
 			see = { "where", "with_max_of" })
 	public static Object with_min_of(final IScope scope, final IContainer c, final IExpression filter) {
-		return stream(scope, c).minBy(function(scope, filter)).orElse(null);
+		return stream(scope, c).minBy(with(scope, filter)).orElse(null);
 	}
 
 	@operator (
@@ -1387,7 +1434,7 @@ public class Containers {
 		if (resultingContentsType.isContainer()) {
 			resultingContentsType = resultingContentsType.getContentType();
 		}
-		return (IList) stream(scope, c).flatCollection(function(scope, filter).andThen(toLists))
+		return (IList) stream(scope, c).flatCollection(with(scope, filter).andThen(toLists))
 				.toCollection(listOf(resultingContentsType));
 
 	}
@@ -1418,7 +1465,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "accumulate" })
 	public static IList collect(final IScope scope, final IContainer c, final IExpression filter) {
-		return (IList) stream(scope, c).map(function(scope, filter)).toCollection(listOf(filter.getType()));
+		return (IList) stream(scope, c).map(with(scope, filter)).toCollection(listOf(filter.getType()));
 	}
 
 	@operator (
@@ -1441,7 +1488,7 @@ public class Containers {
 		if (type.isContainer()) {
 			type = type.getContentType();
 		}
-		final Iterator it = new ContainerHelper.InterleavingIterator(toArray(iterable, Object.class));
+		final Iterator it = new InterleavingIterator(toArray(iterable, Object.class));
 		return GamaListFactory.create(scope, type, it);
 	}
 
@@ -1476,7 +1523,7 @@ public class Containers {
 							equals = "1") },
 			see = { "group_by" })
 	public static Integer count(final IScope scope, final IContainer original, final IExpression filter) {
-		return (int) notNull(scope, original).stream(scope).filter(withPredicate(scope, filter)).count();
+		return (int) notNull(scope, original).stream(scope).filter(by(scope, filter)).count();
 	}
 
 	@operator (
@@ -1498,7 +1545,7 @@ public class Containers {
 
 		final StreamEx s = original.stream(scope);
 		final IType contentsType = original.getType().getContentType();
-		return (GamaMap) s.collect(Collectors.toMap(function(scope, keyProvider), (a) -> a, (a, b) -> a,
+		return (GamaMap) s.collect(Collectors.toMap(with(scope, keyProvider), (a) -> a, (a, b) -> a,
 				asMapOf(keyProvider.getType(), contentsType)));
 	}
 
@@ -1531,7 +1578,7 @@ public class Containers {
 				"::")) { throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope); }
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
-		return (GamaMap) stream(scope, original).collect(Collectors.toMap(function(scope, key), function(scope, value),
+		return (GamaMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
 				(a, b) -> a, asMapOf(key.getType(), value.getType())));
 	}
 

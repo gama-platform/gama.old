@@ -91,8 +91,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAccessAccess().getAlternatives_1_1(), "rule__Access__Alternatives_1_1");
 					put(grammarAccess.getPrimaryAccess().getAlternatives(), "rule__Primary__Alternatives");
 					put(grammarAccess.getAbstractRefAccess().getAlternatives(), "rule__AbstractRef__Alternatives");
-					put(grammarAccess.getAbstractRefAccess().getAlternatives_1(), "rule__AbstractRef__Alternatives_1");
-					put(grammarAccess.getFunctionAccess().getAlternatives_3(), "rule__Function__Alternatives_3");
+					put(grammarAccess.getFunctionAccess().getAlternatives_4(), "rule__Function__Alternatives_4");
 					put(grammarAccess.getParameterAccess().getAlternatives_1(), "rule__Parameter__Alternatives_1");
 					put(grammarAccess.getParameterAccess().getBuiltInFacetKeyAlternatives_1_0_0(), "rule__Parameter__BuiltInFacetKeyAlternatives_1_0_0");
 					put(grammarAccess.getTypeRefAccess().getAlternatives(), "rule__TypeRef__Alternatives");
@@ -213,7 +212,6 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPrimaryAccess().getGroup_5(), "rule__Primary__Group_5__0");
 					put(grammarAccess.getPrimaryAccess().getGroup_5_5(), "rule__Primary__Group_5_5__0");
 					put(grammarAccess.getFunctionAccess().getGroup(), "rule__Function__Group__0");
-					put(grammarAccess.getCastingFunctionAccess().getGroup(), "rule__CastingFunction__Group__0");
 					put(grammarAccess.getParameterAccess().getGroup(), "rule__Parameter__Group__0");
 					put(grammarAccess.getParameterAccess().getGroup_1_1(), "rule__Parameter__Group_1_1__0");
 					put(grammarAccess.getExpressionListAccess().getGroup(), "rule__ExpressionList__Group__0");
@@ -420,11 +418,9 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPrimaryAccess().getRightAssignment_5_4(), "rule__Primary__RightAssignment_5_4");
 					put(grammarAccess.getPrimaryAccess().getZAssignment_5_5_1(), "rule__Primary__ZAssignment_5_5_1");
 					put(grammarAccess.getFunctionAccess().getActionAssignment_1(), "rule__Function__ActionAssignment_1");
-					put(grammarAccess.getFunctionAccess().getParametersAssignment_3_0(), "rule__Function__ParametersAssignment_3_0");
-					put(grammarAccess.getFunctionAccess().getArgsAssignment_3_1(), "rule__Function__ArgsAssignment_3_1");
-					put(grammarAccess.getCastingFunctionAccess().getActionAssignment_0(), "rule__CastingFunction__ActionAssignment_0");
-					put(grammarAccess.getCastingFunctionAccess().getTypeAssignment_1(), "rule__CastingFunction__TypeAssignment_1");
-					put(grammarAccess.getCastingFunctionAccess().getArgsAssignment_3(), "rule__CastingFunction__ArgsAssignment_3");
+					put(grammarAccess.getFunctionAccess().getTypeAssignment_2(), "rule__Function__TypeAssignment_2");
+					put(grammarAccess.getFunctionAccess().getParametersAssignment_4_0(), "rule__Function__ParametersAssignment_4_0");
+					put(grammarAccess.getFunctionAccess().getArgsAssignment_4_1(), "rule__Function__ArgsAssignment_4_1");
 					put(grammarAccess.getParameterAccess().getBuiltInFacetKeyAssignment_1_0(), "rule__Parameter__BuiltInFacetKeyAssignment_1_0");
 					put(grammarAccess.getParameterAccess().getLeftAssignment_1_1_0(), "rule__Parameter__LeftAssignment_1_1_0");
 					put(grammarAccess.getParameterAccess().getRightAssignment_2(), "rule__Parameter__RightAssignment_2");

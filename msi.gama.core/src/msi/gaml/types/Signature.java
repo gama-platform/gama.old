@@ -20,6 +20,10 @@ public class Signature {
 
 	final IType[] list;
 
+	public static Signature varArgFrom(final Signature sig) {
+		return new Signature(Types.LIST.of(GamaType.findCommonType(sig.list)));
+	}
+
 	public Signature(final IType... types) {
 		list = types;
 	}
@@ -99,10 +103,12 @@ public class Signature {
 		// preffered to [topology, geometry, geometry] for an input of [topology, a_species, a_species])
 		for (int i = 0; i < list.length; i++) {
 			final int d = types[i].distanceTo(list[i]);
-			if (max < d)
+			if (max < d) {
 				max = d;
-			if (min > d)
+			}
+			if (min > d) {
 				min = d;
+			}
 		}
 		return min + max;
 	}

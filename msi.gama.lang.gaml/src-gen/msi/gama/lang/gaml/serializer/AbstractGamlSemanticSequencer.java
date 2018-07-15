@@ -264,46 +264,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.FUNCTION:
-				if (rule == grammarAccess.getCastingFunctionRule()) {
-					sequence_CastingFunction(context, (Function) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getExpressionRule()
-						|| rule == grammarAccess.getPairRule()
-						|| action == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()
-						|| rule == grammarAccess.getIfRule()
-						|| action == grammarAccess.getIfAccess().getIfLeftAction_1_0()
-						|| rule == grammarAccess.getOrRule()
-						|| action == grammarAccess.getOrAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getAndRule()
-						|| action == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getCastRule()
-						|| action == grammarAccess.getCastAccess().getCastLeftAction_1_0_0()
-						|| rule == grammarAccess.getComparisonRule()
-						|| action == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getAdditionRule()
-						|| action == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getMultiplicationRule()
-						|| action == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getExponentiationRule()
-						|| action == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getBinaryRule()
-						|| action == grammarAccess.getBinaryAccess().getBinaryLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnitRule()
-						|| action == grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnaryRule()
-						|| rule == grammarAccess.getAccessRule()
-						|| action == grammarAccess.getAccessAccess().getAccessLeftAction_1_0()
-						|| rule == grammarAccess.getPrimaryRule()
-						|| rule == grammarAccess.getAbstractRefRule()) {
-					sequence_CastingFunction_Function(context, (Function) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getFunctionRule()) {
-					sequence_Function(context, (Function) semanticObject); 
-					return; 
-				}
-				else break;
+				sequence_Function(context, (Function) semanticObject); 
+				return; 
 			case GamlPackage.HEADLESS_EXPERIMENT:
 				sequence_HeadlessExperiment(context, (HeadlessExperiment) semanticObject); 
 				return; 
@@ -828,69 +790,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     CastingFunction returns Function
-	 *
-	 * Constraint:
-	 *     (action=ActionRef type=TypeInfo args=ExpressionList)
-	 */
-	protected void sequence_CastingFunction(ISerializationContext context, Function semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FUNCTION__ACTION) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FUNCTION__ACTION));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FUNCTION__TYPE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FUNCTION__TYPE));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FUNCTION__ARGS) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FUNCTION__ARGS));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getCastingFunctionAccess().getActionActionRefParserRuleCall_0_0(), semanticObject.getAction());
-		feeder.accept(grammarAccess.getCastingFunctionAccess().getTypeTypeInfoParserRuleCall_1_0(), semanticObject.getType());
-		feeder.accept(grammarAccess.getCastingFunctionAccess().getArgsExpressionListParserRuleCall_3_0(), semanticObject.getArgs());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Expression returns Function
-	 *     Pair returns Function
-	 *     Pair.Pair_1_0_0 returns Function
-	 *     If returns Function
-	 *     If.If_1_0 returns Function
-	 *     Or returns Function
-	 *     Or.Expression_1_0 returns Function
-	 *     And returns Function
-	 *     And.Expression_1_0 returns Function
-	 *     Cast returns Function
-	 *     Cast.Cast_1_0_0 returns Function
-	 *     Comparison returns Function
-	 *     Comparison.Expression_1_0_0 returns Function
-	 *     Addition returns Function
-	 *     Addition.Expression_1_0_0 returns Function
-	 *     Multiplication returns Function
-	 *     Multiplication.Expression_1_0_0 returns Function
-	 *     Exponentiation returns Function
-	 *     Exponentiation.Expression_1_0_0 returns Function
-	 *     Binary returns Function
-	 *     Binary.Binary_1_0_0 returns Function
-	 *     Unit returns Function
-	 *     Unit.Unit_1_0_0 returns Function
-	 *     Unary returns Function
-	 *     Access returns Function
-	 *     Access.Access_1_0 returns Function
-	 *     Primary returns Function
-	 *     AbstractRef returns Function
-	 *
-	 * Constraint:
-	 *     ((action=ActionRef (parameters=Parameters | args=ExpressionList)) | (action=ActionRef type=TypeInfo args=ExpressionList))
-	 */
-	protected void sequence_CastingFunction_Function(ISerializationContext context, Function semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     ClassicFacet returns Facet
 	 *
 	 * Constraint:
@@ -1063,10 +962,38 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
+	 *     Expression returns Function
+	 *     Pair returns Function
+	 *     Pair.Pair_1_0_0 returns Function
+	 *     If returns Function
+	 *     If.If_1_0 returns Function
+	 *     Or returns Function
+	 *     Or.Expression_1_0 returns Function
+	 *     And returns Function
+	 *     And.Expression_1_0 returns Function
+	 *     Cast returns Function
+	 *     Cast.Cast_1_0_0 returns Function
+	 *     Comparison returns Function
+	 *     Comparison.Expression_1_0_0 returns Function
+	 *     Addition returns Function
+	 *     Addition.Expression_1_0_0 returns Function
+	 *     Multiplication returns Function
+	 *     Multiplication.Expression_1_0_0 returns Function
+	 *     Exponentiation returns Function
+	 *     Exponentiation.Expression_1_0_0 returns Function
+	 *     Binary returns Function
+	 *     Binary.Binary_1_0_0 returns Function
+	 *     Unit returns Function
+	 *     Unit.Unit_1_0_0 returns Function
+	 *     Unary returns Function
+	 *     Access returns Function
+	 *     Access.Access_1_0 returns Function
+	 *     Primary returns Function
+	 *     AbstractRef returns Function
 	 *     Function returns Function
 	 *
 	 * Constraint:
-	 *     (action=ActionRef (parameters=Parameters | args=ExpressionList))
+	 *     (action=ActionRef type=TypeInfo? (parameters=Parameters | args=ExpressionList))
 	 */
 	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

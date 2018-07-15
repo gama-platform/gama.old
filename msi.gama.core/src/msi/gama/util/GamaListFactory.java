@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaListFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaListFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
@@ -21,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import msi.gama.runtime.IScope;
@@ -31,23 +34,56 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Class GamaListFactory. The factory for creating lists from various other
- * objects. All the methods that accept the scope as a parameter will observe
- * the contract of GAML containers, which is that the objects contained in the
- * list will be casted to the content type of the list. To avoid unecessary
- * castings, some methods (without the scope parameter) will simply copy the
- * objects.
+ * Class GamaListFactory. The factory for creating lists from various other objects. All the methods that accept the
+ * scope as a parameter will observe the contract of GAML containers, which is that the objects contained in the list
+ * will be casted to the content type of the list. To avoid unecessary castings, some methods (without the scope
+ * parameter) will simply copy the objects.
  *
  * @author drogoul
  * @since 30 janv. 2015
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 4;
+	private static Set<Collector.Characteristics> CH =
+			ImmutableSet.<Collector.Characteristics> of(Collector.Characteristics.IDENTITY_FINISH);
 
-	public static Collector<Object, IList<Object>, IList<Object>> TO_GAMA_LIST = ContainerHelper.<Object> toGamaList();
+	public static <T> Collector<T, IList<T>, IList<T>> toGamaList() {
+		return new Collector<T, IList<T>, IList<T>>() {
+
+			@Override
+			public Supplier<IList<T>> supplier() {
+				return GamaListFactory::create;
+			}
+
+			@Override
+			public BiConsumer<IList<T>, T> accumulator() {
+				return (left, right) -> left.add(right);
+			}
+
+			@Override
+			public BinaryOperator<IList<T>> combiner() {
+				return (left, right) -> {
+					left.addAll(right);
+					return left;
+				};
+			}
+
+			@Override
+			public java.util.function.Function<IList<T>, IList<T>> finisher() {
+				return (left) -> left;
+			}
+
+			@Override
+			public Set<java.util.stream.Collector.Characteristics> characteristics() {
+				return CH;
+			}
+		};
+	}
+
+	public static Collector<Object, IList<Object>, IList<Object>> TO_GAMA_LIST = toGamaList();
 
 	public static class GamaListSupplier implements Supplier<IList> {
 
@@ -65,13 +101,11 @@ public class GamaListFactory {
 	}
 
 	/**
-	 * Create a GamaList from an array of objects, but does not attempt casting
-	 * its values.
+	 * Create a GamaList from an array of objects, but does not attempt casting its values.
 	 *
 	 * @param contentType
 	 * @param collection
-	 * @warning ***WARNING*** This operation can end up putting values of the
-	 *          wrong type into the list
+	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
 	 * @return
 	 */
 
@@ -103,13 +137,11 @@ public class GamaListFactory {
 	}
 
 	/**
-	 * Create a GamaList from an iterable, but does not attempt casting its
-	 * values.
+	 * Create a GamaList from an iterable, but does not attempt casting its values.
 	 *
 	 * @param contentType
 	 * @param collection
-	 * @warning ***WARNING*** This operation can end up putting values of the
-	 *          wrong type into the list
+	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
 	 * @return
 	 */
 
@@ -124,9 +156,7 @@ public class GamaListFactory {
 	}
 
 	public static IList create(final IScope scope, final IType contentType, final IContainer container) {
-		if (container == null) {
-			return create(contentType);
-		}
+		if (container == null) { return create(contentType); }
 		if (GamaType.requiresCasting(contentType, container.getType().getContentType())) {
 			return create(scope, contentType, container.iterable(scope));
 		} else {
@@ -135,9 +165,7 @@ public class GamaListFactory {
 	}
 
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final IList<T> container) {
-		if (container == null) {
-			return create(contentType);
-		}
+		if (container == null) { return create(contentType); }
 		if (GamaType.requiresCasting(contentType, container.getType().getContentType())) {
 			return create(scope, contentType, (Collection) container);
 		} else {
@@ -225,9 +253,7 @@ public class GamaListFactory {
 	}
 
 	public static IList create(final IScope scope, final IExpression fillExpr, final Integer size) {
-		if (fillExpr == null) {
-			return create(Types.NO_TYPE, size);
-		}
+		if (fillExpr == null) { return create(Types.NO_TYPE, size); }
 		final Object[] contents = new Object[size];
 		final IType contentType = fillExpr.getType();
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
@@ -255,7 +281,7 @@ public class GamaListFactory {
 	}
 
 	public static <T> IList<T> create(final IType contentType, final int size) {
-		return new GamaList<T>(size, contentType);
+		return new GamaList<>(size, contentType);
 	}
 
 	public static <T> IList<T> create(final IType contentType) {

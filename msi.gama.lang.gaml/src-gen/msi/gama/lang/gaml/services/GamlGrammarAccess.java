@@ -3752,28 +3752,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.AbstractRef");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cFunctionParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cAlternatives.eContents().get(1);
-		private final RuleCall cCastingFunctionParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
-		private final RuleCall cVariableRefParserRuleCall_1_1 = (RuleCall)cAlternatives_1.eContents().get(1);
+		private final RuleCall cVariableRefParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//AbstractRef Expression:
-		//	Function | (=> CastingFunction | VariableRef);
+		//	=> Function | VariableRef;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//Function | (=> CastingFunction | VariableRef)
+		//=> Function | VariableRef
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//Function
+		//=> Function
 		public RuleCall getFunctionParserRuleCall_0() { return cFunctionParserRuleCall_0; }
 		
-		//(=> CastingFunction | VariableRef)
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
-		
-		//=> CastingFunction
-		public RuleCall getCastingFunctionParserRuleCall_1_0() { return cCastingFunctionParserRuleCall_1_0; }
-		
 		//VariableRef
-		public RuleCall getVariableRefParserRuleCall_1_1() { return cVariableRefParserRuleCall_1_1; }
+		public RuleCall getVariableRefParserRuleCall_1() { return cVariableRefParserRuleCall_1; }
 	}
 	public class FunctionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.Function");
@@ -3781,19 +3773,21 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cFunctionAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cActionAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cActionActionRefParserRuleCall_1_0 = (RuleCall)cActionAssignment_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
-		private final Assignment cParametersAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cParametersParametersParserRuleCall_3_0_0 = (RuleCall)cParametersAssignment_3_0.eContents().get(0);
-		private final Assignment cArgsAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
-		private final RuleCall cArgsExpressionListParserRuleCall_3_1_0 = (RuleCall)cArgsAssignment_3_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cTypeAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cTypeTypeInfoParserRuleCall_2_0 = (RuleCall)cTypeAssignment_2.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
+		private final Assignment cParametersAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
+		private final RuleCall cParametersParametersParserRuleCall_4_0_0 = (RuleCall)cParametersAssignment_4_0.eContents().get(0);
+		private final Assignment cArgsAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final RuleCall cArgsExpressionListParserRuleCall_4_1_0 = (RuleCall)cArgsAssignment_4_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		//Function Expression:
-		//	{Function} action=ActionRef '(' (parameters=Parameters | args=ExpressionList) ')';
+		//	{Function} action=ActionRef type=TypeInfo? '(' (parameters=Parameters | args=ExpressionList) ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Function} action=ActionRef '(' (parameters=Parameters | args=ExpressionList) ')'
+		//{Function} action=ActionRef type=TypeInfo? '(' (parameters=Parameters | args=ExpressionList) ')'
 		public Group getGroup() { return cGroup; }
 		
 		//{Function}
@@ -3805,69 +3799,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//ActionRef
 		public RuleCall getActionActionRefParserRuleCall_1_0() { return cActionActionRefParserRuleCall_1_0; }
 		
-		//'('
-		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
-		
-		//parameters=Parameters | args=ExpressionList
-		public Alternatives getAlternatives_3() { return cAlternatives_3; }
-		
-		//parameters=Parameters
-		public Assignment getParametersAssignment_3_0() { return cParametersAssignment_3_0; }
-		
-		//Parameters
-		public RuleCall getParametersParametersParserRuleCall_3_0_0() { return cParametersParametersParserRuleCall_3_0_0; }
-		
-		//args=ExpressionList
-		public Assignment getArgsAssignment_3_1() { return cArgsAssignment_3_1; }
-		
-		//ExpressionList
-		public RuleCall getArgsExpressionListParserRuleCall_3_1_0() { return cArgsExpressionListParserRuleCall_3_1_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
-	}
-	public class CastingFunctionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.CastingFunction");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cActionAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cActionActionRefParserRuleCall_0_0 = (RuleCall)cActionAssignment_0.eContents().get(0);
-		private final Assignment cTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cTypeTypeInfoParserRuleCall_1_0 = (RuleCall)cTypeAssignment_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cArgsAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cArgsExpressionListParserRuleCall_3_0 = (RuleCall)cArgsAssignment_3.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
-		
-		//CastingFunction Function:
-		//	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
-		@Override public ParserRule getRule() { return rule; }
-		
-		//action=ActionRef type=TypeInfo "(" args=ExpressionList ')'
-		public Group getGroup() { return cGroup; }
-		
-		//action=ActionRef
-		public Assignment getActionAssignment_0() { return cActionAssignment_0; }
-		
-		//ActionRef
-		public RuleCall getActionActionRefParserRuleCall_0_0() { return cActionActionRefParserRuleCall_0_0; }
-		
-		//type=TypeInfo
-		public Assignment getTypeAssignment_1() { return cTypeAssignment_1; }
+		//type=TypeInfo?
+		public Assignment getTypeAssignment_2() { return cTypeAssignment_2; }
 		
 		//TypeInfo
-		public RuleCall getTypeTypeInfoParserRuleCall_1_0() { return cTypeTypeInfoParserRuleCall_1_0; }
+		public RuleCall getTypeTypeInfoParserRuleCall_2_0() { return cTypeTypeInfoParserRuleCall_2_0; }
 		
-		//"("
-		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
+		//'('
+		public Keyword getLeftParenthesisKeyword_3() { return cLeftParenthesisKeyword_3; }
+		
+		//parameters=Parameters | args=ExpressionList
+		public Alternatives getAlternatives_4() { return cAlternatives_4; }
+		
+		//parameters=Parameters
+		public Assignment getParametersAssignment_4_0() { return cParametersAssignment_4_0; }
+		
+		//Parameters
+		public RuleCall getParametersParametersParserRuleCall_4_0_0() { return cParametersParametersParserRuleCall_4_0_0; }
 		
 		//args=ExpressionList
-		public Assignment getArgsAssignment_3() { return cArgsAssignment_3; }
+		public Assignment getArgsAssignment_4_1() { return cArgsAssignment_4_1; }
 		
 		//ExpressionList
-		public RuleCall getArgsExpressionListParserRuleCall_3_0() { return cArgsExpressionListParserRuleCall_3_0; }
+		public RuleCall getArgsExpressionListParserRuleCall_4_1_0() { return cArgsExpressionListParserRuleCall_4_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
+		public Keyword getRightParenthesisKeyword_5() { return cRightParenthesisKeyword_5; }
 	}
 	public class ParameterElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.Parameter");
@@ -3888,6 +3845,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cRightAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cRightExpressionParserRuleCall_2_0 = (RuleCall)cRightAssignment_2.eContents().get(0);
 		
+		////
+		////CastingFunction returns Function:
+		////	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
 		//Parameter Expression:
 		//	{Parameter} (builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey) |
 		//	left=VariableRef ':') right=Expression;
@@ -4779,7 +4739,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private final PrimaryElements pPrimary;
 	private final AbstractRefElements pAbstractRef;
 	private final FunctionElements pFunction;
-	private final CastingFunctionElements pCastingFunction;
 	private final ParameterElements pParameter;
 	private final ExpressionListElements pExpressionList;
 	private final ParameterListElements pParameterList;
@@ -4902,7 +4861,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.pPrimary = new PrimaryElements();
 		this.pAbstractRef = new AbstractRefElements();
 		this.pFunction = new FunctionElements();
-		this.pCastingFunction = new CastingFunctionElements();
 		this.pParameter = new ParameterElements();
 		this.pExpressionList = new ExpressionListElements();
 		this.pParameterList = new ParameterListElements();
@@ -5809,7 +5767,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//AbstractRef Expression:
-	//	Function | (=> CastingFunction | VariableRef);
+	//	=> Function | VariableRef;
 	public AbstractRefElements getAbstractRefAccess() {
 		return pAbstractRef;
 	}
@@ -5819,7 +5777,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Function Expression:
-	//	{Function} action=ActionRef '(' (parameters=Parameters | args=ExpressionList) ')';
+	//	{Function} action=ActionRef type=TypeInfo? '(' (parameters=Parameters | args=ExpressionList) ')';
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
 	}
@@ -5828,16 +5786,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getFunctionAccess().getRule();
 	}
 	
-	//CastingFunction Function:
-	//	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
-	public CastingFunctionElements getCastingFunctionAccess() {
-		return pCastingFunction;
-	}
-	
-	public ParserRule getCastingFunctionRule() {
-		return getCastingFunctionAccess().getRule();
-	}
-	
+	////
+	////CastingFunction returns Function:
+	////	action=ActionRef type=TypeInfo "(" args=ExpressionList ')';
 	//Parameter Expression:
 	//	{Parameter} (builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey) |
 	//	left=VariableRef ':') right=Expression;

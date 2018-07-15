@@ -54,7 +54,7 @@ public class VariableDescription extends SymbolDescription {
 	public static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE).build();
 	public static Set<String> UPDATE_DEPENDENCIES_FACETS =
-			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
+			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX).build();
 	public static Set<String> FUNCTION_DEPENDENCIES_FACETS = ImmutableSet.<String> builder().add(FUNCTION).build();
 	private String plugin;
 

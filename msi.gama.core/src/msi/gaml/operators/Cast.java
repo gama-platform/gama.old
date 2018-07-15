@@ -152,8 +152,6 @@ public class Cast {
 	@operator (
 			value = IKeyword.AS,
 			type = ITypeProvider.SECOND_DENOTED_TYPE,
-			// content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			// index_type = ITypeProvider.SECOND_KEY_TYPE,
 			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST })
@@ -275,18 +273,6 @@ public class Cast {
 		return GamaListFactory.create(scope, init, size);
 	}
 
-	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type =
-	// ITypeProvider.FIRST_CONTENT_TYPE)
-	// @doc(value = "casts the operand into a matrix", special_cases = {
-	// "if the operand is a file, returns its content casted as a matrix",
-	// "if the operand is a map, returns a 2-columns matrix with keyx in the
-	// first one and value in the second one;",
-	// "if the operand is a list, returns a matrix where all sub-lists represent
-	// columns. Notice that each element of the list should be a single element
-	// or lists with the same length;",
-	// "if the operand is a graph, returns nil;",
-	// "otherwise, returns a 1x1 matrix with the operand at the (0,0) position."
-	// }, see = "as_matrix")
 	public static IMatrix asMatrix(final IScope scope, final Object val) throws GamaRuntimeException {
 		return asMatrix(scope, val, null);
 	}
@@ -303,27 +289,8 @@ public class Cast {
 			see = { IKeyword.MATRIX, "as_matrix" })
 	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if (size == null) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
-		// final IType type = init.getType();
-		// if ( init.isConst() ) {
-		// Object val = init.value(scope);
-		// return GamaMatrixType.with(scope, val, (GamaPoint) size, type);
-
-		// } else {
 		return GamaMatrixType.with(scope, init, (GamaPoint) size);
-		// }
 	}
-
-	// @operator(value = IKeyword.MATRIX, can_be_const = true, content_type =
-	// ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
-	// @doc(value = "casts the list (left operand) into a one-row matrix",
-	// examples = {
-	// " as_matrix [1, 2, 3] --: [ [1, 2, 3] ] " })
-	// public static IMatrix asMatrix(final IScope scope, final IList val)
-	// throws GamaRuntimeException {
-	// return GamaMatrixType.from(scope, val, val.getType().getContentType(),
-	// null);
-	//
-	// }
 
 	@operator (
 			value = "as_matrix",

@@ -48,7 +48,6 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ContainerHelper;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
@@ -744,7 +743,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final SimulationPopulation pop = getSimulationPopulation();
 		if (pop != null) { return Iterables
 				.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
-						Collections.singletonList(getOutputManager())), ContainerHelper.NOT_NULL); }
+						Collections.singletonList(getOutputManager())), each -> each != null); }
 		return Collections.EMPTY_LIST;
 	}
 

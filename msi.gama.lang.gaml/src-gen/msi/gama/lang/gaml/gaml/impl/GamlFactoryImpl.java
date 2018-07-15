@@ -100,7 +100,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FACET: return createFacet();
       case GamlPackage.EXPRESSION: return createExpression();
       case GamlPackage.ARGUMENT_PAIR: return createArgumentPair();
-      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.TYPE_INFO: return createTypeInfo();
@@ -127,6 +126,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.ACCESS: return createAccess();
       case GamlPackage.ARRAY: return createArray();
       case GamlPackage.POINT: return createPoint();
+      case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.PARAMETER: return createParameter();
       case GamlPackage.UNIT_NAME: return createUnitName();
       case GamlPackage.TYPE_REF: return createTypeRef();
@@ -534,17 +534,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Function createFunction()
-  {
-    FunctionImpl function = new FunctionImpl();
-    return function;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public ExpressionList createExpressionList()
   {
     ExpressionListImpl expressionList = new ExpressionListImpl();
@@ -824,6 +813,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     PointImpl point = new PointImpl();
     return point;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Function createFunction()
+  {
+    FunctionImpl function = new FunctionImpl();
+    return function;
   }
 
   /**

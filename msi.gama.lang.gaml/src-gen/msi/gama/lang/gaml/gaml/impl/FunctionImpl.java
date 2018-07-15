@@ -27,9 +27,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getAction <em>Action</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getType <em>Type</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getArgs <em>Args</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getType <em>Type</em>}</li>
  * </ul>
  *
  * @generated
@@ -45,6 +45,16 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * @ordered
    */
   protected Expression action;
+
+  /**
+   * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getType()
+   * @generated
+   * @ordered
+   */
+  protected TypeInfo type;
 
   /**
    * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
@@ -65,16 +75,6 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * @ordered
    */
   protected ExpressionList args;
-
-  /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected TypeInfo type;
 
   /**
    * <!-- begin-user-doc -->
@@ -143,6 +143,54 @@ public class FunctionImpl extends ExpressionImpl implements Function
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__ACTION, newAction, newAction));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TypeInfo getType()
+  {
+    return type;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetType(TypeInfo newType, NotificationChain msgs)
+  {
+    TypeInfo oldType = type;
+    type = newType;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__TYPE, oldType, newType);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setType(TypeInfo newType)
+  {
+    if (newType != type)
+    {
+      NotificationChain msgs = null;
+      if (type != null)
+        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__TYPE, null, msgs);
+      if (newType != null)
+        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__TYPE, null, msgs);
+      msgs = basicSetType(newType, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__TYPE, newType, newType));
   }
 
   /**
@@ -246,54 +294,6 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public TypeInfo getType()
-  {
-    return type;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetType(TypeInfo newType, NotificationChain msgs)
-  {
-    TypeInfo oldType = type;
-    type = newType;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__TYPE, oldType, newType);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setType(TypeInfo newType)
-  {
-    if (newType != type)
-    {
-      NotificationChain msgs = null;
-      if (type != null)
-        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__TYPE, null, msgs);
-      if (newType != null)
-        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__TYPE, null, msgs);
-      msgs = basicSetType(newType, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__TYPE, newType, newType));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -301,12 +301,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
     {
       case GamlPackage.FUNCTION__ACTION:
         return basicSetAction(null, msgs);
+      case GamlPackage.FUNCTION__TYPE:
+        return basicSetType(null, msgs);
       case GamlPackage.FUNCTION__PARAMETERS:
         return basicSetParameters(null, msgs);
       case GamlPackage.FUNCTION__ARGS:
         return basicSetArgs(null, msgs);
-      case GamlPackage.FUNCTION__TYPE:
-        return basicSetType(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -323,12 +323,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
     {
       case GamlPackage.FUNCTION__ACTION:
         return getAction();
+      case GamlPackage.FUNCTION__TYPE:
+        return getType();
       case GamlPackage.FUNCTION__PARAMETERS:
         return getParameters();
       case GamlPackage.FUNCTION__ARGS:
         return getArgs();
-      case GamlPackage.FUNCTION__TYPE:
-        return getType();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -346,14 +346,14 @@ public class FunctionImpl extends ExpressionImpl implements Function
       case GamlPackage.FUNCTION__ACTION:
         setAction((Expression)newValue);
         return;
+      case GamlPackage.FUNCTION__TYPE:
+        setType((TypeInfo)newValue);
+        return;
       case GamlPackage.FUNCTION__PARAMETERS:
         setParameters((Parameters)newValue);
         return;
       case GamlPackage.FUNCTION__ARGS:
         setArgs((ExpressionList)newValue);
-        return;
-      case GamlPackage.FUNCTION__TYPE:
-        setType((TypeInfo)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -372,14 +372,14 @@ public class FunctionImpl extends ExpressionImpl implements Function
       case GamlPackage.FUNCTION__ACTION:
         setAction((Expression)null);
         return;
+      case GamlPackage.FUNCTION__TYPE:
+        setType((TypeInfo)null);
+        return;
       case GamlPackage.FUNCTION__PARAMETERS:
         setParameters((Parameters)null);
         return;
       case GamlPackage.FUNCTION__ARGS:
         setArgs((ExpressionList)null);
-        return;
-      case GamlPackage.FUNCTION__TYPE:
-        setType((TypeInfo)null);
         return;
     }
     super.eUnset(featureID);
@@ -397,12 +397,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
     {
       case GamlPackage.FUNCTION__ACTION:
         return action != null;
+      case GamlPackage.FUNCTION__TYPE:
+        return type != null;
       case GamlPackage.FUNCTION__PARAMETERS:
         return parameters != null;
       case GamlPackage.FUNCTION__ARGS:
         return args != null;
-      case GamlPackage.FUNCTION__TYPE:
-        return type != null;
     }
     return super.eIsSet(featureID);
   }

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'EachExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EachExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
@@ -20,18 +18,19 @@ import msi.gaml.types.IType;
 
 public class EachExpression extends VariableExpression {
 
-	public EachExpression(final IType<?> type) {
-		super(IKeyword.EACH, type, true, null);
+	public EachExpression(final String argName, final IType<?> type) {
+		super(argName, type, true, null);
 	}
 
 	@Override
 	public Object value(final IScope scope) {
+		// see Issue #return scope.getVarValue(getName());
 		return scope.getEach();
 	}
 
 	@Override
 	public String getTitle() {
-		return "pseudo-variable each of type " + getType().getTitle();
+		return "pseudo-variable " + getName() + " of type " + getType().getTitle();
 	}
 
 	/**
@@ -43,8 +42,7 @@ public class EachExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {
-	}
+	public void setVal(final IScope scope, final Object v, final boolean create) {}
 
 	/**
 	 * Method collectPlugins()
@@ -52,11 +50,9 @@ public class EachExpression extends VariableExpression {
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-	}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

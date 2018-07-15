@@ -119,4 +119,6 @@ public interface IExpressionFactory {
 	public abstract IExpression createTemporaryActionForAgent(IAgent agent, String expression,
 			IExecutionContext tempContext);
 
+	public abstract boolean hasOperator(String op, IDescription context, EObject object, IExpression... compiledArgs);
+
 }

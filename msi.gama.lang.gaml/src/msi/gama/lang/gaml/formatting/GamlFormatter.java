@@ -84,7 +84,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 		// Parameters of operators/actions and access should be handled with no
 		// space before
-		c.setNoSpace().before(g.getFunctionAccess().getLeftParenthesisKeyword_2());
+		c.setNoSpace().before(g.getFunctionAccess().getLeftParenthesisKeyword_3());
 		c.setNoSpace().before(g.getAccessAccess().getOpLeftSquareBracketKeyword_1_1_0_0_0());
 
 		// The unary minus should be treated differently (no space after)

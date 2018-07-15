@@ -9,11 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -68,44 +61,44 @@ import msi.gama.util.file.IGamaFileMetaData;
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
 
-	static Gzip GZIP = new Gzip();
+	// static Gzip GZIP = new Gzip();
 
-	public static class Gzip {
-
-		public String compress(final String data) throws IOException {
-			if (data == null) { return null; }
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-			final GZIPOutputStream gzip = new GZIPOutputStream(bos);
-			gzip.write(data.getBytes());
-			gzip.close();
-			final byte[] compressed = bos.toByteArray();
-			bos.close();
-			final StringBuffer retString = new StringBuffer();
-			for (final byte element : compressed) {
-				retString.append(Integer.toHexString(0x0100 + (element & 0x00FF)).substring(1));
-			}
-			return retString.toString();
-		}
-
-		public String decompress(final String hex) throws IOException {
-			final byte[] bts = new byte[hex.length() / 2];
-			for (int i = 0; i < bts.length; i++) {
-				bts[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
-			}
-			final ByteArrayInputStream bis = new ByteArrayInputStream(bts);
-			final GZIPInputStream gis = new GZIPInputStream(bis);
-			final BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-			final StringBuilder sb = new StringBuilder();
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-			}
-			br.close();
-			gis.close();
-			bis.close();
-			return sb.toString();
-		}
-	}
+	// public static class Gzip {
+	//
+	// public String compress(final String data) throws IOException {
+	// if (data == null) { return null; }
+	// final ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+	// final GZIPOutputStream gzip = new GZIPOutputStream(bos);
+	// gzip.write(data.getBytes());
+	// gzip.close();
+	// final byte[] compressed = bos.toByteArray();
+	// bos.close();
+	// final StringBuffer retString = new StringBuffer();
+	// for (final byte element : compressed) {
+	// retString.append(Integer.toHexString(0x0100 + (element & 0x00FF)).substring(1));
+	// }
+	// return retString.toString();
+	// }
+	//
+	// public String decompress(final String hex) throws IOException {
+	// final byte[] bts = new byte[hex.length() / 2];
+	// for (int i = 0; i < bts.length; i++) {
+	// bts[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
+	// }
+	// final ByteArrayInputStream bis = new ByteArrayInputStream(bts);
+	// final GZIPInputStream gis = new GZIPInputStream(bis);
+	// final BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+	// final StringBuilder sb = new StringBuilder();
+	// String line;
+	// while ((line = br.readLine()) != null) {
+	// sb.append(line);
+	// }
+	// br.close();
+	// gis.close();
+	// bis.close();
+	// return sb.toString();
+	// }
+	// }
 
 	private static volatile Set<Object> processing = Collections.<Object> synchronizedSet(new HashSet<>());
 
@@ -385,9 +378,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		T result = null;
 		final long modificationStamp = file.getModificationStamp();
 		try {
-			String s = (String) file.getSessionProperty(CACHE_KEY);
+			final String s = (String) file.getSessionProperty(CACHE_KEY);
 			if (s != null) {
-				s = GZIP.decompress(s);
+				// s = GZIP.decompress(s);
 				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
 			}
 			if (!clazz.isInstance(result)) { return null; }
@@ -582,18 +575,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 						try {
 							if (resource.isAccessible()) {
 								toSave[0] = (String) resource.getSessionProperty(CACHE_KEY);
-								resource.setPersistentProperty(CACHE_KEY, GZIP.compress(toSave[0]));
+								resource.setPersistentProperty(CACHE_KEY, (toSave[0]));
 							}
 							return true;
 						} catch (final Exception e) {
 							System.out.println("Error for resource " + resource.getName());
-							try {
-								System.out.println("Trying to save " + toSave[0].length() + " bytes gzipped to "
-										+ GZIP.compress(toSave[0]).length() + "bytes");
-							} catch (final IOException e1) {
-								e1.printStackTrace();
-							}
-							e.printStackTrace();
+							System.out.println("Trying to save " + toSave[0].length() + " bytes ");
 							return true;
 						}
 

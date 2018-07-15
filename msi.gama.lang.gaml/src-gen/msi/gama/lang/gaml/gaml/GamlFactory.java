@@ -339,15 +339,6 @@ public interface GamlFactory extends EFactory
   ArgumentPair createArgumentPair();
 
   /**
-   * Returns a new object of class '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function</em>'.
-   * @generated
-   */
-  Function createFunction();
-
-  /**
    * Returns a new object of class '<em>Expression List</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -580,6 +571,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Point createPoint();
+
+  /**
+   * Returns a new object of class '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function</em>'.
+   * @generated
+   */
+  Function createFunction();
 
   /**
    * Returns a new object of class '<em>Parameter</em>'.

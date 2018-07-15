@@ -12,14 +12,10 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -39,6 +35,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * The static class ExpressionFactory.
@@ -84,8 +81,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
 			final String deprecated, final boolean isTime, final String[] names) {
 		final UnitConstantExpression exp = UnitConstantExpression.create(value, t, name, doc, isTime, names);
-		if (deprecated != null && !deprecated.isEmpty())
+		if (deprecated != null && !deprecated.isEmpty()) {
 			exp.setDeprecated(deprecated);
+		}
 		return exp;
 
 	}
@@ -156,7 +154,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			case IVarExpression.TEMP:
 				return new TempVariableExpression(name, type, definitionDescription);
 			case IVarExpression.EACH:
-				return new EachExpression(type);
+				return new EachExpression(name, type);
 			case IVarExpression.SELF:
 				return new SelfExpression(type);
 			case IVarExpression.SUPER:
@@ -171,90 +169,103 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return ListExpression.create(elements);
 	}
 
+	public IExpression createList(final IExpression[] elements) {
+		return ListExpression.create(elements);
+	}
+
 	@Override
 	public IExpression createMap(final Iterable<? extends IExpression> elements) {
 		return MapExpression.create(elements);
 	}
 
 	@Override
-	public IExpression createOperator(final String op, final IDescription context, final EObject currentEObject,
+	public boolean hasOperator(final String op, final IDescription context, final EObject object,
 			final IExpression... args) {
-		if (args == null) { return null; }
+		// If arguments are invalid, we have no match
+		if (args == null || args.length == 0) { return false; }
 		for (final IExpression exp : args) {
-			if (exp == null) { return null; }
+			if (exp == null) { return false; }
 		}
-		if (OPERATORS.containsKey(op)) {
-			// We get the possible sets of types registered in OPERATORS
-			final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
-			// We create the signature corresponding to the arguments
-			// 19/02/14 Only the simplified signature is used now
-			Signature userSignature = new Signature(args).simplified();
-			final Signature originalUserSignature = userSignature;
-			// If the signature is not present in the registry
-			if (!ops.containsKey(userSignature)) {
-				final Collection<Signature> filtered = Collections2.filter(ops.keySet(),
-						operatorSignature -> originalUserSignature.matchesDesiredSignature(operatorSignature));
-				final int size = filtered.size();
-				if (size == 0) {
-					context.error(
-							"No operator found for applying '" + op + "' to " + userSignature
-									+ " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
-							IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
-					return null;
-				} else if (size == 1) {
-					userSignature = Iterables.get(filtered, 0);
-				} else {
-					int distance = Integer.MAX_VALUE;
-					for (final Signature s : filtered) {
-						final int dist = s.distanceTo(originalUserSignature);
-						if (dist == 0) {
-							userSignature = s;
-							break;
-						} else if (dist < distance) {
-							distance = dist;
-							userSignature = s;
-						}
-					}
-				}
+		// If the operator is not known, we have no match
+		if (!OPERATORS.containsKey(op)) { return false; }
+		final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		final Signature sig = new Signature(args).simplified();
+		// Does any known operator signature match with the signatue of the expressions ?
+		boolean matches = StreamEx.ofKeys(ops).anyMatch(s -> sig.matchesDesiredSignature(s));
+		if (!matches) {
+			// Check if a varArg is not a possibility
+			matches = StreamEx.ofKeys(ops).anyMatch(s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
+		}
+		return matches;
+	}
 
-				// We coerce the types if necessary, by wrapping the original
-				// expressions in a
-				// casting expression
-				final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
-				for (int i = 0; i < coercingTypes.length; i++) {
-					final IType t = coercingTypes[i];
-					if (t != null) {
-						// Emits a warning when a float is truncated. See Issue
-						// 735.
-						if (t.id() == IType.INT) {
-							// 20/1/14 Changed to info to avoid having too many
-							// harmless warnings
-							context.info(
-									t.toString() + " expected. '" + args[i].serialize(false)
-											+ "' will be  truncated to int.",
-									IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
-						}
-						// System.out.println("Coercing arg " + args[i] + " to "
-						// + t + " in " + op);
-						args[i] =
-								createOperator(IKeyword.AS, context, currentEObject, args[i], createTypeExpression(t));
+	@Override
+	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
+			final IExpression... args) {
+		if (!hasOperator(op, context, eObject, args)) {
+			context.error("No operator found for applying '" + op + "' to " + new Signature(args).simplified()
+					+ " (operators available for " + Arrays.toString(OPERATORS.get(op).keySet().toArray()) + ")",
+					IGamlIssue.UNMATCHED_OPERANDS, eObject);
+			return null;
+		}
+		// We get the possible sets of types registered in OPERATORS
+		final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		// We create the signature corresponding to the arguments
+		// 19/02/14 Only the simplified signature is used now
+		Signature userSignature = new Signature(args).simplified();
+		final Signature originalUserSignature = userSignature;
+		// If the signature is not present in the registry
+		if (!ops.containsKey(userSignature)) {
+			final Signature[] filtered = StreamEx.ofKeys(ops)
+					.filter(s -> originalUserSignature.matchesDesiredSignature(s)).toArray(Signature.class);
+			final int size = filtered.length;
+			if (size == 0) {
+				// It is a varArg, we call recursively the method
+				return createOperator(op, context, eObject, createList(args));
+			} else if (size == 1) {
+				// Only one choice
+				userSignature = filtered[0];
+			} else {
+				// Several choices, we take the closest
+				int distance = Integer.MAX_VALUE;
+				for (final Signature s : filtered) {
+					final int dist = s.distanceTo(originalUserSignature);
+					if (dist == 0) {
+						userSignature = s;
+						break;
+					} else if (dist < distance) {
+						distance = dist;
+						userSignature = s;
 					}
 				}
 			}
-			final OperatorProto proto = ops.get(userSignature);
-			// We finally make an instance of the operator and init it with the
-			// arguments
-			final IExpression copy = proto.create(context, currentEObject, args);
-			if (copy != null) {
-				final String ged = proto.getDeprecated();
-				if (ged != null) {
-					context.warning(proto.getName() + " is deprecated: " + ged, IGamlIssue.DEPRECATED, currentEObject);
+
+			// We coerce the types if necessary, by wrapping the original
+			// expressions in a casting expression
+			final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
+			for (int i = 0; i < coercingTypes.length; i++) {
+				final IType t = coercingTypes[i];
+				if (t != null) {
+					// Emits an info when a float is truncated. See Issue 735.
+					if (t.id() == IType.INT) {
+						context.info("'" + args[i].serialize(false) + "' will be  truncated to int.",
+								IGamlIssue.UNMATCHED_OPERANDS, eObject);
+					}
+					args[i] = createOperator(IKeyword.AS, context, eObject, args[i], createTypeExpression(t));
 				}
 			}
-			return copy;
 		}
-		return null;
-
+		final OperatorProto proto = ops.get(userSignature);
+		// We finally make an instance of the operator and init it with the arguments
+		final IExpression copy = proto.create(context, eObject, args);
+		if (copy != null) {
+			// We verify that it is not deprecated
+			final String ged = proto.getDeprecated();
+			if (ged != null) {
+				context.warning(proto.getName() + " is deprecated: " + ged, IGamlIssue.DEPRECATED, eObject);
+			}
+		}
+		return copy;
 	}
 
 	@Override

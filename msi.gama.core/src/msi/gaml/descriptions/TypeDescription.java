@@ -31,7 +31,6 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -41,6 +40,7 @@ import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * A class that represents skills and species (either built-in or introduced by users) The class TypeDescription.
@@ -272,8 +272,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public List<String> getUpdatableAttributeNames() {
-		return Lists.newArrayList(Iterables.filter(getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS),
-				input -> getAttribute(input).isUpdatable()));
+		final Collection<String> vars = getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS);
+		return StreamEx.of(vars).filter(input -> getAttribute(input).isUpdatable()).toList();
 	}
 
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
@@ -294,7 +294,6 @@ public abstract class TypeDescription extends SymbolDescription {
 			dependencies.addVertex(shape);
 		}
 		attributes.forEachEntry((name, var) -> {
-
 			dependencies.addVertex(var);
 			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
 			for (final VariableDescription newVar : varDependencies) {

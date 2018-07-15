@@ -57,7 +57,7 @@ public class OperatorProto extends AbstractProto {
 			"max_of", "with_max_of", "with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or",
 			"and", "at", "is", "group_by", "index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
 
-	public final boolean isVarOrField, canBeConst;
+	public final boolean isVarOrField, canBeConst, iterator;
 	public final IType returnType;
 	public final GamaGetter helper;
 	public Signature signature;
@@ -108,6 +108,7 @@ public class OperatorProto extends AbstractProto {
 			final int keyTypeProvider, final int contentTypeContentTypeProvider, final int[] expectedContentType,
 			final String plugin) {
 		super(name, method, plugin);
+		this.iterator = IExpressionCompiler.ITERATORS.contains(name);
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
 		this.isVarOrField = isVarOrField;

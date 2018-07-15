@@ -109,15 +109,23 @@ public class GamlLinkingService extends DefaultLinkingService {
 		final String name = getCrossRefNodeAsString(node);
 		if (GamlPackage.eINSTANCE.getTypeDefinition()
 				.isSuperTypeOf(ref.getEReferenceType())) { return addSymbol(name, ref.getEReferenceType()); }
-		if (GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(ref.getEReferenceType())) {
-			if (name.startsWith("pref_"))
-				return addSymbol(name, ref.getEReferenceType());
+		if (GamlPackage.eINSTANCE.getVarDefinition()
+				.isSuperTypeOf(ref.getEReferenceType())) { return addSymbol(name, ref.getEReferenceType());
+		// if (name.startsWith("pref_")) {
+		// return addSymbol(name, ref.getEReferenceType());
+		// } else {
+		// if (context.eContainer() instanceof Parameter) {
+		// final Parameter p = (Parameter) context.eContainer();
+		// if (p.getLeft() == context) { return addSymbol(name, ref.getEReferenceType()); }
+		// }
+		// }
+		// if (stubbedRefs.containsKey(name)) { return stubbedRefs.get(name); }
 		}
 		final GamlResource resource = (GamlResource) context.eResource();
 		final IExecutionContext additionalContext = resource.getCache().getOrCreate(resource).get("linking");
 		if (additionalContext != null) {
-			if (additionalContext.hasLocalVar(name))
-				return Collections.singletonList(create(name, ref.getEReferenceType()));
+			if (additionalContext
+					.hasLocalVar(name)) { return Collections.singletonList(create(name, ref.getEReferenceType())); }
 		}
 		return Collections.EMPTY_LIST;
 	}
