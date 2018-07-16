@@ -28,6 +28,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
@@ -209,10 +210,13 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			final IType at = cd.getType();
 			if (at == Types.NO_TYPE) { return; }
 			final Set<StatementDescription> returns = new TLinkedHashSet<>();
-			cd.collectAllStatements(RETURN, returns);
-
-			// Primitives dont need to be ckecked
-			// if ( cd.getKeyword().equals(PRIMITIVE) ) { return; }
+			final DescriptionVisitor finder = (desc) -> {
+				if (desc.getKeyword().equals(RETURN)) {
+					returns.add((StatementDescription) desc);
+				}
+				return true;
+			};
+			cd.visitOwnChildrenRecursively(finder);
 			if (returns.isEmpty()) {
 				cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
 				return;

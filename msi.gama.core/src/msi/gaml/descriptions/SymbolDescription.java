@@ -58,6 +58,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected final String keyword;
 	private IType<?> type;
 	protected boolean validated;
+	final SymbolProto proto;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
@@ -68,6 +69,7 @@ public abstract class SymbolDescription implements IDescription {
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
+		proto = DescriptionFactory.getProto(getKeyword(), getModelDescription());
 	}
 
 	@Override
@@ -81,13 +83,9 @@ public abstract class SymbolDescription implements IDescription {
 
 	protected boolean hasFacetsNotIn(final Set<String> others) {
 		if (facets == null) { return false; }
-		return !visitFacets(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
-				if (others.contains(name)) { return true; }
-				return false;
-			}
+		return !visitFacets((name, exp) -> {
+			if (others.contains(name)) { return true; }
+			return false;
 		});
 	}
 
@@ -154,7 +152,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean visitFacets(final Set<String> names, final FacetVisitor visitor) {
+	public final boolean visitFacets(final Set<String> names, final IFacetVisitor visitor) {
 		if (!hasFacets()) { return true; }
 		if (names == null) { return facets.forEachEntry(visitor); }
 		for (final String s : names) {
@@ -208,22 +206,18 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	protected void compileTypeProviderFacets() {
-		visitFacets(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
-				if (typeProviderFacets.contains(name)) {
-					exp.compile(SymbolDescription.this);
-				}
-				return true;
+		visitFacets((name, exp) -> {
+			if (typeProviderFacets.contains(name)) {
+				exp.compile(SymbolDescription.this);
 			}
+			return true;
 		});
 
 	}
 
 	@Override
 	public SymbolProto getMeta() {
-		return DescriptionFactory.getProto(getKeyword(), getModelDescription());
+		return proto;
 	}
 
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
@@ -405,6 +399,11 @@ public abstract class SymbolDescription implements IDescription {
 	public abstract boolean visitChildren(DescriptionVisitor visitor);
 
 	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		return true;
+	}
+
+	@Override
 	public abstract boolean visitOwnChildren(DescriptionVisitor visitor);
 
 	@Override
@@ -539,12 +538,12 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean isBuiltIn() {
-		return element == null && !isSynthetic();
+		return element == null;
 	}
 
-	@Override
-	public boolean isSynthetic() {
-		return enclosing != null && enclosing.isSynthetic();
+	protected boolean isSynthetic() {
+		return false;
+		// return enclosing != null && enclosing.isSynthetic();
 	}
 
 	@Override
@@ -574,49 +573,32 @@ public abstract class SymbolDescription implements IDescription {
 			return this;
 		}
 		final IDescription sd = getEnclosingDescription();
-		final SymbolProto proto = getMeta();
 		if (sd != null) {
 			// We first verify that the description is at the right place
 			if (!canBeDefinedIn(sd)) {
 				error(getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT);
-				// return this;
 				return null;
 			}
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
-				final boolean hasError = !sd.visitOwnChildren(new DescriptionVisitor<IDescription>() {
-
-					@Override
-					public boolean visit(final IDescription child) {
-						if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
-							final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
-									+ sd.getKeyword();
-							child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
-									getKeyword());
-							error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), getKeyword());
-							return false;
-						}
-						return true;
-
+				final boolean hasError = !sd.visitOwnChildren(child -> {
+					if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
+						final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
+								+ sd.getKeyword();
+						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
+								getKeyword());
+						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), getKeyword());
+						return false;
 					}
+					return true;
 
 				});
-
-				if (hasError) {
-					// return this;
-					return null;
-				}
-
+				if (hasError) { return null; }
 			}
 		}
 		// We then validate its facets
 		if (!validateFacets()) { return null; }
-
-		// if (proto.isRemoteContext()) {
-		// copyTempsAbove();
-		// }
 		if (!validateChildren()) { return null; }
-
 		if (proto.getDeprecated() != null) {
 			warning("'" + getKeyword() + "' is deprecated. " + proto.getDeprecated(), IGamlIssue.DEPRECATED);
 		}
@@ -643,80 +625,76 @@ public abstract class SymbolDescription implements IDescription {
 			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET);
 			return false;
 		}
-		final boolean ok = visitFacets(new FacetVisitor() {
+		final boolean ok = visitFacets((facet, expr) -> {
+			final FacetProto fp = proto.getFacet(facet);
 
-			@Override
-			public boolean visit(final String facet, final IExpressionDescription expr) {
-				final FacetProto fp = proto.getFacet(facet);
-
-				if (fp == null) {
-					if (facet.contains(IGamlIssue.DOUBLED_CODE)) {
-						final String correct = facet.replace(IGamlIssue.DOUBLED_CODE, "");
-						final String error = "Facet " + correct + " is declared twice. Please correct.";
-						error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, "1");
-						error(error, IGamlIssue.DUPLICATE_DEFINITION, correct, "2");
-						return false;
-					} else if (!isDo) {
-						error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
-						return false;
-					}
-					return true;
-				} else if (fp.deprecated != null) {
-					warning("Facet '" + facet + "' is deprecated: " + fp.deprecated, IGamlIssue.DEPRECATED, facet);
-				}
-				if (fp.values != null) {
-					final String val = expr.getExpression().literalValue();
-					// We have a multi-valued facet
-					if (!fp.values.contains(val)) {
-						error("Facet '" + facet + "' is expecting a value among " + fp.values + " instead of " + val,
-								facet);
-						return false;
-					}
-				} else {
-					IExpression exp;
-					if (fp.isNewTemp) {
-						exp = createVarWithTypes(facet);
-						expr.setExpression(exp);
-					} else if (!fp.isLabel()) {
-						exp = expr.compile(SymbolDescription.this);
-					} else {
-						exp = expr.getExpression();
-					}
-
-					if (exp != null && !isBuiltIn) {
-						// Some expresssions might not be compiled
-						boolean compatible = false;
-						final IType<?> actualType = exp.getType();
-						final IType<?> contentType = fp.contentType;
-						final IType<?> keyType = fp.keyType;
-						for (final IType<?> type : fp.types) {
-							IType<?> requestedType = type;
-							if (requestedType.isContainer()) {
-								requestedType = GamaType.from(requestedType, keyType, contentType);
-							}
-							compatible = compatible || actualType.isTranslatableInto(requestedType)
-									|| Types.isEmptyContainerCase(requestedType, exp);
-							if (compatible) {
-								break;
-							}
-						}
-						if (!compatible) {
-							final String[] strings = new String[fp.types.length];
-							for (int i = 0; i < fp.types.length; i++) {
-								IType<?> requestedType = fp.types[i];
-								if (requestedType.isContainer()) {
-									requestedType = GamaType.from(requestedType, keyType, contentType);
-								}
-								strings[i] = requestedType.toString();
-							}
-
-							warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of "
-									+ actualType, IGamlIssue.SHOULD_CAST, facet, fp.types[0].toString());
-						}
-					}
+			if (fp == null) {
+				if (facet.contains(IGamlIssue.DOUBLED_CODE)) {
+					final String correct = facet.replace(IGamlIssue.DOUBLED_CODE, "");
+					final String error = "Facet " + correct + " is declared twice. Please correct.";
+					error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, "1");
+					error(error, IGamlIssue.DUPLICATE_DEFINITION, correct, "2");
+					return false;
+				} else if (!isDo) {
+					error("Unknown facet " + facet, IGamlIssue.UNKNOWN_FACET, facet);
+					return false;
 				}
 				return true;
+			} else if (fp.deprecated != null) {
+				warning("Facet '" + facet + "' is deprecated: " + fp.deprecated, IGamlIssue.DEPRECATED, facet);
 			}
+			if (fp.values != null) {
+				final String val = expr.getExpression().literalValue();
+				// We have a multi-valued facet
+				if (!fp.values.contains(val)) {
+					error("Facet '" + facet + "' is expecting a value among " + fp.values + " instead of " + val,
+							facet);
+					return false;
+				}
+			} else {
+				IExpression exp;
+				if (fp.isNewTemp) {
+					exp = createVarWithTypes(facet);
+					expr.setExpression(exp);
+				} else if (!fp.isLabel()) {
+					exp = expr.compile(SymbolDescription.this);
+				} else {
+					exp = expr.getExpression();
+				}
+
+				if (exp != null && !isBuiltIn) {
+					// Some expresssions might not be compiled
+					boolean compatible = false;
+					final IType<?> actualType = exp.getType();
+					final IType<?> contentType = fp.contentType;
+					final IType<?> keyType = fp.keyType;
+					for (final IType<?> type : fp.types) {
+						IType<?> requestedType1 = type;
+						if (requestedType1.isContainer()) {
+							requestedType1 = GamaType.from(requestedType1, keyType, contentType);
+						}
+						compatible = compatible || actualType.isTranslatableInto(requestedType1)
+								|| Types.isEmptyContainerCase(requestedType1, exp);
+						if (compatible) {
+							break;
+						}
+					}
+					if (!compatible) {
+						final String[] strings = new String[fp.types.length];
+						for (int i = 0; i < fp.types.length; i++) {
+							IType<?> requestedType2 = fp.types[i];
+							if (requestedType2.isContainer()) {
+								requestedType2 = GamaType.from(requestedType2, keyType, contentType);
+							}
+							strings[i] = requestedType2.toString();
+						}
+
+						warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of "
+								+ actualType, IGamlIssue.SHOULD_CAST, facet, fp.types[0].toString());
+					}
+				}
+			}
+			return true;
 		});
 		return ok;
 
@@ -762,24 +740,17 @@ public abstract class SymbolDescription implements IDescription {
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
 	protected Iterable<? extends ISymbol> compileChildren() {
-		// return Iterables.transform(getChildren(), each -> each.compile());
+		// return Iterables.filter(transform(getChildren(), each -> each.compile()), each -> each != null);
 
 		final List<ISymbol> lce = new ArrayList<>();
-		visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				final ISymbol s = desc.compile();
-				if (s != null) {
-					lce.add(s);
-				}
-				return true;
+		visitChildren(desc -> {
+			final ISymbol s = desc.compile();
+			if (s != null) {
+				lce.add(s);
 			}
-
+			return true;
 		});
-
 		return lce;
-
 	}
 
 	@Override
@@ -829,16 +800,12 @@ public abstract class SymbolDescription implements IDescription {
 
 	public IDescription getSimilarChild(final IDescription container, final IDescription desc) {
 		final IDescription[] found = new IDescription[1];
-		container.visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription d) {
-				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
-					found[0] = d;
-					return false;
-				}
-				return true;
+		container.visitChildren(d -> {
+			if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
+				found[0] = d;
+				return false;
 			}
+			return true;
 		});
 		return found[0];
 	}

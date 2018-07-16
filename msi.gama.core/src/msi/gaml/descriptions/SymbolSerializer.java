@@ -20,7 +20,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
@@ -238,8 +237,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				sb.append(")");
 			} else {
 				final Facets passedArgs = desc.getPassedArgs();
-				if (passedArgs.isEmpty())
-					return;
+				if (passedArgs.isEmpty()) { return; }
 				sb.append("(");
 				passedArgs.forEachEntry((name, value) -> {
 					if (Strings.isGamaNumber(name)) {
@@ -328,19 +326,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		if (expr != null) {
 			sb.append(expr).append(" ");
 		}
-		symbolDescription.visitFacets(new FacetVisitor() {
+		symbolDescription.visitFacets((key, b) -> {
 
-			@Override
-			public boolean visit(final String key, final IExpressionDescription b) {
-
-				if (key.equals(omit)) { return true; }
-				final String expr = serializeFacetValue(symbolDescription, key, includingBuiltIn);
-				if (expr != null) {
-					sb.append(serializeFacetKey(symbolDescription, key, includingBuiltIn)).append(expr).append(" ");
-				}
-
-				return true;
+			if (key.equals(omit)) { return true; }
+			final String expr1 = serializeFacetValue(symbolDescription, key, includingBuiltIn);
+			if (expr1 != null) {
+				sb.append(serializeFacetKey(symbolDescription, key, includingBuiltIn)).append(expr1).append(" ");
 			}
+
+			return true;
 		});
 	}
 
@@ -390,13 +384,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param plugins
 	 */
 	protected void collectMetaInformationInFacets(final SymbolDescription desc, final GamlProperties plugins) {
-		desc.visitFacets(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String key, final IExpressionDescription exp) {
-				collectMetaInformationInFacetValue(desc, key, plugins);
-				return true;
-			}
+		desc.visitFacets((key, exp) -> {
+			collectMetaInformationInFacetValue(desc, key, plugins);
+			return true;
 		});
 	}
 

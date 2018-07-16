@@ -17,7 +17,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -143,27 +142,26 @@ public class PrimitiveOperator implements IExpression {
 		if (action.isBuiltIn()) {
 			meta.put(GamlProperties.ACTIONS, action.getName());
 		}
-		if (parameters != null)
+		if (parameters != null) {
 			parameters.forEachValue(exp -> {
 				exp.collectMetaInformation(meta);
 				return true;
 			});
+		}
 	}
 
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		if (parameters != null)
-			parameters.forEachEntry(new FacetVisitor() {
-
-				@Override
-				public boolean visit(final String name, final IExpressionDescription exp) {
-					final IExpression expression = exp.getExpression();
-					if (expression != null)
-						expression.collectUsedVarsOf(species, result);
-					return true;
-
+		if (parameters != null) {
+			parameters.forEachEntry((name, exp) -> {
+				final IExpression expression = exp.getExpression();
+				if (expression != null) {
+					expression.collectUsedVarsOf(species, result);
 				}
+				return true;
+
 			});
+		}
 	}
 
 	@Override
@@ -176,8 +174,9 @@ public class PrimitiveOperator implements IExpression {
 
 	@Override
 	public void dispose() {
-		if (parameters != null)
+		if (parameters != null) {
 			parameters.dispose();
+		}
 	}
 
 	@Override

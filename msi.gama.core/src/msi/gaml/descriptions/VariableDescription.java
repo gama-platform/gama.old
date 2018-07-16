@@ -104,18 +104,14 @@ public class VariableDescription extends SymbolDescription {
 		final boolean isFunction = hasFacet(FUNCTION);
 		// We dont replace existing facets
 
-		v2.visitFacets(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String facetName, final IExpressionDescription exp) {
-				if (isFunction) {
-					if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) { return true; }
-				}
-				if (!hasFacet(facetName)) {
-					setFacet(facetName, exp);
-				}
-				return true;
+		v2.visitFacets((facetName, exp) -> {
+			if (isFunction) {
+				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) { return true; }
 			}
+			if (!hasFacet(facetName)) {
+				setFacet(facetName, exp);
+			}
+			return true;
 		});
 
 		if (get == null) {
@@ -223,16 +219,12 @@ public class VariableDescription extends SymbolDescription {
 			}
 		}
 
-		this.visitFacets(facetsToVisit, new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String fName, final IExpressionDescription exp) {
-				final IExpression expression = exp.getExpression();
-				if (expression != null) {
-					expression.collectUsedVarsOf(getSpeciesContext(), result);
-				}
-				return true;
+		this.visitFacets(facetsToVisit, (fName, exp) -> {
+			final IExpression expression = exp.getExpression();
+			if (expression != null) {
+				expression.collectUsedVarsOf(getSpeciesContext(), result);
 			}
+			return true;
 		});
 		if (isSyntheticSpeciesContainer()) {
 			final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();

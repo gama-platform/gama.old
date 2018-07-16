@@ -43,7 +43,6 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -262,9 +261,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
 				} else if (species.isBuiltIn()) {
-					cd.error(
-							"Species " + species.getName()
-									+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
+					cd.error("Species " + species.getName()
+							+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
 							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					return;
 				} else if (species.isGrid()) {
@@ -330,14 +328,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) { return; }
 			sb.append("with: [");
-			args.forEachEntry(new FacetVisitor() {
-
-				@Override
-				public boolean visit(final String name, final IExpressionDescription exp) {
-					sb.append(name).append("::").append(exp.serialize(false));
-					sb.append(", ");
-					return true;
-				}
+			args.forEachEntry((name, exp) -> {
+				sb.append(name).append("::").append(exp.serialize(false));
+				sb.append(", ");
+				return true;
 			});
 			sb.setLength(sb.length() - 2);
 			sb.append("]");
@@ -450,8 +444,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
 			final List<Map<String, Object>> inits) {
-		if (population == null)
-			return GamaListFactory.create();
+		if (population == null) { return GamaListFactory.create(); }
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
 		boolean shouldBeScheduled = false;
 		// If we create simulations within a single experiment, we must schedule

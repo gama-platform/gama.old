@@ -35,6 +35,21 @@ public class PrimitiveDescription extends ActionDescription {
 	}
 
 	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		return true;
+	}
+
+	@Override
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		return true;
+	}
+
+	@Override
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		return true;
+	}
+
+	@Override
 	public String getDefiningPlugin() {
 		return plugin;
 	}

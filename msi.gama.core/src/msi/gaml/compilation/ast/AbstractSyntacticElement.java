@@ -14,7 +14,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
+import msi.gaml.descriptions.IDescription.IFacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -82,14 +82,11 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	public final Facets copyFacets(final SymbolProto sp) {
 		if (facets != null) {
 			final Facets ff = new Facets();
-			visitFacets(new FacetVisitor() {
-
-				@Override
-				public boolean visit(final String a, final IExpressionDescription b) {
-					if (b != null)
-						ff.put(a, sp != null && sp.isLabel(a) ? b.cleanCopy().compileAsLabel() : b.cleanCopy());
-					return true;
+			visitFacets((a, b) -> {
+				if (b != null) {
+					ff.put(a, sp != null && sp.isLabel(a) ? b.cleanCopy().compileAsLabel() : b.cleanCopy());
 				}
+				return true;
 			});
 			return ff;
 		}
@@ -98,10 +95,10 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	@Override
 	public void setFacet(final String string, final IExpressionDescription expr) {
-		if (expr == null)
-			return;
-		if (facets == null)
+		if (expr == null) { return; }
+		if (facets == null) {
 			facets = new Facets();
+		}
 		facets.put(string, expr);
 	}
 
@@ -113,11 +110,11 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	protected void removeFacet(final String name) {
-		if (facets == null)
-			return;
+		if (facets == null) { return; }
 		facets.remove(name);
-		if (facets.isEmpty())
+		if (facets.isEmpty()) {
 			facets = null;
+		}
 	}
 
 	@Override
@@ -143,16 +140,14 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public void visitFacets(final FacetVisitor visitor) {
-		if (facets == null)
-			return;
+	public void visitFacets(final IFacetVisitor visitor) {
+		if (facets == null) { return; }
 		facets.forEachEntry(visitor);
 	}
 
 	@Override
 	public void compact() {
-		if (facets == null)
-			return;
+		if (facets == null) { return; }
 		if (facets.isEmpty()) {
 			facets = null;
 			return;
@@ -187,8 +182,9 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	@Override
 	public void dispose() {
-		if (facets != null)
+		if (facets != null) {
 			facets.dispose();
+		}
 	}
 
 }

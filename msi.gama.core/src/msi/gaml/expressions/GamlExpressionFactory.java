@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
@@ -16,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -35,7 +40,6 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
-import one.util.streamex.StreamEx;
 
 /**
  * The static class ExpressionFactory.
@@ -191,10 +195,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 		final Signature sig = new Signature(args).simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
-		boolean matches = StreamEx.ofKeys(ops).anyMatch(s -> sig.matchesDesiredSignature(s));
+		boolean matches = any(ops.keySet(), s -> sig.matchesDesiredSignature(s));
+		// boolean matches = StreamEx.ofKeys(ops).anyMatch(s -> sig.matchesDesiredSignature(s));
 		if (!matches) {
 			// Check if a varArg is not a possibility
-			matches = StreamEx.ofKeys(ops).anyMatch(s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
+			// matches = StreamEx.ofKeys(ops).anyMatch(s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
+			matches = any(ops.keySet(), s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
 		}
 		return matches;
 	}
@@ -203,9 +209,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
 		if (!hasOperator(op, context, eObject, args)) {
-			context.error("No operator found for applying '" + op + "' to " + new Signature(args).simplified()
-					+ " (operators available for " + Arrays.toString(OPERATORS.get(op).keySet().toArray()) + ")",
-					IGamlIssue.UNMATCHED_OPERANDS, eObject);
+			final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+			final Signature userSignature = new Signature(args).simplified();
+			String msg = "No operator found for applying '" + op + "' to " + userSignature;
+			if (ops != null) {
+				msg += " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")";
+			}
+			context.error(msg, IGamlIssue.UNMATCHED_OPERANDS, eObject);
 			return null;
 		}
 		// We get the possible sets of types registered in OPERATORS
@@ -216,19 +226,23 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final Signature originalUserSignature = userSignature;
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
-			final Signature[] filtered = StreamEx.ofKeys(ops)
-					.filter(s -> originalUserSignature.matchesDesiredSignature(s)).toArray(Signature.class);
-			final int size = filtered.length;
+			final Iterable<Signature> matching =
+					(filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s)));
+			// final Signature[] filtered = StreamEx.ofKeys(ops)
+			// .filter(s -> originalUserSignature.matchesDesiredSignature(s)).toArray(Signature.class);
+			final int size = Iterables.size(matching);
+			// final int size = filtered.length;
 			if (size == 0) {
 				// It is a varArg, we call recursively the method
-				return createOperator(op, context, eObject, createList(args));
+				return createOperator(op, context, eObject, (createList(args)));
 			} else if (size == 1) {
 				// Only one choice
-				userSignature = filtered[0];
+				// userSignature = filtered[0];
+				userSignature = get(matching, 0);
 			} else {
 				// Several choices, we take the closest
 				int distance = Integer.MAX_VALUE;
-				for (final Signature s : filtered) {
+				for (final Signature s : matching) {
 					final int dist = s.distanceTo(originalUserSignature);
 					if (dist == 0) {
 						userSignature = s;
@@ -243,6 +257,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We coerce the types if necessary, by wrapping the original
 			// expressions in a casting expression
 			final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
+
 			for (int i = 0; i < coercingTypes.length; i++) {
 				final IType t = coercingTypes[i];
 				if (t != null) {
@@ -251,11 +266,22 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						context.info("'" + args[i].serialize(false) + "' will be  truncated to int.",
 								IGamlIssue.UNMATCHED_OPERANDS, eObject);
 					}
-					args[i] = createOperator(IKeyword.AS, context, eObject, args[i], createTypeExpression(t));
+					args[i] = createAs(context, args[i], createTypeExpression(t));
 				}
 			}
 		}
+
 		final OperatorProto proto = ops.get(userSignature);
+		return createDirectly(context, eObject, proto, args);
+	}
+
+	@Override
+	public IExpression createAs(final IDescription context, final IExpression toCast, final IExpression type) {
+		return OperatorProto.AS.create(context, null, toCast, type);
+	}
+
+	public IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
+			final IExpression... args) {
 		// We finally make an instance of the operator and init it with the arguments
 		final IExpression copy = proto.create(context, eObject, args);
 		if (copy != null) {

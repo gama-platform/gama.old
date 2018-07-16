@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
+import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Iterables.transform;
 import static msi.gama.common.interfaces.IKeyword.AS;
 import static msi.gama.common.interfaces.IKeyword.EACH;
 import static msi.gama.common.interfaces.IKeyword.IS;
@@ -26,7 +28,6 @@ import static msi.gama.common.interfaces.IKeyword.UNKNOWN;
 import static msi.gama.common.interfaces.IKeyword._DOT;
 import static msi.gaml.expressions.IExpressionFactory.FALSE_EXPR;
 import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
-import static one.util.streamex.StreamEx.of;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -237,8 +238,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
 					IGamlIssue.DEPRECATED, e);
 		}
-		if (isSpeciesName(op)) { return getFactory().createOperator(AS, getContext(), e, expr,
-				getSpeciesContext(op).getSpeciesExpr()); }
+		if (isSpeciesName(
+				op)) { return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr()); }
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context,
 		// e, expr, skill(op)); }
 		return getFactory().createOperator(op, getContext(), e, expr);
@@ -284,7 +285,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return toCast;
 		}
 
-		return getFactory().createOperator(AS, getContext().getSpeciesContext(), typeObject, toCast,
+		return getFactory().createAs(getContext().getSpeciesContext(), toCast,
 				getFactory().createTypeExpression(result));
 	}
 
@@ -954,7 +955,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				return binary(op, args.get(0), args.get(1));
 			default:
 				return getFactory().createOperator(op, getContext(), object,
-						of(args).map(a -> compile(a)).toArray(IExpression.class));
+						toArray(transform(args, a -> compile(a)), IExpression.class));
 		}
 	}
 
@@ -966,7 +967,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (size == 1) {
 			toCast = compile(args.get(0));
 		} else {
-			toCast = getFactory().createList(of(args).map(a -> compile(a)).toList());
+			toCast = getFactory().createList((transform(args, a -> compile(a))));
 		}
 		return binaryAs(toCast, object);
 	}
@@ -1005,7 +1006,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (size == 1) { return true; }
 		// If more than one, we need to check if there are operators that match. If yes, we return false
 		return !getFactory().hasOperator(op, getContext(), object,
-				of(args).map(a -> compile(a)).toArray(IExpression.class));
+				toArray(transform(args, a -> compile(a)), IExpression.class));
 	}
 
 	@Override

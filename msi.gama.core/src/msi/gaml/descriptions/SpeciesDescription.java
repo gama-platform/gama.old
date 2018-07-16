@@ -672,37 +672,34 @@ public class SpeciesDescription extends TypeDescription {
 		finalizeControl();
 		final boolean isBuiltIn = this.isBuiltIn();
 
-		final DescriptionVisitor<SpeciesDescription> visitor = new DescriptionVisitor<SpeciesDescription>() {
-
-			@Override
-			public boolean visit(final SpeciesDescription microSpec) {
-				if (!microSpec.finalizeDescription()) { return false; }
-				if (!microSpec.isExperiment() && !isBuiltIn) {
-					final String n = microSpec.getName();
-					if (hasAttribute(n) && !getAttribute(n).isSyntheticSpeciesContainer()) {
-						microSpec.error(microSpec.getName() + " is the name of an existing attribute in "
-								+ SpeciesDescription.this, IGamlIssue.DUPLICATE_NAME, NAME);
-						return false;
-					}
-					final VariableDescription var =
-							(VariableDescription) DescriptionFactory.create(LIST, SpeciesDescription.this, NAME, n);
-
-					var.setSyntheticSpeciesContainer();
-					var.setFacet(OF, GAML.getExpressionFactory()
-							.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
-					final IGamaHelper get = (scope, agent, skill, values) -> ((IMacroAgent) agent)
-							.getMicroPopulation(microSpec.getName());
-					final IGamaHelper set = (scope, agent, skill, values) -> null;
-					final IGamaHelper init = (scope, agent, skill, values) -> {
-						((IMacroAgent) agent).initializeMicroPopulation(scope, microSpec.getName());
-						return ((IMacroAgent) agent).getMicroPopulation(microSpec.getName());
-					};
-
-					var.addHelpers(get, init, set);
-					addChild(var);
+		final DescriptionVisitor<SpeciesDescription> visitor = microSpec -> {
+			if (!microSpec.finalizeDescription()) { return false; }
+			if (!microSpec.isExperiment() && !isBuiltIn) {
+				final String n = microSpec.getName();
+				if (hasAttribute(n) && !getAttribute(n).isSyntheticSpeciesContainer()) {
+					microSpec.error(
+							microSpec.getName() + " is the name of an existing attribute in " + SpeciesDescription.this,
+							IGamlIssue.DUPLICATE_NAME, NAME);
+					return false;
 				}
-				return true;
+				final VariableDescription var =
+						(VariableDescription) DescriptionFactory.create(LIST, SpeciesDescription.this, NAME, n);
+
+				var.setSyntheticSpeciesContainer();
+				var.setFacet(OF, GAML.getExpressionFactory()
+						.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
+				final IGamaHelper get = (scope1, agent1, skill1, values1) -> ((IMacroAgent) agent1)
+						.getMicroPopulation(microSpec.getName());
+				final IGamaHelper set = (scope2, agent2, skill2, values2) -> null;
+				final IGamaHelper init = (scope3, agent3, skill3, values3) -> {
+					((IMacroAgent) agent3).initializeMicroPopulation(scope3, microSpec.getName());
+					return ((IMacroAgent) agent3).getMicroPopulation(microSpec.getName());
+				};
+
+				var.addHelpers(get, init, set);
+				addChild(var);
 			}
+			return true;
 		};
 
 		// recursively finalize the sorted micro-species
@@ -857,6 +854,27 @@ public class SpeciesDescription extends TypeDescription {
 
 		if (aspects != null) {
 			if (!aspects.forEachValue(visitor)) { return false; }
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		final DescriptionVisitor recursiveVisitor = each -> {
+			if (!visitor.visit(each)) { return false; }
+			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
+			return true;
+		};
+		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
+		if (microSpecies != null) {
+			if (!microSpecies.forEachValue(recursiveVisitor)) { return false; }
+		}
+		if (behaviors != null) {
+			if (!behaviors.forEachValue(recursiveVisitor)) { return false; }
+		}
+
+		if (aspects != null) {
+			if (!aspects.forEachValue(recursiveVisitor)) { return false; }
 		}
 		return true;
 	}

@@ -10,7 +10,6 @@
 package msi.gaml.descriptions;
 
 import java.util.Collections;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -68,31 +67,27 @@ public class StatementDescription extends SymbolDescription {
 		if (isBuiltIn()) { return; }
 		super.dispose();
 
-		if (passedArgs != null)
+		if (passedArgs != null) {
 			passedArgs.dispose();
+		}
 	}
 
 	private Arguments createArgs() {
-		if (!hasFacets())
-			return null;
+		if (!hasFacets()) { return null; }
 		if (!hasFacet(WITH)) {
-			if (!isInvocation())
-				return null;
+			if (!isInvocation()) { return null; }
 			if (hasFacetsNotIn(DoStatement.DO_FACETS)) {
 				final Arguments args = new Arguments();
-				visitFacets(new FacetVisitor() {
-
-					@Override
-					public final boolean visit(final String facet, final IExpressionDescription b) {
-						if (!DoStatement.DO_FACETS.contains(facet)) {
-							args.put(facet, b);
-						}
-						return true;
+				visitFacets((facet, b) -> {
+					if (!DoStatement.DO_FACETS.contains(facet)) {
+						args.put(facet, b);
 					}
+					return true;
 				});
 				return args;
-			} else
+			} else {
 				return null;
+			}
 		} else {
 			try {
 				return GAML.getExpressionFactory().createArgumentMap(getAction(), getFacet(WITH), this);
@@ -141,10 +136,8 @@ public class StatementDescription extends SymbolDescription {
 				final IExpression exp = desc.getExpression();
 				if (exp instanceof IOperator) {
 					final IOperator op = (IOperator) exp;
-					if (op.arg(0).getName().equals(name))
-						return true;
-					if (op.arg(1) != null && op.arg(1).getName().equals(name))
-						return true;
+					if (op.arg(0).getName().equals(name)) { return true; }
+					if (op.arg(1) != null && op.arg(1).getName().equals(name)) { return true; }
 				}
 			}
 		}
@@ -210,45 +203,23 @@ public class StatementDescription extends SymbolDescription {
 		return kw + " " + name + " " + in;
 	}
 
-	public void collectAllStatements(final String keyword, final Set<StatementDescription> returns) {
-
-		visitChildren(new DescriptionVisitor() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				if (desc instanceof StatementDescription) {
-					if (desc.getKeyword().equals(keyword)) {
-						returns.add((StatementDescription) desc);
-					}
-					if (desc instanceof StatementWithChildrenDescription)
-						((StatementWithChildrenDescription) desc).visitChildren(this);
-				}
-				return true;
-			}
-		});
-
-	}
-
 	@Override
 	public IDescription validate() {
-		if (validated)
-			return this;
+		if (validated) { return this; }
 		final IDescription result = super.validate();
-		if (passedArgs != null)
+		if (passedArgs != null) {
 			validatePassedArgs();
+		}
 		return result;
 	}
 
 	public Arguments validatePassedArgs() {
 		final IDescription superDesc = getEnclosingDescription();
-		passedArgs.forEachEntry(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
-				if (exp != null)
-					exp.compile(superDesc);
-				return true;
+		passedArgs.forEachEntry((name, exp) -> {
+			if (exp != null) {
+				exp.compile(superDesc);
 			}
+			return true;
 		});
 		if (isInvocation()) {
 			verifyArgs(passedArgs);
@@ -267,46 +238,41 @@ public class StatementDescription extends SymbolDescription {
 			}
 			return;
 		}
-		ca.forEachEntry(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
-				// hqnghi check attribute is not exist in both main model and
-				// micro-model
-				if (!denotedSpecies.hasAttribute(name) && denotedSpecies instanceof ExperimentDescription
-						&& !denotedSpecies.getModelDescription().hasAttribute(name)) {
-					// end-hqnghi
-					error("Attribute " + name + " does not exist in species " + denotedSpecies.getName(),
-							IGamlIssue.UNKNOWN_ARGUMENT, exp.getTarget(), (String[]) null);
-					return false;
-				} else {
-					IType<?> initType = Types.NO_TYPE;
-					IType<?> varType = Types.NO_TYPE;
-					final VariableDescription vd = denotedSpecies.getAttribute(name);
-					if (vd != null) {
-						varType = vd.getType();
+		ca.forEachEntry((name, exp) -> {
+			// hqnghi check attribute is not exist in both main model and
+			// micro-model
+			if (!denotedSpecies.hasAttribute(name) && denotedSpecies instanceof ExperimentDescription
+					&& !denotedSpecies.getModelDescription().hasAttribute(name)) {
+				// end-hqnghi
+				error("Attribute " + name + " does not exist in species " + denotedSpecies.getName(),
+						IGamlIssue.UNKNOWN_ARGUMENT, exp.getTarget(), (String[]) null);
+				return false;
+			} else {
+				IType<?> initType = Types.NO_TYPE;
+				IType<?> varType = Types.NO_TYPE;
+				final VariableDescription vd = denotedSpecies.getAttribute(name);
+				if (vd != null) {
+					varType = vd.getType();
+				}
+				if (exp != null) {
+					final IExpression expr = exp.getExpression();
+					if (expr != null) {
+						initType = expr.getType();
 					}
-					if (exp != null) {
-						final IExpression expr = exp.getExpression();
-						if (expr != null) {
-							initType = expr.getType();
+					if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
+						if (getKeyword().equals(IKeyword.CREATE)) {
+							final boolean isDB = getFacet(FROM) != null
+									&& getFacet(FROM).getExpression().getType().isAssignableFrom(Types.LIST);
+							if (isDB && initType.equals(Types.STRING)) { return true; }
 						}
-						if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
-							if (getKeyword().equals(IKeyword.CREATE)) {
-								final boolean isDB = getFacet(FROM) != null
-										&& getFacet(FROM).getExpression().getType().isAssignableFrom(Types.LIST);
-								if (isDB && initType.equals(Types.STRING))
-									return true;
-							}
-							warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
-									exp.getTarget(), varType.toString());
-						}
+						warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
+								exp.getTarget(), varType.toString());
 					}
-
 				}
 
-				return true;
 			}
+
+			return true;
 		});
 
 	}

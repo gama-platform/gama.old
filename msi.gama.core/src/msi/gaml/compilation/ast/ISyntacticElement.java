@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.base.Predicate;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
+import msi.gaml.descriptions.IDescription.IFacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -61,7 +61,7 @@ public interface ISyntacticElement {
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
 
-	public abstract void visitFacets(FacetVisitor visitor);
+	public abstract void visitFacets(IFacetVisitor visitor);
 
 	public abstract String getName();
 

@@ -49,13 +49,13 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public static final ModelSerializer MODEL_SERIALIZER = new ModelSerializer();
 	public static final StatementSerializer STATEMENT_SERIALIZER = new StatementSerializer();
 	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
-
 	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
 
-	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
+	@FunctionalInterface
+	public static interface DescriptionVisitor<T extends IDescription> extends TObjectProcedure<T> {
 
 		@Override
-		public boolean execute(final T desc) {
+		default boolean execute(final T desc) {
 			return visit(desc);
 		}
 
@@ -63,16 +63,17 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	}
 
-	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription>,
-			BiConsumer<String, IExpressionDescription> {
+	@FunctionalInterface
+	public static interface IFacetVisitor
+			extends TObjectObjectProcedure<String, IExpressionDescription>, BiConsumer<String, IExpressionDescription> {
 
 		@Override
-		public final boolean execute(final String name, final IExpressionDescription exp) {
+		default boolean execute(final String name, final IExpressionDescription exp) {
 			return visit(name, exp);
 		}
 
 		@Override
-		public final void accept(final String name, final IExpressionDescription exp) {
+		default void accept(final String name, final IExpressionDescription exp) {
 			visit(name, exp);
 		}
 
@@ -84,27 +85,18 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		 * @return
 		 */
 		public abstract boolean visit(String name, IExpressionDescription exp);
-
 	}
 
-	public static final DescriptionVisitor VALIDATING_VISITOR = new DescriptionVisitor<IDescription>() {
+	public static final DescriptionVisitor VALIDATING_VISITOR = desc -> {
+		if (desc.validate() == null) { return false; }
+		return true;
 
-		@Override
-		public boolean visit(final IDescription desc) {
-			if (desc.validate() == null) { return false; }
-			return true;
-
-		}
 	};
 
-	public static final DescriptionVisitor DISPOSING_VISITOR = new DescriptionVisitor<IDescription>() {
+	public static final DescriptionVisitor DISPOSING_VISITOR = desc -> {
+		desc.dispose();
+		return true;
 
-		@Override
-		public boolean visit(final IDescription desc) {
-			desc.dispose();
-			return true;
-
-		}
 	};
 
 	public void error(final String message);
@@ -207,35 +199,29 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @param visitor
 	 * @return
 	 */
-	public default boolean visitFacets(final FacetVisitor visitor) {
+	public default boolean visitFacets(final IFacetVisitor visitor) {
 		return visitFacets(null, visitor);
 	}
 
 	public default void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		this.visitFacets(new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String name, final IExpressionDescription exp) {
-				final IExpression expression = exp.getExpression();
-				if (expression != null) {
-					expression.collectUsedVarsOf(species, result);
-				}
-				return true;
+		this.visitFacets((name, exp) -> {
+			final IExpression expression = exp.getExpression();
+			if (expression != null) {
+				expression.collectUsedVarsOf(species, result);
 			}
+			return true;
 		});
-		this.visitOwnChildren(new DescriptionVisitor() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				desc.collectUsedVarsOf(species, result);
-				return true;
-			}
+		this.visitOwnChildren(desc -> {
+			desc.collectUsedVarsOf(species, result);
+			return true;
 		});
 	}
 
-	public boolean visitFacets(Set<String> facets, FacetVisitor visitor);
+	public boolean visitFacets(Set<String> facets, IFacetVisitor visitor);
 
 	public boolean visitChildren(DescriptionVisitor visitor);
+
+	public boolean visitOwnChildrenRecursively(DescriptionVisitor visitor);
 
 	public boolean visitOwnChildren(DescriptionVisitor visitor);
 
@@ -245,7 +231,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public Facets getFacets();
 
-	public boolean isSynthetic();
+	// public boolean isSynthetic();
 
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
 

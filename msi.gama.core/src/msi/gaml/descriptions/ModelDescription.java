@@ -61,9 +61,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ModelDescription getMicroModel(final String name) {
-		if (microModels == null) {
-			return null;
-		}
+		if (microModels == null) { return null; }
 		return microModels.get(name);
 	}
 
@@ -169,9 +167,9 @@ public class ModelDescription extends SpeciesDescription {
 		if (!Iterables.isEmpty(skills)) {
 			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
 		}
-		sb.append("<br>")
-		.append("The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
-		.append("<br>");
+		sb.append("<br>").append(
+				"The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
+				.append("<br>");
 		sb.append(getAttributeDocumentation());
 		sb.append("<br/>");
 		sb.append(getActionDocumentation());
@@ -231,10 +229,6 @@ public class ModelDescription extends SpeciesDescription {
 		types.init(this);
 	}
 
-	// public void addSpeciesType(final SpeciesDescription species) {
-	// types.addSpeciesType(species);
-	// }
-
 	@Override
 	public SpeciesDescription getMacroSpecies() {
 
@@ -248,9 +242,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		if (child == null) {
-			return null;
-		}
+		if (child == null) { return null; }
 
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
@@ -286,16 +278,10 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public boolean hasExperiment(final String nameOrTitle) {
-		if (experiments == null) {
-			return false;
-		}
-		if (experiments.containsKey(nameOrTitle)) {
-			return true;
-		}
+		if (experiments == null) { return false; }
+		if (experiments.containsKey(nameOrTitle)) { return true; }
 		for (final ExperimentDescription exp : experiments.values()) {
-			if (exp.getExperimentTitleFacet().equals(nameOrTitle)) {
-				return true;
-			}
+			if (exp.getExperimentTitleFacet().equals(nameOrTitle)) { return true; }
 		}
 		return false;
 	}
@@ -307,9 +293,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (spec.equals(getName())) {
-			return this;
-		}
+		if (spec.equals(getName())) { return this; }
 		if (importedModelNames != null && importedModelNames.contains(spec)) { return this; }
 		if (getTypesManager() == null) {
 			if (hasMicroSpecies()) {
@@ -338,9 +322,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentNames() {
-		if (experiments == null) {
-			return Collections.EMPTY_SET;
-		}
+		if (experiments == null) { return Collections.EMPTY_SET; }
 		return new TLinkedHashSet(experiments.keySet());
 	}
 
@@ -363,15 +345,11 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ExperimentDescription getExperiment(final String name) {
-		if (experiments == null) {
-			return null;
-		}
+		if (experiments == null) { return null; }
 		final ExperimentDescription desc = experiments.get(name);
 		if (desc == null) {
 			for (final ExperimentDescription ed : experiments.values()) {
-				if (ed.getExperimentTitleFacet().equals(name)) {
-					return ed;
-				}
+				if (ed.getExperimentTitleFacet().equals(name)) { return ed; }
 			}
 		}
 		return desc;
@@ -388,41 +366,36 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (!super.visitOwnChildren(visitor)) {
-			return false;
-		}
+		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (experiments != null) {
-			if (!experiments.forEachValue(visitor)) {
-				return false;
-			}
+			if (!experiments.forEachValue(visitor)) { return false; }
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		final DescriptionVisitor recursiveVisitor = each -> {
+			if (!visitor.visit(each)) { return false; }
+			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
+			return true;
+		};
+		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
+		if (experiments != null) {
+			if (!experiments.forEachValue(recursiveVisitor)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
 	public boolean finalizeDescription() {
-		//		final VariableDescription vd = getAttribute(SHAPE);
-
-		// if (!isBuiltIn() && !vd.hasFacet(INIT)) {
-		// final Facets f = new Facets(NAME, SHAPE);
-		// f.put(INIT,
-		// GAML.getExpressionFactory().createOperator("envelope", this, null,
-		// new ConstantExpression(100)));
-		// final ISyntacticElement shape =
-		// SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
-		// vd = (VariableDescription) DescriptionFactory.create(shape, this,
-		// null);
-		// addChild(vd);
-		// }
-		if (!super.finalizeDescription()) {
-			return false;
-		}
+		if (!super.finalizeDescription()) { return false; }
 		if (actions != null) {
 			for (final ActionDescription action : actions.values()) {
 				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
 						.equals(getUnderlyingElement(null).eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
-					+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
+							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
 					return false;
 				}
 			}
@@ -432,9 +405,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) {
-			return this;
-		}
+		if (validated) { return this; }
 		return validate(false);
 	}
 
@@ -449,9 +420,7 @@ public class ModelDescription extends SpeciesDescription {
 	 * @return
 	 */
 	public Collection<? extends ExperimentDescription> getExperiments() {
-		if (experiments == null) {
-			return Collections.EMPTY_LIST;
-		}
+		if (experiments == null) { return Collections.EMPTY_LIST; }
 		return experiments.values();
 	}
 
@@ -474,9 +443,7 @@ public class ModelDescription extends SpeciesDescription {
 				visitor.visit(desc);
 				return desc.visitMicroSpecies(this);
 			}
-		})) {
-			return;
-		}
+		})) { return; }
 		if (experiments != null) {
 			experiments.forEachValue(visitor);
 		}
@@ -487,13 +454,9 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public void getAllSpecies(final List<SpeciesDescription> accumulator) {
-		final DescriptionVisitor visitor = new DescriptionVisitor<SpeciesDescription>() {
-
-			@Override
-			public boolean visit(final SpeciesDescription desc) {
-				accumulator.add(desc);
-				return true;
-			}
+		final DescriptionVisitor<SpeciesDescription> visitor = desc -> {
+			accumulator.add(desc);
+			return true;
 		};
 		visitAllSpecies(visitor);
 	}

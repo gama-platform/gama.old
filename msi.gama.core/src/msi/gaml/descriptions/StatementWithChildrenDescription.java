@@ -10,7 +10,6 @@
 package msi.gaml.descriptions;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -31,7 +30,7 @@ import msi.gaml.types.IType;
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected THashMap<String, IVarExpression> temps;
-	protected final ICollector<IDescription> children = new Collector.Ordered<IDescription>();
+	protected final ICollector<IDescription> children = new Collector.Ordered<>();
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
@@ -43,35 +42,44 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.visit(d))
-				return false;
+			if (!visitor.visit(d)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		for (final IDescription d : children) {
+			if (!visitor.visit(d)) { return false; }
+			if (!d.visitOwnChildrenRecursively(visitor)) { return false; }
+		}
+		return true;
+
+	}
+
+	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.visit(d))
-				return false;
+			if (!visitor.visit(d)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
 	public Iterable<IDescription> getOwnChildren() {
-		return children == null ? Collections.EMPTY_LIST : children;
+		return children;
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		children.clear();
-		if (temps != null)
+		if (temps != null) {
 			temps.forEachValue(object -> {
 				object.dispose();
 				return true;
 			});
+		}
 		temps = null;
 	}
 
@@ -101,8 +109,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		}
 		final String kw = getKeyword();
 		final String facet = kw == IKeyword.LET || kw == IKeyword.LOOP ? IKeyword.NAME : IKeyword.RETURNS;
-		if (temps == null)
+		if (temps == null) {
 			temps = new THashMap<>();
+		}
 		if (temps.containsKey(name) && !name.equals(MYSELF)) {
 			declaration.warning("This declaration of " + name + " shadows a previous declaration",
 					IGamlIssue.SHADOWS_NAME, facet);

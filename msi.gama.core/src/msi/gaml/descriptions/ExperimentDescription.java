@@ -25,6 +25,8 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.statements.Facets;
 
+@SuppressWarnings ({ "unchecked", "rawtypes" })
+
 public class ExperimentDescription extends SpeciesDescription {
 
 	private TOrderedHashMap<String, VariableDescription> parameters;
@@ -51,14 +53,12 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	public boolean hasParameter(final String name) {
-		if (parameters == null)
-			return false;
+		if (parameters == null) { return false; }
 		return parameters.containsKey(name);
 	}
 
 	public VariableDescription getParameter(final String name) {
-		if (parameters == null)
-			return null;
+		if (parameters == null) { return null; }
 		return parameters.get(name);
 	}
 
@@ -125,18 +125,36 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (!super.visitOwnChildren(visitor))
-			return false;
+		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (parameters != null) {
-			if (!parameters.forEachValue(visitor))
-				return false;
+			if (!parameters.forEachValue(visitor)) { return false; }
 		}
-		if (output != null)
-			if (!visitor.visit(output))
-				return false;
-		if (permanent != null)
-			if (!visitor.visit(permanent))
-				return false;
+		if (output != null) {
+			if (!visitor.visit(output)) { return false; }
+		}
+		if (permanent != null) {
+			if (!visitor.visit(permanent)) { return false; }
+		}
+		return true;
+	}
+
+	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		final DescriptionVisitor recursiveVisitor = each -> {
+			if (!visitor.visit(each)) { return false; }
+			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
+			return true;
+		};
+		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
+		if (parameters != null) {
+			if (!parameters.forEachValue(recursiveVisitor)) { return false; }
+		}
+		if (output != null) {
+			if (!(recursiveVisitor.visit(output))) { return false; }
+		}
+		if (permanent != null) {
+			if (!(recursiveVisitor.visit(permanent))) { return false; }
+		}
 		return true;
 	}
 
@@ -151,19 +169,18 @@ public class ExperimentDescription extends SpeciesDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
 		boolean result = super.visitChildren(visitor);
-		if (!result)
-			return false;
+		if (!result) { return false; }
 		if (parameters != null) {
 			result &= parameters.forEachValue(visitor);
 		}
-		if (!result)
-			return false;
-		if (output != null)
+		if (!result) { return false; }
+		if (output != null) {
 			result &= visitor.visit(output);
-		if (!result)
-			return false;
-		if (permanent != null)
+		}
+		if (!result) { return false; }
+		if (permanent != null) {
 			result &= visitor.visit(permanent);
+		}
 		return result;
 	}
 
@@ -207,20 +224,15 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	private void mergeOutputs(final StatementDescription inherited, final StatementDescription defined) {
-
-		inherited.visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription in) {
-				final IDescription redefined = getSimilarChild(defined, in);
-				if (redefined == null) {
-					defined.addChild(in.copy(defined));
-				} else {
-					redefined.info("This definition of " + redefined.getName() + " supersedes the one in "
-							+ in.getSpeciesContext().getName(), IGamlIssue.REDEFINES, NAME);
-				}
-				return true;
+		inherited.visitChildren(in -> {
+			final IDescription redefined = getSimilarChild(defined, in);
+			if (redefined == null) {
+				defined.addChild(in.copy(defined));
+			} else {
+				redefined.info("This definition of " + redefined.getName() + " supersedes the one in "
+						+ in.getSpeciesContext().getName(), IGamlIssue.REDEFINES, NAME);
 			}
+			return true;
 		});
 
 	}
@@ -231,16 +243,15 @@ public class ExperimentDescription extends SpeciesDescription {
 			output = r;
 		} else if (r.getKeyword().equals(PERMANENT)) {
 			permanent = r;
-		} else
+		} else {
 			super.addBehavior(r);
+		}
 	}
 
 	@Override
 	protected boolean parentIsVisible() {
-		if (!getParent().isExperiment())
-			return false;
-		if (parent.isBuiltIn())
-			return true;
+		if (!getParent().isExperiment()) { return false; }
+		if (parent.isBuiltIn()) { return true; }
 		final ModelDescription host = (ModelDescription) getMacroSpecies();
 		if (host != null) {
 			if (host.getExperiment(parent.getName()) != null) { return true; }

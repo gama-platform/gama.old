@@ -52,7 +52,12 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public boolean isSynthetic() {
+	public boolean isBuiltIn() {
+		return super.isBuiltIn() && !isSynthetic;
+	}
+
+	@Override
+	protected boolean isSynthetic() {
 		return isSynthetic;
 	}
 

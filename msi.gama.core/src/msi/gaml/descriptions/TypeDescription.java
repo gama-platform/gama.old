@@ -332,16 +332,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	 */
 	protected boolean verifyAttributeCycles() {
 		if (attributes == null || attributes.size() <= 1) { return true; }
-
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
-		attributes.forEachEntry((aName, var) -> {
+		final Collection<VariableDescription> shapeDependencies =
+				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
 
+		attributes.forEachEntry((aName, var) -> {
 			dependencies.addVertex(var);
 			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
 				dependencies.addEdge(shape, var);
@@ -356,64 +355,49 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 		});
 
-		final DirectedGraph<VariableDescription, Object> functionDependencies =
-				new DefaultDirectedGraph<>(Object.class);
-		attributes.forEachEntry((aName, var) -> {
-			if (!var.hasFacet(FUNCTION)) { return true; }
-			functionDependencies.addVertex(var);
-
-			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
-				if (attributes.containsValue(newVar)) {
-					functionDependencies.addVertex(newVar);
-					functionDependencies.addEdge(newVar, var);
-				}
-			}
-			return true;
-		});
-
-		// Verifying functions
-		// attributes.forEachEntry((aName, var) -> {
-		// if (var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false).contains(var)) {
-		// var.error("Attributes declared as functions cannot contain references to themselves in their function",
-		// FUNCTION, FUNCTION);
-		// return false;
-		// }
-		// return true;
-		// });
-
-		if (!functionDependencies.vertexSet().isEmpty()) {
-			final CycleDetector functionCycleDetector = new CycleDetector<>(functionDependencies);
-			if (functionCycleDetector.detectCycles()) {
-				final Set<VariableDescription> inCycles = functionCycleDetector.findCycles();
-				final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
-				for (final VariableDescription vd : inCycles) {
-					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
-						continue;
-					}
-					final Collection<String> strings = new HashSet(names);
-					vd.error("Cycle detected between " + vd.getName() + " and these variables: " + strings
-							+ "; attributes declared as functions cannot contain references to themselves in their function");
-				}
-				return false;
-
-			}
-		}
-
 		final CycleDetector cycleDetector = new CycleDetector<>(dependencies);
 		if (cycleDetector.detectCycles()) {
 			final Set<VariableDescription> inCycles = cycleDetector.findCycles();
-			final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
 			for (final VariableDescription vd : inCycles) {
 				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
 					continue;
 				}
-				final Collection<String> strings = new HashSet(names);
+				final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
 				strings.remove(vd.getName());
 				vd.error("Cycle detected between " + vd.getName() + " and " + strings
 						+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
 						+ getKeyword());
 			}
 			return false;
+		}
+		final DirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
+		attributes.forEachEntry((aName, var) -> {
+			if (!var.hasFacet(FUNCTION)) { return true; }
+			fDependencies.addVertex(var);
+			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
+				if (attributes.containsValue(newVar)) {
+					fDependencies.addVertex(newVar);
+					fDependencies.addEdge(newVar, var);
+				}
+			}
+			return true;
+		});
+
+		if (!fDependencies.vertexSet().isEmpty()) {
+			final CycleDetector functionCycleDetector = new CycleDetector<>(fDependencies);
+			if (functionCycleDetector.detectCycles()) {
+				final Set<VariableDescription> inCycles = functionCycleDetector.findCycles();
+				for (final VariableDescription vd : inCycles) {
+					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
+						continue;
+					}
+					final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
+					vd.error("Cycle detected between " + vd.getName() + " and " + strings
+							+ "; attributes declared as functions cannot contain references to themselves in their function");
+				}
+				return false;
+
+			}
 		}
 
 		return true;
@@ -695,6 +679,12 @@ public abstract class TypeDescription extends SymbolDescription {
 		return visitOwnActions(visitor);
 	}
 
+	@Override
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+		if (!visitOwnAttributes(visitor)) { return false; }
+		return visitOwnActionsRecursively(visitor);
+	}
+
 	public boolean visitAllAttributes(final DescriptionVisitor visitor) {
 		if (parent != null && parent != this) {
 			if (!parent.visitAllAttributes(visitor)) { return false; }
@@ -710,6 +700,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	public boolean visitOwnActions(final DescriptionVisitor visitor) {
 		if (actions == null) { return true; }
 		return actions.forEachValue(visitor);
+	}
+
+	public boolean visitOwnActionsRecursively(final DescriptionVisitor visitor) {
+		if (actions == null) { return true; }
+		return actions.forEachValue(each -> {
+			if (!visitor.visit(each)) { return false; }
+			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
+			return true;
+		});
 	}
 
 	@Override

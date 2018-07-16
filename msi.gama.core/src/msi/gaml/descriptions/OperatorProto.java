@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -50,6 +51,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class OperatorProto extends AbstractProto {
 
+	public static OperatorProto AS;
 	public static Set<String> noMandatoryParenthesis = ImmutableSet.copyOf(Arrays.<String> asList("-", "!"));
 	public static Set<String> binaries = ImmutableSet.copyOf(Arrays.<String> asList("=", "+", "-", "/", "*", "^", "<",
 			">", "<=", ">=", "?", "!=", ":", ".", "where", "select", "collect", "first_with", "last_with",
@@ -76,8 +78,10 @@ public class OperatorProto extends AbstractProto {
 				case 2:
 					if (isVarOrField) {
 						if (!(exprs[1] instanceof IVarExpression)) {
-							context.error("Attribute " + exprs[1].literalValue() + " unknown for " + exprs[0].getType()
-									+ " instances");
+							if (context != null) {
+								context.error("Attribute " + exprs[1].literalValue() + " unknown for "
+										+ exprs[0].getType() + " instances");
+							}
 							return null;
 						}
 						return new BinaryOperator.BinaryVarOperator(this, context, exprs);
@@ -108,6 +112,9 @@ public class OperatorProto extends AbstractProto {
 			final int keyTypeProvider, final int contentTypeContentTypeProvider, final int[] expectedContentType,
 			final String plugin) {
 		super(name, method, plugin);
+		if (name.equals(IKeyword.AS)) {
+			AS = this;
+		}
 		this.iterator = IExpressionCompiler.ITERATORS.contains(name);
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;

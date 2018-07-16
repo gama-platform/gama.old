@@ -85,8 +85,6 @@ import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.FacetVisitor;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
@@ -115,7 +113,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz"},
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz" },
 				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
@@ -234,17 +232,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						att == null ? WITH : ATTRIBUTES);
 			} else {
 				if (args != null) {
-					args.forEachEntry(new FacetVisitor() {
-
-						@Override
-						public boolean visit(final String name, final IExpressionDescription exp) {
-							if (!species.hasAttribute(name)) {
-								desc.error("Attribute " + name + " is not defined for the agents of "
-										+ data.serialize(false), IGamlIssue.UNKNOWN_VAR, WITH);
-								return false;
-							}
-							return true;
+					args.forEachEntry((name, exp) -> {
+						if (!species.hasAttribute(name)) {
+							desc.error(
+									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
+									IGamlIssue.UNKNOWN_VAR, WITH);
+							return false;
 						}
+						return true;
 					});
 				}
 			}
@@ -364,18 +359,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			GamaKmlExport kml;
 			if (item == null || !(item.value(scope) instanceof GamaKmlExport)) { return null; }
 			kml = (GamaKmlExport) item.value(scope);
-			
+
 			if (kml == null) { return null; }
 
-			exportKML(scope,kml, path);
+			exportKML(scope, kml, path);
 		} else if (type.equals("kmz")) {
 			GamaKmlExport kml;
 			if (item == null || !(item.value(scope) instanceof GamaKmlExport)) { return null; }
 			kml = (GamaKmlExport) item.value(scope);
-			
+
 			if (kml == null) { return null; }
 
-			exportKMZ(scope,kml, path);
+			exportKMZ(scope, kml, path);
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -398,13 +393,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return Cast.asString(scope, file.value(scope));
 	}
 
-	private static void exportKML(IScope scope, GamaKmlExport kml, String path) {
+	private static void exportKML(final IScope scope, final GamaKmlExport kml, final String path) {
 		kml.saveAsKml(scope, path);
 	}
-	
-	private static void exportKMZ(IScope scope, GamaKmlExport kml, String path) {
+
+	private static void exportKMZ(final IScope scope, final GamaKmlExport kml, final String path) {
 		kml.saveAsKmz(scope, path);
 	}
+
 	private static void createParents(final File outputFile) {
 		final File parent = outputFile.getParentFile();
 		if (!parent.exists()) {
@@ -535,7 +531,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return geomType;
 	}
 
-	public void  saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
+	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
 			throws GamaRuntimeException {
 		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
 			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
@@ -569,7 +565,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			
+
 			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -578,8 +574,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 
 	}
-	
-	public IProjection defineProjection(IScope scope, String path) {
+
+	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
 		if (crsCode != null) {
 			final IType type = crsCode.getType();
@@ -789,8 +785,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes, IProjection gis)
-			throws IOException, SchemaException, GamaRuntimeException {
+			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
 		final File f = new File(path);
 		createParents(f);

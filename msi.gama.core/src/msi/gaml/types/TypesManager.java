@@ -16,13 +16,12 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescription> implements ITypesManager {
+public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDescription>, ITypesManager {
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
 	private TypesManager parent;
@@ -122,18 +121,14 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 		// We first add the species as types
 		model.visitAllSpecies(this);
 		// Then we parent the types
-		model.visitAllSpecies(new DescriptionVisitor<SpeciesDescription>() {
-
-			@Override
-			public boolean visit(final SpeciesDescription entry) {
-				final IType type = get(entry.getName());
-				if (!type.isParented() && !type.getName().equals(IKeyword.AGENT)) {
-					final TypeDescription parent = entry.getParent();
-					// Takes care of invalid species (see Issue 711)
-					type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));
-				}
-				return true;
+		model.visitAllSpecies(entry -> {
+			final IType type = get(entry.getName());
+			if (!type.isParented() && !type.getName().equals(IKeyword.AGENT)) {
+				final TypeDescription parent = entry.getParent();
+				// Takes care of invalid species (see Issue 711)
+				type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));
 			}
+			return true;
 		});
 	}
 
@@ -152,13 +147,10 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 
 	@Override
 	public IType get(final String type) {
-		if (type == null)
-			return Types.NO_TYPE;
+		if (type == null) { return Types.NO_TYPE; }
 		final IType t = types.get(type);
-		if (t != null)
-			return t;
-		if (parent == null)
-			return Types.NO_TYPE;
+		if (t != null) { return t; }
+		if (parent == null) { return Types.NO_TYPE; }
 		return parent.get(type);
 	}
 

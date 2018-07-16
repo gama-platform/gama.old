@@ -121,4 +121,6 @@ public interface IExpressionFactory {
 
 	public abstract boolean hasOperator(String op, IDescription context, EObject object, IExpression... compiledArgs);
 
+	public abstract IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);
+
 }
