@@ -115,7 +115,6 @@ public abstract class AbstractExpression implements IExpression {
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		// Nothing by default
-
 	}
 
 }

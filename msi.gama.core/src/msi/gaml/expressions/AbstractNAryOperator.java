@@ -96,14 +96,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			case NONE:
 				return defaultType;
 			case BOTH:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return GamaType.findCommonType(exprs, kind);
 			case FIRST_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[0].getType();
 			case FIRST_CONTENT_TYPE_OR_TYPE:
 				final IType leftType = exprs[0].getType();
@@ -111,42 +107,28 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				if (t2 == Types.NO_TYPE) { return leftType; }
 				return t2;
 			case SECOND_DENOTED_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[1].getDenotedType();
 			case SECOND_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[1].getType();
 			case FIRST_CONTENT_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[0].getType().getContentType();
 			case FIRST_KEY_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[0].getType().getKeyType();
 			case SECOND_CONTENT_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[1].getType().getContentType();
 			case SECOND_CONTENT_TYPE_OR_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				final IType rightType = exprs[1].getType();
 				final IType t3 = rightType.getContentType();
 				if (t3 == Types.NO_TYPE) { return rightType; }
 				return t3;
 			case SECOND_KEY_TYPE:
-				if (exprs == null) {
-					return defaultType;
-				}
+				if (exprs == null) { return defaultType; }
 				return exprs[1].getType().getKeyType();
 			default:
 				return typeProvider >= 0 ? Types.get(typeProvider) : defaultType;
@@ -217,9 +199,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public IExpression arg(final int i) {
 		if (exprs == null) { return null; }
-		if (i >= exprs.length) {
-			return null;
-		}
+		if (i >= exprs.length) { return null; }
 		return exprs[i];
 	}
 
@@ -279,6 +259,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean isContextIndependant() {
+		if (exprs != null) {
+			for (final IExpression e : exprs) {
+				if (e != null) {
+					if (!e.isContextIndependant()) { return false; }
+				}
+			}
+		}
+		return true;
 	}
 
 	/**

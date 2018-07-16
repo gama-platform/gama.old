@@ -184,7 +184,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (result != null) { return result; }
 			final EObject o = getEObjectOf(expression, tempContext);
 			result = compile(o);
-			if (result != null && result.isConst()) {
+			if (result != null && result.isContextIndependant()) {
 				constantSyntheticExpressions.put(expression, result);
 			}
 			return result;
@@ -1070,7 +1070,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression defaultCase(final EObject object) {
-		if (!getValidationContext().hasErrors()) {
+		final ValidationContext vc = getValidationContext();
+		if (vc != null && !vc.hasErrors()) {
 			// In order to avoid too many "useless errors"
 			getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
 		}

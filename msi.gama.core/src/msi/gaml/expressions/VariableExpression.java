@@ -102,4 +102,9 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		}
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
 }

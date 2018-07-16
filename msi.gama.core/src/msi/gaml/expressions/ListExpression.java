@@ -176,4 +176,14 @@ public class ListExpression extends AbstractExpression {
 
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		for (final IExpression e : elements) {
+			if (e != null) {
+				if (!e.isContextIndependant()) { return false; }
+			}
+		}
+		return true;
+	}
+
 }

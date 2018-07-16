@@ -43,6 +43,10 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	public abstract void collectUsedVarsOf(IDescription species, ICollector<VariableDescription> result);
 
+	default boolean isContextIndependant() {
+		return true;
+	}
+
 	/**
 	 * Returns, by default, the type of the expression. Specialized in some cases (ie. TypeExpression)
 	 * 

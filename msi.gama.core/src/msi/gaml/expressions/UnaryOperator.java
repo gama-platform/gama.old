@@ -196,4 +196,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		child.collectUsedVarsOf(species, result);
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return child.isContextIndependant();
+	}
+
 }

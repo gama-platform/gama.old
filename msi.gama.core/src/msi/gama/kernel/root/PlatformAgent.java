@@ -125,6 +125,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
+	@Override
 	public ITopology getTopology() {
 		return new AmorphousTopology();
 	}

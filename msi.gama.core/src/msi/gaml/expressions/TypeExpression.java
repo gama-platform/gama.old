@@ -99,6 +99,11 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
+	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

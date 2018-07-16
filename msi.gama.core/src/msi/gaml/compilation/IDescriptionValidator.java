@@ -76,8 +76,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 				final IType receiverContentType = receiverType.getContentType();
 				IType<?> contentType = assignedType.getContentType();
 				// Special cases for the empty lists and maps
-				if (Types.isEmptyContainerCase(receiverType, expr2))
-					return;
+				if (Types.isEmptyContainerCase(receiverType, expr2)) { return; }
 				// AD: 28/4/14 special case for variables of type species<xxx>
 				if (expr2 != IExpressionFactory.NIL_EXPR && receiverType.getType().id() == IType.SPECIES) {
 					if (!contentType.isTranslatableInto(receiverContentType)) {
@@ -118,7 +117,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 				return false;
 			} else {
 				final ModelDescription md = cd.getModelDescription();
-				final ITypesManager manager = md.getTypesManager();
+				final ITypesManager manager = md == null ? Types.builtInTypes : md.getTypesManager();
 				final IType t = manager.get(name);
 				if (t != Types.NO_TYPE) {
 					final String type = "It cannot be used as a "

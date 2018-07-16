@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MapExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MapExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,7 +32,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 23 août 07
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MapExpression extends AbstractExpression {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
@@ -217,6 +216,21 @@ public class MapExpression extends AbstractExpression {
 				e.collectMetaInformation(meta);
 			}
 		}
+	}
+
+	@Override
+	public boolean isContextIndependant() {
+		for (final IExpression e : keys) {
+			if (e != null) {
+				if (!e.isContextIndependant()) { return false; }
+			}
+		}
+		for (final IExpression e : vals) {
+			if (e != null) {
+				if (!e.isContextIndependant()) { return false; }
+			}
+		}
+		return true;
 	}
 
 	@Override

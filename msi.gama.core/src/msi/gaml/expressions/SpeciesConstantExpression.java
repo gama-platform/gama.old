@@ -86,9 +86,15 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	}
 
 	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
+	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		if (species.hasAttribute(value.toString()))
+		if (species.hasAttribute(value.toString())) {
 			result.add(((TypeDescription) species).getAttribute(value.toString()));
+		}
 	}
 
 }

@@ -120,8 +120,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-		if (species.equals(this.getDefinitionDescription().getSpeciesContext())) {
-			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
+		final SpeciesDescription sd = this.getDefinitionDescription().getSpeciesContext();
+		if (species.equals(sd)) {
+			result.add(sd.getAttribute(getName()));
 		}
 	}
 

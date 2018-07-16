@@ -137,6 +137,11 @@ public class BinaryOperator extends NAryOperator {
 		}
 
 		@Override
+		public boolean isContextIndependant() {
+			return false;
+		}
+
+		@Override
 		public BinaryVarOperator copy() {
 			return new BinaryVarOperator(prototype, null, exprs);
 		}
