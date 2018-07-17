@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -2749,8 +2750,9 @@ public abstract class Spatial {
 			final IList<IShape> split_lines = split_lines(scope, geoms);
 			if (readAttributes) {
 				for (final IShape line : split_lines) {
-					final IShape matchingGeom = geoms.stream(scope)
-							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry())).get();
+					final Optional<IShape> opt = geoms.stream(scope)
+							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry()));
+					final IShape matchingGeom = opt.isPresent() ? opt.get() : null;
 					if (matchingGeom == null ||matchingGeom.getAttributes() == null ) continue;
 					for (final String att : matchingGeom.getAttributes().keySet()) {
 						line.setAttribute(att, matchingGeom.getAttribute(att));
