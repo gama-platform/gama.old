@@ -104,12 +104,12 @@
 		</repository>
 		<repository>
 			<id>eclipse-oxygen</id>
-			<url>http://download.eclipse.org/releases/oxygen/201712201001/</url>
+			<url>http://download.eclipse.org/releases/oxygen/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.14.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
