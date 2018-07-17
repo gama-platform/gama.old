@@ -42,8 +42,8 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 	static String[] keywords1SpaceAround =
 			new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-", "/", "*" };
-	static String[] keywordNoSpaceAfter = new String[] { ".", "[", "(", "::", "°", "!" };
-	static String[] keywordNoSpaceBefore = new String[] { "]", ".", ")", ",", ":", "::" };
+	static String[] keywordNoSpaceAfter = new String[] { ".", "[", "(", "::", "°", "#", "!", "{" };
+	static String[] keywordNoSpaceBefore = new String[] { "]", ".", ")", ",", ":", "::", "}" };
 	static String[] keyword1SpaceAfter = new String[] { ",", ":" };
 
 	/**
@@ -68,14 +68,23 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 				c.setSpace(" ").around(k);
 			}
 		}
-
+		handled.add(g.getBlockAccess().getLeftCurlyBracketKeyword_1());
+		handled.add(g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1());
+		handled.add(g.getBlockAccess().getRightCurlyBracketKeyword_2_1());
+		handled.add(g.getDisplayBlockAccess().getRightCurlyBracketKeyword_3());
+		handled.add(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
+		handled.add(g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
 		// No space after these elements
 		for (final Keyword k : g.findKeywords(keywordNoSpaceAfter)) {
-			c.setNoSpace().after(k);
+			if (!handled.contains(k)) {
+				c.setNoSpace().after(k);
+			}
 		}
 		// No space before these ones
 		for (final Keyword k : g.findKeywords(keywordNoSpaceBefore)) {
-			c.setNoSpace().before(k);
+			if (!handled.contains(k)) {
+				c.setNoSpace().before(k);
+			}
 		}
 		// One space after these ones
 		for (final Keyword k : g.findKeywords(keyword1SpaceAfter)) {
@@ -110,28 +119,20 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		handleBlock(c, elem.getLeftCurlyBracketKeyword_1(), elem.getRightCurlyBracketKeyword_2_1(), 2);
 		handleBlock(c, g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1(),
 				g.getDisplayBlockAccess().getRightCurlyBracketKeyword_3(), 2);
-		// handleBlock(c,
-		// g.getExperimentBlockAccess().getLeftCurlyBracketKeyword_1(),
-		// g.getExperimentBlockAccess().getRightCurlyBracketKeyword_3(), 2);
-		// handleBlock(c,
-		// g.getOutputBlockAccess().getLeftCurlyBracketKeyword_1(),
-		// g.getOutputBlockAccess().getRightCurlyBracketKeyword_3(), 2);
 		handleBlock(c, g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0(),
 				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2(), 2);
-		// Functions
-		handleBlockTermination(c, g.getBlockAccess().getRightCurlyBracketKeyword_2_1(), 1);
+
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
-		// Double '}' closing elements should not be separated by 2 linewraps
-		// TODO How to do that ?
-		//
-		// c.setNoLinewrap().between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1(),
-		// g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
-		c.setLinewrap(1).between(g.getBlockAccess().getRightCurlyBracketKeyword_2_1(),
-				g.getBlockAccess().getRightCurlyBracketKeyword_2_1());
+		// Adding more space to init (supposing it is the first declared)
+		c.setLinewrap(2).before(g.getS_ReflexRule());
+		c.setLinewrap(2).before(g.getS_ActionRule());
+		c.setLinewrap(2).before(g.getS_EquationsRule());
+		c.setLinewrap(2).before(g.getS_ActionAccess().getKeyAssignment_1());
+		c.setNoLinewrap().between(elem.getRightCurlyBracketKeyword_2_1(), elem.getRightCurlyBracketKeyword_2_1());
 		c.setLinewrap(2).after(g.getS_SpeciesRule());
 		c.setLinewrap(2).after(g.getS_ExperimentRule());
-		c.setLinewrap(3).before(g.getS_GlobalRule());
+		c.setLinewrap(2).before(g.getS_GlobalRule());
 
 		c.setAutoLinewrap(180);
 
@@ -154,7 +155,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 	}
 
 	private void handleBlockOpening(final FormattingConfig c, final Keyword opening) {
-		c.setLinewrap().before(opening);
+		// c.setLinewrap().before(opening);
 		c.setLinewrap().after(opening);
 		c.setIndentationIncrement().after(opening);
 	}
