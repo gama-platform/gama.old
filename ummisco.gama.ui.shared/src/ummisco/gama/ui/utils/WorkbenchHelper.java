@@ -12,6 +12,12 @@ package ummisco.gama.ui.utils;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -21,6 +27,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -32,6 +39,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -282,6 +291,34 @@ public class WorkbenchHelper {
 		final Rectangle[] result = new Rectangle[1];
 		run(() -> result[0] = getDisplay().map(composite, null, composite.getBounds()));
 		return result[0];
+	}
+
+	public static boolean runCommand(final String string) throws ExecutionException {
+		return runCommand(string, null);
+	}
+
+	public static boolean runCommand(final String string, final Event event) throws ExecutionException {
+		final Command c = getCommand(string);
+		final IHandlerService handlerService = getService(IHandlerService.class);
+		final ExecutionEvent e = handlerService.createExecutionEvent(c, event);
+		return runCommand(c, e);
+	}
+
+	public static boolean runCommand(final Command c, final ExecutionEvent event) throws ExecutionException {
+		if (c.isEnabled()) {
+			try {
+				c.executeWithChecks(event);
+				return true;
+			} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public static Command getCommand(final String string) {
+		final ICommandService service = getService(ICommandService.class);
+		return service.getCommand(string);
 	}
 
 }

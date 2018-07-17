@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -47,7 +48,6 @@ import msi.gama.lang.gaml.ui.reference.BuiltinReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.ColorReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.TemplateReferenceMenu;
-import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.access.ModelsFinder;
@@ -265,7 +265,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if (!xr.hasErrors()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
-						if (el != null)
+						if (el != null) {
 							el.visitExperiments(element -> {
 
 								if (!map.containsKey(uri)) {
@@ -274,6 +274,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 								map.get(uri).add(element.getName());
 
 							});
+						}
 					}
 				}
 
@@ -341,7 +342,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	private static Set<URI> getImporters(final GamlEditor editor) {
-		final Set<URI> map = new LinkedHashSet<URI>();
+		final Set<URI> map = new LinkedHashSet<>();
 		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
@@ -365,13 +366,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				getEditor().getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-					@Override
-					public void process(final XtextResource state) throws Exception {
-						GamlModelBuilder.compile(state.getURI(), null);
-					}
-				});
+				try {
+					WorkbenchHelper.runCommand("msi.gama.lang.gaml.Gaml.validate");
+				} catch (final ExecutionException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -425,10 +424,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final boolean shown = getEditor().isOverviewRulerVisible();
-				if (shown)
+				if (shown) {
 					getEditor().hideOverviewRuler();
-				else
+				} else {
 					getEditor().showOverviewRuler();
+				}
 			}
 		});
 

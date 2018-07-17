@@ -18,8 +18,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -45,8 +43,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final GamlEditor editor = getEditor();
-				if (editor == null)
-					return;
+				if (editor == null) { return; }
 				editor.setFontAndCheckButtons(-1);
 				minus.setEnabled(editor.getFont().getFontData()[0].height > 6);
 			}
@@ -56,8 +53,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final GamlEditor editor = getEditor();
-				if (editor == null)
-					return;
+				if (editor == null) { return; }
 				editor.setFontAndCheckButtons(1);
 				minus.setEnabled(editor.getFont().getFontData()[0].height > 6);
 			}
@@ -69,12 +65,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					final ICommandService service = WorkbenchHelper.getService(ICommandService.class);
-					final Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
-					if (c.isEnabled()) {
-						final IHandlerService handlerService = WorkbenchHelper.getService(IHandlerService.class);
-						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY, null);
-					}
+					WorkbenchHelper.runCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
 				} catch (final Exception e1) {
 					e1.printStackTrace();
 				}
@@ -86,12 +77,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
-					final ICommandService service = WorkbenchHelper.getService(ICommandService.class);
-					final Command c = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
-					if (c.isEnabled()) {
-						final IHandlerService handlerService = WorkbenchHelper.getService(IHandlerService.class);
-						handlerService.executeCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY, null);
-					}
+					WorkbenchHelper.runCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 				} catch (final Exception e1) {
 					e1.printStackTrace();
 				}
@@ -107,8 +93,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final GamlEditor editor = getEditor();
-				if (editor == null)
-					return;
+				if (editor == null) { return; }
 				editor.getAction("Format").run();
 			}
 		});
@@ -118,8 +103,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final GamlEditor editor = getEditor();
-				if (editor == null)
-					return;
+				if (editor == null) { return; }
 				editor.getAction("ToggleComment").run();
 			}
 		});
@@ -130,8 +114,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final GamlEditor editor = getEditor();
-				if (editor == null)
-					return;
+				if (editor == null) { return; }
 				editor.openOutlinePopup();
 			}
 		});
@@ -144,13 +127,13 @@ public class EditorToolbar {
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final ICommandService service = WorkbenchHelper.getService(ICommandService.class);
-				final Command nextCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
+				final Command nextCommand =
+						WorkbenchHelper.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 				nextEdit.setEnabled(nextCommand.isEnabled());
 				final ICommandListener nextListener = e -> nextEdit.setEnabled(nextCommand.isEnabled());
-
 				nextCommand.addCommandListener(nextListener);
-				final Command lastCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
+				final Command lastCommand =
+						WorkbenchHelper.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
 				final ICommandListener lastListener = e -> lastEdit.setEnabled(lastCommand.isEnabled());
 				lastEdit.setEnabled(lastCommand.isEnabled());
 				lastCommand.addCommandListener(lastListener);

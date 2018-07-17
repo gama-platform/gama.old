@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DelegateForAllElements.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DelegateForAllElements.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,38 +9,23 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.*;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class DelegateForAllElements implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void run(final IAction action) {
-
-		// Obtain IServiceLocator implementer, e.g. from PlatformUI.getWorkbench():
-		IServiceLocator serviceLocator = PlatformUI.getWorkbench();
-		// or a site from within a editor or view:
-		// IServiceLocator serviceLocator = getSite();
-
-		ICommandService commandService = serviceLocator.getService(ICommandService.class);
-
 		try {
-			// Lookup commmand with its ID
-			Command command = commandService.getCommand("org.eclipse.xtext.ui.shared.OpenXtextElementCommand");
-
-			// Optionally pass a ExecutionEvent instance, default no-param arg creates blank event
-			command.executeWithChecks(new ExecutionEvent());
-
-		} catch (Exception e) {
-
-			// Replace with real-world exception handling
+			WorkbenchHelper.runCommand("org.eclipse.xtext.ui.shared.OpenXtextElementCommand");
+		} catch (final ExecutionException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -51,8 +35,6 @@ public class DelegateForAllElements implements IWorkbenchWindowActionDelegate {
 	public void dispose() {}
 
 	@Override
-	public void init(final IWorkbenchWindow window) {
-
-	}
+	public void init(final IWorkbenchWindow window) {}
 
 }
