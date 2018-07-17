@@ -191,6 +191,19 @@ public class ExperimentDescription extends SpeciesDescription {
 		return IKeyword.BATCH.equals(getLitteral(IKeyword.TYPE));
 	}
 
+	/**
+	 * @return
+	 */
+	public Boolean isMemorize() {
+		return IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE));
+	}	
+	
+	public String getExperimentType() {
+		if(isBatch()) return  IKeyword.BATCH;
+		else if(isMemorize()) return IKeyword.MEMORIZE;
+		else return IKeyword.GUI_;
+	}
+	
 	@Override
 	public Class<? extends ExperimentAgent> getJavaBase() {
 		return isBatch() ? BatchAgent.class : ExperimentAgent.class;

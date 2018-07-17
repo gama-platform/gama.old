@@ -93,6 +93,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxDecoratorPartListener;
@@ -478,14 +479,23 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void enableButton(final int index, final String text, final SelectionListener listener) {
-		if (text == null) { return; }
-		final boolean isBatch = state.types.get(index);
-		final Image image = isBatch ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
-				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
+		if (text == null) { return; }	
+		// final boolean isBatch = state.types.get(index);
+		final String expType = state.types.get(index);		
+//		final Image image = isBatch ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
+//				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
+		final Image image = (IKeyword.BATCH.equals(expType)) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
+				: ( (IKeyword.MEMORIZE.equals(expType)) ? GamaIcons.create(IGamaIcons.BUTTON_BACK).image() 
+				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image());				
+		
 		final ToolItem t = toolbar.button(IGamaColors.OK,
 				text/* + "  " + GamaKeyBindings.format(GamlEditorBindings.MODIFIERS, String.valueOf(index).charAt(0)) */,
 				image, SWT.LEFT);
-		final String type = isBatch ? "batch" : "regular";
+//		final String type = isBatch ? "batch" : "regular";
+		final String type = (IKeyword.BATCH.equals(expType)) ? "batch"
+				: ( (IKeyword.MEMORIZE.equals(expType)) ? "memorize" 
+				: "regular");	
+	
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
 		((FlatButton) t.getControl()).addSelectionListener(listener);
 		t.setData("index", index);

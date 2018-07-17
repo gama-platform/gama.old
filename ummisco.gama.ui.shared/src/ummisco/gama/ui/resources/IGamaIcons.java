@@ -99,6 +99,7 @@ public interface IGamaIcons {
 
 	public static final String BUTTON_GUI = "small.run";
 	public static final String BUTTON_BATCH = "small.batch";
+	public static final String BUTTON_BACK = "small.run.and.back";
 
 	// Small Icons
 

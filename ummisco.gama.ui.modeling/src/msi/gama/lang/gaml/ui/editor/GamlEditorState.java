@@ -32,7 +32,7 @@ public class GamlEditorState {
 	boolean hasNullStatus;
 	public final List<String> experiments;
 	public final List<String> abbreviations;
-	final List<Boolean> types;
+	final List<String> types;
 	final Map<String, URI> importedErrors;
 
 	public GamlEditorState(final ValidationContext status, final Iterable<? extends IDescription> descriptions) {
@@ -56,7 +56,7 @@ public class GamlEditorState {
 				final String name = ep.getName();
 				experiments.add(name);
 				abbreviations.add(name.replaceFirst("Experiment ", ""));
-				types.add(((ExperimentDescription) ep).isBatch());
+				types.add(((ExperimentDescription) ep).getExperimentType());
 			}
 		} else {
 			experiments = Collections.EMPTY_LIST;
