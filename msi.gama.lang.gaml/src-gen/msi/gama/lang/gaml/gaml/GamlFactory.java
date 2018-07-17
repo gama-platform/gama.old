@@ -285,15 +285,6 @@ public interface GamlFactory extends EFactory
   speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement();
 
   /**
-   * Returns a new object of class '<em>Parameters</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Parameters</em>'.
-   * @generated
-   */
-  Parameters createParameters();
-
-  /**
    * Returns a new object of class '<em>Action Arguments</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -474,6 +465,15 @@ public interface GamlFactory extends EFactory
   TerminalExpression createTerminalExpression();
 
   /**
+   * Returns a new object of class '<em>String Literal</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>String Literal</em>'.
+   * @generated
+   */
+  StringLiteral createStringLiteral();
+
+  /**
    * Returns a new object of class '<em>SAction</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -492,13 +492,13 @@ public interface GamlFactory extends EFactory
   S_Var createS_Var();
 
   /**
-   * Returns a new object of class '<em>Pair</em>'.
+   * Returns a new object of class '<em>Binary Operator</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Pair</em>'.
+   * @return a new object of class '<em>Binary Operator</em>'.
    * @generated
    */
-  Pair createPair();
+  BinaryOperator createBinaryOperator();
 
   /**
    * Returns a new object of class '<em>If</em>'.
@@ -508,24 +508,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   If createIf();
-
-  /**
-   * Returns a new object of class '<em>Cast</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Cast</em>'.
-   * @generated
-   */
-  Cast createCast();
-
-  /**
-   * Returns a new object of class '<em>Binary</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Binary</em>'.
-   * @generated
-   */
-  Binary createBinary();
 
   /**
    * Returns a new object of class '<em>Unit</em>'.
@@ -661,15 +643,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   ColorLiteral createColorLiteral();
-
-  /**
-   * Returns a new object of class '<em>String Literal</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>String Literal</em>'.
-   * @generated
-   */
-  StringLiteral createStringLiteral();
 
   /**
    * Returns a new object of class '<em>Boolean Literal</em>'.

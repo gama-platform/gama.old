@@ -22,10 +22,8 @@ import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
-import msi.gama.lang.gaml.gaml.Binary;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Entry;
@@ -42,9 +40,7 @@ import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
 import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Pair;
 import msi.gama.lang.gaml.gaml.Parameter;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
@@ -244,11 +240,6 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 		}
 
 		@Override
-		public String caseParameters(final Parameters object) {
-			return NULL;
-		}
-
-		@Override
 		public String caseActionArguments(final ActionArguments object) {
 			return NULL;
 		}
@@ -354,24 +345,19 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 		}
 
 		@Override
-		public String casePair(final Pair object) {
-			return NULL;
-		}
-
-		@Override
 		public String caseIf(final If object) {
 			return NULL;
 		}
+		//
+		// @Override
+		// public String caseCast(final Cast object) {
+		// return NULL;
+		// }
 
-		@Override
-		public String caseCast(final Cast object) {
-			return NULL;
-		}
-
-		@Override
-		public String caseBinary(final Binary object) {
-			return NULL;
-		}
+		// @Override
+		// public String caseBinary(final Binary object) {
+		// return NULL;
+		// }
 
 		@Override
 		public String caseUnit(final Unit object) {

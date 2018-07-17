@@ -31,6 +31,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	protected final boolean isAbstract;
 	protected final boolean isSynthetic;
+	public static Arguments NULL_ARGS = new Arguments();
 
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
@@ -69,10 +70,16 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	@SuppressWarnings ("rawtypes")
-	public boolean verifyArgs(final IDescription caller, final Arguments names) {
+	public boolean verifyArgs(final IDescription caller, final Arguments args) {
+		final Arguments names = args == null ? NULL_ARGS : args;
 		final Iterable<IDescription> formalArgs = getFormalArgs();
+		final boolean noArgs = names.isEmpty();
+		if (noArgs) {
+			final Iterable<IDescription> formalArgsWithoutDefault =
+					Iterables.filter(formalArgs, each -> !each.hasFacet(DEFAULT));
+			if (Iterables.isEmpty(formalArgsWithoutDefault)) { return true; }
+		}
 
-		if (Iterables.isEmpty(formalArgs) && names.isEmpty()) { return true; }
 		final List<String> allArgs = getArgNames();
 		if (caller.getKeyword().equals(DO) || caller.getKeyword().equals(INVOKE)) {
 			// If the names were not known at the time of the creation of the

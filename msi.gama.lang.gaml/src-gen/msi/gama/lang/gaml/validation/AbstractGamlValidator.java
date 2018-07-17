@@ -16,5 +16,4 @@ public abstract class AbstractGamlValidator extends AbstractDeclarativeValidator
 		result.add(msi.gama.lang.gaml.gaml.GamlPackage.eINSTANCE);
 		return result;
 	}
-	
 }

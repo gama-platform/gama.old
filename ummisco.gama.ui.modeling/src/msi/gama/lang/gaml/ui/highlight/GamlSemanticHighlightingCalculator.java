@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlSemanticHighlightingCalculator.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlSemanticHighlightingCalculator.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -58,17 +57,15 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 
 /**
  *
- * @author Pierrick cf.
- *         http://www.eclipse.org/Xtext/documentation/latest/xtext.html#
- *         highlighting
+ * @author Pierrick cf. http://www.eclipse.org/Xtext/documentation/latest/xtext.html# highlighting
  *
  */
 public class GamlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 
 	@Inject private ITaskFinder taskFinder;
 
-	private static Set<String> ASSIGNMENTS = new HashSet<>(
-			Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+", ">>-", "+<-"));
+	private static Set<String> ASSIGNMENTS =
+			new HashSet<>(Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+", ">>-", "+<-"));
 
 	private IHighlightedPositionAcceptor acceptor;
 	Set<INode> done = new HashSet<>();
@@ -76,9 +73,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	@Override
 	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor arg1,
 			final CancelIndicator arg2) {
-		if (resource == null) {
-			return;
-		}
+		if (resource == null) { return; }
 		acceptor = arg1;
 		final TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
@@ -96,8 +91,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	void process(final EObject object) {
-		if (object == null)
-			return;
+		if (object == null) { return; }
 		process(object, object.eClass());
 	}
 
@@ -105,70 +99,72 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		final int id = clazz.getClassifierID();
 
 		switch (id) {
-		case GamlPackage.PRAGMA:
-			setStyle(object, PRAGMA_ID, ((Pragma) object).getName());
-			break;
-		case GamlPackage.SASSIGNMENT:
-			final String s = ((S_Assignment) object).getKey();
-			setStyle(object, ASSIGN_ID, s);
-			break;
-		case GamlPackage.FACET:
-			final Facet f = (Facet) object;
-			final String key = f.getKey();
-			if (ASSIGNMENTS.contains(key)) {
-				setStyle(object, ASSIGN_ID, 0);
-			} else {
-				setStyle(object, FACET_ID, 0);
-				if (key.startsWith("type")) {
-					setStyle(TYPE_ID, NodeModelUtils.getNode(f.getExpr()));
-				} else if (f.getName() != null) {
-					setStyle(object, VARDEF_ID, 1);
+			case GamlPackage.PRAGMA:
+				setStyle(object, PRAGMA_ID, ((Pragma) object).getName());
+				break;
+			case GamlPackage.SASSIGNMENT:
+				final String s = ((S_Assignment) object).getKey();
+				setStyle(object, ASSIGN_ID, s);
+				break;
+			case GamlPackage.FACET:
+				final Facet f = (Facet) object;
+				final String key = f.getKey();
+				if (ASSIGNMENTS.contains(key)) {
+					setStyle(object, ASSIGN_ID, 0);
+				} else {
+					setStyle(object, FACET_ID, 0);
+					if (key.startsWith("type")) {
+						setStyle(TYPE_ID, NodeModelUtils.getNode(f.getExpr()));
+					} else if (f.getName() != null) {
+						setStyle(object, VARDEF_ID, 1);
+					}
 				}
-			}
-			break;
-		case GamlPackage.TERMINAL_EXPRESSION:
-			if (!(object instanceof StringLiteral)) {
-				setStyle(object, NUMBER_ID, 0);
-			}
-			break;
-		case GamlPackage.RESERVED_LITERAL:
-			setStyle(object, RESERVED_ID, 0);
-			break;
-		case GamlPackage.BINARY:
-		case GamlPackage.FUNCTION:
-			setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
-			break;
-		case GamlPackage.ARGUMENT_PAIR:
-			setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp());
-			break;
-		case GamlPackage.VARIABLE_REF:
-			setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
-			break;
-		case GamlPackage.UNIT_NAME:
-			setStyle(object, UNIT_ID, 0);
-			break;
-		case GamlPackage.TYPE_REF:
-			final Statement st = EGaml.getStatement(object);
-			if (st instanceof S_Definition && ((S_Definition) st).getTkey() == object) {
-				setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
-			} else
-				setStyle(TYPE_ID, NodeModelUtils.getNode(object));
-			break;
-		case GamlPackage.PARAMETER:
-			setStyle(object, VARIABLE_ID, ((Parameter) object).getBuiltInFacetKey());
-			break;
-		case GamlPackage.ARGUMENT_DEFINITION:
-			setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName());
-			break;
-		case GamlPackage.STATEMENT:
-			final Statement stat = (Statement) object;
-			setStyle(object, VARDEF_ID, EGaml.getNameOf(stat));
-			setStyle(object, KEYWORD_ID, stat.getKey());
-			break;
-		default:
-			final List<EClass> eSuperTypes = clazz.getESuperTypes();
-			if (!eSuperTypes.isEmpty())
-				process(object, eSuperTypes.get(0));
+				break;
+			case GamlPackage.TERMINAL_EXPRESSION:
+				if (!(object instanceof StringLiteral)) {
+					setStyle(object, NUMBER_ID, 0);
+				}
+				break;
+			case GamlPackage.RESERVED_LITERAL:
+				setStyle(object, RESERVED_ID, 0);
+				break;
+			case GamlPackage.BINARY_OPERATOR:
+			case GamlPackage.FUNCTION:
+				setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+				break;
+			case GamlPackage.ARGUMENT_PAIR:
+				setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp());
+				break;
+			case GamlPackage.VARIABLE_REF:
+				setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
+				break;
+			case GamlPackage.UNIT_NAME:
+				setStyle(object, UNIT_ID, 0);
+				break;
+			case GamlPackage.TYPE_REF:
+				final Statement st = EGaml.getStatement(object);
+				if (st instanceof S_Definition && ((S_Definition) st).getTkey() == object) {
+					setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
+				} else {
+					setStyle(TYPE_ID, NodeModelUtils.getNode(object));
+				}
+				break;
+			case GamlPackage.PARAMETER:
+				setStyle(object, VARIABLE_ID, ((Parameter) object).getBuiltInFacetKey());
+				break;
+			case GamlPackage.ARGUMENT_DEFINITION:
+				setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName());
+				break;
+			case GamlPackage.STATEMENT:
+				final Statement stat = (Statement) object;
+				setStyle(object, VARDEF_ID, EGaml.getNameOf(stat));
+				setStyle(object, KEYWORD_ID, stat.getKey());
+				break;
+			default:
+				final List<EClass> eSuperTypes = clazz.getESuperTypes();
+				if (!eSuperTypes.isEmpty()) {
+					process(object, eSuperTypes.get(0));
+				}
 		}
 	}
 
@@ -177,9 +173,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		// second one, etc.
 		if (obj != null && s != null) {
 			INode n = NodeModelUtils.getNode(obj);
-			if (n == null) {
-				return false;
-			}
+			if (n == null) { return false; }
 			if (position > -1) {
 				int i = 0;
 				for (final ILeafNode node : n.getLeafNodes()) {
@@ -207,14 +201,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	private final boolean setStyle(final EObject obj, final String s, final String text) {
-		if (text == null) {
-			return false;
-		}
+		if (text == null) { return false; }
 		if (obj != null && s != null) {
 			INode n = NodeModelUtils.getNode(obj);
-			if (n == null) {
-				return false;
-			}
+			if (n == null) { return false; }
 			for (final ILeafNode node : n.getLeafNodes()) {
 				if (!node.isHidden()) {
 					final String sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
@@ -230,18 +220,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	boolean equalsFaceOrString(final String text, final String s) {
-		if (s.equals(text)) {
-			return true;
-		}
-		if (s.equals(text + ":")) {
-			return true;
-		}
-		if (s.equals("\"" + text + "\"")) {
-			return true;
-		}
-		if (s.equals("\'" + text + "\'")) {
-			return true;
-		}
+		if (s.equals(text)) { return true; }
+		if (s.equals(text + ":")) { return true; }
+		if (s.equals("\"" + text + "\"")) { return true; }
+		if (s.equals("\'" + text + "\'")) { return true; }
 		return false;
 	}
 

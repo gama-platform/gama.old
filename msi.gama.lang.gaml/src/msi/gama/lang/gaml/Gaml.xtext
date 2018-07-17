@@ -4,7 +4,7 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
 Entry:
-	Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure;
+	->Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure;
 
 StandaloneBlock:
 	'__synthetic__' block=Block
@@ -51,7 +51,7 @@ S_Global :
 ;
 
 S_Species :
-	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';'));
+	key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';');
 
 S_Experiment :
 	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=Block | ';');
@@ -93,7 +93,7 @@ S_Declaration:
 	->S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
 
 S_Reflex:
-	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
+	key=_ReflexKey ((firstFacet="name:")? name=Valid_ID)? ("when"":" expr=Expression)? block=Block;
 
 S_Definition:
 	tkey=(TypeRef) (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
@@ -132,10 +132,6 @@ S_Solve:
  * DISPLAYS
  */
  
-
-//S_Monitor:
-//	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
-//;
 
 S_Display:
 	key="display" (firstFacet="name:")? name=(Valid_ID|STRING) (facets+=Facet)* block=displayBlock
@@ -191,8 +187,8 @@ _AssignmentKey:
 	/**
  * Parameters and arguments
  */
-Parameters:
-	{Parameters} (params=ParameterList)?;
+//Parameters:
+//	{Parameters} (params=ParameterList)?;
 
 ActionArguments:
 	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
@@ -258,16 +254,20 @@ Block:
  * Expressions
  */
 Expression:
-	ArgumentPair | Pair;
+	ArgumentPair | Pair ;
+	
+BinaryOperator returns Expression:
+	Or | And | Cast | Comparison | Addition | Multiplication | Exponentiation | Binary | Pair | Unit
+;
 
 ArgumentPair:
-	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey) ':')? right=If;
+	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey) ':')? right=Pair;
 
 
 Pair returns Expression:
 	If
-	(({Pair.left=current}
-	op='::')
+	({BinaryOperator.left=current}
+	op='::'
 	right=If)?;
 
 If returns Expression:
@@ -281,48 +281,46 @@ If returns Expression:
 
 Or returns Expression:
 	And
-	({Expression.left=current}
+	({BinaryOperator.left=current}
 	op='or'
 	right=And)*;
 
 And returns Expression:
 	Cast
-	({Expression.left=current}
+	({BinaryOperator.left=current}
 	op='and'
 	right=Cast)*;
 
 Cast returns Expression:
 	Comparison
-	(({Cast.left = current}
+	(({BinaryOperator.left = current}
 		op='as'
-	) ((right= TypeRef) | ('(' right=TypeRef ')') ))?
+) ((right= TypeRef) | ('(' right=TypeRef ')') ))?
 ;
 
 Comparison returns Expression:
 	Addition
-	(({Expression.left=current}
+	(({BinaryOperator.left=current}
 	op=('!=' | '=' | '>=' | '<=' | '<' | '>'))
 	right=Addition)?;
 
 Addition returns Expression:
 	Multiplication
-	(({Expression.left=current} op=('+' | '-'))
+	(({BinaryOperator.left=current} op=('+' | '-'))
 	right=Multiplication)*;
 
 Multiplication returns Expression:
 	Exponentiation
-	(({Expression.left=current} op=('*' | '/' )) right=Exponentiation)*;
+	(({BinaryOperator.left=current} op=('*' | '/' )) right=Exponentiation)*;
 
 Exponentiation returns Expression:
 	Binary
-	(({Expression.left=current} op=('^')) right=Binary)*
-;
+	(({BinaryOperator.left=current} op=('^')) right=Binary)*;
 
 Binary returns Expression:
 	Unit
-	(({Binary.left=current} op=(Valid_ID)) right=Unit)*;
+	(({BinaryOperator.left=current} op=(Valid_ID)) right=Unit)*;
 
-	// NEW: Units are now expressed using the "°" symbol
 Unit returns Expression:
 	Unary
 	(({Unit.left=current} op=('°'|"#")) right=UnitRef)?;
@@ -334,16 +332,13 @@ Unary returns Expression:
 
 Access returns Expression:
 	Primary ({Access.left = current} (
-		(op='[' args=ExpressionList? ']') | (op="." right=AbstractRef) | (op="." named_exp=STRING)
-	))*
-;
-
+		(op='[' right=ExpressionList? ']') | (op="." right=(AbstractRef|StringLiteral))
+	))*;
 
 Primary returns Expression:
 	TerminalExpression |
 	AbstractRef |
 	'(' ExpressionList ')' |
-	'(' {Parameters} (params=ParameterList)? ')' |
 	'[' {Array} exprs=ExpressionList? ']' |
 	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
 
@@ -351,17 +346,14 @@ AbstractRef returns Expression:
 	=>Function | VariableRef;
 
 Function returns Expression:
-	{Function} (action=ActionRef) (type=TypeInfo)? '(' (parameters=Parameters | args=ExpressionList) ')';
+	{Function} (left=ActionRef) (type=TypeInfo)? '(' right=ExpressionList? ')';
 
+ExpressionList:
+	(exprs+=Expression (',' exprs+=Expression)*) | (exprs+=Parameter (',' exprs+=Parameter)*);
+	
 Parameter returns Expression:
 	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey)) |
 	(left=VariableRef ':')) right=Expression;
-
-ExpressionList:
-	exprs+=Expression (',' exprs+=Expression)*;
-
-ParameterList returns ExpressionList:
-	exprs+=Parameter (',' exprs+=Parameter)*;
 
 UnitRef returns Expression:
 	{UnitName} ref=[UnitFakeDefinition|ID];
@@ -391,7 +383,7 @@ EquationDefinition:
 	S_Equations | EquationFakeDefinition;
 
 TypeDefinition:
-	S_Species /*| S_Experiment |*/| TypeFakeDefinition;
+	S_Species | TypeFakeDefinition;
 
 
 VarDefinition:
@@ -426,12 +418,16 @@ Valid_ID:
  * Terminals
  */
 TerminalExpression:
+	StringLiteral |
 	{IntLiteral} op=INTEGER |
 	{DoubleLiteral} op=DOUBLE |
 	{ColorLiteral} op=COLOR |
-	{StringLiteral} op=STRING |
 	{BooleanLiteral} op=BOOLEAN |
 	{ReservedLiteral} op=KEYWORD;
+	
+StringLiteral:
+	op=STRING
+;
 
 terminal KEYWORD:
 	'each' | 'self' | 'myself' | 'nil' | 'super' ;

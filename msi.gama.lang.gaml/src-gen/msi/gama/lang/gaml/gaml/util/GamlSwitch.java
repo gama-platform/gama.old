@@ -326,14 +326,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.PARAMETERS:
-      {
-        Parameters parameters = (Parameters)theEObject;
-        T result = caseParameters(parameters);
-        if (result == null) result = caseExpression(parameters);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.ACTION_ARGUMENTS:
       {
         ActionArguments actionArguments = (ActionArguments)theEObject;
@@ -498,6 +490,15 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.STRING_LITERAL:
+      {
+        StringLiteral stringLiteral = (StringLiteral)theEObject;
+        T result = caseStringLiteral(stringLiteral);
+        if (result == null) result = caseTerminalExpression(stringLiteral);
+        if (result == null) result = caseExpression(stringLiteral);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.SACTION:
       {
         S_Action s_Action = (S_Action)theEObject;
@@ -524,11 +525,11 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.PAIR:
+      case GamlPackage.BINARY_OPERATOR:
       {
-        Pair pair = (Pair)theEObject;
-        T result = casePair(pair);
-        if (result == null) result = caseExpression(pair);
+        BinaryOperator binaryOperator = (BinaryOperator)theEObject;
+        T result = caseBinaryOperator(binaryOperator);
+        if (result == null) result = caseExpression(binaryOperator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -537,22 +538,6 @@ public class GamlSwitch<T> extends Switch<T>
         If if_ = (If)theEObject;
         T result = caseIf(if_);
         if (result == null) result = caseExpression(if_);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.CAST:
-      {
-        Cast cast = (Cast)theEObject;
-        T result = caseCast(cast);
-        if (result == null) result = caseExpression(cast);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.BINARY:
-      {
-        Binary binary = (Binary)theEObject;
-        T result = caseBinary(binary);
-        if (result == null) result = caseExpression(binary);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -676,15 +661,6 @@ public class GamlSwitch<T> extends Switch<T>
         T result = caseColorLiteral(colorLiteral);
         if (result == null) result = caseTerminalExpression(colorLiteral);
         if (result == null) result = caseExpression(colorLiteral);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.STRING_LITERAL:
-      {
-        StringLiteral stringLiteral = (StringLiteral)theEObject;
-        T result = caseStringLiteral(stringLiteral);
-        if (result == null) result = caseTerminalExpression(stringLiteral);
-        if (result == null) result = caseExpression(stringLiteral);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1175,22 +1151,6 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Parameters</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Parameters</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseParameters(Parameters object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Action Arguments</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1511,6 +1471,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>String Literal</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>String Literal</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStringLiteral(StringLiteral object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>SAction</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1543,17 +1519,17 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Pair</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Binary Operator</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Pair</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Binary Operator</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T casePair(Pair object)
+  public T caseBinaryOperator(BinaryOperator object)
   {
     return null;
   }
@@ -1570,38 +1546,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIf(If object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Cast</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Cast</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseCast(Cast object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Binary</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Binary</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseBinary(Binary object)
   {
     return null;
   }
@@ -1842,22 +1786,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseColorLiteral(ColorLiteral object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>String Literal</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>String Literal</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseStringLiteral(StringLiteral object)
   {
     return null;
   }

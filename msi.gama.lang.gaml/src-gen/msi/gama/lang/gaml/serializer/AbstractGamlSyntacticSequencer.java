@@ -54,7 +54,7 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 
 	/**
 	 * Ambiguous syntax:
-	 *     ';' | ('{' '}')
+	 *     ('{' '}') | ';'
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     facets+=Facet (ambiguity) (rule end)

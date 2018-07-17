@@ -221,11 +221,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createspeciesOrGridDisplayStatementAdapter();
       }
       @Override
-      public Adapter caseParameters(Parameters object)
-      {
-        return createParametersAdapter();
-      }
-      @Override
       public Adapter caseActionArguments(ActionArguments object)
       {
         return createActionArgumentsAdapter();
@@ -326,6 +321,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createTerminalExpressionAdapter();
       }
       @Override
+      public Adapter caseStringLiteral(StringLiteral object)
+      {
+        return createStringLiteralAdapter();
+      }
+      @Override
       public Adapter caseS_Action(S_Action object)
       {
         return createS_ActionAdapter();
@@ -336,24 +336,14 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_VarAdapter();
       }
       @Override
-      public Adapter casePair(Pair object)
+      public Adapter caseBinaryOperator(BinaryOperator object)
       {
-        return createPairAdapter();
+        return createBinaryOperatorAdapter();
       }
       @Override
       public Adapter caseIf(If object)
       {
         return createIfAdapter();
-      }
-      @Override
-      public Adapter caseCast(Cast object)
-      {
-        return createCastAdapter();
-      }
-      @Override
-      public Adapter caseBinary(Binary object)
-      {
-        return createBinaryAdapter();
       }
       @Override
       public Adapter caseUnit(Unit object)
@@ -429,11 +419,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseColorLiteral(ColorLiteral object)
       {
         return createColorLiteralAdapter();
-      }
-      @Override
-      public Adapter caseStringLiteral(StringLiteral object)
-      {
-        return createStringLiteralAdapter();
       }
       @Override
       public Adapter caseBooleanLiteral(BooleanLiteral object)
@@ -903,21 +888,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Parameters <em>Parameters</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Parameters
-   * @generated
-   */
-  public Adapter createParametersAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionArguments <em>Action Arguments</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1218,6 +1188,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringLiteral <em>String Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.StringLiteral
+   * @generated
+   */
+  public Adapter createStringLiteralAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Action <em>SAction</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1248,16 +1233,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Pair <em>Pair</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BinaryOperator <em>Binary Operator</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Pair
+   * @see msi.gama.lang.gaml.gaml.BinaryOperator
    * @generated
    */
-  public Adapter createPairAdapter()
+  public Adapter createBinaryOperatorAdapter()
   {
     return null;
   }
@@ -1273,36 +1258,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIfAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Cast <em>Cast</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Cast
-   * @generated
-   */
-  public Adapter createCastAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Binary <em>Binary</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Binary
-   * @generated
-   */
-  public Adapter createBinaryAdapter()
   {
     return null;
   }
@@ -1528,21 +1483,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createColorLiteralAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringLiteral <em>String Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.StringLiteral
-   * @generated
-   */
-  public Adapter createStringLiteralAdapter()
   {
     return null;
   }

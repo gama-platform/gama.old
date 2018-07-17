@@ -7,7 +7,6 @@ import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.TypeInfo;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -26,10 +25,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getAction <em>Action</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getLeft <em>Left</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getType <em>Type</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getParameters <em>Parameters</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.FunctionImpl#getRight <em>Right</em>}</li>
  * </ul>
  *
  * @generated
@@ -37,14 +35,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class FunctionImpl extends ExpressionImpl implements Function
 {
   /**
-   * The cached value of the '{@link #getAction() <em>Action</em>}' containment reference.
+   * The cached value of the '{@link #getLeft() <em>Left</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAction()
+   * @see #getLeft()
    * @generated
    * @ordered
    */
-  protected Expression action;
+  protected Expression left;
 
   /**
    * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
@@ -57,24 +55,14 @@ public class FunctionImpl extends ExpressionImpl implements Function
   protected TypeInfo type;
 
   /**
-   * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
+   * The cached value of the '{@link #getRight() <em>Right</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getParameters()
+   * @see #getRight()
    * @generated
    * @ordered
    */
-  protected Parameters parameters;
-
-  /**
-   * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getArgs()
-   * @generated
-   * @ordered
-   */
-  protected ExpressionList args;
+  protected ExpressionList right;
 
   /**
    * <!-- begin-user-doc -->
@@ -102,9 +90,9 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public Expression getAction()
+  public Expression getLeft()
   {
-    return action;
+    return left;
   }
 
   /**
@@ -112,13 +100,13 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetAction(Expression newAction, NotificationChain msgs)
+  public NotificationChain basicSetLeft(Expression newLeft, NotificationChain msgs)
   {
-    Expression oldAction = action;
-    action = newAction;
+    Expression oldLeft = left;
+    left = newLeft;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__ACTION, oldAction, newAction);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__LEFT, oldLeft, newLeft);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -129,20 +117,20 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setAction(Expression newAction)
+  public void setLeft(Expression newLeft)
   {
-    if (newAction != action)
+    if (newLeft != left)
     {
       NotificationChain msgs = null;
-      if (action != null)
-        msgs = ((InternalEObject)action).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__ACTION, null, msgs);
-      if (newAction != null)
-        msgs = ((InternalEObject)newAction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__ACTION, null, msgs);
-      msgs = basicSetAction(newAction, msgs);
+      if (left != null)
+        msgs = ((InternalEObject)left).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__LEFT, null, msgs);
+      if (newLeft != null)
+        msgs = ((InternalEObject)newLeft).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__LEFT, null, msgs);
+      msgs = basicSetLeft(newLeft, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__ACTION, newAction, newAction));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__LEFT, newLeft, newLeft));
   }
 
   /**
@@ -198,9 +186,9 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public Parameters getParameters()
+  public ExpressionList getRight()
   {
-    return parameters;
+    return right;
   }
 
   /**
@@ -208,13 +196,13 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetParameters(Parameters newParameters, NotificationChain msgs)
+  public NotificationChain basicSetRight(ExpressionList newRight, NotificationChain msgs)
   {
-    Parameters oldParameters = parameters;
-    parameters = newParameters;
+    ExpressionList oldRight = right;
+    right = newRight;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__PARAMETERS, oldParameters, newParameters);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__RIGHT, oldRight, newRight);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -225,68 +213,20 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setParameters(Parameters newParameters)
+  public void setRight(ExpressionList newRight)
   {
-    if (newParameters != parameters)
+    if (newRight != right)
     {
       NotificationChain msgs = null;
-      if (parameters != null)
-        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__PARAMETERS, null, msgs);
-      if (newParameters != null)
-        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__PARAMETERS, null, msgs);
-      msgs = basicSetParameters(newParameters, msgs);
+      if (right != null)
+        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__RIGHT, null, msgs);
+      if (newRight != null)
+        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__RIGHT, null, msgs);
+      msgs = basicSetRight(newRight, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__PARAMETERS, newParameters, newParameters));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ExpressionList getArgs()
-  {
-    return args;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetArgs(ExpressionList newArgs, NotificationChain msgs)
-  {
-    ExpressionList oldArgs = args;
-    args = newArgs;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__ARGS, oldArgs, newArgs);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setArgs(ExpressionList newArgs)
-  {
-    if (newArgs != args)
-    {
-      NotificationChain msgs = null;
-      if (args != null)
-        msgs = ((InternalEObject)args).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__ARGS, null, msgs);
-      if (newArgs != null)
-        msgs = ((InternalEObject)newArgs).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FUNCTION__ARGS, null, msgs);
-      msgs = basicSetArgs(newArgs, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__ARGS, newArgs, newArgs));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FUNCTION__RIGHT, newRight, newRight));
   }
 
   /**
@@ -299,14 +239,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ACTION:
-        return basicSetAction(null, msgs);
+      case GamlPackage.FUNCTION__LEFT:
+        return basicSetLeft(null, msgs);
       case GamlPackage.FUNCTION__TYPE:
         return basicSetType(null, msgs);
-      case GamlPackage.FUNCTION__PARAMETERS:
-        return basicSetParameters(null, msgs);
-      case GamlPackage.FUNCTION__ARGS:
-        return basicSetArgs(null, msgs);
+      case GamlPackage.FUNCTION__RIGHT:
+        return basicSetRight(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -321,14 +259,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ACTION:
-        return getAction();
+      case GamlPackage.FUNCTION__LEFT:
+        return getLeft();
       case GamlPackage.FUNCTION__TYPE:
         return getType();
-      case GamlPackage.FUNCTION__PARAMETERS:
-        return getParameters();
-      case GamlPackage.FUNCTION__ARGS:
-        return getArgs();
+      case GamlPackage.FUNCTION__RIGHT:
+        return getRight();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -343,17 +279,14 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ACTION:
-        setAction((Expression)newValue);
+      case GamlPackage.FUNCTION__LEFT:
+        setLeft((Expression)newValue);
         return;
       case GamlPackage.FUNCTION__TYPE:
         setType((TypeInfo)newValue);
         return;
-      case GamlPackage.FUNCTION__PARAMETERS:
-        setParameters((Parameters)newValue);
-        return;
-      case GamlPackage.FUNCTION__ARGS:
-        setArgs((ExpressionList)newValue);
+      case GamlPackage.FUNCTION__RIGHT:
+        setRight((ExpressionList)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -369,17 +302,14 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ACTION:
-        setAction((Expression)null);
+      case GamlPackage.FUNCTION__LEFT:
+        setLeft((Expression)null);
         return;
       case GamlPackage.FUNCTION__TYPE:
         setType((TypeInfo)null);
         return;
-      case GamlPackage.FUNCTION__PARAMETERS:
-        setParameters((Parameters)null);
-        return;
-      case GamlPackage.FUNCTION__ARGS:
-        setArgs((ExpressionList)null);
+      case GamlPackage.FUNCTION__RIGHT:
+        setRight((ExpressionList)null);
         return;
     }
     super.eUnset(featureID);
@@ -395,14 +325,12 @@ public class FunctionImpl extends ExpressionImpl implements Function
   {
     switch (featureID)
     {
-      case GamlPackage.FUNCTION__ACTION:
-        return action != null;
+      case GamlPackage.FUNCTION__LEFT:
+        return left != null;
       case GamlPackage.FUNCTION__TYPE:
         return type != null;
-      case GamlPackage.FUNCTION__PARAMETERS:
-        return parameters != null;
-      case GamlPackage.FUNCTION__ARGS:
-        return args != null;
+      case GamlPackage.FUNCTION__RIGHT:
+        return right != null;
     }
     return super.eIsSet(featureID);
   }

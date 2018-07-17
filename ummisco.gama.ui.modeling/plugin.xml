@@ -431,13 +431,13 @@
 	<extension point="org.eclipse.compare.contentViewers">
 		<viewer id="msi.gama.lang.gaml.Gaml.compare.contentViewers"
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="gaml">
+			extensions="gaml,experiment">
 		</viewer>
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="msi.gama.lang.gaml.Gaml.compare.contentMergeViewers"
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-			extensions="gaml" label="Gaml Compare">
+			extensions="gaml,experiment" label="Gaml Compare">
 		</viewer>
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
@@ -449,6 +449,10 @@
 	<extension point="org.eclipse.team.core.fileTypes">
 		<fileTypes
 			extension="gaml"
+			type="text">
+		</fileTypes>
+		<fileTypes
+			extension="experiment"
 			type="text">
 		</fileTypes>
 	</extension>

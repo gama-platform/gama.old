@@ -12,16 +12,14 @@ import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
-import msi.gama.lang.gaml.gaml.Binary;
+import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
-import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
@@ -31,8 +29,6 @@ import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.IntLiteral;
 import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Pair;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
@@ -117,9 +113,57 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.ARRAY:
 				sequence_Primary(context, (Array) semanticObject); 
 				return; 
-			case GamlPackage.BINARY:
-				sequence_Binary(context, (Binary) semanticObject); 
-				return; 
+			case GamlPackage.BINARY_OPERATOR:
+				if (rule == grammarAccess.getAndRule()
+						|| action == grammarAccess.getAndAccess().getBinaryOperatorLeftAction_1_0()) {
+					sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (action == grammarAccess.getPairAccess().getBinaryOperatorLeftAction_1_0()
+						|| rule == grammarAccess.getIfRule()
+						|| action == grammarAccess.getIfAccess().getIfLeftAction_1_0()
+						|| rule == grammarAccess.getOrRule()
+						|| action == grammarAccess.getOrAccess().getBinaryOperatorLeftAction_1_0()) {
+					sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionRule()
+						|| rule == grammarAccess.getBinaryOperatorRule()
+						|| rule == grammarAccess.getPairRule()) {
+					sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or_Pair(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getCastRule()) {
+					sequence_Addition_Binary_Cast_Comparison_Exponentiation_Multiplication(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (action == grammarAccess.getCastAccess().getBinaryOperatorLeftAction_1_0_0()
+						|| rule == grammarAccess.getComparisonRule()) {
+					sequence_Addition_Binary_Comparison_Exponentiation_Multiplication(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (action == grammarAccess.getComparisonAccess().getBinaryOperatorLeftAction_1_0_0()
+						|| rule == grammarAccess.getAdditionRule()
+						|| action == grammarAccess.getAdditionAccess().getBinaryOperatorLeftAction_1_0_0()) {
+					sequence_Addition_Binary_Exponentiation_Multiplication(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getBinaryRule()
+						|| action == grammarAccess.getBinaryAccess().getBinaryOperatorLeftAction_1_0_0()) {
+					sequence_Binary(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExponentiationRule()
+						|| action == grammarAccess.getExponentiationAccess().getBinaryOperatorLeftAction_1_0_0()) {
+					sequence_Binary_Exponentiation(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getMultiplicationRule()
+						|| action == grammarAccess.getMultiplicationAccess().getBinaryOperatorLeftAction_1_0_0()) {
+					sequence_Binary_Exponentiation_Multiplication(context, (BinaryOperator) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.BLOCK:
 				if (rule == grammarAccess.getBlockRule()) {
 					sequence_Block(context, (Block) semanticObject); 
@@ -137,9 +181,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.BOOLEAN_LITERAL:
 				sequence_TerminalExpression(context, (BooleanLiteral) semanticObject); 
 				return; 
-			case GamlPackage.CAST:
-				sequence_Cast(context, (Cast) semanticObject); 
-				return; 
 			case GamlPackage.COLOR_LITERAL:
 				sequence_TerminalExpression(context, (ColorLiteral) semanticObject); 
 				return; 
@@ -155,82 +196,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.EXPERIMENT_FILE_STRUCTURE:
 				sequence_ExperimentFileStructure(context, (ExperimentFileStructure) semanticObject); 
 				return; 
-			case GamlPackage.EXPRESSION:
-				if (rule == grammarAccess.getAndRule()
-						|| action == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()) {
-					sequence_Addition_And_Comparison_Exponentiation_Multiplication(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getExpressionRule()
-						|| rule == grammarAccess.getPairRule()
-						|| action == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()
-						|| rule == grammarAccess.getIfRule()
-						|| action == grammarAccess.getIfAccess().getIfLeftAction_1_0()
-						|| rule == grammarAccess.getOrRule()
-						|| action == grammarAccess.getOrAccess().getExpressionLeftAction_1_0()) {
-					sequence_Addition_And_Comparison_Exponentiation_Multiplication_Or(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getCastRule()
-						|| action == grammarAccess.getCastAccess().getCastLeftAction_1_0_0()
-						|| rule == grammarAccess.getComparisonRule()) {
-					sequence_Addition_Comparison_Exponentiation_Multiplication(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if (action == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getAdditionRule()
-						|| action == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Addition_Exponentiation_Multiplication(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getExponentiationRule()
-						|| action == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Exponentiation(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getMultiplicationRule()
-						|| action == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Exponentiation_Multiplication(context, (Expression) semanticObject); 
-					return; 
-				}
-				else break;
 			case GamlPackage.EXPRESSION_LIST:
-				if (rule == grammarAccess.getExpressionRule()
-						|| rule == grammarAccess.getPairRule()
-						|| action == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()
-						|| rule == grammarAccess.getIfRule()
-						|| action == grammarAccess.getIfAccess().getIfLeftAction_1_0()
-						|| rule == grammarAccess.getOrRule()
-						|| action == grammarAccess.getOrAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getAndRule()
-						|| action == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getCastRule()
-						|| action == grammarAccess.getCastAccess().getCastLeftAction_1_0_0()
-						|| rule == grammarAccess.getComparisonRule()
-						|| action == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getAdditionRule()
-						|| action == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getMultiplicationRule()
-						|| action == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getExponentiationRule()
-						|| action == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getBinaryRule()
-						|| action == grammarAccess.getBinaryAccess().getBinaryLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnitRule()
-						|| action == grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnaryRule()
-						|| rule == grammarAccess.getAccessRule()
-						|| action == grammarAccess.getAccessAccess().getAccessLeftAction_1_0()
-						|| rule == grammarAccess.getPrimaryRule()
-						|| rule == grammarAccess.getExpressionListRule()) {
-					sequence_ExpressionList(context, (ExpressionList) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getParameterListRule()) {
-					sequence_ParameterList(context, (ExpressionList) semanticObject); 
-					return; 
-				}
-				else break;
+				sequence_ExpressionList(context, (ExpressionList) semanticObject); 
+				return; 
 			case GamlPackage.FACET:
 				if (rule == grammarAccess.getFacetRule()) {
 					sequence_ActionFacet_ClassicFacet_DefinitionFacet_FunctionFacet_TypeFacet_VarFacet(context, (Facet) semanticObject); 
@@ -281,48 +249,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.MODEL:
 				sequence_Model(context, (Model) semanticObject); 
 				return; 
-			case GamlPackage.PAIR:
-				sequence_Pair(context, (Pair) semanticObject); 
-				return; 
 			case GamlPackage.PARAMETER:
 				sequence_Parameter(context, (msi.gama.lang.gaml.gaml.Parameter) semanticObject); 
 				return; 
-			case GamlPackage.PARAMETERS:
-				if (rule == grammarAccess.getParametersRule()) {
-					sequence_Parameters(context, (Parameters) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getExpressionRule()
-						|| rule == grammarAccess.getPairRule()
-						|| action == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()
-						|| rule == grammarAccess.getIfRule()
-						|| action == grammarAccess.getIfAccess().getIfLeftAction_1_0()
-						|| rule == grammarAccess.getOrRule()
-						|| action == grammarAccess.getOrAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getAndRule()
-						|| action == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()
-						|| rule == grammarAccess.getCastRule()
-						|| action == grammarAccess.getCastAccess().getCastLeftAction_1_0_0()
-						|| rule == grammarAccess.getComparisonRule()
-						|| action == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getAdditionRule()
-						|| action == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getMultiplicationRule()
-						|| action == grammarAccess.getMultiplicationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getExponentiationRule()
-						|| action == grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0()
-						|| rule == grammarAccess.getBinaryRule()
-						|| action == grammarAccess.getBinaryAccess().getBinaryLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnitRule()
-						|| action == grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0()
-						|| rule == grammarAccess.getUnaryRule()
-						|| rule == grammarAccess.getAccessRule()
-						|| action == grammarAccess.getAccessAccess().getAccessLeftAction_1_0()
-						|| rule == grammarAccess.getPrimaryRule()) {
-					sequence_Primary(context, (Parameters) semanticObject); 
-					return; 
-				}
-				else break;
 			case GamlPackage.POINT:
 				sequence_Primary(context, (Point) semanticObject); 
 				return; 
@@ -405,7 +334,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				sequence_StringEvaluator(context, (StringEvaluator) semanticObject); 
 				return; 
 			case GamlPackage.STRING_LITERAL:
-				sequence_TerminalExpression(context, (StringLiteral) semanticObject); 
+				sequence_StringLiteral(context, (StringLiteral) semanticObject); 
 				return; 
 			case GamlPackage.TYPE_FAKE_DEFINITION:
 				sequence_TypeFakeDefinition(context, (TypeFakeDefinition) semanticObject); 
@@ -445,26 +374,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns Access
+	 *     BinaryOperator returns Access
 	 *     Pair returns Access
-	 *     Pair.Pair_1_0_0 returns Access
+	 *     Pair.BinaryOperator_1_0 returns Access
 	 *     If returns Access
 	 *     If.If_1_0 returns Access
 	 *     Or returns Access
-	 *     Or.Expression_1_0 returns Access
+	 *     Or.BinaryOperator_1_0 returns Access
 	 *     And returns Access
-	 *     And.Expression_1_0 returns Access
+	 *     And.BinaryOperator_1_0 returns Access
 	 *     Cast returns Access
-	 *     Cast.Cast_1_0_0 returns Access
+	 *     Cast.BinaryOperator_1_0_0 returns Access
 	 *     Comparison returns Access
-	 *     Comparison.Expression_1_0_0 returns Access
+	 *     Comparison.BinaryOperator_1_0_0 returns Access
 	 *     Addition returns Access
-	 *     Addition.Expression_1_0_0 returns Access
+	 *     Addition.BinaryOperator_1_0_0 returns Access
 	 *     Multiplication returns Access
-	 *     Multiplication.Expression_1_0_0 returns Access
+	 *     Multiplication.BinaryOperator_1_0_0 returns Access
 	 *     Exponentiation returns Access
-	 *     Exponentiation.Expression_1_0_0 returns Access
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Access
 	 *     Binary returns Access
-	 *     Binary.Binary_1_0_0 returns Access
+	 *     Binary.BinaryOperator_1_0_0 returns Access
 	 *     Unit returns Access
 	 *     Unit.Unit_1_0_0 returns Access
 	 *     Unary returns Access
@@ -472,7 +402,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     Access.Access_1_0 returns Access
 	 *
 	 * Constraint:
-	 *     (left=Access_Access_1_0 ((op='[' args=ExpressionList?) | (op='.' right=AbstractRef) | (op='.' named_exp=STRING)))
+	 *     (left=Access_Access_1_0 ((op='[' right=ExpressionList?) | (op='.' (right=AbstractRef | right=StringLiteral))))
 	 */
 	protected void sequence_Access(ISerializationContext context, Access semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -562,14 +492,15 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     And returns Expression
-	 *     And.Expression_1_0 returns Expression
+	 *     And returns BinaryOperator
+	 *     And.BinaryOperator_1_0 returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     (
-	 *         (left=And_Expression_1_0 op='and' right=Cast) | 
+	 *         (left=And_BinaryOperator_1_0 op='and' right=Cast) | 
+	 *         (left=Cast_BinaryOperator_1_0_0 op='as' (right=TypeRef | right=TypeRef)) | 
 	 *         (
-	 *             left=Comparison_Expression_1_0_0 
+	 *             left=Comparison_BinaryOperator_1_0_0 
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
@@ -580,32 +511,32 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
-	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
-	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
 	 */
-	protected void sequence_Addition_And_Comparison_Exponentiation_Multiplication(ISerializationContext context, Expression semanticObject) {
+	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     Expression returns Expression
-	 *     Pair returns Expression
-	 *     Pair.Pair_1_0_0 returns Expression
-	 *     If returns Expression
-	 *     If.If_1_0 returns Expression
-	 *     Or returns Expression
-	 *     Or.Expression_1_0 returns Expression
+	 *     Pair.BinaryOperator_1_0 returns BinaryOperator
+	 *     If returns BinaryOperator
+	 *     If.If_1_0 returns BinaryOperator
+	 *     Or returns BinaryOperator
+	 *     Or.BinaryOperator_1_0 returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     (
-	 *         (left=Or_Expression_1_0 op='or' right=And) | 
-	 *         (left=And_Expression_1_0 op='and' right=Cast) | 
+	 *         (left=Or_BinaryOperator_1_0 op='or' right=And) | 
+	 *         (left=And_BinaryOperator_1_0 op='and' right=Cast) | 
+	 *         (left=Cast_BinaryOperator_1_0_0 op='as' (right=TypeRef | right=TypeRef)) | 
 	 *         (
-	 *             left=Comparison_Expression_1_0_0 
+	 *             left=Comparison_BinaryOperator_1_0_0 
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
@@ -616,26 +547,31 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
-	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
-	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
 	 */
-	protected void sequence_Addition_And_Comparison_Exponentiation_Multiplication_Or(ISerializationContext context, Expression semanticObject) {
+	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     Cast returns Expression
-	 *     Cast.Cast_1_0_0 returns Expression
-	 *     Comparison returns Expression
+	 *     Expression returns BinaryOperator
+	 *     BinaryOperator returns BinaryOperator
+	 *     Pair returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     (
+	 *         (left=Pair_BinaryOperator_1_0 op='::' right=If) | 
+	 *         (left=Or_BinaryOperator_1_0 op='or' right=And) | 
+	 *         (left=And_BinaryOperator_1_0 op='and' right=Cast) | 
+	 *         (left=Cast_BinaryOperator_1_0_0 op='as' (right=TypeRef | right=TypeRef)) | 
 	 *         (
-	 *             left=Comparison_Expression_1_0_0 
+	 *             left=Comparison_BinaryOperator_1_0_0 
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
@@ -646,30 +582,92 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
-	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
-	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
 	 */
-	protected void sequence_Addition_Comparison_Exponentiation_Multiplication(ISerializationContext context, Expression semanticObject) {
+	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or_Pair(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     Comparison.Expression_1_0_0 returns Expression
-	 *     Addition returns Expression
-	 *     Addition.Expression_1_0_0 returns Expression
+	 *     Cast returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     (
-	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
-	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | 
-	 *         (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
+	 *         (left=Cast_BinaryOperator_1_0_0 op='as' (right=TypeRef | right=TypeRef)) | 
+	 *         (
+	 *             left=Comparison_BinaryOperator_1_0_0 
+	 *             (
+	 *                 op='!=' | 
+	 *                 op='=' | 
+	 *                 op='>=' | 
+	 *                 op='<=' | 
+	 *                 op='<' | 
+	 *                 op='>'
+	 *             ) 
+	 *             right=Addition
+	 *         ) | 
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
 	 */
-	protected void sequence_Addition_Exponentiation_Multiplication(ISerializationContext context, Expression semanticObject) {
+	protected void sequence_Addition_Binary_Cast_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Cast.BinaryOperator_1_0_0 returns BinaryOperator
+	 *     Comparison returns BinaryOperator
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             left=Comparison_BinaryOperator_1_0_0 
+	 *             (
+	 *                 op='!=' | 
+	 *                 op='=' | 
+	 *                 op='>=' | 
+	 *                 op='<=' | 
+	 *                 op='<' | 
+	 *                 op='>'
+	 *             ) 
+	 *             right=Addition
+	 *         ) | 
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
+	 *     )
+	 */
+	protected void sequence_Addition_Binary_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Comparison.BinaryOperator_1_0_0 returns BinaryOperator
+	 *     Addition returns BinaryOperator
+	 *     Addition.BinaryOperator_1_0_0 returns BinaryOperator
+	 *
+	 * Constraint:
+	 *     (
+	 *         (left=Addition_BinaryOperator_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
+	 *     )
+	 */
+	protected void sequence_Addition_Binary_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -703,7 +701,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             op=ActionFacetKey | 
 	 *             op=VarFacetKey
 	 *         )? 
-	 *         right=If
+	 *         right=Pair
 	 *     )
 	 */
 	protected void sequence_ArgumentPair(ISerializationContext context, ArgumentPair semanticObject) {
@@ -713,45 +711,56 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Expression returns Binary
-	 *     Pair returns Binary
-	 *     Pair.Pair_1_0_0 returns Binary
-	 *     If returns Binary
-	 *     If.If_1_0 returns Binary
-	 *     Or returns Binary
-	 *     Or.Expression_1_0 returns Binary
-	 *     And returns Binary
-	 *     And.Expression_1_0 returns Binary
-	 *     Cast returns Binary
-	 *     Cast.Cast_1_0_0 returns Binary
-	 *     Comparison returns Binary
-	 *     Comparison.Expression_1_0_0 returns Binary
-	 *     Addition returns Binary
-	 *     Addition.Expression_1_0_0 returns Binary
-	 *     Multiplication returns Binary
-	 *     Multiplication.Expression_1_0_0 returns Binary
-	 *     Exponentiation returns Binary
-	 *     Exponentiation.Expression_1_0_0 returns Binary
-	 *     Binary returns Binary
-	 *     Binary.Binary_1_0_0 returns Binary
+	 *     Binary returns BinaryOperator
+	 *     Binary.BinaryOperator_1_0_0 returns BinaryOperator
 	 *
 	 * Constraint:
-	 *     (left=Binary_Binary_1_0_0 op=Valid_ID right=Unit)
+	 *     (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 */
-	protected void sequence_Binary(ISerializationContext context, Binary semanticObject) {
+	protected void sequence_Binary(ISerializationContext context, BinaryOperator semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__LEFT));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.BINARY_OPERATOR__RIGHT));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getBinaryAccess().getBinaryLeftAction_1_0_0(), semanticObject.getLeft());
+		feeder.accept(grammarAccess.getBinaryAccess().getBinaryOperatorLeftAction_1_0_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getBinaryAccess().getOpValid_IDParserRuleCall_1_0_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getBinaryAccess().getRightUnitParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Exponentiation returns BinaryOperator
+	 *     Exponentiation.BinaryOperator_1_0_0 returns BinaryOperator
+	 *
+	 * Constraint:
+	 *     ((left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit))
+	 */
+	protected void sequence_Binary_Exponentiation(ISerializationContext context, BinaryOperator semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Multiplication returns BinaryOperator
+	 *     Multiplication.BinaryOperator_1_0_0 returns BinaryOperator
+	 *
+	 * Constraint:
+	 *     (
+	 *         (left=Multiplication_BinaryOperator_1_0_0 (op='*' | op='/') right=Exponentiation) | 
+	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
+	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
+	 *     )
+	 */
+	protected void sequence_Binary_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -763,27 +772,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     statements+=Statement*
 	 */
 	protected void sequence_Block(ISerializationContext context, Block semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Expression returns Cast
-	 *     Pair returns Cast
-	 *     Pair.Pair_1_0_0 returns Cast
-	 *     If returns Cast
-	 *     If.If_1_0 returns Cast
-	 *     Or returns Cast
-	 *     Or.Expression_1_0 returns Cast
-	 *     And returns Cast
-	 *     And.Expression_1_0 returns Cast
-	 *     Cast returns Cast
-	 *
-	 * Constraint:
-	 *     (left=Cast_Cast_1_0_0 op='as' (right=TypeRef | right=TypeRef))
-	 */
-	protected void sequence_Cast(ISerializationContext context, Cast semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -873,65 +861,28 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Exponentiation returns Expression
-	 *     Exponentiation.Expression_1_0_0 returns Expression
-	 *
-	 * Constraint:
-	 *     (left=Exponentiation_Expression_1_0_0 op='^' right=Binary)
-	 */
-	protected void sequence_Exponentiation(ISerializationContext context, Expression semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getExponentiationAccess().getExpressionLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getExponentiationAccess().getOpCircumflexAccentKeyword_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getExponentiationAccess().getRightBinaryParserRuleCall_1_1_0(), semanticObject.getRight());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Multiplication returns Expression
-	 *     Multiplication.Expression_1_0_0 returns Expression
-	 *
-	 * Constraint:
-	 *     ((left=Multiplication_Expression_1_0_0 (op='*' | op='/') right=Exponentiation) | (left=Exponentiation_Expression_1_0_0 op='^' right=Binary))
-	 */
-	protected void sequence_Exponentiation_Multiplication(ISerializationContext context, Expression semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Expression returns ExpressionList
+	 *     BinaryOperator returns ExpressionList
 	 *     Pair returns ExpressionList
-	 *     Pair.Pair_1_0_0 returns ExpressionList
+	 *     Pair.BinaryOperator_1_0 returns ExpressionList
 	 *     If returns ExpressionList
 	 *     If.If_1_0 returns ExpressionList
 	 *     Or returns ExpressionList
-	 *     Or.Expression_1_0 returns ExpressionList
+	 *     Or.BinaryOperator_1_0 returns ExpressionList
 	 *     And returns ExpressionList
-	 *     And.Expression_1_0 returns ExpressionList
+	 *     And.BinaryOperator_1_0 returns ExpressionList
 	 *     Cast returns ExpressionList
-	 *     Cast.Cast_1_0_0 returns ExpressionList
+	 *     Cast.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Comparison returns ExpressionList
-	 *     Comparison.Expression_1_0_0 returns ExpressionList
+	 *     Comparison.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Addition returns ExpressionList
-	 *     Addition.Expression_1_0_0 returns ExpressionList
+	 *     Addition.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Multiplication returns ExpressionList
-	 *     Multiplication.Expression_1_0_0 returns ExpressionList
+	 *     Multiplication.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Exponentiation returns ExpressionList
-	 *     Exponentiation.Expression_1_0_0 returns ExpressionList
+	 *     Exponentiation.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Binary returns ExpressionList
-	 *     Binary.Binary_1_0_0 returns ExpressionList
+	 *     Binary.BinaryOperator_1_0_0 returns ExpressionList
 	 *     Unit returns ExpressionList
 	 *     Unit.Unit_1_0_0 returns ExpressionList
 	 *     Unary returns ExpressionList
@@ -941,7 +892,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     ExpressionList returns ExpressionList
 	 *
 	 * Constraint:
-	 *     (exprs+=Expression exprs+=Expression*)
+	 *     ((exprs+=Expression exprs+=Expression*) | (exprs+=Parameter exprs+=Parameter*))
 	 */
 	protected void sequence_ExpressionList(ISerializationContext context, ExpressionList semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -963,26 +914,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns Function
+	 *     BinaryOperator returns Function
 	 *     Pair returns Function
-	 *     Pair.Pair_1_0_0 returns Function
+	 *     Pair.BinaryOperator_1_0 returns Function
 	 *     If returns Function
 	 *     If.If_1_0 returns Function
 	 *     Or returns Function
-	 *     Or.Expression_1_0 returns Function
+	 *     Or.BinaryOperator_1_0 returns Function
 	 *     And returns Function
-	 *     And.Expression_1_0 returns Function
+	 *     And.BinaryOperator_1_0 returns Function
 	 *     Cast returns Function
-	 *     Cast.Cast_1_0_0 returns Function
+	 *     Cast.BinaryOperator_1_0_0 returns Function
 	 *     Comparison returns Function
-	 *     Comparison.Expression_1_0_0 returns Function
+	 *     Comparison.BinaryOperator_1_0_0 returns Function
 	 *     Addition returns Function
-	 *     Addition.Expression_1_0_0 returns Function
+	 *     Addition.BinaryOperator_1_0_0 returns Function
 	 *     Multiplication returns Function
-	 *     Multiplication.Expression_1_0_0 returns Function
+	 *     Multiplication.BinaryOperator_1_0_0 returns Function
 	 *     Exponentiation returns Function
-	 *     Exponentiation.Expression_1_0_0 returns Function
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Function
 	 *     Binary returns Function
-	 *     Binary.Binary_1_0_0 returns Function
+	 *     Binary.BinaryOperator_1_0_0 returns Function
 	 *     Unit returns Function
 	 *     Unit.Unit_1_0_0 returns Function
 	 *     Unary returns Function
@@ -993,7 +945,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     Function returns Function
 	 *
 	 * Constraint:
-	 *     (action=ActionRef type=TypeInfo? (parameters=Parameters | args=ExpressionList))
+	 *     (left=ActionRef type=TypeInfo? right=ExpressionList?)
 	 */
 	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1022,8 +974,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns If
+	 *     BinaryOperator returns If
 	 *     Pair returns If
-	 *     Pair.Pair_1_0_0 returns If
+	 *     Pair.BinaryOperator_1_0 returns If
 	 *     If returns If
 	 *
 	 * Constraint:
@@ -1031,12 +984,12 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_If(ISerializationContext context, If semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.IF__LEFT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.IF__LEFT));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.IF__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.IF__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.IF__RIGHT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.IF__RIGHT));
 			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.IF__IF_FALSE) == ValueTransient.YES)
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.IF__IF_FALSE));
 		}
@@ -1092,43 +1045,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Expression returns Pair
-	 *     Pair returns Pair
-	 *
-	 * Constraint:
-	 *     (left=Pair_Pair_1_0_0 op='::' right=If)
-	 */
-	protected void sequence_Pair(ISerializationContext context, Pair semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__LEFT));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__RIGHT));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getPairAccess().getPairLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getPairAccess().getOpColonColonKeyword_1_0_1_0(), semanticObject.getOp());
-		feeder.accept(grammarAccess.getPairAccess().getRightIfParserRuleCall_1_1_0(), semanticObject.getRight());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ParameterList returns ExpressionList
-	 *
-	 * Constraint:
-	 *     (exprs+=Parameter exprs+=Parameter*)
-	 */
-	protected void sequence_ParameterList(ISerializationContext context, ExpressionList semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Parameter returns Parameter
 	 *
 	 * Constraint:
@@ -1145,18 +1061,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     )
 	 */
 	protected void sequence_Parameter(ISerializationContext context, msi.gama.lang.gaml.gaml.Parameter semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Parameters returns Parameters
-	 *
-	 * Constraint:
-	 *     params=ParameterList?
-	 */
-	protected void sequence_Parameters(ISerializationContext context, Parameters semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1182,26 +1086,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns Array
+	 *     BinaryOperator returns Array
 	 *     Pair returns Array
-	 *     Pair.Pair_1_0_0 returns Array
+	 *     Pair.BinaryOperator_1_0 returns Array
 	 *     If returns Array
 	 *     If.If_1_0 returns Array
 	 *     Or returns Array
-	 *     Or.Expression_1_0 returns Array
+	 *     Or.BinaryOperator_1_0 returns Array
 	 *     And returns Array
-	 *     And.Expression_1_0 returns Array
+	 *     And.BinaryOperator_1_0 returns Array
 	 *     Cast returns Array
-	 *     Cast.Cast_1_0_0 returns Array
+	 *     Cast.BinaryOperator_1_0_0 returns Array
 	 *     Comparison returns Array
-	 *     Comparison.Expression_1_0_0 returns Array
+	 *     Comparison.BinaryOperator_1_0_0 returns Array
 	 *     Addition returns Array
-	 *     Addition.Expression_1_0_0 returns Array
+	 *     Addition.BinaryOperator_1_0_0 returns Array
 	 *     Multiplication returns Array
-	 *     Multiplication.Expression_1_0_0 returns Array
+	 *     Multiplication.BinaryOperator_1_0_0 returns Array
 	 *     Exponentiation returns Array
-	 *     Exponentiation.Expression_1_0_0 returns Array
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Array
 	 *     Binary returns Array
-	 *     Binary.Binary_1_0_0 returns Array
+	 *     Binary.BinaryOperator_1_0_0 returns Array
 	 *     Unit returns Array
 	 *     Unit.Unit_1_0_0 returns Array
 	 *     Unary returns Array
@@ -1219,65 +1124,28 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Expression returns Parameters
-	 *     Pair returns Parameters
-	 *     Pair.Pair_1_0_0 returns Parameters
-	 *     If returns Parameters
-	 *     If.If_1_0 returns Parameters
-	 *     Or returns Parameters
-	 *     Or.Expression_1_0 returns Parameters
-	 *     And returns Parameters
-	 *     And.Expression_1_0 returns Parameters
-	 *     Cast returns Parameters
-	 *     Cast.Cast_1_0_0 returns Parameters
-	 *     Comparison returns Parameters
-	 *     Comparison.Expression_1_0_0 returns Parameters
-	 *     Addition returns Parameters
-	 *     Addition.Expression_1_0_0 returns Parameters
-	 *     Multiplication returns Parameters
-	 *     Multiplication.Expression_1_0_0 returns Parameters
-	 *     Exponentiation returns Parameters
-	 *     Exponentiation.Expression_1_0_0 returns Parameters
-	 *     Binary returns Parameters
-	 *     Binary.Binary_1_0_0 returns Parameters
-	 *     Unit returns Parameters
-	 *     Unit.Unit_1_0_0 returns Parameters
-	 *     Unary returns Parameters
-	 *     Access returns Parameters
-	 *     Access.Access_1_0 returns Parameters
-	 *     Primary returns Parameters
-	 *
-	 * Constraint:
-	 *     params=ParameterList?
-	 */
-	protected void sequence_Primary(ISerializationContext context, Parameters semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Expression returns Point
+	 *     BinaryOperator returns Point
 	 *     Pair returns Point
-	 *     Pair.Pair_1_0_0 returns Point
+	 *     Pair.BinaryOperator_1_0 returns Point
 	 *     If returns Point
 	 *     If.If_1_0 returns Point
 	 *     Or returns Point
-	 *     Or.Expression_1_0 returns Point
+	 *     Or.BinaryOperator_1_0 returns Point
 	 *     And returns Point
-	 *     And.Expression_1_0 returns Point
+	 *     And.BinaryOperator_1_0 returns Point
 	 *     Cast returns Point
-	 *     Cast.Cast_1_0_0 returns Point
+	 *     Cast.BinaryOperator_1_0_0 returns Point
 	 *     Comparison returns Point
-	 *     Comparison.Expression_1_0_0 returns Point
+	 *     Comparison.BinaryOperator_1_0_0 returns Point
 	 *     Addition returns Point
-	 *     Addition.Expression_1_0_0 returns Point
+	 *     Addition.BinaryOperator_1_0_0 returns Point
 	 *     Multiplication returns Point
-	 *     Multiplication.Expression_1_0_0 returns Point
+	 *     Multiplication.BinaryOperator_1_0_0 returns Point
 	 *     Exponentiation returns Point
-	 *     Exponentiation.Expression_1_0_0 returns Point
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Point
 	 *     Binary returns Point
-	 *     Binary.Binary_1_0_0 returns Point
+	 *     Binary.BinaryOperator_1_0_0 returns Point
 	 *     Unit returns Point
 	 *     Unit.Unit_1_0_0 returns Point
 	 *     Unary returns Point
@@ -1501,7 +1369,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     VarDefinition returns S_Reflex
 	 *
 	 * Constraint:
-	 *     (key=_ReflexKey firstFacet='name:'? name=Valid_ID? expr=Expression? block=Block)
+	 *     (key=_ReflexKey (firstFacet='name:'? name=Valid_ID)? expr=Expression? block=Block)
 	 */
 	protected void sequence_S_Reflex(ISerializationContext context, S_Reflex semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1688,27 +1556,75 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
+	 *     Expression returns StringLiteral
+	 *     BinaryOperator returns StringLiteral
+	 *     Pair returns StringLiteral
+	 *     Pair.BinaryOperator_1_0 returns StringLiteral
+	 *     If returns StringLiteral
+	 *     If.If_1_0 returns StringLiteral
+	 *     Or returns StringLiteral
+	 *     Or.BinaryOperator_1_0 returns StringLiteral
+	 *     And returns StringLiteral
+	 *     And.BinaryOperator_1_0 returns StringLiteral
+	 *     Cast returns StringLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Comparison returns StringLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Addition returns StringLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Multiplication returns StringLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Exponentiation returns StringLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Binary returns StringLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns StringLiteral
+	 *     Unit returns StringLiteral
+	 *     Unit.Unit_1_0_0 returns StringLiteral
+	 *     Unary returns StringLiteral
+	 *     Access returns StringLiteral
+	 *     Access.Access_1_0 returns StringLiteral
+	 *     Primary returns StringLiteral
+	 *     TerminalExpression returns StringLiteral
+	 *     StringLiteral returns StringLiteral
+	 *
+	 * Constraint:
+	 *     op=STRING
+	 */
+	protected void sequence_StringLiteral(ISerializationContext context, StringLiteral semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getStringLiteralAccess().getOpSTRINGTerminalRuleCall_0(), semanticObject.getOp());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Expression returns BooleanLiteral
+	 *     BinaryOperator returns BooleanLiteral
 	 *     Pair returns BooleanLiteral
-	 *     Pair.Pair_1_0_0 returns BooleanLiteral
+	 *     Pair.BinaryOperator_1_0 returns BooleanLiteral
 	 *     If returns BooleanLiteral
 	 *     If.If_1_0 returns BooleanLiteral
 	 *     Or returns BooleanLiteral
-	 *     Or.Expression_1_0 returns BooleanLiteral
+	 *     Or.BinaryOperator_1_0 returns BooleanLiteral
 	 *     And returns BooleanLiteral
-	 *     And.Expression_1_0 returns BooleanLiteral
+	 *     And.BinaryOperator_1_0 returns BooleanLiteral
 	 *     Cast returns BooleanLiteral
-	 *     Cast.Cast_1_0_0 returns BooleanLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Comparison returns BooleanLiteral
-	 *     Comparison.Expression_1_0_0 returns BooleanLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Addition returns BooleanLiteral
-	 *     Addition.Expression_1_0_0 returns BooleanLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Multiplication returns BooleanLiteral
-	 *     Multiplication.Expression_1_0_0 returns BooleanLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Exponentiation returns BooleanLiteral
-	 *     Exponentiation.Expression_1_0_0 returns BooleanLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Binary returns BooleanLiteral
-	 *     Binary.Binary_1_0_0 returns BooleanLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns BooleanLiteral
 	 *     Unit returns BooleanLiteral
 	 *     Unit.Unit_1_0_0 returns BooleanLiteral
 	 *     Unary returns BooleanLiteral
@@ -1722,8 +1638,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, BooleanLiteral semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_4_1_0(), semanticObject.getOp());
@@ -1734,26 +1650,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns ColorLiteral
+	 *     BinaryOperator returns ColorLiteral
 	 *     Pair returns ColorLiteral
-	 *     Pair.Pair_1_0_0 returns ColorLiteral
+	 *     Pair.BinaryOperator_1_0 returns ColorLiteral
 	 *     If returns ColorLiteral
 	 *     If.If_1_0 returns ColorLiteral
 	 *     Or returns ColorLiteral
-	 *     Or.Expression_1_0 returns ColorLiteral
+	 *     Or.BinaryOperator_1_0 returns ColorLiteral
 	 *     And returns ColorLiteral
-	 *     And.Expression_1_0 returns ColorLiteral
+	 *     And.BinaryOperator_1_0 returns ColorLiteral
 	 *     Cast returns ColorLiteral
-	 *     Cast.Cast_1_0_0 returns ColorLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Comparison returns ColorLiteral
-	 *     Comparison.Expression_1_0_0 returns ColorLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Addition returns ColorLiteral
-	 *     Addition.Expression_1_0_0 returns ColorLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Multiplication returns ColorLiteral
-	 *     Multiplication.Expression_1_0_0 returns ColorLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Exponentiation returns ColorLiteral
-	 *     Exponentiation.Expression_1_0_0 returns ColorLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Binary returns ColorLiteral
-	 *     Binary.Binary_1_0_0 returns ColorLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns ColorLiteral
 	 *     Unit returns ColorLiteral
 	 *     Unit.Unit_1_0_0 returns ColorLiteral
 	 *     Unary returns ColorLiteral
@@ -1767,11 +1684,11 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, ColorLiteral semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_2_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_3_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	
@@ -1779,26 +1696,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns DoubleLiteral
+	 *     BinaryOperator returns DoubleLiteral
 	 *     Pair returns DoubleLiteral
-	 *     Pair.Pair_1_0_0 returns DoubleLiteral
+	 *     Pair.BinaryOperator_1_0 returns DoubleLiteral
 	 *     If returns DoubleLiteral
 	 *     If.If_1_0 returns DoubleLiteral
 	 *     Or returns DoubleLiteral
-	 *     Or.Expression_1_0 returns DoubleLiteral
+	 *     Or.BinaryOperator_1_0 returns DoubleLiteral
 	 *     And returns DoubleLiteral
-	 *     And.Expression_1_0 returns DoubleLiteral
+	 *     And.BinaryOperator_1_0 returns DoubleLiteral
 	 *     Cast returns DoubleLiteral
-	 *     Cast.Cast_1_0_0 returns DoubleLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Comparison returns DoubleLiteral
-	 *     Comparison.Expression_1_0_0 returns DoubleLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Addition returns DoubleLiteral
-	 *     Addition.Expression_1_0_0 returns DoubleLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Multiplication returns DoubleLiteral
-	 *     Multiplication.Expression_1_0_0 returns DoubleLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Exponentiation returns DoubleLiteral
-	 *     Exponentiation.Expression_1_0_0 returns DoubleLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Binary returns DoubleLiteral
-	 *     Binary.Binary_1_0_0 returns DoubleLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns DoubleLiteral
 	 *     Unit returns DoubleLiteral
 	 *     Unit.Unit_1_0_0 returns DoubleLiteral
 	 *     Unary returns DoubleLiteral
@@ -1812,11 +1730,11 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, DoubleLiteral semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpDOUBLETerminalRuleCall_1_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpDOUBLETerminalRuleCall_2_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	
@@ -1824,26 +1742,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns IntLiteral
+	 *     BinaryOperator returns IntLiteral
 	 *     Pair returns IntLiteral
-	 *     Pair.Pair_1_0_0 returns IntLiteral
+	 *     Pair.BinaryOperator_1_0 returns IntLiteral
 	 *     If returns IntLiteral
 	 *     If.If_1_0 returns IntLiteral
 	 *     Or returns IntLiteral
-	 *     Or.Expression_1_0 returns IntLiteral
+	 *     Or.BinaryOperator_1_0 returns IntLiteral
 	 *     And returns IntLiteral
-	 *     And.Expression_1_0 returns IntLiteral
+	 *     And.BinaryOperator_1_0 returns IntLiteral
 	 *     Cast returns IntLiteral
-	 *     Cast.Cast_1_0_0 returns IntLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Comparison returns IntLiteral
-	 *     Comparison.Expression_1_0_0 returns IntLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Addition returns IntLiteral
-	 *     Addition.Expression_1_0_0 returns IntLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Multiplication returns IntLiteral
-	 *     Multiplication.Expression_1_0_0 returns IntLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Exponentiation returns IntLiteral
-	 *     Exponentiation.Expression_1_0_0 returns IntLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Binary returns IntLiteral
-	 *     Binary.Binary_1_0_0 returns IntLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns IntLiteral
 	 *     Unit returns IntLiteral
 	 *     Unit.Unit_1_0_0 returns IntLiteral
 	 *     Unary returns IntLiteral
@@ -1857,11 +1776,11 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, IntLiteral semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpINTEGERTerminalRuleCall_0_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpINTEGERTerminalRuleCall_1_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	
@@ -1869,26 +1788,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns ReservedLiteral
+	 *     BinaryOperator returns ReservedLiteral
 	 *     Pair returns ReservedLiteral
-	 *     Pair.Pair_1_0_0 returns ReservedLiteral
+	 *     Pair.BinaryOperator_1_0 returns ReservedLiteral
 	 *     If returns ReservedLiteral
 	 *     If.If_1_0 returns ReservedLiteral
 	 *     Or returns ReservedLiteral
-	 *     Or.Expression_1_0 returns ReservedLiteral
+	 *     Or.BinaryOperator_1_0 returns ReservedLiteral
 	 *     And returns ReservedLiteral
-	 *     And.Expression_1_0 returns ReservedLiteral
+	 *     And.BinaryOperator_1_0 returns ReservedLiteral
 	 *     Cast returns ReservedLiteral
-	 *     Cast.Cast_1_0_0 returns ReservedLiteral
+	 *     Cast.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Comparison returns ReservedLiteral
-	 *     Comparison.Expression_1_0_0 returns ReservedLiteral
+	 *     Comparison.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Addition returns ReservedLiteral
-	 *     Addition.Expression_1_0_0 returns ReservedLiteral
+	 *     Addition.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Multiplication returns ReservedLiteral
-	 *     Multiplication.Expression_1_0_0 returns ReservedLiteral
+	 *     Multiplication.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Exponentiation returns ReservedLiteral
-	 *     Exponentiation.Expression_1_0_0 returns ReservedLiteral
+	 *     Exponentiation.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Binary returns ReservedLiteral
-	 *     Binary.Binary_1_0_0 returns ReservedLiteral
+	 *     Binary.BinaryOperator_1_0_0 returns ReservedLiteral
 	 *     Unit returns ReservedLiteral
 	 *     Unit.Unit_1_0_0 returns ReservedLiteral
 	 *     Unary returns ReservedLiteral
@@ -1902,56 +1822,11 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, ReservedLiteral semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_5_1_0(), semanticObject.getOp());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Expression returns StringLiteral
-	 *     Pair returns StringLiteral
-	 *     Pair.Pair_1_0_0 returns StringLiteral
-	 *     If returns StringLiteral
-	 *     If.If_1_0 returns StringLiteral
-	 *     Or returns StringLiteral
-	 *     Or.Expression_1_0 returns StringLiteral
-	 *     And returns StringLiteral
-	 *     And.Expression_1_0 returns StringLiteral
-	 *     Cast returns StringLiteral
-	 *     Cast.Cast_1_0_0 returns StringLiteral
-	 *     Comparison returns StringLiteral
-	 *     Comparison.Expression_1_0_0 returns StringLiteral
-	 *     Addition returns StringLiteral
-	 *     Addition.Expression_1_0_0 returns StringLiteral
-	 *     Multiplication returns StringLiteral
-	 *     Multiplication.Expression_1_0_0 returns StringLiteral
-	 *     Exponentiation returns StringLiteral
-	 *     Exponentiation.Expression_1_0_0 returns StringLiteral
-	 *     Binary returns StringLiteral
-	 *     Binary.Binary_1_0_0 returns StringLiteral
-	 *     Unit returns StringLiteral
-	 *     Unit.Unit_1_0_0 returns StringLiteral
-	 *     Unary returns StringLiteral
-	 *     Access returns StringLiteral
-	 *     Access.Access_1_0 returns StringLiteral
-	 *     Primary returns StringLiteral
-	 *     TerminalExpression returns StringLiteral
-	 *
-	 * Constraint:
-	 *     op=STRING
-	 */
-	protected void sequence_TerminalExpression(ISerializationContext context, StringLiteral semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.EXPRESSION__OP));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpSTRINGTerminalRuleCall_3_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	
@@ -2016,26 +1891,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns Unary
+	 *     BinaryOperator returns Unary
 	 *     Pair returns Unary
-	 *     Pair.Pair_1_0_0 returns Unary
+	 *     Pair.BinaryOperator_1_0 returns Unary
 	 *     If returns Unary
 	 *     If.If_1_0 returns Unary
 	 *     Or returns Unary
-	 *     Or.Expression_1_0 returns Unary
+	 *     Or.BinaryOperator_1_0 returns Unary
 	 *     And returns Unary
-	 *     And.Expression_1_0 returns Unary
+	 *     And.BinaryOperator_1_0 returns Unary
 	 *     Cast returns Unary
-	 *     Cast.Cast_1_0_0 returns Unary
+	 *     Cast.BinaryOperator_1_0_0 returns Unary
 	 *     Comparison returns Unary
-	 *     Comparison.Expression_1_0_0 returns Unary
+	 *     Comparison.BinaryOperator_1_0_0 returns Unary
 	 *     Addition returns Unary
-	 *     Addition.Expression_1_0_0 returns Unary
+	 *     Addition.BinaryOperator_1_0_0 returns Unary
 	 *     Multiplication returns Unary
-	 *     Multiplication.Expression_1_0_0 returns Unary
+	 *     Multiplication.BinaryOperator_1_0_0 returns Unary
 	 *     Exponentiation returns Unary
-	 *     Exponentiation.Expression_1_0_0 returns Unary
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Unary
 	 *     Binary returns Unary
-	 *     Binary.Binary_1_0_0 returns Unary
+	 *     Binary.BinaryOperator_1_0_0 returns Unary
 	 *     Unit returns Unary
 	 *     Unit.Unit_1_0_0 returns Unary
 	 *     Unary returns Unary
@@ -2088,26 +1964,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns Unit
+	 *     BinaryOperator returns Unit
 	 *     Pair returns Unit
-	 *     Pair.Pair_1_0_0 returns Unit
+	 *     Pair.BinaryOperator_1_0 returns Unit
 	 *     If returns Unit
 	 *     If.If_1_0 returns Unit
 	 *     Or returns Unit
-	 *     Or.Expression_1_0 returns Unit
+	 *     Or.BinaryOperator_1_0 returns Unit
 	 *     And returns Unit
-	 *     And.Expression_1_0 returns Unit
+	 *     And.BinaryOperator_1_0 returns Unit
 	 *     Cast returns Unit
-	 *     Cast.Cast_1_0_0 returns Unit
+	 *     Cast.BinaryOperator_1_0_0 returns Unit
 	 *     Comparison returns Unit
-	 *     Comparison.Expression_1_0_0 returns Unit
+	 *     Comparison.BinaryOperator_1_0_0 returns Unit
 	 *     Addition returns Unit
-	 *     Addition.Expression_1_0_0 returns Unit
+	 *     Addition.BinaryOperator_1_0_0 returns Unit
 	 *     Multiplication returns Unit
-	 *     Multiplication.Expression_1_0_0 returns Unit
+	 *     Multiplication.BinaryOperator_1_0_0 returns Unit
 	 *     Exponentiation returns Unit
-	 *     Exponentiation.Expression_1_0_0 returns Unit
+	 *     Exponentiation.BinaryOperator_1_0_0 returns Unit
 	 *     Binary returns Unit
-	 *     Binary.Binary_1_0_0 returns Unit
+	 *     Binary.BinaryOperator_1_0_0 returns Unit
 	 *     Unit returns Unit
 	 *
 	 * Constraint:
@@ -2162,26 +2039,27 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	/**
 	 * Contexts:
 	 *     Expression returns VariableRef
+	 *     BinaryOperator returns VariableRef
 	 *     Pair returns VariableRef
-	 *     Pair.Pair_1_0_0 returns VariableRef
+	 *     Pair.BinaryOperator_1_0 returns VariableRef
 	 *     If returns VariableRef
 	 *     If.If_1_0 returns VariableRef
 	 *     Or returns VariableRef
-	 *     Or.Expression_1_0 returns VariableRef
+	 *     Or.BinaryOperator_1_0 returns VariableRef
 	 *     And returns VariableRef
-	 *     And.Expression_1_0 returns VariableRef
+	 *     And.BinaryOperator_1_0 returns VariableRef
 	 *     Cast returns VariableRef
-	 *     Cast.Cast_1_0_0 returns VariableRef
+	 *     Cast.BinaryOperator_1_0_0 returns VariableRef
 	 *     Comparison returns VariableRef
-	 *     Comparison.Expression_1_0_0 returns VariableRef
+	 *     Comparison.BinaryOperator_1_0_0 returns VariableRef
 	 *     Addition returns VariableRef
-	 *     Addition.Expression_1_0_0 returns VariableRef
+	 *     Addition.BinaryOperator_1_0_0 returns VariableRef
 	 *     Multiplication returns VariableRef
-	 *     Multiplication.Expression_1_0_0 returns VariableRef
+	 *     Multiplication.BinaryOperator_1_0_0 returns VariableRef
 	 *     Exponentiation returns VariableRef
-	 *     Exponentiation.Expression_1_0_0 returns VariableRef
+	 *     Exponentiation.BinaryOperator_1_0_0 returns VariableRef
 	 *     Binary returns VariableRef
-	 *     Binary.Binary_1_0_0 returns VariableRef
+	 *     Binary.BinaryOperator_1_0_0 returns VariableRef
 	 *     Unit returns VariableRef
 	 *     Unit.Unit_1_0_0 returns VariableRef
 	 *     Unary returns VariableRef

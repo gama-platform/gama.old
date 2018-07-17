@@ -94,7 +94,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSOLVE: return createS_Solve();
       case GamlPackage.SDISPLAY: return createS_Display();
       case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
-      case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
       case GamlPackage.FACET: return createFacet();
@@ -115,12 +114,11 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.VAR_FAKE_DEFINITION: return createVarFakeDefinition();
       case GamlPackage.EQUATION_FAKE_DEFINITION: return createEquationFakeDefinition();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
+      case GamlPackage.STRING_LITERAL: return createStringLiteral();
       case GamlPackage.SACTION: return createS_Action();
       case GamlPackage.SVAR: return createS_Var();
-      case GamlPackage.PAIR: return createPair();
+      case GamlPackage.BINARY_OPERATOR: return createBinaryOperator();
       case GamlPackage.IF: return createIf();
-      case GamlPackage.CAST: return createCast();
-      case GamlPackage.BINARY: return createBinary();
       case GamlPackage.UNIT: return createUnit();
       case GamlPackage.UNARY: return createUnary();
       case GamlPackage.ACCESS: return createAccess();
@@ -136,7 +134,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
       case GamlPackage.COLOR_LITERAL: return createColorLiteral();
-      case GamlPackage.STRING_LITERAL: return createStringLiteral();
       case GamlPackage.BOOLEAN_LITERAL: return createBooleanLiteral();
       case GamlPackage.RESERVED_LITERAL: return createReservedLiteral();
       default:
@@ -468,17 +465,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Parameters createParameters()
-  {
-    ParametersImpl parameters = new ParametersImpl();
-    return parameters;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public ActionArguments createActionArguments()
   {
     ActionArgumentsImpl actionArguments = new ActionArgumentsImpl();
@@ -699,6 +685,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public StringLiteral createStringLiteral()
+  {
+    StringLiteralImpl stringLiteral = new StringLiteralImpl();
+    return stringLiteral;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public S_Action createS_Action()
   {
     S_ActionImpl s_Action = new S_ActionImpl();
@@ -721,10 +718,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Pair createPair()
+  public BinaryOperator createBinaryOperator()
   {
-    PairImpl pair = new PairImpl();
-    return pair;
+    BinaryOperatorImpl binaryOperator = new BinaryOperatorImpl();
+    return binaryOperator;
   }
 
   /**
@@ -736,28 +733,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     IfImpl if_ = new IfImpl();
     return if_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Cast createCast()
-  {
-    CastImpl cast = new CastImpl();
-    return cast;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Binary createBinary()
-  {
-    BinaryImpl binary = new BinaryImpl();
-    return binary;
   }
 
   /**
@@ -923,17 +898,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ColorLiteralImpl colorLiteral = new ColorLiteralImpl();
     return colorLiteral;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public StringLiteral createStringLiteral()
-  {
-    StringLiteralImpl stringLiteral = new StringLiteralImpl();
-    return stringLiteral;
   }
 
   /**

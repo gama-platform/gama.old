@@ -103,7 +103,7 @@ species ant skills: [moving] control: fsm {
 	}
 	//State to follow a pheromon road once it has been found
 	state followingRoad {
-		location <- (self choose_best_place()) as point ;
+		location <- choose_best_place as point ;
 		transition to: carryingFood when: place.food > 0 {
 			do pick ;
 		}

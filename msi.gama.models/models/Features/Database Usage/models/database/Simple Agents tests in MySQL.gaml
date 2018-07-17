@@ -44,7 +44,7 @@ global {
 		write "and if the database testDB has been created." color: #red;
 		
 		create DB_Accessor number: 1 {
-			if (self testConnection (params::PARAMS) = false) {
+			if ( testConnection (params::PARAMS) = false) {
 				write "Impossible connection";
 			} else {
 				write "Connection of " + self;
@@ -61,7 +61,7 @@ global {
 
 			do pause;
 		} else {
-			write "  with parameters: " + first(DB_Accessor) getParameter ();
+			write "  with parameters: " + first(DB_Accessor).getParameter ();
 			write "";		
 		}
 
@@ -84,7 +84,7 @@ global {
 
 species DB_Accessor parent: AgentDB {
 	reflex select {
-		list<list> t <- list<list> (self select (select::"SELECT * FROM registration"));
+		list<list> t <- list<list> (select (select::"SELECT * FROM registration"));
 		write "Select before updated " + t;
 	}
 

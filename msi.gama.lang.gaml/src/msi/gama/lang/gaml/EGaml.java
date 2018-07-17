@@ -24,6 +24,7 @@ import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
+import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -97,9 +98,11 @@ public class EGaml {
 	 *            the o
 	 * @return the exprs of
 	 */
-	public static List<Expression> getExprsOf(final ExpressionList o) {
-		if (o == null) { return Collections.EMPTY_LIST; }
-		if (((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS)) { return o.getExprs(); }
+	public static List<Expression> getExprsOf(final EObject o) {
+		if (o instanceof ExpressionList) {
+			if (((ExpressionListImpl) o)
+					.eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS)) { return ((ExpressionList) o).getExprs(); }
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -273,8 +276,10 @@ public class EGaml {
 		String s;
 		final int id = clazz.getClassifierID();
 		switch (id) {
-			case GamlPackage.EXPRESSION:
-				return ((Expression) object).getOp();
+			case GamlPackage.UNARY:
+				return ((Unary) object).getOp();
+			case GamlPackage.BINARY_OPERATOR:
+				return ((BinaryOperator) object).getOp();
 			case GamlPackage.ARGUMENT_PAIR:
 				s = ((ArgumentPair) object).getOp();
 				return s.endsWith(":") ? s.substring(0, s.length() - 1) : s;
@@ -299,9 +304,7 @@ public class EGaml {
 				return s.endsWith(":") ? s.substring(0, s.length() - 1) : s;
 			case GamlPackage.FUNCTION:
 				final Function ff = (Function) object;
-				s = ff.getOp();
-				if (s == null) { return getKeyOf(ff.getAction()); }
-				return s;
+				return getKeyOf(ff.getLeft());
 			case GamlPackage.TYPE_REF:
 				s = getNameOfRef(object);
 				if (s.contains("<")) {
@@ -312,14 +315,22 @@ public class EGaml {
 					}
 				}
 				return s;
+			case GamlPackage.IF:
+				return "?";
 			case GamlPackage.VARIABLE_REF:
 			case GamlPackage.UNIT_NAME:
 			case GamlPackage.ACTION_REF:
 			case GamlPackage.SKILL_REF:
 			case GamlPackage.EQUATION_REF:
 				return getNameOfRef(object);
+			case GamlPackage.INT_LITERAL:
 			case GamlPackage.STRING_LITERAL:
-				return ((StringLiteral) object).getOp();
+			case GamlPackage.DOUBLE_LITERAL:
+			case GamlPackage.COLOR_LITERAL:
+			case GamlPackage.RESERVED_LITERAL:
+			case GamlPackage.BOOLEAN_LITERAL:
+			case GamlPackage.TERMINAL_EXPRESSION:
+				return ((TerminalExpression) object).getOp();
 			default:
 				final List<EClass> eSuperTypes = clazz.getESuperTypes();
 				return eSuperTypes.isEmpty() ? null : getKeyOf(object, eSuperTypes.get(0));
@@ -396,9 +407,9 @@ public class EGaml {
 			return;
 		} else if (expr instanceof If) {
 			serializer.append("(");
-			serialize(serializer, expr.getLeft());
-			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(serializer, expr.getRight());
+			serialize(serializer, ((If) expr).getLeft());
+			serializer.append(")").append(((If) expr).getOp()).append("(");
+			serialize(serializer, ((If) expr).getRight());
 			serializer.append(")").append(":");
 			serialize(serializer, ((If) expr).getIfFalse());
 		} else if (expr instanceof StringLiteral) {
@@ -407,9 +418,9 @@ public class EGaml {
 			serializer.append(((TerminalExpression) expr).getOp());
 		} else if (expr instanceof Point) {
 			serializer.append("{").append("(");
-			serialize(serializer, expr.getLeft());
-			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(serializer, expr.getRight());
+			serialize(serializer, ((Point) expr).getLeft());
+			serializer.append(")").append(((Point) expr).getOp()).append("(");
+			serialize(serializer, ((Point) expr).getRight());
 			serializer.append(")");
 			if (((Point) expr).getZ() != null) {
 				serializer.append(',').append("(");
@@ -423,8 +434,8 @@ public class EGaml {
 				|| expr instanceof ActionRef || expr instanceof UnitName) {
 			serializer.append(getKeyOf(expr));
 		} else if (expr instanceof Unary) {
-			serializer.append(expr.getOp()).append("(");
-			serialize(serializer, expr.getRight());
+			serializer.append(((Unary) expr).getOp()).append("(");
+			serialize(serializer, ((Unary) expr).getRight());
 			serializer.append(")");
 		} else if (expr instanceof Function) {
 			function(serializer, (Function) expr);
@@ -433,11 +444,11 @@ public class EGaml {
 		// function((FunctionRef) expr);
 		// }
 		else {
-			serializer.append("(");
-			serialize(serializer, expr.getLeft());
-			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(serializer, expr.getRight());
-			serializer.append(")");
+			// serializer.append("(");
+			// serialize(serializer, expr.getLeft());
+			// serializer.append(")").append(expr.getOp()).append("(");
+			// serialize(serializer, expr.getRight());
+			// serializer.append(")");
 		}
 	}
 
@@ -450,8 +461,8 @@ public class EGaml {
 	 *            the expr
 	 */
 	private static void function(final StringBuilder serializer, final Function expr) {
-		final List<Expression> args = getExprsOf(expr.getArgs());
-		final String opName = expr.getOp();
+		final List<Expression> args = getExprsOf(expr.getRight());
+		final String opName = getKeyOf(expr.getLeft());
 		switch (args.size()) {
 			case 1:
 				serializer.append(opName).append("(");

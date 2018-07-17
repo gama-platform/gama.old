@@ -83,7 +83,6 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Assignment;
@@ -268,15 +267,12 @@ public class GamlSyntacticConverter {
 			if (e instanceof Function) {
 				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				final Function f = (Function) e;
-				final Parameters p = f.getParameters();
-				if (p != null) {
-					addFacet(elt, WITH, convExpr(p, errors), errors);
-				} else {
-					final ExpressionList list = f.getArgs();
-					if (list != null) {
-						addFacet(elt, WITH, convExpr(list, errors), errors);
-					}
+
+				final ExpressionList list = f.getRight();
+				if (list != null) {
+					addFacet(elt, WITH, convExpr(list, errors), errors);
 				}
+
 			}
 		} else if (stm instanceof S_If) {
 			// If the statement is "if", we convert its potential "else" part
@@ -415,13 +411,13 @@ public class GamlSyntacticConverter {
 			// "put item: value in: container at: index"
 			// 20/1/14: Translation of container[index] +<- value" to
 			// "add item: value in: container at: index"
-			if (expr instanceof Access && expr.getOp().equals("[")) {
+			if (expr instanceof Access && ((Access) expr).getOp().equals("[")) {
 				final String kw = keyword.equals("+<-") ? ADD : PUT;
 				final String to = keyword.equals("+<-") ? TO : IN;
 				elt.setKeyword(kw);
 				addFacet(elt, ITEM, value, errors);
-				addFacet(elt, to, convExpr(expr.getLeft(), errors), errors);
-				final List<Expression> args = EGaml.getExprsOf(((Access) expr).getArgs());
+				addFacet(elt, to, convExpr(((Access) expr).getLeft(), errors), errors);
+				final List<Expression> args = EGaml.getExprsOf(((Access) expr).getRight());
 				if (args.size() == 0) {
 					// Add facet all: true when no index is provided
 					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
@@ -458,9 +454,9 @@ public class GamlSyntacticConverter {
 			// 08/01/14: Addition of the ">>-" keyword (remove all)
 			elt.setKeyword(REMOVE);
 			// 20/01/14: Addition of the access [] to remove from the index
-			if (expr instanceof Access && expr.getOp().equals("[")
-					&& EGaml.getExprsOf(((Access) expr).getArgs()).size() == 0) {
-				addFacet(elt, FROM, convExpr(expr.getLeft(), errors), errors);
+			if (expr instanceof Access && ((Access) expr).getOp().equals("[")
+					&& EGaml.getExprsOf(((Access) expr).getRight()).size() == 0) {
+				addFacet(elt, FROM, convExpr(((Access) expr).getLeft(), errors), errors);
 				addFacet(elt, INDEX, value, errors);
 			} else {
 				addFacet(elt, FROM, convExpr(expr, errors), errors);

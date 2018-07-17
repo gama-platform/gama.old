@@ -4,7 +4,7 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.Access;
-import msi.gama.lang.gaml.gaml.ExpressionList;
+import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -23,8 +23,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getArgs <em>Args</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getNamed_exp <em>Named exp</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getLeft <em>Left</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getOp <em>Op</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.AccessImpl#getRight <em>Right</em>}</li>
  * </ul>
  *
  * @generated
@@ -32,34 +33,44 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 public class AccessImpl extends ExpressionImpl implements Access
 {
   /**
-   * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
+   * The cached value of the '{@link #getLeft() <em>Left</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getArgs()
+   * @see #getLeft()
    * @generated
    * @ordered
    */
-  protected ExpressionList args;
+  protected Expression left;
 
   /**
-   * The default value of the '{@link #getNamed_exp() <em>Named exp</em>}' attribute.
+   * The default value of the '{@link #getOp() <em>Op</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getNamed_exp()
+   * @see #getOp()
    * @generated
    * @ordered
    */
-  protected static final String NAMED_EXP_EDEFAULT = null;
+  protected static final String OP_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getNamed_exp() <em>Named exp</em>}' attribute.
+   * The cached value of the '{@link #getOp() <em>Op</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getNamed_exp()
+   * @see #getOp()
    * @generated
    * @ordered
    */
-  protected String named_exp = NAMED_EXP_EDEFAULT;
+  protected String op = OP_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getRight() <em>Right</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRight()
+   * @generated
+   * @ordered
+   */
+  protected Expression right;
 
   /**
    * <!-- begin-user-doc -->
@@ -87,9 +98,9 @@ public class AccessImpl extends ExpressionImpl implements Access
    * <!-- end-user-doc -->
    * @generated
    */
-  public ExpressionList getArgs()
+  public Expression getLeft()
   {
-    return args;
+    return left;
   }
 
   /**
@@ -97,13 +108,13 @@ public class AccessImpl extends ExpressionImpl implements Access
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetArgs(ExpressionList newArgs, NotificationChain msgs)
+  public NotificationChain basicSetLeft(Expression newLeft, NotificationChain msgs)
   {
-    ExpressionList oldArgs = args;
-    args = newArgs;
+    Expression oldLeft = left;
+    left = newLeft;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__ARGS, oldArgs, newArgs);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__LEFT, oldLeft, newLeft);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -114,20 +125,20 @@ public class AccessImpl extends ExpressionImpl implements Access
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setArgs(ExpressionList newArgs)
+  public void setLeft(Expression newLeft)
   {
-    if (newArgs != args)
+    if (newLeft != left)
     {
       NotificationChain msgs = null;
-      if (args != null)
-        msgs = ((InternalEObject)args).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__ARGS, null, msgs);
-      if (newArgs != null)
-        msgs = ((InternalEObject)newArgs).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__ARGS, null, msgs);
-      msgs = basicSetArgs(newArgs, msgs);
+      if (left != null)
+        msgs = ((InternalEObject)left).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__LEFT, null, msgs);
+      if (newLeft != null)
+        msgs = ((InternalEObject)newLeft).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__LEFT, null, msgs);
+      msgs = basicSetLeft(newLeft, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__ARGS, newArgs, newArgs));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__LEFT, newLeft, newLeft));
   }
 
   /**
@@ -135,9 +146,9 @@ public class AccessImpl extends ExpressionImpl implements Access
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getNamed_exp()
+  public String getOp()
   {
-    return named_exp;
+    return op;
   }
 
   /**
@@ -145,12 +156,60 @@ public class AccessImpl extends ExpressionImpl implements Access
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setNamed_exp(String newNamed_exp)
+  public void setOp(String newOp)
   {
-    String oldNamed_exp = named_exp;
-    named_exp = newNamed_exp;
+    String oldOp = op;
+    op = newOp;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__NAMED_EXP, oldNamed_exp, named_exp));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__OP, oldOp, op));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getRight()
+  {
+    return right;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRight(Expression newRight, NotificationChain msgs)
+  {
+    Expression oldRight = right;
+    right = newRight;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__RIGHT, oldRight, newRight);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRight(Expression newRight)
+  {
+    if (newRight != right)
+    {
+      NotificationChain msgs = null;
+      if (right != null)
+        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__RIGHT, null, msgs);
+      if (newRight != null)
+        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ACCESS__RIGHT, null, msgs);
+      msgs = basicSetRight(newRight, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ACCESS__RIGHT, newRight, newRight));
   }
 
   /**
@@ -163,8 +222,10 @@ public class AccessImpl extends ExpressionImpl implements Access
   {
     switch (featureID)
     {
-      case GamlPackage.ACCESS__ARGS:
-        return basicSetArgs(null, msgs);
+      case GamlPackage.ACCESS__LEFT:
+        return basicSetLeft(null, msgs);
+      case GamlPackage.ACCESS__RIGHT:
+        return basicSetRight(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -179,10 +240,12 @@ public class AccessImpl extends ExpressionImpl implements Access
   {
     switch (featureID)
     {
-      case GamlPackage.ACCESS__ARGS:
-        return getArgs();
-      case GamlPackage.ACCESS__NAMED_EXP:
-        return getNamed_exp();
+      case GamlPackage.ACCESS__LEFT:
+        return getLeft();
+      case GamlPackage.ACCESS__OP:
+        return getOp();
+      case GamlPackage.ACCESS__RIGHT:
+        return getRight();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -197,11 +260,14 @@ public class AccessImpl extends ExpressionImpl implements Access
   {
     switch (featureID)
     {
-      case GamlPackage.ACCESS__ARGS:
-        setArgs((ExpressionList)newValue);
+      case GamlPackage.ACCESS__LEFT:
+        setLeft((Expression)newValue);
         return;
-      case GamlPackage.ACCESS__NAMED_EXP:
-        setNamed_exp((String)newValue);
+      case GamlPackage.ACCESS__OP:
+        setOp((String)newValue);
+        return;
+      case GamlPackage.ACCESS__RIGHT:
+        setRight((Expression)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -217,11 +283,14 @@ public class AccessImpl extends ExpressionImpl implements Access
   {
     switch (featureID)
     {
-      case GamlPackage.ACCESS__ARGS:
-        setArgs((ExpressionList)null);
+      case GamlPackage.ACCESS__LEFT:
+        setLeft((Expression)null);
         return;
-      case GamlPackage.ACCESS__NAMED_EXP:
-        setNamed_exp(NAMED_EXP_EDEFAULT);
+      case GamlPackage.ACCESS__OP:
+        setOp(OP_EDEFAULT);
+        return;
+      case GamlPackage.ACCESS__RIGHT:
+        setRight((Expression)null);
         return;
     }
     super.eUnset(featureID);
@@ -237,10 +306,12 @@ public class AccessImpl extends ExpressionImpl implements Access
   {
     switch (featureID)
     {
-      case GamlPackage.ACCESS__ARGS:
-        return args != null;
-      case GamlPackage.ACCESS__NAMED_EXP:
-        return NAMED_EXP_EDEFAULT == null ? named_exp != null : !NAMED_EXP_EDEFAULT.equals(named_exp);
+      case GamlPackage.ACCESS__LEFT:
+        return left != null;
+      case GamlPackage.ACCESS__OP:
+        return OP_EDEFAULT == null ? op != null : !OP_EDEFAULT.equals(op);
+      case GamlPackage.ACCESS__RIGHT:
+        return right != null;
     }
     return super.eIsSet(featureID);
   }
@@ -256,8 +327,8 @@ public class AccessImpl extends ExpressionImpl implements Access
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (named_exp: ");
-    result.append(named_exp);
+    result.append(" (op: ");
+    result.append(op);
     result.append(')');
     return result.toString();
   }

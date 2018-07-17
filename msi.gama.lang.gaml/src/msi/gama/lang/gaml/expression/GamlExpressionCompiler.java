@@ -54,9 +54,8 @@ import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
-import msi.gama.lang.gaml.gaml.Binary;
+import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationRef;
@@ -66,15 +65,14 @@ import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.If;
 import msi.gama.lang.gaml.gaml.IntLiteral;
-import msi.gama.lang.gaml.gaml.Pair;
 import msi.gama.lang.gaml.gaml.Parameter;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
 import msi.gama.lang.gaml.gaml.StringEvaluator;
 import msi.gama.lang.gaml.gaml.StringLiteral;
+import msi.gama.lang.gaml.gaml.TerminalExpression;
 import msi.gama.lang.gaml.gaml.TypeDefinition;
 import msi.gama.lang.gaml.gaml.TypeInfo;
 import msi.gama.lang.gaml.gaml.TypeRef;
@@ -403,9 +401,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private String findIteratorArgName(final Expression e2) {
-		if (!(e2 instanceof Parameters)) { return IKeyword.EACH; }
-		final Parameters params = (Parameters) e2;
-		final List<Expression> exprs = EGaml.getExprsOf(params.getParams());
+		if (!(e2 instanceof ExpressionList)) { return IKeyword.EACH; }
+		final ExpressionList params = (ExpressionList) e2;
+		final List<Expression> exprs = EGaml.getExprsOf(params);
 		if (exprs == null || exprs.isEmpty()) { return IKeyword.EACH; }
 		final Expression arg = exprs.get(0);
 		if (!(arg instanceof Parameter)) { return IKeyword.EACH; }
@@ -414,9 +412,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private Expression findIteratorExpr(final Expression e2) {
-		if (!(e2 instanceof Parameters)) { return e2; }
-		final Parameters params = (Parameters) e2;
-		final List<Expression> exprs = EGaml.getExprsOf(params.getParams());
+		if (!(e2 instanceof ExpressionList)) { return e2; }
+		final ExpressionList params = (ExpressionList) e2;
+		final List<Expression> exprs = EGaml.getExprsOf(params);
 		if (exprs == null || exprs.isEmpty()) { return e2; }
 		final Expression arg = exprs.get(0);
 		if (!(arg instanceof Parameter)) { return arg; }
@@ -569,9 +567,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final String name = EGaml.getKeyOf(fieldExpr);
 			final ActionDescription action = species.getAction(name);
 			if (action != null) {
-				final ExpressionList list = ((Function) fieldExpr).getArgs();
-				final IExpression call =
-						action(name, owner, list == null ? ((Function) fieldExpr).getParameters() : list, action);
+				final ExpressionList list = ((Function) fieldExpr).getRight();
+				final IExpression call = action(name, owner, list, action);
 				getContext().document(fieldExpr, call); // ??
 				return call;
 			}
@@ -629,10 +626,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		List<Expression> parameters = null;
 		if (o instanceof Array) {
 			parameters = EGaml.getExprsOf(((Array) o).getExprs());
-		} else if (o instanceof Parameters) {
-			parameters = EGaml.getExprsOf(((Parameters) o).getParams());
 		} else if (o instanceof ExpressionList) {
-			parameters = ((ExpressionList) o).getExprs();
+			parameters = EGaml.getExprsOf(o);
 			completeArgs = true;
 		} else {
 			command.error("Arguments must be written [a1::v1, a2::v2], (a1:v1, a2:v2) or (v1, v2)");
@@ -646,12 +641,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			String arg = null;
 			IExpressionDescription ed = null;
 
-			if (exp instanceof ArgumentPair || exp instanceof Parameter) {
+			if (exp instanceof ArgumentPair) {
 				arg = EGaml.getKeyOf(exp);
-				ed = builder.create(exp.getRight()/* , errors */);
-			} else if (exp instanceof Pair) {
-				arg = EGaml.getKeyOf(exp.getLeft());
-				ed = builder.create(exp.getRight()/* , errors */);
+				ed = builder.create(((ArgumentPair) exp).getRight()/* , errors */);
+			} else if (exp instanceof Parameter) {
+				arg = EGaml.getKeyOf(exp);
+				ed = builder.create(((Parameter) exp).getRight()/* , errors */);
+			} else if (exp instanceof BinaryOperator && "::".equals(EGaml.getKeyOf(exp))) {
+				arg = EGaml.getKeyOf(((BinaryOperator) exp).getLeft());
+				ed = builder.create(((BinaryOperator) exp).getRight()/* , errors */);
 			} else if (completeArgs) {
 				final List<String> args = action == null ? null : action.getArgNames();
 				if (args != null && action != null && index == args.size()) {
@@ -677,10 +675,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return argMap;
 	}
 
-	@Override
-	public IExpression caseCast(final Cast object) {
-		return binary(AS, object.getLeft(), object.getRight());
-	}
+	// @Override
+	// public IExpression caseCast(final Cast object) {
+	// return binary(AS, object.getLeft(), object.getRight());
+	// }
 
 	@Override
 	public IExpression caseSkillRef(final SkillRef object) {
@@ -710,14 +708,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseExpression(final Expression object) {
-		// If an error already exists, we discard the case
-		final ValidationContext vc = getValidationContext();
-		final Expression left = object.getLeft();
-		final Expression right = object.getRight();
-		if (vc == null || vc.hasErrorOn(object, left, right)) { return null; }
-		// in the general case, we try to return a binary expression
-		final IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-		return result;
+		return null;
+		// // If an error already exists, we discard the case
+		// final ValidationContext vc = getValidationContext();
+		// final Expression left = object.getLeft();
+		// final Expression right = object.getRight();
+		// if (vc == null || vc.hasErrorOn(object, left, right)) { return null; }
+		// // in the general case, we try to return a binary expression
+		// final IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+		// return result;
 	}
 
 	@Override
@@ -795,18 +794,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	@Override
-	public IExpression casePair(final Pair object) {
-		final IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-		return result;
-	}
-
-	@Override
-	public IExpression caseBinary(final Binary object) {
-		final IExpression result = binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
-		return result;
-	}
-
-	@Override
 	public IExpression caseUnit(final Unit object) {
 		// We simply return a multiplication, since the right member (the
 		// "unit") will be
@@ -835,12 +822,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return unary(EGaml.getKeyOf(object), object.getRight());
 	}
 
-	// @Override
 	public IExpression caseDot(final Access object) {
-		if (object.getRight() != null) {
-			return compileFieldExpr(object.getLeft(), object.getRight());
-		} else if (object.getNamed_exp() != null) { return compileNamedExperimentFieldExpr(object.getLeft(),
-				object.getNamed_exp()); }
+		final Expression right = (object.getRight());
+		if (right instanceof StringLiteral) {
+			return compileNamedExperimentFieldExpr(object.getLeft(), EGaml.getKeyOf(right));
+		} else if (right != null) { return compileFieldExpr(object.getLeft(), object.getRight()); }
 		return null;
 	}
 
@@ -853,7 +839,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType contType = container.getType();
 		final boolean isMatrix = contType.id() == IType.MATRIX;
 		final IType keyType = contType.getKeyType();
-		final List<? extends Expression> list = EGaml.getExprsOf(object.getArgs());
+		final List<? extends Expression> list = EGaml.getExprsOf(object.getRight());
 		final List<IExpression> result = new ArrayList<>();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {
@@ -901,7 +887,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseArray(final Array object) {
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getExprs());
-		final boolean allPairs = !list.isEmpty() && Iterables.all(list, each -> each instanceof Pair);
+		final boolean allPairs = !list.isEmpty() && Iterables.all(list, each -> "::".equals(EGaml.getKeyOf(each)));
 		final Iterable<IExpression> result = Iterables.transform(list, input -> compile(input));
 		return allPairs ? getFactory().createMap(result) : getFactory().createList(result);
 	}
@@ -916,13 +902,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		exprs[2] = compile(z);
 		return getFactory().createOperator(POINT, getContext(), object, exprs);
 	}
-
-	@Override
-	public IExpression caseParameters(final Parameters object) {
-		final Iterable it = Iterables.transform(EGaml.getExprsOf(object.getParams()), input -> binary("::",
-				getFactory().createConst(EGaml.getKeyOf(input.getLeft()), Types.STRING), input.getRight()));
-		return getFactory().createMap(it);
-	}
+	//
+	// @Override
+	// public IExpression caseParameters(final Parameters object) {
+	// final Iterable it = Iterables.transform(EGaml.getExprsOf(object.getParams()), input -> binary("::",
+	// getFactory().createConst(EGaml.getKeyOf(input.getLeft()), Types.STRING), input.getRight()));
+	// return getFactory().createMap(it);
+	// }
 
 	@Override
 	public IExpression caseExpressionList(final ExpressionList object) {
@@ -944,7 +930,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (result != null) { return result; }
 		result = tryActionCall(op, object);
 		if (result != null) { return result; }
-		final List<Expression> args = EGaml.getExprsOf(object.getArgs());
+		final List<Expression> args = EGaml.getExprsOf(object.getRight());
 		switch (args.size()) {
 			case 0:
 				getContext().error("Unknown operator or action: " + op, IGamlIssue.UNKNOWN_ACTION, object);
@@ -961,7 +947,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private IExpression tryCastingFunction(final String op, final Function object) {
 		if (!isCastingFunction(op, object)) { return null; }
-		final List<Expression> args = EGaml.getExprsOf(object.getArgs());
+		final List<Expression> args = EGaml.getExprsOf(object.getRight());
 		final int size = args.size();
 		IExpression toCast;
 		if (size == 1) {
@@ -979,10 +965,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				&& ((StatementDescription) getContext()).isSuperInvocation();
 		final ActionDescription action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
 		if (action == null) { return null; }
-		EObject params = object.getParameters();
-		if (params == null) {
-			params = object.getArgs();
-		}
+		final EObject params = object.getRight();
 		return action(op, caseVar(isSuper ? SUPER : SELF, object), params, action);
 	}
 
@@ -998,7 +981,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return false;
 		}
 		// We look at the arguments of the operator
-		final List<Expression> args = EGaml.getExprsOf(object.getArgs());
+		final List<Expression> args = EGaml.getExprsOf(object.getRight());
 		final int size = args.size();
 		// If there is none, it can't be a casting
 		if (size == 0) { return false; }
@@ -1291,4 +1274,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		this.iteratorContexts.clear();
 
 	}
+
+	@Override
+	public IExpression caseTerminalExpression(final TerminalExpression object) {
+		return null;
+	}
+
+	@Override
+	public IExpression caseBinaryOperator(final BinaryOperator object) {
+		return binary(object.getOp(), object.getLeft(), object.getRight());
+	}
+
 }

@@ -94,8 +94,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			}
 		} else if (o instanceof Function) {
 			final Function f = (Function) o;
-			if (f.getAction() instanceof ActionRef) {
-				final ActionRef ref = (ActionRef) f.getAction();
+			if (f.getLeft() instanceof ActionRef) {
+				final ActionRef ref = (ActionRef) f.getLeft();
 				final String temp = getDocumentation(ref.getRef());
 				if (!temp.contains("No documentation")) { return temp; }
 			}

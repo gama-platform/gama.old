@@ -262,6 +262,15 @@
 		<super type="org.eclipse.xtext.ui.check.expensive"/>
 		<persistent value="true"/>
 	</extension>
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			category="msi.gama.lang.gaml.Gaml"
+			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.validation.ValidatorPreferencePage"
+			id="msi.gama.lang.gaml.Gaml.validator.preferencePage"
+			name="Errors/Warnings">
+			<keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
+		</page>
+	</extension>
 	<extension point="org.eclipse.xtext.builder.participant">
 		<participant
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
@@ -410,12 +419,18 @@
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="gaml,experiment">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="msi.gama.lang.gaml.Gaml.contenttype"
+			contentViewerId="msi.gama.lang.gaml.Gaml.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="msi.gama.lang.gaml.Gaml.compare.contentMergeViewers"
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="gaml,experiment" label="Gaml Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="msi.gama.lang.gaml.Gaml.contenttype"
+			contentMergeViewerId="msi.gama.lang.gaml.Gaml.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="msi.gama.lang.gaml.Gaml.editors.documentProviders"

@@ -6,23 +6,23 @@ package msi.gama.lang.gaml.gaml;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Access</b></em>'.
+ * A representation of the model object '<em><b>Binary Operator</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.Access#getLeft <em>Left</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Access#getOp <em>Op</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Access#getRight <em>Right</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.BinaryOperator#getLeft <em>Left</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.BinaryOperator#getOp <em>Op</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.BinaryOperator#getRight <em>Right</em>}</li>
  * </ul>
  *
- * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess()
+ * @see msi.gama.lang.gaml.gaml.GamlPackage#getBinaryOperator()
  * @model
  * @generated
  */
-public interface Access extends Expression
+public interface BinaryOperator extends Expression
 {
   /**
    * Returns the value of the '<em><b>Left</b></em>' containment reference.
@@ -34,14 +34,14 @@ public interface Access extends Expression
    * <!-- end-user-doc -->
    * @return the value of the '<em>Left</em>' containment reference.
    * @see #setLeft(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess_Left()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getBinaryOperator_Left()
    * @model containment="true"
    * @generated
    */
   Expression getLeft();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Access#getLeft <em>Left</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.BinaryOperator#getLeft <em>Left</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Left</em>' containment reference.
@@ -60,14 +60,14 @@ public interface Access extends Expression
    * <!-- end-user-doc -->
    * @return the value of the '<em>Op</em>' attribute.
    * @see #setOp(String)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess_Op()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getBinaryOperator_Op()
    * @model
    * @generated
    */
   String getOp();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Access#getOp <em>Op</em>}' attribute.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.BinaryOperator#getOp <em>Op</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Op</em>' attribute.
@@ -86,14 +86,14 @@ public interface Access extends Expression
    * <!-- end-user-doc -->
    * @return the value of the '<em>Right</em>' containment reference.
    * @see #setRight(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getAccess_Right()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getBinaryOperator_Right()
    * @model containment="true"
    * @generated
    */
   Expression getRight();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Access#getRight <em>Right</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.BinaryOperator#getRight <em>Right</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Right</em>' containment reference.
@@ -102,4 +102,4 @@ public interface Access extends Expression
    */
   void setRight(Expression value);
 
-} // Access
+} // BinaryOperator

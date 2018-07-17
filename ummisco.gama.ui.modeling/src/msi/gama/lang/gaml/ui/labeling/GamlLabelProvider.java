@@ -197,12 +197,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		if (f == null) {
 			final Expression e = p.getExpr();
 			if (e instanceof StringLiteral) {
-				name = e.getOp();
+				name = ((StringLiteral) e).getOp();
 			}
 		} else {
 			final Expression e = f.getExpr();
 			if (e instanceof StringLiteral) {
-				name = e.getOp();
+				name = ((StringLiteral) e).getOp();
 			}
 		}
 		return "Parameter " + "\"" + name + "\""

@@ -246,17 +246,14 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 				final ActionDefinition def = ref.getRef();
 				if (def != null) {
 					final String temp = getFirstLine(def);
-					if (!temp.isEmpty())
-						return temp;
+					if (!temp.isEmpty()) { return temp; }
 				}
 			}
 		} else if (o instanceof UnitName) {
 			final UnitFakeDefinition fake = ((UnitName) o).getRef();
-			if (fake == null)
-				return "<b> Unknown unit or constant </b>";
+			if (fake == null) { return "<b> Unknown unit or constant </b>"; }
 			final UnitConstantExpression unit = IUnits.UNITS_EXPR.get(fake.getName());
-			if (unit == null)
-				return "<b> Unknown unit or constant </b>";
+			if (unit == null) { return "<b> Unknown unit or constant </b>"; }
 			return "<b>" + unit.getTitle() + "</b>";
 		}
 
@@ -283,8 +280,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	private ActionRef getActionFrom(final Function f) {
-		if (f.getAction() instanceof ActionRef)
-			return (ActionRef) f.getAction();
+		if (f.getLeft() instanceof ActionRef) { return (ActionRef) f.getLeft(); }
 		return null;
 	}
 

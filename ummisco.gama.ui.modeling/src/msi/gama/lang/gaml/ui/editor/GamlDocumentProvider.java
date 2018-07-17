@@ -9,12 +9,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import org.eclipse.xtext.ui.editor.model.XtextDocument;
 import org.eclipse.xtext.ui.editor.model.XtextDocumentProvider;
-import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
-import org.eclipse.xtext.validation.IResourceValidator;
-
-import com.google.inject.Inject;
 
 /**
  * The class GamlDocumentProvider.
@@ -25,10 +20,10 @@ import com.google.inject.Inject;
  */
 public class GamlDocumentProvider extends XtextDocumentProvider {
 
-	@Inject private IssueResolutionProvider issueResolutionProvider;
-
-	@Inject private IResourceValidator resourceValidator;
-
-	private XtextDocument doc;
+	// @Inject private IssueResolutionProvider issueResolutionProvider;
+	//
+	// @Inject private IResourceValidator resourceValidator;
+	//
+	// private XtextDocument doc;
 
 }

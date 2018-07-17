@@ -314,7 +314,7 @@ species species0 {
 
 species species1 mirrors: species0 skills: [moving] {
 	point location update: target.location + { 10, 10 };
-	float speed1 update: self compute_speed_using_an_action (); // No parameter as "max" is defaulted
+	float speed1 update: self.compute_speed_using_an_action(); // No parameter as "max" is defaulted
 	float speed2 update: compute_speed_using_a_functional_attribute;
 	float compute_speed_using_a_functional_attribute {
 		return speed of target;

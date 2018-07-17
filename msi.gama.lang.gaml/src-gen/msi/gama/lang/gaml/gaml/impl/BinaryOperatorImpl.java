@@ -3,9 +3,9 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Unary;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -17,20 +17,31 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Unary</b></em>'.
+ * An implementation of the model object '<em><b>Binary Operator</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.UnaryImpl#getOp <em>Op</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.UnaryImpl#getRight <em>Right</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.BinaryOperatorImpl#getLeft <em>Left</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.BinaryOperatorImpl#getOp <em>Op</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.BinaryOperatorImpl#getRight <em>Right</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class UnaryImpl extends ExpressionImpl implements Unary
+public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
 {
+  /**
+   * The cached value of the '{@link #getLeft() <em>Left</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLeft()
+   * @generated
+   * @ordered
+   */
+  protected Expression left;
+
   /**
    * The default value of the '{@link #getOp() <em>Op</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -66,7 +77,7 @@ public class UnaryImpl extends ExpressionImpl implements Unary
    * <!-- end-user-doc -->
    * @generated
    */
-  protected UnaryImpl()
+  protected BinaryOperatorImpl()
   {
     super();
   }
@@ -79,7 +90,55 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.UNARY;
+    return GamlPackage.Literals.BINARY_OPERATOR;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getLeft()
+  {
+    return left;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLeft(Expression newLeft, NotificationChain msgs)
+  {
+    Expression oldLeft = left;
+    left = newLeft;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.BINARY_OPERATOR__LEFT, oldLeft, newLeft);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLeft(Expression newLeft)
+  {
+    if (newLeft != left)
+    {
+      NotificationChain msgs = null;
+      if (left != null)
+        msgs = ((InternalEObject)left).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.BINARY_OPERATOR__LEFT, null, msgs);
+      if (newLeft != null)
+        msgs = ((InternalEObject)newLeft).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.BINARY_OPERATOR__LEFT, null, msgs);
+      msgs = basicSetLeft(newLeft, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.BINARY_OPERATOR__LEFT, newLeft, newLeft));
   }
 
   /**
@@ -102,7 +161,7 @@ public class UnaryImpl extends ExpressionImpl implements Unary
     String oldOp = op;
     op = newOp;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.UNARY__OP, oldOp, op));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.BINARY_OPERATOR__OP, oldOp, op));
   }
 
   /**
@@ -126,7 +185,7 @@ public class UnaryImpl extends ExpressionImpl implements Unary
     right = newRight;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.UNARY__RIGHT, oldRight, newRight);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.BINARY_OPERATOR__RIGHT, oldRight, newRight);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -143,14 +202,14 @@ public class UnaryImpl extends ExpressionImpl implements Unary
     {
       NotificationChain msgs = null;
       if (right != null)
-        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.UNARY__RIGHT, null, msgs);
+        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.BINARY_OPERATOR__RIGHT, null, msgs);
       if (newRight != null)
-        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.UNARY__RIGHT, null, msgs);
+        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.BINARY_OPERATOR__RIGHT, null, msgs);
       msgs = basicSetRight(newRight, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.UNARY__RIGHT, newRight, newRight));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.BINARY_OPERATOR__RIGHT, newRight, newRight));
   }
 
   /**
@@ -163,7 +222,9 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   {
     switch (featureID)
     {
-      case GamlPackage.UNARY__RIGHT:
+      case GamlPackage.BINARY_OPERATOR__LEFT:
+        return basicSetLeft(null, msgs);
+      case GamlPackage.BINARY_OPERATOR__RIGHT:
         return basicSetRight(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -179,9 +240,11 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   {
     switch (featureID)
     {
-      case GamlPackage.UNARY__OP:
+      case GamlPackage.BINARY_OPERATOR__LEFT:
+        return getLeft();
+      case GamlPackage.BINARY_OPERATOR__OP:
         return getOp();
-      case GamlPackage.UNARY__RIGHT:
+      case GamlPackage.BINARY_OPERATOR__RIGHT:
         return getRight();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -197,10 +260,13 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   {
     switch (featureID)
     {
-      case GamlPackage.UNARY__OP:
+      case GamlPackage.BINARY_OPERATOR__LEFT:
+        setLeft((Expression)newValue);
+        return;
+      case GamlPackage.BINARY_OPERATOR__OP:
         setOp((String)newValue);
         return;
-      case GamlPackage.UNARY__RIGHT:
+      case GamlPackage.BINARY_OPERATOR__RIGHT:
         setRight((Expression)newValue);
         return;
     }
@@ -217,10 +283,13 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   {
     switch (featureID)
     {
-      case GamlPackage.UNARY__OP:
+      case GamlPackage.BINARY_OPERATOR__LEFT:
+        setLeft((Expression)null);
+        return;
+      case GamlPackage.BINARY_OPERATOR__OP:
         setOp(OP_EDEFAULT);
         return;
-      case GamlPackage.UNARY__RIGHT:
+      case GamlPackage.BINARY_OPERATOR__RIGHT:
         setRight((Expression)null);
         return;
     }
@@ -237,9 +306,11 @@ public class UnaryImpl extends ExpressionImpl implements Unary
   {
     switch (featureID)
     {
-      case GamlPackage.UNARY__OP:
+      case GamlPackage.BINARY_OPERATOR__LEFT:
+        return left != null;
+      case GamlPackage.BINARY_OPERATOR__OP:
         return OP_EDEFAULT == null ? op != null : !OP_EDEFAULT.equals(op);
-      case GamlPackage.UNARY__RIGHT:
+      case GamlPackage.BINARY_OPERATOR__RIGHT:
         return right != null;
     }
     return super.eIsSet(featureID);
@@ -262,4 +333,4 @@ public class UnaryImpl extends ExpressionImpl implements Unary
     return result.toString();
   }
 
-} //UnaryImpl
+} //BinaryOperatorImpl

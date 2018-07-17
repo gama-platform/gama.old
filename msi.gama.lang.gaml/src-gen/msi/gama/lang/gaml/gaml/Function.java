@@ -13,10 +13,9 @@ package msi.gama.lang.gaml.gaml;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Function#getLeft <em>Left</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getType <em>Type</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Function#getRight <em>Right</em>}</li>
  * </ul>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction()
@@ -26,30 +25,30 @@ package msi.gama.lang.gaml.gaml;
 public interface Function extends Expression
 {
   /**
-   * Returns the value of the '<em><b>Action</b></em>' containment reference.
+   * Returns the value of the '<em><b>Left</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Action</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Left</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Action</em>' containment reference.
-   * @see #setAction(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Action()
+   * @return the value of the '<em>Left</em>' containment reference.
+   * @see #setLeft(Expression)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Left()
    * @model containment="true"
    * @generated
    */
-  Expression getAction();
+  Expression getLeft();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getLeft <em>Left</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Action</em>' containment reference.
-   * @see #getAction()
+   * @param value the new value of the '<em>Left</em>' containment reference.
+   * @see #getLeft()
    * @generated
    */
-  void setAction(Expression value);
+  void setLeft(Expression value);
 
   /**
    * Returns the value of the '<em><b>Type</b></em>' containment reference.
@@ -78,55 +77,29 @@ public interface Function extends Expression
   void setType(TypeInfo value);
 
   /**
-   * Returns the value of the '<em><b>Parameters</b></em>' containment reference.
+   * Returns the value of the '<em><b>Right</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Parameters</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Right</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Parameters</em>' containment reference.
-   * @see #setParameters(Parameters)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Parameters()
+   * @return the value of the '<em>Right</em>' containment reference.
+   * @see #setRight(ExpressionList)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Right()
    * @model containment="true"
    * @generated
    */
-  Parameters getParameters();
+  ExpressionList getRight();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getRight <em>Right</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Parameters</em>' containment reference.
-   * @see #getParameters()
+   * @param value the new value of the '<em>Right</em>' containment reference.
+   * @see #getRight()
    * @generated
    */
-  void setParameters(Parameters value);
-
-  /**
-   * Returns the value of the '<em><b>Args</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Args</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Args</em>' containment reference.
-   * @see #setArgs(ExpressionList)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Args()
-   * @model containment="true"
-   * @generated
-   */
-  ExpressionList getArgs();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Args</em>' containment reference.
-   * @see #getArgs()
-   * @generated
-   */
-  void setArgs(ExpressionList value);
+  void setRight(ExpressionList value);
 
 } // Function
