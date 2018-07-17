@@ -297,6 +297,15 @@ public class WorkbenchHelper {
 		return runCommand(string, null);
 	}
 
+	public static boolean executeCommand(final String string) {
+		try {
+			return runCommand(string, null);
+		} catch (final ExecutionException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public static boolean runCommand(final String string, final Event event) throws ExecutionException {
 		final Command c = getCommand(string);
 		final IHandlerService handlerService = getService(IHandlerService.class);

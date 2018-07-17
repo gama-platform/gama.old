@@ -21,7 +21,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 
-import msi.gama.lang.gaml.ui.editor.toolbar.EditorToolbar;
 import ummisco.gama.ui.access.GamlSearchField;
 
 /**
@@ -58,7 +57,7 @@ public class GamlReferenceSearch {
 							};
 							job.schedule(1000);
 							element.setWidget(GamlSearchField.installOn(parent));
-							new EditorToolbar().fill(GamlSearchField.INSTANCE.getToolbar());
+							// new EditorToolbar().fill(GamlSearchField.INSTANCE.getToolbar());
 							parent.layout(true, true);
 							parent.update();
 							break;

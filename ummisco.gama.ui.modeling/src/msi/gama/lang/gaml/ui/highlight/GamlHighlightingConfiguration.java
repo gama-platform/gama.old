@@ -32,7 +32,6 @@ import msi.gama.common.preferences.GamaPreferences.Modeling;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaFonts;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
 
@@ -197,7 +196,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle taskTextStyle() {
 		final TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setFontData(GamaFonts.getNavigHeaderFont().getFontData());
+		// textStyle.setFontData(GamaFonts.getNavigHeaderFont().getFontData());
 		textStyle.setColor(new RGB(150, 132, 106));
 		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
 		return textStyle;
@@ -206,7 +205,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle commentTextStyle() {
 		final TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setFontData(GamaFonts.getNavigFolderFont().getFontData());
+		// textStyle.setFontData(GamaFonts.getNavigFolderFont().getFontData());
 		textStyle.setColor(new RGB(63, 127, 95));
 		return textStyle;
 	}
