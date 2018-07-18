@@ -446,12 +446,12 @@ public class GeometryUtils {
 
 	
 	
-	public static IList<IShape> triangulation(final IScope scope, final Geometry geom, double toleranceTriangulation,double toleranceClip) {
+	public static IList<IShape> triangulation(final IScope scope, final Geometry geom, double toleranceTriangulation,double toleranceClip,  final boolean approxClipping) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if (geom instanceof GeometryCollection) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for (int i = 0; i < gc.getNumGeometries(); i++) {
-				geoms.addAll(triangulation(scope, gc.getGeometryN(i),toleranceTriangulation, toleranceClip));
+				geoms.addAll(triangulation(scope, gc.getGeometryN(i),toleranceTriangulation, toleranceClip, approxClipping));
 			}
 		} else  {
 			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
@@ -468,13 +468,13 @@ public class GeometryUtils {
 				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
 			}
 			if (tri != null)
-				geoms.addAll(filterGeoms(tri, geom, toleranceClip));
+				geoms.addAll(filterGeoms(tri, geom, toleranceClip,approxClipping));
 			
 		}
 		return geoms;
 	}
 	
-	private static IList<IShape> filterGeoms(final GeometryCollection geom, final Geometry clip, final double sizeTol) {
+	private static IList<IShape> filterGeoms(final GeometryCollection geom, final Geometry clip, final double sizeTol, final boolean approxClipping) {
 		if (geom == null) return null;
 		final double elevation = getContourCoordinates(clip).averageZ();
 		final boolean setZ = (elevation != 0.0);
@@ -482,16 +482,27 @@ public class GeometryUtils {
 		final Geometry bufferClip = clip.buffer(sizeTol, 5, 0);
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
-		applyToInnerGeometries(geom, (gg) -> {
-			final ICoordinates cc = getContourCoordinates(gg);
-			if (cc.isCoveredBy(env) && buffered.covers(gg)) {
+		for (int i = 0; i < geom.getNumGeometries(); i++) {
+			Geometry gg = geom.getGeometryN(i);
+			Coordinate[] coord = gg.getCoordinates();
+			boolean cond = env.covers(gg.getCentroid().getCoordinate());
+			cond = cond && (approxClipping ? (buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
+					&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1])) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))): gg.covers(gg));
+			if (cond) {
 				if (setZ) {
+					final ICoordinates cc = getContourCoordinates(gg);
 					cc.setAllZ(elevation);
 					gg.geometryChanged();
 				}
 				result.add(new GamaShape(gg));
 			}
-		});
+		}
+		/*applyToInnerGeometries(geom, (gg) -> {
+			final ICoordinates cc = getContourCoordinates(gg);
+			if (cc.isCoveredBy(env) && buffered.covers(gg)) {
+				
+			}
+		});*/
 		return result;
 	}
 
@@ -522,9 +533,9 @@ public class GeometryUtils {
 	
 
 	
-	public static List<LineString> squeletisation(final IScope scope, final Geometry geom,  double toleranceTriangulation,double toleranceClip) {
+	public static List<LineString> squeletisation(final IScope scope, final Geometry geom,  double toleranceTriangulation,double toleranceClip,  final boolean approxClipping) {
 		final List<LineString> network = new ArrayList<LineString>();
-		final IList polys = GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip);
+		final IList polys = GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip,approxClipping);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 		final Collection<GamaShape> nodes = graph.vertexSet();
 		for (final GamaShape node : nodes) {

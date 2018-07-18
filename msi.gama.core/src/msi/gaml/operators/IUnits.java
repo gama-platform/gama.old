@@ -358,7 +358,7 @@ public interface IUnits {
 			altNames = { "centimeter", "centimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("centimeter unit") }) public final static double cm = 0.01f * m, centimeter = cm,
+			doc = { @doc ("centimeter unit") }) public final static double cm = 0.01d * m, centimeter = cm,
 					centimeters = cm;
 
 	/** The Constant dm. */
@@ -367,7 +367,7 @@ public interface IUnits {
 			altNames = { "decimeter", "decimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("decimeter unit") }) public final static double dm = 0.1f * m, decimeter = dm,
+			doc = { @doc ("decimeter unit") }) public final static double dm = 0.1d * m, decimeter = dm,
 					decimeters = dm;
 
 	/** The Constant mm. */
@@ -376,8 +376,24 @@ public interface IUnits {
 			altNames = { "milimeter", "milimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("millimeter unit") }) public final static double mm = cm / 10, millimeter = mm,
+			doc = { @doc ("millimeter unit") }) public final static double mm = cm / 10d, millimeter = mm,
 					millimeters = mm;
+
+	@constant (
+			value = "µm",
+			altNames = { "micrometer", "micrometers" },
+			category = { IConstantCategory.LENGTH },
+			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
+			doc = { @doc ("micrometer unit") }) public final static double µm = mm / 1000d, micrometer = µm,
+					micrometers = µm;
+
+	@constant (
+			value = "nm",
+			altNames = { "nanometer", "nanometers" },
+			category = { IConstantCategory.LENGTH },
+			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
+			doc = { @doc ("nanometer unit") }) public final static double nm = µm / 1000d, nanometer = nm,
+					nanometers = nm;
 
 	/** The Constant km. */
 	@constant (

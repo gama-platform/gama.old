@@ -112,9 +112,9 @@ public class GamlResource extends LazyLinkingResource {
 		// If there are no micro-models
 		final Set<String> keySet = resources.keySet();
 		if (keySet.size() == 1 && keySet.contains(null)) {
-			final Iterable<ISyntacticElement> selfAndImports =
-					Iterables.concat(Collections.singleton(getSyntacticContents()),
-							Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
+			final Iterable<ISyntacticElement> selfAndImports = Iterables.concat(
+					Collections.singleton(getSyntacticContents()),
+					Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
 			return f.createModelDescription(projectPath, modelPath, selfAndImports, context, isEdited, null);
 		}
 		final ListMultimap<String, ISyntacticElement> models = ArrayListMultimap.create();
@@ -161,13 +161,15 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	/**
-	 * Validates the resource by compiling its contents into a ModelDescription and discarding this ModelDescription
-	 * afterwards
+	 * Validates the resource by compiling its contents into a ModelDescription and
+	 * discarding this ModelDescription afterwards
 	 * 
-	 * @note The errors will be available as part of the ValidationContext, which can later be retrieved from the
-	 *       resource, and which contains semantic errors (as opposed to the ones obtained via resource.getErrors(),
-	 *       which are syntactic errors), This collector can be probed for compilation errors via its hasErrors(),
-	 *       hasInternalErrors(), hasImportedErrors() methods
+	 * @note The errors will be available as part of the ValidationContext, which
+	 *       can later be retrieved from the resource, and which contains semantic
+	 *       errors (as opposed to the ones obtained via resource.getErrors(), which
+	 *       are syntactic errors), This collector can be probed for compilation
+	 *       errors via its hasErrors(), hasInternalErrors(), hasImportedErrors()
+	 *       methods
 	 *
 	 */
 	public void validate() {
@@ -192,7 +194,6 @@ public class GamlResource extends LazyLinkingResource {
 					model.dispose();
 				}
 		}
-
 	}
 
 	@Override
