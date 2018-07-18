@@ -88,7 +88,8 @@ import msi.gaml.types.Types;
 						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "`" + IKeyword.IMAGE + "` allows modeler to display an image (e.g. as background of a simulation).",
+		value = "`" + IKeyword.IMAGE
+				+ "` allows modeler to display an image (e.g. as background of a simulation). Note that this image will not be dynamically changed or moved in OpenGL, unless the refresh: facet is set to true.",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (
@@ -157,8 +158,9 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	@Override
 	public IExpression getRefreshFacet() {
 		IExpression exp = super.getRefreshFacet();
-		if (exp == null)
+		if (exp == null) {
 			exp = IExpressionFactory.FALSE_EXPR;
+		}
 		return exp;
 	}
 
