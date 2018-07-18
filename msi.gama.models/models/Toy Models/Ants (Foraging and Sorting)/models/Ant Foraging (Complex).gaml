@@ -158,16 +158,15 @@ experiment Displays type: gui {
 
 	output {
 		display Ants background: #white type: opengl {
-			image '../images/soil.jpg' position: { pos, pos } size: quadrant_size refresh: true;
-			agents "agents" transparency: 0.5 position: { pos, pos } size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-			species ant position: { pos, pos } size: quadrant_size aspect: icon;
-			grid ant_grid lines: #darkgray position: { 0.5 - pos, pos } size: quadrant_size;
-			species ant position: { 0.5 - pos, pos } size: quadrant_size aspect: info;
-			
-			chart "Proportions carrying: Pie"  size: quadrant_size position: {pos, 0.5 - pos} type:pie 
-			{
-				data "empty_ants" value:(list(ant) count (!each.has_food)) color:°red;
-				data "carry_food_ants" value:(list(ant) count (each.has_food)) color:°green;
+			image '../images/soil.jpg' position: {pos, pos} size: quadrant_size refresh: true;
+			agents "agents" transparency: 0.5 position: {pos, pos} size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
+			species ant position: {pos, pos} size: quadrant_size aspect: icon;
+			grid ant_grid lines: #darkgray position: {0.5 - pos, pos} size: quadrant_size;
+			species ant position: {0.5 - pos, pos} size: quadrant_size aspect: info;
+			chart "Proportions carrying: Pie" size: quadrant_size position: {pos, 0.5 - pos} type: pie {
+				data "empty_ants" value: (list(ant) count (!each.has_food)) color: °red;
+				data "carry_food_ants" value: (list(ant) count (each.has_food)) color: °green;
+			}
 
 		}
 
