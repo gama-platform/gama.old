@@ -17,7 +17,6 @@ cache:
 addons:
     apt:
         packages:      
-            - oracle-java8-installer
             - sshpass
     ssh_known_hosts:
       - 51.255.46.42
