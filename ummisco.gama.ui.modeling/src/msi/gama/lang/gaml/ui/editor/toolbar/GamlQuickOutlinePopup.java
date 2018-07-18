@@ -9,13 +9,19 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -84,6 +90,37 @@ public class GamlQuickOutlinePopup extends QuickOutlinePopup {
 	@Override
 	protected Color getForeground() {
 		return IGamaColors.BLACK.color();
+	}
+
+	@Override
+	protected Text createFilterText(final Composite parent) {
+		final Text filterText = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
+		filterText.setMessage("Search keyword");
+		Dialog.applyDialogFont(filterText);
+
+		final GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalAlignment = GridData.FILL;
+		data.verticalAlignment = GridData.CENTER;
+		filterText.setLayoutData(data);
+
+		filterText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(final KeyEvent e) {
+				if (e.keyCode == 0x0D) {
+					gotoSelectedElement();
+				}
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					getTreeViewer().getTree().setFocus();
+				}
+				if (e.keyCode == SWT.ARROW_UP) {
+					getTreeViewer().getTree().setFocus();
+				}
+				if (e.character == 0x1B) {
+					dispose();
+				}
+			}
+		});
+		return filterText;
 	}
 
 }
