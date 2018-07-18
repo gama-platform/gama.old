@@ -60,14 +60,13 @@ public class EditorSearchControls {
 
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 		Composite parent = toolbar;
-		if (PlatformHelper.isWin32()) ((ummisco.gama.ui.views.toolbar.GamaToolbar2) toolbar.getParent()).sep(4, SWT.RIGHT);
 		if (PlatformHelper.isWin32()) {
 			parent = new Composite(toolbar, SWT.NONE);
 			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 24;
 			data.widthHint = 100;
 			parent.setLayoutData(data);
-			GridLayout layout = new GridLayout();
+			final GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
 		}
 		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
@@ -76,6 +75,7 @@ public class EditorSearchControls {
 
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 24;
+		data.widthHint = 100;
 		find.setLayoutData(data);
 		find.setBackground(IGamaColors.WHITE.color());
 		find.setForeground(IGamaColors.BLACK.color());
@@ -94,7 +94,7 @@ public class EditorSearchControls {
 			}
 		});
 
-		toolbar.control(parent == toolbar ? find:parent, 100);
+		toolbar.control(parent == toolbar ? find : parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 
@@ -147,17 +147,14 @@ public class EditorSearchControls {
 	};
 
 	private void adjustEnablement(final boolean found, final Color color) {
-		//		final String text = find.getText();
 		if (color == null) {
 			find.setForeground(IGamaColors.VERY_LIGHT_GRAY.color());
-			// composite.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		} else {
 			find.setForeground(color);
-			// composite.setBackground(color);
 		}
 	}
 
-	private void findPrevious() {
+	public void findPrevious() {
 		find(false);
 	}
 

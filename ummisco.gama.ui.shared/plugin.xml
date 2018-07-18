@@ -230,6 +230,10 @@
                   </not>
                </visibleWhen>
             </command>
+            <separator
+                  name="additions"
+                  visible="false">
+            </separator>
          </toolbar>
       </menuContribution>
       <menuContribution

@@ -52,8 +52,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -103,6 +101,7 @@ import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
 import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
 import msi.gama.lang.gaml.ui.editor.toolbar.CreateExperimentSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.EditorSearchControls;
+import msi.gama.lang.gaml.ui.editor.toolbar.EditorToolbar;
 import msi.gama.lang.gaml.ui.editor.toolbar.GamlQuickOutlinePopup;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenExperimentSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenImportedErrorSelectionListener;
@@ -319,10 +318,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final ToolItem t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(),
 				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
+		findControl = new EditorToolbar(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
-		findControl = new EditorSearchControls(this).fill(toolbar.getToolbar(SWT.RIGHT));
-		toolbar.sep(4, SWT.RIGHT);
-
+		//toolbar.sep(4, SWT.RIGHT);
 		toolbar.refresh(true);
 	}
 
@@ -344,8 +342,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	private void configureTabFolder(final Composite compo) {
 		Composite c = compo;
 		while (c != null) {
-			if (c instanceof CTabFolder)
+			if (c instanceof CTabFolder) {
 				break;
+			}
 			c = c.getParent();
 		}
 		if (c != null) {
@@ -393,8 +392,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public boolean isOverviewRulerVisible() {
 		final GamaSourceViewer viewer = getInternalSourceViewer();
-		if (viewer == null)
-			return super.isOverviewRulerVisible();
+		if (viewer == null) { return super.isOverviewRulerVisible(); }
 		return viewer.isOverviewVisible();
 	}
 
@@ -426,49 +424,42 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final StyledText text = this.getInternalSourceViewer().getTextWidget();
 		if (text != null) {
 			text.addGestureListener(ge -> {
-				if (ge.detail == SWT.GESTURE_BEGIN) {
-
-				} else
-
-				if (ge.detail == SWT.GESTURE_MAGNIFY) {
-					if (ge.magnification > 1.0) {
-						setFontAndCheckButtons(1);
-					} else if (ge.magnification < 1.0) {
-						setFontAndCheckButtons(-1);
-					}
+				if (ge.detail == SWT.GESTURE_END) {
+					updateBoxes();
 				}
 			});
 		}
 	}
+	//
+	// public Font getFont() {
+	// return getInternalSourceViewer().getTextWidget().getFont();
+	// }
 
-	public Font getFont() {
-		return getInternalSourceViewer().getTextWidget().getFont();
-	}
+	// private void setFont(final Font font) {
+	// final StyledText text = getInternalSourceViewer().getTextWidget();
+	// text.setFont(font);
+	// text.update();
+	// }
 
-	private void setFont(final Font font) {
-		final StyledText text = getInternalSourceViewer().getTextWidget();
-		text.setFont(font);
-		text.update();
-	}
-
-	public void setFontAndCheckButtons(final int deltaToApply) {
-		Font font = getFont();
-		final FontData data = font.getFontData()[0];
-		data.height += deltaToApply;
-		if (data.height < 6) { return; }
-		if (font != null) {
-			if (data.equals(font.getFontData()[0])) { return; }
-		}
-		font = new Font(WorkbenchHelper.getDisplay(), data);
-		setFont(font);
-		updateBoxes();
-	}
+	// public void setFontAndCheckButtons(final int deltaToApply) {
+	// Font font = getFont();
+	// final FontData data = font.getFontData()[0];
+	// data.height += deltaToApply;
+	// if (data.height < 6) { return; }
+	// if (font != null) {
+	// if (data.equals(font.getFontData()[0])) { return; }
+	// }
+	// font = new Font(WorkbenchHelper.getDisplay(), data);
+	// setFont(font);
+	// updateBoxes();
+	// }
 
 	@Override
 	protected void installFoldingSupport(final ProjectionViewer projectionViewer) {
 		super.installFoldingSupport(projectionViewer);
-		if (!isRangeIndicatorEnabled())
+		if (!isRangeIndicatorEnabled()) {
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		}
 	};
 
 	@Override
@@ -508,7 +499,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
-				if (PlatformHelper.isWin32()) toolbar.sep(4, SWT.LEFT);
+				if (PlatformHelper.isWin32()) {
+					toolbar.sep(4, SWT.LEFT);
+				}
 
 				final GamaUIColor c = state.getColor();
 				String msg = state.getStatus();
@@ -545,10 +538,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 					}
 				}
-				if (!GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName()))
+				if (!GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
 					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", GamaIcons.create("small.plus").image(),
 							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
 							SWT.LEFT);
+				}
 
 				toolbar.refresh(true);
 
@@ -559,9 +553,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
-		if (newExperiments == null && state != null)
+		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
-		else {
+		} else {
 			final GamlEditorState newState = new GamlEditorState(status, newExperiments);
 			updateToolbar(newState, false);
 			state = newState;
@@ -594,8 +588,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final SourceViewer sv = getInternalSourceViewer();
 		final Point p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
-		if (sv.canDoOperation(SourceViewer.FORMAT))
+		if (sv.canDoOperation(SourceViewer.FORMAT)) {
 			sv.doOperation(ISourceViewer.FORMAT);
+		}
 		sv.setSelectedRange(p.x, p.y);
 	}
 
@@ -672,7 +667,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final IPartService partService = getSite().getWorkbenchWindow().getPartService();
 		if (partService == null) { return; }
 		if (partListeners == null) {
-			partListeners = new HashMap<IPartService, IPartListener2>();
+			partListeners = new HashMap<>();
 		}
 		final IPartListener2 oldListener = partListeners.get(partService);
 		if (oldListener == null) {

@@ -444,10 +444,7 @@
          </menu>
       </menuContribution>
       <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=msi.gama.application.common.toolbar">
-         <toolbar
-               id="msi.gama.application.experiment.toolbar"
-               label="Experiment">
+            locationURI="toolbar:msi.gama.application.common.toolbar?after=msi.gama.application.goto.modeling">
             <command
                   commandId="msi.gama.application.goto.simulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
@@ -463,10 +460,12 @@
                   </and>
                </visibleWhen>
             </command>
-            <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator2876">
-            </control>
+            <command
+                  commandId="ummisco.gama.ui.experiment.dummy"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  style="push"
+                  tooltip="  ">
+            </command>
             <control
                   class="ummisco.gama.ui.controls.StatusControlContribution"
                   id="msi.gama.application.status">
@@ -580,7 +579,10 @@
                   </and>
                </visibleWhen>
             </command>
-         </toolbar>
+            <control
+                  class="ummisco.gama.ui.controls.Separator"
+                  id="separator2876">
+            </control>
       </menuContribution>
    </extension>
    <extension
