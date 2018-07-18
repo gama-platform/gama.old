@@ -1456,28 +1456,27 @@ public abstract class Spatial {
 				return g1.difference(g2);
 			} catch (AssertionFailedException | TopologyException e) {
 				try {
-					java.lang.System.out.println("Topology exception: trying single floating point precision");
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					return GeometryPrecisionReducer.reducePointwise(g1, pm)
 							.difference(GeometryPrecisionReducer.reducePointwise(g2, pm));
 				} catch (final RuntimeException e1) {
 					try {
-						java.lang.System.out.println("Topology exception: trying to buffer geometries");
 						return g1.buffer(0, 10, BufferParameters.CAP_FLAT)
 								.difference(g2.buffer(0, 10, BufferParameters.CAP_FLAT));
 					} catch (final TopologyException e2) {
 						try {
-							java.lang.System.out.println("Topology exception: trying fixed precision operation");
 							final PrecisionModel pm = new PrecisionModel(100000d);
 							return GeometryPrecisionReducer.reduce(g1, pm)
 									.difference(GeometryPrecisionReducer.reduce(g2, pm));
 						} catch (final RuntimeException e3) {
-							java.lang.System.out.println("Topology exception: trying enhanced precision operation");
 							try {
 								return EnhancedPrecisionOp.difference(g1, g2);
-							} catch (final RuntimeException last) {
-								java.lang.System.out.println("Unable to compute difference: returning null instead");
-								return null; // return g1; ??
+							} catch (final RuntimeException e4) {
+								try {
+									return g1.difference(g2.buffer(Math.min(0.01, g2.getArea()/ 1000), 10, BufferParameters.CAP_FLAT));
+								} catch (final RuntimeException last) {
+									return null; // return g1; ??
+								}
 							}
 						}
 					}
@@ -2237,7 +2236,27 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance, final Double triangulationTolerance) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance );
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance, false );
+			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			for (final LineString ls : netw) {
+				geoms.add(new GamaShape(ls));
+			}
+			return geoms;
+		}
+		
+		@operator (
+				value = "skeletonize",
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping and for the triangulation",
+				examples = { @example (
+						value = "skeletonize(self)",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance, final Double triangulationTolerance, final boolean approxiClipping) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance, approxiClipping );
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
@@ -2257,7 +2276,7 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,clippingTolerance );
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,clippingTolerance, false );
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
@@ -2277,7 +2296,7 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,0.0 );
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,0.0, false );
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
@@ -2299,7 +2318,7 @@ public abstract class Spatial {
 						test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, 0.0);
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
 		}
 
 		
@@ -2317,7 +2336,7 @@ public abstract class Spatial {
 						test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance);
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance, false);
 		}
 		
 		@operator (
@@ -2353,7 +2372,24 @@ public abstract class Spatial {
 						test = false) })
 		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance, final Double triangulationTolerance) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance);
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance, false);
+		}
+		
+		@operator (
+				value = { "triangulate", "to_triangles" },
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point, use_approx_clipping) with the given tolerance for the clipping and for the triangulation with using an approximate clipping is the last operand is true",
+				masterDoc = true,
+				examples = { @example (
+						value = "triangulate(self,0.1, 1.0)",
+						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
+						test = false) })
+		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance, final Double triangulationTolerance, final boolean approxClip) {
+			if (g == null) { return null; }
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance, approxClip);
 		}
 
 		
