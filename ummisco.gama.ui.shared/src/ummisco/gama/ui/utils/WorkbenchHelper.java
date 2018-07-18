@@ -11,6 +11,7 @@ package ummisco.gama.ui.utils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -18,6 +19,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -41,6 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.progress.UIJob;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -328,6 +333,19 @@ public class WorkbenchHelper {
 	public static Command getCommand(final String string) {
 		final ICommandService service = getService(ICommandService.class);
 		return service.getCommand(string);
+	}
+
+	public static void runInUI(final String title, final int scheduleTime, final Consumer<IProgressMonitor> run) {
+		final UIJob job = new UIJob(title) {
+
+			@Override
+			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				run.accept(monitor);
+				return Status.OK_STATUS;
+			}
+
+		};
+		job.schedule(scheduleTime);
 	}
 
 }

@@ -19,9 +19,6 @@ import java.util.function.Consumer;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ICommandListener;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -29,12 +26,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.navigator.NavigatorSearchControl;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
@@ -75,9 +69,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				// final GamlEditor editor = getEditor();
-				if (editor == null) {
-					return;
-				}
+				if (editor == null) { return; }
 				editor.openOutlinePopup();
 			}
 		});
@@ -124,26 +116,20 @@ public class EditorToolbar {
 	}
 
 	private void hookToCommands(final ToolItem lastEdit, final ToolItem nextEdit) {
-		final UIJob job = new UIJob("Hooking to commands") {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final Command nextCommand = getCommand(NAVIGATE_FORWARD_HISTORY);
-				nextEdit.setEnabled(nextCommand.isEnabled());
-				final ICommandListener nextListener = e -> nextEdit.setEnabled(searching || nextCommand.isEnabled());
-				nextCommand.addCommandListener(nextListener);
-				final Command lastCommand = getCommand(NAVIGATE_BACKWARD_HISTORY);
-				final ICommandListener lastListener = e -> lastEdit.setEnabled(searching || lastCommand.isEnabled());
-				lastEdit.setEnabled(lastCommand.isEnabled());
-				lastCommand.addCommandListener(lastListener);
-				// Attaching dispose listeners to the toolItems so that they remove the
-				// command listeners properly
-				lastEdit.addDisposeListener(e -> lastCommand.removeCommandListener(lastListener));
-				nextEdit.addDisposeListener(e -> nextCommand.removeCommandListener(nextListener));
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
+		WorkbenchHelper.runInUI("Hooking to commands", 0, m -> {
+			final Command nextCommand = getCommand(NAVIGATE_FORWARD_HISTORY);
+			nextEdit.setEnabled(nextCommand.isEnabled());
+			final ICommandListener nextListener = e -> nextEdit.setEnabled(searching || nextCommand.isEnabled());
+			nextCommand.addCommandListener(nextListener);
+			final Command lastCommand = getCommand(NAVIGATE_BACKWARD_HISTORY);
+			final ICommandListener lastListener = e -> lastEdit.setEnabled(searching || lastCommand.isEnabled());
+			lastEdit.setEnabled(lastCommand.isEnabled());
+			lastCommand.addCommandListener(lastListener);
+			// Attaching dispose listeners to the toolItems so that they remove the
+			// command listeners properly
+			lastEdit.addDisposeListener(e -> lastCommand.removeCommandListener(lastListener));
+			nextEdit.addDisposeListener(e -> nextCommand.removeCommandListener(nextListener));
+		});
 
 	}
 

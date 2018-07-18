@@ -36,7 +36,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
@@ -95,18 +94,12 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 		}
 		project = projectHandle;
 		if (createNewModel) {
-			final UIJob job = new UIJob("New Model File") {
-
-				@Override
-				public IStatus runInUIThread(final IProgressMonitor monitor) {
-					final IWorkbenchWizard w = isTest ? new NewTestExperimentWizard() : new NewFileWizard();
-					w.init(WorkbenchHelper.getWorkbench(), new StructuredSelection(project));
-					final WizardDialog wd = new WizardDialog(getShell(), w);
-					wd.open();
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule(100);
+			WorkbenchHelper.runInUI("New Model File", 100, m -> {
+				final IWorkbenchWizard w = isTest ? new NewTestExperimentWizard() : new NewFileWizard();
+				w.init(WorkbenchHelper.getWorkbench(), new StructuredSelection(project));
+				final WizardDialog wd = new WizardDialog(getShell(), w);
+				wd.open();
+			});
 		}
 		return true;
 
