@@ -12,13 +12,7 @@ package msi.gama.lang.gaml.ui.editor;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
-import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-
-import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 
 /**
  * The class GamaSourceViewer.
@@ -29,7 +23,6 @@ import msi.gama.lang.gaml.validation.IGamlBuilderListener;
  */
 public class GamaSourceViewer extends XtextSourceViewer {
 
-	private IGamlBuilderListener resourceListener;
 	private boolean isOverviewVisible;
 
 	/**
@@ -46,12 +39,6 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	}
 
 	@Override
-	protected void handleDispose() {
-		GamlResourceServices.removeResourceListener(resourceListener);
-		super.handleDispose();
-	}
-
-	@Override
 	public void showAnnotationsOverview(final boolean show) {
 		super.showAnnotationsOverview(show);
 		isOverviewVisible = show;
@@ -59,22 +46,6 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 	public boolean isOverviewVisible() {
 		return isOverviewVisible;
-	}
-
-	/**
-	 * @param gamlEditor
-	 */
-	public void setResourceListener(final IGamlBuilderListener listener) {
-		this.resourceListener = listener;
-		((IXtextDocument) getDocument()).priorityReadOnly(new IUnitOfWork<Object, XtextResource>() {
-
-			@Override
-			public Object exec(final XtextResource state) throws Exception {
-				if (state != null)
-					GamlResourceServices.addResourceListener(state.getURI(), listener);
-				return null;
-			}
-		});
 	}
 
 }
