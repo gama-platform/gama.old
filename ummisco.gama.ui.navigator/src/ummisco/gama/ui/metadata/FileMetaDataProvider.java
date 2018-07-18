@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -549,7 +552,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				return true;
 			});
 		} catch (final CoreException e) {
-			e.printStackTrace();
+			// Nothing
 		} finally {
 			System.out.println("in " + (System.currentTimeMillis() - ms) + "ms");
 		}
@@ -580,6 +583,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							return true;
 						} catch (final Exception e) {
 							System.out.println("Error for resource " + resource.getName());
+							if (toSave[0] != null)
 							System.out.println("Trying to save " + toSave[0].length() + " bytes ");
 							return true;
 						}

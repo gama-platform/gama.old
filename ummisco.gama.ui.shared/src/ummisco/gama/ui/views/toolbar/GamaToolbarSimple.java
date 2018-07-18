@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -65,6 +66,14 @@ public class GamaToolbarSimple extends ToolBar {
 		};
 		addControlListener(widthListener);
 		return this;
+	}
+	
+	public ToolItem sepSizer(final int width, int height) {
+		final GamaIcon icon = GamaIcons.createSizer(getBackground(), width, height);
+		final ToolItem item = create(icon.getCode(), null, null, null, SWT.NONE);
+		item.setDisabledImage(icon.image());
+		item.setEnabled(false);
+		return item;
 	}
 
 	public ToolItem sep(final int n) {

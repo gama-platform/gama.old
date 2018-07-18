@@ -319,7 +319,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		toolbar.sep(4, SWT.LEFT);
 		findControl = new EditorToolbar(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
-		toolbar.sep(4, SWT.RIGHT);
+		//toolbar.sep(4, SWT.RIGHT);
 		toolbar.refresh(true);
 	}
 

@@ -33,6 +33,8 @@ import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.navigator.NavigatorSearchControl;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
@@ -67,24 +69,25 @@ public class EditorToolbar {
 
 		previous = toolbar.button("editor.lastedit2", null, "Previous edit location", globalPrevious);
 		next = toolbar.button("editor.nextedit2", null, "Next edit location", globalNext);
-
-		// Attaching listeners to the global commands in order to enable/disable the toolbar items
-		hookToCommands(previous, next);
-
-		toolbar.sep(8);
 		find = new EditorSearchControls(editor).fill(toolbar);
-		// Attaching a focus listener to the search control to
-		hookToSearch(previous, next);
-		toolbar.sep(8);
 		toolbar.menu("editor.outline2", null, "Show outline", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				// final GamlEditor editor = getEditor();
-				if (editor == null) { return; }
+				if (editor == null) {
+					return;
+				}
 				editor.openOutlinePopup();
 			}
 		});
+
+		// Attaching listeners to the global commands in order to enable/disable the
+		// toolbar items
+		hookToCommands(previous, next);
+
+		// Attaching a focus listener to the search control to
+		hookToSearch(previous, next);
 
 		return find;
 	}
@@ -98,7 +101,7 @@ public class EditorToolbar {
 				previous.removeSelectionListener(globalPrevious);
 				previous.setToolTipText("Search previous occurence");
 				next.removeSelectionListener(globalNext);
-				next.setToolTipText("Search next occurence "+GamaKeyBindings.format(SWT.MOD1, 'G'));
+				next.setToolTipText("Search next occurence " + GamaKeyBindings.format(SWT.MOD1, 'G'));
 				previous.addSelectionListener(searchPrevious);
 				next.addSelectionListener(searchNext);
 				previous.setEnabled(true);
@@ -148,7 +151,8 @@ public class EditorToolbar {
 		return (GamlEditor) WorkbenchHelper.getActiveEditor();
 	}
 
-	// minus = toolbar.button("editor.decrease2", "", "Decrease font size", new SelectionAdapter() {
+	// minus = toolbar.button("editor.decrease2", "", "Decrease font size", new
+	// SelectionAdapter() {
 	//
 	// @Override
 	// public void widgetSelected(final SelectionEvent e) {
@@ -158,7 +162,8 @@ public class EditorToolbar {
 	// minus.setEnabled(editor.getFont().getFontData()[0].height > 6);
 	// }
 	// });
-	// toolbar.button("editor.increase2", "", "Increase font size", new SelectionAdapter() {
+	// toolbar.button("editor.increase2", "", "Increase font size", new
+	// SelectionAdapter() {
 	//
 	// @Override
 	// public void widgetSelected(final SelectionEvent e) {
@@ -180,7 +185,8 @@ public class EditorToolbar {
 	// }
 	// });
 	//
-	// toolbar.button("editor.comment2", null, "Toggle comment", new SelectionAdapter() {
+	// toolbar.button("editor.comment2", null, "Toggle comment", new
+	// SelectionAdapter() {
 	//
 	// @Override
 	// public void widgetSelected(final SelectionEvent e) {

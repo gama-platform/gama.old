@@ -61,9 +61,6 @@ public class EditorSearchControls {
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 		Composite parent = toolbar;
 		if (PlatformHelper.isWin32()) {
-			((ummisco.gama.ui.views.toolbar.GamaToolbar2) toolbar.getParent()).sep(4, SWT.RIGHT);
-		}
-		if (PlatformHelper.isWin32()) {
 			parent = new Composite(toolbar, SWT.NONE);
 			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 24;
@@ -78,6 +75,7 @@ public class EditorSearchControls {
 
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 24;
+		data.widthHint = 100;
 		find.setLayoutData(data);
 		find.setBackground(IGamaColors.WHITE.color());
 		find.setForeground(IGamaColors.BLACK.color());
