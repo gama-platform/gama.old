@@ -44,7 +44,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlResourceServices {
 
 	private static int resourceCount = 0;
@@ -58,8 +58,8 @@ public class GamlResourceServices {
 		}
 
 	};
-	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache =
-			CacheBuilder.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
+	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder
+			.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
 
 				@Override
 				public THashMap load(final URI key) throws Exception {
@@ -86,9 +86,16 @@ public class GamlResourceServices {
 
 	public static void updateState(final URI uri, final ModelDescription model, final boolean newState,
 			final ValidationContext status) {
+		// System.out.println("Beginning updating the state of editor in
+		// ResourceServices for " + uri.lastSegment());
 		final URI newURI = properlyEncodedURI(uri);
+
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
-		if (listener == null) { return; }
+		if (listener == null) {
+			return;
+		}
+		// System.out.println("Finishing updating the state of editor for " +
+		// uri.lastSegment());
 		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
 				: Iterables.filter(model.getExperiments(), each -> !each.isAbstract());
 		listener.validationEnded(exps, status);
@@ -163,7 +170,9 @@ public class GamlResourceServices {
 			final IPath fullPath = file.getLocation();
 			path = fullPath; // toOSString ?
 		}
-		if (path == null) { return null; }
+		if (path == null) {
+			return null;
+		}
 		return path.uptoSegment(path.segmentCount() - 1);
 	}
 

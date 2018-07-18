@@ -15,8 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
-import org.eclipse.xtext.util.CancelIndicator;
-import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
@@ -67,10 +66,10 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	 */
 	public void setResourceListener(final IGamlBuilderListener listener) {
 		this.resourceListener = listener;
-		((IXtextDocument) getDocument()).readOnly(new CancelableUnitOfWork<Object, XtextResource>() {
+		((IXtextDocument) getDocument()).priorityReadOnly(new IUnitOfWork<Object, XtextResource>() {
 
 			@Override
-			public Object exec(final XtextResource state, final CancelIndicator cancelIndicator) throws Exception {
+			public Object exec(final XtextResource state) throws Exception {
 				if (state != null)
 					GamlResourceServices.addResourceListener(state.getURI(), listener);
 				return null;

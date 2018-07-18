@@ -115,8 +115,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
 	}
 
-	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
-			bindParserBasedContentAssistContextFactory$StatefulFactory() {
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
 	}
 
@@ -125,8 +124,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	@Override
-	@SingletonBinding (
-			eager = true)
+	@SingletonBinding(eager = true)
 	public Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider() {
 		return msi.gama.lang.gaml.ui.labeling.GamlLabelProvider.class;
 	}
@@ -176,7 +174,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		// do not use the builder infrastructure
 		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
 		// not correct for 2.7: return GamlEditorCallback.class;
-		return GamlEditorTickUpdater.class;
+		return IXtextEditorCallback.NullImpl.class;
 	}
 
 	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
