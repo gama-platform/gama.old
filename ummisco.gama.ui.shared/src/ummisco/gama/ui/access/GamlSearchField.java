@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import msi.gama.common.interfaces.IGamlDescription;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlSearchField {
@@ -71,22 +72,13 @@ public class GamlSearchField {
 		return text;
 	}
 
-	// public GamaToolbarSimple getToolbar() {
-	// return toolbar;
-	// }
-
 	public Control createWidget(final Composite parent) {
 		composite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).extendedMargins(0, 5, 5, 5).numColumns(2)
 				.equalWidth(false).applyTo(composite);
-
-		// toolbar = new GamaToolbarSimple(composite, SWT.NONE, parent.getBackground());
-		// GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).hint(SWT.DEFAULT, 24)
-		// .applyTo(toolbar);
-		// toolbar.setVisible(false);
-		// ((GridData) toolbar.getLayoutData()).exclude = true;
 		text = createText(composite);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).hint(200, 24).applyTo(text);
+		final int height = PlatformHelper.isWin32() ? 24 : 16;
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).hint(200, height).applyTo(text);
 
 		parent.getShell().addControlListener(new ControlListener() {
 			@Override
@@ -219,60 +211,6 @@ public class GamlSearchField {
 		// hookToWorkbench();
 		return composite;
 	}
-
-	// private void hookToWorkbench() {
-	// final IGamlEditor editor = WorkbenchHelper.getActiveEditor();
-	// if (editor != null) {
-	// toolbar.setVisible(true);
-	// ((GridData) toolbar.getLayoutData()).exclude = false;
-	// }
-	// WorkbenchHelper.getPage().addPartListener(new IPartListener() {
-	//
-	// @Override
-	// public void partOpened(final IWorkbenchPart part) {
-	// // if (part instanceof IGamlEditor) {
-	// // toolbar.setVisible(true);
-	// // ((GridData) toolbar.getLayoutData()).exclude = false;
-	// // }
-	//
-	// }
-	//
-	// @Override
-	// public void partDeactivated(final IWorkbenchPart part) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public void partClosed(final IWorkbenchPart part) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	//
-	// @Override
-	// public void partBroughtToTop(final IWorkbenchPart part) {
-	// // if (part instanceof IGamlEditor) {
-	// // toolbar.setVisible(true);
-	// // ((GridData) toolbar.getLayoutData()).exclude = false;
-	// // }
-	//
-	// }
-	//
-	// @Override
-	// public void partActivated(final IWorkbenchPart part) {
-	// if (part instanceof IGamlEditor) {
-	// toolbar.setVisible(true);
-	// ((GridData) toolbar.getLayoutData()).exclude = false;
-	// } else {
-	// toolbar.setVisible(false);
-	// ((GridData) toolbar.getLayoutData()).exclude = true;
-	// }
-	// composite.layout(true);
-	//
-	// }
-	// });
-	//
-	// }
 
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
