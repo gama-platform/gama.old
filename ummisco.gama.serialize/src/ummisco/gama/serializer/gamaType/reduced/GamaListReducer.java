@@ -32,7 +32,7 @@ public class GamaListReducer {
 	}
 
 	public GamaList constructObject(final IScope scope) {
-		System.out.println("read "+contentTypeListReducer+ " "+valuesListReducer );
+	//	System.out.println("read "+contentTypeListReducer+ " "+valuesListReducer );
 	//	scope.getAgent().getPopulationFor(speciesName)
 	//	(microSpeciesName)getMicroSpecies(contentTypeListReducer);
 		return (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
