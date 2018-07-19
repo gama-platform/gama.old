@@ -33,7 +33,7 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 public class ReverseOperators {
 
 	@operator(value = "serialize")
-	@doc(value = "It serializes any object, i.e. transform it into a string.") //, deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "It serializes any object, i.e. transform it into a string.") 
 	public static String serialize(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");
 		return StreamConverter.convertObjectToStream(scope, o);
@@ -47,7 +47,7 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "serializeAgent")
-	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
 
 		System.out.println("**** TODO list = Problème dans les displays");
@@ -59,51 +59,12 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "unSerializeSimulationFromFile")
-	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
-	public static int unSerializeSimulationFromFile(final IScope scope, final String pathname) {
+	@doc(value = "")
+	public static int unSerializeSimulationFromFile(final IScope scope, final GamaSavedSimulationFile file) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
 
-		BufferedReader br = null;
-		String stringFile;
-
-		final String absolute_pathname = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
-
-		try {
-			br = new BufferedReader(new FileReader(absolute_pathname));
-		} catch (final FileNotFoundException e) {
-			e.printStackTrace();
-			return 0;
-		}
-		try {
-			final StringBuilder sb = new StringBuilder();
-			String line = null;
-			try {
-				line = br.readLine();
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			while (line != null) {
-				sb.append(line);
-				sb.append(System.lineSeparator());
-				try {
-					line = br.readLine();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
-			stringFile = sb.toString();
-		} finally {
-			try {
-				br.close();
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		String stringFile = file.getBuffer().get(0);
 		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgent = expAgt.getSimulation();

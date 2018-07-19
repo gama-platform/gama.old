@@ -32,7 +32,8 @@ Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.persistence,
  ummisco.gama.serializer.factory,
  ummisco.gama.serializer.gamaType.converters,
- ummisco.gama.serializer.gamaType.reduced
+ ummisco.gama.serializer.gamaType.reduced,
+ ummisco.gama.serializer.gaml
 Import-Package: org.apache.commons.lang
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
