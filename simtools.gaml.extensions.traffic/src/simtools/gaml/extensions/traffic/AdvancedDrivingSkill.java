@@ -578,6 +578,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		final List<List> stops = (List<List>) theNode.getAttribute(RoadNodeSkill.STOP);
 		final List<Double> respectsStops = getRespectStops(driver);
 		final IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
+		if (currentRoad == null) return true;
 		for (int i = 0; i < stops.size(); i++) {
 			final Boolean stop = stops.get(i).contains(currentRoad);
 			if (stop && (respectsStops.size() <= i || Random.opFlip(scope, respectsStops.get(i)))) { return false; }
@@ -906,8 +907,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		 */
 
 		final IAgent agent = getCurrentAgent(scope);
+		if (agent == null || agent.dead()) return;
 		final GamaPoint finalTarget = getFinalTarget(agent);
+		if (finalTarget == null ) return;
 		final IPath path = getCurrentPath(agent);
+		
 		final double fx = finalTarget.getX();
 		final double fy = finalTarget.getY();
 
@@ -921,7 +925,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		ILocation loc = agent.getLocation();
 		double x = loc.getX();
 		double y = loc.getY();
-
+		
 		double remainingTime = 1.0;
 		// t1 += java.lang.System.currentTimeMillis() - t;
 		while (remainingTime > 0.0) {
@@ -1064,15 +1068,13 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				block.remove(dr);
 			}
 		}
-
+		
 		final boolean ready = isReadyNextRoad(scope, road, driver, secDistCoeff, vL, block);
 		if (!ready) { return -1; }
 
 		if (lanes == 0 /* && !onLinkedRoad */ ) {
 			final int lane = testBlockNode || nextRoadTestLane(driver, road, 0, secDistCoeff, vL) ? 0 : -1;
-			if (onLinkedRoad) {
-				java.lang.System.out.println("lane 1 : " + lane);
-			}
+			
 			if (lane != -1) {
 				addBlockingDriver(0, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
 				return lane;
@@ -1091,10 +1093,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		}
 		final int cvTmp = CmnFastMath.min(currentLane, lanes - 1);
 		int cv = testBlockNode || nextRoadTestLane(driver, road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
-		if (onLinkedRoad) {
-			java.lang.System.out.println("cv 1 : " + cv);
-		}
-
+		
 		if (cv != -1) {
 			addBlockingDriver(cv, testBlockNode, driver, currentRoad, road, node, roadsIn, block);
 			return cv;
@@ -1136,10 +1135,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		// }
 		// }
 		// }
-		if (onLinkedRoad) {
-			java.lang.System.out.println("cv 2: " + cv);
-		}
-
+		
 		return cv;
 	}
 
