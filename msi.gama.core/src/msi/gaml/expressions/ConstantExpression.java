@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ConstantExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -44,7 +43,7 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	@Override
-	public Object value(final IScope scope) {
+	public Object _value(final IScope scope) {
 		return value;
 	}
 
@@ -92,7 +91,6 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

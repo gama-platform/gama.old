@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FsmStateStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FsmStateStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -50,35 +49,107 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
-@inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@facets(value = {
-		@facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true, doc = @doc("specifies whether the state is the initial one (default value = false)")),
-		@facet(name = FsmStateStatement.FINAL, type = IType.BOOL, optional = true, doc = @doc("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("the identifier of the state")) }, omissible = IKeyword.NAME)
-@validator(StateValidator.class)
-@doc(value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.", usages = {
-		@usage(value = "Here is an exemple integrating 2 states and the statements in the FSM architecture:", examples = {
-				@example(value = "	state s_init initial: true {", isExecutable = false),
-				@example(value = "		enter { write \"Enter in\" + state; }", isExecutable = false),
-				@example(value = "			write \"Enter in\" + state;", isExecutable = false),
-				@example(value = "		}", isExecutable = false), @example(value = "", isExecutable = false),
-				@example(value = "		write state;", isExecutable = false),
-				@example(value = "", isExecutable = false),
-				@example(value = "		transition to: s1 when: (cycle > 2) {", isExecutable = false),
-				@example(value = "			write \"transition s_init -> s1\";", isExecutable = false),
-				@example(value = "		}", isExecutable = false), @example(value = "", isExecutable = false),
-				@example(value = "		exit {", isExecutable = false),
-				@example(value = "			write \"EXIT from \"+state;", isExecutable = false),
-				@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false),
-				@example(value = "	state s1 {", isExecutable = false), @example(value = "", isExecutable = false),
-				@example(value = "	enter {write 'Enter in '+state;}", isExecutable = false),
-				@example(value = "", isExecutable = false), @example(value = "	write state;", isExecutable = false),
-				@example(value = "", isExecutable = false),
-				@example(value = "	exit {write 'EXIT from '+state;}", isExecutable = false),
-				@example(value = "}", isExecutable = false) }) }, see = { FsmStateStatement.ENTER,
-						FsmStateStatement.EXIT, FsmTransitionStatement.TRANSITION })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@symbol (
+		name = FsmStateStatement.STATE,
+		kind = ISymbolKind.BEHAVIOR,
+		with_sequence = true,
+		unique_name = true)
+@inside (
+		symbols = IKeyword.FSM,
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@facets (
+		value = { @facet (
+				name = FsmStateStatement.INITIAL,
+				type = IType.BOOL,
+				optional = true,
+				doc = @doc ("specifies whether the state is the initial one (default value = false)")),
+				@facet (
+						name = FsmStateStatement.FINAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("specifies whether the state is a final one (i.e. there is no transition from this state to another state) (default value= false)")),
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.ID,
+						optional = false,
+						doc = @doc ("the identifier of the state")) },
+		omissible = IKeyword.NAME)
+@validator (StateValidator.class)
+@doc (
+		value = "A state, like a reflex, can contains several statements that can be executed at each time step by the agent.",
+		usages = { @usage (
+				value = "Here is an exemple integrating 2 states and the statements in the FSM architecture:",
+				examples = { @example (
+						value = "	state s_init initial: true {",
+						isExecutable = false),
+						@example (
+								value = "		enter { write \"Enter in\" + state; }",
+								isExecutable = false),
+						@example (
+								value = "			write \"Enter in\" + state;",
+								isExecutable = false),
+						@example (
+								value = "		}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "		write state;",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "		transition to: s1 when: (cycle > 2) {",
+								isExecutable = false),
+						@example (
+								value = "			write \"transition s_init -> s1\";",
+								isExecutable = false),
+						@example (
+								value = "		}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "		exit {",
+								isExecutable = false),
+						@example (
+								value = "			write \"EXIT from \"+state;",
+								isExecutable = false),
+						@example (
+								value = "		}",
+								isExecutable = false),
+						@example (
+								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "	state s1 {",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	enter {write 'Enter in '+state;}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	write state;",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	exit {write 'EXIT from '+state;}",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }) },
+		see = { FsmStateStatement.ENTER, FsmStateStatement.EXIT, FsmTransitionStatement.TRANSITION })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class FsmStateStatement extends AbstractStatementSequence {
 
 	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,
@@ -109,9 +180,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 					return;
 				}
 			}
-			if (!Assert.nameIsValid(description)) {
-				return;
-			}
+			if (!Assert.nameIsValid(description)) { return; }
 
 			IExpression expr = description.getFacetExpr(INITIAL);
 			if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
@@ -129,9 +198,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		private void assertNoOther(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
-			if (!(sd instanceof SpeciesDescription)) {
-				return;
-			}
+			if (!(sd instanceof SpeciesDescription)) { return; }
 			for (final IDescription child : ((SpeciesDescription) sd).getBehaviors()) {
 				if (child.equals(desc) || !child.getKeyword().equals(STATE)) {
 					continue;
@@ -146,9 +213,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		private void assertAtLeastOne(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
-			if (!(sd instanceof SpeciesDescription)) {
-				return;
-			}
+			if (!(sd instanceof SpeciesDescription)) { return; }
 			for (final IDescription child : ((SpeciesDescription) sd).getBehaviors()) {
 				final String s = child.getKeyword();
 				if (s.equals(STATE) || s.equals(USER_PANEL)) {
@@ -156,9 +221,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 					if (expr == null) {
 						continue;
 					}
-					if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
-						return;
-					}
+					if (IExpressionFactory.TRUE_EXPR.equals(expr)) { return; }
 				}
 			}
 			final String error = "No " + facet + " state defined";
@@ -207,9 +270,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgent();
-		if (scope.interrupted()) {
-			return false;
-		}
+		if (scope.interrupted()) { return false; }
 		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if (enter || memory == null) {
@@ -222,11 +283,9 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		}
 		if (enter) {
 			if (enterActions != null) {
-				enterActions.executeOn(scope);
+				scope.execute(enterActions);
 			}
-			if (agent.dead()) {
-				return false;
-			}
+			if (agent.dead()) { return false; }
 			agent.setAttribute(ENTER, false);
 		}
 		return true;
@@ -244,7 +303,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			if (transition.evaluatesTrueOn(scope)) {
 				final String futureState = transition.getName();
 				haltOn(scope);
-				transition.executeOn(scope);
+				scope.execute(transition);
 				scope.setAgentVarValue(agent, STATE, futureState);
 				return futureState;
 			}
@@ -258,16 +317,14 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (!beginExecution(scope)) {
-			return null;
-		}
+		if (!beginExecution(scope)) { return null; }
 		bodyExecution(scope);
 		return evaluateTransitions(scope);
 	}
 
 	public void haltOn(final IScope scope) throws GamaRuntimeException {
 		if (exitActions != null) {
-			exitActions.executeOn(scope);
+			scope.execute(exitActions);
 		}
 	}
 

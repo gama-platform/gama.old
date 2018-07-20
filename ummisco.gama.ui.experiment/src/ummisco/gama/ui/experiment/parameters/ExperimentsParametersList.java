@@ -115,7 +115,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 			} else {
 				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
 						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
-							final Object result = ((UserCommandStatement) var).executeOn(scope);
+							final Object result = scope.execute((UserCommandStatement) var).getValue();
 							GAMA.getExperiment().refreshAllOutputs();
 							return result;
 						}));

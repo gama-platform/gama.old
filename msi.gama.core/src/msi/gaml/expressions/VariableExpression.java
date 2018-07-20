@@ -10,8 +10,6 @@
 package msi.gaml.expressions;
 
 import msi.gama.precompiler.GamlProperties;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -43,9 +41,6 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	public VariableExpression getVar() {
 		return this;
 	}
-
-	@Override
-	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

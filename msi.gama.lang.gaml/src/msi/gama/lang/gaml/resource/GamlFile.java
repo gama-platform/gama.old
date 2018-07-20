@@ -95,7 +95,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 			o.setName(o.getName() + "#" + aliasName);
 		}
 
-		GAMA.addGuiExperiment(exp);
+		// GAMA.addGuiExperiment(exp);
 
 		return exp;
 	}
@@ -111,7 +111,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 				experiment.getModel().getVar(in.getKeys().get(i).toString()).setValue(null, in.getValues().get(i));
 			}
 		}
-		GAMA.openExperiment(experiment);
+		GAMA.openExperimentFromGamlFile(experiment);
 	}
 
 	/**

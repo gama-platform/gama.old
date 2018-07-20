@@ -50,7 +50,7 @@ public class WeightedTasksArchitecture extends ReflexArchitecture {
 		// We let inits, reflexes run
 		super.executeOn(scope);
 		final WeightedTaskStatement active = chooseTask(scope);
-		if (active != null) { return active.executeOn(scope); }
+		if (active != null) { return scope.execute(active).getValue(); }
 		return null;
 	}
 

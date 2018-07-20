@@ -30,7 +30,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	}
 
 	@Override
-	public Object value(final IScope scope) {
+	public Object _value(final IScope scope) {
 		final IAgent a = scope.getAgent();
 		if (a != null) {
 			// hqnghi if main description contains micro-description then

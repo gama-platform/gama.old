@@ -20,6 +20,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.Types;
@@ -30,7 +31,7 @@ import msi.gaml.types.Types;
  * @author drogoul 23 août 07
  */
 @SuppressWarnings ({ "rawtypes" })
-public class ListExpression extends AbstractExpression {
+public class ListExpression extends AbstractExpression implements IOperator {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
 		final ListExpression u = new ListExpression(elements);
@@ -93,7 +94,7 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	@Override
-	public IList value(final IScope scope) throws GamaRuntimeException {
+	public IList _value(final IScope scope) throws GamaRuntimeException {
 		// if ( isConst && computed ) { return
 		// GamaListFactory.createWithoutCasting(getType().getContentType(),
 		// values); }
@@ -184,6 +185,27 @@ public class ListExpression extends AbstractExpression {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void visitSuboperators(final IOperatorVisitor visitor) {
+		for (final IExpression e : elements) {
+			if (e instanceof IOperator) {
+				visitor.visit((IOperator) e);
+			}
+		}
+
+	}
+
+	@Override
+	public IExpression arg(final int i) {
+		if (i < 0 || i > elements.length) { return null; }
+		return elements[i];
+	}
+
+	@Override
+	public OperatorProto getPrototype() {
+		return null;
 	}
 
 }

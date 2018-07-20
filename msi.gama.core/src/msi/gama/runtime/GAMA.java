@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -24,10 +25,15 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.runtime.benchmark.Benchmark;
+import msi.gama.runtime.benchmark.IStopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.IExecutable;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -40,8 +46,11 @@ public class GAMA {
 
 	public final static String VERSION = "GAMA 1.8";
 	public static final String _WARNINGS = "warnings";
-	public static PlatformAgent agent;
-
+	private static PlatformAgent agent;
+	private static Benchmark benchmarkAgent;
+	private static boolean isInHeadlessMode;
+	private static IGui regularGui;
+	private static IGui headlessGui = new HeadlessListener();
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new ArrayList<>();
 
@@ -87,27 +96,26 @@ public class GAMA {
 
 		if (getGui().openSimulationPerspective(model, id, true)) {
 			controllers.add(controller);
+			startBenchmark(newExperiment);
 			controller.userOpen();
 		} else {
 			// we are unable to launch the perspective.
 			System.out.println("Unable to launch simulation perspective for experiment " + id + " of model "
 					+ model.getFilePath());
-			// getGui().openModelingPerspective(true);
 		}
-
 	}
 
-	/**
-	 * Add a sub-experiment to the current GUI experiment
-	 * 
-	 * @param id
-	 * @param model
-	 */
-	public static void addGuiExperiment(final IExperimentPlan experiment) {
+	// /**
+	// * Add a sub-experiment to the current GUI experiment
+	// *
+	// * @param id
+	// * @param model
+	// */
+	// public static void addGuiExperiment(final IExperimentPlan experiment) {
+	//
+	// }
 
-	}
-
-	public static void openExperiment(final IExperimentPlan experiment) {
+	public static void openExperimentFromGamlFile(final IExperimentPlan experiment) {
 		experiment.getController().directOpenExperiment();
 	}
 
@@ -152,27 +160,31 @@ public class GAMA {
 
 	}
 
-	public static void closeFrontmostExperiment() {
-		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) { return; }
-		controller.close();
-		controllers.remove(controller);
-	}
+	// public static void closeFrontmostExperiment() {
+	// final IExperimentController controller = getFrontmostController();
+	// if (controller == null || controller.getExperiment() == null) { return; }
+	// controller.close();
+	// controllers.remove(controller);
+	// }
 
 	public static void closeExperiment(final IExperimentPlan experiment) {
 		if (experiment == null) { return; }
-		final IExperimentController controller = experiment.getController();
-		if (controller == null) { return; }
-		controller.close();
-		controllers.remove(controller);
+		closeController(experiment.getController());
 	}
 
 	public static void closeAllExperiments(final boolean andOpenModelingPerspective, final boolean immediately) {
-		for (final IExperimentController controller : controllers) {
-			controller.close();
+		for (final IExperimentController controller : new ArrayList<>(controllers)) {
+			closeController(controller);
 		}
-		controllers.clear();
 		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
+
+	}
+
+	private static void closeController(final IExperimentController controller) {
+		if (controller == null) { return; }
+		stopBenchmark(controller.getExperiment());
+		controller.close();
+		controllers.remove(controller);
 	}
 
 	/**
@@ -370,18 +382,6 @@ public class GAMA {
 		getExperiment().refreshAllOutputs();
 	}
 
-	/**
-	 *
-	 * Simulation state related utilities for Eclipse GUI
-	 *
-	 */
-
-	static IGui regularGui;
-	static IGui headlessGui = new HeadlessListener();
-
-	/**
-	 * @return
-	 */
 	public static IGui getGui() {
 		// either a headless listener or a fully configured gui
 		if (isInHeadlessMode || regularGui == null) {
@@ -411,8 +411,6 @@ public class GAMA {
 		regularGui = g;
 	}
 
-	static boolean isInHeadlessMode;
-
 	/**
 	 * @return
 	 */
@@ -433,11 +431,56 @@ public class GAMA {
 
 	}
 
+	/**
+	 * Access to the one and only 'gama' agent
+	 * 
+	 * @return the platform agent, or creates it if it doesn't exist
+	 */
 	public static PlatformAgent getPlatformAgent() {
 		if (agent == null) {
 			agent = new PlatformAgent();
 		}
 		return agent;
+	}
+
+	/**
+	 *
+	 * Benchmarking utilities
+	 *
+	 */
+	public static IStopWatch benchmarck(final IScope scope, final IStepable symbol) {
+		if (benchmarkAgent == null) { return IStopWatch.NULL; }
+		if (symbol instanceof ISymbol) { return benchmarkAgent.record(scope, (ISymbol) symbol); }
+		return IStopWatch.NULL;
+	}
+
+	public static IStopWatch benchmarck(final IScope scope, final ISymbol symbol) {
+		if (benchmarkAgent == null) { return IStopWatch.NULL; }
+		return benchmarkAgent.record(scope, symbol);
+	}
+
+	public static IStopWatch benchmarck(final IScope scope, final IExecutable symbol) {
+		if (benchmarkAgent == null) { return IStopWatch.NULL; }
+		if (symbol instanceof ISymbol) { return benchmarkAgent.record(scope, (ISymbol) symbol); }
+		return IStopWatch.NULL;
+	}
+
+	public static IStopWatch benchmarck(final IScope scope, final IExpression expression) {
+		if (benchmarkAgent == null) { return IStopWatch.NULL; }
+		return benchmarkAgent.record(scope, expression);
+	}
+
+	public static void startBenchmark(final IExperimentPlan experiment) {
+		if (experiment.shouldBeBenchmarked()) {
+			benchmarkAgent = new Benchmark(experiment);
+		}
+	}
+
+	public static void stopBenchmark(final IExperimentPlan experiment) {
+		if (benchmarkAgent != null) {
+			benchmarkAgent.saveAndDispose(experiment);
+		}
+		benchmarkAgent = null;
 	}
 
 }

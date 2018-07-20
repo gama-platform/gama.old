@@ -56,6 +56,7 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaMetaModel;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -93,6 +94,12 @@ import msi.gaml.variables.IVariable;
 						optional = false,
 						doc = @doc (""),
 						internal = true),
+				@facet (
+						name = IKeyword.BENCHMARK,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("If true, make GAMA record the number of invocations and running time of the statements and operators of the simulations launched in this experiment. The results are automatically saved in a csv file in a folder called 'benchmarks' when the experiment is closed"),
+						internal = false),
 				@facet (
 						name = IKeyword.PARENT,
 						type = IType.ID,
@@ -221,6 +228,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private final boolean keepSimulations;
 	private final String experimentType;
 	private final boolean autorun;
+	private final boolean benchmarkable;
 
 	public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
 
@@ -322,7 +330,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else {
 			autorun = Cast.asBool(scope, ar.value(scope));
 		}
-
+		final IExpression bm = getFacet(IKeyword.BENCHMARK);
+		benchmarkable = bm != null && Cast.asBool(scope, bm.value(scope));
 	}
 
 	@Override
@@ -759,6 +768,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (agent == null) { return Collections.EMPTY_LIST; }
 		return Iterables.concat(agent.getAllSimulationOutputs(), Arrays.asList(experimentOutputs));
 
+	}
+
+	@Override
+	public ExperimentDescription getDescription() {
+		return (ExperimentDescription) super.getDescription();
+	}
+
+	@Override
+	public boolean shouldBeBenchmarked() {
+		return benchmarkable;
 	}
 
 }

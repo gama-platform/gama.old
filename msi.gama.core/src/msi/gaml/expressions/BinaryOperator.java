@@ -69,7 +69,7 @@ public class BinaryOperator extends NAryOperator {
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public Object _value(final IScope scope) throws GamaRuntimeException {
 		Object leftVal = null, rightVal = null;
 		try {
 			leftVal = prototype.lazy[0] ? exprs[0] : exprs[0].value(scope);

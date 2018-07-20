@@ -41,7 +41,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 			}
 
 			@Override
-			public Boolean value(final IScope scope) throws GamaRuntimeException {
+			public Boolean _value(final IScope scope) throws GamaRuntimeException {
 				return scope.getClock().getCycle() == 1;
 			}
 

@@ -28,6 +28,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.runtime.benchmark.IStopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
@@ -138,9 +139,9 @@ public class ExecutionScope implements IScope {
 		String name = "Scope #" + ++SCOPE_NUMBER;
 		setRoot(root);
 		if (root != null) {
-			name += " of " + root;
+			name += " of " + root.stringValue(root.getScope());
 		}
-		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
+		name += otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")";
 		this.name = name;
 		this.executionContext = context == null ? new ExecutionContext(this) : context.createCopyContext();
 		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
@@ -368,7 +369,7 @@ public class ExecutionScope implements IScope {
 		final IAgent caller = this.getAgent();
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
-		try {
+		try (IStopWatch w = GAMA.benchmarck(this, statement)) {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
 			if (args != null && statement instanceof IStatement.WithArgs) {
@@ -455,7 +456,7 @@ public class ExecutionScope implements IScope {
 	}
 
 	private <S extends IStepable> ExecutionResult runAndCatch(final S a, final Function<S, ExecutionResult> f) {
-		try {
+		try (IStopWatch w = GAMA.benchmarck(this, a)) {
 			return f.apply(a);
 		} catch (final Throwable ex) {
 			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);

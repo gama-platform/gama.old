@@ -24,7 +24,9 @@ import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.benchmark.IStopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -36,7 +38,7 @@ public abstract class GamaExecutorService {
 
 	public static ForkJoinPool AGENT_PARALLEL_EXECUTOR;
 	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
-	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();//sameThreadExecutor();
+	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();// sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
 			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL)
@@ -76,11 +78,13 @@ public abstract class GamaExecutorService {
 	}
 
 	public static void setConcurrencyLevel(final int nb) {
-		if (AGENT_PARALLEL_EXECUTOR != null)
+		if (AGENT_PARALLEL_EXECUTOR != null) {
 			AGENT_PARALLEL_EXECUTOR.shutdown();
+		}
 		AGENT_PARALLEL_EXECUTOR = new ForkJoinPool(nb);
-		if (SIMULATION_PARALLEL_EXECUTOR != null)
+		if (SIMULATION_PARALLEL_EXECUTOR != null) {
 			SIMULATION_PARALLEL_EXECUTOR.shutdown();
+		}
 		SIMULATION_PARALLEL_EXECUTOR = Executors.newFixedThreadPool(nb);
 	}
 
@@ -102,10 +106,11 @@ public abstract class GamaExecutorService {
 		if (concurrency == null) {
 			switch (caller) {
 				case SIMULATION:
-					if (CONCURRENCY_SIMULATIONS.getValue())
+					if (CONCURRENCY_SIMULATIONS.getValue()) {
 						return CONCURRENCY_THREADS_NUMBER.getValue();
-					else
+					} else {
 						return 0;
+					}
 				case SPECIES:
 					if (CONCURRENCY_SPECIES.getValue()) {
 						return CONCURRENCY_THRESHOLD.getValue();
@@ -124,11 +129,9 @@ public abstract class GamaExecutorService {
 		} else {
 			final Object o = concurrency.value(scope);
 			if (o instanceof Boolean) {
-				if (o.equals(Boolean.FALSE))
-					return 0;
+				if (o.equals(Boolean.FALSE)) { return 0; }
 				if (o.equals(Boolean.TRUE)) {
-					if (caller == Caller.SIMULATION)
-						return CONCURRENCY_THREADS_NUMBER.getValue();
+					if (caller == Caller.SIMULATION) { return CONCURRENCY_THREADS_NUMBER.getValue(); }
 					return CONCURRENCY_THRESHOLD.getValue();
 				}
 			} else if (o instanceof Integer) {
@@ -151,7 +154,7 @@ public abstract class GamaExecutorService {
 		final List<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
-		return doStep(scope, agents.toArray(new IAgent[0]), threshold);
+		return doStep(scope, agents.toArray(new IAgent[0]), threshold, species);
 	}
 
 	public static <A extends IShape> Boolean step(final IScope scope, final A[] array, final ISpecies species)
@@ -166,36 +169,42 @@ public abstract class GamaExecutorService {
 		}
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
-		return doStep(scope, scheduledAgents, threshold);
+		return doStep(scope, scheduledAgents, threshold, species);
 	}
 
-	private static <A extends IShape> Boolean doStep(final IScope scope, final A[] array, final int threshold) {
-		int concurrency = threshold;
-		if (array.length <= threshold)
-			concurrency = 0;
-		switch (concurrency) {
-			case 0:
-				for (final A agent : array) {
-					if (((IAgent) agent).dead()) continue; //add this condition to avoid the activation of dead agents
-					if (!scope.step((IAgent) agent).passed())
-						return false;
-				}
-				return true;
-			case 1:
-				for (final A agent : array) {
-					executeThreaded(() -> scope.step((IAgent) agent));
-				}
-				return true;
-			default:
-				return ParallelAgentRunner.step(scope, array, threshold);
+	private static <A extends IShape> Boolean doStep(final IScope scope, final A[] array, final int threshold,
+			final ISpecies species) {
+		try (final IStopWatch w = GAMA.benchmarck(scope, species)) {
+			int concurrency = threshold;
+			if (array.length <= threshold) {
+				concurrency = 0;
+			}
+			switch (concurrency) {
+				case 0:
+					for (final A agent : array) {
+						if (((IAgent) agent).dead()) {
+							continue; // add this condition to avoid the activation of dead agents
+						}
+						if (!scope.step((IAgent) agent).passed()) { return false; }
+					}
+					return true;
+				case 1:
+					for (final A agent : array) {
+						executeThreaded(() -> scope.step((IAgent) agent));
+					}
+					return true;
+				default:
+					return ParallelAgentRunner.step(scope, array, threshold);
+			}
 		}
 	}
 
 	public static <A extends IShape> void execute(final IScope scope, final IExecutable executable, final A[] array,
 			final IExpression parallel) throws GamaRuntimeException {
 		int threshold = getParallelism(scope, parallel, Caller.NONE);
-		if (array.length <= threshold)
+		if (array.length <= threshold) {
 			threshold = 0;
+		}
 		switch (threshold) {
 			case 0:
 				for (final A agent : array) {

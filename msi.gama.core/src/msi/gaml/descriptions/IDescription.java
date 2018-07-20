@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
+import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
@@ -41,7 +42,8 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IVarDescriptionProvider {
+public interface IDescription
+		extends IGamlDescription, IKeyword, ITyped, IDisposable, IVarDescriptionProvider, IBenchmarkable {
 
 	public static final SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
 	public static final VarSerializer VAR_SERIALIZER = new VarSerializer();
@@ -203,6 +205,13 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		return visitFacets(null, visitor);
 	}
 
+	@Override
+	default String getNameForBenchmarks() {
+		final StringBuilder sb = new StringBuilder();
+		getSerializer().serializeNoRecursion(sb, this, false);
+		return sb.toString();
+	}
+
 	public default void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		this.visitFacets((name, exp) -> {
 			final IExpression expression = exp.getExpression();
@@ -240,5 +249,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public boolean isDocumenting();
 
 	public int getOrder();
+
+	public SymbolSerializer getSerializer();
 
 }

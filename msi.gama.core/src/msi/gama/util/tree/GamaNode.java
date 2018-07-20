@@ -44,12 +44,13 @@ public class GamaNode<T> {
 		return children != null && children.size() > 0;
 	}
 
-	private void addChild(final GamaNode<T> child) {
+	public GamaNode<T> addChild(final GamaNode<T> child) {
 		child.parent = this;
 		if (children == null) {
 			children = new ArrayList<>();
 		}
 		children.add(child);
+		return child;
 	}
 
 	public GamaNode<T> addChild(final T child) {
@@ -59,8 +60,7 @@ public class GamaNode<T> {
 
 	public GamaNode<T> addChild(final T child, final Integer w) {
 		final GamaNode<T> result = new GamaNode<>(child, w);
-		addChild(result);
-		return result;
+		return addChild(result);
 	}
 
 	public T getData() {

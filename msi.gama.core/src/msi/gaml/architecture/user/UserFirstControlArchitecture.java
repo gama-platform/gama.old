@@ -33,7 +33,7 @@ public class UserFirstControlArchitecture extends UserControlArchitecture {
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		if (initPanel != null) {
-			initPanel.executeOn(scope);
+			scope.execute(initPanel);
 		}
 		return super.init(scope);
 	}

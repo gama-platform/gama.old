@@ -10,6 +10,7 @@
 package msi.gama.util.file;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,7 +24,7 @@ import java.util.Map;
  * A stream based writer for writing delimited text data to a file or a stream.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class CsvWriter {
+public class CsvWriter implements Closeable {
 
 	private Writer outputStream = null;
 
@@ -267,16 +268,15 @@ public class CsvWriter {
 			content = content.replace(userSettings.Delimiter, REPLACEMENTS.get(userSettings.Delimiter));
 		}
 
-		if (!textQualify && userSettings.UseTextQualifier
-				&& (content.indexOf(userSettings.TextQualifier) > -1 || content.indexOf(userSettings.Delimiter) > -1
-						|| !useCustomRecordDelimiter
-						&& (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1)
-						|| useCustomRecordDelimiter && content.indexOf(userSettings.RecordDelimiter) > -1
-						|| firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ||
-						// check for empty first column, which if on its own
-						// line must
-						// be qualified or the line will be skipped
-						firstColumn && content.length() == 0)) {
+		if (!textQualify && userSettings.UseTextQualifier && (content.indexOf(userSettings.TextQualifier) > -1
+				|| content.indexOf(userSettings.Delimiter) > -1
+				|| !useCustomRecordDelimiter && (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1)
+				|| useCustomRecordDelimiter && content.indexOf(userSettings.RecordDelimiter) > -1
+				|| firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ||
+				// check for empty first column, which if on its own
+				// line must
+				// be qualified or the line will be skipped
+				firstColumn && content.length() == 0)) {
 			textQualify = true;
 		}
 
@@ -449,6 +449,7 @@ public class CsvWriter {
 	/**
 	 * Closes and releases all related resources.
 	 */
+	@Override
 	public void close() {
 		if (!closed) {
 			close(true);

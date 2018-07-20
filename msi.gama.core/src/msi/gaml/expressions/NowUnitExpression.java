@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'NowUnitExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'NowUnitExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,7 +22,7 @@ public class NowUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public GamaDate value(final IScope scope) {
+	public GamaDate _value(final IScope scope) {
 		return GamaDate.of(LocalDateTime.now());
 	}
 

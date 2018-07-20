@@ -130,9 +130,8 @@ public class UserCommandStatement extends AbstractStatementSequence
 				if (enclosing instanceof ExperimentDescription) {
 					final ModelDescription model = enclosing.getModelDescription();
 					if (model.hasAction(action, false)) {
-						description.warning(
-								"Action " + action
-										+ " should be defined in the experiment, not in global. To maintain the compatibility with GAMA 1.6.1, the command will execute it on all the simulations managed by this experiment",
+						description.warning("Action " + action
+								+ " should be defined in the experiment, not in global. To maintain the compatibility with GAMA 1.6.1, the command will execute it on all the simulations managed by this experiment",
 								IGamlIssue.WRONG_CONTEXT, ACTION);
 					} else {
 						description.error("Action " + action + " does not exist in this experiment",
@@ -190,7 +189,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 				}
 				// AD 2/1/16 : Addition of this to address Issue #1339
 				for (final UserInputStatement s : inputs) {
-					s.executeOn(scope);
+					if (!scope.execute(s).passed()) { return null; }
 				}
 				final Object result = super.privateExecuteIn(scope);
 				runtimeArgs = null;
@@ -219,8 +218,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 					scope.execute(executer, sim, tempArgs);
 				}
 			} else {
-				executer.setRuntimeArgs(scope, tempArgs);
-				final Object result = executer.executeOn(scope);
+				final Object result = scope.execute(executer, tempArgs).getValue();
 				runtimeArgs = null;
 				return result;
 			}
@@ -239,15 +237,13 @@ public class UserCommandStatement extends AbstractStatementSequence
 
 	public GamaColor getColor(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.COLOR);
-		if (exp == null)
-			return null;
+		if (exp == null) { return null; }
 		return Cast.asColor(scope, exp.value(scope));
 	}
 
 	public boolean isContinue(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.CONTINUE);
-		if (exp == null)
-			return false;
+		if (exp == null) { return false; }
 		return Cast.asBool(scope, exp.value(scope));
 	}
 

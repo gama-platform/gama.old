@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UserControlDialog.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UserControlDialog.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -95,9 +94,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
-		if (previous == null || !previous.name.equals(title)) {
-			return;
-		}
+		if (previous == null || !previous.name.equals(title)) { return; }
 		newShell.setLocation(previous.location);
 		newShell.setSize(previous.extent);
 
@@ -157,7 +154,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						c.executeOn(scope);
+						scope.execute(c);
 						GAMA.getExperiment().refreshAllOutputs();
 					}
 
@@ -167,7 +164,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
 					EditorFactory.create(scope, composite, i, newValue -> {
 						i.setValue(scope, newValue);
-						c.executeOn(scope);
+						scope.execute(i);
 					}, false, false);
 				}
 
@@ -205,9 +202,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		}
 
 		/*
-		 * Must be sure to call getContents().computeSize(SWT.DEFAULT,
-		 * SWT.DEFAULT) before calling getShell().setSize(newWindowSize) since
-		 * controls have been added or removed.
+		 * Must be sure to call getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT) before calling
+		 * getShell().setSize(newWindowSize) since controls have been added or removed.
 		 */
 
 		// Compute the new window size.
@@ -231,7 +227,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		((Composite) getContents()).layout();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	protected Control createDetailsArea(final Composite parent) {
 		final Composite compo = new Composite(parent, SWT.BORDER | SWT.SHADOW_IN);

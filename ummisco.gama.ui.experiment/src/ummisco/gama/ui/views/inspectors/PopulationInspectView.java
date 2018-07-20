@@ -195,7 +195,7 @@ public class PopulationInspectView extends GamaViewPart
 			outputs.clear();
 		}
 		outputs.add(output);
-		scope = output.getScope().copy("in PopulationInspectView");
+		scope = output.getScope().copy("in population inspector");
 		selectedColumns.clear();
 		updateSpecies();
 		comparator = new AgentComparator();
@@ -472,10 +472,11 @@ public class PopulationInspectView extends GamaViewPart
 				if (agent.dead() && !title.equals(ID_ATTRIBUTE)) { return "N/A"; }
 				if (title.equals(ID_ATTRIBUTE)) { return String.valueOf(agent.getIndex()); }
 				final Object value;
-				if (agent.getSpecies().hasVar(title))
+				if (agent.getSpecies().hasVar(title)) {
 					return Cast.toGaml(getScope().getAgentVarValue(agent, title));
-				else
+				} else {
 					return Cast.toGaml(agent.getAttribute(title));
+				}
 			}
 		};
 	}
@@ -713,14 +714,6 @@ public class PopulationInspectView extends GamaViewPart
 		final String exportFileName = FileUtils.constructAbsoluteFilePath(getScope(),
 				exportFolder + "/" + getSpeciesName() + "_population" + getScope().getClock().getCycle() + ".csv",
 				false);
-		// File file = new File(exportFileName);
-		// FileWriter fileWriter = null;
-		// try {
-		// file.createNewFile();
-		// fileWriter = new FileWriter(file, false);
-		// } catch (final IOException e) {
-		// throw GamaRuntimeException.create(e);
-		// }
 		final Table table = viewer.getTable();
 		final TableColumn[] columns = table.getColumns();
 		final CsvWriter writer = new CsvWriter(exportFileName);

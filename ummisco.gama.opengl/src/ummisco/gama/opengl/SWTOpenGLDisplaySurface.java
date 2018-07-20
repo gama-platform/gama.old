@@ -102,7 +102,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.parent = parent;
 		output.getData().addListener(this);
 		output.setSurface(this);
-		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
+		setDisplayScope(output.getScope().copy("in opengl display"));
 		if (getOutput().getData().useShader()) {
 			renderer = new ModernRenderer();
 
@@ -215,8 +215,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
-		if (renderer.data.cameraInteractionDisabled())
-			return;
+		if (renderer.data.cameraInteractionDisabled()) { return; }
 		renderer.camera.zoom(true);
 	}
 
@@ -227,8 +226,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
-		if (renderer.data.cameraInteractionDisabled())
-			return;
+		if (renderer.data.cameraInteractionDisabled()) { return; }
 		renderer.camera.zoom(false);
 	}
 
@@ -319,9 +317,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void outputReloaded() {
-		setDisplayScope(output.getScope().copy("in OpenGLDisplaySurface"));
-		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue())
+		setDisplayScope(output.getScope().copy("in opengl display"));
+		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) {
 			getScope().disableErrorReporting();
+		}
 		renderer.initScene();
 		layerManager.outputChanged();
 
@@ -528,7 +527,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void selectAgent(final DrawingAttributes attributes) {
 		IAgent ag = null;
 		boolean withHighlight = true;
-		if (attributes != null)
+		if (attributes != null) {
 			if (attributes.getSpeciesName() != null) {
 				// The picked image is a grid or an image of a grid
 				withHighlight = false;
@@ -538,15 +537,18 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 						new GamaPoint(pickedPoint.x, -pickedPoint.y));
 			} else {
 				final AgentIdentifier id = attributes.getAgentIdentifier();
-				if (id != null)
+				if (id != null) {
 					ag = id.getAgent(scope);
+				}
 			}
-		if (withHighlight)
+		}
+		if (withHighlight) {
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
 					cleanup, AgentsMenu.getHighlightActionFor(ag));
-		else
+		} else {
 			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
 					cleanup);
+		}
 	}
 
 	/**
@@ -628,8 +630,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void changed(final Changes property, final Object value) {
-		if (renderer == null || renderer.camera == null) // Init
-			return;
+		if (renderer == null || renderer.camera == null) { return; }
 		switch (property) {
 
 			case CHANGE_CAMERA:
@@ -713,8 +714,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public boolean isRendered() {
-		if (renderer == null || renderer.sceneBuffer == null || renderer.sceneBuffer.getSceneToRender() == null)
-			return false;
+		if (renderer == null || renderer.sceneBuffer == null
+				|| renderer.sceneBuffer.getSceneToRender() == null) { return false; }
 		return renderer.sceneBuffer.getSceneToRender().rendered();
 	}
 
@@ -740,7 +741,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Point p = renderer.camera.getMousePosition();
 		final int x = p.x;
 		final int y = p.y;
-		for (final IEventLayerListener gl : listeners)
+		for (final IEventLayerListener gl : listeners) {
 			switch (swtMouseEvent) {
 				case SWT.MouseDown:
 					gl.mouseDown(x, y, 1);
@@ -758,6 +759,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					gl.mouseExit(x, y);
 					break;
 			}
+		}
 	}
 
 	@Override

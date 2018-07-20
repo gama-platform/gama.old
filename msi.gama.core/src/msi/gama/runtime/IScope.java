@@ -65,8 +65,9 @@ public interface IScope extends Closeable {
 		 */
 		public boolean accept(final ExecutionResult e) {
 			passed = passed && e.passed();
-			if (passed)
+			if (passed) {
 				this.value = e.getValue();
+			}
 			return passed;
 		}
 
@@ -492,6 +493,14 @@ public interface IScope extends Closeable {
 	 * @return the graphics
 	 */
 	public abstract IGraphics getGraphics();
+
+	public default ExecutionResult execute(final IExecutable executable) {
+		return execute(executable, getAgent(), null);
+	}
+
+	public default ExecutionResult execute(final IExecutable executable, final Arguments args) {
+		return execute(executable, getAgent(), args);
+	}
 
 	/**
 	 * Execution flow.

@@ -72,7 +72,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public Object _value(final IScope scope) throws GamaRuntimeException {
 		final Object childValue = prototype.lazy[0] ? child : child.value(scope);
 		try {
 			return prototype.helper.get(scope, childValue);
@@ -199,6 +199,19 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public boolean isContextIndependant() {
 		return child.isContextIndependant();
+	}
+
+	@Override
+	public OperatorProto getPrototype() {
+		return prototype;
+	}
+
+	@Override
+	public void visitSuboperators(final IOperatorVisitor visitor) {
+		if (child instanceof IOperator) {
+			visitor.visit((IOperator) child);
+		}
+
 	}
 
 }

@@ -63,10 +63,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		}
 	}
 
-	// @Override
-	// public OperatorProto getPrototype() {
-	// return prototype;
-	// }
+	@Override
+	public OperatorProto getPrototype() {
+		return prototype;
+	}
 
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, 0, type, GamaType.TYPE);
@@ -271,6 +271,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void visitSuboperators(final IOperatorVisitor visitor) {
+		if (exprs != null) {
+			for (final IExpression e : exprs) {
+				if (e instanceof IOperator) {
+					visitor.visit((IOperator) e);
+				}
+			}
+		}
+
 	}
 
 	/**

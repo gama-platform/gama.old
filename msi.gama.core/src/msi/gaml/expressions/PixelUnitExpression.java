@@ -20,15 +20,12 @@ public class PixelUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public Double value(final IScope scope) {
-		if (scope == null)
-			return 1d;
+	public Double _value(final IScope scope) {
+		if (scope == null) { return 1d; }
 		final IGraphics g = scope.getGraphics();
-		if (g == null)
-			return 1d;
+		if (g == null) { return 1d; }
 		final double ratio = g.getyRatioBetweenPixelsAndModelUnits();
-		if (ratio == 0d)
-			return 1d;
+		if (ratio == 0d) { return 1d; }
 		final Double v = 1d / ratio;
 		return v;
 	}

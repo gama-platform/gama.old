@@ -74,7 +74,7 @@ public class NAryOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public Object _value(final IScope scope) throws GamaRuntimeException {
 		final Object[] values = new Object[exprs == null ? 0 : exprs.length];
 		try {
 			for (int i = 0; i < values.length; i++) {

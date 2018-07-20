@@ -32,7 +32,7 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public Object _value(final IScope scope) throws GamaRuntimeException {
 		return scope.getAgentVarValue(scope.getAgent(), getName());
 	}
 

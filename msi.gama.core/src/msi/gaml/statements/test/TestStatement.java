@@ -120,8 +120,9 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		super.setChildren(commands);
 		commands.forEach(s -> {
-			if (s instanceof AssertStatement)
+			if (s instanceof AssertStatement) {
 				assertions.add((AssertStatement) s);
+			}
 		});
 	}
 
@@ -136,6 +137,7 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 			scope.enableTryMode();
 			for (final IStatement statement : commands) {
 				try {
+					// TODO Verify this call (wrt IScope.execute())
 					lastResult = statement.executeOn(scope);
 				} catch (final GamaAssertException e) {
 					continue;

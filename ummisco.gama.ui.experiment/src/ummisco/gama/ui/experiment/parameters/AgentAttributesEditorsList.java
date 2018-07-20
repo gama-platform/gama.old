@@ -54,7 +54,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		if (addItem(agent)) {
 			if (!agent.dead()) {
-				final IScope scope = agent.getScope().copy(" for " + agent.getName());
+				final IScope scope = agent.getScope().copy("for " + agent.getName());
 				for (final IExperimentDisplayable var : params) {
 					if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
 						final IParameterEditor<?> gp =

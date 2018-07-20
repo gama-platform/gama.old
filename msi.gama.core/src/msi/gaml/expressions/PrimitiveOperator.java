@@ -11,6 +11,8 @@ package msi.gaml.expressions;
 
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -18,6 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.operators.Cast;
@@ -33,7 +36,7 @@ import msi.gaml.types.IType;
  * @author drogoul 4 sept. 07
  */
 
-public class PrimitiveOperator implements IExpression {
+public class PrimitiveOperator implements IExpression, IOperator {
 
 	final Arguments parameters;
 	final IExpression target;
@@ -192,6 +195,31 @@ public class PrimitiveOperator implements IExpression {
 	@Override
 	public boolean shouldBeParenthesized() {
 		return true;
+	}
+
+	@Override
+	public void visitSuboperators(final IOperatorVisitor visitor) {
+		if (parameters != null) {
+			parameters.forEach((name, exp) -> {
+				final IExpression expr = exp.getExpression();
+				if (expr instanceof IOperator) {
+					visitor.visit((IOperator) expr);
+				}
+			});
+		}
+
+	}
+
+	// TODO The arguments are not ordered...
+	@Override
+	public IExpression arg(final int i) {
+		if (i < 0 || i > parameters.size()) { return null; }
+		return Iterables.get(parameters.values(), i).getExpression();
+	}
+
+	@Override
+	public OperatorProto getPrototype() {
+		return null;
 	}
 
 }

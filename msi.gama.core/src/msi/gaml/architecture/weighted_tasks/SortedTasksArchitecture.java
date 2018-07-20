@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 
@@ -54,7 +55,9 @@ public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 		// heaviest)
 		Object result = null;
 		for (int i = tasks.size() - 1; i >= 0; i--) {
-			result = tasks.get(i).executeOn(scope);
+			final ExecutionResult er = scope.execute(tasks.get(i));
+			if (!er.passed()) { return result; }
+			result = er.getValue();
 		}
 		return result;
 	}

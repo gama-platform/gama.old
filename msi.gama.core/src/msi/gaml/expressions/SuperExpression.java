@@ -24,7 +24,7 @@ public class SuperExpression extends VariableExpression {
 	}
 
 	@Override
-	public Object value(final IScope scope) {
+	public Object _value(final IScope scope) {
 		return scope.getAgent();
 	}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractStatementSequence.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractStatementSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,6 +12,7 @@ package msi.gaml.statements;
 import com.google.common.collect.FluentIterable;
 
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -50,11 +50,10 @@ public class AbstractStatementSequence extends AbstractStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Object lastResult = null;
-		for (int i = 0; i < commands.length; i++) {
-			if (scope.interrupted()) {
-				return lastResult;
-			}
-			lastResult = commands[i].executeOn(scope);
+		for (final IStatement command : commands) {
+			final ExecutionResult result = scope.execute(command);
+			if (!result.passed()) { return lastResult; }
+			lastResult = result.getValue();
 		}
 		return lastResult;
 	}

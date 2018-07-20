@@ -24,7 +24,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.operators.Strings;
@@ -85,17 +84,13 @@ public class TryStatement extends AbstractStatementSequence {
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
 			final String[] catchString = new String[] { null };
-			desc.visitChildren(new DescriptionVisitor<IDescription>() {
-
-				@Override
-				public boolean visit(final IDescription s) {
-					if (s.getKeyword().equals(IKeyword.CATCH)) {
-						catchString[0] = s.serialize(false) + Strings.LN;
-					} else {
-						serializeChild(s, sb, includingBuiltIn);
-					}
-					return true;
+			desc.visitChildren(s -> {
+				if (s.getKeyword().equals(IKeyword.CATCH)) {
+					catchString[0] = s.serialize(false) + Strings.LN;
+				} else {
+					serializeChild(s, sb, includingBuiltIn);
 				}
+				return true;
 			});
 
 			sb.append('}');
@@ -141,8 +136,7 @@ public class TryStatement extends AbstractStatementSequence {
 			result = super.privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			scope.disableTryMode();
-			if (catchStatement != null)
-				return catchStatement.executeOn(scope);
+			if (catchStatement != null) { return scope.execute(catchStatement).getValue(); }
 		} finally {
 			scope.disableTryMode();
 		}

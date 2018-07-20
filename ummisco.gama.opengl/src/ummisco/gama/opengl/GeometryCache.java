@@ -64,13 +64,16 @@ public class GeometryCache {
 		}
 
 		public void draw(final OpenGL gl) {
-			if (bottom != null)
+			if (bottom != null) {
 				gl.drawList(bottom);
-			if (top != null)
+			}
+			if (top != null) {
 				gl.drawList(top);
+			}
 			gl.enableAlternateTexture();
-			if (faces != null)
+			if (faces != null) {
 				gl.drawList(faces);
+			}
 		}
 	}
 
@@ -82,7 +85,7 @@ public class GeometryCache {
 	private final Consumer<Geometry> drawer;
 
 	public GeometryCache(final JOGLRenderer renderer) {
-		this.scope = renderer.getSurface().getScope().copy("Geometry cache");
+		this.scope = renderer.getSurface().getScope().copy("in opengl geometry cache");
 		this.drawer = g -> renderer.getGeometryDrawer().drawGeometry(g, true, null, 0, getTypeOf(g));
 		envelopes = CacheBuilder.newBuilder().build();
 	}
@@ -147,8 +150,9 @@ public class GeometryCache {
 
 	public void saveGeometryToProcess(final ResourceObject object) {
 		final String path = object.getFile().getPath(scope);
-		if (!geometriesToProcess.containsKey(path))
+		if (!geometriesToProcess.containsKey(path)) {
 			geometriesToProcess.put(path, object);
+		}
 	}
 
 	public Envelope3D getEnvelope(final GamaGeometryFile file) {

@@ -33,7 +33,7 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public IType<?> value(final IScope scope) throws GamaRuntimeException {
+	public IType<?> _value(final IScope scope) throws GamaRuntimeException {
 		// Normally never evaluated
 		return getDenotedType();
 	}

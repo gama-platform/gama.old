@@ -69,9 +69,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void outputReloaded() {
-		this.scope = output.getScope().copy("in ImageDisplaySurface");
-		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue())
+		this.scope = output.getScope().copy("in image surface of " + output.getName());
+		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) {
 			scope.disableErrorReporting();
+		}
 		if (manager == null) {
 			manager = new LayerManager(this, output);
 		} else {

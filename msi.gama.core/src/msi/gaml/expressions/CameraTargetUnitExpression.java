@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CameraTargetUnitExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CameraTargetUnitExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,13 +22,10 @@ public class CameraTargetUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public ILocation value(final IScope scope) {
-		if (scope == null)
-			return GamaPoint.NULL_POINT;
+	public ILocation _value(final IScope scope) {
+		if (scope == null) { return GamaPoint.NULL_POINT; }
 		final IGraphics g = scope.getGraphics();
-		if (g == null) {
-			return GamaPoint.NULL_POINT;
-		}
+		if (g == null) { return GamaPoint.NULL_POINT; }
 		return g.getCameraTarget();
 	}
 

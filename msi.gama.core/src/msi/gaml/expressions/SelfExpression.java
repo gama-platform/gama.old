@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SelfExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SelfExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,7 +24,7 @@ public class SelfExpression extends VariableExpression {
 	}
 
 	@Override
-	public Object value(final IScope scope) {
+	public Object _value(final IScope scope) {
 		return scope.getAgent();
 	}
 
@@ -40,8 +39,7 @@ public class SelfExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {
-	}
+	public void setVal(final IScope scope, final Object v, final boolean create) {}
 
 	/**
 	 * Method collectPlugins()
@@ -49,11 +47,9 @@ public class SelfExpression extends VariableExpression {
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-	}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

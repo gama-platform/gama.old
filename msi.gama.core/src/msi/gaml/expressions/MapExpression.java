@@ -22,6 +22,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -33,7 +34,7 @@ import msi.gaml.types.Types;
  * @author drogoul 23 août 07
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class MapExpression extends AbstractExpression {
+public class MapExpression extends AbstractExpression implements IOperator {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
 		final MapExpression u = new MapExpression(elements);
@@ -110,7 +111,7 @@ public class MapExpression extends AbstractExpression {
 	}
 
 	@Override
-	public GamaMap value(final IScope scope) throws GamaRuntimeException {
+	public GamaMap _value(final IScope scope) throws GamaRuntimeException {
 		// if ( isConst && computed ) { return (GamaMap) values.clone(); }
 		final GamaMap values = GamaMapFactory.create(type.getKeyType(), type.getContentType());
 		for (int i = 0; i < keys.length; i++) {
@@ -247,6 +248,33 @@ public class MapExpression extends AbstractExpression {
 			}
 		}
 
+	}
+
+	@Override
+	public void visitSuboperators(final IOperatorVisitor visitor) {
+		for (final IExpression e : keys) {
+			if (e instanceof IOperator) {
+				visitor.visit((IOperator) e);
+			}
+		}
+
+		for (final IExpression e : vals) {
+			if (e instanceof IOperator) {
+				visitor.visit((IOperator) e);
+			}
+		}
+
+	}
+
+	@Override
+	public IExpression arg(final int i) {
+		if (i < 0 || i > vals.length) { return null; }
+		return vals[i];
+	}
+
+	@Override
+	public OperatorProto getPrototype() {
+		return null;
 	}
 
 }

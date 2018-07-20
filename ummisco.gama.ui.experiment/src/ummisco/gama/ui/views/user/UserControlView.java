@@ -108,8 +108,9 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				final int nbLines = inputs.size() > 1 ? inputs.size() : 1;
 				final int nbCol = inputs.size() > 0 ? 1 : 3;
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
-				if (color == null)
+				if (color == null) {
 					color = IGamaColors.BLUE;
+				}
 				final Image image = GamaIcons.create(c.isContinue(scope) ? "small.continue" : "small.run").image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));
@@ -119,7 +120,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						c.executeOn(scope);
+						scope.execute(c);
 						GAMA.getExperiment().refreshAllOutputs();
 						if (c.isContinue(scope)) {
 							doContinue();
@@ -131,7 +132,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
 					EditorFactory.create(scope, commandComposite, i, newValue -> {
 						i.setValue(scope, newValue);
-						i.executeOn(scope);
+						scope.execute(i);
 					}, false, false);
 				}
 

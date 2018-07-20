@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FsmArchitecture.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FsmArchitecture.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -38,10 +37,19 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@vars({ @var(name = IKeyword.STATE, type = IType.STRING, doc = @doc("Returns the current state in which the agent is")),
-		@var(name = IKeyword.STATES, type = IType.LIST, constant = true, doc = @doc("Returns the list of all possible states the agents can be in")) })
-@skill(name = IKeyword.FSM, concept = { IConcept.BEHAVIOR,
-		IConcept.ARCHITECTURE }, doc = @doc("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them"))
+@vars ({ @var (
+		name = IKeyword.STATE,
+		type = IType.STRING,
+		doc = @doc ("Returns the current state in which the agent is")),
+		@var (
+				name = IKeyword.STATES,
+				type = IType.LIST,
+				constant = true,
+				doc = @doc ("Returns the list of all possible states the agents can be in")) })
+@skill (
+		name = IKeyword.FSM,
+		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
+		doc = @doc ("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them"))
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected final Map<String, FsmStateStatement> states = new THashMap<>();
@@ -66,21 +74,20 @@ public class FsmArchitecture extends ReflexArchitecture {
 		}
 	}
 
-	@getter(value = IKeyword.STATES, initializer = true)
+	@getter (
+			value = IKeyword.STATES,
+			initializer = true)
 	public IList<String> getStateNames(final IAgent agent) {
 		return GamaListFactory.createWithoutCasting(Types.STRING, states.keySet());
 	}
 
-	@setter(IKeyword.STATES)
-	public void setStateNames(final IAgent agent, final IList<String> list) {
-	}
+	@setter (IKeyword.STATES)
+	public void setStateNames(final IAgent agent, final IList<String> list) {}
 
-	@getter(IKeyword.STATE)
+	@getter (IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == null) {
-			return null;
-		}
+		if (currentState == null) { return null; }
 		return currentState.getName();
 	}
 
@@ -88,7 +95,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 		return states.get(stateName);
 	}
 
-	@setter(IKeyword.STATE)
+	@setter (IKeyword.STATE)
 	public void setStateName(final IAgent agent, final String stateName) {
 		if (stateName != null && states.containsKey(stateName)) {
 			setCurrentState(agent, states.get(stateName));
@@ -113,21 +120,15 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		if (scope.interrupted()) {
-			return null;
-		}
+		if (scope.interrupted()) { return null; }
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == null) {
-			return null;
-		}
-		return currentState.executeOn(scope);
+		if (currentState == null) { return null; }
+		return scope.execute(currentState).getValue();
 	}
 
 	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == state) {
-			return;
-		}
+		if (currentState == state) { return; }
 		// if ( currentState != null && currentState.hasExitActions() ) {
 		// agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);
 		// }

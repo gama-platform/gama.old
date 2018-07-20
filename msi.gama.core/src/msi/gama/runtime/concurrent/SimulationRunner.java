@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimulationRunner.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationRunner.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,7 +26,7 @@ public class SimulationRunner {
 
 	final SimulationPopulation population;
 	final Map<SimulationAgent, Callable<Boolean>> runnables;
-	static final Function<SimulationAgent, Boolean> STEP = each -> each.step(each.getScope());
+	static final Function<SimulationAgent, Boolean> STEP = each -> each.getScope().step(each).passed();
 	final int concurrency;
 
 	private int activeThreads;
@@ -36,11 +35,12 @@ public class SimulationRunner {
 		population = pop;
 		runnables = new LinkedHashMap<>();
 		final IExperimentPlan plan = population.getHost().getSpecies();
-		if (plan.isHeadless())
+		if (plan.isHeadless()) {
 			concurrency = 1;
-		else
+		} else {
 			concurrency = GamaExecutorService.getParallelism(population.getHost().getScope(), plan.getConcurrency(),
 					Caller.SIMULATION);
+		}
 
 	}
 
@@ -58,19 +58,18 @@ public class SimulationRunner {
 	public void step() {
 		try {
 			getExecutor().invokeAll(runnables.values());
-		} catch (final InterruptedException e) {
-		}
+		} catch (final InterruptedException e) {}
 
 	}
 
 	private int computeNumberOfThreads() {
 		final ExecutorService executor = getExecutor();
-		if (executor instanceof ForkJoinPool)
+		if (executor instanceof ForkJoinPool) {
 			// getActiveThreadCount() always overestimates the number of threads
 			return Math.min(concurrency, ((ForkJoinPool) executor).getActiveThreadCount());
-		if (executor instanceof ThreadPoolExecutor) {
-			return Math.min(concurrency, ((ThreadPoolExecutor) executor).getActiveCount());
 		}
+		if (executor instanceof ThreadPoolExecutor) { return Math.min(concurrency,
+				((ThreadPoolExecutor) executor).getActiveCount()); }
 		return 1;
 	}
 

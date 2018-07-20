@@ -102,14 +102,14 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				final ITopLevelAgent agent = getStatusAgent();
-				if (agent == null)
-					return;
+				if (agent == null) { return; }
 
 				final IExperimentAgent exp = agent.getExperiment();
 				final int all = exp.getSimulationPopulation().size() + 1;
 				agentIndex++;
-				if (agentIndex > all)
+				if (agentIndex > all) {
 					agentIndex = 0;
+				}
 				exp.informStatus();
 			}
 		});
@@ -123,18 +123,16 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	private ITopLevelAgent getStatusAgent() {
-		if (agentIndex < 0)
+		if (agentIndex < 0) {
 			agentIndex = 0;
+		}
 		final IExperimentPlan exp = GAMA.getExperiment();
-		if (exp == null)
-			return null;
+		if (exp == null) { return null; }
 		// final ITopLevelAgent agent;
 		if (agentIndex == 0) { return exp.getAgent(); }
-		if (exp.getAgent() == null)
-			return null;
+		if (exp.getAgent() == null) { return null; }
 		final IPopulation<? extends IAgent> pop = exp.getAgent().getSimulationPopulation();
-		if (pop.isEmpty())
-			return null;
+		if (pop.isEmpty()) { return null; }
 		final IAgent[] simulations = pop.toArray();
 		if (agentIndex > simulations.length) {
 			agentIndex = 0;
@@ -275,10 +273,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		label.setColor(getPopupBackground());
 		if (!inUserStatus && !inSubTask && mainTaskName == null) {
-			if (getStatusAgent() == null)
+			if (getStatusAgent() == null) {
 				label.setColor(IGamaColors.NEUTRAL);
-			else
+			} else {
 				label.setColor(GamaColors.get(getStatusAgent().getColor()));
+			}
 		}
 
 		if (inSubTask) {
@@ -297,16 +296,20 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	private String getClockMessage() {
 		final ITopLevelAgent agent = getStatusAgent();
-		if (agent == null)
-			return "";
+		if (agent == null) { return ""; }
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(agent.getClock().getInfo());
 		final IExperimentAgent exp = agent.getExperiment();
 		final int nbThreads = exp.getSimulationPopulation().getNumberOfActiveThreads();
-		if (agent.getScope().isOnUserHold())
+		if (agent.getScope().isOnUserHold()) {
 			sb.append(" (waiting)");
-		else if (nbThreads > 1)
+		} else if (nbThreads > 1) {
 			sb.append(" (" + nbThreads + " threads)");
+		}
+		final IExperimentPlan plan = exp.getSpecies();
+		if (plan.shouldBeBenchmarked()) {
+			sb.append(" [benchmarking]");
+		}
 		return sb.toString();
 	}
 

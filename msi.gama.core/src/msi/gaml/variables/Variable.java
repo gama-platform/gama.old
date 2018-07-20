@@ -26,7 +26,9 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.benchmark.IStopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.IGamaHelper;
@@ -450,7 +452,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public void initializeWith(final IScope scope, final IAgent a, final Object v) throws GamaRuntimeException {
-		try {
+		try (IStopWatch w = GAMA.benchmarck(scope, this)) {
 			scope.setCurrentSymbol(this);
 			if (v != null) {
 				_setVal(a, scope, v);

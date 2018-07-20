@@ -515,7 +515,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			chartoutput.setUseYLabels(scope, expval);
 		}
 
-		dataDeclaration.executeOn(scope);
+		scope.execute(dataDeclaration);
 
 		chartoutput.initChart_post_data_init(scope);
 		chartoutput.updateOutput(scope);
@@ -748,7 +748,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public void saveHistory() {
 		if (!getDataSet().keepsHistory()) { return; }
-		final IScope scope = this.getDisplayOutput().getScope().copy("Save");
+		final IScope scope = this.getDisplayOutput().getScope().copy("in save");
 		if (scope == null) { return; }
 		try {
 			this.getDataSet().saveHistory(scope, this.getName() + "_cycle_" + scope.getClock().getCycle());

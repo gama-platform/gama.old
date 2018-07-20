@@ -19,7 +19,6 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
@@ -277,6 +276,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		return sb.toString();
 	}
 
+	public final void serializeNoRecursion(final StringBuilder sb, final IDescription symbolDescription,
+			final boolean includingBuiltIn) {
+		serializeKeyword((SymbolDescription) symbolDescription, sb, includingBuiltIn);
+		serializeFacets((SymbolDescription) symbolDescription, sb, includingBuiltIn);
+	}
+
 	protected void serialize(final SymbolDescription symbolDescription, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 		serializeKeyword(symbolDescription, sb, includingBuiltIn);
@@ -293,13 +298,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			final boolean includingBuiltIn) {
 
 		final StringBuilder childBuilder = new StringBuilder();
-		symbolDescription.visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				serializeChild(desc, childBuilder, includingBuiltIn);
-				return true;
-			}
+		symbolDescription.visitChildren(desc -> {
+			serializeChild(desc, childBuilder, includingBuiltIn);
+			return true;
 		});
 		if (childBuilder.length() == 0) {
 			sb.append(';');
@@ -407,13 +408,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param plugins
 	 */
 	protected void collectMetaInformationInChildren(final SymbolDescription desc, final GamlProperties plugins) {
-		desc.visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription s) {
-				s.collectMetaInformation(plugins);
-				return true;
-			}
+		desc.visitChildren(s -> {
+			s.collectMetaInformation(plugins);
+			return true;
 		});
 
 	}

@@ -63,6 +63,7 @@ public class CleanupHelper {
 
 	static class ForceMaximizeRestoration {
 		public static void run() {
+
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 			for (final IWorkbenchWindow window : windows) {
 				final IWorkbenchPage page = window.getActivePage();
@@ -137,7 +138,7 @@ public class CleanupHelper {
 		@Override
 		public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
-			WorkbenchHelper.asyncRun(() -> {
+			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
 				// RearrangeMenus.run();
 				final IContributionItem[] items = w.getCoolBarManager2().getItems();
 				// System.out.println(Arrays.toString(items));
@@ -168,15 +169,6 @@ public class CleanupHelper {
 				w.getMenuBarManager().update(true);
 			});
 		}
-
-		// private void exploreMenus(final IMenuManager m, final String before) {
-		// for (final IContributionItem o : m.getItems()) {
-		// System.out.println(before + "Item " + o.getClass().getSimpleName() + " " + o.getId());
-		// if (o instanceof IMenuManager)
-		// exploreMenus((IMenuManager) o, "===");
-		// }
-		//
-		// }
 
 		@Override
 		public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
@@ -264,7 +256,7 @@ public class CleanupHelper {
 		};
 
 		public static void run() {
-			WorkbenchHelper.run(() -> {
+			WorkbenchHelper.runInUI("Rearranging menus", 0, m -> {
 				final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
 				if (window instanceof WorkbenchWindow) {
 					final IMenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();

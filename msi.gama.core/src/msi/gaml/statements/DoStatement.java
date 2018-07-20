@@ -25,6 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
@@ -198,8 +199,9 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			final String action = desc.getLitteral(ACTION);
 			final boolean isSuperInvocation = desc.isSuperInvocation();
 			SpeciesDescription sd = desc.getSpeciesContext();
-			if (sd != null && isSuperInvocation)
+			if (sd != null && isSuperInvocation) {
 				sd = sd.getParent();
+			}
 			if (sd == null) { return; }
 			// TODO What about actions defined in a macro species (not the
 			// global one, which is filtered before) ?
@@ -240,13 +242,14 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final boolean isSuperInvocation = getDescription().isSuperInvocation();
 		ISpecies context = scope.getAgent().getSpecies();
-		if (isSuperInvocation)
+		if (isSuperInvocation) {
 			context = context.getParentSpecies();
+		}
 		final IStatement.WithArgs executer = context.getAction(name);
 		Object result = null;
 		if (executer != null) {
-			executer.setRuntimeArgs(scope, args);
-			result = executer.executeOn(scope);
+			final ExecutionResult er = scope.execute(executer, args);
+			result = er.getValue();
 		} else if (function != null) {
 			result = function.value(scope);
 		}

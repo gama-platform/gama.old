@@ -127,7 +127,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public Java2DDisplaySurface(final Object... args) {
 		output = (LayeredDisplayOutput) args[0];
 		output.setSurface(this);
-		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
+		setDisplayScope(output.getScope().copy("in java2D display"));
 		output.getData().addListener(this);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 		setDoubleBuffered(true);
@@ -232,7 +232,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void outputReloaded() {
 		// We first copy the scope
-		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
+		setDisplayScope(output.getScope().copy("in java2D display "));
 		// We disable error reporting
 		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) {
 			getScope().disableErrorReporting();

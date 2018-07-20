@@ -79,7 +79,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public boolean init(final IScope scope) {
-		setScope(scope.copy("of " + this));
+		setScope(scope.copy("of " + getDescription().getKeyword() + " " + getName()));
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if (refresh != null) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
@@ -112,10 +112,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	// @Override
 	@Override
 	public boolean isRefreshable() {
-		if (!isOpen())
-			return false;
-		if (isPaused())
-			return false;
+		if (!isOpen()) { return false; }
+		if (isPaused()) { return false; }
 		final IScope scope = getScope();
 		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0
 				&& scope.getClock().getCycle() % refreshRate == 0;

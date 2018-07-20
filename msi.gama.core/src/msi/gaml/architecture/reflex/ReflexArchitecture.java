@@ -21,6 +21,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.statements.IStatement;
@@ -50,34 +51,40 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	protected void clearBehaviors() {
-		if (_inits != null)
+		if (_inits != null) {
 			_inits.clear();
+		}
 		_inits = null;
-		if (_aborts != null)
+		if (_aborts != null) {
 			_aborts.clear();
+		}
 		_aborts = null;
-		if (_reflexes != null)
+		if (_reflexes != null) {
 			_reflexes.clear();
+		}
 		_reflexes = null;
 	}
 
 	public void addBehavior(final IStatement c) {
 		switch (c.getKeyword()) {
 			case IKeyword.INIT:
-				if (_inits == null)
+				if (_inits == null) {
 					_inits = new ArrayList<>();
+				}
 				_inits.add(0, c);
 				return;
 
 			case IKeyword.ABORT:
-				if (_aborts == null)
+				if (_aborts == null) {
 					_aborts = new ArrayList<>();
+				}
 				_aborts.add(0, c);
 				return;
 			case IKeyword.REFLEX:
 			case IKeyword.TEST:
-				if (_reflexes == null)
+				if (_reflexes == null) {
 					_reflexes = new ArrayList<>();
+				}
 				_reflexes.add(c);
 				break;
 			default:
@@ -92,24 +99,21 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	protected final Object executeReflexes(final IScope scope) throws GamaRuntimeException {
-		if (_reflexes == null)
-			return null;
+		if (_reflexes == null) { return null; }
 		Object result = null;
 		for (final IStatement r : _reflexes) {
-			if (!scope.interrupted()) {
-				result = r.executeOn(scope);
-			}
+			final ExecutionResult er = scope.execute(r);
+			if (!er.passed()) { return result; }
+			result = er.getValue();
 		}
 		return result;
 	}
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		if (_inits == null)
-			return true;
+		if (_inits == null) { return true; }
 		for (final IStatement init : _inits) {
-			if (scope.interrupted()) { return false; }
-			init.executeOn(scope);
+			if (!scope.execute(init).passed()) { return false; }
 		}
 		return true;
 	}
@@ -118,8 +122,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	public boolean abort(final IScope scope) throws GamaRuntimeException {
 		if (_aborts == null) { return true; }
 		for (final IStatement init : _aborts) {
-			if (scope.interrupted()) { return false; }
-			init.executeOn(scope);
+			if (!scope.execute(init).passed()) { return false; }
 		}
 		return true;
 	}

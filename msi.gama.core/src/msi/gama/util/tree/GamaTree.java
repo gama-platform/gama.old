@@ -74,14 +74,14 @@ public class GamaTree<T> {
 		}
 	}
 
-	private void visitPreOrder(final GamaNode<T> node, final Consumer<GamaNode<T>> visitor) {
+	public void visitPreOrder(final GamaNode<T> node, final Consumer<GamaNode<T>> visitor) {
 		visitor.accept(node);
 		for (final GamaNode<T> child : node.getChildren()) {
 			visitPreOrder(child, visitor);
 		}
 	}
 
-	private void visitPostOrder(final GamaNode<T> node, final Consumer<GamaNode<T>> visitor) {
+	public void visitPostOrder(final GamaNode<T> node, final Consumer<GamaNode<T>> visitor) {
 		for (final GamaNode<T> child : node.getChildren()) {
 			visitPostOrder(child, visitor);
 		}

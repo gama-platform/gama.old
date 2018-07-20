@@ -23,7 +23,7 @@ public class EachExpression extends VariableExpression {
 	}
 
 	@Override
-	public Object value(final IScope scope) {
+	public Object _value(final IScope scope) {
 		// see Issue #return scope.getVarValue(getName());
 		return scope.getEach();
 	}

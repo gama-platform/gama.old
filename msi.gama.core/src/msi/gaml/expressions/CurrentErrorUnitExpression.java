@@ -20,10 +20,9 @@ public class CurrentErrorUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public String value(final IScope scope) {
+	public String _value(final IScope scope) {
 		final GamaRuntimeException e = scope.getCurrentError();
-		if (e == null)
-			return "nil";
+		if (e == null) { return "nil"; }
 		return e.getMessage();
 	}
 

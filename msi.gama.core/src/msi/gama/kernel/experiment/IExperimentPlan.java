@@ -18,6 +18,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -104,5 +105,10 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract boolean isAutorun();
 
 	public abstract boolean isTest();
+
+	@Override
+	public ExperimentDescription getDescription();
+
+	public abstract boolean shouldBeBenchmarked();
 
 }

@@ -50,7 +50,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	}
 
 	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
+	public Object _value(final IScope scope) throws GamaRuntimeException {
 		final String name = getName();
 		// We first try in the 'normal' scope (so that regular global vars are still accessed by agents of micro-models,
 		// see #2238)

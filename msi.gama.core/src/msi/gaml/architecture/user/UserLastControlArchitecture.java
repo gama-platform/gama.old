@@ -34,7 +34,7 @@ public class UserLastControlArchitecture extends UserControlArchitecture {
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		if (super.init(scope)) {
 			if (initPanel != null) {
-				initPanel.executeOn(scope);
+				scope.execute(initPanel);
 			}
 		} else {
 			return false;
