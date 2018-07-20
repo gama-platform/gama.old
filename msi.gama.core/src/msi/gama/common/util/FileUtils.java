@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 
 import com.google.common.collect.Iterables;
 
@@ -41,16 +42,17 @@ public class FileUtils {
 	 * @return true, if is absolute path
 	 */
 	private static boolean isAbsolutePath(final String filePath) {
-		final File[] roots = File.listRoots();
-		for (int i = 0; i < roots.length; i++) {
-			if (filePath.startsWith(roots[i].getAbsolutePath())) { return true; }
-		}
-		return false;
+		// Fixes #2456
+		return Paths.get(filePath).isAbsolute();
+		// final File[] roots = File.listRoots();
+		// for (int i = 0; i < roots.length; i++) {
+		// if (filePath.startsWith(roots[i].getAbsolutePath())) { return true; }
+		// }
+		// return false;
 	}
 
 	private static String withTrailingSep(final String path) {
-		if (path.endsWith("/"))
-			return path;
+		if (path.endsWith("/")) { return path; }
 		return path + "/";
 	}
 
@@ -66,9 +68,9 @@ public class FileUtils {
 		// OutputManager.debug("absoluteFilePath before = " + absoluteFilePath);
 
 		final File[] roots = File.listRoots();
-		for (int i = 0; i < roots.length; i++) {
-			if (absoluteFilePath.startsWith(roots[i].getAbsolutePath())) { return absoluteFilePath
-					.substring(roots[i].getAbsolutePath().length(), absoluteFilePath.length()); }
+		for (final File root : roots) {
+			if (absoluteFilePath.startsWith(root.getAbsolutePath())) { return absoluteFilePath
+					.substring(root.getAbsolutePath().length(), absoluteFilePath.length()); }
 		}
 		return absoluteFilePath;
 	}
@@ -153,12 +155,13 @@ public class FileUtils {
 			}
 			// We havent found the file, but it may not exist. In that case, the
 			// first directory is used as a reference.
-			if (!mustExist)
+			if (!mustExist) {
 				try {
 					return new File(Iterables.get(baseDirectories, 0) + filePath).getCanonicalPath();
 				} catch (final IOException e) {
 					throw ex;
 				}
+			}
 		}
 
 		throw ex;
@@ -168,33 +171,31 @@ public class FileUtils {
 	 * Guess whether given file is binary. Just checks for anything under 0x09.
 	 */
 	public static boolean isBinaryFile(final IScope scope, final File f) {
-		if (f == null || !f.exists())
-			return false;
+		if (f == null || !f.exists()) { return false; }
 		byte[] data;
 		try (FileInputStream in = new FileInputStream(f)) {
 			int size = in.available();
-			if (size > 1024)
+			if (size > 1024) {
 				size = 1024;
+			}
 			data = new byte[size];
 			in.read(data);
 			int ascii = 0;
 			int other = 0;
 
-			for (int i = 0; i < data.length; i++) {
-				final byte b = data[i];
-				if (b < 0x09)
-					return true;
+			for (final byte b : data) {
+				if (b < 0x09) { return true; }
 
-				if (b == 0x09 || b == 0x0A || b == 0x0C || b == 0x0D)
+				if (b == 0x09 || b == 0x0A || b == 0x0C || b == 0x0D) {
 					ascii++;
-				else if (b >= 0x20 && b <= 0x7E)
+				} else if (b >= 0x20 && b <= 0x7E) {
 					ascii++;
-				else
+				} else {
 					other++;
+				}
 			}
 
-			if (other == 0)
-				return false;
+			if (other == 0) { return false; }
 
 			return 100 * other / (ascii + other) > 95;
 		} catch (final IOException e) {
