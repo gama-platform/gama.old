@@ -386,6 +386,34 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		super.enterScope(scope);
 	}
 
+	IPopulation findPopulation(final IScope scope) {
+		final IAgent executor = scope.getAgent();
+		if (species == null) { return executor.getPopulationFor(description.getSpeciesContext().getName()); }
+		ISpecies s = Cast.asSpecies(scope, species.value(scope));
+		if (s == null) {// A last attempt in order to fix #2466
+			final String potentialSpeciesName = species.getDenotedType().getSpeciesName();
+			if (potentialSpeciesName != null) {
+				s = scope.getModel().getSpecies(potentialSpeciesName);
+			}
+		}
+		if (s == null) { throw GamaRuntimeException.error(
+				"No population of " + species.serialize(false) + " is accessible in the context of " + executor + ".",
+				scope); }
+		IPopulation pop = executor.getPopulationFor(s);
+		// hqnghi population of micro-model's experiment is not exist, we
+		// must create the new one
+		if (pop == null && s instanceof ExperimentPlan && executor instanceof IMacroAgent) {
+			final ExperimentPlan ep = (ExperimentPlan) s;
+			pop = ep.new ExperimentPopulation(s);
+			final IScope sc = ep.getExperimentScope();
+			pop.initializeFor(sc);
+			((IMacroAgent) executor).addExternMicroPopulation(
+					s.getDescription().getModelDescription().getAlias() + "." + s.getName(), pop);
+		}
+		// end-hqnghi
+		return pop;
+	}
+
 	@Override
 	public IList<? extends IAgent> privateExecuteIn(final IScope scope) {
 
@@ -394,28 +422,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if (from == null && max != null && max <= 0) { return GamaListFactory.create(); }
 
 		// Next, we compute the species to instantiate
-		IPopulation pop;
-		final IAgent executor = scope.getAgent();
-		if (species == null) {
-			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
-		} else {
-			final ISpecies s = Cast.asSpecies(scope, species.value(scope));
-			if (s == null) { throw GamaRuntimeException.error("No population of " + species.serialize(false)
-					+ " is accessible in the context of " + executor + ".", scope); }
-			pop = executor.getPopulationFor(s);
-			// hqnghi population of micro-model's experiment is not exist, we
-			// must create the new one
-			if (pop == null && s instanceof ExperimentPlan && executor instanceof IMacroAgent) {
-				final ExperimentPlan ep = (ExperimentPlan) s;
-				pop = ep.new ExperimentPopulation(s);
-				final IScope sc = ep.getExperimentScope();
-				pop.initializeFor(sc);
-				((IMacroAgent) executor).addExternMicroPopulation(
-						s.getDescription().getModelDescription().getAlias() + "." + s.getName(), pop);
-			}
-			// end-hqnghi
-		}
-		// scope.addVarWithValue(IKeyword.MYSELF, executor);
+		final IPopulation pop = findPopulation(scope);
+
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
