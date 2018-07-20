@@ -1,19 +1,21 @@
 package msi.gama.runtime.benchmark;
 
+import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class StopWatch implements IStopWatch {
+public class StopWatch implements Closeable {
+	public final static StopWatch NULL = new StopWatch(BenchmarkRecord.NULL, BenchmarkRecord.NULL);
 	final static long notRunning = -1;
-	private final BenchmarkRecord numbers;
+	private final BenchmarkRecord numbers, scope;
 	private long lastStart = notRunning;
 	private final AtomicInteger reentrant = new AtomicInteger();
 
-	StopWatch(final BenchmarkRecord numbers) {
+	StopWatch(final BenchmarkRecord scope, final BenchmarkRecord numbers) {
 		this.numbers = numbers;
+		this.scope = scope;
 	}
 
-	@Override
-	public IStopWatch start() {
+	public StopWatch start() {
 		if (lastStart == notRunning) {
 			lastStart = System.currentTimeMillis();
 		}
@@ -24,11 +26,12 @@ public class StopWatch implements IStopWatch {
 	@Override
 	public void close() {
 		if (lastStart != notRunning) {
-			reentrant.decrementAndGet();
-			if (reentrant.intValue() == 0) {
-				final long milli = System.currentTimeMillis();
-				numbers.addMilliseconds(milli - lastStart);
-				numbers.increaseCalls();
+			final int value = reentrant.decrementAndGet();
+			if (value == 0) {
+				final long milli = System.currentTimeMillis() - lastStart;
+				numbers.milliseconds.add(milli);
+				scope.milliseconds.add(milli);
+				numbers.times.increment();
 				lastStart = notRunning;
 			}
 		}

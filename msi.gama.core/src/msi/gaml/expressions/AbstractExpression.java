@@ -12,7 +12,7 @@ package msi.gaml.expressions;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.benchmark.IStopWatch;
+import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -121,7 +121,7 @@ public abstract class AbstractExpression implements IExpression {
 
 	@Override
 	public final Object value(final IScope scope) {
-		try (IStopWatch w = GAMA.benchmarck(scope, this)) {
+		try (StopWatch w = GAMA.benchmark(scope, this)) {
 			return _value(scope);
 		}
 	}

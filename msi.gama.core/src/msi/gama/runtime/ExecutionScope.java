@@ -28,7 +28,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.runtime.benchmark.IStopWatch;
+import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
@@ -57,7 +57,6 @@ public class ExecutionScope implements IScope {
 	private static int SCOPE_NUMBER = 0;
 
 	private final String name;
-
 	protected IExecutionContext executionContext;
 	protected AgentExecutionContext agentContext;
 	protected final SpecialContext additionalContext = new SpecialContext();
@@ -369,7 +368,7 @@ public class ExecutionScope implements IScope {
 		final IAgent caller = this.getAgent();
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
-		try (IStopWatch w = GAMA.benchmarck(this, statement)) {
+		try (StopWatch w = GAMA.benchmark(this, statement)) {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
 			if (args != null && statement instanceof IStatement.WithArgs) {
@@ -456,7 +455,7 @@ public class ExecutionScope implements IScope {
 	}
 
 	private <S extends IStepable> ExecutionResult runAndCatch(final S a, final Function<S, ExecutionResult> f) {
-		try (IStopWatch w = GAMA.benchmarck(this, a)) {
+		try (StopWatch w = GAMA.benchmark(this, a)) {
 			return f.apply(a);
 		} catch (final Throwable ex) {
 			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);

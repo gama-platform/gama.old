@@ -26,7 +26,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.benchmark.IStopWatch;
+import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -174,7 +174,7 @@ public abstract class GamaExecutorService {
 
 	private static <A extends IShape> Boolean doStep(final IScope scope, final A[] array, final int threshold,
 			final ISpecies species) {
-		try (final IStopWatch w = GAMA.benchmarck(scope, species)) {
+		try (final StopWatch w = GAMA.benchmark(scope, species)) {
 			int concurrency = threshold;
 			if (array.length <= threshold) {
 				concurrency = 0;

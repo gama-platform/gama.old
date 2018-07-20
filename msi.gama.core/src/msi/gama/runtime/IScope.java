@@ -12,6 +12,7 @@ package msi.gama.runtime;
 import java.io.Closeable;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
@@ -39,7 +40,7 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IScope extends Closeable {
+public interface IScope extends Closeable, IBenchmarkable {
 
 	/**
 	 * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be returned
@@ -279,6 +280,11 @@ public interface IScope extends Closeable {
 	 * @return the name
 	 */
 	public abstract String getName();
+
+	@Override
+	default String getNameForBenchmarks() {
+		return getName();
+	}
 
 	/**
 	 * Copy.

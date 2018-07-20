@@ -59,7 +59,7 @@ import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.benchmark.IStopWatch;
+import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -221,7 +221,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public void updateVariables(final IScope scope, final IAgent a) {
 		for (final IVariable v : updatableVars) {
-			try (IStopWatch w = GAMA.benchmarck(scope, v)) {
+			try (StopWatch w = GAMA.benchmark(scope, v)) {
 				scope.setCurrentSymbol(v);
 				scope.setAgentVarValue(a, v.getName(), v.getUpdatedValue(scope));
 			}

@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -26,14 +26,12 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.benchmark.Benchmark;
-import msi.gama.runtime.benchmark.IStopWatch;
+import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.IExecutable;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -448,26 +446,11 @@ public class GAMA {
 	 * Benchmarking utilities
 	 *
 	 */
-	public static IStopWatch benchmarck(final IScope scope, final IStepable symbol) {
-		if (benchmarkAgent == null) { return IStopWatch.NULL; }
-		if (symbol instanceof ISymbol) { return benchmarkAgent.record(scope, (ISymbol) symbol); }
-		return IStopWatch.NULL;
-	}
-
-	public static IStopWatch benchmarck(final IScope scope, final ISymbol symbol) {
-		if (benchmarkAgent == null) { return IStopWatch.NULL; }
-		return benchmarkAgent.record(scope, symbol);
-	}
-
-	public static IStopWatch benchmarck(final IScope scope, final IExecutable symbol) {
-		if (benchmarkAgent == null) { return IStopWatch.NULL; }
-		if (symbol instanceof ISymbol) { return benchmarkAgent.record(scope, (ISymbol) symbol); }
-		return IStopWatch.NULL;
-	}
-
-	public static IStopWatch benchmarck(final IScope scope, final IExpression expression) {
-		if (benchmarkAgent == null) { return IStopWatch.NULL; }
-		return benchmarkAgent.record(scope, expression);
+	public static StopWatch benchmark(final IScope scope, final Object symbol) {
+		if (benchmarkAgent == null || symbol == null || scope == null) { return StopWatch.NULL; }
+		if (symbol instanceof IBenchmarkable) { return benchmarkAgent.record(scope, (IBenchmarkable) symbol); }
+		if (symbol instanceof ISymbol) { return benchmarkAgent.record(scope, ((ISymbol) symbol).getDescription()); }
+		return StopWatch.NULL;
 	}
 
 	public static void startBenchmark(final IExperimentPlan experiment) {
