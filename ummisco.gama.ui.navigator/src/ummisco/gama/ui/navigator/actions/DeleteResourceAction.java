@@ -12,21 +12,16 @@ package ummisco.gama.ui.navigator.actions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -51,15 +46,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.ide.undo.DeleteResourcesOperation;
-import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.LTKLauncher;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.progress.WorkbenchJob;
+
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.navigator.contents.ResourceManager;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -216,13 +210,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".DeleteResourceAction";//$NON-NLS-1$
 
-	private IShellProvider shellProvider;
-
-	/**
-	 * Whether or not we are deleting content for projects.
-	 */
-	private boolean deleteContent;
-
 	/**
 	 * Flag that allows testing mode ... it won't pop up the project delete dialog, and will return "delete all content"
 	 * .
@@ -242,7 +229,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		super(IDEWorkbenchMessages.DeleteResourceAction_text);
 		Assert.isNotNull(provider);
 		initAction();
-		setShellProvider(provider);
+		// setShellProvider(provider);
 	}
 
 	/**
@@ -254,9 +241,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		setId(ID);
 	}
 
-	private void setShellProvider(final IShellProvider provider) {
-		shellProvider = provider;
-	}
+	// private void setShellProvider(final IShellProvider provider) {
+	// // shellProvider = provider;
+	// }
 
 	/**
 	 * Returns whether delete can be performed on the current selection.
@@ -324,68 +311,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	}
 
 	/**
-	 * Asks the user to confirm a delete operation.
-	 *
-	 * @param resources
-	 *            the selected resources
-	 * @return <code>true</code> if the user says to go ahead, and <code>false</code> if the deletion should be
-	 *         abandoned
-	 */
-	private boolean confirmDelete(final List<? extends IResource> resources) {
-		if (containsOnlyProjects(resources)) { return confirmDeleteProjects(resources); }
-		return confirmDeleteNonProjects(resources);
-
-	}
-
-	/**
-	 * Asks the user to confirm a delete operation, where the selection contains no projects.
-	 *
-	 * @param resources
-	 *            the selected resources
-	 * @return <code>true</code> if the user says to go ahead, and <code>false</code> if the deletion should be
-	 *         abandoned
-	 */
-	private boolean confirmDeleteNonProjects(final List<? extends IResource> resources) {
-		String title;
-		String msg;
-		if (resources.size() == 1) {
-			title = IDEWorkbenchMessages.DeleteResourceAction_title1;
-			final IResource resource = resources.get(0);
-			if (resource.isLinked()) {
-				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResource1, resource.getName());
-			} else {
-				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirm1, resource.getName());
-			}
-		} else {
-			title = IDEWorkbenchMessages.DeleteResourceAction_titleN;
-			if (containsLinkedResource(resources)) {
-				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmLinkedResourceN,
-						Integer.valueOf(resources.size()));
-			} else {
-				msg = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmN, new Integer(resources.size()));
-			}
-		}
-		return MessageDialog.openQuestion(shellProvider.getShell(), title, msg);
-	}
-
-	/**
-	 * Asks the user to confirm a delete operation, where the selection contains only projects. Also remembers whether
-	 * project content should be deleted.
-	 *
-	 * @param resources
-	 *            the selected resources
-	 * @return <code>true</code> if the user says to go ahead, and <code>false</code> if the deletion should be
-	 *         abandoned
-	 */
-	private boolean confirmDeleteProjects(final List<? extends IResource> resources) {
-		final DeleteProjectDialog dialog = new DeleteProjectDialog(shellProvider.getShell(), resources);
-		dialog.setTestingMode(fTestingMode);
-		final int code = dialog.open();
-		deleteContent = dialog.getDeleteContent();
-		return code == 0; // YES
-	}
-
-	/**
 	 * Returns a bit-mask containing the types of resources in the selection.
 	 *
 	 * @param resources
@@ -399,105 +324,30 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return types;
 	}
 
+	/**
+	 * Returns the elements in the current selection that are <code>IResource</code>s.
+	 *
+	 * @return list of resource elements (element type: <code>IResource</code>)
+	 */
+	@Override
+	protected List<? extends IResource> getSelectedResources() {
+		final List<IResource> list = new ArrayList<>();
+		for (final IResource r : super.getSelectedResources()) {
+			list.add(r);
+			if (ResourceManager.isFile(r)) {
+				list.addAll(FileMetaDataProvider.getInstance().getSupportFilesOf((IFile) r));
+			}
+		}
+		return list;
+	}
+
 	@Override
 	public void run() {
 		final List<? extends IResource> resources = getSelectedResources();
-
-		if (!fTestingMode) {
-			if (LTKLauncher.openDeleteWizard(getStructuredSelection())) {
-				closeMatchingEditors(resources, true);
-				return;
-			}
+		if (LTKLauncher.openDeleteWizard(new StructuredSelection(resources))) {
+			closeMatchingEditors(resources, true);
+			return;
 		}
-
-		// WARNING: do not query the selected resources more than once
-		// since the selection may change during the run,
-		// e.g. due to window activation when the prompt dialog is dismissed.
-		// For more details, see Bug 60606 [Navigator] (data loss) Navigator
-		// deletes/moves the wrong file
-		if (!confirmDelete(resources)) { return; }
-
-		final Job deletionCheckJob = new Job(IDEWorkbenchMessages.DeleteResourceAction_checkJobName) {
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				if (resources.isEmpty()) { return Status.CANCEL_STATUS; }
-				scheduleDeleteJob(resources);
-				return Status.OK_STATUS;
-			}
-
-			@Override
-			public boolean belongsTo(final Object family) {
-				if (IDEWorkbenchMessages.DeleteResourceAction_jobName.equals(family)) { return true; }
-				return super.belongsTo(family);
-			}
-		};
-
-		deletionCheckJob.schedule();
-
-	}
-
-	/**
-	 * Schedule a job to delete the resources to delete.
-	 *
-	 * @param resourcesToDelete
-	 */
-	private void scheduleDeleteJob(final List<? extends IResource> resourcesToDelete) {
-		// use a non-workspace job with a runnable inside so we can avoid
-		// periodic updates
-		final Job deleteJob = new Job(IDEWorkbenchMessages.DeleteResourceAction_jobName) {
-			@Override
-			public IStatus run(final IProgressMonitor monitor) {
-				try {
-					final DeleteResourcesOperation op = new DeleteResourcesOperation(
-							resourcesToDelete.toArray(new IResource[resourcesToDelete.size()]),
-							IDEWorkbenchMessages.DeleteResourceAction_operationLabel, deleteContent);
-					op.setModelProviderIds(getModelProviderIds());
-					// If we are deleting projects and their content, do not
-					// execute the operation in the undo history, since it cannot be
-					// properly restored. Just execute it directly so it won't be
-					// added to the undo history.
-					if (deleteContent && containsOnlyProjects(resourcesToDelete)) {
-						// We must compute the execution status first so that any user prompting
-						// or validation checking occurs. Do it in a syncExec because
-						// we are calling this from a Job.
-						final WorkbenchJob statusJob = new WorkbenchJob("Status checking") { //$NON-NLS-1$
-							@Override
-							public IStatus runInUIThread(final IProgressMonitor m) {
-								return op.computeExecutionStatus(m);
-							}
-
-						};
-
-						statusJob.setSystem(true);
-						statusJob.schedule();
-						try {// block until the status is ready
-							statusJob.join();
-						} catch (final InterruptedException e) {
-							// Do nothing as status will be a cancel
-						}
-
-						if (statusJob.getResult().isOK()) { return op.execute(monitor,
-								WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell())); }
-						return statusJob.getResult();
-					}
-					return PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, monitor,
-							WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
-				} catch (final ExecutionException e) {
-					if (e.getCause() instanceof CoreException) { return ((CoreException) e.getCause()).getStatus(); }
-					return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(), e);
-				}
-			}
-
-			@Override
-			public boolean belongsTo(final Object family) {
-				if (IDEWorkbenchMessages.DeleteResourceAction_jobName.equals(family)) { return true; }
-				return super.belongsTo(family);
-			}
-
-		};
-		deleteJob.setUser(true);
-		deleteJob.schedule();
 	}
 
 	/**
@@ -545,7 +395,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		final Runnable runnable = () -> SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorOnCloseEditors) {
 			@Override
 			public void run() {
-				final IWorkbenchWindow w = getActiveWindow();
+				final IWorkbenchWindow w = WorkbenchHelper.getWindow();
 				if (w != null) {
 					final List<IEditorReference> toClose = getMatchingEditors(resourceRoots, w, deletedOnly);
 					if (toClose.isEmpty()) { return; }
@@ -554,17 +404,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			}
 		});
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
-	}
-
-	private static IWorkbenchWindow getActiveWindow() {
-		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (w == null) {
-			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			if (windows.length > 0) {
-				w = windows[0];
-			}
-		}
-		return w;
 	}
 
 	private static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
