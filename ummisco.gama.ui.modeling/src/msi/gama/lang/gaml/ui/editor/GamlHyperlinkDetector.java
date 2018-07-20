@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
@@ -64,6 +65,8 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 				if (importUri.isPlatformResource()) {
 					fileOpener.openFileInWorkspace(importUri);
 					return;
+				} else if (importUri.isFile()) {
+					fileOpener.openFileInFileSystem(importUri);
 				}
 
 			} catch (final PartInitException e) {
@@ -110,9 +113,21 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	public URI getURI(final StringLiteral resolved) {
 		final String target = resolved.getOp();
 		if (target == null) { return null; }
-		final URI iu = URI.createURI(target, false).resolve(resolved.eResource().getURI());
-		if (isFileExisting(iu)) { return iu; }
-		return null;
+		final java.io.File f = new java.io.File(target);
+		if (f.exists()) {
+			// We have an absolute file
+			final URI fileURI = URI.createFileURI(target);
+			final URI platformURI = URI.createFileURI(Platform.getInstanceLocation().getURL().toString());
+
+			System.out.println(platformURI);
+			return fileURI;
+		} else {
+			final URI first = URI.createURI(target, false);
+			if (!first.isRelative() && isFileExisting(first)) { return first; }
+			final URI iu = first.resolve(resolved.eResource().getURI());
+			if (isFileExisting(iu)) { return iu; }
+			return null;
+		}
 	}
 
 	private IHyperlink[] importHyperlinks(final IXtextDocument document, final IRegion region) {
@@ -142,8 +157,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			} else if (resolved instanceof HeadlessExperiment) {
 				importUri = ((HeadlessExperiment) resolved).getImportURI();
 			}
-			if (importUri == null)
-				return NO_HYPERLINKS;
+			if (importUri == null) { return NO_HYPERLINKS; }
 			final URI iu2 = URI.createURI(importUri, false).resolve(resource.getURI());
 			IRegion importUriRegion;
 			try {
@@ -158,9 +172,11 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	}
 
 	public boolean isFileExisting(final URI uri) {
+		if (uri.isFile()) {
+			if (new java.io.File(java.net.URI.create(uri.toString())).exists()) { return true; }
+		}
 		final IFile file = getFile(uri);
-		if (file != null)
-			return file.exists();
+		if (file != null) { return file.exists(); }
 		return false;
 	}
 
