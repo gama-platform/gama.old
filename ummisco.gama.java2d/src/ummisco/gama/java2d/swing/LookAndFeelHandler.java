@@ -215,7 +215,7 @@ public class LookAndFeelHandler {
 			laf = UIManager.getSystemLookAndFeelClassName();
 		} else if ( LAFChoiceNativeSystemPreferGtk.equals(laf) ) {
 			laf = UIManager.getSystemLookAndFeelClassName();
-			if ( PlatformHelper.isGtk() && laf.equals(UIManager.getCrossPlatformLookAndFeelClassName()) ) {
+			if ( PlatformHelper.isLinux() && laf.equals(UIManager.getCrossPlatformLookAndFeelClassName()) ) {
 
 				laf = GTK_LOOK_AND_FEEL_NAME;
 			}

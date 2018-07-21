@@ -171,7 +171,7 @@ public class DisplaySurfaceMenu {
 	static int MAX_RETRIES = 10;
 
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
-		if (!PlatformHelper.isGtk())
+		if (!PlatformHelper.isLinux())
 			return;
 		WorkbenchHelper.asyncRun(() -> {
 			if (!menu.isVisible() && retriesRemaining > 0) {

@@ -538,7 +538,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
-				if (PlatformHelper.isWin32()) {
+				if (PlatformHelper.isWindows()) {
 					toolbar.sep(4, SWT.LEFT);
 				}
 

@@ -117,7 +117,7 @@ public class NavigatorSearchControl {
 
 	public NavigatorSearchControl fill(final GamaToolbarSimple toolbar) {
 		Composite parent = toolbar;
-		if (PlatformHelper.isWin32()) {
+		if (PlatformHelper.isWindows()) {
 			parent = new Composite(toolbar, SWT.NONE);
 			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 24;

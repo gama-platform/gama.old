@@ -35,7 +35,7 @@ public class SwtPopupHandler {
 	// shell to own the popup. Note that this means the SWT menu
 	// needs to be created by the client with the parent returned by
 	// AwtEnvironment#getSwtPopupParent.
-	private static final boolean CREATE_POPUP_PARENT_SHELL = PlatformHelper.isGtk();
+	private static final boolean CREATE_POPUP_PARENT_SHELL = PlatformHelper.isLinux();
 
 	// Gtk will not display popup menus that are made visible by an
 	// AWT mouse click (mouse pressed event), unless we wait until
@@ -44,7 +44,7 @@ public class SwtPopupHandler {
 	// This flag enables the delay
 	// TODO: this flag effectively changes the popup trigger from mouse down to
 	// mouse up (can it be avoided?)
-	private static final boolean DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS = PlatformHelper.isGtk();
+	private static final boolean DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS = PlatformHelper.isLinux();
 
 	// TODO: in some relatively rare cases, on GTK, SWT popups are not dismissed
 	// It can happen if you try to dismiss it with a left click while

@@ -219,9 +219,9 @@ public final class AwtEnvironment {
 	 */
 
 	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN =
-			PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || // GTK:
+			PlatformHelper.isLinux() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || // GTK:
 																											// pre-Java1.6
-					PlatformHelper.isWin32(); // Win32: all JDKs
+					PlatformHelper.isWindows(); // Win32: all JDKs
 
 	private void initSwingPopupsDismissal() {
 		if (HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN) {
@@ -443,7 +443,7 @@ public final class AwtEnvironment {
 		// avoid flicker, temporarily set the size to 0.
 		// (Note: the shell location must be correctly set before this will
 		// work)
-		if (PlatformHelper.isGtk()) {
+		if (PlatformHelper.isLinux()) {
 			shell.setSize(0, 0);
 			shell.setVisible(true);
 			shell.setVisible(false);
@@ -483,7 +483,7 @@ public final class AwtEnvironment {
 	 * @return
 	 */
 	public Shell getSwtPopupParent(final SwingControl control) {
-		if (PlatformHelper.isGtk()) {
+		if (PlatformHelper.isLinux()) {
 			if (true && popupParent == null) {
 				// System.err.println("*** Creating separate popup parent
 				// shell");

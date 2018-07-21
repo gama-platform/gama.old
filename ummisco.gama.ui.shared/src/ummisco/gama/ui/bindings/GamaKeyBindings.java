@@ -34,7 +34,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class GamaKeyBindings implements Listener {
 
-	public static int COMMAND = PlatformHelper.isCocoa() ? SWT.COMMAND : SWT.CTRL;
+	public static int COMMAND = PlatformHelper.isMac() ? SWT.COMMAND : SWT.CTRL;
 	public static String SEARCH_STRING = format(COMMAND + SWT.SHIFT, 'H');
 	public static String PLAY_STRING = format(COMMAND, 'P');
 	public static String STEP_STRING = format(COMMAND + SWT.SHIFT, 'P');

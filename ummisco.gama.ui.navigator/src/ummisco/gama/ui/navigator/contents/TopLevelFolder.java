@@ -66,7 +66,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcons.create(!PlatformHelper.isGtk() ? iconName : iconName + "_16").image();
+		icon = GamaIcons.create(!PlatformHelper.isLinux() ? iconName : iconName + "_16").image();
 		statusIcon = GamaIcons.create(statusIconName).image();
 		initializeChildren();
 	}

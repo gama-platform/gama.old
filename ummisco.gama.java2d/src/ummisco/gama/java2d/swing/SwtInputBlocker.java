@@ -83,7 +83,7 @@ public class SwtInputBlocker {
 
 		// Add listener(s) to force focus back to the AWT dialog if SWT gets
 		// control
-		if (PlatformHelper.isGtk()) {
+		if (PlatformHelper.isLinux()) {
 			// Under GTK, focus events are not available to detect this
 			// condition,
 			// so use the activate event.
@@ -123,7 +123,7 @@ public class SwtInputBlocker {
 	private void close() {
 		assert shell != null;
 
-		if (PlatformHelper.isGtk()) {
+		if (PlatformHelper.isLinux()) {
 			while (!shellsWithActivateListener.isEmpty()) {
 				final Shell shell = (Shell) shellsWithActivateListener.pop();
 				if (!shell.isDisposed()) {

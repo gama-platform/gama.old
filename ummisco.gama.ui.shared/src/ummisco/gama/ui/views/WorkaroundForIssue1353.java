@@ -87,7 +87,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	public static void install() {
-		if (!PlatformHelper.isCocoa()) { return; }
+		if (!PlatformHelper.isMac()) { return; }
 		if (shell != null) { return; }
 		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " installed");
 		WorkbenchHelper.run(() -> {

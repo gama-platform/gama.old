@@ -135,7 +135,7 @@ public class FileOpener {
 			folder.accept((IResourceVisitor) resource -> {
 				if (resource.isLinked()) {
 					String p = resource.getLocation().toString();
-					if (PlatformHelper.isWin32()) {
+					if (PlatformHelper.isWindows()) {
 						// Bug in getLocation().toString() under Windows. The documentation states that
 						// the returned string is platform independant, but it is not
 						p = p.replace('/', '\\');
