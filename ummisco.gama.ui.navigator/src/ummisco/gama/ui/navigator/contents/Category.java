@@ -73,15 +73,18 @@ public class Category extends VirtualContent<WrappedFile> {
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (fileNames.isEmpty()) { return EMPTY; }
+		if (fileNames.isEmpty()) {
+			return EMPTY;
+		}
 		final List<LinkedFile> files = new ArrayList<>();
 		final IFile file = getParent().getResource();
 		final String filePath = file.getFullPath().toString();
+		URI uri = URI.createURI(filePath, false);
 		for (final String s : fileNames) {
 			if (s.startsWith("http")) {
 				continue;
 			}
-			final IFile newFile = FileOpener.getFile(s, URI.createURI(filePath, false));
+			final IFile newFile = FileOpener.getFile(s, uri);
 			if (newFile != null && newFile.exists()) {
 				final LinkedFile proxy = new LinkedFile(this, newFile, s);
 				files.add(proxy);
@@ -111,7 +114,8 @@ public class Category extends VirtualContent<WrappedFile> {
 	}
 
 	@Override
-	public void getSuffix(final StringBuilder sb) {}
+	public void getSuffix(final StringBuilder sb) {
+	}
 
 	@Override
 	public int findMaxProblemSeverity() {
