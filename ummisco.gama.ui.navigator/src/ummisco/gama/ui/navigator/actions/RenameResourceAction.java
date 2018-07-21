@@ -8,6 +8,7 @@
 package ummisco.gama.ui.navigator.actions;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -36,6 +37,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 
+import ummisco.gama.ui.navigator.contents.LinkedFile;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -193,8 +195,7 @@ public class RenameResourceAction extends WorkspaceAction {
 						IDEWorkbenchMessages.RenameResourceAction_inputDialogMessage, resource.getName(), validator);
 		dialog.setBlockOnOpen(true);
 		final int result = dialog.open();
-		if (result == Window.OK)
-			return dialog.getValue();
+		if (result == Window.OK) { return dialog.getValue(); }
 		return null;
 	}
 
@@ -226,6 +227,14 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (resources.size() == 1) { return (IResource) resources.get(0); }
 		return null;
 
+	}
+
+	@Override
+	protected List<? extends IResource> getSelectedResources() {
+		final IStructuredSelection selection = getStructuredSelection();
+		if (selection.toList().stream()
+				.anyMatch(each -> (each instanceof LinkedFile))) { return Collections.EMPTY_LIST; }
+		return super.getSelectedResources();
 	}
 
 	/**

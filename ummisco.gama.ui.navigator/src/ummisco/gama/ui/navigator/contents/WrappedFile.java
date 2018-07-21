@@ -31,11 +31,13 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	boolean isShapeFile;
 	boolean isShapeFileSupport;
 	Image image;
+	final Font font;
 
 	public WrappedFile(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
 		computeFileType();
 		computeFileParent();
+		font = wrapped.isLinked() ? GamaFonts.getNavigLinkFont() : GamaFonts.getNavigFileFont();
 	}
 
 	protected void computeFileImage() {
@@ -69,8 +71,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	@Override
 	public WrappedResource<?, ?> getParent() {
-		if (fileParent != null)
-			return fileParent;
+		if (fileParent != null) { return fileParent; }
 		return super.getParent();
 	}
 
@@ -87,8 +88,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	@Override
 	public Object[] getNavigatorChildren() {
 		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED) {
-			if (isGamaFile() || isShapeFile)
-				return getFileChildren();
+			if (isGamaFile() || isShapeFile) { return getFileChildren(); }
 		}
 		return EMPTY;
 	}
@@ -112,13 +112,14 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	@Override
 	public Font getFont() {
-		return GamaFonts.getNavigFileFont();
+		return font;
 	}
 
 	@Override
 	public Image getImage() {
-		if (image == null)
+		if (image == null) {
 			computeFileImage();
+		}
 		return image;
 	}
 
@@ -133,6 +134,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, true);
 			if (data != null) {
 				data.appendSuffix(sb);
+			}
+			if (getResource().isLinked()) {
+				if (sb.length() > 0) {
+					sb.append(" - ");
+				}
+				sb.append(getResource().getLocation());
 			}
 		}
 	}

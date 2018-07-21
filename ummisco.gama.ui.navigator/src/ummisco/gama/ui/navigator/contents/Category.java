@@ -14,14 +14,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import ummisco.gama.ui.commands.FileOpener;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -77,27 +76,14 @@ public class Category extends VirtualContent<WrappedFile> {
 		if (fileNames.isEmpty()) { return EMPTY; }
 		final List<LinkedFile> files = new ArrayList<>();
 		final IFile file = getParent().getResource();
-		final IPath filePath = file.getLocation();
-		final IPath projectPath = file.getProject().getLocation();
+		final String filePath = file.getFullPath().toString();
 		for (final String s : fileNames) {
-			if (s.startsWith("http"))
+			if (s.startsWith("http")) {
 				continue;
-			IPath resPath = new Path(s);
-			if (!resPath.isAbsolute()) {
-				final URI fileURI = URI.createFileURI(filePath.toString());
-				final URI resURI = URI.createURI(resPath.toString()).resolve(fileURI);
-				final String fileString = resURI.toFileString();
-				if (fileString != null)
-					resPath = new Path(fileString).makeRelativeTo(projectPath);
-			} else {
-				resPath = resPath.makeRelativeTo(projectPath);
 			}
-			IFile newFile = null;
-			try {
-				newFile = file.getProject().getFile(resPath);
-			} catch (final IllegalArgumentException e) {}
+			final IFile newFile = FileOpener.getFile(s, URI.createURI(filePath, false));
 			if (newFile != null && newFile.exists()) {
-				final LinkedFile proxy = new LinkedFile(this, newFile);
+				final LinkedFile proxy = new LinkedFile(this, newFile, s);
 				files.add(proxy);
 			}
 		}

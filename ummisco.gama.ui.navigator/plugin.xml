@@ -316,6 +316,25 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="ummisco.gama.navigator.reveal"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchfile2.png"
+               label="Reveal in Workspace"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="ummisco.gama.ui.navigator.contents.LinkedFile">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -876,5 +895,33 @@ type="java.lang.Object">
              id="ummisco.gama.ui.export.ZipFile"
              name="External files to archive">
        </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.ui.commands">
+       <command
+             categoryId="msi.gama.category"
+             defaultHandler="ummisco.gama.ui.commands.RevealInWorkspace"
+             id="ummisco.gama.ui.navigator.command1"
+             name="Reveal in Workspace">
+       </command>
+    </extension>
+    <extension
+          point="org.eclipse.ui.handlers">
+       <handler
+             class="ummisco.gama.ui.commands.RevealInWorkspace"
+             commandId="ummisco.gama.navigator.reveal">
+          <enabledWhen>
+             <with
+                   variable="selection">
+                <iterate
+                      ifEmpty="false"
+                      operator="and">
+                   <instanceof
+                         value="ummisco.gama.ui.navigator.contents.LinkedFile">
+                   </instanceof>
+                </iterate>
+             </with>
+          </enabledWhen>
+       </handler>
     </extension>
 </plugin>

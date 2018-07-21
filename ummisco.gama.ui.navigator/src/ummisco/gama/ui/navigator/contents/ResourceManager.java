@@ -205,6 +205,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			DEBUG("========= New Event =========");
 		}
 		try {
+			if (event == null) { return; }
 			// begin();
 			final int type = event.getType();
 			switch (type) {
@@ -473,7 +474,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		}
 	}
 
-	private void refreshResource(final VirtualContent<?> res) {
+	public void refreshResource(final VirtualContent<?> res) {
 		toRefresh.add(res);
 	}
 

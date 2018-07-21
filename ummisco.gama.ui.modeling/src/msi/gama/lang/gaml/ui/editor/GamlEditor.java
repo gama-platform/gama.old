@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -129,6 +132,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
+import ummisco.gama.ui.navigator.contents.NavigatorRoot;
+import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -182,6 +187,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Inject private MarkerCreator markerCreator;
 	@Inject private MarkerTypeProvider markerTypeProvider;
 	@Inject private IssueResolutionProvider issueResolver;
+	private URI uri;
 
 	// Fix for #2108 -- forces the selection of the "clicked" tab
 	private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
@@ -425,6 +431,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				public List<Issue> createIssues(final IProgressMonitor monitor) {
 					final List<Issue> issues = getDocument().readOnly(resource -> {
 						if (resource == null || resource.isValidationDisabled()) { return Collections.emptyList(); }
+						GamlEditor.this.setURI(resource.getURI());
 						GamlResourceServices.addResourceListener(resource.getURI(), GamlEditor.this);
 						return validator.validate(resource, getCheckMode(), null);
 					});
@@ -434,6 +441,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			};
 			validate.schedule();
 		}
+	}
+
+	/**
+	 * @param uri2
+	 */
+	protected void setURI(final URI uri2) {
+		uri = uri2;
 	}
 
 	@Override
@@ -477,29 +491,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			});
 		}
 	}
-	//
-	// public Font getFont() {
-	// return getInternalSourceViewer().getTextWidget().getFont();
-	// }
-
-	// private void setFont(final Font font) {
-	// final StyledText text = getInternalSourceViewer().getTextWidget();
-	// text.setFont(font);
-	// text.update();
-	// }
-
-	// public void setFontAndCheckButtons(final int deltaToApply) {
-	// Font font = getFont();
-	// final FontData data = font.getFontData()[0];
-	// data.height += deltaToApply;
-	// if (data.height < 6) { return; }
-	// if (font != null) {
-	// if (data.equals(font.getFontData()[0])) { return; }
-	// }
-	// font = new Font(WorkbenchHelper.getDisplay(), data);
-	// setFont(font);
-	// updateBoxes();
-	// }
 
 	@Override
 	protected void installFoldingSupport(final ProjectionViewer projectionViewer) {
@@ -602,6 +593,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
+		final String platformString = uri.toPlatformString(true);
+		final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+		final WrappedGamaFile file = (WrappedGamaFile) NavigatorRoot.INSTANCE.mapper.findWrappedInstanceOf(myFile);
+		NavigatorRoot.INSTANCE.mapper.refreshResource(file);
+		NavigatorRoot.INSTANCE.mapper.resourceChanged(null);
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {

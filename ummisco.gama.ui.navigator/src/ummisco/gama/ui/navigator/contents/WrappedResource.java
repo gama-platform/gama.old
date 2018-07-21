@@ -13,7 +13,8 @@ public abstract class WrappedResource<P extends VirtualContent<?>, T extends IRe
 	int severity = NOT_COMPUTED;
 
 	public WrappedResource(final P root, final T wrapped) {
-		super(root, wrapped.getName());
+		super(root, wrapped.getType() == IResource.FILE && wrapped.isLinked() ? "-> " + wrapped.getName()
+				: wrapped.getName());
 		resource = wrapped;
 		findMaxProblemSeverity();
 	}
@@ -21,8 +22,7 @@ public abstract class WrappedResource<P extends VirtualContent<?>, T extends IRe
 	@SuppressWarnings ({ "unchecked" })
 	@Override
 	public <C> C getAdapter(final Class<C> adapter) {
-		if (adapter.isInstance(resource))
-			return (C) resource;
+		if (adapter.isInstance(resource)) { return (C) resource; }
 		return null;
 	}
 
@@ -39,12 +39,13 @@ public abstract class WrappedResource<P extends VirtualContent<?>, T extends IRe
 	@Override
 	public int findMaxProblemSeverity() {
 		if (severity == NOT_COMPUTED) {
-			if (isOpen())
+			if (isOpen()) {
 				try {
 					severity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 				} catch (final CoreException e) {}
-			else
+			} else {
 				severity = CLOSED;
+			}
 		}
 		return severity;
 	}

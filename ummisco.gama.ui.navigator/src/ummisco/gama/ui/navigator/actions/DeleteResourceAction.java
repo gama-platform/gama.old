@@ -10,35 +10,18 @@
 package ummisco.gama.ui.navigator.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.jface.window.Window;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,6 +35,7 @@ import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.part.FileEditorInput;
 
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.navigator.contents.LinkedFile;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -65,156 +49,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class DeleteResourceAction extends SelectionListenerAction {
 
-	static class DeleteProjectDialog extends MessageDialog {
-
-		private final List<? extends IResource> projects;
-
-		private boolean deleteContent;
-
-		/**
-		 * Control testing mode. In testing mode, it returns true to delete contents and does not pop up the dialog.
-		 */
-		private boolean fIsTesting;
-
-		private Button radio1;
-
-		private Button radio2;
-
-		DeleteProjectDialog(final Shell parentShell, final List<? extends IResource> projects) {
-			super(parentShell, getTitle(projects), null, // accept the
-					// default window
-					// icon
-					getMessage(projects), MessageDialog.QUESTION,
-					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0); // yes is the
-			// default
-			this.projects = projects;
-			setShellStyle(getShellStyle() | SWT.SHEET);
-		}
-
-		static String getTitle(final List<? extends IResource> projects) {
-			if (projects.size() == 1) { return IDEWorkbenchMessages.DeleteResourceAction_titleProject1; }
-			return IDEWorkbenchMessages.DeleteResourceAction_titleProjectN;
-		}
-
-		static String getMessage(final List<? extends IResource> projects) {
-			if (projects.size() == 1) {
-				final IProject project = (IProject) projects.get(0);
-				return NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmProject1, project.getName());
-			}
-			return NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_confirmProjectN,
-					Integer.valueOf(projects.size()));
-		}
-
-		@Override
-		protected void configureShell(final Shell newShell) {
-			super.configureShell(newShell);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IIDEHelpContextIds.DELETE_PROJECT_DIALOG);
-		}
-
-		@SuppressWarnings ("unused")
-		@Override
-		protected Control createCustomArea(final Composite parent) {
-			final Composite composite = new Composite(parent, SWT.NONE);
-			composite.setLayout(new GridLayout());
-			radio1 = new Button(composite, SWT.RADIO);
-			radio1.addSelectionListener(selectionListener);
-			String text1;
-			if (projects.size() == 1) {
-				final IProject project = (IProject) projects.get(0);
-				if (project == null || project.getLocation() == null) {
-					text1 = IDEWorkbenchMessages.DeleteResourceAction_deleteContentsN;
-				} else {
-					text1 = NLS.bind(IDEWorkbenchMessages.DeleteResourceAction_deleteContents1,
-							project.getLocation().toOSString());
-				}
-			} else {
-				text1 = IDEWorkbenchMessages.DeleteResourceAction_deleteContentsN;
-			}
-			radio1.setText(text1);
-			radio1.setFont(parent.getFont());
-
-			// Add explanatory label that the action cannot be undone.
-			// We can't put multi-line formatted text in a radio button,
-			// so we have to create a separate label.
-			final Label detailsLabel = new Label(composite, SWT.LEFT);
-			detailsLabel.setText(IDEWorkbenchMessages.DeleteResourceAction_deleteContentsDetails);
-			detailsLabel.setFont(parent.getFont());
-			// indent the explanatory label
-			final GridData data = new GridData();
-			data.horizontalIndent = 20;
-			detailsLabel.setLayoutData(data);
-			// add a listener so that clicking on the label selects the
-			// corresponding radio button.
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172574
-			detailsLabel.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseUp(final MouseEvent e) {
-					deleteContent = true;
-					radio1.setSelection(deleteContent);
-					radio2.setSelection(!deleteContent);
-				}
-			});
-			// Add a spacer label
-			new Label(composite, SWT.LEFT);
-
-			radio2 = new Button(composite, SWT.RADIO);
-			radio2.addSelectionListener(selectionListener);
-			final String text2 = IDEWorkbenchMessages.DeleteResourceAction_doNotDeleteContents;
-			radio2.setText(text2);
-			radio2.setFont(parent.getFont());
-
-			// set initial state
-			radio1.setSelection(deleteContent);
-			radio2.setSelection(!deleteContent);
-
-			return composite;
-		}
-
-		private final SelectionListener selectionListener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final Button button = (Button) e.widget;
-				if (button.getSelection()) {
-					deleteContent = button == radio1;
-				}
-			}
-		};
-
-		boolean getDeleteContent() {
-			return deleteContent;
-		}
-
-		@Override
-		public int open() {
-			// Override Window#open() to allow for non-interactive testing.
-			if (fIsTesting) {
-				deleteContent = true;
-				return Window.OK;
-			}
-			return super.open();
-		}
-
-		/**
-		 * Set this delete dialog into testing mode. It won't pop up, and it returns true for deleteContent.
-		 *
-		 * @param t
-		 *            the testing mode
-		 */
-		void setTestingMode(final boolean t) {
-			fIsTesting = t;
-		}
-	}
-
 	/**
 	 * The id of this action.
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".DeleteResourceAction";//$NON-NLS-1$
-
-	/**
-	 * Flag that allows testing mode ... it won't pop up the project delete dialog, and will return "delete all content"
-	 * .
-	 */
-	protected boolean fTestingMode;
 
 	private String[] modelProviderIds;
 
@@ -331,6 +169,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
+		final IStructuredSelection selection = getStructuredSelection();
+		if (selection.toList().stream()
+				.anyMatch(each -> (each instanceof LinkedFile))) { return Collections.EMPTY_LIST; }
 		final List<IResource> list = new ArrayList<>();
 		for (final IResource r : super.getSelectedResources()) {
 			list.add(r);

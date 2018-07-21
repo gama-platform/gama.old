@@ -55,7 +55,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 		this.name = name;
 	}
 
-	public ResourceManager getMapper() {
+	public static ResourceManager getMapper() {
 		return NavigatorRoot.INSTANCE.mapper;
 	}
 
@@ -103,8 +103,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public TopLevelFolder getTopLevelFolder() {
 		final Object p = getParent();
-		if (p instanceof VirtualContent)
-			return ((VirtualContent<?>) p).getTopLevelFolder();
+		if (p instanceof VirtualContent) { return ((VirtualContent<?>) p).getTopLevelFolder(); }
 		return null;
 	}
 
@@ -131,8 +130,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	}
 
 	public boolean isContainedIn(final VirtualContent<?> current) {
-		if (root == null)
-			return false;
+		if (root == null) { return false; }
 		return root == current || root.isContainedIn(current);
 	}
 

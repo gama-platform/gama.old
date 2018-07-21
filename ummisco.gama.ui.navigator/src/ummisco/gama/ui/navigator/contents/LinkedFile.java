@@ -17,12 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.ide.IDE;
 
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
@@ -38,13 +34,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	final WrappedFile file;
+	final String suffix;
 
 	/**
 	 * @param root
 	 * @param name
 	 */
-	public LinkedFile(final Category root, final IFile wrapped) {
-		super(root, wrapped.getName());
+	public LinkedFile(final Category root, final IFile wrapped, final String originalName) {
+		super(root, getMapper().findWrappedInstanceOf(wrapped).getName());
+		suffix = originalName;
 		file = (WrappedFile) getMapper().findWrappedInstanceOf(wrapped);
 	}
 
@@ -105,14 +103,10 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	@Override
 	public boolean handleDoubleClick() {
-		final IEditorInput editorInput = new FileEditorInput(file.getResource());
-		final IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-		if (desc == null) { return false; }
-		final IWorkbenchPage page = WorkbenchHelper.getPage();
 		try {
-			page.openEditor(editorInput, desc.getId());
-		} catch (final PartInitException e) {
-			e.printStackTrace();
+			IDE.openEditor(WorkbenchHelper.getPage(), file.getResource());
+		} catch (final PartInitException e1) {
+			e1.printStackTrace();
 			return false;
 		}
 		return true;
@@ -135,7 +129,9 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	}
 
 	@Override
-	public void getSuffix(final StringBuilder sb) {}
+	public void getSuffix(final StringBuilder sb) {
+		sb.append(suffix);
+	}
 
 	@Override
 	public ImageDescriptor getOverlay() {
@@ -145,5 +141,9 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	@Override
 	public VirtualContentType getType() {
 		return VirtualContentType.FILE_REFERENCE;
+	}
+
+	public WrappedFile getTarget() {
+		return file;
 	}
 }

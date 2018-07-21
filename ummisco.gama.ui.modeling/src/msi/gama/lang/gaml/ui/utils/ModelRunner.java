@@ -23,10 +23,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
@@ -80,9 +78,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 				return;
 			}
 			try {
-				final IEditorDescriptor desc =
-						PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-				WorkbenchHelper.getPage().openEditor(new FileEditorInput(file), desc.getId());
+				IDE.openEditor(WorkbenchHelper.getPage(), file);
 			} catch (final PartInitException e) {
 				e.printStackTrace();
 			}
@@ -100,12 +96,10 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	public List<TestExperimentSummary> runHeadlessTests(final Object object) {
 		// final StringBuilder sb = new StringBuilder();
 		final IModel model = findModel(object);
-		if (model == null)
-			return null;
+		if (model == null) { return null; }
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
-		if (testExpNames.isEmpty())
-			return null;
+		if (testExpNames.isEmpty()) { return null; }
 		final List<TestExperimentSummary> result = new ArrayList<>();
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
@@ -126,8 +120,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	 * @return
 	 */
 	private IModel findModel(final Object object) {
-		if (object instanceof IModel)
-			return (IModel) object;
+		if (object instanceof IModel) { return (IModel) object; }
 		if (object instanceof WrappedGamaFile) { return findModel(((WrappedGamaFile) object).getResource()); }
 		if (object instanceof IFile) {
 			final IFile file = (IFile) object;
@@ -171,8 +164,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	@Override
 	public void runModel(final Object object, final String exp) {
 		final IModel model = findModel(object);
-		if (model == null)
-			return;
+		if (model == null) { return; }
 		GAMA.runGuiExperiment(exp, model);
 	}
 

@@ -43,6 +43,7 @@ import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.commands.FileOpener;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
@@ -59,13 +60,32 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		if (o instanceof StringLiteral) {
 			final URI iu = detector.getURI((StringLiteral) o);
 			if (iu != null) {
-				final IFile file = detector.getFile(iu);
-				final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
-				if (data != null) {
-					String s = data.getDocumentation();
-					if (s != null) {
-						s = s.replace(Strings.LN, "<br/>");
-						return s;
+				if (FileOpener.isFileExistingInWorkspace(iu)) {
+					final IFile file = FileOpener.getWorkspaceFile(iu);
+					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
+					if (data != null) {
+						String s = data.getDocumentation();
+						if (s != null) {
+							s = s.replace(Strings.LN, "<br/>");
+							return s;
+						}
+					} else {
+						final String ext = file.getFileExtension();
+						return "This workspace " + ext + " file has no metadata associated with it";
+					}
+				} else { // absolute file
+					final IFile file = FileOpener.getFileSystemFile(iu, o.eResource().getURI());
+					if (file == null) { return "This file is outside the workspace. No further information is available, but you can nevertheless try to open it in an editor by crtl-clicking or cmd-clicking it"; }
+					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
+					if (data != null) {
+						String s = data.getDocumentation();
+						if (s != null) {
+							s = s.replace(Strings.LN, "<br/>");
+							return s;
+						}
+					} else {
+						final String ext = file.getFileExtension();
+						return "This external " + ext + " file has no metadata associated with it";
 					}
 				}
 			}

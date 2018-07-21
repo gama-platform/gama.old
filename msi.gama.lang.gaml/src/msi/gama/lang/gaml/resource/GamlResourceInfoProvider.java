@@ -47,8 +47,9 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		Set<String> imports = null;
 		final Set<URI> uris = GamlResourceIndexer.directImportsOf(r.getURI());
 		for (final URI u : uris) {
-			if (imports == null)
+			if (imports == null) {
 				imports = new TLinkedHashSet();
+			}
 			imports.add(u.deresolve(r.getURI()).toString());
 		}
 
@@ -63,10 +64,12 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				final String s = ((StringLiteral) e).getOp();
 				if (s.length() > 4) {
 					final URI u = URI.createFileURI(s);
+					System.out.println("Creating file uri in uses for " + s);
 					final String ext = u.fileExtension();
 					if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
-						if (uses == null)
+						if (uses == null) {
 							uses = new TLinkedHashSet();
+						}
 						uses.add(s);
 					}
 				}
@@ -79,8 +82,9 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 
-				if (exps == null)
+				if (exps == null) {
 					exps = new TLinkedHashSet();
+				}
 				exps.add(s);
 			} else if (e instanceof HeadlessExperiment) {
 				String s = ((HeadlessExperiment) e).getName();
@@ -89,8 +93,9 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 
-				if (exps == null)
+				if (exps == null) {
 					exps = new TLinkedHashSet();
+				}
 				exps.add(s);
 			}
 		}
@@ -133,8 +138,9 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 	}
 
 	private XtextResourceSet getResourceSet() {
-		if (resourceSet == null)
+		if (resourceSet == null) {
 			resourceSet = new SynchronizedXtextResourceSet();
+		}
 		return resourceSet;
 	}
 
