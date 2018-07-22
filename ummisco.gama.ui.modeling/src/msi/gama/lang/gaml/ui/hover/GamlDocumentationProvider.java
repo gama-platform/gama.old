@@ -47,7 +47,8 @@ import ummisco.gama.ui.commands.FileOpener;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
-	@Inject protected GamlHyperlinkDetector detector;
+	@Inject
+	protected GamlHyperlinkDetector detector;
 
 	public String getOnlyComment(final EObject o) {
 		return super.getDocumentation(o);
@@ -74,7 +75,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 						return "This workspace " + ext + " file has no metadata associated with it";
 					}
 				} else { // absolute file
-					final IFile file = FileOpener.getFileSystemFile(iu, o.eResource().getURI());
+					final IFile file = FileOpener.getFileSystemFile(((StringLiteral) o).getOp(),
+							o.eResource().getURI());
 					if (file == null) { return "This file is outside the workspace. No further information is available, but you can nevertheless try to open it in an editor by crtl-clicking or cmd-clicking it"; }
 					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 					if (data != null) {

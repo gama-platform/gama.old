@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -39,17 +38,19 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class FileOpener {
 
 	static final IWorkbenchPage PAGE = WorkbenchHelper.getPage();
-	static final URI WORKSPACE =
-			URI.createURI(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().toString(), false);
+	static final URI WORKSPACE = URI.createURI(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().toString(),
+			false);
 
 	/**
-	 * Returns a best guess URI based on the target string and an optional URI specifying from where the relative URI
-	 * should be run. If existingResource is null, then the root of the workspace is used as the relative URI
+	 * Returns a best guess URI based on the target string and an optional URI
+	 * specifying from where the relative URI should be run. If existingResource is
+	 * null, then the root of the workspace is used as the relative URI
 	 * 
 	 * @param target
 	 *            a String giving the path
 	 * @param existingResource
-	 *            the URI of the resource from which relative URIs should be interpreted
+	 *            the URI of the resource from which relative URIs should be
+	 *            interpreted
 	 * @author Alexis Drogoul, July 2018
 	 * @return an URI or null if it cannot be determined.
 	 */
@@ -90,12 +91,86 @@ public class FileOpener {
 		final URI uri = getURI(path, root);
 		if (uri != null) {
 			if (uri.isPlatformResource()) { return getWorkspaceFile(uri); }
-			if (uri.isFile()) { return getFileSystemFile(uri, root); }
+			return getFileSystemFile(path, root);
 		}
 		return null;
 	}
 
+	public static IFile getFileSystemFile(final String path, final URI workspaceResource) {
+		final IFolder folder = createExternalFolder(workspaceResource);
+		if (folder == null)
+			return null;
+		IFile file = findExistingLinkedFile(folder, path);
+		if (file != null) { return file; }
+		file = correctlyNamedFile(folder, new Path(path).lastSegment());
+		return createLinkedFile(path, file);
+	}
+
 	public static IFile getFileSystemFile(final URI uri, final URI workspaceResource) {
+		final IFolder folder = createExternalFolder(workspaceResource);
+		if (folder == null)
+			return null;
+
+		final String uriString = URI.decode(uri.isFile() ? uri.toFileString() : uri.toString());
+		// We try to find an existing file linking to this uri (in case it has been
+		// renamed, for instance)
+		IFile file = findExistingLinkedFile(folder, uriString);
+		if (file != null) { return file; }
+		// We get the file with the same last name
+		// If it already exists, we need to find it a new name as it doesnt point to the
+		// same absolute file
+		file = correctlyNamedFile(folder, uri.lastSegment());
+		return createLinkedFile(uriString, file);
+	}
+
+	private static IFile createLinkedFile(final String path, IFile file) {
+		java.net.URI javaURI = new java.io.File(path).toURI();
+		try {
+			file.createLink(javaURI, IResource.NONE, null);
+		} catch (final CoreException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return file;
+	}
+
+	private static IFile correctlyNamedFile(final IFolder folder, String fileName) {
+		IFile file;
+		do {
+			file = folder.getFile(fileName);
+			fileName = "copy of " + fileName;
+		} while (file.exists());
+		return file;
+	}
+
+	private static IFile findExistingLinkedFile(final IFolder folder, final String name) {
+		final IFile[] result = new IFile[1];
+		try {
+			folder.accept((IResourceVisitor) resource -> {
+				if (resource.isLinked()) {
+					String p = resource.getLocation().toString();
+					// if (PlatformHelper.isWindows()) {
+					// Bug in getLocation().toString() under Windows. The documentation states that
+					// the returned string is platform independant, but it is not
+					// p = p.replace('/', '\\');
+					// }
+					// System.out.println("URI : " + uriString + " | IPath : " + p);
+					if (p.equals(name)) {
+						result[0] = (IFile) resource;
+						return false;
+					}
+				}
+				return true;
+
+			}, IResource.DEPTH_INFINITE, IResource.FILE);
+		} catch (final CoreException e1) {
+			e1.printStackTrace();
+		}
+		IFile file = result[0];
+		return file;
+	}
+
+	private static IFolder createExternalFolder(final URI workspaceResource) {
 		if (workspaceResource == null || !isFileExistingInWorkspace(workspaceResource)) { return null; }
 		final IFile root = getWorkspaceFile(workspaceResource);
 		final IProject project = root.getProject();
@@ -109,49 +184,7 @@ public class FileOpener {
 				return null;
 			}
 		}
-		final String uriString = URI.decode(uri.isFile() ? uri.toFileString() : uri.toString());
-		// We try to find an existing file linking to this uri (in case it has been
-		// renamed, for instance)
-		final IFile[] result = new IFile[1];
-		try {
-			folder.accept((IResourceVisitor) resource -> {
-				if (resource.isLinked()) {
-					String p = resource.getLocation().toString();
-					if (PlatformHelper.isWindows()) {
-						// Bug in getLocation().toString() under Windows. The documentation states that
-						// the returned string is platform independant, but it is not
-						p = p.replace('/', '\\');
-					}
-					// System.out.println("URI : " + uriString + " | IPath : " + p);
-					if (p.equals(uriString)) {
-						result[0] = (IFile) resource;
-						return false;
-					}
-				}
-				return true;
-
-			}, IResource.DEPTH_INFINITE, IResource.FILE);
-		} catch (final CoreException e1) {
-			e1.printStackTrace();
-		}
-		IFile file = result[0];
-		if (file != null) { return file; }
-		// We get the file with the same last name
-		// If it already exists, we need to find it a new name as it doesnt point to the
-		// same absolute file
-		String fileName = URI.decode(uri.lastSegment());
-		do {
-			file = folder.getFile(fileName);
-			fileName = "copy of " + fileName;
-		} while (file.exists());
-
-		final java.net.URI javaURI = java.net.URI.create(uri.toString());
-		try {
-			file.createLink(javaURI, IResource.NONE, null);
-		} catch (final CoreException e) {
-			return null;
-		}
-		return file;
+		return folder;
 	}
 
 	public static IFile getWorkspaceFile(final URI uri) {

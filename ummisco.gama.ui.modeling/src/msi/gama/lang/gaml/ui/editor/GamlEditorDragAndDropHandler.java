@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
@@ -236,7 +235,8 @@ public class GamlEditorDragAndDropHandler {
 					}
 
 					final String text = (String) data;
-					if (editor.isBlockSelectionModeEnabled()) {} else {
+					if (editor.isBlockSelectionModeEnabled()) {
+					} else {
 						final Point newSelection = st.getSelection();
 						try {
 							final int modelOffset = getViewer().widgetOffset2ModelOffset(newSelection.x);
@@ -281,14 +281,14 @@ public class GamlEditorDragAndDropHandler {
 			if (PlatformHelper.isWindows()) {
 				// Bug in getLocation().toString() under Windows. The documentation states that
 				// the returned string is platform independant, but it is not
-				path = path.replace('/', '\\');
+				path = path.replace('\\', '/');
 			}
 			final IFileStore external = EFS.getLocalFileSystem().getStore(new Path(path));
 			final IFileInfo info = external.fetchInfo();
 			if (info.isDirectory() || !info.exists()) {
 				continue;
 			}
-			final IFile file = FileOpener.getFileSystemFile(URI.createURI(path, false), editor.getURI());
+			final IFile file = FileOpener.getFileSystemFile(path, editor.getURI());
 			if (file != null) {
 				files.add(file);
 			}
@@ -305,11 +305,11 @@ public class GamlEditorDragAndDropHandler {
 			if (resource instanceof IFile) {
 				final IFile file = (IFile) resource;
 				switch (getContentTypeId(file)) {
-					case FileMetaDataProvider.GAML_CT_ID:
-						newSelection.x = addDropImport(sb, file);
-						break;
-					default:
-						addDropFile(sb, file);
+				case FileMetaDataProvider.GAML_CT_ID:
+					newSelection.x = addDropImport(sb, file);
+					break;
+				default:
+					addDropFile(sb, file);
 				}
 			}
 		}
@@ -348,10 +348,13 @@ public class GamlEditorDragAndDropHandler {
 
 	private String obtainRelativePath(final IFile file) {
 		final IPath path = file.getFullPath();
-		final IPath editorFile = new Path(editor.getURI().toPlatformString(true));
-		final URI u1 = URI.createFileURI(path.toString());
-		final URI u2 = URI.createFileURI(editorFile.toString());
-		final String name = URI.decode(u1.deresolve(u2, false, true, true).toString());
+		final IPath editorFile = new Path(editor.getURI().toPlatformString(true)).removeLastSegments(1);
+		IPath newRelativePath = path.makeRelativeTo(editorFile);
+		String name = newRelativePath.toString();
+		// final URI u1 = URI.createFileURI(path.toString());
+		// final URI u2 = URI.createFileURI(editorFile.toString());
+		// final String name = URI.decode(u1.deresolve(u2, false, true,
+		// true).toString());
 		return name;
 	}
 
