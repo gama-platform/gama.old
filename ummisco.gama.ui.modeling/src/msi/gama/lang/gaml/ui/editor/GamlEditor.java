@@ -55,10 +55,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -204,26 +201,29 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	private URI fileURI;
 
 	// Fix for #2108 -- forces the selection of the "clicked" tab
-	private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
-
-		@Override
-		public void mouseUp(final MouseEvent e) {
-			// System.out.println("MOUSE up IN TAB FOLDER");
-			final CTabFolder folder = (CTabFolder) e.widget;
-			final int x = e.x;
-			final int y = e.y;
-			for (final CTabItem item : folder.getItems()) {
-				final Rectangle r = item.getBounds();
-				if (r.contains(x, y) && !item.equals(folder.getSelection())) {
-					System.out.println("Detected problem in editors tab selection (see #2108). Fixed.");
-					folder.setSelection(item);
-					folder.update();
-					return;
-				}
-			}
-		}
-
-	};
+	// private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
+	//
+	// @Override
+	// public void mouseUp(final MouseEvent e) {
+	// // System.out.println("MOUSE up IN TAB FOLDER");
+	// final CTabFolder folder = (CTabFolder) e.widget;
+	// final int x = e.x;
+	// final int y = e.y;
+	// for (final CTabItem item : folder.getItems()) {
+	// final Rectangle r = item.getBounds();
+	// if (r.contains(x, y) && !item.equals(folder.getSelection())) {
+	// System.out.println("Detected problem in editors tab selection (see #2108). Fixed.");
+	// WorkbenchHelper.runInUI("", 100, (m) -> {
+	// folder.setSelection(item);
+	// folder.layout(true, true);
+	// folder.update();
+	// return;
+	// });
+	// }
+	// }
+	// }
+	//
+	// };
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -344,8 +344,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			folder.setMinimumCharacters(10);
 			folder.setMRUVisible(true);
 			// Makes sure the listener is added only once
-			folder.removeMouseListener(FIX_FOR_ISSUE_2108);
-			folder.addMouseListener(FIX_FOR_ISSUE_2108);
+			// folder.removeMouseListener(FIX_FOR_ISSUE_2108);
+			// folder.addMouseListener(FIX_FOR_ISSUE_2108);
 		}
 
 	}
