@@ -29,6 +29,7 @@ import java.util.prefs.Preferences;
 import org.geotools.referencing.CRS;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -412,10 +413,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION = create("pref_optimize_path_computation",
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
 				IType.BOOL).in(NAME, OPTIMIZATIONS);
-		public static final Pref<Boolean> QUADTREE_OPTIMIZATION =
-				create("pref_optimize_quadtree", "Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false, IType.BOOL).in(NAME,
-						OPTIMIZATIONS);
-	
+		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
+				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
+				IType.BOOL).in(NAME, OPTIMIZATIONS);
+
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME,
 						OPTIMIZATIONS);
@@ -428,7 +429,7 @@ public class GamaPreferences {
 				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
 						() -> new GenericFile("Enter path", false), IType.FILE).in(NAME, PATHS);
 		public static final String jriFile = System.getProperty("os.name").startsWith("Mac") ? "libjri.jnilib"
-				: (System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll");
+				: System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll";
 
 		public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
 				"Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
@@ -449,47 +450,26 @@ public class GamaPreferences {
 						IType.BOOL).deactivates("pref_gis_output_crs").in(NAME, GEOTOOLS);
 		public static final Pref<Integer> LIB_TARGET_CRS =
 				create("pref_gis_default_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT)
-						.in(NAME, GEOTOOLS).addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-							@Override
-							public boolean beforeValueChange(final Integer newValue) {
-								final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-								if (codes.isEmpty()) { return false; }
-								return true;
-							}
-
-							@Override
-							public void afterValueChange(final Integer newValue) {}
+						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
+							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							if (codes.isEmpty()) { return false; }
+							return true;
 						});
 
 		public static final Pref<Integer> LIB_INITIAL_CRS =
 				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT)
-						.in(NAME, GEOTOOLS).addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-							@Override
-							public boolean beforeValueChange(final Integer newValue) {
-								final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-								if (codes.isEmpty()) { return false; }
-								return true;
-							}
-
-							@Override
-							public void afterValueChange(final Integer newValue) {}
+						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
+							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							if (codes.isEmpty()) { return false; }
+							return true;
 						});
 
 		public static final Pref<Integer> LIB_OUTPUT_CRS =
 				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT)
-						.in(NAME, GEOTOOLS).addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-							@Override
-							public boolean beforeValueChange(final Integer newValue) {
-								final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
-								if (codes.isEmpty()) { return false; }
-								return true;
-							}
-
-							@Override
-							public void afterValueChange(final Integer newValue) {}
+						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
+							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							if (codes.isEmpty()) { return false; }
+							return true;
 						});
 
 		// RScript adress:

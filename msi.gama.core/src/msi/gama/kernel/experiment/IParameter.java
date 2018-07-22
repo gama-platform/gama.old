@@ -66,7 +66,7 @@ public interface IParameter extends IExperimentDisplayable {
 		return EMPTY_STRINGS;
 	}
 
-	public default void addChangeListener(final ParameterChangeListener listener) {
+	public default void addChangedListener(final ParameterChangeListener listener) {
 		// Nothing to do by default
 	}
 

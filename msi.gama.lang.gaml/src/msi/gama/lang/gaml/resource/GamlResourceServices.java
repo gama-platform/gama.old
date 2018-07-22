@@ -15,6 +15,7 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -44,7 +45,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceServices {
 
 	private static int resourceCount = 0;
@@ -58,8 +59,8 @@ public class GamlResourceServices {
 		}
 
 	};
-	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder
-			.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
+	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache =
+			CacheBuilder.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
 
 				@Override
 				public THashMap load(final URI key) throws Exception {
@@ -91,9 +92,7 @@ public class GamlResourceServices {
 		final URI newURI = properlyEncodedURI(uri);
 
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
-		if (listener == null) {
-			return;
-		}
+		if (listener == null) { return; }
 		// System.out.println("Finishing updating the state of editor for " +
 		// uri.lastSegment());
 		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
@@ -164,16 +163,14 @@ public class GamlResourceServices {
 			uri = uri.trimSegments(1);
 			return Path.fromOSString(uri.path());
 		}
-		IPath path = getPathOf(r);
-		if (!r.getURI().isFile()) {
-			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			final IPath fullPath = file.getLocation();
-			path = fullPath; // toOSString ?
-		}
-		if (path == null) {
-			return null;
-		}
-		return path.uptoSegment(path.segmentCount() - 1);
+		final IPath path = getPathOf(r);
+		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		final IContainer folder = file.getParent();
+		return folder.getLocation();
+		// final IPath fullPath = file.getLocation();
+		// path = fullPath; // toOSString ?
+		// if (path == null) { return null; }
+		// return path.uptoSegment(path.segmentCount() - 1);
 	}
 
 	public static String getModelPathOf(final Resource r) {

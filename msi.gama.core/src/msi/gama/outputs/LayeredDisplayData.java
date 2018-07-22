@@ -21,7 +21,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -146,19 +146,7 @@ public class LayeredDisplayData {
 	 *
 	 */
 
-	IPreferenceChangeListener<GamaColor> highlightListener = new IPreferenceChangeListener<GamaColor>() {
-
-		@Override
-		public boolean beforeValueChange(final GamaColor newValue) {
-			return true;
-		}
-
-		@Override
-		public void afterValueChange(final GamaColor newValue) {
-			setHighlightColor(newValue);
-
-		}
-	};
+	IPreferenceAfterChangeListener<GamaColor> highlightListener = newValue -> setHighlightColor(newValue);
 
 	public LayeredDisplayData() {
 		GamaPreferences.Displays.CORE_HIGHLIGHT.addChangeListener(highlightListener);

@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
+import static msi.gama.lang.gaml.ui.AutoStartup.EDITOR_DRAG_RESOURCES;
 import static org.eclipse.xtext.validation.CheckMode.NORMAL_AND_FAST;
 
 import java.util.Collections;
@@ -44,7 +45,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
@@ -88,6 +88,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.XtextUIMessages;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
+import org.eclipse.xtext.ui.editor.model.XtextDocument;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
@@ -109,6 +110,7 @@ import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
@@ -166,7 +168,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	}
 
-	public GamlEditor() {}
+	public GamlEditor() {
+		dndHandler = new GamlEditorDragAndDropHandler(this);
+	}
 
 	protected static Map<IPartService, IPartListener2> partListeners;
 
@@ -187,7 +191,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Inject private MarkerCreator markerCreator;
 	@Inject private MarkerTypeProvider markerTypeProvider;
 	@Inject private IssueResolutionProvider issueResolver;
-	private URI uri;
+	private final GamlEditorDragAndDropHandler dndHandler;
+	private final IPreferenceAfterChangeListener dndChangedListener = newValue -> {
+		uninstallTextDragAndDrop(getInternalSourceViewer());
+		installTextDragAndDrop(getInternalSourceViewer());
+	};
+
+	private boolean fIsTextDragAndDropInstalled;
+
+	protected Object fTextDragAndDropToken;
+
+	private URI fileURI;
 
 	// Fix for #2108 -- forces the selection of the "clicked" tab
 	private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
@@ -268,61 +282,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		foldingMenu.add(action);
 	}
 
-	private void foldRegionsOnStartup(final ProjectionAnnotationModel model) {
-		//
-		// // TODO retrieve set of types to fold from helper, as other types
-		// might
-		// // be added
-		// final Set<EClass> typesToFold = new HashSet<EClass>();
-		// if
-		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_TRIPLES_KEY))
-		// {
-		// typesToFold.add(XturtlePackage.Literals.TRIPLES);
-		// }
-		// if
-		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_STRINGS_KEY))
-		// {
-		// typesToFold.add(XturtlePackage.Literals.STRING_LITERAL);
-		// }
-		// if
-		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_DIRECTIVES_KEY))
-		// {
-		// typesToFold.add(XturtlePackage.Literals.DIRECTIVES);
-		// }
-		// if
-		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_BLANK_COLL))
-		// {
-		// typesToFold.add(XturtlePackage.Literals.BLANK_COLLECTION);
-		// }
-		// if
-		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_BLANK_OBJ))
-		// {
-		// typesToFold.add(XturtlePackage.Literals.BLANK_OBJECTS);
-		// }
-		// if (!typesToFold.isEmpty()) {
-		// final List<Annotation> changes = new ArrayList<Annotation>();
-		// final Iterator<?> iterator = model.getAnnotationIterator();
-		// while (iterator.hasNext()) {
-		// final Object next = iterator.next();
-		// if (next instanceof ProjectionAnnotation) {
-		// final ProjectionAnnotation pa = (ProjectionAnnotation) next;
-		// final Position position = model.getPosition(pa);
-		// if (position instanceof TypedFoldedRegion
-		// && typesToFold.contains(((TypedFoldedRegion) position).getType())) {
-		// pa.markCollapsed();
-		// changes.add(pa);
-		// }
-		// }
-		// }
-		// model.modifyAnnotations(null, null, changes.toArray(new
-		// Annotation[0]));
-		// }
-	}
-
 	@Override
 	public void dispose() {
 		decorator = null;
+		EDITOR_DRAG_RESOURCES.removeChangeListener(dndChangedListener);
 		GamlResourceServices.removeResourceListener(this);
+
 		super.dispose();
 	}
 
@@ -411,6 +376,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void scheduleValidationJob() {
+		fileURI = ((XtextDocument) getDocument()).getResourceURI();
 		IValidationIssueProcessor processor;
 		if (isEditable()) {
 			if (getResource() == null) {
@@ -431,7 +397,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				public List<Issue> createIssues(final IProgressMonitor monitor) {
 					final List<Issue> issues = getDocument().readOnly(resource -> {
 						if (resource == null || resource.isValidationDisabled()) { return Collections.emptyList(); }
-						GamlEditor.this.setURI(resource.getURI());
 						GamlResourceServices.addResourceListener(resource.getURI(), GamlEditor.this);
 						return validator.validate(resource, getCheckMode(), null);
 					});
@@ -441,13 +406,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			};
 			validate.schedule();
 		}
-	}
-
-	/**
-	 * @param uri2
-	 */
-	protected void setURI(final URI uri2) {
-		uri = uri2;
 	}
 
 	@Override
@@ -593,7 +551,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
-		final String platformString = uri.toPlatformString(true);
+		final String platformString = getURI().toPlatformString(true);
 		final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 		final WrappedGamaFile file = (WrappedGamaFile) NavigatorRoot.INSTANCE.mapper.findWrappedInstanceOf(myFile);
 		NavigatorRoot.INSTANCE.mapper.refreshResource(file);
@@ -866,6 +824,29 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		} else {
 			findControl.getFindControl().setFocus();
 		}
+	}
+
+	@Override
+	protected void initializeDragAndDrop(final ISourceViewer viewer) {
+		EDITOR_DRAG_RESOURCES.addChangeListener(dndChangedListener);
+		super.initializeDragAndDrop(viewer);
+	}
+
+	@Override
+	protected void installTextDragAndDrop(final ISourceViewer viewer) {
+		dndHandler.install(!EDITOR_DRAG_RESOURCES.getValue());
+	}
+
+	@Override
+	protected void uninstallTextDragAndDrop(final ISourceViewer viewer) {
+		dndHandler.uninstall();
+	}
+
+	/**
+	 * @return
+	 */
+	public URI getURI() {
+		return fileURI;
 	}
 
 }

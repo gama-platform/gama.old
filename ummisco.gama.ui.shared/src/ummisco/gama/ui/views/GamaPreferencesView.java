@@ -42,7 +42,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
@@ -225,23 +224,14 @@ public class GamaPreferencesView {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
 			checkActivables(e, e.getValue());
-			e.addChangeListener(new IPreferenceChangeListener() {
-
-				@Override
-				public boolean beforeValueChange(final Object newValue) {
-					return true;
+			e.onChange(value -> {
+				if (e.acceptChange(value)) {
+					modelValues.put(e.getKey(), value);
+					checkActivables(e, value);
+				} else {
+					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 				}
 
-				@Override
-				public void afterValueChange(final Object value) {
-					if (e.acceptChange(value)) {
-						modelValues.put(e.getKey(), value);
-						checkActivables(e, value);
-					} else {
-						GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
-					}
-
-				}
 			});
 			final boolean isSubParameter = activations.containsKey(e.getKey());
 			final AbstractEditor ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))],

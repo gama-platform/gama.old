@@ -218,10 +218,6 @@ public class ModelDescription extends SpeciesDescription {
 		return modelProjectPath;
 	}
 
-	public void setModelFilePath(final String modelFilePath) {
-		this.modelFilePath = modelFilePath;
-	}
-
 	/**
 	 * Create types from the species descriptions
 	 */

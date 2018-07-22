@@ -15,7 +15,6 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 
 /**
  * Simple Animator (with target FPS)
@@ -37,19 +36,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	protected int frames = 0;
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
-		GamaPreferences.Displays.OPENGL_FPS.addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Integer newValue) {
-				targetFPS = newValue;
-
-			}
-		});
+		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
 		this.drawable = drawable;
 		drawable.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");

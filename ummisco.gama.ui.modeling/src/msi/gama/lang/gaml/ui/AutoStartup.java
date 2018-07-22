@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
+import static org.eclipse.jface.preference.PreferenceConverter.setValue;
+import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
+
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
@@ -18,7 +21,6 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.editor.GamlEditorBindings;
@@ -33,22 +35,7 @@ public class AutoStartup implements IStartup {
 	public static Pref<String> OPERATORS_MENU_SORT =
 			GamaPreferences.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING)
 					.among("Name", "Category").in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
-					.addChangeListener(new IPreferenceChangeListener<String>() {
-
-						@Override
-						public boolean beforeValueChange(final String newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final String newValue) {
-							OperatorsReferenceMenu.byName = newValue.equals("Name");
-							// final GamlReferenceMenu menu = GamlReferenceTools.getInstance().getOperatorsMenu();
-							// if (menu != null) {
-							// menu.reset();
-							// }
-						}
-					});
+					.onChange(newValue -> OperatorsReferenceMenu.byName = newValue.equals("Name"));
 	public static final Pref<Boolean> CORE_CLOSE_CURLY =
 			GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
@@ -64,6 +51,9 @@ public class AutoStartup implements IStartup {
 	public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
 			.create("pref_editor_save_all", "Save files before lauching an experiment", true, IType.BOOL)
 			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
+	public static final Pref<Boolean> EDITOR_DRAG_RESOURCES =
+			GamaPreferences.create("pref_editor_drag_resources", "Drag files and resources as references in GAML files",
+					true, IType.BOOL).in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
 	public static final Pref<Boolean> EDITOR_SAVE_ASK =
 			GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
@@ -75,41 +65,21 @@ public class AutoStartup implements IStartup {
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).hidden();
 	static final Pref<GamaFont> EDITOR_BASE_FONT =
 			GamaPreferences.create("pref_editor_font", "Font of editors", () -> getDefaultFontData(), IType.FONT)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
-					.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
-
-						@Override
-						public boolean beforeValueChange(final GamaFont newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final GamaFont font) {
-							try {
-								final FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
-								PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
-										JFaceResources.TEXT_FONT, newValue);
-							} catch (final Exception e) {}
-						}
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).onChange(font -> {
+						try {
+							final FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
+							setValue(EditorsPlugin.getDefault().getPreferenceStore(), TEXT_FONT, newValue);
+						} catch (final Exception e) {}
 					});
-	public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = GamaPreferences
-			.create("pref_editor_background_color", "Background color of editors", () -> getDefaultBackground(),
-					IType.COLOR)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
-			.addChangeListener(new IPreferenceChangeListener<GamaColor>() {
-
-				@Override
-				public boolean beforeValueChange(final GamaColor newValue) {
-					return true;
-				}
-
-				@Override
-				public void afterValueChange(final GamaColor c) {
-					final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
-					PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
-							AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-				}
-			});
+	public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
+			GamaPreferences
+					.create("pref_editor_background_color", "Background color of editors", () -> getDefaultBackground(),
+							IType.COLOR)
+					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).onChange(c -> {
+						final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
+						PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
+								AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
+					});
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()

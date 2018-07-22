@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -65,7 +65,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		GamaPreferences.Modeling.INFO_ENABLED.removeChangeListener(listener);
 	}
 
-	public static class BuildPreferenceChangeListener implements IPreferenceChangeListener<Boolean> {
+	public static class BuildPreferenceChangeListener implements IPreferenceAfterChangeListener<Boolean> {
 
 		SyntaxErrorsView view;
 
@@ -74,22 +74,12 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		}
 
 		/**
-		 * @see msi.gama.common.preferences.IPreferenceChangeListener#beforeValueChange(java.lang.Object)
-		 */
-		@Override
-		public boolean beforeValueChange(final Boolean newValue) {
-			return true;
-		}
-
-		/**
 		 * @see msi.gama.common.preferences.IPreferenceChangeListener#afterValueChange(java.lang.Object)
 		 */
 		@Override
 		public void afterValueChange(final Boolean newValue) {
-
 			build();
 			view.checkActions();
-
 		}
 	}
 

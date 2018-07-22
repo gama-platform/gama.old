@@ -62,7 +62,6 @@ import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.geometry.UnboundedCoordinateSequence;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -92,18 +91,7 @@ public class OpenGL {
 
 	static {
 		AWTTextureIO.addTextureProvider(new PGMTextureProvider());
-		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				AWTTextureIO.setTexRectEnabled(newValue);
-			}
-		});
+		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(newValue -> AWTTextureIO.setTexRectEnabled(newValue));
 		AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
 	}
 

@@ -64,7 +64,6 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				final String s = ((StringLiteral) e).getOp();
 				if (s.length() > 4) {
 					final URI u = URI.createFileURI(s);
-					System.out.println("Creating file uri in uses for " + s);
 					final String ext = u.fileExtension();
 					if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
 						if (uses == null) {

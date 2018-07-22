@@ -10,6 +10,7 @@
 package msi.gaml.compilation.ast;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -47,11 +48,18 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 			final Object... imports) {
 		super(keyword, facets, statement);
 		if (path != null) {
-			final String p = path.getAbsolutePath();
+			String p;
+			try {
+				p = path.getCanonicalPath();
+			} catch (final IOException e) {
+				e.printStackTrace();
+				p = path.getAbsolutePath();
+			}
 			this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
-		} else
+		} else {
 			// Case of ill resources (compilation of blocks)
 			this.path = null;
+		}
 	}
 
 	@Override

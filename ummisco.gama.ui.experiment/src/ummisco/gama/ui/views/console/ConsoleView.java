@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.console.IOConsoleViewer;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -54,28 +53,18 @@ public class ConsoleView extends GamaViewPart
 	private final HashMap<Color, BufferedWriter> writers = new HashMap<>();
 
 	public void setCharacterLimit(final int limit) {
-		if (limit == -1)
+		if (limit == -1) {
 			msgConsole.setWaterMarks(-1, -1);
-		else
+		} else {
 			msgConsole.setWaterMarks(limit, limit * 2);
+		}
 	}
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		msgConsole = new IOConsole("GAMA Console", null);
 		setCharacterLimit(GamaPreferences.Interface.CORE_CONSOLE_SIZE.getValue());
-		GamaPreferences.Interface.CORE_CONSOLE_SIZE.addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-			@Override
-			public boolean beforeValueChange(final Integer newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Integer newValue) {
-				setCharacterLimit(newValue);
-			}
-		});
+		GamaPreferences.Interface.CORE_CONSOLE_SIZE.onChange(newValue -> setCharacterLimit(newValue));
 		viewer = new IOConsoleViewer(parent, msgConsole);
 		viewer.setWordWrap(GamaPreferences.Interface.CORE_CONSOLE_WRAP.getValue());
 	}
@@ -98,8 +87,7 @@ public class ConsoleView extends GamaViewPart
 	 * @return
 	 */
 	private Color getColorFor(final ITopLevelAgent root) {
-		if (root == null)
-			return IGamaColors.BLACK.color();
+		if (root == null) { return IGamaColors.BLACK.color(); }
 		return GamaColors.get(root.getColor()).color();
 	}
 

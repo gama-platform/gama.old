@@ -88,7 +88,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						for (final String other : enablements) {
 							activations.put(other, value);
 						}
-						param.addChangeListener((scope, val) -> {
+						param.addChangedListener((scope, val) -> {
 							for (final String enabled : enablements) {
 								final IParameterEditor ed = getEditorForVar(enabled);
 								if (ed != null) {
@@ -102,7 +102,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						for (final String other : disablements) {
 							activations.put(other, !value);
 						}
-						param.addChangeListener((scope, val) -> {
+						param.addChangedListener((scope, val) -> {
 							for (final String disabled : disablements) {
 								final IParameterEditor ed = getEditorForVar(disabled);
 								if (ed != null) {

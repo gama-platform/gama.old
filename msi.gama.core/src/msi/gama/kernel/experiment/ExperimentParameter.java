@@ -299,7 +299,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void addChangeListener(final ParameterChangeListener listener) {
+	public void addChangedListener(final ParameterChangeListener listener) {
 		if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		}

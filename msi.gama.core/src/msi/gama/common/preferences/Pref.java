@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
@@ -59,20 +59,8 @@ public class Pref<T> implements IParameter {
 		return disabled;
 	}
 
-	public Pref<T> onChange(final Consumer<T> consumer) {
-		addChangeListener(new IPreferenceChangeListener<T>() {
-
-			@Override
-			public boolean beforeValueChange(final T newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final T newValue) {
-				consumer.accept(newValue);
-
-			}
-		});
+	public Pref<T> onChange(final IPreferenceAfterChangeListener<T> consumer) {
+		addChangeListener(consumer);
 		return this;
 	}
 

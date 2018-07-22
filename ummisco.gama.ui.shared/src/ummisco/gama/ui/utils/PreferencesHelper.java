@@ -30,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -74,96 +73,40 @@ public class PreferencesHelper {
 			.create("pref_button_font", "Font of buttons and dialogs",
 					() -> new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
-			.addChangeListener(new IPreferenceChangeListener<GamaFont>() {
-
-				@Override
-				public boolean beforeValueChange(final GamaFont newValue) {
-					return true;
-				}
-
-				@Override
-				public void afterValueChange(final GamaFont newValue) {
-					GamaFonts.setLabelFont(newValue);
-				}
-			});
+			.onChange(newValue -> GamaFonts.setLabelFont(newValue));
 
 	public static Pref<String> COLOR_MENU_SORT =
 			GamaPreferences.create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING)
 					.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
-					.addChangeListener(new IPreferenceChangeListener<String>() {
-
-						@Override
-						public boolean beforeValueChange(final String newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final String pref) {
-							if (pref.equals(GamaColorMenu.SORT_NAMES[0])) {
-								GamaColorMenu.colorComp = GamaColorMenu.byRGB;
-							} else if (pref.equals(GamaColorMenu.SORT_NAMES[1])) {
-								GamaColorMenu.colorComp = GamaColorMenu.byName;
-							} else if (pref.equals(GamaColorMenu.SORT_NAMES[2])) {
-								GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
-							} else {
-								GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
-							}
-							// GamaColorMenu.instance.reset();
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS).onChange(pref -> {
+						if (pref.equals(GamaColorMenu.SORT_NAMES[0])) {
+							GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+						} else if (pref.equals(GamaColorMenu.SORT_NAMES[1])) {
+							GamaColorMenu.colorComp = GamaColorMenu.byName;
+						} else if (pref.equals(GamaColorMenu.SORT_NAMES[2])) {
+							GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+						} else {
+							GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
 						}
 					});
 	public static Pref<Boolean> COLOR_MENU_REVERSE =
 			GamaPreferences.create("pref_menu_colors_reverse", "Reverse order", false, IType.BOOL)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
-					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-						@Override
-						public boolean beforeValueChange(final Boolean newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final Boolean pref) {
-							GamaColorMenu.setReverse(pref ? -1 : 1);
-							// GamaColorMenu.instance.reset();
-						}
-					});
+					.onChange(pref -> GamaColorMenu.setReverse(pref ? -1 : 1));
 	public static Pref<Boolean> COLOR_MENU_GROUP =
 			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
-					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-						@Override
-						public boolean beforeValueChange(final Boolean newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final Boolean pref) {
-							GamaColorMenu.breakdown = pref;
-							// GamaColorMenu.instance.reset();
-						}
-					});
+					.onChange(pref -> GamaColorMenu.breakdown = pref);
 	public static final Pref<Boolean> NAVIGATOR_METADATA =
 			GamaPreferences.create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
-					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-						@Override
-						public boolean beforeValueChange(final Boolean newValue) {
-							return true;
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE).onChange(newValue -> {
+						final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+						try {
+							mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
+						} catch (final CoreException e) {
+							e.printStackTrace();
 						}
 
-						@Override
-						public void afterValueChange(final Boolean newValue) {
-							final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-							try {
-								mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
-							} catch (final CoreException e) {
-								e.printStackTrace();
-							}
-
-						}
 					});
 
 	public static void initialize() {
@@ -172,18 +115,9 @@ public class PreferencesHelper {
 			final Pref<Integer> p = GamaPreferences
 					.create("pref_memory_max", "Maximum memory allocated in Mb (requires restart)", memory, 1)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
-			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-				@Override
-				public boolean beforeValueChange(final Integer newValue) {
-					return true;
-				}
-
-				@Override
-				public void afterValueChange(final Integer newValue) {
-					changeMaxMemory(newValue);
-					GamaPreferencesView.setRestartRequired();
-				}
+			p.onChange(newValue -> {
+				changeMaxMemory(newValue);
+				GamaPreferencesView.setRestartRequired();
 			});
 		}
 

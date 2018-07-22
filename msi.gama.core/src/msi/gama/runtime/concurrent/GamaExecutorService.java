@@ -20,7 +20,6 @@ import java.util.concurrent.ForkJoinTask;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -57,19 +56,10 @@ public abstract class GamaExecutorService {
 					"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors()
 							+ ")",
 					4, IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
-							.addChangeListener(new IPreferenceChangeListener<Integer>() {
-
-								@Override
-								public boolean beforeValueChange(final Integer newValue) {
-									return true;
-								}
-
-								@Override
-								public void afterValueChange(final Integer newValue) {
-									setConcurrencyLevel(newValue);
-									System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
-											String.valueOf(newValue));
-								}
+							.onChange(newValue -> {
+								setConcurrencyLevel(newValue);
+								System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
+										String.valueOf(newValue));
 							});
 
 	public static void startUp() {

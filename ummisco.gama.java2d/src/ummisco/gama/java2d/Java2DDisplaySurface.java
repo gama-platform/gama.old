@@ -51,7 +51,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -78,25 +77,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	private static final long serialVersionUID = 1L;
 
 	static {
-		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			// Corresponds to JVM options : -Dsun.java2d.noddraw=true
-			// -Dsun.awt.noerasebackground=true -Dsun.java2d.d3d=false
-			// -Dsun.java2d.opengl=false -Dsun.java2d.pmoffscreen=false
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
-				System.setProperty("sun.awt.noerasebackground", "true"); // Always
-																			// true
-				System.setProperty("sun.java2d.d3d", newValue ? "false" : "true");
-				System.setProperty("sun.java2d.opengl", newValue ? "false" : "true");
-				System.setProperty("sun.java2d.pmoffscreen", newValue ? "false" : "true");
-			}
+		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION.onChange(newValue -> {
+			System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
+			System.setProperty("sun.awt.noerasebackground", "true");
+			System.setProperty("sun.java2d.d3d", newValue ? "false" : "true");
+			System.setProperty("sun.java2d.opengl", newValue ? "false" : "true");
+			System.setProperty("sun.java2d.pmoffscreen", newValue ? "false" : "true");
 		});
 		// Forces the listener to run at least once
 		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION

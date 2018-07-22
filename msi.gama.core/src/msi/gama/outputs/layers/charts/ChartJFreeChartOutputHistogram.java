@@ -55,7 +55,6 @@ import org.jfree.ui.TextAnchor;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -85,18 +84,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	static {
 		enableFlatLook(GamaPreferences.Displays.CHART_FLAT.getValue());
-		GamaPreferences.Displays.CHART_FLAT.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				enableFlatLook(newValue);
-			}
-		});
+		GamaPreferences.Displays.CHART_FLAT.onChange(newValue -> enableFlatLook(newValue));
 	}
 
 	public ChartJFreeChartOutputHistogram(final IScope scope, final String name, final IExpression typeexp) {
@@ -110,8 +98,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		super.createChart(scope);
 		jfreedataset.add(0, new DefaultCategoryDataset());
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		if (reverse_axes)
+		if (reverse_axes) {
 			orientation = PlotOrientation.HORIZONTAL;
+		}
 		if (style.equals(IKeyword.THREE_D)) {
 			chart = ChartFactory.createBarChart3D(getName(), null, null, null, orientation, true, true, false);
 		} else if (style.equals(IKeyword.STACK)) {
@@ -331,8 +320,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// DefaultCategoryDataset serie=((DefaultCategoryDataset)
 		// jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))));
 		final DefaultCategoryDataset serie = (DefaultCategoryDataset) jfreedataset.get(0);
-		if (serie.getRowKeys().contains(serieid))
+		if (serie.getRowKeys().contains(serieid)) {
 			serie.removeRow(serieid);
+		}
 		final ArrayList<String> CValues = dataserie.getCValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
@@ -343,23 +333,17 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
 			rangeAxis.setAutoRange(false);
 			for (int i = 0; i < CValues.size(); i++) {
-				if (getY_LogScale(scope)) 
-				{
-					double val=YValues.get(i);
-					if (val<=0)
-					{
-						throw GamaRuntimeException.warning("Log scale with <=0 value:"+val, scope);
+				if (getY_LogScale(scope)) {
+					final double val = YValues.get(i);
+					if (val <= 0) {
+						throw GamaRuntimeException.warning("Log scale with <=0 value:" + val, scope);
+					} else {
+						serie.addValue(YValues.get(i), serieid, CValues.get(i));
 					}
-					else
-					{
-						serie.addValue(YValues.get(i), serieid, CValues.get(i));						
-					}
-					
-				}
-				else
-				{
+
+				} else {
 					serie.addValue(YValues.get(i), serieid, CValues.get(i));
-					
+
 				}
 				// ((ExtendedCategoryAxis)domainAxis).addSubLabel(CValues.get(i),
 				// serieid);;
@@ -376,14 +360,13 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
-		final CategoryPlot pp= (CategoryPlot)this.chart.getPlot();
-		 NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
-		if (getY_LogScale(scope)) 
-		{
-			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
+		final CategoryPlot pp = (CategoryPlot) this.chart.getPlot();
+		NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
+		if (getY_LogScale(scope)) {
+			final LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
 			logAxis.setAllowNegativesFlag(true);
-		((CategoryPlot) this.chart.getPlot()).setRangeAxis(logAxis);
-		rangeAxis=logAxis;
+			((CategoryPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+			rangeAxis = logAxis;
 		}
 
 		if (!useyrangeinterval && !useyrangeminmax) {
@@ -409,7 +392,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		pp.setRangeGridlinePaint(axesColor);
 		pp.setRangeCrosshairVisible(true);
 
-		
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
 		pp.getRangeAxis().setTickLabelFont(getTickFont());
@@ -433,30 +415,25 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			pp.getDomainAxis().setLabel(getXLabel(scope));
 		}
 
-		
-		
 		if (this.useSubAxis) {
 			for (final String serieid : chartdataset.getDataSeriesIds(scope)) {
 				((SubCategoryAxis) domainAxis).addSubCategory(serieid);
 			}
 
 		}
-		if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			pp.setDomainGridlinesVisible(false);
 		}
 
-			if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			pp.setRangeCrosshairVisible(false);
-			
+
 		}
-		
-		if (!this.getYTickValueVisible(scope))
-		{
+
+		if (!this.getYTickValueVisible(scope)) {
 			pp.getRangeAxis().setTickMarksVisible(false);
 			pp.getRangeAxis().setTickLabelsVisible(false);
-			
+
 		}
 
 	}
@@ -490,28 +467,24 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			// pp.getDomainAxis().setLabelFont(new Font(labelFontFace,
 			// labelFontStyle, 1));
 		}
-		if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			pp.setDomainGridlinesVisible(false);
 		}
 
-			if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			pp.setRangeCrosshairVisible(false);
-			
+
 		}
-		
-		if (!this.getYTickValueVisible(scope))
-		{
+
+		if (!this.getYTickValueVisible(scope)) {
 			pp.getRangeAxis().setTickMarksVisible(false);
 			pp.getRangeAxis().setTickLabelsVisible(false);
-			
+
 		}
-		if (!this.getXTickValueVisible(scope))
-		{
+		if (!this.getXTickValueVisible(scope)) {
 			pp.getDomainAxis().setTickMarksVisible(false);
 			pp.getDomainAxis().setTickLabelsVisible(false);
-			
+
 		}
 
 	}
@@ -572,12 +545,10 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 		pp.setDomainGridlinePaint(axesColor);
 		pp.setRangeGridlinePaint(axesColor);
-		if (!this.getXTickLineVisible(scope))
-		{
+		if (!this.getXTickLineVisible(scope)) {
 			pp.setDomainGridlinesVisible(false);
 		}
-		if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			pp.setRangeGridlinesVisible(false);
 		}
 		pp.setRangeCrosshairVisible(true);

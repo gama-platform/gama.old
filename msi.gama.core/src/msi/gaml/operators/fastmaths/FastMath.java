@@ -20,7 +20,6 @@
 package msi.gaml.operators.fastmaths;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener;
 
 /**
  * Class providing math treatments that: - are meant to be faster than java.lang.Math class equivalents (if any), - are
@@ -68,19 +67,7 @@ public final class FastMath extends CmnFastMath {
 	private static boolean USE_JDK_MATH = !GamaPreferences.External.MATH_OPTIMIZATION.getValue();
 
 	static {
-		GamaPreferences.External.MATH_OPTIMIZATION.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
-
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				USE_JDK_MATH = !newValue;
-				FM_USE_JDK_MATH = !newValue;
-			}
-		});
+		GamaPreferences.External.MATH_OPTIMIZATION.onChange(newValue -> USE_JDK_MATH = FM_USE_JDK_MATH = !newValue);
 	}
 
 	// --------------------------------------------------------------------------
@@ -1785,11 +1772,11 @@ public final class FastMath extends CmnFastMath {
 			// A bit faster than using casts.
 			final int bits = Float.floatToRawIntBits(value);
 			final int anteCommaBits = bits & 0xFF800000 >> exponent;
-		if (value < 0.0f && anteCommaBits != bits) {
-			return Float.intBitsToFloat(anteCommaBits) - 1.0f;
-		} else {
-			return Float.intBitsToFloat(anteCommaBits);
-		}
+			if (value < 0.0f && anteCommaBits != bits) {
+				return Float.intBitsToFloat(anteCommaBits) - 1.0f;
+			} else {
+				return Float.intBitsToFloat(anteCommaBits);
+			}
 		} else {
 			// +-Infinity, NaN, or a mathematical integer.
 			return value;
@@ -1895,22 +1882,22 @@ public final class FastMath extends CmnFastMath {
 		// (http://mail.openjdk.java.net/pipermail/core-libs-dev/2013-August/020247.html).
 		final int bits = Float.floatToRawIntBits(value);
 		final int biasedExp = bits >> 23 & 0xFF;
-				// Shift to get rid of bits past comma except first one: will need to
-				// 1-shift to the right to end up with correct magnitude.
-				final int shift = 23 - 1 + MAX_FLOAT_EXPONENT - biasedExp;
-				if ((shift & -32) == 0) {
-					// shift in [0,31], so unbiased exp in [-9,22].
-					int extendedMantissa = 0x00800000 | bits & 0x007FFFFF;
-					if (bits < 0) {
-						extendedMantissa = -extendedMantissa;
-					}
-					// If value is positive and first bit past comma is 0, rounding
-					// to lower integer, else to upper one, which is what "+1" and
-					// then ">>1" do.
-					return (extendedMantissa >> shift) + 1 >> 1;
-				} else {
-					return (int) value;
-				}
+		// Shift to get rid of bits past comma except first one: will need to
+		// 1-shift to the right to end up with correct magnitude.
+		final int shift = 23 - 1 + MAX_FLOAT_EXPONENT - biasedExp;
+		if ((shift & -32) == 0) {
+			// shift in [0,31], so unbiased exp in [-9,22].
+			int extendedMantissa = 0x00800000 | bits & 0x007FFFFF;
+			if (bits < 0) {
+				extendedMantissa = -extendedMantissa;
+			}
+			// If value is positive and first bit past comma is 0, rounding
+			// to lower integer, else to upper one, which is what "+1" and
+			// then ">>1" do.
+			return (extendedMantissa >> shift) + 1 >> 1;
+		} else {
+			return (int) value;
+		}
 	}
 
 	/**

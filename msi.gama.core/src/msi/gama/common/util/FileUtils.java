@@ -9,12 +9,26 @@
  **********************************************************************************************/
 package msi.gama.common.util;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
+import java.util.List;
+
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import com.google.common.collect.Iterables;
 
@@ -33,6 +47,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
  */
 public class FileUtils {
 
+	static IWorkspaceRoot ROOT = ResourcesPlugin.getWorkspace().getRoot();
+	static IFileSystem LOCAL = EFS.getLocalFileSystem();
+
 	/**
 	 * Checks if is absolute path.
 	 *
@@ -44,11 +61,6 @@ public class FileUtils {
 	private static boolean isAbsolutePath(final String filePath) {
 		// Fixes #2456
 		return Paths.get(filePath).isAbsolute();
-		// final File[] roots = File.listRoots();
-		// for (int i = 0; i < roots.length; i++) {
-		// if (filePath.startsWith(roots[i].getAbsolutePath())) { return true; }
-		// }
-		// return false;
 	}
 
 	private static String withTrailingSep(final String path) {
@@ -65,14 +77,59 @@ public class FileUtils {
 	 * @return the string
 	 */
 	private static String removeRoot(final String absoluteFilePath) {
-		// OutputManager.debug("absoluteFilePath before = " + absoluteFilePath);
-
 		final File[] roots = File.listRoots();
 		for (final File root : roots) {
 			if (absoluteFilePath.startsWith(root.getAbsolutePath())) { return absoluteFilePath
 					.substring(root.getAbsolutePath().length(), absoluteFilePath.length()); }
 		}
 		return absoluteFilePath;
+	}
+
+	// Add a thin layer of workspace-based searching in order to resolve linked resources.
+	// Should be able to catch most of the calls to relative resources as well
+	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist) {
+		final IExperimentAgent a = scope.getExperiment();
+		// Necessary to ask the workspace for the containers as projects might be linked
+		final List<IContainer> paths =
+				a.getWorkingPaths().stream().map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
+		for (final IContainer folder : paths) {
+			final String file = findInWorkspace(fp, folder, mustExist);
+			if (file != null) {
+				System.out.println("Hit with workspace-based search: " + file);
+				return file;
+			}
+		}
+		if (isAbsolutePath(fp)) {
+			final String file = findOutsideWorkspace(fp, mustExist);
+			if (file != null) {
+				System.out.println("Hit with EFS-based search: " + file);
+				return file;
+			}
+		}
+		System.out.println("Falling back to the previous JavaIO based search");
+		return constructAbsoluteFilePathAlternate(scope, fp, mustExist);
+	}
+
+	private static String findInWorkspace(final String fp, final IContainer container, final boolean mustExist) {
+		final IPath full = container.getFullPath().append(fp);
+		IResource file = ROOT.getFile(full);
+		if (!file.exists()) {
+			// Might be a folder we're looking for
+			file = ROOT.getFolder(full);
+		}
+		if (!file.exists()) {
+			if (mustExist) { return null; }
+		}
+		return file.getLocation().toString();
+		// getLocation() works for regular and linked files
+	}
+
+	private static String findOutsideWorkspace(final String fp, final boolean mustExist) {
+		final IFileStore file = LOCAL.getStore(new Path(fp));
+		if (!mustExist) { return fp; }
+		final IFileInfo info = file.fetchInfo();
+		if (info.exists()) { return fp; }
+		return null;
 	}
 
 	/**
@@ -88,8 +145,8 @@ public class FileUtils {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist)
-			throws GamaRuntimeException {
+	static public String constructAbsoluteFilePathAlternate(final IScope scope, final String fp,
+			final boolean mustExist) throws GamaRuntimeException {
 		String filePath = null;
 		Iterable<String> baseDirectories = null;
 		final IExperimentAgent a = scope.getExperiment();
