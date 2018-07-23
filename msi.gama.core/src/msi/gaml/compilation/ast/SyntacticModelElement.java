@@ -10,7 +10,6 @@
 package msi.gaml.compilation.ast;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -27,7 +26,7 @@ import msi.gaml.statements.Facets;
 public class SyntacticModelElement extends SyntacticTopLevelElement {
 
 	public static class SyntacticExperimentModelElement extends SyntacticModelElement {
-		public SyntacticExperimentModelElement(final String keyword, final EObject root, final File path) {
+		public SyntacticExperimentModelElement(final String keyword, final EObject root, final String path) {
 			super(keyword, null, root, path);
 		}
 
@@ -44,17 +43,17 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 
 	final private String path;
 
-	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final File path,
+	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final String path,
 			final Object... imports) {
 		super(keyword, facets, statement);
 		if (path != null) {
-			String p;
-			try {
-				p = path.getCanonicalPath();
-			} catch (final IOException e) {
-				e.printStackTrace();
-				p = path.getAbsolutePath();
-			}
+			final String p = path;
+			// try {
+			// p = path.getCanonicalPath();
+			// } catch (final IOException e) {
+			// e.printStackTrace();
+			// p = path.getAbsolutePath();
+			// }
 			this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
 		} else {
 			// Case of ill resources (compilation of blocks)

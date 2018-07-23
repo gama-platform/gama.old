@@ -58,13 +58,18 @@ import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -126,6 +131,25 @@ public class GamlSyntacticConverter {
 
 	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
+	public static String getAbsoluteContainerFolderPathOf(final Resource r) {
+		URI uri = r.getURI();
+		if (uri.isFile()) {
+			uri = uri.trimSegments(1);
+			return uri.toFileString();
+		} else if (uri.isPlatform()) {
+			final IPath path = GamlResourceServices.getPathOf(r);
+			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			final IContainer folder = file.getParent();
+			return folder.getLocation().toString();
+		}
+		return URI.decode(uri.toString());
+
+		// final IPath fullPath = file.getLocation();
+		// path = fullPath; // toOSString ?
+		// if (path == null) { return null; }
+		// return path.uptoSegment(path.segmentCount() - 1);
+	}
+
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
 			Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
@@ -137,7 +161,7 @@ public class GamlSyntacticConverter {
 		}
 		if (root instanceof ExperimentFileStructure) {
 			final HeadlessExperiment he = ((ExperimentFileStructure) root).getExp();
-			final File path = GamlResourceServices.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
+			final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 			final SyntacticExperimentModelElement exp = SyntacticFactory.createExperimentModel(root, he, path);
 			convertFacets(he, exp.getExperiment(), errors);
 			exp.setFacet(NAME, LabelExpressionDescription.create(exp.getExperiment().getName()));
@@ -149,7 +173,7 @@ public class GamlSyntacticConverter {
 		final List<String> prgm = collectPragmas(m);
 		// final Object[] imps = collectImports(m);<>
 
-		final File path = GamlResourceServices.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
+		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 		final SyntacticModelElement model =
 				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), path/* , imps */);
 		if (prgm != null) {

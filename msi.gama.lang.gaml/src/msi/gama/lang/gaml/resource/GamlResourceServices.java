@@ -15,7 +15,6 @@ import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -155,22 +154,6 @@ public class GamlResourceServices {
 		}
 		return path;
 
-	}
-
-	public static IPath getAbsoluteContainerFolderPathOf(final Resource r) {
-		URI uri = r.getURI();
-		if (uri.isFile()) {
-			uri = uri.trimSegments(1);
-			return Path.fromOSString(uri.path());
-		}
-		final IPath path = getPathOf(r);
-		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		final IContainer folder = file.getParent();
-		return folder.getLocation();
-		// final IPath fullPath = file.getLocation();
-		// path = fullPath; // toOSString ?
-		// if (path == null) { return null; }
-		// return path.uptoSegment(path.segmentCount() - 1);
 	}
 
 	public static String getModelPathOf(final Resource r) {
