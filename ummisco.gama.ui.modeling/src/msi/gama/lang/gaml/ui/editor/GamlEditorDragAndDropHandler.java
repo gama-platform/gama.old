@@ -42,6 +42,7 @@ import org.eclipse.xtext.ui.editor.model.XtextDocument;
 
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFileType;
+import msi.gaml.types.ParametricFileType;
 import ummisco.gama.ui.commands.FileOpener;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.utils.PlatformHelper;
@@ -168,8 +169,23 @@ public class GamlEditorDragAndDropHandler {
 
 			private Point fSelection;
 
+			/**
+			 * @see org.eclipse.swt.dnd.DropTargetAdapter#dropAccept(org.eclipse.swt.dnd.DropTargetEvent)
+			 */
+			@Override
+			public void dropAccept(final DropTargetEvent event) {
+				if (RSRC.isSupportedType(event.currentDataType) || FILE.isSupportedType(event.currentDataType)) {
+					event.detail = DND.DROP_COPY;
+					return;
+				}
+			}
+
 			@Override
 			public void dragEnter(final DropTargetEvent event) {
+				if (RSRC.isSupportedType(event.currentDataType) || FILE.isSupportedType(event.currentDataType)) {
+					event.detail = DND.DROP_COPY;
+					return;
+				}
 				fTextDragAndDropToken = null;
 				fSelection = st.getSelection();
 				if (event.detail == DND.DROP_DEFAULT) {
@@ -235,8 +251,7 @@ public class GamlEditorDragAndDropHandler {
 					}
 
 					final String text = (String) data;
-					if (editor.isBlockSelectionModeEnabled()) {
-					} else {
+					if (editor.isBlockSelectionModeEnabled()) {} else {
 						final Point newSelection = st.getSelection();
 						try {
 							final int modelOffset = getViewer().widgetOffset2ModelOffset(newSelection.x);
@@ -305,11 +320,11 @@ public class GamlEditorDragAndDropHandler {
 			if (resource instanceof IFile) {
 				final IFile file = (IFile) resource;
 				switch (getContentTypeId(file)) {
-				case FileMetaDataProvider.GAML_CT_ID:
-					newSelection.x = addDropImport(sb, file);
-					break;
-				default:
-					addDropFile(sb, file);
+					case FileMetaDataProvider.GAML_CT_ID:
+						newSelection.x = addDropImport(sb, file);
+						break;
+					default:
+						addDropFile(sb, file);
 				}
 			}
 		}
@@ -330,10 +345,8 @@ public class GamlEditorDragAndDropHandler {
 	 * @param file
 	 */
 	private void addDropFile(final StringBuilder sb, final IFile file) {
-		String fullType = GamaFileType.extensionsToFullType.get(file.getFileExtension()).toString();
-		if (fullType == null) {
-			fullType = "file";
-		}
+		final ParametricFileType type = GamaFileType.extensionsToFullType.get(file.getFileExtension());
+		final String fullType = type == null ? "file" : type.toString();
 		final String name = obtainRelativePath(file);
 		final String varName = clean(file.getName()) + "_" + fullType;
 		sb.append(Strings.LN).append(Strings.TAB).append(fullType).append(' ').append(varName).append(" <- ")
@@ -349,12 +362,8 @@ public class GamlEditorDragAndDropHandler {
 	private String obtainRelativePath(final IFile file) {
 		final IPath path = file.getFullPath();
 		final IPath editorFile = new Path(editor.getURI().toPlatformString(true)).removeLastSegments(1);
-		IPath newRelativePath = path.makeRelativeTo(editorFile);
-		String name = newRelativePath.toString();
-		// final URI u1 = URI.createFileURI(path.toString());
-		// final URI u2 = URI.createFileURI(editorFile.toString());
-		// final String name = URI.decode(u1.deresolve(u2, false, true,
-		// true).toString());
+		final IPath newRelativePath = path.makeRelativeTo(editorFile);
+		final String name = newRelativePath.toString();
 		return name;
 	}
 
