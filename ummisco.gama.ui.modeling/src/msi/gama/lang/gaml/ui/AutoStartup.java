@@ -49,7 +49,7 @@ public class AutoStartup implements IStartup {
 			GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
 	public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
-			.create("pref_editor_save_all", "Save files before lauching an experiment", true, IType.BOOL)
+			.create("pref_editor_save_all", "Save all editors before lauching an experiment", true, IType.BOOL)
 			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 	public static final Pref<Boolean> EDITOR_DRAG_RESOURCES =
 			GamaPreferences.create("pref_editor_drag_resources", "Drag files and resources as references in GAML files",

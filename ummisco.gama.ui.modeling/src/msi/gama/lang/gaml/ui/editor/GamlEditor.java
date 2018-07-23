@@ -177,7 +177,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	Composite toolbarParent;
 	private EditorSearchControls findControl;
 	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
-	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
+	// boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
 	@Inject public IResourceSetProvider resourceSetProvider;
 	@Inject Injector injector;

@@ -20,13 +20,19 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
+import msi.gaml.types.IType;
 
 public class PerspectiveHelper {
+
+	public static final Pref<Boolean> EDITOR_PERSPECTIVE_SAVE = GamaPreferences
+		.create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL)
+		.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -72,7 +78,7 @@ public class PerspectiveHelper {
 	private static IPerspectiveDescriptor findOrBuildPerspectiveWithId(final String id) {
 		if ( currentSimulationPerspective != null &&
 			currentSimulationPerspective.getId().equals(id) ) { return currentSimulationPerspective; }
-		final PerspectiveRegistry pr = ((PerspectiveRegistry) getPerspectiveRegistry());
+		final PerspectiveRegistry pr = (PerspectiveRegistry) getPerspectiveRegistry();
 		IPerspectiveDescriptor tempDescriptor = pr.findPerspectiveWithId(id);
 		if ( tempDescriptor == null ) {
 			tempDescriptor = new SimulationPerspectiveDescriptor(id);
@@ -97,15 +103,23 @@ public class PerspectiveHelper {
 		if ( perspectiveId == null ) { return false; }
 		if ( perspectiveId.equals(currentPerspectiveId) ) { return true; }
 
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if ( activePage == null ) {
+		IWorkbenchPage activePage = null;
+		try {
+			activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		} catch (final Exception e) {
 			try {
 				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
-			} catch (final WorkbenchException e1) {
+			} catch (final Exception e1) {
 				e1.printStackTrace();
 			}
+			e.printStackTrace();
 		}
 		if ( activePage == null ) { return false; }
+
+		if ( EDITOR_PERSPECTIVE_SAVE.getValue() ) {
+			activePage.saveAllEditors(false);
+		}
+
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
