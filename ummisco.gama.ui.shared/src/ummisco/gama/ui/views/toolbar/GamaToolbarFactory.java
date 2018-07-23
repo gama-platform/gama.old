@@ -23,6 +23,9 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
+import msi.gaml.types.IType;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -35,6 +38,10 @@ import ummisco.gama.ui.resources.IGamaColors;
  *
  */
 public class GamaToolbarFactory {
+
+	public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
+			.create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL)
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static class GamaComposite extends Composite {
 
@@ -151,8 +158,10 @@ public class GamaToolbarFactory {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		layout.marginWidth = 0;
-		layout.marginTop = 0;
-		layout.marginBottom = 0;
+		final int margin = REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
+		layout.marginTop = margin;
+		layout.marginBottom = margin;
+		layout.marginHeight = margin;
 		toolbarComposite.setLayout(layout);
 		toolbarComposite.setBackground(IGamaColors.WHITE.color());
 
@@ -161,6 +170,23 @@ public class GamaToolbarFactory {
 	}
 
 	public static Composite createToolbars(final IToolbarDecoratedView view, final Composite composite) {
+		// Composite view_parent = composite;
+		// while (view_parent != null) {
+		// final Layout layout = view_parent.getLayout();
+		// if (layout != null) {
+		// System.out.println("View: " + ((IWorkbenchPart) view).getTitle() + " | Class of composite : "
+		// + view_parent.getClass().toString() + " | Class of layout : " + layout.getClass().toString());
+		//
+		// if (layout instanceof FillLayout) {
+		// ((FillLayout) layout).marginHeight = 0;
+		// ((FillLayout) layout).marginWidth = 0;
+		// } else if (layout instanceof StackLayout) {
+		// ((StackLayout) layout).marginHeight = 0;
+		// ((StackLayout) layout).marginWidth = 0;
+		// }
+		// }
+		// view_parent = view_parent.getParent();
+		// }
 		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
 		final Composite toolbarComposite = createToolbarComposite(view, intermediateComposite);
 		final Composite childComposite = new Composite(intermediateComposite, SWT.None);
