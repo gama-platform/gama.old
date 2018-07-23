@@ -22,7 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -49,11 +49,15 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		final Composite container = new Composite(parent, SWT.NULL);
 		createContainerSection(container);
 		createLabel(container, "Model to experiment on:");
-		modelChooser = new Text(container, SWT.BORDER | SWT.SINGLE);
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		modelChooser.setLayoutData(gd);
+		final Composite rightSection = new Composite(container, SWT.NONE);
+		applyGridData(rightSection, 2);
+		final GridLayout layout = new GridLayout(2, false);
+		rightSection.setLayout(layout);
+
+		modelChooser = new Text(rightSection, SWT.BORDER | SWT.SINGLE);
+		applyGridData(modelChooser, 1);
 		modelChooser.addModifyListener(e -> dialogChanged());
-		final Button button = new Button(container, SWT.PUSH);
+		final Button button = new Button(rightSection, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
 
@@ -66,17 +70,18 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		createAuthorSection(container);
 		createNameSection(container);
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		createLabel(container, null);
 		createLabel(container, "&Type of Experiment:");
 
 		final Composite middleComposite = new Composite(container, SWT.NULL);
 		final FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
+		applyGridData(middleComposite, 2);
 		Arrays.asList(AbstractNewModelWizard.GUI, AbstractNewModelWizard.HEADLESS).forEach(s -> {
 			final Button b = new Button(middleComposite, SWT.RADIO);
 			b.setText(s);
-			if (s.equals(AbstractNewModelWizard.GUI))
+			if (s.equals(AbstractNewModelWizard.GUI)) {
 				b.setSelection(true);
+			}
 			b.addSelectionListener(new SelectionAdapter() {
 
 				@Override

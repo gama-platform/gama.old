@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -19,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
@@ -52,10 +54,12 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 	@Override
 	public void setVisible(final boolean b) {
 		super.setVisible(b);
-		if (containerText.getText().isEmpty())
+		if (containerText.getText().isEmpty()) {
 			WorkbenchHelper.asyncRun(() -> handleContainerBrowse());
-		if (b)
+		}
+		if (b) {
 			fileText.setFocus();
+		}
 	}
 
 	/** Gets the author of the new file */
@@ -108,8 +112,9 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 		if (container != null) {
 			containerText.setText(container.getFullPath().toString());
 			fileText.setText(getInitialFileName());
-		} else
+		} else {
 			fileText.setText(getDefaultFileBody() + getExtension());
+		}
 
 	}
 
@@ -138,8 +143,9 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 
 	private IContainer findContainer() {
 		Object obj = null;
-		if (selection instanceof IStructuredSelection && !selection.isEmpty())
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			obj = ((IStructuredSelection) selection).getFirstElement();
+		}
 		IResource r = ResourceManager.getResource(obj);
 		if (r == null) { return null; }
 		if (r instanceof IProject) {
@@ -158,41 +164,45 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 
 	Label createLabel(final Composite c, final String t) {
 		final Label label = new Label(c, t == null ? SWT.NULL : SWT.RIGHT);
-		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		final GridData d = new GridData(SWT.END, SWT.CENTER, false, false);
+		// d.minimumHeight = 20;
+		// d.heightHint = 30;
 		label.setLayoutData(d);
 		label.setFont(GamaFonts.getLabelfont());
-		label.setText(t == null ? "" : t);
+		label.setText(t == null ? " " : t);
 		return label;
 	}
 
 	public void createAuthorSection(final Composite container) {
-		GridData gd;
+		final GridData gd;
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		createLabel(container, null);
 		createLabel(container, "&Author:");
 
 		authorText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		authorText.setLayoutData(gd);
+		applyGridData(authorText, 2);
 		authorText.setText(getComputerFullName());
 		authorText.addModifyListener(e -> dialogChanged());
 	}
 
 	public void createContainerSection(final Composite container) {
-		final GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
+		layout.makeColumnsEqualWidth = false;
+		layout.verticalSpacing = 20;
 
 		createLabel(container, "&Container:");
-
-		containerText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		containerText.setLayoutData(gd);
+		final Composite rightSection = new Composite(container, SWT.NONE);
+		applyGridData(rightSection, 2);
+		layout = new GridLayout(2, false);
+		rightSection.setLayout(layout);
+		containerText = new Text(rightSection, SWT.BORDER | SWT.SINGLE);
+		applyGridData(containerText, 1);
 		containerText.addModifyListener(e -> dialogChanged());
 
-		final Button button = new Button(container, SWT.PUSH);
+		final Button button = new Button(rightSection, SWT.PUSH);
 		button.setText("Browse...");
+
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -203,21 +213,22 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 	}
 
 	public void createNameSection(final Composite container) {
-		createLabel(container, null);
 		createLabel(container, gamlType() + " name:");
-
 		nameText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		nameText.setLayoutData(gd);
+		applyGridData(nameText, 2);
 		nameText.setText("New " + gamlType());
 		nameText.addModifyListener(e -> dialogChanged());
+	}
+
+	void applyGridData(final Control c, final int hSpan) {
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).span(hSpan, 1)
+				.minSize(SWT.DEFAULT, 20).applyTo(c);
 	}
 
 	public void createFileNameSection(final Composite container) {
 		createLabel(container, "&File name:");
 		fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		fileText.setLayoutData(gd);
+		applyGridData(fileText, 2);
 		fileText.addModifyListener(e -> {
 			final Text t = (Text) e.getSource();
 			final String fname = t.getText();

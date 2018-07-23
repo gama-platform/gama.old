@@ -47,14 +47,17 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 		createLabel(container, "&Choose a template:");
 
 		final Composite middleComposite = new Composite(container, SWT.NULL);
-		FillLayout fillLayout = new FillLayout();
+
+		applyGridData(middleComposite, 2);
+		final FillLayout fillLayout = new FillLayout();
 		middleComposite.setLayout(fillLayout);
 		Arrays.asList(AbstractNewModelWizard.EMPTY, AbstractNewModelWizard.SKELETON, AbstractNewModelWizard.TEST)
 				.forEach(s -> {
 					final Button b = new Button(middleComposite, SWT.RADIO);
 					b.setText(s);
-					if (s.equals(AbstractNewModelWizard.EMPTY))
+					if (s.equals(AbstractNewModelWizard.EMPTY)) {
 						b.setSelection(true);
+					}
 					b.addSelectionListener(new SelectionAdapter() {
 
 						@Override
@@ -69,32 +72,41 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 					});
 				});
 
-		createLabel(container, null);
 		createFileNameSection(container);
 		createAuthorSection(container);
 		createNameSection(container);
-		createLabel(container, null);
+		createDocSection(container);
 		createLabel(container, "&Model description:");
 		descriptionText = new Text(container, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		descriptionText.setBounds(0, 0, 250, 100);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		gd.heightHint = 100;
 		gd.verticalSpan = 4;
+		gd.horizontalSpan = 2;
 		descriptionText.setLayoutData(gd);
 
 		/*
 		 * Need to add seven empty labels in order to push next controls after the descriptionText box.
 		 */
 		// TODO Dirty!! Change the way to do this
-		for (int i = 0; i < 7; i++) {
-			createLabel(container, null);
-		}
+		// for (int i = 0; i < 13; i++) {
+		// createLabel(container, null);
+		// }
 
+		/* Finished adding the custom control */
+		initialize();
+		dialogChanged();
+		setControl(container);
+	}
+
+	private void createDocSection(final Composite container) {
+		FillLayout fillLayout;
 		createLabel(container, "&Create a documentation template ?");
 
 		final Composite compo = new Composite(container, SWT.NULL);
 		fillLayout = new FillLayout();
 		compo.setLayout(fillLayout);
-
+		applyGridData(compo, 2);
 		yesButton = new Button(compo, SWT.RADIO);
 		yesButton.setText("Yes");
 		final Button noButton = new Button(compo, SWT.RADIO);
@@ -107,11 +119,6 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 				dialogChanged();
 			}
 		});
-
-		/* Finished adding the custom control */
-		initialize();
-		dialogChanged();
-		setControl(container);
 	}
 
 	/** Gets the model name of the new file */

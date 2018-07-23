@@ -29,7 +29,6 @@ public class NewTestExperimentWizardPage extends AbstractNewModelWizardPage {
 		createAuthorSection(container);
 		createNameSection(container);
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
-		createLabel(container, null);
 		/* Finished adding the custom control */
 		initialize();
 		dialogChanged();
