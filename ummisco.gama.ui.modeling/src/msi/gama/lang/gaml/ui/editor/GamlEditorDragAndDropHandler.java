@@ -9,7 +9,9 @@ import static org.eclipse.swt.dnd.DND.DROP_MOVE;
 import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.filesystem.EFS;
@@ -66,6 +68,7 @@ public class GamlEditorDragAndDropHandler {
 	final GamlEditor editor;
 	boolean fIsTextDragAndDropInstalled;
 	protected Object fTextDragAndDropToken;
+	protected static Set<String> usedNames = new HashSet<>();
 
 	public GamlEditorDragAndDropHandler(final GamlEditor editor) {
 		this.editor = editor;
@@ -314,49 +317,75 @@ public class GamlEditorDragAndDropHandler {
 	}
 
 	void tryDropResources(final IResource[] data) {
-		final StringBuilder sb = new StringBuilder();
-		final Point newSelection = getStyledText().getSelection();
+		final List<IFile> imports = new ArrayList<>();
+		final List<IFile> declarations = new ArrayList<>();
 		for (final IResource resource : data) {
 			if (resource instanceof IFile) {
 				final IFile file = (IFile) resource;
 				switch (getContentTypeId(file)) {
 					case FileMetaDataProvider.GAML_CT_ID:
-						newSelection.x = addDropImport(sb, file);
+						imports.add(file);
 						break;
 					default:
-						addDropFile(sb, file);
+						declarations.add(file);
 				}
 			}
 		}
+		addFilesToText(declarations, false);
+		addFilesToText(imports, true);
+		usedNames.clear();
+	}
+
+	private void addFilesToText(final List<IFile> files, final boolean imports) {
+		if (files.size() == 0) { return; }
+		final StringBuilder sb = new StringBuilder();
+		int index = getStyledText().getSelection().x;
+		if (imports) {
+			for (final IFile file : files) {
+				index = addDropImport(sb, file);
+			}
+		} else {
+			for (final IFile file : files) {
+				addDropFile(sb, file);
+			}
+		}
 		if (sb.length() == 0) { return; }
-		if (newSelection.x == -1) { return; }
+		if (index == -1) { return; }
 		try {
-			final int modelOffset = getViewer().widgetOffset2ModelOffset(newSelection.x);
+			final int modelOffset = getViewer().widgetOffset2ModelOffset(index);
 			getDocument().replace(modelOffset, 0, addGlobalIfNecessary(sb.toString()));
 		} catch (final BadLocationException e) {
 			return;
 		}
-		getStyledText().setSelectionRange(newSelection.x, sb.length());
-		return;
+		getStyledText().setSelectionRange(index, sb.length());
+
 	}
 
 	/**
 	 * @param sb
 	 * @param file
 	 */
-	private void addDropFile(final StringBuilder sb, final IFile file) {
+	private int addDropFile(final StringBuilder sb, final IFile file) {
 		final ParametricFileType type = GamaFileType.extensionsToFullType.get(file.getFileExtension());
 		final String fullType = type == null ? "file" : type.toString();
 		final String name = obtainRelativePath(file);
 		final String varName = clean(file.getName()) + "_" + fullType;
 		sb.append(Strings.LN).append(Strings.TAB).append(fullType).append(' ').append(varName).append(" <- ")
 				.append(fullType).append("(").append('"').append(name).append('"').append(");").append(Strings.LN);
+		return -1;
 
 	}
 
 	private static String clean(final String name) {
-		final String newName = name.substring(0, name.indexOf('.'));
-		return StringUtils.replaceChars(newName, " .,;:-()'&@%*?!<>=+#", "_");
+		int i = 1;
+		String rootName = name.substring(0, name.indexOf('.'));
+		rootName = StringUtils.replaceChars(rootName, " .,;:-()'&@%*?!<>=+#", "_");
+		String result = rootName + "0";
+		while (usedNames.contains(result)) {
+			result = rootName + String.valueOf(i++);
+		}
+		usedNames.add(result);
+		return result;
 	}
 
 	private String obtainRelativePath(final IFile file) {
@@ -387,9 +416,9 @@ public class GamlEditorDragAndDropHandler {
 		final StyledText st = getStyledText();
 		final String text = st.getText();
 		final int startOfGlobal = text.indexOf("global");
-		final int startOfModel = text.indexOf("model");
+		final int startOfModel = text.indexOf("\nmodel");
 		if (startOfGlobal == -1 && startOfModel == -1) { return -1; }
-		final int endOfModel = text.indexOf("\n", startOfModel);
+		final int endOfModel = text.indexOf("\n", startOfModel + 1);
 		return endOfModel + 1;
 	}
 }
