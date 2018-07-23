@@ -48,8 +48,8 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class ResourceManager implements IResourceChangeListener, IResourceDeltaVisitor, ISelectionChangedListener {
 
 	public static ResourceManager INSTANCE;
-	public final static Cache<IResource, WrappedResource<?, ?>> cache = CacheBuilder.newBuilder().initialCapacity(1000)
-			.concurrencyLevel(4).build();
+	public final static Cache<IResource, WrappedResource<?, ?>> cache =
+			CacheBuilder.newBuilder().initialCapacity(1000).concurrencyLevel(4).build();
 	final CommonViewer viewer;
 	final IResourceChangeListener delegate;
 	public final static boolean DEBUG = false;
@@ -122,7 +122,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	void runPostEventActions() {
-		Runnable actions = () -> {
+		WorkbenchHelper.runInUI("Resource changes", 0, (m) -> {
 			try {
 				for (final Runnable r : postEventActions) {
 					r.run();
@@ -155,11 +155,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				}
 				toReveal = null;
 			}
-		};
-		if (viewer.isBusy())
-			WorkbenchHelper.runInUI("Resource changes", 0, (m) -> actions.run());
-		else
-			WorkbenchHelper.run(actions);
+		});
 
 	}
 
@@ -170,29 +166,21 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public static IResource getResource(final Object target) {
-		if (target instanceof IResource) {
-			return (IResource) target;
-		}
+		if (target instanceof IResource) { return (IResource) target; }
 		if (target instanceof IAdaptable) {
 			final IAdaptable adapter = (IAdaptable) target;
 			final IResource r = adapter.getAdapter(IResource.class);
-			if (r != null) {
-				return r;
-			}
+			if (r != null) { return r; }
 		}
 		return null;
 	}
 
 	public static IFile getFile(final Object target) {
-		if (target instanceof IFile) {
-			return (IFile) target;
-		}
+		if (target instanceof IFile) { return (IFile) target; }
 		if (target instanceof IAdaptable) {
 			final IAdaptable adapter = (IAdaptable) target;
 			final IFile r = adapter.getAdapter(IFile.class);
-			if (r != null) {
-				return r;
-			}
+			if (r != null) { return r; }
 		}
 		return null;
 	}
@@ -217,35 +205,34 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			DEBUG("========= New Event =========");
 		}
 		try {
-			if (event == null) {
-				return;
-			}
+			if (event == null) { return; }
 			// begin();
 			final int type = event.getType();
 			switch (type) {
-			case POST_CHANGE:
-				if (viewer.isBusy())
-					WorkbenchHelper.runInUI("Resource changes", 50, (m) -> delegate.resourceChanged(event));
-				else
-					delegate.resourceChanged(event);
-				try {
-					event.getDelta().accept(this);
-				} catch (final CoreException e) {
-					e.printStackTrace();
-				}
-				break;
-			case IResourceChangeEvent.PRE_REFRESH:
-				if (DEBUG) {
-					DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
-				}
-				break;
-			case PRE_CLOSE:
-			case PRE_DELETE:
-				if (DEBUG) {
-					DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
-				}
-				break;
-			default:
+				case POST_CHANGE:
+					if (viewer.isBusy()) {
+						WorkbenchHelper.runInUI("Resource changes", 50, (m) -> delegate.resourceChanged(event));
+					} else {
+						delegate.resourceChanged(event);
+					}
+					try {
+						event.getDelta().accept(this);
+					} catch (final CoreException e) {
+						e.printStackTrace();
+					}
+					break;
+				case IResourceChangeEvent.PRE_REFRESH:
+					if (DEBUG) {
+						DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
+					}
+					break;
+				case PRE_CLOSE:
+				case PRE_DELETE:
+					if (DEBUG) {
+						DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
+					}
+					break;
+				default:
 
 			}
 		} finally {
@@ -257,20 +244,20 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	boolean processAddition(final IResource res) {
 		boolean update = false;
 		switch (res.getType()) {
-		case IResource.FILE:
-			if (GamlFileExtension.isAny(res.getName())) {
-				invalidateModelsCountCache(res.getParent());
-				invalidateSeverityCache(res.getParent());
+			case IResource.FILE:
+				if (GamlFileExtension.isAny(res.getName())) {
+					invalidateModelsCountCache(res.getParent());
+					invalidateSeverityCache(res.getParent());
+					update = true;
+				}
+				fileAdded((IFile) res);
+				break;
+			case IResource.PROJECT:
+				projectAdded((IProject) res);
 				update = true;
-			}
-			fileAdded((IFile) res);
-			break;
-		case IResource.PROJECT:
-			projectAdded((IProject) res);
-			update = true;
-			break;
-		case IResource.FOLDER:
-			folderAdded((IFolder) res);
+				break;
+			case IResource.FOLDER:
+				folderAdded((IFolder) res);
 		}
 		final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
 		provider.storeMetaData(res, null, true);
@@ -292,8 +279,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	/**
-	 * Returns the top-level folder in which to paste/drop a project, based on its
-	 * description and the current selection
+	 * Returns the top-level folder in which to paste/drop a project, based on its description and the current selection
 	 * 
 	 * @param project
 	 * @return
@@ -301,9 +287,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	public TopLevelFolder chooseFolderForPasting(final IProject project) {
 		if (currentSelection != null && !currentSelection.isEmpty()) {
 			final Object o = currentSelection.getFirstElement();
-			if (o instanceof VirtualContent) {
-				return ((VirtualContent<?>) o).getTopLevelFolder();
-			}
+			if (o instanceof VirtualContent) { return ((VirtualContent<?>) o).getTopLevelFolder(); }
 		}
 		return NavigatorRoot.INSTANCE.getUserFolder();
 	}
@@ -368,20 +352,20 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	boolean processRemoval(final IResource res) {
 		boolean update = false;
 		switch (res.getType()) {
-		case IResource.FILE:
-			if (GamlFileExtension.isAny(res.getName())) {
-				invalidateModelsCountCache(res.getParent());
-				invalidateSeverityCache(res.getParent());
-				update = true;
-			}
-			fileRemoved((IFile) res);
-			break;
-		case IResource.FOLDER:
-			folderRemoved((IFolder) res);
-			break;
-		case IResource.PROJECT:
-			projectRemoved((IProject) res);
-			break;
+			case IResource.FILE:
+				if (GamlFileExtension.isAny(res.getName())) {
+					invalidateModelsCountCache(res.getParent());
+					invalidateSeverityCache(res.getParent());
+					update = true;
+				}
+				fileRemoved((IFile) res);
+				break;
+			case IResource.FOLDER:
+				folderRemoved((IFolder) res);
+				break;
+			case IResource.PROJECT:
+				projectRemoved((IProject) res);
+				break;
 		}
 
 		return update;
@@ -427,37 +411,37 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		final IResource res = delta.getResource();
 		boolean update = false;
 		switch (delta.getKind()) {
-		case IResourceDelta.OPEN:
-			if (res.isAccessible()) {
-				update = projectOpened((IProject) res);
-			} else {
-				update = projectClosed((IProject) res);
-			}
-			break;
-		case IResourceDelta.ADDED:
-			update = processAddition(res);
-			break;
-		case IResourceDelta.REMOVED:
-			update = processRemoval(res);
-			break;
-		case IResourceDelta.CHANGED:
-			final int flags = delta.getFlags();
-			if ((flags & IResourceDelta.MARKERS) != 0) {
-				update = processMarkersChanged(res);
-			} else if ((flags & IResourceDelta.TYPE) != 0) {
-				if (DEBUG) {
-					DEBUG("Resource type changed: " + res);
+			case IResourceDelta.OPEN:
+				if (res.isAccessible()) {
+					update = projectOpened((IProject) res);
+				} else {
+					update = projectClosed((IProject) res);
 				}
-			} else if ((flags & IResourceDelta.CONTENT) != 0) {
-				if (DEBUG) {
-					DEBUG("Resource contents changed: " + res);
+				break;
+			case IResourceDelta.ADDED:
+				update = processAddition(res);
+				break;
+			case IResourceDelta.REMOVED:
+				update = processRemoval(res);
+				break;
+			case IResourceDelta.CHANGED:
+				final int flags = delta.getFlags();
+				if ((flags & IResourceDelta.MARKERS) != 0) {
+					update = processMarkersChanged(res);
+				} else if ((flags & IResourceDelta.TYPE) != 0) {
+					if (DEBUG) {
+						DEBUG("Resource type changed: " + res);
+					}
+				} else if ((flags & IResourceDelta.CONTENT) != 0) {
+					if (DEBUG) {
+						DEBUG("Resource contents changed: " + res);
+					}
+				} else if ((flags & IResourceDelta.SYNC) != 0) {
+					if (DEBUG) {
+						DEBUG("Resource sync info changed: " + res);
+					}
 				}
-			} else if ((flags & IResourceDelta.SYNC) != 0) {
-				if (DEBUG) {
-					DEBUG("Resource sync info changed: " + res);
-				}
-			}
-			break;
+				break;
 		}
 		if (update) {
 			updateResource(res);
@@ -481,16 +465,12 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private void updateResource(final IResource res) {
-		if (res == null) {
-			return;
-		}
+		if (res == null) { return; }
 		updateResource(findWrappedInstanceOf(res));
 	}
 
 	private void updateResource(final VirtualContent<?> res) {
-		if (res == null) {
-			return;
-		}
+		if (res == null) { return; }
 		VirtualContent<?> resource = res;
 		while (resource != null) {
 			toUpdate.add(resource);
@@ -523,33 +503,23 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public WrappedResource<?, ?> findWrappedInstanceOf(final Object resource) {
-		if (resource == null) {
-			return null;
-		}
-		if (resource instanceof WrappedResource) {
-			return (WrappedResource<?, ?>) resource;
-		}
+		if (resource == null) { return null; }
+		if (resource instanceof WrappedResource) { return (WrappedResource<?, ?>) resource; }
 		return cache.getIfPresent(resource);
 	}
 
 	public WrappedContainer<?> findWrappedInstanceOf(final IContainer shape) {
-		if (shape == null) {
-			return null;
-		}
+		if (shape == null) { return null; }
 		return (WrappedContainer<?>) cache.getIfPresent(shape);
 	}
 
 	public WrappedProject findWrappedInstanceOf(final IProject parent) {
-		if (parent == null) {
-			return null;
-		}
+		if (parent == null) { return null; }
 		return (WrappedProject) cache.getIfPresent(parent);
 	}
 
 	public WrappedResource<?, ?> wrap(final VirtualContent<?> parent, final IResource child) {
-		if (parent == null || child == null) {
-			return null;
-		}
+		if (parent == null || child == null) { return null; }
 		try {
 			return cache.get(child, () -> privateCreateWrapping(parent, child));
 		} catch (final ExecutionException e) {
@@ -562,15 +532,14 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			DEBUG("Creation of the wrapped instance of " + child.getName());
 		}
 		switch (child.getType()) {
-		case IResource.FILE:
-			if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId((IFile) child))) {
-				return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child);
-			}
-			return new WrappedFile((WrappedContainer<?>) parent, (IFile) child);
-		case IResource.FOLDER:
-			return new WrappedFolder((WrappedContainer<?>) parent, (IFolder) child);
-		case IResource.PROJECT:
-			return new WrappedProject((TopLevelFolder) parent, (IProject) child);
+			case IResource.FILE:
+				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId(
+						(IFile) child))) { return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child); }
+				return new WrappedFile((WrappedContainer<?>) parent, (IFile) child);
+			case IResource.FOLDER:
+				return new WrappedFolder((WrappedContainer<?>) parent, (IFolder) child);
+			case IResource.PROJECT:
+				return new WrappedProject((TopLevelFolder) parent, (IProject) child);
 		}
 		return null;
 	}
