@@ -132,7 +132,7 @@ public class WorkspacePreferences {
 				final boolean create =
 					MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
 						workspaceLocation + " does not exist. Would you like to create a new workspace here" +
-							(cloning ? ", copy the projects and preferences of an existing workspace into it, " : "") +
+							(cloning ? ", copy the projects and preferences of your current workspace into it, " : "") +
 							" and proceeed ?");
 				if ( create ) {
 					try {
@@ -171,8 +171,8 @@ public class WorkspacePreferences {
 		final File wsTest = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 		if ( fromDialog ) {
 			if ( !wsTest.exists() ) {
-				final boolean create = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "New Workspace",
-					"The directory '" + wsTest.getAbsolutePath() +
+				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+					"New Workspace", "The directory '" + wsTest.getAbsolutePath() +
 						"' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
 				if ( create ) {
 					try {
@@ -196,7 +196,7 @@ public class WorkspacePreferences {
 		final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 		if ( !dotFile.exists() ) {
 			if ( fromDialog ) {
-				final boolean create = MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
 					"Different version of the models library",
 					"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
 				if ( create ) {
@@ -211,7 +211,7 @@ public class WorkspacePreferences {
 
 			return "models";
 		} else if ( cloning ) {
-			final boolean b = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Existing workspace",
+			final boolean b = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Existing workspace",
 				"The path entered is a path to an existing workspace. All its contents will be erased and replaced by the current workspace contents. Proceed anyway ?");
 			if ( !b ) { return ""; }
 		}
