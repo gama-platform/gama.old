@@ -3,12 +3,12 @@
 function mvn_install() {
 	echo "Building " $1
 	cd $1
-	mvn clean install
-	res=${PIPESTATUS[0]}
-	echo "return code $res"
-	if [[ $res -ne 0 ]]; then
-		exit $res
-	fi
+	if mvn clean install; then
+	   echo ok
+	else
+	   echo Maven build error.
+	   exit 1
+	fi 
 	cd -
 }
 function mvn_compile() {
@@ -38,12 +38,11 @@ compile (){
 	mvn_install msi.gama.parent
 }
 
-
 install (){
 	echo "Install GAMA project"			
 	
 	
-	change=$(git log --pretty=format: --name-only --since="30 minute ago")
+	change=$(git log --pretty=format: --name-only --since="24 hour ago")
 	
 	if [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.annotations"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
 		mvn_install ummisco.gama.annotations 		
@@ -303,6 +302,7 @@ install (){
 
 
 
+MSG='ci fullbuild'
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
