@@ -491,6 +491,9 @@
                 <objectClass
                       name="ummisco.gama.ui.navigator.contents.WrappedSyntacticContent">
                 </objectClass>
+                <objectClass
+                      name="ummisco.gama.ui.navigator.contents.WrappedLink">
+                </objectClass>
              </or>
           </enablement>
        </decorator>

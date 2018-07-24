@@ -24,14 +24,22 @@ public class NavigatorLinkHelper extends ResourceLinkHelper {
 
 	@Override
 	public void activateEditor(final IWorkbenchPage aPage, final IStructuredSelection aSelection) {
-		if (aSelection == null || aSelection.isEmpty())
-			return;
+		if (aSelection == null || aSelection.isEmpty()) { return; }
 		final Object o = aSelection.getFirstElement();
+		// if (o instanceof WrappedLink) {
+		// if (!NavigatorRoot.INSTANCE.mapper.validateLocation(((WrappedLink) o).getResource())) {
+		// MessageDialog.openError(WorkbenchHelper.getShell(), "Unknown file",
+		// "The file at location '" + ((WrappedLink) o).getResource().getLocation() + " does not exist");
+		// return;
+		// }
+		//
+		// }
 		if (o instanceof WrappedFile) {
 			final IEditorInput fileInput = new FileEditorInput(((WrappedFile) o).getResource());
 			final IEditorPart editor = aPage.findEditor(fileInput);
-			if (editor != null)
+			if (editor != null) {
 				aPage.bringToTop(editor);
+			}
 		}
 
 	}

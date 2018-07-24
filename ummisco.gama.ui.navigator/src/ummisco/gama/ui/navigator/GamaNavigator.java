@@ -252,12 +252,12 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		this.toolbar = tb;
 		// tb.menu(importCommand, SWT.RIGHT);
 		// tb.menu(newCommand, SWT.RIGHT);
-		//tb.sep(24, SWT.RIGHT);
-		if (PlatformHelper.isWindows())  {
+		// tb.sep(24, SWT.RIGHT);
+		if (PlatformHelper.isWindows()) {
 			tb.sep(24, SWT.RIGHT);
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
 			linkItem = tb.check(linkCommand, SWT.RIGHT);
-			
+
 		} else {
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
 			tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);

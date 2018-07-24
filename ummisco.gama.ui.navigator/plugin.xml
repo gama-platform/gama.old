@@ -19,6 +19,9 @@
                <objectClass
                      name="ummisco.gama.ui.navigator.contents.WrappedProject">
                </objectClass>
+               <objectClass
+                     name="ummisco.gama.ui.navigator.contents.WrappedLink">
+               </objectClass>
                <and>
                   <objectClass
                         name="org.eclipse.core.resources.IFile">

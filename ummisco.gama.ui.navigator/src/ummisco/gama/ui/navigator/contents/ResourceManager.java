@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -23,6 +26,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -122,7 +126,10 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	void runPostEventActions() {
-		WorkbenchHelper.runInUI("Resource changes", 0, (m) -> {
+
+		WorkbenchHelper.runInUI("Resource changes", 5, (m) -> {
+			if (viewer.getControl().isDisposed()) { return; }
+			viewer.getControl().setRedraw(false);
 			try {
 				for (final Runnable r : postEventActions) {
 					r.run();
@@ -155,6 +162,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				}
 				toReveal = null;
 			}
+			viewer.getControl().setRedraw(true);
+			viewer.getControl().update();
 		});
 
 	}
@@ -428,18 +437,27 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				final int flags = delta.getFlags();
 				if ((flags & IResourceDelta.MARKERS) != 0) {
 					update = processMarkersChanged(res);
-				} else if ((flags & IResourceDelta.TYPE) != 0) {
+				}
+				if ((flags & IResourceDelta.TYPE) != 0) {
 					if (DEBUG) {
 						DEBUG("Resource type changed: " + res);
 					}
-				} else if ((flags & IResourceDelta.CONTENT) != 0) {
+				}
+				if ((flags & IResourceDelta.CONTENT) != 0) {
 					if (DEBUG) {
 						DEBUG("Resource contents changed: " + res);
 					}
-				} else if ((flags & IResourceDelta.SYNC) != 0) {
+				}
+				if ((flags & IResourceDelta.SYNC) != 0) {
 					if (DEBUG) {
 						DEBUG("Resource sync info changed: " + res);
 					}
+				}
+				if ((flags & IResourceDelta.LOCAL_CHANGED) != 0) {
+					if (DEBUG) {
+						DEBUG("Linked resource target info changed: " + res);
+					}
+					update = processLinkedTargerChanged(res);
 				}
 				break;
 		}
@@ -447,6 +465,15 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			updateResource(res);
 		}
 		return true; // visit the children
+	}
+
+	private boolean processLinkedTargerChanged(final IResource res) {
+		if (res.getType() == IResource.FILE) {
+			invalidateSeverityCache(res);
+			final WrappedFile file = (WrappedFile) findWrappedInstanceOf(res);
+			refreshResource(file.getParent());
+		}
+		return true;
 	}
 
 	private boolean processMarkersChanged(final IResource res) {
@@ -479,6 +506,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void refreshResource(final VirtualContent<?> res) {
+		// if (res == null) { return; }
+		// Keep null to refresh all workspace
 		toRefresh.add(res);
 	}
 
@@ -535,6 +564,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			case IResource.FILE:
 				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId(
 						(IFile) child))) { return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child); }
+				if (child.isLinked()) { return new WrappedLink((WrappedContainer<?>) parent, (IFile) child); }
 				return new WrappedFile((WrappedContainer<?>) parent, (IFile) child);
 			case IResource.FOLDER:
 				return new WrappedFolder((WrappedContainer<?>) parent, (IFolder) child);
@@ -542,6 +572,19 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 				return new WrappedProject((TopLevelFolder) parent, (IProject) child);
 		}
 		return null;
+	}
+
+	public boolean validateLocation(final IFile resource) {
+		if (!resource.isLinked()) { return true; }
+		if (DEBUG) {
+			DEBUG("Validating link location of " + resource);
+		}
+		final boolean internal =
+				ResourcesPlugin.getWorkspace().validateLinkLocation(resource, resource.getLocation()).isOK();
+		if (!internal) { return false; }
+		final IFileStore file = EFS.getLocalFileSystem().getStore(resource.getLocation());
+		final IFileInfo info = file.fetchInfo();
+		return info.exists();
 	}
 
 }

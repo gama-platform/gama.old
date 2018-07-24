@@ -39,11 +39,15 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 			put(IMarker.SEVERITY_INFO, GamaIcons.create("overlay.ok2").descriptor());
 			put(IMarker.SEVERITY_WARNING, GamaIcons.create("overlay.warning2").descriptor());
 			put(IMarker.SEVERITY_ERROR, GamaIcons.create("overlay.error2").descriptor());
+			put(LINK_OK, GamaIcons.create("overlay.ok").descriptor());
+			put(LINK_BROKEN, GamaIcons.create("overlay.link.broken").descriptor());
 		}
 	};
 
 	public static final int NO_PROBLEM = -1;
 	public static final int CLOSED = -2;
+	public static final int LINK_OK = -3;
+	public static final int LINK_BROKEN = -4;
 	public static Object[] EMPTY = new Object[0];
 	public static WrappedProject[] EMPTY_PROJECTS = new WrappedProject[0];
 

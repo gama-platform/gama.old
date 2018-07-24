@@ -13,8 +13,7 @@ public abstract class WrappedResource<P extends VirtualContent<?>, T extends IRe
 	int severity = NOT_COMPUTED;
 
 	public WrappedResource(final P root, final T wrapped) {
-		super(root, wrapped.getType() == IResource.FILE && wrapped.isLinked() ? "-> " + wrapped.getName()
-				: wrapped.getName());
+		super(root, wrapped.getName());
 		resource = wrapped;
 		findMaxProblemSeverity();
 	}
