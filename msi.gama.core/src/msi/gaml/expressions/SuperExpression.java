@@ -30,7 +30,7 @@ public class SuperExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "pseudo-variable super of type " + getType().getTitle();
+		return "pseudo-variable super of type " + getGamlType().getTitle();
 	}
 
 	@Override

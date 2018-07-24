@@ -53,7 +53,7 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 	 * @return
 	 */
 	public default IType<?> getDenotedType() {
-		return getType();
+		return getGamlType();
 	}
 
 }

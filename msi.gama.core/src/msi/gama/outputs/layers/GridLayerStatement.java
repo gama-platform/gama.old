@@ -192,7 +192,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		elevation = getFacet(IKeyword.ELEVATION, "dem", "draw_as_dem");
 		textureExp = getFacet(IKeyword.TEXTURE);
 		if (textureExp != null) {
-			switch (textureExp.getType().getType().id()) {
+			switch (textureExp.getGamlType().getGamlType().id()) {
 				case IType.BOOL:
 					// isTextured = Cast.asBool(scope, textureExp.value(scope));
 					break;
@@ -297,7 +297,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	public double[] getElevationMatrix(final IScope scope) {
 		if (elevation != null) {
-			switch (elevation.getType().id()) {
+			switch (elevation.getGamlType().id()) {
 				case IType.MATRIX:
 					return GamaFloatMatrix.from(scope, Cast.asMatrix(scope, elevation.value(scope))).getMatrix();
 				case IType.FLOAT:

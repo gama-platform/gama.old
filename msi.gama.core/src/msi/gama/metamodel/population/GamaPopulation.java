@@ -215,7 +215,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	@Override
 	public IList<T> copy(final IScope scope) {
-		return listValue(scope, getType().getContentType(), true);
+		return listValue(scope, getGamlType().getContentType(), true);
 	}
 
 	@Override
@@ -309,7 +309,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries) {
 		final int number = geometries.length(scope);
 		if (number == 0) { return GamaListFactory.create(); }
-		final IList<T> list = GamaListFactory.create(getType().getContentType(), number);
+		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (final IShape geom : geometries.iterable(scope)) {
 			// WARNING Should be redefined somehow
@@ -353,7 +353,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled) throws GamaRuntimeException {
 		if (number == 0) { return GamaListFactory.create(); }
-		final IList<T> list = GamaListFactory.create(getType().getContentType(), number);
+		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (int i = 0; i < number; i++) {
 			@SuppressWarnings ("unchecked") final T a = constr.createOneAgent(this, currentAgentIndex++);
@@ -498,7 +498,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
 			final ISpecies edgeSpecies = scope.getModel().getSpecies(edgeName);
 			final IType<?> edgeType = scope.getType(edgeName);
-			final IType<?> nodeType = getType().getContentType();
+			final IType<?> nodeType = getGamlType().getContentType();
 			// TODO Specifier directed quelque part dans l'espece
 			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
@@ -742,7 +742,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
-		return GamaListFactory.create(scope, getType().getContentType(), GamaPopulation.allLivingAgents(this));
+		return GamaListFactory.create(scope, getGamlType().getContentType(), GamaPopulation.allLivingAgents(this));
 	}
 
 	/**
@@ -777,7 +777,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final IAgent a = each.getAgent();
 			return a == null || a.dead()
 					|| a.getPopulation() != this
-							&& (a.getPopulation().getType().getContentType() != this.getType().getContentType()
+							&& (a.getPopulation().getGamlType().getContentType() != this.getGamlType().getContentType()
 									|| !this.contains(a));
 		};
 		results.removeIf(toRemove);

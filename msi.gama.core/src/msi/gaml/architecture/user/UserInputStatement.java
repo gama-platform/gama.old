@@ -162,10 +162,10 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	public IType getType() {
-		final IType type = description.getType();
+		final IType type = description.getGamlType();
 		if (type != Types.NO_TYPE) { return type; }
 		if (init == null) { return Types.NO_TYPE; }
-		return init.getType();
+		return init.getGamlType();
 	}
 
 	@Override

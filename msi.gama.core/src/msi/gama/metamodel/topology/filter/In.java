@@ -34,8 +34,8 @@ public abstract class In implements IAgentFilter {
 	public static IAgentFilter list(final IScope scope, final IContainer<?, ? extends IShape> targets) {
 		if (targets.isEmpty(scope)) { return null; }
 		if (targets instanceof IPopulationSet) { return (IPopulationSet) targets; }
-		final ISpecies species = targets.getType().getContentType().isAgentType()
-				? Cast.asSpecies(scope, targets.getType().getContentType().getSpeciesName()) : null;
+		final ISpecies species = targets.getGamlType().getContentType().isAgentType()
+				? Cast.asSpecies(scope, targets.getGamlType().getContentType().getSpeciesName()) : null;
 		return new InList(targets.listValue(scope, Types.NO_TYPE, false), species);
 	}
 

@@ -24,7 +24,7 @@ public class GamaListReducer {
 	private final IType contentTypeListReducer;
 
 	public GamaListReducer(final GamaList l) {
-		contentTypeListReducer = l.getType().getContentType();
+		contentTypeListReducer = l.getGamlType().getContentType();
 		
 		for (final Object p : l) {
 			valuesListReducer.add(p);

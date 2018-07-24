@@ -241,14 +241,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			if (desc != null) {
 				final IExpression exp = desc.getExpression();
 				if (exp != null) {
-					final IType type = exp.getType();
+					final IType type = exp.getGamlType();
 					if (type.isAgentType() && !(type.getSpecies() instanceof ModelDescription)) {
 						cd.warning("Facet " + IKeyword.SPECIES + " expects a species name and not an agent",
 								IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					}
 				}
 			}
-			final SpeciesDescription species = cd.getType().getDenotedSpecies();
+			final SpeciesDescription species = cd.getGamlType().getDenotedSpecies();
 			// final SpeciesDescription species =
 			// cd.getModelDescription().getSpeciesReferencedBy(cd);
 			if (species != null) {
@@ -291,7 +291,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				}
 				final IExpression exp = cd.getFacetExpr(FROM);
 				if (exp != null) {
-					final IType type = exp.getType();
+					final IType type = exp.getGamlType();
 					boolean found = false;
 					for (final IType delegateType : delegateTypes) {
 						found = delegateType.isAssignableFrom(type);

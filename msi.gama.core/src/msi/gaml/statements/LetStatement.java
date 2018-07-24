@@ -80,7 +80,7 @@ public class LetStatement extends SetStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			sb.append(desc.getType().serialize(includingBuiltIn)).append(" ");
+			sb.append(desc.getGamlType().serialize(includingBuiltIn)).append(" ");
 			super.serialize(desc, sb, includingBuiltIn);
 
 		}

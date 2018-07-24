@@ -146,11 +146,11 @@ public class Containers {
 	}
 
 	public static Supplier<IList> listLike(final IContainer c) {
-		return new GamaListSupplier(c == null ? Types.NO_TYPE : c.getType().getContentType());
+		return new GamaListSupplier(c == null ? Types.NO_TYPE : c.getGamlType().getContentType());
 	}
 
 	public static Supplier<IList> listLike(final IContainer c, final IContainer c1) {
-		return listOf(c.getType().getContentType().findCommonSupertypeWith(c1.getType().getContentType()));
+		return listOf(c.getGamlType().getContentType().findCommonSupertypeWith(c1.getGamlType().getContentType()));
 	}
 
 	public static GamaMapSupplier asMapOf(final IType k, final IType v) {
@@ -396,7 +396,7 @@ public class Containers {
 	@doc (
 			value = "Returns the nth last elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
 	public static IList last(final IScope scope, final Integer number, final IContainer c) {
-		final IList result = GamaListFactory.create(scope, c.getType().getContentType(), Iterables.limit(
+		final IList result = GamaListFactory.create(scope, c.getGamlType().getContentType(), Iterables.limit(
 				Lists.reverse(notNull(scope, c).listValue(scope, Types.NO_TYPE, false)), number < 0 ? 0 : number));
 		Collections.reverse(result);
 		return result;
@@ -639,7 +639,7 @@ public class Containers {
 			see = { "" + IKeyword.PLUS })
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
 		final IList result =
-				(IList) notNull(scope, source).listValue(scope, source.getType().getContentType(), false).copy(scope);
+				(IList) notNull(scope, source).listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
 		result.removeAll(notNull(scope, l).listValue(scope, Types.NO_TYPE, false));
 		return result;
 	}
@@ -767,7 +767,7 @@ public class Containers {
 	public static GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
 		final Object v1 = a.value(scope);
 		final Object v2 = b.value(scope);
-		return new GamaPair(notNull(scope, v1), v2, a.getType(), b.getType());
+		return new GamaPair(notNull(scope, v1), v2, a.getGamlType(), b.getGamlType());
 	}
 
 	@operator (
@@ -883,8 +883,8 @@ public class Containers {
 							returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
-		final IType ct = notNull(scope, c).getType().getContentType();
-		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getType(), Types.LIST.of(ct)),
+		final IType ct = notNull(scope, c).getGamlType().getContentType();
+		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getGamlType(), Types.LIST.of(ct)),
 				listOf(ct));
 	}
 
@@ -1076,9 +1076,9 @@ public class Containers {
 		IType t;
 		if (filter != null) {
 			s = s.map(with(scope, filter));
-			t = filter.getType();
+			t = filter.getGamlType();
 		} else {
-			t = container.getType().getContentType();
+			t = container.getGamlType().getContentType();
 		}
 		s = s.map(each -> t.cast(scope, each, null, false));
 		switch (t.id()) {
@@ -1255,7 +1255,7 @@ public class Containers {
 			}
 			return listLike(c).get();
 		}
-		final IList l = notNull(scope, c).listValue(scope, c.getType().getContentType(), false);
+		final IList l = notNull(scope, c).listValue(scope, c.getGamlType().getContentType(), false);
 		final int size = l.size();
 		if (number >= size) { return l; }
 		final int[] indexes = new int[size];
@@ -1429,7 +1429,7 @@ public class Containers {
 			see = { "collect" })
 	public static IList accumulate(final IScope scope, final IContainer c, final IExpression filter) {
 		// WARNING TODO The resulting type is not computed
-		final IType type = filter.getType();
+		final IType type = filter.getGamlType();
 		IType resultingContentsType = type;
 		if (resultingContentsType.isContainer()) {
 			resultingContentsType = resultingContentsType.getContentType();
@@ -1465,7 +1465,7 @@ public class Containers {
 							isExecutable = false) },
 			see = { "accumulate" })
 	public static IList collect(final IScope scope, final IContainer c, final IExpression filter) {
-		return (IList) stream(scope, c).map(with(scope, filter)).toCollection(listOf(filter.getType()));
+		return (IList) stream(scope, c).map(with(scope, filter)).toCollection(listOf(filter.getGamlType()));
 	}
 
 	@operator (
@@ -1484,7 +1484,7 @@ public class Containers {
 							equals = "['e11','e21','e31','e12','e22','e32','e13','e23','e33']") })
 	public static IList interleave(final IScope scope, final IContainer cc) {
 		final Iterable iterable = notNull(scope, cc).iterable(scope);
-		IType type = cc.getType().getContentType();
+		IType type = cc.getGamlType().getContentType();
 		if (type.isContainer()) {
 			type = type.getContentType();
 		}
@@ -1544,9 +1544,9 @@ public class Containers {
 	public static GamaMap index_by(final IScope scope, final IContainer original, final IExpression keyProvider) {
 
 		final StreamEx s = original.stream(scope);
-		final IType contentsType = original.getType().getContentType();
+		final IType contentsType = original.getGamlType().getContentType();
 		return (GamaMap) s.collect(Collectors.toMap(with(scope, keyProvider), (a) -> a, (a, b) -> a,
-				asMapOf(keyProvider.getType(), contentsType)));
+				asMapOf(keyProvider.getGamlType(), contentsType)));
 	}
 
 	@operator (
@@ -1579,7 +1579,7 @@ public class Containers {
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
 		return (GamaMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
-				(a, b) -> a, asMapOf(key.getType(), value.getType())));
+				(a, b) -> a, asMapOf(key.getGamlType(), value.getGamlType())));
 	}
 
 	@operator (
@@ -1615,7 +1615,7 @@ public class Containers {
 		final HashSet newSet = new HashSet(keys);
 		if (newSet.size() < keys.length(scope)) { throw GamaRuntimeException
 				.error("'create_map' expects unique values in the keys list", scope); }
-		return GamaMapFactory.create(scope, keys.getType(), values.getType(), keys, values);
+		return GamaMapFactory.create(scope, keys.getGamlType(), values.getGamlType(), keys, values);
 	}
 
 	@operator (
@@ -1635,7 +1635,7 @@ public class Containers {
 							equals = "['a'::1,'b'::2,5::3.0]") },
 			see = { "" + IKeyword.MINUS })
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
-		final IType type = GamaType.findCommonType(notNull(scope, m1).getType(), notNull(scope, m2).getType());
+		final IType type = GamaType.findCommonType(notNull(scope, m1).getGamlType(), notNull(scope, m2).getGamlType());
 		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
 		res.putAll(m2);
 		return res;
@@ -1658,7 +1658,7 @@ public class Containers {
 							equals = "['a'::1,'b'::2,'c'::3]") },
 			see = { "" + IKeyword.MINUS })
 	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
-		final IType type = GamaType.findCommonType(notNull(scope, m1).getType(), notNull(scope, m2).getType());
+		final IType type = GamaType.findCommonType(notNull(scope, m1).getGamlType(), notNull(scope, m2).getGamlType());
 		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
 		res.put(m2.key, m2.value);
 		return res;

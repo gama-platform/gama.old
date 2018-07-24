@@ -77,7 +77,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	// }
 	//
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return type;
 	}
 
@@ -381,7 +381,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@doc ("Specialization of the reverse operator for maps. Reverses keys and values")
 	@Override
 	public IContainer reverse(final IScope scope) {
-		final GamaMap map = new GamaMap(size(), getType().getContentType(), getType().getKeyType());
+		final GamaMap map = new GamaMap(size(), getGamlType().getContentType(), getGamlType().getKeyType());
 		for (final Map.Entry<K, V> entry : entrySet()) {
 			map.put(entry.getValue(), entry.getKey());
 		}
@@ -390,12 +390,12 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@getter ("keys")
 	public IList<K> getKeys() {
-		return GamaListFactory.<K> createWithoutCasting(getType().getKeyType(), keySet());
+		return GamaListFactory.<K> createWithoutCasting(getGamlType().getKeyType(), keySet());
 	}
 
 	@getter ("values")
 	public IList<V> getValues() {
-		return GamaListFactory.<V> createWithoutCasting(getType().getContentType(), values());
+		return GamaListFactory.<V> createWithoutCasting(getGamlType().getContentType(), values());
 	}
 
 	@getter ("pairs")
@@ -411,7 +411,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@Override
 	public GamaMap copy(final IScope scope) {
 		final GamaMap result =
-				GamaMapFactory.createWithoutCasting(getType().getKeyType(), getType().getContentType(), this);
+				GamaMapFactory.createWithoutCasting(getGamlType().getKeyType(), getGamlType().getContentType(), this);
 		return result;
 	}
 
@@ -509,7 +509,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	}
 
 	protected IContainer<?, K> buildIndexes(final IScope scope, final IContainer value) {
-		final IList<K> result = GamaListFactory.create(getType().getContentType());
+		final IList<K> result = GamaListFactory.create(getGamlType().getContentType());
 		for (final Object o : value.iterable(scope)) {
 			result.add(buildIndex(scope, o));
 		}

@@ -66,7 +66,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	}
 
 	@Override
-	public IType getType() {
+	public IType getGamlType() {
 		return Types.GEOMETRY;
 	}
 

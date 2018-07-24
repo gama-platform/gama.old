@@ -94,7 +94,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 */
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
 			final ILocation preferredSize, final boolean copy) {
-		final IType contentsType = matrix.getType().getContentType();
+		final IType contentsType = matrix.getGamlType().getContentType();
 		if (!GamaType.requiresCasting(desiredType, contentsType)) { return matrix.copy(scope, preferredSize, copy); }
 		int cols, rows;
 		if (preferredSize == null) {
@@ -128,7 +128,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
 		IMatrix result;
 		if (fillExpr == null) { return new GamaObjectMatrix(cols, rows, Types.NO_TYPE); }
-		switch (fillExpr.getType().id()) {
+		switch (fillExpr.getGamlType().id()) {
 			case IType.FLOAT:
 				result = new GamaFloatMatrix(cols, rows);
 				final double[] dd = ((GamaFloatMatrix) result).getMatrix();
@@ -150,7 +150,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 					}));
 				break;
 			default:
-				result = new GamaObjectMatrix(cols, rows, fillExpr.getType());
+				result = new GamaObjectMatrix(cols, rows, fillExpr.getGamlType());
 				final Object[] contents = ((GamaObjectMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(contents, fillExpr.value(scope));
@@ -196,17 +196,17 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
-		final IType itemType = exp.getType();
+		final IType itemType = exp.getGamlType();
 		final IType cType = itemType.getContentType();
 		if (itemType.id() == IType.LIST && cType.id() == IType.LIST) {
 			if (exp instanceof ListExpression) {
 				final IExpression[] array = ((ListExpression) exp).getElements();
 				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getType().getContentType();
+				return array[0].getGamlType().getContentType();
 			} else if (exp instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) exp).valuesArray();
 				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getType().getContentType();
+				return array[0].getGamlType().getContentType();
 			} else {
 				return cType.getContentType();
 			}

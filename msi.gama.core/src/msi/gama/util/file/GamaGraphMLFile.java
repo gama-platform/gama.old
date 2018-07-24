@@ -24,7 +24,7 @@ public class GamaGraphMLFile extends GamaGraphFile {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.GRAPH;
 	}
 

@@ -88,13 +88,13 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
-		final IType itemType = exp.getType();
+		final IType itemType = exp.getGamlType();
 		if (itemType.isAgentType()) { return itemType; }
-		switch (exp.getType().id()) {
+		switch (exp.getGamlType().id()) {
 			case SPECIES:
 				return itemType.getContentType();
 		}
-		return exp.getType();
+		return exp.getGamlType();
 	}
 
 	@Override

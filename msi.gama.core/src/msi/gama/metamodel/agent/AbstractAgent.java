@@ -559,7 +559,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return getScope().getType(getSpeciesName());
 	}
 

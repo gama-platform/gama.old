@@ -76,7 +76,7 @@ public class Sanction implements IValue{
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(SanctionType.id);
 //		return null;
 	}

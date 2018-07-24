@@ -153,8 +153,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
 			final VariableDescription newVar) {
 		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) { return true; }
-		final IType existingType = existingVar.getType();
-		final IType newType = newVar.getType();
+		final IType existingType = existingVar.getGamlType();
+		final IType newType = newVar.getGamlType();
 		if (!newType.isTranslatableInto(existingType)) {
 			markTypeDifference(existingVar, newVar, existingType, newType, true);
 		} else if (!newType.equals(existingType) && !newType.isParametricFormOf(existingType)) {
@@ -575,8 +575,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	public static void assertActionsAreCompatible(final ActionDescription myAction,
 			final ActionDescription parentAction, final String parentName) {
 		final String actionName = parentAction.getName();
-		final IType myType = myAction.getType();
-		final IType parentType = parentAction.getType();
+		final IType myType = myAction.getGamlType();
+		final IType parentType = parentAction.getGamlType();
 		if (!parentType.isAssignableFrom(myType)) {
 			myAction.error("Return type (" + myType + ") differs from that (" + parentType
 					+ ") of the implementation of  " + actionName + " in " + parentName);
@@ -602,7 +602,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				differentName = true;
 				break;
 			}
-			if (!parentArg.getType().isAssignableFrom(myArg.getType())) {
+			if (!parentArg.getGamlType().isAssignableFrom(myArg.getGamlType())) {
 				differentType = myName;
 				break;
 			}

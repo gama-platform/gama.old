@@ -203,7 +203,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.FILE.of(Types.POINT, Types.INT);
 	}
 

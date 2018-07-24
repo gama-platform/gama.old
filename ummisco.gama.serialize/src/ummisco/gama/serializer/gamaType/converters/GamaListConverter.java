@@ -46,7 +46,7 @@ public class GamaListConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
 		final GamaList list = (GamaList) arg0;
 
-		System.out.println("ConvertAnother : GamaList " + list.getClass()+ " "+list.getType().getContentType());
+		System.out.println("ConvertAnother : GamaList " + list.getClass()+ " "+list.getGamlType().getContentType());
 		arg2.convertAnother(new GamaListReducer(list));
 		System.out.println("END --- ConvertAnother : GamaList ");
 

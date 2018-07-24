@@ -68,7 +68,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.TOPOLOGY;
 	}
 

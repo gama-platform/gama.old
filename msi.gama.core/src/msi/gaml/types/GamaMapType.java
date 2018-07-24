@@ -66,7 +66,7 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
 	public IType keyTypeIfCasting(final IExpression exp) {
-		final IType itemType = exp.getType();
+		final IType itemType = exp.getGamlType();
 		if (itemType.isAgentType()) { return Types.get(STRING); }
 		switch (itemType.id()) {
 			case PAIR:
@@ -88,7 +88,7 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
-		final IType itemType = exp.getType();
+		final IType itemType = exp.getGamlType();
 		if (itemType.isAgentType()) { return Types.NO_TYPE; }
 		switch (itemType.id()) {
 			case LIST:

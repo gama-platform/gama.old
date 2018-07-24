@@ -49,7 +49,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	private final IContainerType<IMatrix> type;
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return type;
 	}
 
@@ -74,7 +74,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static IList getLines(final IScope scope, final IMatrix m) {
-		final IList result = GamaListFactory.create(Types.LIST.of(m.getType().getContentType()));
+		final IList result = GamaListFactory.create(Types.LIST.of(m.getGamlType().getContentType()));
 		for (int i = 0; i < m.getRows(scope); i++) {
 			result.add(getLine(scope, m, i));
 		}
@@ -82,7 +82,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static IList getColumns(final IScope scope, final IMatrix m) {
-		final IList result = GamaListFactory.create(Types.LIST.of(m.getType().getContentType()));
+		final IList result = GamaListFactory.create(Types.LIST.of(m.getGamlType().getContentType()));
 		for (int i = 0, n = m.getCols(scope); i < n; i++) {
 			result.add(getColumn(scope, m, i));
 		}
@@ -90,7 +90,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static IList getColumn(final IScope scope, final IMatrix m, final Integer num_col) {
-		final IList result = GamaListFactory.create(m.getType().getContentType());
+		final IList result = GamaListFactory.create(m.getGamlType().getContentType());
 		if (num_col >= m.getCols(scope) || num_col < 0) {
 			return result;
 		}
@@ -101,7 +101,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static IList getLine(final IScope scope, final IMatrix m, final Integer num_line) {
-		final IList result = GamaListFactory.create(m.getType().getContentType());
+		final IList result = GamaListFactory.create(m.getGamlType().getContentType());
 		if (num_line >= m.getRows(scope) || num_line < 0) {
 			return result;
 		}

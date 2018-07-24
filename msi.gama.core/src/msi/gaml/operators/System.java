@@ -255,7 +255,7 @@ public class System {
 				final String key = Cast.asString(scope, entry.getKey().value(scope));
 				final IExpression val = entry.getValue();
 				initialValues.put(key, val.value(scope));
-				initialTypes.put(key, val.getType());
+				initialTypes.put(key, val.getGamlType());
 			}
 		} else {
 			initialValues = Cast.asMap(scope, expr.value(scope), false);

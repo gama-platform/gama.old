@@ -67,7 +67,7 @@ public class ConstantExpression extends AbstractExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Literal expression of type " + getType().getTitle();
+		return "Literal expression of type " + getGamlType().getTitle();
 	}
 
 	@Override

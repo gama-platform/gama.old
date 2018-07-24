@@ -232,7 +232,7 @@ public class ExperimentJob implements IExperimentJob {
 		} else {
 			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
 		}
-		if (endCondition.getType() != Types.BOOL) { throw GamaRuntimeException.error(
+		if (endCondition.getGamlType() != Types.BOOL) { throw GamaRuntimeException.error(
 				"The until condition of the experiment should be a boolean", simulator.getSimulation().getScope()); }
 	}
 

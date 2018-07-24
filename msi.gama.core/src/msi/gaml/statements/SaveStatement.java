@@ -223,7 +223,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			final IExpression data = desc.getFacetExpr(DATA);
 			if (data == null) { return; }
-			final IType<?> t = data.getType().getContentType();
+			final IType<?> t = data.getGamlType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 
 			if (att == null && (args == null || args.isEmpty())) { return; }
@@ -272,7 +272,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		// First case: we have a file as item;
-		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
+		if (file == null && Types.FILE.isAssignableFrom(item.getGamlType())) {
 			final IGamaFile file = (IGamaFile) item.value(scope);
 			if (file != null) {
 				// Passes directly the facets of the statement, like crs, etc.
@@ -549,7 +549,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation
 					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
-					: agents.getType().getContentType().getSpecies();
+					: agents.getGamlType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			if (species != null) {
 				if (withFacet != null) {
@@ -578,7 +578,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
 		if (crsCode != null) {
-			final IType type = crsCode.getType();
+			final IType type = crsCode.getGamlType();
 			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
 				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
 			} else if (type.id() == IType.STRING) {
@@ -606,7 +606,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (type.equals("text")) {
 				fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 			} else if (type.equals("csv")) {
-				final IType itemType = item.getType();
+				final IType itemType = item.getGamlType();
 				final boolean isAgent = itemType.isAgentType() || itemType.getContentType().isAgentType();
 				final Object value = item.value(scope);
 				final IList values = itemType.isContainer() ? Cast.asList(scope, value)
@@ -618,7 +618,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (isAgent) {
 					final Collection<String> attributeNames =
 							values instanceof IPopulation ? ((IPopulation) values).getSpecies().getAttributeNames(scope)
-									: values.getType().getContentType().getSpecies().getAttributeNames();
+									: values.getGamlType().getContentType().getSpecies().getAttributeNames();
 					attributeNames.removeAll(NON_SAVEABLE_ATTRIBUTE_NAMES);
 					if (header) {
 						// final IAgent ag0 = Cast.asAgent(scope,
@@ -701,7 +701,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	public String type(final ITyped var) {
-		switch (var.getType().id()) {
+		switch (var.getGamlType().id()) {
 			case IType.BOOL:
 				return "Boolean";
 			case IType.INT:
@@ -815,7 +815,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (ag instanceof IAgent) {
 					for (final IExpression variable : attributeValues) {
 						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-						if (variable.getType().equals(IType.STRING)) {
+						if (variable.getGamlType().equals(IType.STRING)) {
 							if (val == null) {
 								val = "";
 							} else {

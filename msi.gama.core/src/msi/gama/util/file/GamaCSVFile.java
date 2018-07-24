@@ -193,7 +193,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		super(scope, pathName, matrix);
 		if (matrix != null) {
 			userSize = matrix.getDimensions();
-			contentsType = matrix.getType().getContentType();
+			contentsType = matrix.getGamlType().getContentType();
 		}
 	}
 
@@ -300,8 +300,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@Override
-	public IContainerType getType() {
-		final IType ct = getBuffer() == null ? Types.NO_TYPE : getBuffer().getType().getContentType();
+	public IContainerType getGamlType() {
+		final IType ct = getBuffer() == null ? Types.NO_TYPE : getBuffer().getGamlType().getContentType();
 		return Types.FILE.of(ct);
 	}
 

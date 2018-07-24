@@ -65,12 +65,12 @@ public class MapExpression extends AbstractExpression implements IOperator {
 				final BinaryOperator pair = (BinaryOperator) e;
 				keys[i] = pair.exprs[0];
 				vals[i] = pair.exprs[1];
-			} else if (e instanceof ConstantExpression && e.getType().getType() == Types.PAIR) {
+			} else if (e instanceof ConstantExpression && e.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair pair = (GamaPair) e.value(null);
 				final Object left = pair.key;
 				final Object right = pair.value;
-				keys[i] = GAML.getExpressionFactory().createConst(left, e.getType().getKeyType());
-				vals[i] = GAML.getExpressionFactory().createConst(right, e.getType().getContentType());
+				keys[i] = GAML.getExpressionFactory().createConst(left, e.getGamlType().getKeyType());
+				vals[i] = GAML.getExpressionFactory().createConst(right, e.getGamlType().getContentType());
 			}
 			i++;
 		}
@@ -187,7 +187,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public String getTitle() {
-		return "literal map of type " + getType().getTitle();
+		return "literal map of type " + getGamlType().getTitle();
 	}
 
 	/**

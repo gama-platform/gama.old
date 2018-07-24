@@ -108,9 +108,9 @@ public class Cast {
 			final IModel m = scope.getModel();
 			return m.getDescription().getTypeNamed((String) value);
 		} else if (value instanceof ISpecies) {
-			return ((ISpecies) value).getDescription().getType();
+			return ((ISpecies) value).getDescription().getGamlType();
 		} else {
-			return expr.getType();
+			return expr.getGamlType();
 		}
 	}
 

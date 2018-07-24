@@ -160,7 +160,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 			IExpressionDescription ed = description.getFacet(SPECIES);
 			SpeciesDescription target = null;
 			if (ed != null) {
-				target = description.getType().getDenotedSpecies();
+				target = description.getGamlType().getDenotedSpecies();
 				// target =
 				// description.getModelDescription().getSpeciesReferencedBy(description);
 				if (target == null) {

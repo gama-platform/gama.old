@@ -105,7 +105,7 @@ public class SetStatement extends AbstractStatement {
 			}
 			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
-				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getType(), assigned);
+				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
 			}
 
 			// AD 19/1/13: test of the constants
@@ -126,7 +126,7 @@ public class SetStatement extends AbstractStatement {
 		setName(IKeyword.SET + getVarName());
 		final IExpression expr = getFacet(IKeyword.VALUE);
 		if (expr == null) {
-			value = GAML.getExpressionFactory().createConst(varExpr.getType().getDefault(), varExpr.getType());
+			value = GAML.getExpressionFactory().createConst(varExpr.getGamlType().getDefault(), varExpr.getGamlType());
 		} else {
 			value = expr;
 		}

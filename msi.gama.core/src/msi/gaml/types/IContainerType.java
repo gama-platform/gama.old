@@ -24,7 +24,7 @@ import msi.gaml.expressions.IExpression;
 public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 
 	@Override
-	public IContainerType<T> getType();
+	public IContainerType<T> getGamlType();
 
 	@Override
 	public IContainerType<?> typeIfCasting(final IExpression exp);

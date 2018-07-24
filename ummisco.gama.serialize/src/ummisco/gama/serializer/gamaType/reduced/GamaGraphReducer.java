@@ -32,8 +32,8 @@ public class GamaGraphReducer {
 		spatial = g instanceof GamaSpatialGraph;
 		directed = g.isDirected();
 		
-		nodeTypeGraphReducer = g.getType().getKeyType();
-		edgeTypeGraphReducer = g.getType().getContentType();
+		nodeTypeGraphReducer = g.getGamlType().getKeyType();
+		edgeTypeGraphReducer = g.getGamlType().getContentType();
 
 		// Map of keys = pair(source,target), values = edge
 		valuesGraphReducer = g.mapValue(scope, nodeTypeGraphReducer, edgeTypeGraphReducer, false);

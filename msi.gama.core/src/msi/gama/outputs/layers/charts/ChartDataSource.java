@@ -343,7 +343,7 @@ public class ChartDataSource {
 	// }
 
 	public int computeTypeOfData(final IScope scope, final IExpression expr) {
-		final IType type = expr.getType();
+		final IType type = expr.getGamlType();
 		if (type == Types.NO_TYPE)
 			return DATA_TYPE_NULL;
 		if (Types.POINT.isAssignableFrom(type))

@@ -93,12 +93,12 @@ public class DiffusionStatement extends AbstractStatement {
 			IExpression spec = desc.getFacetExpr(IKeyword.ON);
 			// FIXME Terrible hack, while spec.getType().getSpecies() will give
 			// the species...
-			if (spec.getType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString())) {
+			if (spec.getGamlType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString())) {
 				if (!desc.getSpeciesDescription(spec.getName()).isGrid()) {
 					desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
 				}
 			} else {
-				if (!spec.getType().getContentType().isAgentType()) {
+				if (!spec.getGamlType().getContentType().isAgentType()) {
 					desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
 				}
 			}
@@ -142,7 +142,7 @@ public class DiffusionStatement extends AbstractStatement {
 
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
-		final SpeciesDescription s = getFacet(IKeyword.ON).getType().getContentType().getSpecies();
+		final SpeciesDescription s = getFacet(IKeyword.ON).getGamlType().getContentType().getSpecies();
 		envName = s.getName();
 
 	}

@@ -30,7 +30,7 @@ public class SelfExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "pseudo-variable self of type " + getType().getTitle();
+		return "pseudo-variable self of type " + getGamlType().getTitle();
 	}
 
 	@Override

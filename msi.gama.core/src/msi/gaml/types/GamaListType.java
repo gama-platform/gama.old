@@ -82,7 +82,7 @@ public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression expr) {
-		switch (expr.getType().id()) {
+		switch (expr.getGamlType().id()) {
 			case COLOR:
 			case DATE:
 				return Types.get(INT);

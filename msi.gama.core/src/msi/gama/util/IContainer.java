@@ -40,7 +40,7 @@ import one.util.streamex.StreamEx;
 public interface IContainer<KeyType, ValueType> extends IValue {
 
 	@Override
-	public IContainerType<?> getType();
+	public IContainerType<?> getGamlType();
 
 	public abstract IList<ValueType> listValue(IScope scope, IType<?> contentType, boolean copy);
 

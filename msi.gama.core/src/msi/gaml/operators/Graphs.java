@@ -379,9 +379,9 @@ public class Graphs {
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) { throw GamaRuntimeException
 				.error("In the in_edges_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getType().getContentType(),
+		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getContentType(),
 				graph.incomingEdgesOf(vertex)); }
-		return GamaListFactory.create(graph.getType().getContentType());
+		return GamaListFactory.create(graph.getGamlType().getContentType());
 	}
 
 	@operator (
@@ -445,9 +445,9 @@ public class Graphs {
 	public static IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) { throw GamaRuntimeException
 				.error("In the out_edges_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getType().getContentType(),
+		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getContentType(),
 				graph.outgoingEdgesOf(vertex)); }
-		return GamaListFactory.create(graph.getType().getContentType());
+		return GamaListFactory.create(graph.getGamlType().getContentType());
 	}
 
 	@operator (
@@ -518,7 +518,7 @@ public class Graphs {
 		ci = new ConnectivityInspector((DirectedGraph) graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
-			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 
 		}
 		return results;
@@ -549,7 +549,7 @@ public class Graphs {
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			if (edge) {
-				final IList edges = GamaListFactory.create(scope, graph.getType().getContentType());
+				final IList edges = GamaListFactory.create(scope, graph.getGamlType().getContentType());
 				for (final Object v : (Set) obj) {
 					edges.addAll(graph.edgesOf(v));
 				}
@@ -557,7 +557,7 @@ public class Graphs {
 				results.add(Containers.remove_duplicates(scope, edges));
 
 			} else
-				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+				results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
 		return results;
 	}
@@ -619,7 +619,7 @@ public class Graphs {
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		final Collection cliques = cls.getAllMaximalCliques();
 		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
 		return results;
 	}
@@ -647,7 +647,7 @@ public class Graphs {
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		final Collection cliques = cls.getBiggestMaximalCliques();
 		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
 		return results;
 	}
@@ -775,7 +775,7 @@ public class Graphs {
 				.error("In the betweenness_centrality operator, the graph should not be null!", scope); }
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
-		final GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.INT);
+		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
 		for (final Object v : vertices) {
 			mapResult.put(v, 0);
@@ -827,7 +827,7 @@ public class Graphs {
 				.error("In the edge_betweenness operator, the graph should not be null!", scope); }
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
-		final GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.INT);
+		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		for (final Object v : graph.edgeSet()) {
 			mapResult.put(v, 0);
 		}
@@ -872,9 +872,9 @@ public class Graphs {
 	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) { throw GamaRuntimeException
 				.error("In the neighbors_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
 				org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
-		return GamaListFactory.create(graph.getType().getKeyType());
+		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
 	@operator (
@@ -898,9 +898,9 @@ public class Graphs {
 							test = false) },
 			see = { "neighbors_of", "successors_of" })
 	public static IList predecessorsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
 				org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
-		return GamaListFactory.create(graph.getType().getKeyType());
+		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
 	@operator (
@@ -921,9 +921,9 @@ public class Graphs {
 							equals = "[]") },
 			see = { "predecessors_of", "neighbors_of" })
 	public static IList successorsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getType().getKeyType(),
+		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
 				org.jgrapht.Graphs.successorListOf(graph, vertex)); }
-		return GamaListFactory.create(graph.getType().getKeyType());
+		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
 	// @operator(value = "graph_from_edges")
@@ -951,8 +951,8 @@ public class Graphs {
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 
 		final IGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
-				edges.getType().getContentType());
-		if (Types.AGENT.equals(edges.getType().getContentType())) {
+				edges.getGamlType().getContentType());
+		if (Types.AGENT.equals(edges.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, null, edges, createdGraph);
 		}
 
@@ -978,9 +978,9 @@ public class Graphs {
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges, final Double tolerance) {
 
 		final GamaSpatialGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope,
-				Types.GEOMETRY, edges.getType().getContentType(), tolerance);
+				Types.GEOMETRY, edges.getGamlType().getContentType(), tolerance);
 
-		if (Types.AGENT.equals(edges.getType().getContentType())) {
+		if (Types.AGENT.equals(edges.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, null, edges, createdGraph);
 		}
 
@@ -1032,8 +1032,8 @@ public class Graphs {
 			see = { "as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
-				null, scope, vertices.getType().getContentType(), Types.GEOMETRY);
-		if (Types.AGENT.equals(vertices.getType().getContentType())) {
+				null, scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
 		return createdGraph;
@@ -1041,7 +1041,7 @@ public class Graphs {
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLineTriangle(), null, scope,
-				vertices.getType().getContentType(), Types.GEOMETRY);
+				vertices.getGamlType().getContentType(), Types.GEOMETRY);
 	}
 
 	@operator (
@@ -1060,8 +1060,8 @@ public class Graphs {
 			see = { "as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null,
-				scope, vertices.getType().getContentType(), Types.GEOMETRY);
-		if (Types.AGENT.equals(vertices.getType().getContentType())) {
+				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
 		return createdGraph;
@@ -1083,7 +1083,7 @@ public class Graphs {
 			see = {})
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
 		final IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighborsRelation(), null, scope,
-				vertices.getType().getContentType(), Types.GEOMETRY);
+				vertices.getGamlType().getContentType(), Types.GEOMETRY);
 		for (final Object e : graph.edgeSet()) {
 			graph.setEdgeWeight(e, ((IShape) e).getPerimeter());
 		}
@@ -1103,7 +1103,7 @@ public class Graphs {
 			final ISpecies edgeSpecies) {
 		final IType edgeType = scope.getType(edgeSpecies.getName());
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-				edgeSpecies, scope, vertices.getType().getContentType(), edgeType);
+				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
 
 		GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
 
@@ -1122,9 +1122,9 @@ public class Graphs {
 		final ISpecies edgeSpecies = (ISpecies) params.get("species");
 		final IType edgeType = edgeSpecies == null ? Types.GEOMETRY : scope.getType(edgeSpecies.getName());
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-				edgeSpecies, scope, vertices.getType().getContentType(), edgeType);
+				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
 
-		if (Types.AGENT.equals(vertices.getType().getContentType())) {
+		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
 		}
 		return createdGraph;
@@ -1139,7 +1139,7 @@ public class Graphs {
 			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
 			see = { "graph" })
 	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getType().getContentType(),
+		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getGamlType().getContentType(),
 				Types.GEOMETRY);
 	}
 

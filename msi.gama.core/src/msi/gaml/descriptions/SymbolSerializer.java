@@ -48,7 +48,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				final boolean includingBuiltIn) {
 			String k = desc.getKeyword(); // desc.getFacets().getLabel(IKeyword.KEYWORD);
 			if (!k.equals(PARAMETER)) {
-				final String type = desc.getType().serialize(false);
+				final String type = desc.getGamlType().serialize(false);
 				if (!type.equals(UNKNOWN)) {
 					k = type;
 				}
@@ -372,7 +372,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		collectMetaInformationInSymbol(desc, plugins);
 		collectMetaInformationInFacets(desc, plugins);
 		collectMetaInformationInChildren(desc, plugins);
-		desc.getType().collectMetaInformation(plugins);
+		desc.getGamlType().collectMetaInformation(plugins);
 	}
 
 	protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {

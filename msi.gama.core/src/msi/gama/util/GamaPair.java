@@ -91,7 +91,7 @@ public class GamaPair<K, V>
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return type;
 	}
 

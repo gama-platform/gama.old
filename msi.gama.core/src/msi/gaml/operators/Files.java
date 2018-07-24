@@ -53,8 +53,8 @@ public class Files {
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
 		// WARNING Casting to Modifiable is not safe
 		// TODO: Add a method toModifiableVersion() to IContainer
-		final IType key = container == null ? Types.NO_TYPE : container.getType().getKeyType();
-		final IType content = container == null ? Types.NO_TYPE : container.getType().getContentType();
+		final IType key = container == null ? Types.NO_TYPE : container.getGamlType().getKeyType();
+		final IType content = container == null ? Types.NO_TYPE : container.getGamlType().getContentType();
 		return (IGamaFile) Types.FILE.cast(scope, s, container, key, content, false);
 	}
 

@@ -135,10 +135,10 @@ public class ContainerVariable extends Variable {
 				if (fill == null) {
 					fill = IExpressionFactory.NIL_EXPR;
 				}
-				final IType<?> type = vd.getType();
+				final IType<?> type = vd.getGamlType();
 				switch (type.id()) {
 					case IType.LIST:
-						if (size.getType().id() != IType.INT) {
+						if (size.getGamlType().id() != IType.INT) {
 							vd.error("Facet 'size:' must be of type int", IGamlIssue.WRONG_TYPE, SIZE, "int");
 							return;
 						}
@@ -147,7 +147,7 @@ public class ContainerVariable extends Variable {
 						vd.setFacet(INIT, init);
 						break;
 					case IType.MATRIX:
-						if (size.getType().id() != IType.POINT) {
+						if (size.getGamlType().id() != IType.POINT) {
 							vd.error("Facet 'size:' must be of type point", IGamlIssue.WRONG_TYPE, SIZE, "point");
 							return;
 						}

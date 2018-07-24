@@ -123,7 +123,7 @@ public class DrawingData {
 			final IExpression textureExp, final IExpression materialExp, final IExpression perspectiveExp,
 			final IExpression lineWidthExp) {
 		this.size = create(sizeExp, (scope) -> {
-			if (sizeExp.getType().isNumber()) {
+			if (sizeExp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(scope, sizeExp.value(scope));
 				// We do not consider the z ordinate -- see Issue #1539
 				return new GamaPoint(val, val, 0);
@@ -133,7 +133,7 @@ public class DrawingData {
 		}, Types.POINT, null);
 		this.depth = create(depthExp, Types.FLOAT, null);
 		this.rotation = create(rotationExp, (scope) -> {
-			if (rotationExp.getType().getType() == Types.PAIR) {
+			if (rotationExp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
 				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				return currentRotation;
@@ -153,7 +153,7 @@ public class DrawingData {
 		this.location = create(locationExp, Types.POINT, null);
 		this.empty = create(emptyExp, Types.BOOL, false);
 		this.border = create(borderExp, (scope) -> {
-			if (borderExp.getType() == Types.BOOL) {
+			if (borderExp.getGamlType() == Types.BOOL) {
 				final boolean hasBorder = Cast.asBool(scope, borderExp.value(scope));
 				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
 				return null;
@@ -162,7 +162,7 @@ public class DrawingData {
 			}
 		}, Types.COLOR, null);
 		this.colors = create(colorExp, (scope) -> {
-			switch (colorExp.getType().id()) {
+			switch (colorExp.getGamlType().id()) {
 				case IType.COLOR:
 					final GamaColor currentColor = (GamaColor) colorExp.value(scope);
 					return GamaListFactory.createWithoutCasting(Types.COLOR, currentColor);
@@ -175,7 +175,7 @@ public class DrawingData {
 		}, Types.LIST, null);
 		this.font = create(fontExp, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		this.texture = create(textureExp, (scope) -> {
-			if (textureExp.getType().getType() == Types.LIST) {
+			if (textureExp.getGamlType().getGamlType() == Types.LIST) {
 				return GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
 			} else {
 				return GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));

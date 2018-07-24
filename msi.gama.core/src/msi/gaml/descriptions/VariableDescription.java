@@ -169,16 +169,16 @@ public class VariableDescription extends SymbolDescription {
 					final IDescription species = this.getEnclosingDescription();
 					final IDescription macro = species.getEnclosingDescription();
 					if (macro == null) { return Types.AGENT; }
-					return macro.getType();
+					return macro.getGamlType();
 				case ITypeProvider.OWNER_TYPE: // This represents the type of the
 												// agents of the enclosing species
 					if (this.getEnclosingDescription() == null) { return Types.AGENT; }
-					return this.getEnclosingDescription().getType();
+					return this.getEnclosingDescription().getGamlType();
 				case ITypeProvider.MODEL_TYPE: // This represents the type of the
 												// model (used for simulations)
 					final ModelDescription md = this.getModelDescription();
 					if (md == null) { return Types.get("model"); }
-					return md.getType();
+					return md.getGamlType();
 				case ITypeProvider.EXPERIMENT_TYPE:
 					return Types.get("experiment");
 				case ITypeProvider.MIRROR_TYPE:
@@ -188,7 +188,7 @@ public class VariableDescription extends SymbolDescription {
 						// We try to change the type of the 'target' variable if the
 						// expression contains only agents from the
 						// same species
-						final IType<?> t = mirrors.getType().getContentType();
+						final IType<?> t = mirrors.getGamlType().getContentType();
 						if (t.isAgentType() && t.id() != IType.AGENT) {
 							getEnclosingDescription().info(
 									"The 'target' attribute will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL,
@@ -257,7 +257,7 @@ public class VariableDescription extends SymbolDescription {
 	public IExpression getVarExpr(final boolean asField) {
 		final boolean asGlobal = _isGlobal && !asField;
 
-		final IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
+		final IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getGamlType(), isNotModifiable(),
 				asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
@@ -275,7 +275,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		final String title = getType().getTitle()
+		final String title = getGamlType().getTitle()
 				+ (isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
 		if (getEnclosingDescription() == null) { return title; }
 		final String s = title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
@@ -294,7 +294,7 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public String getShortDescription() {
-		String s = ", of type " + getType().getTitle();
+		String s = ", of type " + getGamlType().getTitle();
 		final String doc = getBuiltInDoc();
 		if (doc != null) {
 			s += ": " + doc;

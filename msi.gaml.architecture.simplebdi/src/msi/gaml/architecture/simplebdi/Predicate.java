@@ -780,10 +780,10 @@ public class Predicate implements IValue {
 	/**
 	 * Method getType()
 	 * 
-	 * @see msi.gama.common.interfaces.ITyped#getType()
+	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(PredicateType.id);
 	}
 

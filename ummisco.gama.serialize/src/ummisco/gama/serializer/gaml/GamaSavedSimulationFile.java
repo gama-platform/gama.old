@@ -39,7 +39,7 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 	}
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

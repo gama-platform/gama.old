@@ -73,7 +73,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	@Override
 	public String getTitle() {
 
-		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + getType()
+		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + getGamlType()
 				+ (definitionDescription != null ? " defined in " + getDefinitionDescription().getTitle() : "");
 	}
 

@@ -182,7 +182,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		@Override
 		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
-			String type = desc.getType().serialize(includingBuiltIn);
+			String type = desc.getGamlType().serialize(includingBuiltIn);
 			if (type.equals(UNKNOWN)) {
 				type = ACTION;
 			}
@@ -207,7 +207,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		}
 
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
-			final IType at = cd.getType();
+			final IType at = cd.getGamlType();
 			if (at == Types.NO_TYPE) { return; }
 			final Set<StatementDescription> returns = new TLinkedHashSet<>();
 			final DescriptionVisitor finder = (desc) -> {
@@ -234,7 +234,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 						continue;
 					}
 				} else {
-					final IType<?> rt = ie.getType();
+					final IType<?> rt = ie.getGamlType();
 					if (!rt.isTranslatableInto(at)) {
 						ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not " + rt
 								+ ")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());

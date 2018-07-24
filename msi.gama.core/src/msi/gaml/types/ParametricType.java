@@ -49,7 +49,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public boolean equals(final Object other) {
-		if (other instanceof ParametricType) { return type.equals(((ParametricType) other).getType())
+		if (other instanceof ParametricType) { return type.equals(((ParametricType) other).getGamlType())
 				&& keyType.equals(((ParametricType) other).getKeyType())
 				&& contentsType.equals(((ParametricType) other).getContentType()); }
 		return false;
@@ -68,10 +68,10 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method getType()
 	 * 
-	 * @see msi.gama.common.interfaces.ITyped#getType()
+	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
-	public IContainerType<IContainer<?, ?>> getType() {
+	public IContainerType<IContainer<?, ?>> getGamlType() {
 		return type;
 	}
 
@@ -226,7 +226,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 */
 	@Override
 	public boolean isAssignableFrom(final IType<?> l) {
-		return type.isAssignableFrom(l.getType()) && contentsType.isAssignableFrom(l.getContentType())
+		return type.isAssignableFrom(l.getGamlType()) && contentsType.isAssignableFrom(l.getContentType())
 				&& keyType.isAssignableFrom(l.getKeyType());
 	}
 
@@ -237,7 +237,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 */
 	@Override
 	public boolean isTranslatableInto(final IType<?> l) {
-		return type.isTranslatableInto(l.getType()) && contentsType.isTranslatableInto(l.getContentType())
+		return type.isTranslatableInto(l.getGamlType()) && contentsType.isTranslatableInto(l.getContentType())
 				&& keyType.isTranslatableInto(l.getKeyType());
 	}
 
@@ -286,7 +286,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 */
 	@Override
 	public int distanceTo(final IType<?> t) {
-		return t.getType().distanceTo(type) + t.getContentType().distanceTo(contentsType)
+		return t.getGamlType().distanceTo(type) + t.getContentType().distanceTo(contentsType)
 				+ t.getKeyType().distanceTo(keyType);
 	}
 
@@ -346,7 +346,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	public IType<? super IContainer<?, ?>> findCommonSupertypeWith(final IType<?> iType) {
 		if (iType instanceof ParametricType) {
 			final IType<?> pType = iType;
-			final IType<?> cType = type.findCommonSupertypeWith(pType.getType());
+			final IType<?> cType = type.findCommonSupertypeWith(pType.getGamlType());
 			if (cType.isContainer()) {
 				final IType<?> kt = keyType.findCommonSupertypeWith(pType.getKeyType());
 				final IType<?> ct = contentsType.findCommonSupertypeWith(pType.getContentType());

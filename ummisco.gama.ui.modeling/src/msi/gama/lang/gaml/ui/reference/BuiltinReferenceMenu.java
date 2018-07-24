@@ -136,7 +136,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
 			for (final IDescription variable : vars) {
-				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getType() + ")"), variable);
+				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getGamlType() + ")"), variable);
 			}
 		}
 		final List<IDescription> actions = Lists.newArrayList(GamaSkillRegistry.INSTANCE.getActionsForSkill(skill));
@@ -208,7 +208,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 			for (final String v : vars) {
 				final VariableDescription variable = species.getAttribute(v);
 				if (!variable.isSyntheticSpeciesContainer() && variable.getOriginName().endsWith(species.getName())) {
-					fillIDescriptionSubMenu(sub(submenu, v + " (" + variable.getType() + ")"), variable);
+					fillIDescriptionSubMenu(sub(submenu, v + " (" + variable.getGamlType() + ")"), variable);
 				}
 			}
 		}

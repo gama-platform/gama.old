@@ -150,7 +150,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	private List<int[]> computeColors(final IScope scope) {
 		if (constantColors != null) { return constantColors; }
 		if (color == null) { return null; }
-		if (color.getType().id() == IType.LIST) {
+		if (color.getGamlType().id() == IType.LIST) {
 			final IList<?> list = Cast.asList(scope, color.value(scope));
 			final List<int[]> result = new ArrayList<>();
 			int i = 0;

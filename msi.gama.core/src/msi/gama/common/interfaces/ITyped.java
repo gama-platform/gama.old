@@ -14,6 +14,6 @@ import msi.gaml.types.IType;
 
 public interface ITyped {
 
-	public IType<?> getType();
+	public IType<?> getGamlType();
 
 }

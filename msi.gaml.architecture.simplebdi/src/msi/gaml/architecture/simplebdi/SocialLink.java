@@ -153,7 +153,7 @@ public class SocialLink implements IValue {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(SocialLinkType.id);
 	}
 

@@ -74,7 +74,7 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.TYPE;
 	}
 

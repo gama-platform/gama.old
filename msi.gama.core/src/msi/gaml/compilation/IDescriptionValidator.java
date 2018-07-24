@@ -57,17 +57,17 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 			final IExpression expr2 = assigned.getExpression();
 			if (expr2 == null) { return; }
 			// IType receiverType = expr1.getType();
-			final IType assignedType = expr2.getType();
+			final IType assignedType = expr2.getGamlType();
 
 			// AD: 6/9/13 special case for int and float (see Issue 590) and for
 			// empty lists and maps
 			if (expr2 != IExpressionFactory.NIL_EXPR
-					&& !assignedType.getType().isTranslatableInto(receiverType.getType())
+					&& !assignedType.getGamlType().isTranslatableInto(receiverType.getGamlType())
 					|| Types.intFloatCase(receiverType, assignedType)) {
 				if (!Types.isEmptyContainerCase(receiverType, expr2)) {
 					context.warning(
-							receiverDescription + " of type " + receiverType.getType() + " is assigned a value of type "
-									+ assignedType.getType() + ", which will be casted to " + receiverType.getType(),
+							receiverDescription + " of type " + receiverType.getGamlType() + " is assigned a value of type "
+									+ assignedType.getGamlType() + ", which will be casted to " + receiverType.getGamlType(),
 							IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
 				}
 			}
@@ -78,7 +78,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 				// Special cases for the empty lists and maps
 				if (Types.isEmptyContainerCase(receiverType, expr2)) { return; }
 				// AD: 28/4/14 special case for variables of type species<xxx>
-				if (expr2 != IExpressionFactory.NIL_EXPR && receiverType.getType().id() == IType.SPECIES) {
+				if (expr2 != IExpressionFactory.NIL_EXPR && receiverType.getGamlType().id() == IType.SPECIES) {
 					if (!contentType.isTranslatableInto(receiverContentType)) {
 						context.error(
 								"Impossible assignment: " + contentType.getSpeciesName() + " is not a sub-species of "

@@ -108,7 +108,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 		}
 		// computed = true;
 		// Important NOT to return the reference to values (but a copy of it).
-		return GamaListFactory.createWithoutCasting(getType().getContentType(), values);
+		return GamaListFactory.createWithoutCasting(getGamlType().getContentType(), values);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public String getTitle() {
-		return "literal list of type " + getType().getTitle();
+		return "literal list of type " + getGamlType().getTitle();
 	}
 
 	@Override

@@ -61,7 +61,7 @@ public class GisLayer extends AbstractLayer {
 
 	private GamaShapeFile getShapeFile(final IScope scope) {
 		if (gisExpression == null) { return null; }
-		if (gisExpression.getType().id() == IType.STRING) {
+		if (gisExpression.getGamlType().id() == IType.STRING) {
 			final String fileName = Cast.asString(scope, gisExpression.value(scope));
 			return new GamaShapeFile(scope, fileName);
 		}

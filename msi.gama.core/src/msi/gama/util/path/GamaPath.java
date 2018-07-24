@@ -44,7 +44,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public GamaPath() {}
 
 	@Override
-	public IType getType() {
+	public IType getGamlType() {
 		return Types.PATH;
 	}
 
@@ -170,7 +170,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	@Override
 	public IList<V> getVertexList() {
 		if (graph == null) { return GamaListFactory.create(); }
-		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), GraphPath.super.getVertexList());
+		return GamaListFactory.<V> createWithoutCasting(getGamlType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
 	// TODO :to check

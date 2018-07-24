@@ -157,7 +157,7 @@ public class GamaListFactory {
 
 	public static IList create(final IScope scope, final IType contentType, final IContainer container) {
 		if (container == null) { return create(contentType); }
-		if (GamaType.requiresCasting(contentType, container.getType().getContentType())) {
+		if (GamaType.requiresCasting(contentType, container.getGamlType().getContentType())) {
 			return create(scope, contentType, container.iterable(scope));
 		} else {
 			return createWithoutCasting(contentType, container.iterable(scope));
@@ -166,7 +166,7 @@ public class GamaListFactory {
 
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final IList<T> container) {
 		if (container == null) { return create(contentType); }
-		if (GamaType.requiresCasting(contentType, container.getType().getContentType())) {
+		if (GamaType.requiresCasting(contentType, container.getGamlType().getContentType())) {
 			return create(scope, contentType, (Collection) container);
 		} else {
 			return createWithoutCasting(contentType, container);
@@ -255,7 +255,7 @@ public class GamaListFactory {
 	public static IList create(final IScope scope, final IExpression fillExpr, final Integer size) {
 		if (fillExpr == null) { return create(Types.NO_TYPE, size); }
 		final Object[] contents = new Object[size];
-		final IType contentType = fillExpr.getType();
+		final IType contentType = fillExpr.getGamlType();
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 		if (fillExpr.isConst()) {
 			final Object o = fillExpr.value(scope);

@@ -329,7 +329,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.DATE;
 	}
 

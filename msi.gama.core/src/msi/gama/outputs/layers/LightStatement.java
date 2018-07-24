@@ -233,7 +233,7 @@ public class LightStatement extends AbstractLayerStatement {
 		}
 		final IExpression expr = getFacet(IKeyword.COLOR);
 		if (expr != null) {
-			if (expr.getType().equals(Types.COLOR)) {
+			if (expr.getGamlType().equals(Types.COLOR)) {
 				getLayeredDisplayData().setDiffuseLightColor(lightId, Cast.asColor(scope, expr.value(scope)));
 			} else {
 				final int meanValue = Cast.asInt(scope, expr.value(scope));

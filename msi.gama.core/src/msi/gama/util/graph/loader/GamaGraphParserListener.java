@@ -82,8 +82,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 	@Override
 	public void startOfParsing() {
-		final IType nodeType = populationNodes == null ? Types.NO_TYPE : populationNodes.getType().getContentType();
-		final IType edgeType = populationEdges == null ? Types.NO_TYPE : populationEdges.getType().getContentType();
+		final IType nodeType = populationNodes == null ? Types.NO_TYPE : populationNodes.getGamlType().getContentType();
+		final IType edgeType = populationEdges == null ? Types.NO_TYPE : populationEdges.getGamlType().getContentType();
 		gamaGraph =
 				isSpatial ? new GamaSpatialGraph(scope, nodeType, edgeType) : new GamaGraph(scope, nodeType, edgeType);
 		nodeId2agent = new HashMap<String, IAgent>();

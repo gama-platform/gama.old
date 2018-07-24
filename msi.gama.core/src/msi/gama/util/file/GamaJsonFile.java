@@ -66,7 +66,7 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.MAP.of(Types.STRING, Types.NO_TYPE);
 	}
 

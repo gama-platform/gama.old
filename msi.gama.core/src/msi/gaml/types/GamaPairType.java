@@ -63,8 +63,8 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 			value = g.getTarget();
 		} else if (obj instanceof GamaMap) {
 			final GamaMap m = (GamaMap) obj;
-			key = GamaListFactory.create(scope, m.getType().getKeyType(), m.keySet());
-			value = GamaListFactory.create(scope, m.getType().getContentType(), m.values());
+			key = GamaListFactory.create(scope, m.getGamlType().getKeyType(), m.keySet());
+			value = GamaListFactory.create(scope, m.getGamlType().getContentType(), m.values());
 		} else if (obj instanceof IList) {
 			final IList l = (IList) obj;
 			switch (l.size()) {

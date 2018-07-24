@@ -313,7 +313,7 @@ public class Types {
 	 * @return
 	 */
 	public static boolean isEmptyContainerCase(final IType receiverType, final IExpression expr2) {
-		final IType receiver = receiverType.getType();
+		final IType receiver = receiverType.getGamlType();
 		final boolean result = (receiver == MAP || receiver == LIST) && isEmpty(expr2);
 		if (result) { return true; }
 
@@ -330,7 +330,7 @@ public class Types {
 	}
 
 	private static boolean isEmpty(final IExpression expr2) {
-		switch (expr2.getType().getType().id()) {
+		switch (expr2.getGamlType().getGamlType().id()) {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
 				// if (expr2.isConst()) {

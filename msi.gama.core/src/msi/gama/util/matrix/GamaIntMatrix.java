@@ -70,7 +70,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.MATRIX.of(Types.INT);
 	}
 

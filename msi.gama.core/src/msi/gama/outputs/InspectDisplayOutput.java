@@ -159,7 +159,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 				IKeyword.TYPE, types.get(INSPECT_AGENT), IKeyword.VALUE,
 				StringUtils.toGamlString(a.getSpeciesName() + " at " + a.getIndex())).validate());
 
-		setValue(GAML.getExpressionFactory().createConst(a, a.getType()));
+		setValue(GAML.getExpressionFactory().createConst(a, a.getGamlType()));
 		lastValue = a;
 	}
 
@@ -169,7 +169,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 				IKeyword.TYPE, types.get(INSPECT_TABLE), IKeyword.VALUE, "experiment.simulations").validate());
 
 		final SimulationPopulation sp = a.getSimulationPopulation();
-		setValue(GAML.getExpressionFactory().createConst(sp, sp.getType()));
+		setValue(GAML.getExpressionFactory().createConst(sp, sp.getGamlType()));
 		lastValue = sp;
 		rootAgent = a;
 	}
@@ -268,7 +268,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	public ISpecies getSpecies() {
 		final IExpression value = getValue();
 		if (value == null) { return null; }
-		final IType type = value.getType().getContentType();
+		final IType type = value.getGamlType().getContentType();
 		if (type == Types.get(IKeyword.MODEL)) { return getScope().getModel().getSpecies(); }
 		final SpeciesDescription sd = type.getSpecies();
 		if (sd == null) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
@@ -297,7 +297,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		final IType type = value.getType();
+		final IType type = value.getGamlType();
 		if (type.isAgentType()) {
 			GAMA.getGui().setSelectedAgent((IAgent) value.value(scope));
 		} else if (type.isContainer()) {

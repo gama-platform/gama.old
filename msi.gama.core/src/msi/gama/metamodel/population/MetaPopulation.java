@@ -77,7 +77,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return type;
 	}
 

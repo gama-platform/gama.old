@@ -246,7 +246,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		if (evaluateExpression) {
 			return expectedType.canBeTypeOf(scope, value);
 		} else if (value instanceof IExpression) {
-			return expectedType.isAssignableFrom(((IExpression) value).getType());
+			return expectedType.isAssignableFrom(((IExpression) value).getGamlType());
 		} else {
 			return false;
 		}

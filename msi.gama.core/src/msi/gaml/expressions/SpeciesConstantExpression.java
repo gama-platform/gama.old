@@ -36,7 +36,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 			// hqnghi if main description contains micro-description then
 			// species comes from micro-model
 			final IModel m = scope.getModel();
-			final ModelDescription micro = this.getType().getContentType().getSpecies().getModelDescription();
+			final ModelDescription micro = this.getGamlType().getContentType().getSpecies().getModelDescription();
 			final ModelDescription main = m == null ? null : (ModelDescription) scope.getModel().getDescription();
 			final Boolean fromMicroModel = main == null || main.getMicroModel(micro.getAlias()) != null;
 			if (!fromMicroModel) {
@@ -46,7 +46,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 			} else {
 				final IPopulation pop = scope.getRoot().getExternMicroPopulationFor(micro.getAlias() + "." + value);
 				if (pop != null) { return pop.getSpecies(); }
-				return scope.getModel().getSpecies((String) value, this.getType().getContentType().getSpecies());
+				return scope.getModel().getSpecies((String) value, this.getGamlType().getContentType().getSpecies());
 			}
 			// end-hqnghi
 		}
@@ -66,7 +66,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public String getDocumentation() {
-		return getType().getContentType().getSpecies().getDocumentationWithoutMeta();
+		return getGamlType().getContentType().getSpecies().getDocumentationWithoutMeta();
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		final SpeciesDescription sd = getType().getContentType().getSpecies();
+		final SpeciesDescription sd = getGamlType().getContentType().getSpecies();
 		if (sd != null) {
 			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
 			if (sd.isBuiltIn()) {

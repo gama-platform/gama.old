@@ -299,7 +299,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(IKeyword.PLATFORM);
 	}
 }

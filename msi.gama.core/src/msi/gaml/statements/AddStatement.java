@@ -271,7 +271,7 @@ public class AddStatement extends AbstractContainerStatement {
 			if (item == null)
 				return;
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
-				if (!item.getType().isContainer()) {
+				if (!item.getGamlType().isContainer()) {
 					cd.warning(
 							"The use of 'all' will have no effect here, as " + item.serialize(false)
 									+ " is not a container. Only this value will be added to " + list.serialize(false),
@@ -279,11 +279,11 @@ public class AddStatement extends AbstractContainerStatement {
 					cd.removeFacets(ALL);
 				}
 			}
-			if (list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR) {
-				final IType<?> contentType = list.getType().getContentType();
-				final IType<?> valueType = item.getType().getContentType();
-				final IType<?> mapKeyType = list.getType().getKeyType();
-				final IType<?> pairKeyType = item.getType().getKeyType();
+			if (list.getGamlType().id() == IType.MAP && item.getGamlType().id() == IType.PAIR) {
+				final IType<?> contentType = list.getGamlType().getContentType();
+				final IType<?> valueType = item.getGamlType().getContentType();
+				final IType<?> mapKeyType = list.getGamlType().getKeyType();
+				final IType<?> pairKeyType = item.getGamlType().getKeyType();
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)) {
 					cd.warning(
 							"The type of the contents of " + list.serialize(false) + " (" + contentType

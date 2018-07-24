@@ -264,10 +264,10 @@ public class RFile extends GamaFile<GamaMap, Object> {
 	/**
 	 * Method getType()
 	 * 
-	 * @see msi.gama.util.IContainer#getType()
+	 * @see msi.gama.util.IContainer#getGamlType()
 	 */
 	@Override
-	public IContainerType<IGamaFile> getType() {
+	public IContainerType<IGamaFile> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

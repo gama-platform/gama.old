@@ -434,7 +434,7 @@ public class Stats {
 	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb,
 			final boolean strict) {
 		if (nb <= 1) {
-			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getGamlType().getContentType()));
 			result.add(list);
 			return result;
 		}
@@ -471,7 +471,7 @@ public class Stats {
 	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
 			final IList<? extends Comparable> stops, final boolean strict) {
 		if (stops.size() == 0) {
-			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getType().getContentType()));
+			final IList<IList<T>> result = GamaListFactory.create(Types.LIST.of(list.getGamlType().getContentType()));
 			result.add(list);
 			return result;
 		}
@@ -480,7 +480,7 @@ public class Stats {
 					"The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
 		final DataSet d = from(scope, stops);
 		d.addValue(Double.MAX_VALUE);
-		final IType numberType = list.getType().getContentType();
+		final IType numberType = list.getGamlType().getContentType();
 		final IList<IList<T>> result = GamaListFactory.createWithoutCasting(Types.LIST.of(numberType));
 		for (int i = 0; i < d.dataSetSize; i++) {
 			result.add(GamaListFactory.createWithoutCasting(numberType));
@@ -681,7 +681,7 @@ public class Stats {
 			see = { "mean" })
 	public static Object opMedian(final IScope scope, final IContainer values) {
 
-		final IType contentType = values.getType().getContentType();
+		final IType contentType = values.getGamlType().getContentType();
 		if (values.length(scope) == 0) { return contentType.cast(scope, 0d, null, false); }
 		switch (contentType.id()) {
 			case IType.INT:
@@ -839,7 +839,7 @@ public class Stats {
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
 		if (original == null) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
-		final GamaMap<Object, Integer> result = GamaMapFactory.create(original.getType().getContentType(), Types.INT);
+		final GamaMap<Object, Integer> result = GamaMapFactory.create(original.getGamlType().getContentType(), Types.INT);
 		for (final Object each : original.iterable(scope)) {
 			scope.setEach(each);
 			final Object key = filter.value(scope);

@@ -21,8 +21,8 @@ public class GamaPairReducer {
 	private final Object value;
 
 	public GamaPairReducer(final GamaPair m) {
-		keyPairType = m.getType().getKeyType();
-		dataPairType = m.getType().getContentType();
+		keyPairType = m.getGamlType().getKeyType();
+		dataPairType = m.getGamlType().getContentType();
 		key = m.getKey();
 		value = m.getValue();
 	}

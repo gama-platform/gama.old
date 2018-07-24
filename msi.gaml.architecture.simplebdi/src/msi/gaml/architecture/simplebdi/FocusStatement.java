@@ -166,8 +166,8 @@ public class FocusStatement extends AbstractStatement {
 					}
 					tempPred = new Predicate(namePred,
 							GamaMapFactory.createWithoutCasting(
-									((GamaMap<String, Object>) tempValues).getType().getKeyType(),
-									((GamaMap<String, Object>) tempValues).getType().getContentType(), tempValues));
+									((GamaMap<String, Object>) tempValues).getGamlType().getKeyType(),
+									((GamaMap<String, Object>) tempValues).getGamlType().getContentType(), tempValues));
 					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scope, truth.value(scope)));
 					}

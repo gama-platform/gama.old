@@ -25,7 +25,7 @@ public class GamaMatrixReducer {
 	private final int nCols;
 
 	public GamaMatrixReducer(final IScope scope, final GamaMatrix m) {
-		contentTypeMatrixReducer = m.getType().getContentType();
+		contentTypeMatrixReducer = m.getGamlType().getContentType();
 		nRows = m.getRows(null);
 		nCols = m.getCols(null);
 		valuesMatrixReducer = m.listValue(scope, contentTypeMatrixReducer, true);

@@ -104,7 +104,7 @@ public class PutStatement extends AddStatement {
 		public void validate(final IDescription cd) {
 			final IExpression index = cd.getFacetExpr(AT, KEY);
 			final IExpression whole = cd.getFacetExpr(ALL);
-			if (whole != null && whole.getType().id() != IType.BOOL) {
+			if (whole != null && whole.getGamlType().id() != IType.BOOL) {
 				cd.error("Put cannot be used to add several values", IGamlIssue.MISSING_FACET, ALL);
 				return;
 			}

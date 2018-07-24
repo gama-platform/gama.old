@@ -96,7 +96,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public GamaSpatialGraph(final IContainer edges, final IContainer vertices, final IScope scope) {
-		this(scope, vertices.getType().getContentType(), edges.getType().getContentType());
+		this(scope, vertices.getGamlType().getContentType(), edges.getGamlType().getContentType());
 		init(scope, edges, vertices);
 	}
 
@@ -280,7 +280,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
-		final GamaMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getType().getKeyType());
+		final GamaMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}

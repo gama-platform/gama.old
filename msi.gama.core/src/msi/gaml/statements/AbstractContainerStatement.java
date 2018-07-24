@@ -100,7 +100,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			// and ALL is set to "true"
 			final IExpressionDescription wholeDesc = cd.getFacet(ALL);
 			final IExpression whole = wholeDesc == null ? null : wholeDesc.getExpression();
-			if (whole != null && whole.getType().id() != IType.BOOL) {
+			if (whole != null && whole.getGamlType().id() != IType.BOOL) {
 				cd.setFacet(ITEM, wholeDesc);
 				cd.removeFacets(ALL);
 				cd.setFacet(ALL, IExpressionFactory.TRUE_EXPR);
@@ -122,7 +122,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				return;
 			}
 			if (keyword.equals(ADD) || keyword.equals(REMOVE)) {
-				final IType containerType = list.getType();
+				final IType containerType = list.getGamlType();
 				if (containerType.isFixedLength()) {
 					cd.error("Impossible to add/remove to/from " + list.serialize(false), IGamlIssue.WRONG_TYPE);
 					return;
@@ -131,9 +131,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			/**
 			 * Warnings for agent variables
 			 */
-			if (index != null && list.getType().isAgentType() && index.isConst()) {
+			if (index != null && list.getGamlType().isAgentType() && index.isConst()) {
 				final String s = index.literalValue();
-				final SpeciesDescription sd = list.getType().getSpecies();
+				final SpeciesDescription sd = list.getGamlType().getSpecies();
 				if (sd.hasAttribute(s)) {
 					if (keyword.equals(PUT)) {
 						cd.warning("Attribute '" + s + "' will not be modified by this statement. Use '"
@@ -174,14 +174,14 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					// validate
 					return;
 				}
-				final IType<?> contentType = list.getType().getContentType();
+				final IType<?> contentType = list.getGamlType().getContentType();
 				boolean isAll = false;
 				IType<?> valueType = Types.NO_TYPE;
-				if (!keyword.equals(PUT) && all && item.getType().isTranslatableInto(Types.CONTAINER)) {
+				if (!keyword.equals(PUT) && all && item.getGamlType().isTranslatableInto(Types.CONTAINER)) {
 					isAll = true;
-					valueType = item.getType().getContentType();
+					valueType = item.getGamlType().getContentType();
 				} else {
-					valueType = item.getType();
+					valueType = item.getGamlType();
 				}
 
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
@@ -200,14 +200,14 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 						message += "The argument will be casted to " + contentType + ". ";
 					}
 					cd.warning(message, IGamlIssue.SHOULD_CAST, IKeyword.ITEM,
-							isAll ? list.getType().toString() : contentType.toString());
+							isAll ? list.getGamlType().toString() : contentType.toString());
 				}
-				final IType<?> keyType = list.getType().getKeyType();
-				if (index != null && keyType != Types.NO_TYPE && !index.getType().isTranslatableInto(keyType)) {
+				final IType<?> keyType = list.getGamlType().getKeyType();
+				if (index != null && keyType != Types.NO_TYPE && !index.getGamlType().isTranslatableInto(keyType)) {
 					cd.warning(
 							"The type of the index of " + list.serialize(false) + " (" + keyType
 									+ ") does not match with the type of " + index.serialize(false) + " ("
-									+ index.getType() + "). The latter will be casted to " + keyType,
+									+ index.getGamlType() + "). The latter will be casted to " + keyType,
 							IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 				}
 			}
@@ -235,9 +235,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		list = getFacet(IKeyword.TO);
 
 		asAll = all != null && all.literalValue().equals(IKeyword.TRUE);
-		asAllValues = asAll && item != null && item.getType().isTranslatableInto(Types.CONTAINER);
-		asAllIndexes = asAll && index != null && index.getType().isTranslatableInto(Types.CONTAINER);
-		final IType<?> t = list.getType();
+		asAllValues = asAll && item != null && item.getGamlType().isTranslatableInto(Types.CONTAINER);
+		asAllIndexes = asAll && index != null && index.getGamlType().isTranslatableInto(Types.CONTAINER);
+		final IType<?> t = list.getGamlType();
 		isDirect = t.isContainer();
 		isGraph = t.isTranslatableInto(Types.GRAPH);
 		// containerType = (IContainerType) (isDirect ? t : attributesType);
@@ -294,7 +294,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		if (isDirect) { return (IContainer.Modifiable) cont; }
 		if (cont instanceof IShape) { return ((IShape) cont).getOrCreateAttributes(); }
 		throw GamaRuntimeException.warning(
-				"Cannot use " + list.serialize(false) + ", of type " + list.getType().toString() + ", as a container",
+				"Cannot use " + list.serialize(false) + ", of type " + list.getGamlType().toString() + ", as a container",
 				scope);
 	}
 

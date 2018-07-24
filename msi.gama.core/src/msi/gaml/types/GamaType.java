@@ -375,7 +375,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public IType<Support> getType() {
+	public IType<Support> getGamlType() {
 		return this;
 	}
 
@@ -385,15 +385,15 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static IType<?> from(final TypeDescription species) {
-		return from(Types.SPECIES, Types.INT, species.getType());
+		return from(Types.SPECIES, Types.INT, species.getGamlType());
 	}
 
 	public static IContainerType<?> from(final IContainerType<IContainer<?, ?>> t, final IType<?> keyType,
 			final IType<?> contentType) {
 		if (keyType == Types.NO_TYPE && contentType == Types.NO_TYPE) { return t; }
-		final IType<?> kt = keyType == Types.NO_TYPE ? t.getType().getKeyType() : keyType;
-		final IType<?> ct = contentType == Types.NO_TYPE ? t.getType().getContentType() : contentType;
-		return new ParametricType(t.getType(), kt, ct);
+		final IType<?> kt = keyType == Types.NO_TYPE ? t.getGamlType().getKeyType() : keyType;
+		final IType<?> ct = contentType == Types.NO_TYPE ? t.getGamlType().getContentType() : contentType;
+		return new ParametricType(t.getGamlType(), kt, ct);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -421,7 +421,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 			if (e == null) {
 				continue;
 			}
-			final IType<?> eType = e.getType();
+			final IType<?> eType = e.getGamlType();
 			types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
 		}
 		final IType<?>[] array = types.toArray(new IType[types.size()]);
@@ -453,8 +453,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 * @return
 	 */
 	public static IType<?> of(final Object obj) {
-		if (obj instanceof IValue) { return ((IValue) obj).getType(); }
-		if (obj instanceof IExpression) { return ((IExpression) obj).getType(); }
+		if (obj instanceof IValue) { return ((IValue) obj).getGamlType(); }
+		if (obj instanceof IExpression) { return ((IExpression) obj).getGamlType(); }
 		if (obj == null) { return Types.NO_TYPE; }
 		return Types.get(obj.getClass());
 	}

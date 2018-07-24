@@ -26,8 +26,8 @@ public class GamaMapReducer {
 	private final HashMap valuesMapReducer = new HashMap();
 
 	public GamaMapReducer(final GamaMap m) {
-		keysType = m.getType().getKeyType();
-		dataType = m.getType().getContentType();
+		keysType = m.getGamlType().getKeyType();
+		dataType = m.getGamlType().getContentType();
 
 		for (final Object p : m.getPairs()) {
 			final GamaPair pair = (GamaPair) p;

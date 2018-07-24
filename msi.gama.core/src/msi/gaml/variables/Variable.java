@@ -217,7 +217,7 @@ public class Variable extends Symbol implements IVariable {
 			if (cd.isParameter()) {
 				assertCanBeParameter(cd);
 			} else {
-				assertValueFacetsTypes(cd, cd.getType());
+				assertValueFacetsTypes(cd, cd.getGamlType());
 			}
 			assertAssignmentFacetsTypes(cd);
 			assertAmongValues(cd);
@@ -245,7 +245,7 @@ public class Variable extends Symbol implements IVariable {
 
 		public void assertAssignmentFacetsTypes(final VariableDescription vd) {
 			for (final String s : assignmentFacets) {
-				Assert.typesAreCompatibleForAssignment(vd, vd.getName(), vd.getType(), /* vd.getContentType(), */
+				Assert.typesAreCompatibleForAssignment(vd, vd.getName(), vd.getGamlType(), /* vd.getContentType(), */
 						vd.getFacet(s));
 			}
 		}
@@ -255,7 +255,7 @@ public class Variable extends Symbol implements IVariable {
 			// final IType type = null;
 			// final String firstValueFacet = null;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
-			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getType().getContentType())) {
+			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
 				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
 						+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
 				return;
@@ -272,15 +272,15 @@ public class Variable extends Symbol implements IVariable {
 							IKeyword.VAR);
 					return;
 				}
-				if (!cd.getType().equals(Types.NO_TYPE) && cd.getType().id() != targetedVar.getType().id()) {
+				if (!cd.getGamlType().equals(Types.NO_TYPE) && cd.getGamlType().id() != targetedVar.getGamlType().id()) {
 					final String p = "Parameter '" + cd.getParameterName() + "' ";
 					cd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES,
 							IKeyword.TYPE);
 					return;
 				}
-				assertValueFacetsTypes(cd, targetedVar.getType());
+				assertValueFacetsTypes(cd, targetedVar.getGamlType());
 			}
-			assertValueFacetsTypes(cd, cd.getType());
+			assertValueFacetsTypes(cd, cd.getGamlType());
 			final IExpression min = cd.getFacetExpr(MIN);
 			if (min != null && !min.isConst()) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
@@ -298,17 +298,17 @@ public class Variable extends Symbol implements IVariable {
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(null),
-						cd.getType().toString());
+						cd.getGamlType().toString());
 				return;
 			}
 			if (cd.hasFacet(ENABLES)) {
-				if (!cd.getType().equals(Types.BOOL)) {
+				if (!cd.getGamlType().equals(Types.BOOL)) {
 					cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
 							IGamlIssue.CONFLICTING_FACETS, ENABLES);
 				}
 			}
 			if (cd.hasFacet(DISABLES)) {
-				if (!cd.getType().equals(Types.BOOL)) {
+				if (!cd.getGamlType().equals(Types.BOOL)) {
 					cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
 							IGamlIssue.CONFLICTING_FACETS, DISABLES);
 				}
@@ -352,7 +352,7 @@ public class Variable extends Symbol implements IVariable {
 		amongExpression = getFacet(IKeyword.AMONG);
 		onChangeExpression = getFacet(IKeyword.ON_CHANGE);
 		isNotModifiable = desc.isNotModifiable();
-		type = desc.getType();
+		type = desc.getGamlType();
 		// contentType = desc.getContentType();
 		// definitionOrder = desc.getDefinitionOrder();
 	}

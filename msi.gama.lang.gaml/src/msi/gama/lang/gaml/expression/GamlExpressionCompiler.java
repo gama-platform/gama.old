@@ -221,7 +221,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				// We are in a remote context, so 'my' refers to the calling
 				// agent
 				final IExpression myself = desc.getVarExpr(MYSELF, false);
-				final IDescription species = myself.getType().getSpecies();
+				final IDescription species = myself.getGamlType().getSpecies();
 				final IExpression var = species.getVarExpr(EGaml.getKeyOf(e), true);
 				return getFactory().createOperator(_DOT, (IDescription) desc, e, myself, var);
 			}
@@ -231,7 +231,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// The unary "unit" operator should let the value of its child pass
 		// through
 		if (op.equals("°") || op.equals("#")) { return expr; }
-		if (op.equals("every") && expr instanceof ConstantExpression && expr.getType() == Types.INT) {
+		if (op.equals("every") && expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
 			getContext().warning(
 					"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
 					IGamlIssue.DEPRECATED, e);
@@ -247,7 +247,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (toCast == null) { return null; }
 		final IType castingType = currentTypesManager.get(type).typeIfCasting(toCast);
 
-		final boolean isSuperType = castingType.isAssignableFrom(toCast.getType());
+		final boolean isSuperType = castingType.isAssignableFrom(toCast.getGamlType());
 		TypeInfo typeInfo = null;
 		if (typeObject instanceof TypeRef) {
 			typeInfo = ((TypeRef) typeObject).getParameter();
@@ -277,7 +277,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		final IType result = GamaType.from(castingType, keyType, contentsType);
 		// If there is no casting to do, just return the expression unchanged.
-		if (result.isAssignableFrom(toCast.getType())) {
+		if (result.isAssignableFrom(toCast.getGamlType())) {
 			getContext().info("Unneeded casting: '" + toCast.serialize(true) + "' is already of type " + type,
 					IGamlIssue.UNUSED, typeObject);
 			return toCast;
@@ -346,7 +346,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// we verify and compile apart the calls to actions as operators
 
-		final TypeDescription sd = left.getType().getSpecies();
+		final TypeDescription sd = left.getGamlType().getSpecies();
 		if (sd != null) {
 			final ActionDescription action = sd.getAction(op);
 			if (action != null) {
@@ -366,7 +366,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// sensitive "each" variable
 		final boolean isIterator = ITERATORS.contains(op);
 		if (isIterator) {
-			final IType t = left.getType().getContentType();
+			final IType t = left.getGamlType().getContentType();
 			final String argName = findIteratorArgName(rightMember);
 			rightMember = findIteratorExpr(rightMember);
 			iteratorContexts.push(new EachExpression(argName, t));
@@ -493,7 +493,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpression compileNamedExperimentFieldExpr(final Expression leftExpr, final String name) {
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) { return null; }
-		final IType type = owner.getType();
+		final IType type = owner.getGamlType();
 		if (type.isParametricFormOf(Types.SPECIES)) {
 			final SpeciesDescription sd = type.getContentType().getSpecies();
 			if (sd instanceof ModelDescription) {
@@ -509,10 +509,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) { return null; }
-		final IType type = owner.getType();
+		final IType type = owner.getGamlType();
 		final TypeDescription species = type.getSpecies();
 		// hqnghi 28-05-14 search input variable from model, not experiment
-		if (type instanceof ParametricType && type.getType().id() == IType.SPECIES) {
+		if (type instanceof ParametricType && type.getGamlType().id() == IType.SPECIES) {
 			if (type.getContentType().getSpecies() instanceof ModelDescription) {
 				final ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
 				final String var = EGaml.getKeyOf(fieldExpr);
@@ -836,7 +836,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IExpression container = compile(object.getLeft());
 		// If no container is defined, return a null expression
 		if (container == null) { return null; }
-		final IType contType = container.getType();
+		final IType contType = container.getGamlType();
 		final boolean isMatrix = contType.id() == IType.MATRIX;
 		final IType keyType = contType.getKeyType();
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getRight());
@@ -846,8 +846,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final Expression eExpr = list.get(i);
 			final IExpression e = compile(eExpr);
 			if (e != null) {
-				final IType elementType = e.getType();
-				if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getType())) {
+				final IType elementType = e.getGamlType();
+				if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getGamlType())) {
 					if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
 						getContext().warning("a " + contType.toString() + " cannot be accessed using a "
 								+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
@@ -1079,7 +1079,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					getContext().error("Unable to determine the species of self", IGamlIssue.GENERAL, object);
 					return null;
 				}
-				final IType tt = temp_sd.getType();
+				final IType tt = temp_sd.getGamlType();
 				return getFactory().createVar(SELF, tt, true, IVarExpression.SELF, null);
 			case SUPER:
 				SpeciesDescription sd = getContext().getSpeciesContext();
@@ -1090,7 +1090,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					getContext().error("Unable to determine the species of super", IGamlIssue.GENERAL, object);
 					return null;
 				}
-				final IType t = sd.getType();
+				final IType t = sd.getGamlType();
 				return getFactory().createVar(SUPER, t, true, IVarExpression.SUPER, null);
 
 			// case WORLD_AGENT_NAME:
@@ -1139,7 +1139,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// belongs to the species denoted by the
 			// current statement
 			if (getContext() instanceof StatementDescription) {
-				final SpeciesDescription denotedSpecies = getContext().getType().getDenotedSpecies();
+				final SpeciesDescription denotedSpecies = getContext().getGamlType().getDenotedSpecies();
 				if (denotedSpecies != null) {
 					if (denotedSpecies.hasAttribute(varName)) { return denotedSpecies.getVarExpr(varName, false); }
 				}

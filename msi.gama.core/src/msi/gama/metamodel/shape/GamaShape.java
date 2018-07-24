@@ -64,7 +64,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	}
 
 	@Override
-	public IType getType() {
+	public IType getGamlType() {
 		return Types.GEOMETRY;
 	}
 

@@ -59,7 +59,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	}
 
 	@Override
-	public IContainerType<T> getType() {
+	public IContainerType<T> getGamlType() {
 		return this;
 	}
 
@@ -80,7 +80,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 
 	@Override
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
-		final IType<?> itemType = exp.getType();
+		final IType<?> itemType = exp.getGamlType();
 		if (itemType.isContainer() || itemType.isAgentType()
 				|| itemType.isCompoundType()) { return itemType.getContentType(); }
 		return itemType;

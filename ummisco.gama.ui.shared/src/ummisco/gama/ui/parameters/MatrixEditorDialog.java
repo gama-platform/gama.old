@@ -237,7 +237,7 @@ public class MatrixEditorDialog extends Dialog {
 		} else if (data instanceof GamaFloatMatrix) {
 			return new GamaFloatMatrix(cols, rows);
 		} else {
-			return new GamaObjectMatrix(cols, rows, data.getType().getContentType());
+			return new GamaObjectMatrix(cols, rows, data.getGamlType().getContentType());
 		}
 
 	}

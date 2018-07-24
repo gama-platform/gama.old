@@ -233,14 +233,14 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 			final Iterable<IDescription> matches = desc.getChildrenWithKeyword(MATCH);
 			final IExpression switchValue = desc.getFacetExpr(VALUE);
 			if (switchValue == null) { return; }
-			final IType switchType = switchValue.getType();
+			final IType switchType = switchValue.getGamlType();
 			if (switchType.equals(Types.NO_TYPE)) { return; }
 			for (final IDescription match : matches) {
 				final IExpression value = match.getFacetExpr(VALUE);
 				if (value == null) {
 					continue;
 				}
-				final IType<?> matchType = value.getType();
+				final IType<?> matchType = value.getGamlType();
 				// AD : special case introduced for ints and floats (a warning
 				// is emitted)
 				if (Types.intFloatCase(matchType, switchType)) {

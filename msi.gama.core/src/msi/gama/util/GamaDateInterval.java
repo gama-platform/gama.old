@@ -167,7 +167,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return Types.LIST.of(Types.DATE);
 	}
 

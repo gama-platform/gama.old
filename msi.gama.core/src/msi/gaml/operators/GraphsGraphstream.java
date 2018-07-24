@@ -204,8 +204,8 @@ public class GraphsGraphstream {
 		final IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
 		// creates the graph to be filled
-		final IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getType().getContentType(),
-				populationEdges.getType().getContentType());
+		final IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getGamlType().getContentType(),
+				populationEdges.getGamlType().getContentType());
 
 		final Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges, nodes);
 
@@ -246,8 +246,8 @@ public class GraphsGraphstream {
 		final IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
 		// creates the graph to be filled
-		final IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getType().getContentType(),
-				populationEdges.getType().getContentType());
+		final IGraph createdGraph = new GamaGraph(scope, false, populationNodes.getGamlType().getContentType(),
+				populationEdges.getGamlType().getContentType());
 
 		final Sink ourSink = new GraphStreamGamaGraphSink(createdGraph, scope, populationNodes, populationEdges, null);
 

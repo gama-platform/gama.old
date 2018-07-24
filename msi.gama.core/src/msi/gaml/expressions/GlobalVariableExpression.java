@@ -92,7 +92,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final boolean isParameter =
 				desc == null ? false : desc.getSpeciesContext().getAttribute(getName()).isParameter();
 		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName()
-				+ " of type " + getType().getTitle();
+				+ " of type " + getGamlType().getTitle();
 	}
 
 	@Override

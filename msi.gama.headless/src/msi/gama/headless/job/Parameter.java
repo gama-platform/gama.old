@@ -41,7 +41,7 @@ public class Parameter {
 		final String varName = paramDesc.getLitteral(IKeyword.VAR);
 		final IExpression exp = paramDesc.getFacetExpr(IKeyword.INIT);
 		final Object val = exp.isConst() ? exp.value(null) : exp.serialize(true);
-		final Parameter res = new Parameter(name, varName, val, translate(paramDesc.getType().id()));
+		final Parameter res = new Parameter(name, varName, val, translate(paramDesc.getGamlType().id()));
 		return res;
 	}
 

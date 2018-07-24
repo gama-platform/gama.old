@@ -38,7 +38,7 @@ public abstract class AbstractExpression implements IExpression {
 	public void setName(final String s) {}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return type == null ? Types.NO_TYPE : type;
 	}
 

@@ -92,7 +92,7 @@ public class LayerBox implements IDisplayLayerBox {
 			}
 			currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
 			currentTrace =
-					constantTrace == null ? trace.getType().id() == IType.BOOL && Cast.asBool(scope, trace.value(scope))
+					constantTrace == null ? trace.getGamlType().id() == IType.BOOL && Cast.asBool(scope, trace.value(scope))
 							? Integer.MAX_VALUE : Cast.asInt(scope, trace.value(scope)) : constantTrace;
 			currentFading = constantFading == null ? Cast.asBool(scope, fading.value(scope)) : constantFading;
 
@@ -216,7 +216,7 @@ public class LayerBox implements IDisplayLayerBox {
 			constantTrace = null;
 			trace = r;
 			if (r.isConst()) {
-				if (r.getType().id() == IType.BOOL) {
+				if (r.getGamlType().id() == IType.BOOL) {
 					final boolean val = Cast.asBool(scope, trace.value(scope));
 					setTrace(val ? Integer.MAX_VALUE : 0);
 				} else {

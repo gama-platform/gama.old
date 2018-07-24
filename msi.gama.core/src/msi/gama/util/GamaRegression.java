@@ -87,7 +87,7 @@ public class GamaRegression implements IValue {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(IType.REGRESSION);
 	}
 

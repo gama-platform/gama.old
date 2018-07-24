@@ -44,7 +44,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e =
-					GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
+					GAML.getExpressionFactory().createConst(u.value(null), u.getGamlType(), u.serialize(false));
 			return e;
 		}
 		return u;
@@ -67,7 +67,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		if (proto != null) {
 			type = proto.returnType;
 			computeType();
-			proto.verifyExpectedTypes(context, child[0].getType().getContentType());
+			proto.verifyExpectedTypes(context, child[0].getGamlType().getContentType());
 		}
 	}
 
@@ -115,8 +115,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator ").append(getName()).append(" (");
-		sb.append(child == null ? prototype.signature : child.getType().getTitle());
-		sb.append(") returns ").append(getType().getTitle());
+		sb.append(child == null ? prototype.signature : child.getGamlType().getTitle());
+		sb.append(") returns ").append(getGamlType().getTitle());
 		return sb.toString();
 	}
 
@@ -127,29 +127,29 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	private IType computeType(final int t, final IType def) {
 		if (t == NONE) { return def; }
-		if (t == WRAPPED) { return child.getType().getWrappedType(); }
+		if (t == WRAPPED) { return child.getGamlType().getWrappedType(); }
 		if (t == FIRST_ELEMENT_CONTENT_TYPE) {
 			if (child instanceof ListExpression) {
 				final IExpression[] array = ((ListExpression) child).getElements();
 				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getType().getContentType();
+				return array[0].getGamlType().getContentType();
 			} else if (child instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) child).valuesArray();
 				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getType().getContentType();
+				return array[0].getGamlType().getContentType();
 			} else {
-				final IType tt = child.getType().getContentType().getContentType();
+				final IType tt = child.getGamlType().getContentType().getContentType();
 				if (tt != Types.NO_TYPE) { return tt; }
 			}
 			return def;
 		} else if (t == FIRST_CONTENT_TYPE_OR_TYPE) {
-			final IType firstType = child.getType();
+			final IType firstType = child.getGamlType();
 			final IType t2 = firstType.getContentType();
 			if (t2 == Types.NO_TYPE) { return firstType; }
 			return t2;
 		}
-		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getType().getContentType()
-				: t == FIRST_KEY_TYPE ? child.getType().getKeyType() : t >= 0 ? Types.get(t) : def;
+		return t == FIRST_TYPE ? child.getGamlType() : t == FIRST_CONTENT_TYPE ? child.getGamlType().getContentType()
+				: t == FIRST_KEY_TYPE ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
 	}
 
 	protected void computeType() {
@@ -161,7 +161,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			if (contentType.isContainer() && contentType.getKeyType() == Types.NO_TYPE
 					&& contentType.getContentType() == Types.NO_TYPE) {
 				contentType =
-						GamaType.from(contentType, child.getType().getKeyType(), child.getType().getContentType());
+						GamaType.from(contentType, child.getGamlType().getKeyType(), child.getGamlType().getContentType());
 			}
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
 			type = GamaType.from(type, keyType, contentType);

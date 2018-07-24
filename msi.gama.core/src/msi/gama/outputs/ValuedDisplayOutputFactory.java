@@ -79,8 +79,8 @@ public class ValuedDisplayOutputFactory {
 	}
 
 	public static void browse(final IMacroAgent root, final IExpression expr) {
-		final SpeciesDescription species = expr.getType().isContainer() ? expr.getType().getContentType().getSpecies()
-				: expr.getType().getSpecies();
+		final SpeciesDescription species = expr.getGamlType().isContainer() ? expr.getGamlType().getContentType().getSpecies()
+				: expr.getGamlType().getSpecies();
 		if (species == null) {
 			GamaRuntimeException.error("Expression '" + expr.serialize(true) + "' does not reference agents",
 					root.getScope());

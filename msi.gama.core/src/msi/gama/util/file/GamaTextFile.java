@@ -44,7 +44,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String> {
 	}
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

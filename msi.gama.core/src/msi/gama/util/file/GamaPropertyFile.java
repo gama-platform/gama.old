@@ -68,7 +68,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> 
 	}
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.STRING, Types.STRING);
 	}
 

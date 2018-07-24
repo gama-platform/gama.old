@@ -45,11 +45,11 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 		IDescription previousEnclosingDescription = null;
 		try {
 
-			final SpeciesDescription denotedSpecies = getType().getDenotedSpecies();
+			final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies();
 			if (denotedSpecies != null) {
 				final SpeciesDescription s = getSpeciesContext();
 				if (s != null) {
-					final IType t = s.getType();
+					final IType t = s.getGamlType();
 					addTemp(this, MYSELF, t);
 					previousEnclosingDescription = getEnclosingDescription();
 					setEnclosingDescription(denotedSpecies);
@@ -71,9 +71,9 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	@Override
 	public Iterable<? extends ISymbol> compileChildren() {
 
-		final SpeciesDescription sd = getType().getDenotedSpecies();
+		final SpeciesDescription sd = getGamlType().getDenotedSpecies();
 		if (sd != null) {
-			final IType t = getSpeciesContext().getType();
+			final IType t = getSpeciesContext().getGamlType();
 			addTemp(this, MYSELF, t);
 			setEnclosingDescription(sd);
 		}

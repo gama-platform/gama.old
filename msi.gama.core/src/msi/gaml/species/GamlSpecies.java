@@ -406,11 +406,11 @@ public class GamlSpecies extends AbstractSpecies {
 	/**
 	 * Method getType()
 	 * 
-	 * @see msi.gama.util.IContainer#getType()
+	 * @see msi.gama.util.IContainer#getGamlType()
 	 */
 	@Override
-	public IContainerType<?> getType() {
-		return (IContainerType<?>) getDescription().getSpeciesExpr().getType();
+	public IContainerType<?> getGamlType() {
+		return (IContainerType<?>) getDescription().getSpeciesExpr().getGamlType();
 	}
 
 	public boolean belongsToAMicroModel() {

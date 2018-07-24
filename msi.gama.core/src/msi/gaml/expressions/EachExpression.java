@@ -30,7 +30,7 @@ public class EachExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "pseudo-variable " + getName() + " of type " + getType().getTitle();
+		return "pseudo-variable " + getName() + " of type " + getGamlType().getTitle();
 	}
 
 	/**

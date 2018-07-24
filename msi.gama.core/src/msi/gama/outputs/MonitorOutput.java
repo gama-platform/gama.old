@@ -194,7 +194,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		}
 		super.setValue(value);
 		if (value != null) {
-			final IType<?> t = value.getType();
+			final IType<?> t = value.getGamlType();
 			if (t.isNumber() || t.isContainer() && t.getContentType().isNumber()) {
 				history = GamaListFactory.create(t);
 			}

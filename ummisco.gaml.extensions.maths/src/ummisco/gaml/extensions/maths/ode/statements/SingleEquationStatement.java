@@ -125,14 +125,14 @@ public class SingleEquationStatement extends AbstractStatement {
 				return;
 			}
 
-			final IType<?> type = ((IOperator) func).arg(0).getType();
+			final IType<?> type = ((IOperator) func).arg(0).getGamlType();
 			if (!type.isTranslatableInto(Types.FLOAT)) {
 				d.error("The variable of the left-hand member of an equation is expected to be of type float",
 						IGamlIssue.WRONG_TYPE, fDesc.getTarget());
 				return;
 			}
 
-			if (expr == null || !expr.getType().isTranslatableInto(Types.FLOAT)) {
+			if (expr == null || !expr.getGamlType().isTranslatableInto(Types.FLOAT)) {
 				d.error("The right-hand member of an equation is expected to be of type float", IGamlIssue.WRONG_TYPE,
 						eDesc.getTarget());
 			}

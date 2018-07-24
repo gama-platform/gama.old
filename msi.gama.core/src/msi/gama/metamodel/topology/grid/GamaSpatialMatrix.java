@@ -136,7 +136,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	public IContainerType getPreciseType(final IScope scope) {
 		if (cellSpecies == null) {
-			return super.getType();
+			return super.getGamlType();
 		} else {
 			return Types.MATRIX.of(scope.getType(cellSpecies.getName()));
 		}

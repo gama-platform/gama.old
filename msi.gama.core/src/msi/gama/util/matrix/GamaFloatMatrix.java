@@ -651,7 +651,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.MATRIX.of(Types.FLOAT);
 	}
 

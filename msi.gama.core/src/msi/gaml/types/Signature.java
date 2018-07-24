@@ -39,7 +39,7 @@ public class Signature {
 		list = new IType[objects.length];
 		for (int i = 0; i < list.length; i++) {
 			final IExpression o = objects[i];
-			list[i] = o == null ? Types.NO_TYPE : o.getType();
+			list[i] = o == null ? Types.NO_TYPE : o.getGamlType();
 		}
 	}
 
@@ -54,7 +54,7 @@ public class Signature {
 		// returns a signature that does not contain any parametric types
 		final IType[] copy = Arrays.copyOf(list, list.length);
 		for (int i = 0; i < copy.length; i++) {
-			copy[i] = copy[i].getType();
+			copy[i] = copy[i].getGamlType();
 		}
 		return new Signature(copy);
 	}

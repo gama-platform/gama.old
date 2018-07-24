@@ -155,9 +155,9 @@ public class Random {
 							"reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if (target == null || target.isEmpty(scope)) {
-			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getType().getContentType());
+			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
 		}
-		final IList list = (IList) target.listValue(scope, target.getType().getContentType(), false).copy(scope);
+		final IList list = (IList) target.listValue(scope, target.getGamlType().getContentType(), false).copy(scope);
 		RANDOM(scope).shuffle(list);
 		return list;
 	}
@@ -324,7 +324,7 @@ public class Random {
 			throw GamaRuntimeException
 					.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
 		}
-		final IList result = GamaListFactory.create(x.getType());
+		final IList result = GamaListFactory.create(x.getGamlType());
 		final IList source = (IList) (replacement ? x : x.copy(scope));
 		while (result.size() < nb && !source.isEmpty()) {
 			final int i = scope.getRandom().between(0, source.size() - 1);
@@ -354,7 +354,7 @@ public class Random {
 			throw GamaRuntimeException.create(new RuntimeException(
 					"The number of weights should be equal to the number of elements of the source."), scope);
 		}
-		final IList result = GamaListFactory.create(x.getType());
+		final IList result = GamaListFactory.create(x.getGamlType());
 		final IList source = (IList) (replacement ? x : x.copy(scope));
 		final IList weights_s = (IList) (replacement ? weights : weights.copy(scope));
 		while (result.size() < nb && !source.isEmpty()) {

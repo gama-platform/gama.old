@@ -216,7 +216,7 @@ public class Norm implements IValue{
 	}
 	
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return Types.get(NormType.id);
 //		return null;
 	}

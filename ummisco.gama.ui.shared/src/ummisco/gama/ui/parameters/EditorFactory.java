@@ -163,7 +163,7 @@ public class EditorFactory {
 		final IParameter var = disp;
 		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
 		final IType t = var.getType();
-		final int type = t.getType().id();
+		final int type = t.getGamlType().id();
 		if (t.isContainer() && t.getContentType().isAgentType()) { return new PopulationEditor(scope, agent, var, l); }
 		if (t.isAgentType() || type == IType.AGENT) { return new AgentEditor(scope, agent, var, l); }
 		switch (type) {

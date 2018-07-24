@@ -28,7 +28,7 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 
 	@Override
 	public IExpression getOwner() {
-		return new SelfExpression(this.getDefinitionDescription().getSpeciesContext().getType());
+		return new SelfExpression(this.getDefinitionDescription().getSpeciesContext().getGamlType());
 	}
 
 	@Override

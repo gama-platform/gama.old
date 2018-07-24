@@ -25,7 +25,7 @@ public class GamaGraphFile extends GamaFile<IGraph, Object> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		// TODO Auto-generated method stub
 		return null;
 	}

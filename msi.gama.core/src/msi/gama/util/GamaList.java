@@ -42,7 +42,7 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	private IContainerType type;
 
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return type;
 	}
 
@@ -58,7 +58,7 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 
 	@Override
 	public IList<E> listValue(final IScope scope, final IType contentsType, final boolean copy) {
-		if (!GamaType.requiresCasting(contentsType, getType().getContentType())) {
+		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
 			if (copy) {
 				return this.cloneWithContentType(contentsType);
 			}

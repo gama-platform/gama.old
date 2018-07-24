@@ -142,7 +142,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public IType<String> getType() {
+	public IType<String> getGamlType() {
 		return Types.STRING;
 	}
 

@@ -3913,7 +3913,7 @@ public abstract class Spatial {
 
 			}
 
-			final IType contentType = list.getType().getContentType();
+			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _neighbors(scope, In.list(scope, list), scope.getAgent(), distance);
 			} else if (contentType == Types.GEOMETRY) { return geomAtDistance(scope, list, distance); }
@@ -3955,7 +3955,7 @@ public abstract class Spatial {
 						"agents_inside", "agent_closest_to" })
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
-			final IType contentType = list.getType().getContentType();
+			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, true);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, true); }
@@ -3981,7 +3981,7 @@ public abstract class Spatial {
 						"agents_overlapping" })
 		public static IList<? extends IShape> overlapping(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final IShape source) {
-			final IType contentType = list.getType().getContentType();
+			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, false);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, false); }
@@ -4031,10 +4031,10 @@ public abstract class Spatial {
 				final IShape source) {
 			if (list == null)
 				return null;
-			final IType contentType = list.getType().getContentType();
+			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _closest(scope, In.list(scope, list), source);
-			} else if (list.getType().getContentType()
+			} else if (list.getGamlType().getContentType()
 					.isTranslatableInto(Types.GEOMETRY)) { return geomClostestTo(scope, list, source); }
 			return null;
 		}
@@ -4059,10 +4059,10 @@ public abstract class Spatial {
 						"agents_inside", "agent_closest_to", "closest_to", "agent_farthest_to" })
 		public static IShape farthest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
-			final IType contentType = list.getType().getContentType();
+			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _farthest(scope, In.list(scope, list), source);
-			} else if (list.getType().getContentType()
+			} else if (list.getGamlType().getContentType()
 					.isTranslatableInto(Types.GEOMETRY)) { return geomFarthestTo(scope, list, source); }
 			return null;
 		}
@@ -4246,7 +4246,7 @@ public abstract class Spatial {
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
 				final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups =
-					GamaListFactory.create(Types.LIST.of(agents.getType().getContentType()));
+					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) { return groups; }
 			final Set<IAgent> clusteredCells = new THashSet<IAgent>();

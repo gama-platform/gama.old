@@ -42,7 +42,7 @@ public class MoleExperiment extends Experiment implements IMoleExperiment {
 			} else {
 				endCondition =this.compileExpression(exp);			
 			}
-			if(endCondition.getType() != Types.BOOL) {
+			if(endCondition.getGamlType() != Types.BOOL) {
 				throw GamaRuntimeException.error("The until condition of the experiment should be a boolean", this.getSimulation().getScope());
 			}
 			long step = 0;

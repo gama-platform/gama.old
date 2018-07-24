@@ -162,7 +162,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		if (tm.containsType(s))
 			return tm.get(s);
 
-		return expression.getType();
+		return expression.getGamlType();
 	}
 
 }

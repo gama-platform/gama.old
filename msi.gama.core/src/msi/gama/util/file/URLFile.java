@@ -133,10 +133,10 @@ public class URLFile extends GamaFile<IList<String>, String> {
 	/**
 	 * Method getType()
 	 * 
-	 * @see msi.gama.util.IContainer#getType()
+	 * @see msi.gama.util.IContainer#getGamlType()
 	 */
 	@Override
-	public IContainerType<?> getType() {
+	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

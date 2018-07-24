@@ -718,7 +718,7 @@ public class LayeredDisplayData {
 
 		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
 		if (auto != null) {
-			if (auto.getType().equals(Types.POINT)) {
+			if (auto.getGamlType().equals(Types.POINT)) {
 				setAutosave(true);
 				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
 			} else {
@@ -731,7 +731,7 @@ public class LayeredDisplayData {
 		}
 		final IExpression scale = facets.getExpr(IKeyword.SCALE);
 		if (scale != null) {
-			if (scale.getType().equals(Types.BOOL)) {
+			if (scale.getGamlType().equals(Types.BOOL)) {
 				setDisplayScale(Cast.asBool(scope, scale.value(scope)));
 			} else {
 				setDisplayScale(true);
@@ -780,7 +780,7 @@ public class LayeredDisplayData {
 		// this facet is deprecated...
 		if (light2 != null) {
 			setLightActive(1, true);
-			if (light2.getType().equals(Types.COLOR)) {
+			if (light2.getGamlType().equals(Types.COLOR)) {
 				setDiffuseLightColor(1, Cast.asColor(scope, light2.value(scope)));
 			} else {
 				final int meanValue = Cast.asInt(scope, light2.value(scope));
@@ -842,7 +842,7 @@ public class LayeredDisplayData {
 		final IExpression fs = facets.getExpr(IKeyword.FULLSCREEN);
 		if (fs != null) {
 			int monitor;
-			if (fs.getType() == Types.BOOL) {
+			if (fs.getGamlType() == Types.BOOL) {
 				monitor = Cast.asBool(scope, fs.value(scope)) ? 0 : -1;
 			} else {
 				monitor = Cast.asInt(scope, fs.value(scope));
@@ -863,7 +863,7 @@ public class LayeredDisplayData {
 
 		final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
 		if (light != null) {
-			if (light.getType().equals(Types.COLOR)) {
+			if (light.getGamlType().equals(Types.COLOR)) {
 				setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
 			} else {
 				final int meanValue = Cast.asInt(scope, light.value(scope));
@@ -894,7 +894,7 @@ public class LayeredDisplayData {
 	public void update(final IScope scope, final Facets facets) {
 		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
 		if (auto != null) {
-			if (auto.getType().equals(Types.POINT)) {
+			if (auto.getGamlType().equals(Types.POINT)) {
 				setAutosave(true);
 				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
 			} else {
@@ -915,7 +915,7 @@ public class LayeredDisplayData {
 		if (!constantAmbientLight) {
 			final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
 			if (light != null) {
-				if (light.getType().equals(Types.COLOR)) {
+				if (light.getGamlType().equals(Types.COLOR)) {
 					setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
 				} else {
 					final int meanValue = Cast.asInt(scope, light.value(scope));

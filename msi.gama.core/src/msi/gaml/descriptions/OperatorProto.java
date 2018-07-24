@@ -80,7 +80,7 @@ public class OperatorProto extends AbstractProto {
 						if (!(exprs[1] instanceof IVarExpression)) {
 							if (context != null) {
 								context.error("Attribute " + exprs[1].literalValue() + " unknown for "
-										+ exprs[0].getType() + " instances");
+										+ exprs[0].getGamlType() + " instances");
 							}
 							return null;
 						}

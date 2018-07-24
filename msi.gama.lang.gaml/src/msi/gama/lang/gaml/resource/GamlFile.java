@@ -68,7 +68,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType getGamlType() {
 		return Types.FILE.of(Types.INT, Types.SPECIES);
 	}
 

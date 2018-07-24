@@ -236,7 +236,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					}
 				}
 				final IExpression exp = geom.getExpression();
-				final IType<?> type = exp == null ? Types.NO_TYPE : exp.getType();
+				final IType<?> type = exp == null ? Types.NO_TYPE : exp.getGamlType();
 				if (exp == null || !canDraw(exp)) {
 					description.error("'draw' cannot draw objects of type " + type, IGamlIssue.WRONG_TYPE, GEOMETRY);
 					return;
@@ -260,7 +260,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		private boolean canDraw(final IExpression exp) {
-			IType<?> type = exp.getType();
+			IType<?> type = exp.getGamlType();
 			if (type.isDrawable()) { return true; }
 			// In case we have a generic file operator, for instance
 			type = type.typeIfCasting(exp);
@@ -298,9 +298,9 @@ public class DrawStatement extends AbstractStatementSequence {
 		if (item == null) {
 			executer = null;
 		} else {
-			if (item.getType().getType().id() == IType.FILE) {
+			if (item.getGamlType().getGamlType().id() == IType.FILE) {
 				executer = new FileExecuter(item);
-			} else if (item.getType().id() == IType.STRING) {
+			} else if (item.getGamlType().id() == IType.STRING) {
 				executer = new TextExecuter(item);
 			} else {
 				// item is supposed to be castable into a geometry

@@ -87,8 +87,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	@Override
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
-		sb.append("action ").append(getName()).append(" defined in species ").append(target.getType().getSpeciesName())
-				.append(" returns ").append(getType().getTitle());
+		sb.append("action ").append(getName()).append(" defined in species ").append(target.getGamlType().getSpeciesName())
+				.append(" returns ").append(getGamlType().getTitle());
 		return sb.toString();
 
 	}
@@ -171,8 +171,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public void setName(final String newName) {}
 
 	@Override
-	public IType<?> getType() {
-		return action.getType();
+	public IType<?> getGamlType() {
+		return action.getGamlType();
 	}
 
 	@Override

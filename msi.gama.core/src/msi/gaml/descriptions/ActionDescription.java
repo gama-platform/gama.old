@@ -133,8 +133,8 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
 					final IDescription formalArg =
 							Iterables.find(formalArgs, input -> input.getName().equals(the_name));
-					final IType<?> formalType = formalArg.getType();
-					final IType<?> callerType = arg.getValue().getExpression().getType();
+					final IType<?> formalType = formalArg.getGamlType();
+					final IType<?> callerType = arg.getValue().getExpression().getGamlType();
 					if (Types.intFloatCase(formalType, callerType)) {
 						caller.warning("The argument " + the_name + " (of type " + callerType + ") will be casted to "
 								+ formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
@@ -187,7 +187,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
 				final StringBuilder sb1 = new StringBuilder(100);
 				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b>, type ")
-						.append(desc.getType());
+						.append(desc.getGamlType());
 				if (desc.hasFacet(IKeyword.DEFAULT)) {
 					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
 							.append(")</i>");
@@ -216,11 +216,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	public String getShortDescription() {
-		final String returns = getType().equals(Types.NO_TYPE) ? ", no value returned"
-				: ", returns a result of type " + getType().getTitle();
+		final String returns = getGamlType().equals(Types.NO_TYPE) ? ", no value returned"
+				: ", returns a result of type " + getGamlType().getTitle();
 		final StringBuilder args = new StringBuilder();
 		for (final IDescription desc : getFormalArgs()) {
-			args.append(desc.getType()).append(" ").append(desc.getName()).append(", ");
+			args.append(desc.getGamlType()).append(" ").append(desc.getName()).append(", ");
 		}
 		if (args.length() > 0) {
 			args.setLength(args.length() - 2);

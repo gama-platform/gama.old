@@ -275,7 +275,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		final IExpression exp = data.getValue();
 		if (exp == null)
 			return null;
-		final IType<?> type = exp.getType();
+		final IType<?> type = exp.getGamlType();
 		menu.put("Copy to clipboard", () -> {
 			WorkbenchHelper.copy(getValueAsString(data));
 		});

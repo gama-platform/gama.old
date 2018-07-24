@@ -230,7 +230,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void verifyInits(final Arguments ca) {
-		final SpeciesDescription denotedSpecies = getType().getDenotedSpecies();
+		final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies();
 		if (denotedSpecies == null) {
 			if (!ca.isEmpty()) {
 				warning("Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
@@ -252,17 +252,17 @@ public class StatementDescription extends SymbolDescription {
 				IType<?> varType = Types.NO_TYPE;
 				final VariableDescription vd = denotedSpecies.getAttribute(name);
 				if (vd != null) {
-					varType = vd.getType();
+					varType = vd.getGamlType();
 				}
 				if (exp != null) {
 					final IExpression expr = exp.getExpression();
 					if (expr != null) {
-						initType = expr.getType();
+						initType = expr.getGamlType();
 					}
 					if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
 						if (getKeyword().equals(IKeyword.CREATE)) {
 							final boolean isDB = getFacet(FROM) != null
-									&& getFacet(FROM).getExpression().getType().isAssignableFrom(Types.LIST);
+									&& getFacet(FROM).getExpression().getGamlType().isAssignableFrom(Types.LIST);
 							if (isDB && initType.equals(Types.STRING)) { return true; }
 						}
 						warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
@@ -283,7 +283,7 @@ public class StatementDescription extends SymbolDescription {
 		compileTypeProviderFacets();
 
 		// Definition of the type
-		IType t = super.getType();
+		IType t = super.getGamlType();
 		final String keyword = getKeyword();
 		IType ct = t.getContentType();
 		if (keyword.equals(CREATE) || keyword.equals(CAPTURE) || keyword.equals(RELEASE)) {
@@ -294,17 +294,17 @@ public class StatementDescription extends SymbolDescription {
 			if (hasFacet(VALUE)) {
 				final IExpression value = getFacetExpr(VALUE);
 				if (value != null) {
-					t = value.getType();
+					t = value.getGamlType();
 				}
 			} else if (hasFacet(OVER)) {
 				final IExpression expr = getFacetExpr(OVER);
 				if (expr != null) {
-					t = expr.getType().getContentType();
+					t = expr.getGamlType().getContentType();
 				}
 			} else if (hasFacet(FROM) && hasFacet(TO)) {
 				final IExpression expr = getFacetExpr(FROM);
 				if (expr != null) {
-					t = expr.getType();
+					t = expr.getGamlType();
 				}
 			}
 		}
@@ -316,8 +316,8 @@ public class StatementDescription extends SymbolDescription {
 		} else if (hasFacet(SPECIES)) {
 			final IExpression expr = getFacetExpr(SPECIES);
 			if (expr != null) {
-				ct = expr.getType().getContentType();
-				kt = expr.getType().getKeyType();
+				ct = expr.getGamlType().getContentType();
+				kt = expr.getGamlType().getKeyType();
 			}
 		}
 

@@ -130,7 +130,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		return type;
 	}
 

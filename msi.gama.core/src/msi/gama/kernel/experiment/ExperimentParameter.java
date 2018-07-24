@@ -160,13 +160,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
 		setName(desc.getLitteral(IKeyword.VAR));
-		type = desc.getType();
+		type = desc.getGamlType();
 		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
 		final ModelDescription wd = desc.getModelDescription();
 		final VariableDescription targetedGlobalVar = wd.getAttribute(varName);
 		if (type.equals(Types.NO_TYPE)) {
-			type = targetedGlobalVar.getType();
+			type = targetedGlobalVar.getGamlType();
 		}
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
@@ -251,7 +251,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setName(p.getName());
 		setCategory(category);
 		setType(p.getType());
-		if (p instanceof IVariable && getType().getType().id() == IType.FILE) {
+		if (p instanceof IVariable && getType().getGamlType().id() == IType.FILE) {
 			init = ((IVariable) p).getFacet(IKeyword.INIT);
 		} else {
 			init = null;

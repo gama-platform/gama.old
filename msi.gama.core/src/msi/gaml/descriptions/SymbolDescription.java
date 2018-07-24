@@ -448,7 +448,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IType<?> getType() {
+	public IType<?> getGamlType() {
 		if (type == null) {
 			type = computeType();
 		}
@@ -468,7 +468,7 @@ public abstract class SymbolDescription implements IDescription {
 			compileTypeProviderFacets();
 			final IExpression expr = getFacetExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
 			if (expr != null) {
-				final IType<?> exprType = expr.getType();
+				final IType<?> exprType = expr.getGamlType();
 				if (tt.isAssignableFrom(exprType)) {
 					tt = exprType;
 				} else {
@@ -665,7 +665,7 @@ public abstract class SymbolDescription implements IDescription {
 				if (exp != null && !isBuiltIn) {
 					// Some expresssions might not be compiled
 					boolean compatible = false;
-					final IType<?> actualType = exp.getType();
+					final IType<?> actualType = exp.getGamlType();
 					final IType<?> contentType = fp.contentType;
 					final IType<?> keyType = fp.keyType;
 					for (final IType<?> type : fp.types) {
