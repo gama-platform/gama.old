@@ -6,9 +6,14 @@ function mvn_install() {
 	if mvn clean install; then
 	   echo ok
 	else
-	   echo Maven build error.
+	   echo Something went wrong.
 	   exit 1
-	fi 
+	fi
+	res=${PIPESTATUS[0]} 
+	echo "return code $res"
+	if [[ $res -ne 0 ]]; then
+		exit $res
+	fi
 	cd -
 }
 function mvn_compile() {
@@ -39,6 +44,22 @@ compile (){
 }
 
 install (){
+	echo "Install GAMA project"			
+	mvn_install ummisco.gama.annotations
+	mvn_install msi.gama.processor
+	
+	change=$(git log --pretty=format: --name-only --since="1 hour ago")
+	
+	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
+		mvn_install msi.gama.ext
+		mvn_install ummisco.gama.feature.dependencies
+	fi
+	
+	
+	mvn_install msi.gama.parent
+}
+
+install1 (){
 	echo "Install GAMA project"			
 	
 	
