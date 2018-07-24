@@ -16,7 +16,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,15 +29,15 @@ import msi.gaml.types.Types;
  * @author drogoul
  */
 
-@vars({ @var(name = GamaMessage.SENDER, type = IType.NONE, doc = {
+@vars({ @variable(name = GamaMessage.SENDER, type = IType.NONE, doc = {
 		@doc("Returns the sender that has sent this message") }),
-		@var(name = GamaMessage.CONTENTS, type = IType.NONE, doc = {
+		@variable(name = GamaMessage.CONTENTS, type = IType.NONE, doc = {
 				@doc("Returns the contents of this message, as a list of arbitrary objects") }),
-		@var(name = GamaMessage.UNREAD, type = IType.BOOL, init = IKeyword.TRUE, doc = {
+		@variable(name = GamaMessage.UNREAD, type = IType.BOOL, init = IKeyword.TRUE, doc = {
 				@doc("Returns whether this message is unread or not") }),
-		@var(name = GamaMessage.RECEPTION_TIMESTAMP, type = IType.INT, doc = {
+		@variable(name = GamaMessage.RECEPTION_TIMESTAMP, type = IType.INT, doc = {
 				@doc("Returns the reception time stamp of this message (I.e. at what cycle it has been received)") }),
-		@var(name = GamaMessage.EMISSION_TIMESTAMP, type = IType.INT, doc = {
+		@variable(name = GamaMessage.EMISSION_TIMESTAMP, type = IType.INT, doc = {
 				@doc("Returns the emission time stamp of this message (I.e. at what cycle it has been emitted)") }) })
 public class GamaMessage implements IValue {
 

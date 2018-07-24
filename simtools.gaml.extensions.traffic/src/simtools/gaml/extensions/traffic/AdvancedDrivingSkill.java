@@ -34,7 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -60,128 +60,128 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @var (
+@vars ({ @variable (
 			name = IKeyword.SPEED,
 			type = IType.FLOAT,
 			init = "1.0",
 			doc = @doc ("the speed of the agent (in meter/second)")),
-		@var (
+		@variable (
 			name = IKeyword.REAL_SPEED,
 			type = IType.FLOAT,
 			init = "0.0",
 			doc = @doc ("the actual speed of the agent (in meter/second)")),
-		@var (
+		@variable (
 				name = "current_path",
 				type = IType.PATH,
 				init = "nil",
 				doc = @doc ("the current path that tha agent follow")),
-		@var (
+		@variable (
 				name = "final_target",
 				type = IType.POINT,
 				init = "nil",
 				doc = @doc ("the final target of the agent")),
-		@var (
+		@variable (
 				name = "current_target",
 				type = IType.POINT,
 				init = "nil",
 				doc = @doc ("the current target of the agent")),
-		@var (
+		@variable (
 				name = "current_index",
 				type = IType.INT,
 				init = "0",
 				doc = @doc ("the current index of the agent target (according to the targets list)")),
-		@var (
+		@variable (
 				name = "targets",
 				type = IType.LIST,
 				of = IType.POINT,
 				init = "[]",
 				doc = @doc ("the current list of points that the agent has to reach (path)")),
-		@var (
+		@variable (
 				name = "security_distance_coeff",
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
-		@var (
+		@variable (
 				name = "min_security_distance",
 				type = IType.FLOAT,
 				init = "0.5",
 				doc = @doc ("the minimal distance to another driver")),
-		@var (
+		@variable (
 				name = "current_lane",
 				type = IType.INT,
 				init = "0",
 				doc = @doc ("the current lane on which the agent is")),
-		@var (
+		@variable (
 				name = "vehicle_length",
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("the length of the vehicle (in meters)")),
-		@var (
+		@variable (
 				name = "speed_coeff",
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("speed coefficient for the speed that the driver want to reach (according to the max speed of the road)")),
-		@var (
+		@variable (
 				name = "max_acceleration",
 				type = IType.FLOAT,
 				init = "0.5",
 				doc = @doc ("maximum acceleration of the car for a cycle")),
-		@var (
+		@variable (
 				name = "current_road",
 				type = IType.AGENT,
 				doc = @doc ("current road on which the agent is")),
-		@var (
+		@variable (
 				name = "on_linked_road",
 				type = IType.BOOL,
 				init = "false",
 				doc = @doc ("is the agent on the linked road?")),
-		@var (
+		@variable (
 				name = "proba_lane_change_up",
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to change lane to a upper lane (left lane if right side driving) if necessary")),
-		@var (
+		@variable (
 				name = "proba_lane_change_down",
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
-		@var (
+		@variable (
 				name = "proba_respect_priorities",
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to respect priority (right or left) laws")),
-		@var (
+		@variable (
 				name = "proba_respect_stops",
 				type = IType.LIST,
 				of = IType.FLOAT,
 				init = "[]",
 				doc = @doc ("probability to respect stop laws - one value for each type of stop")),
-		@var (
+		@variable (
 				name = "proba_block_node",
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("probability to block a node (do not let other driver cross the crossroad)")),
-		@var (
+		@variable (
 				name = "proba_use_linked_road",
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("probability to change lane to a linked road lane if necessary")),
-		@var (
+		@variable (
 				name = "right_side_driving",
 				type = IType.BOOL,
 				init = "true",
 				doc = @doc ("are drivers driving on the right size of the road?")),
-		@var (
+		@variable (
 				name = "max_speed",
 				type = IType.FLOAT,
 				init = "50.0",
 				doc = @doc ("maximal speed of the vehicle")),
-		@var (
+		@variable (
 				name = "distance_to_goal",
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("euclidean distance to the next point of the current segment")),
-		@var (
+		@variable (
 				name = "segment_index_on_road",
 				type = IType.INT,
 				init = "-1",

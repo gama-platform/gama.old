@@ -13,7 +13,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -32,40 +32,40 @@ import msi.gaml.types.IType;
  * @param <K>
  * @param <V>
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.NAME,
 		type = IType.STRING,
 		doc = { @doc ("Returns the name of the receiver file") }),
-		@var (
+		@variable (
 				name = IKeyword.EXTENSION,
 				type = IType.STRING,
 				doc = { @doc ("Returns the extension of the receiver file") }),
-		@var (
+		@variable (
 				name = IKeyword.PATH,
 				type = IType.STRING,
 				doc = { @doc ("Returns the absolute path of the receiver file") }),
-		@var (
+		@variable (
 				name = IKeyword.EXISTS,
 				type = IType.BOOL,
 				doc = { @doc ("Returns whether the receiver file exists or not in the filesystem") }),
-		@var (
+		@variable (
 				name = IKeyword.ISFOLDER,
 				type = IType.BOOL,
 				doc = { @doc ("Returns whether the receiver file is a folder or not") }),
-		@var (
+		@variable (
 				name = IKeyword.READABLE,
 				type = IType.BOOL,
 				doc = { @doc ("Returns true if the contents of the receiver file can be read") }),
-		@var (
+		@variable (
 				name = IKeyword.WRITABLE,
 				type = IType.BOOL,
 				doc = { @doc ("Returns true if the contents of the receiver file can be written") }),
-		@var (
+		@variable (
 				name = IKeyword.ATTRIBUTES,
 				type = IType.LIST,
 				of = IType.STRING,
 				doc = { @doc ("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
-		@var (
+		@variable (
 				name = IKeyword.CONTENTS,
 				type = ITypeProvider.WRAPPED,
 				of = ITypeProvider.FIRST_CONTENT_TYPE,

@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
@@ -36,33 +36,33 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars ({ @var (
+@vars ({ @variable (
 		name = "agents_on",
 		type = IType.LIST,
 		of = IType.LIST,
 		doc = @doc ("for each lane of the road, the list of agents for each segment")),
-		@var (
+		@variable (
 				name = "all_agents",
 				type = IType.LIST,
 				of = IType.AGENT,
 				doc = @doc ("the list of agents on the road")),
-		@var (
+		@variable (
 				name = "source_node",
 				type = IType.AGENT,
 				doc = @doc ("the source node of the road")),
-		@var (
+		@variable (
 				name = "target_node",
 				type = IType.AGENT,
 				doc = @doc ("the target node of the road")),
-		@var (
+		@variable (
 				name = "lanes",
 				type = IType.INT,
 				doc = @doc ("the number of lanes")),
-		@var (
+		@variable (
 				name = "linked_road",
 				type = ITypeProvider.OWNER_TYPE,
 				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
-		@var (
+		@variable (
 				name = "maxspeed",
 				type = IType.FLOAT,
 				doc = @doc ("the maximal speed on the road")) })

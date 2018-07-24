@@ -33,7 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.doc.utils.TypeConverter;
@@ -301,7 +301,7 @@ public class DocProcessorAnnotations {
 			final String skillName, final TypeConverter tc) {
 		if (varsAnnot != null) {
 			final org.w3c.dom.Element varsElt = doc.createElement(XMLElements.VARS);
-			for (final var v : varsAnnot.value()) {
+			for (final variable v : varsAnnot.value()) {
 				final org.w3c.dom.Element varElt = doc.createElement(XMLElements.VAR);
 				varElt.setAttribute(XMLElements.ATT_VAR_NAME, v.name());
 				varElt.setAttribute(XMLElements.ATT_VAR_TYPE, tc.getTypeString(Integer.valueOf(v.type())));

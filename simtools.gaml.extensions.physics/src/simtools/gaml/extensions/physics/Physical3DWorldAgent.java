@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -51,12 +51,12 @@ import msi.gaml.types.Types;
 @species (
 		name = "physical_world")
 @doc ("The base species for agents that act as a 3D physical world")
-@vars ({ @var (
+@vars ({ @variable (
 		name = "gravity",
 		type = IType.BOOL,
 		init = "true",
 		doc = @doc ("Define if the physical world has a gravity or not")),
-		@var (
+		@variable (
 				name = IKeyword.AGENTS,
 				type = IType.LIST,
 				of = IType.AGENT,

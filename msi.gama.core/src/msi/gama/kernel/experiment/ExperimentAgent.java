@@ -41,7 +41,7 @@ import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.ExecutionScope;
@@ -70,37 +70,37 @@ import msi.gaml.types.Types;
 @species (
 		name = IKeyword.EXPERIMENT,
 		doc = @doc ("The species of agents that represent experiments"))
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.SIMULATIONS,
 		type = IType.LIST,
 		of = ITypeProvider.MODEL_TYPE,
 		doc = @doc (
 				value = "contains the list of currently running simulations")),
-		@var (
+		@variable (
 				name = IKeyword.SIMULATION,
 				type = ITypeProvider.MODEL_TYPE,
 				doc = @doc (
 						value = "contains a reference to the current simulation being run by this experiment",
 						comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 		// @var(name = GAMA._FATAL, type = IType.BOOL),
-		@var (
+		@variable (
 				name = GAMA._WARNINGS,
 				type = IType.BOOL,
 				doc = @doc ("The value of the preference 'Consider warnings as errors'")),
-		@var (
+		@variable (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
 				constant = true,
 				doc = @doc (
 						value = "Contains the absolute path to the folder in which the current model is located",
 						comment = "Always terminated with a trailing separator")),
-		@var (
+		@variable (
 				name = IKeyword.SEED,
 				type = IType.FLOAT,
 				doc = @doc (
 						value = "The seed of the random number generator",
 						comment = "Each time it is set, the random number generator is reinitialized")),
-		@var (
+		@variable (
 				name = IKeyword.RNG,
 				type = IType.STRING,
 				doc = @doc ("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: "
@@ -109,17 +109,17 @@ import msi.gaml.types.Types;
 						+ IKeyword.CELLULAR
 						+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
 						+ IKeyword.JAVA + " invokes the standard Java generator")),
-		@var (
+		@variable (
 				name = SimulationAgent.USAGE,
 				type = IType.INT,
 				doc = @doc ("Returns the number of times the random number generator of the experiment has been drawn")),
-		@var (
+		@variable (
 				name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
 				type = IType.FLOAT,
 				doc = @doc (
 						value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
 						comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
-		@var (
+		@variable (
 				name = PlatformAgent.WORKSPACE_PATH,
 				type = IType.STRING,
 				constant = true,
@@ -127,7 +127,7 @@ import msi.gaml.types.Types;
 						deprecated = "Use 'gama.workspace_path' or 'gama.workspace' instead",
 						value = "Contains the absolute path to the workspace of GAMA",
 						comment = "Always terminated with a trailing separator")),
-		@var (
+		@variable (
 				name = ExperimentAgent.PROJECT_PATH,
 				type = IType.STRING,
 				constant = true,

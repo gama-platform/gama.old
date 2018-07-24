@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConstantCategory;
 import msi.gama.precompiler.constants.ColorCSS;
@@ -34,27 +34,27 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.COLOR_RED,
 		type = IType.INT,
 		doc = { @doc ("Returns the red component of the color (between 0 and 255)") }),
-		@var (
+		@variable (
 				name = IKeyword.COLOR_GREEN,
 				type = IType.INT,
 				doc = { @doc ("Returns the green component of the color (between 0 and 255)") }),
-		@var (
+		@variable (
 				name = IKeyword.COLOR_BLUE,
 				type = IType.INT,
 				doc = { @doc ("Returns the blue component of the color (between 0 and 255)") }),
-		@var (
+		@variable (
 				name = IKeyword.ALPHA,
 				type = IType.INT,
 				doc = { @doc ("Returns the alpha component (transparency) of the color (between 0 for transparent and 255 for opaque)") }),
-		@var (
+		@variable (
 				name = IKeyword.BRIGHTER,
 				type = IType.COLOR,
 				doc = { @doc ("Returns a lighter color (with increased luminance)") }),
-		@var (
+		@variable (
 				name = IKeyword.DARKER,
 				type = IType.COLOR,
 				doc = { @doc ("Returns a darker color (with decreased luminance)") }) })

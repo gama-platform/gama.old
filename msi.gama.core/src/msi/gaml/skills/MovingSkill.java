@@ -39,7 +39,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -72,38 +72,38 @@ import msi.gaml.types.Types;
  */
 
 @doc ("The moving skill is intended to define the minimal set of behaviours required for agents that are able to move on different topologies")
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.LOCATION,
 		type = IType.POINT,
 		depends_on = IKeyword.SHAPE,
 		doc = @doc ("Represents the current position of the agent")),
-		@var (
+		@variable (
 				name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("Represents the speed of the agent (in meter/second)")),
-		@var (
+		@variable (
 				name = IKeyword.HEADING,
 				type = IType.FLOAT,
 				init = "rnd(360.0)",
 				doc = @doc ("Represents the absolute heading of the agent in degrees.")),
-		@var (
+		@variable (
 				name = "current_path",
 				type = IType.PATH,
 				init = "nil",
 				doc = @doc ("Represents the path on which the agent is moving on (goto action on a graph)")),
-		@var (
+		@variable (
 				name = "current_edge",
 				type = IType.GEOMETRY,
 				init = "nil",
 				doc = @doc ("Represents the agent/geometry on which the agent is located (only used with a graph)")),
-		@var (
+		@variable (
 				name = IKeyword.REAL_SPEED,
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("Represents the actual speed of the agent (in meter/second)")),
 
-		@var (
+		@variable (
 				name = IKeyword.DESTINATION,
 				type = IType.POINT,
 				depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },

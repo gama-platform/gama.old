@@ -19,7 +19,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -37,17 +37,17 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaMap.
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = GamaMap.KEYS,
 		type = IType.LIST,
 		of = ITypeProvider.FIRST_KEY_TYPE,
 		doc = { @doc ("Returns the list of keys of this map (in their order of insertion)") }),
-		@var (
+		@variable (
 				name = GamaMap.VALUES,
 				type = IType.LIST,
 				of = ITypeProvider.FIRST_CONTENT_TYPE,
 				doc = { @doc ("Returns the list of values of this map (in their order of insertion)") }),
-		@var (
+		@variable (
 				name = GamaMap.PAIRS,
 				type = IType.LIST,
 				of = IType.PAIR,

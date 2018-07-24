@@ -30,7 +30,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.ExecutionScope;
@@ -55,13 +55,13 @@ import one.util.streamex.StreamEx;
 		name = IKeyword.PLATFORM,
 		internal = true,
 		doc = { @doc ("The species of the unique platform agent, called 'gama'") })
-@vars ({ @var (
+@vars ({ @variable (
 		name = PlatformAgent.MACHINE_TIME,
 		type = IType.FLOAT,
 		doc = @doc (
 				value = "Returns the current system time in milliseconds (i.e. number of milliseconds since UNIX epoch day)",
 				comment = "The return value is a float number")),
-		@var (
+		@variable (
 				name = PlatformAgent.WORKSPACE_PATH,
 				type = IType.STRING,
 				constant = true,
@@ -69,32 +69,32 @@ import one.util.streamex.StreamEx;
 						value = "Contains the absolute path to the workspace of GAMA. Can be used to list all the projects and files present in the platform",
 						comment = "Always terminated with a trailing separator",
 						see = { "workspace" })),
-		@var (
+		@variable (
 				name = "version",
 				type = IType.STRING,
 				constant = true,
 				doc = @doc (
 						value = "Returns the version of the current GAMA installation")),
-		@var (
+		@variable (
 				name = "plugins",
 				type = IType.LIST,
 				of = IType.STRING,
 				constant = true,
 				doc = @doc (
 						value = "Lists all the plugins present in this installation of GAMA")),
-		@var (
+		@variable (
 				name = "free_memory",
 				type = IType.INT,
 				constant = false,
 				doc = @doc (
 						value = "Returns the free memory available to GAMA in bytes")),
-		@var (
+		@variable (
 				name = "max_memory",
 				type = IType.INT,
 				constant = false,
 				doc = @doc (
 						value = "Returns the maximum amount of memory available to GAMA in bytes")),
-		@var (
+		@variable (
 				name = "workspace",
 				type = IType.FILE,
 				constant = true,

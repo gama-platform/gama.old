@@ -15,7 +15,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -24,9 +24,9 @@ import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = IKeyword.MEMBERS, type = IType.LIST, of = IType.AGENT, doc = {
+@vars({ @variable(name = IKeyword.MEMBERS, type = IType.LIST, of = IType.AGENT, doc = {
 		@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct host") }),
-		@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = {
+		@variable(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = {
 				@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct or undirect host") }) })
 public interface IMacroAgent extends IAgent {
 

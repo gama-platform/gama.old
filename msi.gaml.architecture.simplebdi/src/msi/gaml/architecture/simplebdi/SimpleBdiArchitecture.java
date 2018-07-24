@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -37,140 +37,140 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @var (
+@vars ({ @variable (
 		name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_PLANS,
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc ("plan persistence")),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_INTENTIONS,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("intention persistence")),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.USE_SOCIAL_ARCHITECTURE,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.USE_PERSONALITY,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.USE_NORMS,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.USE_PERSISTENCE,
 				type = IType.BOOL,
 				init = "false"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.OBEDIENCE,
 				type = IType.FLOAT,
 				init = "1.0"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.CHARISMA,
 				type = IType.FLOAT,
 				init = "1.0"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.RECEPTIVITY,
 				type = IType.FLOAT,
 				init = "1.0"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.OPENNESS,
 				type = IType.FLOAT,
 				init = "0.5"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.CONSCIENTIOUSNESS,
 				type = IType.FLOAT,
 				init = "0.5"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.EXTRAVERSION,
 				type = IType.FLOAT,
 				init = "0.5"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.AGREEABLENESS,
 				type = IType.FLOAT,
 				init = "0.5"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.NEUROTISM,
 				type = IType.FLOAT,
 				init = "0.5"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.BELIEF_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.LAST_THOUGHTS,
 				type = IType.LIST,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.INTENTION_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.EMOTION_BASE,
 				type = IType.LIST,
 				of = EmotionType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.DESIRE_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.OBLIGATION_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.UNCERTAINTY_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.IDEAL_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.LAW_BASE,
 				type = IType.LIST,
 				of = IType.NONE,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.PLAN_BASE,
 				type = IType.LIST,
 				of = BDIPlanType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.NORM_BASE,
 				type = IType.LIST,
 				of = NormType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.SANCTION_BASE,
 				type = IType.LIST,
 				of = SanctionType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.SOCIALLINK_BASE,
 				type = IType.LIST,
 				of = SocialLinkType.id,
 				init = "[]"),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.CURRENT_PLAN,
 				type = IType.NONE/*BDIPlanType.id*/),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.CURRENT_NORM,
 				type = IType.NONE/*NormType.id*/)})
 @skill (

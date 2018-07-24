@@ -19,18 +19,18 @@ import java.util.Set;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
-		@var(name = "values", type = IType.MAP), /*@var(name = "priority", type = IType.FLOAT),*/
-		@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
-		@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE),
-		/*@var(name = "praiseworthiness", type = IType.FLOAT),*/@var(name = "agentCause", type = IType.AGENT) })
+@vars({ @variable(name = "name", type = IType.STRING), @variable(name = "is_true", type = IType.BOOL),
+		@variable(name = "values", type = IType.MAP), /*@var(name = "priority", type = IType.FLOAT),*/
+		@variable(name = "date", type = IType.FLOAT), @variable(name = "subintentions", type = IType.LIST),
+		@variable(name = "on_hold_until", type = IType.NONE), @variable(name = "super_intention", type = IType.NONE),
+		/*@var(name = "praiseworthiness", type = IType.FLOAT),*/@variable(name = "agentCause", type = IType.AGENT) })
 public class Predicate implements IValue {
 
 	String name;

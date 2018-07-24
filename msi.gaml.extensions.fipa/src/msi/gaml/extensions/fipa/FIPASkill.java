@@ -40,7 +40,7 @@ import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -59,20 +59,20 @@ import msi.gaml.types.Types;
  */
 @doc(value = "The fipa skill offers some primitives and built-in variables which enable agent to communicate with each other using the FIPA interaction protocol. ")
 @skill(name = "fipa", concept = { IConcept.FIPA, IConcept.SKILL, IConcept.COMMUNICATION })
-@vars({ @var(name = "conversations", type = IType.LIST, of = IType.MESSAGE, init = "[]", doc = @doc("A list containing the current conversations of agent. Ended conversations are automatically removed from this list.")),
-		@var(name = "accept_proposals", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'accept_proposal' performative messages of the agent's mailbox having .")),
-		@var(name = "agrees", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'accept_proposal' performative messages.")),
-		@var(name = "cancels", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'cancel' performative messages.")),
-		@var(name = "cfps", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'cfp' (call for proposal) performative messages.")),
-		@var(name = "failures", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'failure' performative messages.")),
-		@var(name = "informs", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'inform' performative messages.")),
-		@var(name = "proposes", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'propose' performative messages .")),
-		@var(name = "queries", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'query' performative messages.")),
-		@var(name = "refuses", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'propose' performative messages.")),
-		@var(name = "reject_proposals", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'reject_proposals' performative messages.")),
-		@var(name = "requests", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request' performative messages.")),
-		@var(name = "requestWhens", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request-when' performative messages.")),
-		@var(name = "subscribes", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'subscribe' performative messages.")), })
+@vars({ @variable(name = "conversations", type = IType.LIST, of = IType.MESSAGE, init = "[]", doc = @doc("A list containing the current conversations of agent. Ended conversations are automatically removed from this list.")),
+		@variable(name = "accept_proposals", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'accept_proposal' performative messages of the agent's mailbox having .")),
+		@variable(name = "agrees", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'accept_proposal' performative messages.")),
+		@variable(name = "cancels", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'cancel' performative messages.")),
+		@variable(name = "cfps", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'cfp' (call for proposal) performative messages.")),
+		@variable(name = "failures", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'failure' performative messages.")),
+		@variable(name = "informs", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'inform' performative messages.")),
+		@variable(name = "proposes", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'propose' performative messages .")),
+		@variable(name = "queries", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'query' performative messages.")),
+		@variable(name = "refuses", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'propose' performative messages.")),
+		@variable(name = "reject_proposals", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'reject_proposals' performative messages.")),
+		@variable(name = "requests", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request' performative messages.")),
+		@variable(name = "requestWhens", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request-when' performative messages.")),
+		@variable(name = "subscribes", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'subscribe' performative messages.")), })
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class FIPASkill extends MessagingSkill {
 

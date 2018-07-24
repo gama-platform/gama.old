@@ -18,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -38,15 +38,15 @@ import one.util.streamex.StreamEx;
  *
  * @param <T>
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IMatrix.DIMENSION,
 		type = IType.POINT,
 		doc = { @doc ("Returns the dimension (columns x rows) of the receiver matrix") }),
-		@var (
+		@variable (
 				name = IMatrix.ROWS,
 				type = IType.INT,
 				doc = { @doc ("Returns the number of rows of the receiver matrix") }),
-		@var (
+		@variable (
 				name = IMatrix.COLUMNS,
 				type = IType.INT,
 				doc = { @doc ("Returns the number of columns of the receiver matrix") }) })

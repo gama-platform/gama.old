@@ -15,7 +15,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -27,11 +27,11 @@ import msi.gaml.types.IType;
 @species (
 		name = "graph_edge",
 		doc = @doc ("A species that represents an edge of a graph made of agents. The source and the target of the edge should be agents"))
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.SOURCE,
 		type = IType.AGENT,
 		doc = @doc ("The source agent of this edge")),
-		@var (
+		@variable (
 				name = IKeyword.TARGET,
 				type = IType.AGENT,
 				doc = @doc ("The target agent of this edge")) })

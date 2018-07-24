@@ -21,7 +21,7 @@ import msi.gaml.types.IType;
  *
  */
 @vars({
-	@var(name = IKeyword.LOCATION, type = IType.POINT, doc = { @doc("Returns the location of the receiver object") }) })
+	@variable(name = IKeyword.LOCATION, type = IType.POINT, doc = { @doc("Returns the location of the receiver object") }) })
 public interface ILocated {
 
 	/**

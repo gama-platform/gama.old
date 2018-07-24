@@ -15,7 +15,7 @@ import javax.lang.model.type.TypeMirror;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
 public class VarsProcessor extends ElementProcessor<vars> {
@@ -55,7 +55,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		final boolean isField = !context.getTypeUtils().isAssignable(typeClass, context.getISkill())
 				&& !context.getTypeUtils().isAssignable(typeClass, context.getIAgent());
 
-		for (final var node : vars.value()) {
+		for (final variable node : vars.value()) {
 			final doc[] docs = node.doc();
 			// String d = "";
 			if (docs.length == 0) {
@@ -92,7 +92,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		UNDOCUMENTED.clear();
 	}
 
-	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final var var, final String clazz,
+	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final variable var, final String clazz,
 			final Element e, final boolean isField, final boolean onlyGetter) {
 		String getterHelper = null;
 		String initerHelper = null;
@@ -161,7 +161,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		}
 	}
 
-	private void writeFacets(final StringBuilder sb, final var s) {
+	private void writeFacets(final StringBuilder sb, final variable s) {
 		sb.append("S(\"type\"").append(',').append(toJavaString(String.valueOf(s.type()))).append(',')
 				.append("\"name\"").append(',').append(toJavaString(s.name()));
 		if (s.constant()) {

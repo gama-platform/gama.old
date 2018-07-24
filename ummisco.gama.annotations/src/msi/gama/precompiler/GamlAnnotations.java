@@ -557,9 +557,9 @@ public final class GamlAnnotations {
 		 * Value.
 		 *
 		 * @return an Array of var instances, each representing a variable
-		 * @see var
+		 * @see variable
 		 */
-		var[] value();
+		variable[] value();
 	}
 
 	/**
@@ -572,7 +572,7 @@ public final class GamlAnnotations {
 	 */
 	@Retention (RetentionPolicy.SOURCE)
 	@Target ({})
-	public static @interface var {
+	public static @interface variable {
 
 		/**
 		 * Name.

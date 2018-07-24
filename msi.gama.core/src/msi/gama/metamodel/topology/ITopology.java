@@ -25,7 +25,7 @@ import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -40,11 +40,11 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.ENVIRONMENT,
 		type = IType.GEOMETRY,
 		doc = { @doc ("Returns the environment of this topology, either an agent or a geometry, which defines its boundaries") }),
-		@var (
+		@variable (
 				name = IKeyword.PLACES,
 				type = IType.CONTAINER,
 				of = IType.GEOMETRY,

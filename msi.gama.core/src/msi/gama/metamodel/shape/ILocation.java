@@ -14,7 +14,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
@@ -27,15 +27,15 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ("rawtypes")
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.X,
 		type = IType.FLOAT,
 		doc = { @doc ("Returns the x ordinate of this point") }),
-		@var (
+		@variable (
 				name = IKeyword.Y,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the y ordinate of this point") }),
-		@var (
+		@variable (
 				name = IKeyword.Z,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the z ordinate of this point") }) })

@@ -25,7 +25,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -41,26 +41,26 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.NAME,
 		type = IType.STRING,
 		doc = { @doc ("Returns the name of the agent (not necessarily unique in its population)") }),
-		@var (
+		@variable (
 				name = IKeyword.PEERS,
 				type = IType.LIST,
 				of = ITypeProvider.OWNER_TYPE,
 				doc = { @doc ("Returns the population of agents of the same species, in the same host, minus the receiver agent") }),
-		@var (
+		@variable (
 				name = IKeyword.HOST,
 				type = ITypeProvider.MACRO_TYPE,
 				doc = { @doc ("Returns the agent that hosts the population of the receiver agent") }),
-		@var (
+		@variable (
 				name = IKeyword.LOCATION,
 				type = IType.POINT,
 				depends_on = IKeyword.SHAPE,
 				doc = { @doc ("Returns the location of the agent") }),
 
-		@var (
+		@variable (
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the shape of the receiver agent") }) })

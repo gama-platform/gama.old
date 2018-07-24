@@ -288,7 +288,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	private String getVarDoc(final String name, final Class<?> clazz) {
 		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
-		for (final msi.gama.precompiler.GamlAnnotations.var v : vars.value()) {
+		for (final msi.gama.precompiler.GamlAnnotations.variable v : vars.value()) {
 			if (v.name().equals(name)) {
 				final doc[] docs = v.doc();
 				final String d = "";

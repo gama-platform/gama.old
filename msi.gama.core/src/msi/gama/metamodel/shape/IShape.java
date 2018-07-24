@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
@@ -37,62 +37,62 @@ import msi.gaml.types.IType;
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = "area",
 		type = IType.FLOAT,
 		doc = { @doc ("Returns the total area of this geometry") }),
-		@var (
+		@variable (
 				name = "volume",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the total volume of this geometry") }),
-		@var (
+		@variable (
 				name = "centroid",
 				type = IType.POINT,
 				doc = { @doc ("Returns the centroid of this geometry") }),
-		@var (
+		@variable (
 				name = "width",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the width (length on the x-axis) of the rectangular envelope of this  geometry") }),
-		@var (
+		@variable (
 				name = "attributes",
 				type = IType.MAP,
 				doc = { @doc ("Returns the attributes kept by this geometry (the ones shared with the agent)") }),
-		@var (
+		@variable (
 				name = "depth",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the depth (length on the z-axis) of the rectangular envelope of this geometry") }),
-		@var (
+		@variable (
 				name = "height",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the height (length on the y-axis) of the rectangular envelope of this geometry") }),
-		@var (
+		@variable (
 				name = "points",
 				type = IType.LIST,
 				of = IType.POINT,
 				doc = { @doc ("Returns the list of points that delimit this geometry. A point will return a list with itself") }),
-		@var (
+		@variable (
 				name = "envelope",
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the envelope of this geometry (the smallest rectangle that contains the geometry)") }),
-		@var (
+		@variable (
 				name = "geometries",
 				type = IType.LIST,
 				of = IType.GEOMETRY,
 				doc = { @doc ("Returns the list of geometries that compose this geometry, or a list containing the geometry itself if it is simple") }),
-		@var (
+		@variable (
 				name = "multiple",
 				type = IType.BOOL,
 				doc = { @doc ("Returns whether this geometry is composed of multiple geometries or not") }),
-		@var (
+		@variable (
 				name = "perimeter",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the length of the contour of this geometry") }),
-		@var (
+		@variable (
 				name = "holes",
 				type = IType.LIST,
 				of = IType.GEOMETRY,
 				doc = { @doc ("Returns the list of holes inside this geometry as a list of geometries, and an emptly list if this geometry is solid") }),
-		@var (
+		@variable (
 				name = "contour",
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })

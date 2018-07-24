@@ -18,7 +18,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -33,9 +33,9 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaPair.
  */
-@vars({ @var(name = GamaPair.KEY, type = ITypeProvider.FIRST_KEY_TYPE, doc = {
+@vars({ @variable(name = GamaPair.KEY, type = ITypeProvider.FIRST_KEY_TYPE, doc = {
 		@doc("Returns the key of this pair (can be nil)") }),
-		@var(name = GamaPair.VALUE, type = ITypeProvider.FIRST_CONTENT_TYPE, doc = {
+		@variable(name = GamaPair.VALUE, type = ITypeProvider.FIRST_CONTENT_TYPE, doc = {
 				@doc("Returns the value of this pair (can be nil)") }) })
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPair<K, V>

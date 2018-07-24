@@ -22,7 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -42,27 +42,27 @@ import msi.gaml.types.IType;
  */
 
 @doc ("The moving skill 3D is intended to define the minimal set of behaviours required for agents that are able to move on different topologies")
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.SPEED,
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc ("the speed of the agent (in meter/second)")),
-		@var (
+		@variable (
 				name = IKeyword.HEADING,
 				type = IType.FLOAT,
 				init = "rnd(360.0)",
 				doc = @doc ("the absolute heading of the agent in degrees (in the range 0-359)")),
-		@var (
+		@variable (
 				name = IKeyword.PITCH,
 				type = IType.FLOAT,
 				init = "rnd(360.0)",
 				doc = @doc ("the absolute pitch of the agent in degrees (in the range 0-359)")),
-		@var (
+		@variable (
 				name = IKeyword.ROLL,
 				type = IType.FLOAT,
 				init = "rnd(360.0)",
 				doc = @doc ("the absolute roll of the agent in degrees (in the range 0-359)")),
-		@var (
+		@variable (
 				name = IKeyword.DESTINATION,
 				type = IType.POINT,
 				depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },

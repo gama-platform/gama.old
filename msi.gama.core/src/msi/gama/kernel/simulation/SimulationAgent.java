@@ -43,7 +43,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.ExecutionScope;
@@ -73,19 +73,19 @@ import msi.gaml.types.IType;
 @species (
 		name = IKeyword.MODEL,
 		internal = true)
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.COLOR,
 		type = IType.COLOR,
 		doc = @doc (
 				value = "The color used to identify this simulation in the UI",
 				comment = "Can be set freely by the modeler")),
-		@var (
+		@variable (
 				name = IKeyword.SEED,
 				type = IType.FLOAT,
 				doc = @doc (
 						value = "The seed of the random number generator",
 						comment = "Each time it is set, the random number generator is reinitialized")),
-		@var (
+		@variable (
 				name = IKeyword.RNG,
 				type = IType.STRING,
 				doc = @doc ("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: "
@@ -94,65 +94,65 @@ import msi.gaml.types.IType;
 						+ IKeyword.CELLULAR
 						+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
 						+ IKeyword.JAVA + " invokes the standard Java generator")),
-		@var (
+		@variable (
 				name = IKeyword.EXPERIMENT,
 				type = ITypeProvider.EXPERIMENT_TYPE,
 				doc = { @doc ("Returns the current experiment agent") }),
-		@var (
+		@variable (
 				name = IKeyword.WORLD_AGENT_NAME,
 				type = ITypeProvider.MODEL_TYPE,
 				doc = @doc ("Represents the 'world' of the agents, i.e. the instance of the model in which they are instantiated. Equivalent to 'simulation' in experiments")),
-		@var (
+		@variable (
 				name = IKeyword.STEP,
 				type = IType.FLOAT,
 				doc = @doc (
 						value = "Represents the value of the interval, in model time, between two simulation cycles",
 						comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
-		@var (
+		@variable (
 				name = SimulationAgent.TIME,
 				type = IType.FLOAT,
 				doc = @doc (
 						value = "Represents the total time passed, in model time, since the beginning of the simulation",
 						comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
-		@var (
+		@variable (
 				name = SimulationAgent.CYCLE,
 				type = IType.INT,
 				doc = @doc ("Returns the current cycle of the simulation")),
-		@var (
+		@variable (
 				name = SimulationAgent.USAGE,
 				type = IType.INT,
 				doc = @doc ("Returns the number of times the random number generator of the simulation has been drawn")),
-		@var (
+		@variable (
 				name = SimulationAgent.PAUSED,
 				type = IType.BOOL,
 				doc = @doc ("Returns the current pausing state of the simulation")),
-		@var (
+		@variable (
 				name = SimulationAgent.DURATION,
 				type = IType.STRING,
 				doc = @doc ("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
-		@var (
+		@variable (
 				name = SimulationAgent.TOTAL_DURATION,
 				type = IType.STRING,
 				doc = @doc ("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
-		@var (
+		@variable (
 				name = SimulationAgent.AVERAGE_DURATION,
 				type = IType.STRING,
 				doc = @doc ("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
-		@var (
+		@variable (
 				name = PlatformAgent.MACHINE_TIME,
 				type = IType.FLOAT,
 				doc = @doc (
 						deprecated = "Use 'gama.machine_time' instead",
 						value = "Returns the current system time in milliseconds",
 						comment = "The return value is a float number")),
-		@var (
+		@variable (
 				name = SimulationAgent.CURRENT_DATE,
 				depends_on = SimulationAgent.STARTING_DATE,
 				type = IType.DATE,
 				doc = @doc (
 						value = "Returns the current date in the simulation",
 						comment = "The return value is a date; the starting_date have to be initialized to use this attribute, which otherwise indicates a pseudo-date")),
-		@var (
+		@variable (
 				name = SimulationAgent.STARTING_DATE,
 				type = IType.DATE,
 				doc = @doc (

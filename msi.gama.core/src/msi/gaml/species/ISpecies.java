@@ -18,7 +18,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -41,25 +41,25 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.ATTRIBUTES,
 		type = IType.LIST,
 		of = IType.STRING,
 		doc = @doc ("A list of the names of the attributes of this species")),
-		@var (
+		@variable (
 				name = IKeyword.PARENT,
 				type = IType.SPECIES,
 				doc = @doc ("The parent (if any) of this species")),
-		@var (
+		@variable (
 				name = IKeyword.NAME,
 				type = IType.STRING,
 				doc = @doc ("The name of the species")),
-		@var (
+		@variable (
 				name = ISpecies.SUBSPECIES,
 				type = IType.LIST,
 				of = IType.SPECIES,
 				doc = @doc ("A list of the species declared inside this species")),
-		@var (
+		@variable (
 				name = ISpecies.POPULATION,
 				type = IType.LIST,
 				of = ITypeProvider.FIRST_CONTENT_TYPE,

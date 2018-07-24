@@ -16,7 +16,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -25,7 +25,7 @@ import msi.gaml.architecture.finite_state_machine.FsmStateStatement;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@vars (@var (
+@vars (@variable (
 		name = IKeyword.USER_CONTROLLED,
 		init = IKeyword.TRUE,
 		type = IType.BOOL,

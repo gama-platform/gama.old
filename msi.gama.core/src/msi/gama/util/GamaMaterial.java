@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
@@ -31,9 +31,9 @@ import msi.gaml.types.Types;
  *
  * @author mazarsju
  */
-@vars({ @var(name = IKeyword.DAMPER, type = IType.FLOAT, doc = {
+@vars({ @variable(name = IKeyword.DAMPER, type = IType.FLOAT, doc = {
 		@doc("Returns the shine damper component of the material") }),
-		@var(name = IKeyword.REFLECTIVITY, type = IType.FLOAT, doc = {
+		@variable(name = IKeyword.REFLECTIVITY, type = IType.FLOAT, doc = {
 				@doc("Returns the reflectivity of the material (between 0 and 1)") }) })
 public class GamaMaterial implements IValue {
 

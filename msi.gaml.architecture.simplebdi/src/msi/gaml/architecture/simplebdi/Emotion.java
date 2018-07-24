@@ -3,16 +3,16 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @var(name = "name", type = IType.STRING), @var(name = "intensity", type = IType.FLOAT),
-		@var(name = "about", type = PredicateType.id), @var(name = "decay", type = IType.FLOAT),
-		@var(name = "agentCause", type = IType.AGENT), @var(name = "owner", type = IType.AGENT)})
+@vars({ @variable(name = "name", type = IType.STRING), @variable(name = "intensity", type = IType.FLOAT),
+		@variable(name = "about", type = PredicateType.id), @variable(name = "decay", type = IType.FLOAT),
+		@variable(name = "agentCause", type = IType.AGENT), @variable(name = "owner", type = IType.AGENT)})
 public class Emotion implements IValue {
 
 	String name;

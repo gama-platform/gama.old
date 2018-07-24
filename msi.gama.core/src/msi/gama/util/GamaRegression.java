@@ -17,7 +17,7 @@ import org.apache.commons.math3.stat.regression.RegressionResults;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -26,7 +26,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @var(name = "parameters", type = IType.LIST, of = IType.FLOAT), @var(name = "nb_features", type = IType.INT) })
+@vars({ @variable(name = "parameters", type = IType.LIST, of = IType.FLOAT), @variable(name = "nb_features", type = IType.INT) })
 public class GamaRegression implements IValue {
 
 	RegressionResults regressionResults;

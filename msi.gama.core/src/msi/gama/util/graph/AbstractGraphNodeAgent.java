@@ -19,7 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 		name = "graph_node",
 		concept = { IConcept.GRAPH, IConcept.NODE },
 		doc = @doc ("A base species to use as a parent for species representing agents that are nodes of a graph"))
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.MYGRAPH,
 		type = IType.GRAPH,
 		doc = @doc ("A reference to the graph containing the agent")) })

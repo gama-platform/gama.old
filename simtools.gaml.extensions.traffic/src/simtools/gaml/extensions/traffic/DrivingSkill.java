@@ -38,7 +38,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -57,26 +57,26 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @var (
+@vars ({ @variable (
 		name = "living_space",
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc ("the min distance between the agent and an obstacle (in meter)")),
-		@var (
+		@variable (
 				name = "lanes_attribute",
 				type = IType.STRING,
 				doc = @doc ("the name of the attribut of the road agent that determine the number of road lanes")),
-		@var (
+		@variable (
 				name = "tolerance",
 				type = IType.FLOAT,
 				init = "0.1",
 				doc = @doc ("the tolerance distance used for the computation (in meter)")),
-		@var (
+		@variable (
 				name = "obstacle_species",
 				type = IType.LIST,
 				init = "[]",
 				doc = @doc ("the list of species that are considered as obstacles")),
-		@var (
+		@variable (
 				name = IKeyword.SPEED,
 				type = IType.FLOAT,
 				init = "1.0",

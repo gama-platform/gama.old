@@ -15,17 +15,17 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = "space", type = IType.AGENT), @var(name = "density", type = IType.FLOAT, init = "1.0"),
-		@var(name = "mass", type = IType.FLOAT, init = "1.0"),
-		@var(name = "velocity", type = IType.LIST, init = "[0.0, 0.0, 0.0]"),
-		@var(name = "collisionBound", type = IType.MAP),
-		@var(name = "motor", type = IType.POINT, init = "{0.0, 0.0}") })
+@vars({ @variable(name = "space", type = IType.AGENT), @variable(name = "density", type = IType.FLOAT, init = "1.0"),
+		@variable(name = "mass", type = IType.FLOAT, init = "1.0"),
+		@variable(name = "velocity", type = IType.LIST, init = "[0.0, 0.0, 0.0]"),
+		@variable(name = "collisionBound", type = IType.MAP),
+		@variable(name = "motor", type = IType.POINT, init = "{0.0, 0.0}") })
 @skill(name = "physics", concept = { IConcept.SKILL, IConcept.THREED }, doc = {
 		@doc("A skill allowing an agent to act like a physical 3D world") })
 public class Physics3DSkill extends Skill {

@@ -16,7 +16,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
@@ -31,31 +31,31 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.COLOR,
 		type = IType.COLOR,
 		init = "#white",
 		doc = { @doc ("Represents the color of the cell, used by default to represent the grid on displays") }),
-		@var (
+		@variable (
 				name = IKeyword.NEIGHBORS,
 				type = IType.LIST,
 				of = ITypeProvider.OWNER_TYPE,
 				doc = { @doc ("Represents the neighbor at distance 1 of the cell") }),
-		@var (
+		@variable (
 				name = IKeyword.GRID_VALUE,
 				type = IType.FLOAT,
 				doc = { @doc ("Represents a floating point value (automatically set when the grid is initialized from a grid file, and used by default to represent the elevation of the cell when displaying it on a display)") }),
-		@var (
+		@variable (
 				name = IKeyword.BANDS,
 				type = IType.LIST,
 				of = IType.FLOAT,
 				doc = { @doc ("Represents the values of the different bands of the cell (list of floating point value automatically set when the grid is initialized from a grid file)") }),
-		@var (
+		@variable (
 				name = IKeyword.GRID_X,
 				type = IType.INT,
 				constant = true,
 				doc = { @doc ("Returns the 0-based index of the column of the cell in the grid") }),
-		@var (
+		@variable (
 				name = IKeyword.GRID_Y,
 				type = IType.INT,
 				constant = true,

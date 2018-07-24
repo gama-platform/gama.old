@@ -18,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -34,9 +34,9 @@ import msi.gaml.types.Types;
  * @since 22 mars 2015
  *
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of this font") }),
-		@var(name = IKeyword.SIZE, type = IType.INT, doc = { @doc("Returns the size (in points) of this font") }),
-		@var(name = IKeyword.STYLE, type = IType.INT, doc = {
+@vars({ @variable(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of this font") }),
+		@variable(name = IKeyword.SIZE, type = IType.INT, doc = { @doc("Returns the size (in points) of this font") }),
+		@variable(name = IKeyword.STYLE, type = IType.INT, doc = {
 				@doc("Returns the style of this font (0 for plain, 1 for bold, 2 for italic, 3 for bold+italic)") }) })
 public class GamaFont extends Font implements IValue {
 

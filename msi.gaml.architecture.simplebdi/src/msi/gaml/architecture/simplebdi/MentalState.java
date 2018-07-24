@@ -3,20 +3,20 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({@var(name = "modality", type = IType.STRING),
-	@var(name = "predicate", type = PredicateType.id),
-	@var(name = "mental_state", type = MentalStateType.id),
-	@var(name = "emotion", type= EmotionType.id),
-	@var(name = "owner", type = IType.AGENT),
-	@var(name = "strength", type = IType.FLOAT),
-	@var(name = "lifetime", type = IType.INT)})
+@vars({@variable(name = "modality", type = IType.STRING),
+	@variable(name = "predicate", type = PredicateType.id),
+	@variable(name = "mental_state", type = MentalStateType.id),
+	@variable(name = "emotion", type= EmotionType.id),
+	@variable(name = "owner", type = IType.AGENT),
+	@variable(name = "strength", type = IType.FLOAT),
+	@variable(name = "lifetime", type = IType.INT)})
 public class MentalState implements IValue {
 
 	String modality;

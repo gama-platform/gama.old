@@ -13,28 +13,28 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @var (
+@vars ({ @variable (
 		name = "name",
 		type = IType.STRING,
 		doc = @doc ("The name of this BDI plan")),
-		@var (
+		@variable (
 				name = "todo",
 				type = IType.STRING),
-		@var (
+		@variable (
 				name = SimpleBdiPlanStatement.INTENTION,
 				type = MentalStateType.id,
 				doc = @doc ("A string representing the current intention of this BDI plan")),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
 				type = IType.STRING),
-		@var (
+		@variable (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
 				type = IType.STRING)
 		/*

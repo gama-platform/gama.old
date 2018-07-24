@@ -18,7 +18,7 @@ import java.util.Map;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,15 +39,15 @@ import msi.gaml.types.Types;
  * sub-classes.
  */
 
-@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST, of = IType.MESSAGE, doc = {
+@vars({ @variable(name = Conversation.MESSAGES, type = IType.LIST, of = IType.MESSAGE, doc = {
 		@doc("Returns the list of messages that compose this conversation") }),
-		@var(name = Conversation.PROTOCOL, type = IType.STRING, doc = {
+		@variable(name = Conversation.PROTOCOL, type = IType.STRING, doc = {
 				@doc("Returns the name of the protocol followed by the conversation") }),
-		@var(name = Conversation.INITIATOR, type = IType.AGENT, doc = {
+		@variable(name = Conversation.INITIATOR, type = IType.AGENT, doc = {
 				@doc("Returns the agent that has initiated this conversation") }),
-		@var(name = Conversation.PARTICIPANTS, type = IType.LIST, of = IType.AGENT, doc = {
+		@variable(name = Conversation.PARTICIPANTS, type = IType.LIST, of = IType.AGENT, doc = {
 				@doc("Returns the list of agents that participate to this conversation") }),
-		@var(name = Conversation.ENDED, type = IType.BOOL, init = "false", doc = {
+		@variable(name = Conversation.ENDED, type = IType.BOOL, init = "false", doc = {
 				@doc("Returns whether this conversation has ended or not") }) })
 public class Conversation extends GamaList<FIPAMessage> {
 

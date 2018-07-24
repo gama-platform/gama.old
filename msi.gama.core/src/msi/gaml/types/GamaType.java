@@ -19,7 +19,7 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -111,8 +111,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 		final vars annot = prototype.getSupport().getAnnotation(vars.class);
 		if (annot != null) {
-			final var[] allVars = annot.value();
-			for (final var v : allVars) {
+			final variable[] allVars = annot.value();
+			for (final variable v : allVars) {
 				if (v.name().equals(prototype.getName())) {
 					if (v.doc().length > 0) {
 						sb.append(", ").append(v.doc()[0].value());

@@ -42,7 +42,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -61,59 +61,59 @@ import msi.gaml.types.Types;
  * @author Taillandier
  * @author Alexis Drogoul
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = "day_of_week",
 		type = IType.INT,
 		doc = { @doc ("Returns the index of the day of the week (with Monday being 1)") }),
-		@var (
+		@variable (
 				name = "date",
 				type = IType.DATE,
 				doc = { @doc ("Returns a new date object with only the year-month-day components of this date") }),
-		@var (
+		@variable (
 				name = "leap",
 				type = IType.BOOL,
 				doc = { @doc ("Returns true if the year is a leap year") }),
-		@var (
+		@variable (
 				name = "days_in_month",
 				type = IType.INT,
 				doc = { @doc ("Returns the number of days of the month (28-31) of this date") }),
-		@var (
+		@variable (
 				name = "days_in_year",
 				type = IType.INT,
 				doc = { @doc ("Returns the number of days of the year (365-366) of this date") }),
-		@var (
+		@variable (
 				name = "week_of_year",
 				type = IType.INT,
 				doc = { @doc ("Returns the week (1-52) of the year") }),
-		@var (
+		@variable (
 				name = "second",
 				type = IType.INT,
 				doc = { @doc ("Returns the second of minute (0-59) of this date") }),
-		@var (
+		@variable (
 				name = "second_of_day",
 				type = IType.INT,
 				doc = { @doc ("Returns the second of day (0-86399) of this date") }),
-		@var (
+		@variable (
 				name = "minute",
 				type = IType.INT,
 				doc = { @doc ("Returns the minute of hour (0-59) of this date") }),
-		@var (
+		@variable (
 				name = "minute_of_day",
 				type = IType.INT,
 				doc = { @doc ("Returns the minute of day (0-1439) of this date") }),
-		@var (
+		@variable (
 				name = "hour",
 				type = IType.INT,
 				doc = { @doc ("Returns the hour of the day (0-23) of this date") }),
-		@var (
+		@variable (
 				name = "day",
 				type = IType.INT,
 				doc = { @doc ("Returns the day of month (1-31) of this date") }),
-		@var (
+		@variable (
 				name = "month",
 				type = IType.INT,
 				doc = { @doc ("Returns the month of year (1-12) of this date") }),
-		@var (
+		@variable (
 				name = "year",
 				type = IType.INT,
 				doc = { @doc ("Returns the year") }) })

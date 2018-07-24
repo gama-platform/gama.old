@@ -3,17 +3,17 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ /* @var(name = "name", type = IType.STRING), */@var(name = "agent", type = IType.AGENT),
-		@var(name = "liking", type = IType.FLOAT), @var(name = "dominance", type = IType.FLOAT),
-		@var(name = "solidarity", type = IType.FLOAT), @var(name = "familiarity", type = IType.FLOAT),
-		@var(name = "trust", type = IType.FLOAT)})
+@vars({ /* @var(name = "name", type = IType.STRING), */@variable(name = "agent", type = IType.AGENT),
+		@variable(name = "liking", type = IType.FLOAT), @variable(name = "dominance", type = IType.FLOAT),
+		@variable(name = "solidarity", type = IType.FLOAT), @variable(name = "familiarity", type = IType.FLOAT),
+		@variable(name = "trust", type = IType.FLOAT)})
 
 public class SocialLink implements IValue {
 

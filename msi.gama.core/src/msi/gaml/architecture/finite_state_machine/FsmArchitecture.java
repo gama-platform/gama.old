@@ -18,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -37,11 +37,11 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.STATE,
 		type = IType.STRING,
 		doc = @doc ("Returns the current state in which the agent is")),
-		@var (
+		@variable (
 				name = IKeyword.STATES,
 				type = IType.LIST,
 				constant = true,

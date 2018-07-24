@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
@@ -179,8 +179,8 @@ public class OperatorProto extends AbstractProto {
 		if (!isVarOrField) { return super.getDocumentation(); }
 		final vars annot = getSupport().getAnnotation(vars.class);
 		if (annot != null) {
-			final var[] allVars = annot.value();
-			for (final var v : allVars) {
+			final variable[] allVars = annot.value();
+			for (final variable v : allVars) {
 				if (v.name().equals(getName())) {
 					if (v.doc().length > 0) { return v.doc()[0].value(); }
 					break;

@@ -17,7 +17,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -32,41 +32,41 @@ import msi.gaml.types.IType;
  * @since 14 d�c. 2011
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = IKeyword.TARGET,
 		type = IType.NONE,
 		doc = @doc ("The target (i.e. last element) of this path")),
-		@var (
+		@variable (
 				name = IKeyword.SOURCE,
 				type = IType.NONE,
 				doc = @doc ("The source (i.e. first element) of this path")),
-		@var (
+		@variable (
 				name = IKeyword.GRAPH,
 				type = IType.GRAPH,
 				doc = @doc ("The graph this path refers to")),
-		@var (
+		@variable (
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
 				doc = @doc ("The shape obtained by all the points of this path")),
-		@var (
+		@variable (
 				name = IKeyword.SEGMENTS,
 				type = IType.LIST,
 				of = IType.GEOMETRY,
 				doc = { @doc ("Returns the list of segments that compose this path") }),
-		@var (
+		@variable (
 				name = "distance",
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the total lenght of all the segments that compose this path") }),
-		@var (
+		@variable (
 				name = "weight",
 				type = IType.FLOAT,
 				doc = @doc ("The addition of all the weights of the vertices that compose this path, with respect to the graph they belong to")),
-		@var (
+		@variable (
 				name = "edges",
 				type = IType.LIST,
 				of = IType.GEOMETRY,
 				doc = @doc ("The list of edges of the underlying graph that compose this path")),
-		@var (
+		@variable (
 				name = "vertices",
 				type = IType.LIST,
 				doc = @doc ("The list of vertices of the underlying graph that compose this path"))

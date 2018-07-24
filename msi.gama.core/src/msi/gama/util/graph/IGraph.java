@@ -20,7 +20,7 @@ import org.jgrapht.WeightedGraph;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -41,25 +41,25 @@ import msi.gaml.types.IType;
  * while edges are the values
  *
  */
-@vars ({ @var (
+@vars ({ @variable (
 		name = "spanning_tree",
 		type = IType.LIST,
 		of = ITypeProvider.FIRST_CONTENT_TYPE,
 		doc = { @doc ("Returns the list of edges that compose the minimal spanning tree of this graph") }),
-		@var (
+		@variable (
 				name = "circuit",
 				type = IType.PATH,
 				doc = { @doc ("Returns a polynomial approximation of the Hamiltonian cycle (the optimal tour passing through each vertex) of this graph") }),
-		@var (
+		@variable (
 				name = "connected",
 				type = IType.BOOL,
 				doc = { @doc ("Returns whether this graph is connected or not") }),
-		@var (
+		@variable (
 				name = "edges",
 				type = IType.LIST,
 				of = ITypeProvider.FIRST_CONTENT_TYPE,
 				doc = { @doc ("Returns the list of edges of the receiver graph") }),
-		@var (
+		@variable (
 				name = "vertices",
 				type = IType.LIST,
 				of = ITypeProvider.FIRST_KEY_TYPE,

@@ -18,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +28,7 @@ import msi.gaml.types.IType;
 
 @skill(name = MessagingSkill.SKILL_NAME)
 @doc("A simple skill that provides agents with a mailbox than can be filled with messages")
-@vars({ @var(name = "mailbox", type = IType.LIST, of = IType.MESSAGE, doc = @doc("The list of messages that can be consulted by the agent")) })
+@vars({ @variable(name = "mailbox", type = IType.LIST, of = IType.MESSAGE, doc = @doc("The list of messages that can be consulted by the agent")) })
 public class MessagingSkill extends Skill {
 
 	public static final String SKILL_NAME = "messaging";

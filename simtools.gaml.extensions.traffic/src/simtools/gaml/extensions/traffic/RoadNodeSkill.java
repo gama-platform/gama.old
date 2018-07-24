@@ -18,33 +18,33 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars ({ @var (
+@vars ({ @variable (
 		name = "roads_in",
 		type = IType.LIST,
 		of = IType.AGENT,
 		doc = @doc ("the list of input roads")),
-		@var (
+		@variable (
 				name = "priority_roads",
 				type = IType.LIST,
 				of = IType.AGENT,
 				doc = @doc ("the list of priority roads")),
-		@var (
+		@variable (
 				name = "roads_out",
 				type = IType.LIST,
 				of = IType.AGENT,
 				doc = @doc ("the list of output roads")),
-		@var (
+		@variable (
 				name = "stop",
 				type = IType.LIST,
 				of = IType.LIST,
 				doc = @doc ("define for each type of stop, the list of concerned roads")),
-		@var (
+		@variable (
 				name = "block",
 				type = IType.MAP,
 				doc = @doc ("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
