@@ -28,7 +28,7 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 			if (size == 0)
 				children = EMPTY;
 			else {
-				children = StreamEx.of(cc).filter(r -> r.getName().charAt(0) != '.').map(r -> getMapper().wrap(this, r))
+				children = StreamEx.of(cc).filter(r -> r.getName().charAt(0) != '.').map(r -> getManager().wrap(this, r))
 						.toArray(WrappedResource.class);
 			}
 		} catch (final CoreException e) {

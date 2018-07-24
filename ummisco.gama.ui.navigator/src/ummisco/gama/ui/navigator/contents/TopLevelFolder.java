@@ -73,7 +73,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 
 	public void initializeChildren() {
 		children = StreamEx.of(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(p -> privateAccepts(p))
-				.map(p -> (WrappedProject) getMapper().wrap(this, p)).toArray(WrappedProject.class);
+				.map(p -> (WrappedProject) getManager().wrap(this, p)).toArray(WrappedProject.class);
 	}
 
 	@Override

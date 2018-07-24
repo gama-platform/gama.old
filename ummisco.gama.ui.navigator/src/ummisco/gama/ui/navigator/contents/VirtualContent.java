@@ -59,8 +59,8 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 		this.name = name;
 	}
 
-	public static ResourceManager getMapper() {
-		return NavigatorRoot.INSTANCE.mapper;
+	public ResourceManager getManager() {
+		return NavigatorRoot.getInstance().getManager();
 	}
 
 	public abstract VirtualContentType getType();

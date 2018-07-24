@@ -25,7 +25,7 @@ public class WrappedLink extends WrappedFile {
 
 	@Override
 	public boolean handleDoubleClick() {
-		if (!getMapper().validateLocation(getResource())) {
+		if (!getManager().validateLocation(getResource())) {
 			MessageDialog.openError(WorkbenchHelper.getShell(), "Unknown file",
 					"The file at location '" + getResource().getLocation() + " does not exist");
 			return true;
@@ -36,7 +36,7 @@ public class WrappedLink extends WrappedFile {
 
 	@Override
 	public int findMaxProblemSeverity() {
-		if (!getMapper().validateLocation(getResource())) { return LINK_BROKEN; }
+		if (!getManager().validateLocation(getResource())) { return LINK_BROKEN; }
 		return LINK_OK;
 	}
 

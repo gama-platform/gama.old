@@ -100,7 +100,7 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	}
 
 	public String getSuffixOfTestSummary(final org.eclipse.emf.common.util.URI uri) {
-		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
+		final CompoundSummary<?, ?> summary = getManager().getTestsSummary();
 		if (summary == null)
 			return "";
 		final List<AbstractSummary<?>> list = new ArrayList<>();

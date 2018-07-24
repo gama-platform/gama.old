@@ -74,8 +74,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		WorkbenchHelper.run(() -> {
 			monitor.beginTask("Processing additions to the workspace", BLOCKED_EVENTS.size());
 			try {
-				NavigatorRoot.INSTANCE.resetVirtualFolders(null);
-				NavigatorRoot.INSTANCE.recreateVirtualFolders();
+				NavigatorRoot.getInstance().resetVirtualFolders(null);
+				NavigatorRoot.getInstance().recreateVirtualFolders();
 				IN_INITIALIZATION_PHASE = true;
 				for (final IResourceChangeEvent event : BLOCKED_EVENTS) {
 					INSTANCE.resourceChanged(event);
@@ -94,7 +94,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public static void setLastTestResults(final CompoundSummary<TestExperimentSummary, ?> last) {
-		INSTANCE.refreshResource(NavigatorRoot.INSTANCE.getTestFolder());
+		INSTANCE.refreshResource(NavigatorRoot.getInstance().getTestFolder());
 	}
 
 	public ResourceManager(final IResourceChangeListener delegate, final CommonViewer navigator) {
@@ -298,7 +298,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			final Object o = currentSelection.getFirstElement();
 			if (o instanceof VirtualContent) { return ((VirtualContent<?>) o).getTopLevelFolder(); }
 		}
-		return NavigatorRoot.INSTANCE.getUserFolder();
+		return NavigatorRoot.getInstance().getUserFolder();
 	}
 
 	public void projectAdded(final IProject project) {

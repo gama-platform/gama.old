@@ -9,8 +9,15 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
+import static msi.gama.common.preferences.GamaPreferences.create;
+import static one.util.streamex.StreamEx.of;
+import static one.util.streamex.StreamEx.split;
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
+import static ummisco.gama.ui.navigator.contents.NavigatorRoot.getInstance;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -28,6 +35,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -38,8 +46,13 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
+import msi.gaml.types.IType;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
+import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
+import ummisco.gama.ui.navigator.contents.WrappedContainer;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -51,6 +64,13 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 import ummisco.gama.ui.views.toolbar.Selector;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
+	//
+	// static Pref<String> NAVIGATOR_EXPANDED_STATE =
+	// create("pref_navigator_state", "Navigator", "", IType.STRING).hidden();
+
+	static Pref<Boolean> KEEP_NAVIGATOR_STATE =
+			create("pref_keep_navigator_state", "Maintain the state of the navigator across sessions", true, IType.BOOL)
+					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
 
 	IAction link;
 	ToolItem linkItem;
@@ -97,29 +117,30 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		this.parent = GamaToolbarFactory.createToolbars(this, compo);
 
 		super.createPartControl(parent);
-		final IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
-		for (final IContributionItem item : toolbar.getItems()) {
+		restoreState();
+		final IToolBarManager tb = getViewSite().getActionBars().getToolBarManager();
+		for (final IContributionItem item : tb.getItems()) {
 			if (item instanceof ActionContributionItem) {
 				final ActionContributionItem aci = (ActionContributionItem) item;
 				final IAction action = aci.getAction();
 				if (action instanceof LinkEditorAction) {
 					link = action;
-					toolbar.remove(aci);
+					tb.remove(aci);
 				} else if (action instanceof org.eclipse.ui.internal.navigator.actions.CollapseAllAction) {
-					toolbar.remove(aci);
+					tb.remove(aci);
 				}
 
 			}
 		}
 		linkItem.setSelection(link.isChecked());
-		toolbar.update(true);
+		tb.update(true);
 		// linkItem.setSelection(link.isChecked());
 		// final Action a = linkCommand.toCheckAction();
 		// a.setChecked(link.isChecked());
 		// toolbar.insertBefore("toolbar.toggle", a);
-		toolbar.insertBefore("toolbar.toggle", byDate.toCheckAction());
-		toolbar.insertBefore("toolbar.toggle", expandAll.toAction());
-		toolbar.insertBefore(expandAll.getId(), collapseAll.toAction());
+		tb.insertBefore("toolbar.toggle", byDate.toCheckAction());
+		tb.insertBefore("toolbar.toggle", expandAll.toAction());
+		tb.insertBefore(expandAll.getId(), collapseAll.toAction());
 
 		try {
 			final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
@@ -130,11 +151,34 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		properties =
 				new PropertyDialogAction(new SameShellProvider(getSite().getShell()), getSite().getSelectionProvider());
 		findControl.initialize();
+		// getCommonViewer().getControl().addDisposeListener(e -> saveState());
 	}
 
 	@Override
-	public CommonViewer createCommonViewer(final Composite parent) {
-		final CommonViewer commonViewer = super.createCommonViewer(parent);
+	public void saveState(final IMemento newMemento) {
+		if (KEEP_NAVIGATOR_STATE.getValue()) {
+			newMemento.putString("EXPANDED_STATE", of(getCommonViewer().getExpandedElements()).map((o) -> {
+				return o instanceof WrappedContainer ? ((WrappedContainer<?>) o).getResource().getFullPath().toString()
+						: o instanceof TopLevelFolder ? ((TopLevelFolder) o).getName() : null;
+			}).nonNull().joining("@@"));
+		}
+		super.saveState(newMemento);
+	}
+
+	private void restoreState() {
+		final String saved = memento.getString("EXPANDED_STATE");
+		if (saved == null) { return; }
+		if (KEEP_NAVIGATOR_STATE.getValue()) {
+			getCommonViewer().setExpandedElements(split(saved, "@@").map((s) -> {
+				return s.startsWith("/") ? getInstance().getManager().findWrappedInstanceOf(
+						getWorkspace().getRoot().findMember(new Path(s))) : getInstance().getFolder(s);
+			}).nonNull().toArray(VirtualContent.class));
+		}
+	}
+
+	@Override
+	public CommonViewer createCommonViewer(final Composite p) {
+		final CommonViewer commonViewer = super.createCommonViewer(p);
 		return commonViewer;
 
 	}
@@ -144,7 +188,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		VirtualContent<?> current;
 		final Object o1 = getCommonViewer().getStructuredSelection().getFirstElement();
 		if (o1 instanceof IResource) {
-			current = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o1);
+			current = NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(o1);
 		} else {
 			current = (VirtualContent<?>) getCommonViewer().getStructuredSelection().getFirstElement();
 		}
@@ -154,7 +198,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			newSelection = (StructuredSelection) selection;
 			Object o = ((StructuredSelection) selection).getFirstElement();
 			if (o instanceof IResource) {
-				o = NavigatorRoot.INSTANCE.getMapper().findWrappedInstanceOf(o);
+				o = NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(o);
 				if (o != null) {
 					newSelection = new StructuredSelection(o);
 				}
@@ -182,7 +226,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	@Override
 	protected Object getInitialInput() {
-		return new NavigatorRoot();
+		return NavigatorRoot.getInstance();
 	}
 
 	@Override
@@ -233,6 +277,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
+
 		getCommonViewer().refresh();
 		FileFolderSorter.BY_DATE = enabled;
 
@@ -275,7 +320,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final IStructuredSelection currentSelection = (IStructuredSelection) event.getSelection();
 		VirtualContent<?> element;
 		if (currentSelection == null || currentSelection.isEmpty()) {
-			element = NavigatorRoot.INSTANCE;
+			element = NavigatorRoot.getInstance();
 		} else {
 			element = (VirtualContent<?>) currentSelection.getFirstElement();
 		}

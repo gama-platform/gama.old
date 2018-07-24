@@ -62,7 +62,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		if (isShapeFileSupport) {
 			final IResource shape = shapeFileSupportedBy(getResource());
 			if (shape != null) {
-				fileParent = (WrappedFile) getMapper().findWrappedInstanceOf(shape);
+				fileParent = (WrappedFile) getManager().findWrappedInstanceOf(shape);
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			final List<WrappedFile> sub = new ArrayList<>();
 			for (final IResource r : folder.members()) {
 				if (r instanceof IFile && isSupport(p, (IFile) r)) {
-					sub.add((WrappedFile) getMapper().findWrappedInstanceOf(r));
+					sub.add((WrappedFile) getManager().findWrappedInstanceOf(r));
 				}
 			}
 			return sub.toArray();

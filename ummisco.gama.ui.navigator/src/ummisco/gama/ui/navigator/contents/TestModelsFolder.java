@@ -21,7 +21,7 @@ public class TestModelsFolder extends TopLevelFolder {
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {
-		final CompoundSummary<?, ?> summary = getMapper().getTestsSummary();
+		final CompoundSummary<?, ?> summary = getManager().getTestsSummary();
 		if (summary != null)
 			sb.append(summary.getStringSummary());
 		else {

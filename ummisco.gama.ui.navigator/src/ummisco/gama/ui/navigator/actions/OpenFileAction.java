@@ -88,7 +88,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	 *         reason
 	 */
 	boolean ensureFileLocal(final IFile file) {
-		return NavigatorRoot.INSTANCE.mapper.validateLocation(file);
+		return NavigatorRoot.getInstance().getManager().validateLocation(file);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
 		final List<? extends IResource> resources = new ArrayList<>(super.getSelectedResources());
-		resources.removeIf((r) -> r instanceof IFile && !NavigatorRoot.INSTANCE.mapper.validateLocation((IFile) r));
+		resources.removeIf((r) -> r instanceof IFile && !NavigatorRoot.getInstance().getManager().validateLocation((IFile) r));
 		return resources;
 	}
 

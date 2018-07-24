@@ -12,7 +12,7 @@ package ummisco.gama.ui.navigator;
 import static org.eclipse.core.resources.IResourceChangeEvent.POST_CHANGE;
 import static org.eclipse.core.resources.IResourceChangeEvent.PRE_DELETE;
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
-import static ummisco.gama.ui.navigator.contents.NavigatorRoot.INSTANCE;
+import static ummisco.gama.ui.navigator.contents.NavigatorRoot.getInstance;
 
 import java.util.ArrayList;
 
@@ -52,7 +52,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider implement
 	public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
 		final CommonViewer viewer = (CommonViewer) v;
 		final ResourceManager mapper = new ResourceManager(this, viewer);
-		INSTANCE.resetVirtualFolders(mapper);
+		getInstance().resetVirtualFolders(mapper);
 		getWorkspace().addResourceChangeListener(mapper, POST_CHANGE | PRE_DELETE);
 		super.inputChanged(viewer, oldInput, newInput);
 	}
@@ -73,9 +73,9 @@ public class NavigatorContentProvider extends WorkbenchContentProvider implement
 		Object parent = element;
 		do {
 			parent = getParent(parent);
-			if (parent != null && parent != INSTANCE)
+			if (parent != null && parent != getInstance())
 				segments.add(0, parent);
-		} while (parent != null && parent != INSTANCE);
+		} while (parent != null && parent != getInstance());
 		if (!segments.isEmpty()) { return new TreePath[] { new TreePath(segments.toArray()) }; }
 		return new TreePath[0];
 	}

@@ -244,9 +244,9 @@ public class FileOpener {
 			return null;
 		}
 		if (file.isLinked()) {
-			if (!NavigatorRoot.INSTANCE.mapper.validateLocation(file)) {
-				MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-						"The file'" + file.getRawLocation() + "' cannot be found.");
+			if (!NavigatorRoot.getInstance().getManager().validateLocation(file)) {
+				MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found", "The file'"
+						+ file.getRawLocation() + "' referenced by '" + file.getName() + "' cannot be found.");
 				return null;
 			}
 		}

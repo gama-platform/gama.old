@@ -33,41 +33,45 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	private TopLevelFolder testFolder;
 	private TopLevelFolder pluginFolder;
 	private TopLevelFolder libraryFolder;
-	public static NavigatorRoot INSTANCE;
-	public ResourceManager mapper;
+	private final static NavigatorRoot instance = new NavigatorRoot();
+	private ResourceManager mapper;
 
 	public NavigatorRoot() {
 		super(null, "Workspace");
-		INSTANCE = this;
 	}
 
 	public TopLevelFolder getUserFolder() {
-		if (userFolder == null)
+		if (userFolder == null) {
 			userFolder = new UserProjectsFolder(this, "User models");
+		}
 		return userFolder;
 	}
 
 	public TopLevelFolder getTestFolder() {
-		if (testFolder == null)
+		if (testFolder == null) {
 			testFolder = new TestModelsFolder(this, "Test models");
+		}
 		return testFolder;
 	}
 
 	public TopLevelFolder getPluginFolder() {
-		if (pluginFolder == null)
+		if (pluginFolder == null) {
 			pluginFolder = new PluginsModelsFolder(this, "Plugin models");
+		}
 		return pluginFolder;
 	}
 
 	public TopLevelFolder getLibraryFolder() {
-		if (libraryFolder == null)
+		if (libraryFolder == null) {
 			libraryFolder = new ModelsLibraryFolder(this, "Library models");
+		}
 		return libraryFolder;
 	}
 
-	public void resetVirtualFolders(final ResourceManager mapper) {
-		if (mapper != null)
-			this.mapper = mapper;
+	public void resetVirtualFolders(final ResourceManager manager) {
+		if (manager != null) {
+			this.setManager(manager);
+		}
 		setUserFolder(null);
 		setPluginFolder(null);
 		setTestFolder(null);
@@ -141,12 +145,14 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 			for (final IResource r : root.members()) {
 				final int modelCount[] = new int[1];
 				try {
-					if (r.isAccessible())
+					if (r.isAccessible()) {
 						r.accept(proxy -> {
-							if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName()))
+							if (proxy.getType() == IResource.FILE && GamlFileExtension.isAny(proxy.getName())) {
 								modelCount[0]++;
+							}
 							return true;
 						}, IResource.NONE);
+					}
 				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
@@ -192,10 +198,29 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	public TopLevelFolder findFolderFor(final IProject project) {
 		for (final TopLevelFolder folder : getFolders()) {
-			if (folder.privateAccepts(project))
-				return folder;
+			if (folder.privateAccepts(project)) { return folder; }
 		}
 		return null;
+	}
+
+	@Override
+	public ResourceManager getManager() {
+		return mapper;
+	}
+
+	public void setManager(final ResourceManager mapper) {
+		this.mapper = mapper;
+	}
+
+	public TopLevelFolder getFolder(final String s) {
+		for (final TopLevelFolder folder : getFolders()) {
+			if (folder.getName().equals(s)) { return folder; }
+		}
+		return null;
+	}
+
+	public static NavigatorRoot getInstance() {
+		return instance;
 	}
 
 }

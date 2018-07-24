@@ -134,7 +134,7 @@ public class RefreshHandler implements IRefreshHandler {
 							monitor.beginTask("Refreshing GAMA Workspace: refreshing resources", resources.size());
 							op.run(monitor);
 							monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
-							NavigatorRoot.INSTANCE.resetVirtualFolders(NavigatorRoot.INSTANCE.mapper);
+							NavigatorRoot.getInstance().resetVirtualFolders(NavigatorRoot.getInstance().getManager());
 							monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
 							final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 							refreshNavigator();

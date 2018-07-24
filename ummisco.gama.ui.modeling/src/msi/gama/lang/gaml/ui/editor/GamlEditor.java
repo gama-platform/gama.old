@@ -460,6 +460,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected void handleCursorPositionChanged() {
+		if (getSelectionProvider() == null) { return; }
+		if (getInternalSourceViewer() == null) { return; }
+		if (getInternalSourceViewer().getControl() == null) { return; }
+		if (getInternalSourceViewer().getControl().isDisposed()) { return; }
 		/// AAAAA
 		super.handleCursorPositionChanged();
 		this.markInNavigationHistory();
@@ -553,9 +557,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
 		final String platformString = getURI().toPlatformString(true);
 		final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		final WrappedGamaFile file = (WrappedGamaFile) NavigatorRoot.INSTANCE.mapper.findWrappedInstanceOf(myFile);
-		NavigatorRoot.INSTANCE.mapper.refreshResource(file);
-		NavigatorRoot.INSTANCE.mapper.resourceChanged(null);
+		final WrappedGamaFile file = (WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
+		NavigatorRoot.getInstance().getManager().refreshResource(file);
+		NavigatorRoot.getInstance().getManager().resourceChanged(null);
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {
