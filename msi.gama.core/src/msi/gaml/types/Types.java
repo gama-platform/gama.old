@@ -19,15 +19,16 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import msi.gama.util.tree.GamaTree.Order;
-import msi.gama.util.tree.GamaNode;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.MapExpression;
 import msi.gaml.factories.DescriptionFactory;
 
 /**
@@ -332,13 +333,14 @@ public class Types {
 		switch (expr2.getType().getType().id()) {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
-				if (expr2.isConst()) {
-					final Object o = expr2.value(null);
-					return ((List) o).isEmpty();
-				}
+				// if (expr2.isConst()) {
+				// final Object o = expr2.value(null);
+				// return ((List) o).isEmpty();
+				// }
 				break;
 			case IType.MAP:
-				if (expr2.isConst()) { return ((Map) expr2.value(null)).isEmpty(); }
+				if (expr2 instanceof MapExpression) { return ((MapExpression) expr2).isEmpty(); }
+				// if (expr2.isConst()) { return ((Map) expr2.value(null)).isEmpty(); }
 		}
 		return false;
 	}

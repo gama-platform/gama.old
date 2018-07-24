@@ -277,4 +277,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		return null;
 	}
 
+	public boolean isEmpty() {
+		return keys.length == 0;
+	}
+
 }
