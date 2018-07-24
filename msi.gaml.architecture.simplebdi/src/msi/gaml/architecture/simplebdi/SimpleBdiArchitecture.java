@@ -345,7 +345,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agent.dead()) { return null; }
 			}
 		}
-		//computeEmotions(scope);
+		computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
 		if(!scope.getAgent().dead()){
@@ -3104,20 +3104,20 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_emotion_architecture = scope.hasArg(USE_EMOTIONS_ARCHITECTURE)
 				? scope.getBoolArg(USE_EMOTIONS_ARCHITECTURE) : (Boolean) agent.getAttribute(USE_EMOTIONS_ARCHITECTURE);
 		if (use_emotion_architecture) {
-			createJoy(scope);
-			createSadness(scope);
-			createHope(scope);
-			createFear(scope);
-			createSatisfaction(scope);
-			createFearConfirmed(scope);
-			createRelief(scope);
-			createDisappointment(scope);
+//			createJoy(scope);
+//			createSadness(scope);
+//			createHope(scope);
+//			createFear(scope);
+//			createSatisfaction(scope);
+//			createFearConfirmed(scope);
+//			createRelief(scope);
+//			createDisappointment(scope);
 			createEmotionsRelatedToOthers(scope);
-			createPrideAndShameAndAdmirationAndReproach(scope);
-			createGratification(scope);
-			createRemorse(scope);
-			createGratitude(scope);
-			createAnger(scope);
+//			createPrideAndShameAndAdmirationAndReproach(scope);
+//			createGratification(scope);
+//			createRemorse(scope);
+//			createGratitude(scope);
+//			createAnger(scope);
 		}
 	}
 
