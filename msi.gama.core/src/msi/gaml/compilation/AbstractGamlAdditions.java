@@ -41,22 +41,23 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.compilation.annotations.serializer;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.SkillDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.descriptions.TypeDescription;
@@ -166,11 +167,23 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	protected void _symbol(final String[] names, final Class c, final IDescriptionValidator validator,
-			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
-			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
-			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
-			final ISymbolConstructor sc) {
+	protected void _symbol(final String[] names, final Class c, final int sKind, final boolean remote,
+			final boolean args, final boolean scope, final boolean sequence, final boolean unique,
+			final boolean name_unique, final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd,
+			final String omissible, final ISymbolConstructor sc) {
+
+		IDescriptionValidator validator2 = null;
+		SymbolSerializer serializer2 = null;
+		final validator v = (validator) c.getAnnotation(validator.class);
+		final serializer s = (serializer) c.getAnnotation(serializer.class);
+		try {
+			if (v != null) {
+				validator2 = v.value().newInstance();
+			}
+			if (s != null) {
+				serializer2 = s.value().newInstance();
+			}
+		} catch (InstantiationException | IllegalAccessException e) {}
 
 		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
@@ -186,7 +199,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 
 		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
-				contextKinds, remote, unique, name_unique, sc, validator, serializer,
+				contextKinds, remote, unique, name_unique, sc, validator2, serializer2,
 				names == null || names.length == 0 ? "variable declaration" : names[0], CURRENT_PLUGIN_NAME);
 		DescriptionFactory.addProto(md, keywords);
 	}
@@ -275,7 +288,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	private String getVarDoc(final String name, final Class<?> clazz) {
 		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
-		for (final var v : vars.value()) {
+		for (final msi.gama.precompiler.GamlAnnotations.var v : vars.value()) {
 			if (v.name().equals(name)) {
 				final doc[] docs = v.doc();
 				final String d = "";
@@ -370,24 +383,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static Collection<IDescription> getAllVars() {
 		final THashSet<IDescription> result = new THashSet<>();
 
-		final DescriptionVisitor varVisitor = new DescriptionVisitor<VariableDescription>() {
-
-			@Override
-			public boolean visit(final VariableDescription desc) {
-				result.add(desc);
-				return true;
-			}
-
+		final DescriptionVisitor varVisitor = desc -> {
+			result.add(desc);
+			return true;
 		};
 
-		final DescriptionVisitor actionVisitor = new DescriptionVisitor<StatementDescription>() {
-
-			@Override
-			public boolean visit(final StatementDescription desc) {
-				Iterables.addAll(result, desc.getFormalArgs());
-				return true;
-			}
-
+		final DescriptionVisitor actionVisitor = desc -> {
+			Iterables.addAll(result, ((ActionDescription) desc).getFormalArgs());
+			return true;
 		};
 
 		for (final TypeDescription desc : Types.getBuiltInSpecies()) {
@@ -395,15 +398,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			desc.visitOwnActions(actionVisitor);
 
 		}
-		GamaSkillRegistry.INSTANCE.visitSkills(new DescriptionVisitor<SkillDescription>() {
-
-			@Override
-			public boolean visit(final SkillDescription desc) {
-				desc.visitOwnAttributes(varVisitor);
-				desc.visitOwnActions(actionVisitor);
-				return true;
-			}
-
+		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
+			((TypeDescription) desc).visitOwnAttributes(varVisitor);
+			((TypeDescription) desc).visitOwnActions(actionVisitor);
+			return true;
 		});
 
 		return result;
@@ -423,27 +421,17 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static Collection<IDescription> getAllActions() {
 		final THashMap<String, IDescription> result = new THashMap<>();
 
-		final DescriptionVisitor visitor = new DescriptionVisitor<StatementDescription>() {
-
-			@Override
-			public boolean visit(final StatementDescription desc) {
-				result.putIfAbsent(desc.getName(), desc);
-				return true;
-			}
-
+		final DescriptionVisitor visitor = desc -> {
+			result.putIfAbsent(desc.getName(), desc);
+			return true;
 		};
 
 		for (final TypeDescription s : Types.getBuiltInSpecies()) {
 			s.visitOwnActions(visitor);
 		}
-		GamaSkillRegistry.INSTANCE.visitSkills(new DescriptionVisitor<SkillDescription>() {
-
-			@Override
-			public boolean visit(final SkillDescription desc) {
-				desc.visitOwnActions(visitor);
-				return true;
-			}
-
+		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
+			((SkillDescription) desc).visitOwnActions(visitor);
+			return true;
 		});
 		return result.values();
 	}

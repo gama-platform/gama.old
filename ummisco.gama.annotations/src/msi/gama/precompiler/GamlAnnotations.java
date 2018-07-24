@@ -57,43 +57,6 @@ public final class GamlAnnotations {
 	}
 
 	/**
-	 * Allows to declare a custom validator for Symbols. This validator, if declared on subclasses of Symbol, will be
-	 * called after the standard validation is done. The validator must be subclass of IDescriptionValidator
-	 *
-	 * @author drogoul
-	 * @since 11 nov. 2014
-	 *
-	 */
-
-	@Retention (RetentionPolicy.SOURCE)
-	@Target (ElementType.TYPE)
-	@Inherited
-	@SuppressWarnings ({ "rawtypes" })
-	public static @interface validator {
-
-		Class value();
-	}
-
-	/**
-	 * Allows to declare a custom serializer for Symbols (statements, var declarations, species ,experiments, etc.) This
-	 * serializer will be called instead of the standard serializer, superseding this last one. Serializers must be
-	 * sublasses of the SymbolSerializer class
-	 *
-	 * @author drogoul
-	 * @since 11 nov. 2014
-	 *
-	 */
-
-	@Retention (RetentionPolicy.SOURCE)
-	@Target (ElementType.TYPE)
-	@Inherited
-	@SuppressWarnings ({ "rawtypes" })
-	public static @interface serializer {
-
-		Class value();
-	}
-
-	/**
 	 *
 	 * The class facets. Describes a list of facet used by a symbol (a statement, a declaration) in GAML. Can only be
 	 * declared in classes annotated with symbol
@@ -1135,8 +1098,8 @@ public final class GamlAnnotations {
 		 *
 		 * Note that for usages aiming at defining templates, the description is displayed on a tooltip in the editor.
 		 * The use of the path allows to remove unecessary explanations. For instance, instead of writing : description=
-		 * "This template illustrates the use of a complex form of the "create
-		 * " statement, which reads agents from a shape file and uses the tabular data of the file to initialize their attributes"
+		 * "This template illustrates the use of a complex form of the "create " statement, which reads agents from a
+		 * shape file and uses the tabular data of the file to initialize their attributes"
 		 *
 		 * choose: name="Create agents from shapefile" menu=STATEMENT; path={"Create", "Complex forms"} description=
 		 * "Read agents from a shape file and initialize their attributes"
@@ -1493,29 +1456,4 @@ public final class GamlAnnotations {
 		doc[] doc() default {};
 	}
 
-	/**
-	 * Used to annotate a populations linker implemented in Java.
-	 *
-	 * @author voducan
-	 */
-	@Retention (RetentionPolicy.SOURCE)
-	@Target (ElementType.TYPE)
-	public static @interface populations_linker {
-
-		/**
-		 * Name.
-		 *
-		 * @return a String representing the skill name in GAML (must be unique throughout GAML)
-		 */
-		String name();
-
-		/**
-		 * Doc.
-		 *
-		 * @return the documentation attached to this skill
-		 * @see doc
-		 */
-		doc[] doc() default {};
-
-	}
 }

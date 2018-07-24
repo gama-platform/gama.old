@@ -181,7 +181,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) { return; }
 		if (KEEP_NAVIGATOR_STATE.getValue()) {
-			final List<VirtualContent> contents = new ArrayList();
+			final List<VirtualContent<?>> contents = new ArrayList<>();
 			final String[] names = saved.split("@@");
 			for (final String s : names) {
 				if (s.startsWith("/")) {
