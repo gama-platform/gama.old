@@ -10,10 +10,11 @@
 package ummisco.gama.ui.navigator;
 
 import static msi.gama.common.preferences.GamaPreferences.create;
-import static one.util.streamex.StreamEx.of;
-import static one.util.streamex.StreamEx.split;
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 import static ummisco.gama.ui.navigator.contents.NavigatorRoot.getInstance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -54,6 +55,7 @@ import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.WrappedContainer;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
+import ummisco.gama.ui.navigator.contents.WrappedResource;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.PlatformHelper;
@@ -157,10 +159,20 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void saveState(final IMemento newMemento) {
 		if (KEEP_NAVIGATOR_STATE.getValue()) {
-			newMemento.putString("EXPANDED_STATE", of(getCommonViewer().getExpandedElements()).map((o) -> {
-				return o instanceof WrappedContainer ? ((WrappedContainer<?>) o).getResource().getFullPath().toString()
-						: o instanceof TopLevelFolder ? ((TopLevelFolder) o).getName() : null;
-			}).nonNull().joining("@@"));
+			final StringBuilder sb = new StringBuilder();
+			for (final Object o : getCommonViewer().getExpandedElements()) {
+				final String name =
+						o instanceof WrappedContainer ? ((WrappedContainer<?>) o).getResource().getFullPath().toString()
+								: o instanceof TopLevelFolder ? ((TopLevelFolder) o).getName() : null;
+				if (name != null) {
+					sb.append(name);
+					sb.append("@@");
+				}
+			}
+			if (sb.length() > 2) {
+				sb.setLength(sb.length() - 2);
+			}
+			newMemento.putString("EXPANDED_STATE", sb.toString());
 		}
 		super.saveState(newMemento);
 	}
@@ -169,10 +181,24 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) { return; }
 		if (KEEP_NAVIGATOR_STATE.getValue()) {
-			getCommonViewer().setExpandedElements(split(saved, "@@").map((s) -> {
-				return s.startsWith("/") ? getInstance().getManager().findWrappedInstanceOf(
-						getWorkspace().getRoot().findMember(new Path(s))) : getInstance().getFolder(s);
-			}).nonNull().toArray(VirtualContent.class));
+			final List<VirtualContent> contents = new ArrayList();
+			final String[] names = saved.split("@@");
+			for (final String s : names) {
+				if (s.startsWith("/")) {
+					final WrappedResource<?, ?> resource = getInstance().getManager()
+							.findWrappedInstanceOf(getWorkspace().getRoot().findMember(new Path(s)));
+					if (resource != null) {
+						contents.add(resource);
+					}
+				} else {
+					final TopLevelFolder folder = getInstance().getFolder(s);
+					if (folder != null) {
+						contents.add(folder);
+					}
+				}
+			}
+
+			getCommonViewer().setExpandedElements(contents.toArray(new VirtualContent[0]));
 		}
 	}
 
