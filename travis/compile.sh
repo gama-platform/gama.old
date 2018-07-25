@@ -48,7 +48,7 @@ install (){
 	mvn_install ummisco.gama.annotations
 	mvn_install msi.gama.processor
 	
-	change=$(git log --pretty=format: --name-only --since="1 hour ago")
+	change=$(git log --pretty=format: --name-only --since="24 hour ago")
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_install msi.gama.ext
@@ -322,8 +322,7 @@ install1 (){
 }
 
 
-
-MSG='ci fullbuild'
+ 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
