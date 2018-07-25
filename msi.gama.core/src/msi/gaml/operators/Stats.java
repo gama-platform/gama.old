@@ -499,7 +499,7 @@ public class Stats {
 	@operator (
 			value = "max",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 			concept = { IConcept.STATISTIC })
@@ -551,7 +551,7 @@ public class Stats {
 	@operator (
 			value = "min",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 			concept = { IConcept.STATISTIC })
@@ -606,7 +606,7 @@ public class Stats {
 	@operator (
 			value = { "mul", "product" },
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER },
 			concept = { IConcept.STATISTIC })
@@ -667,7 +667,7 @@ public class Stats {
 	@operator (
 			value = "median",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 			concept = { IConcept.STATISTIC, IConcept.COLOR })
@@ -824,7 +824,7 @@ public class Stats {
 			value = { "frequency_of" },
 			can_be_const = true,
 			iterator = true,
-			index_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			content_type = IType.INT,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
@@ -916,7 +916,7 @@ public class Stats {
 	@operator (
 			value = { "meanR", "R_mean" },
 			can_be_const = false,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (

@@ -145,7 +145,7 @@ public class DeprecatedOperators {
 	@Deprecated
 	@operator (
 			value = "neighbours_at",
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES })
 	@doc (
 			deprecated = "use neighbors_at instead",
@@ -306,9 +306,9 @@ public class DeprecatedOperators {
 
 	@operator (
 			value = "read",
-			type = ITypeProvider.FIRST_TYPE,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE)
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1)
 	@doc (
 			deprecated = "use the operator \"writable\" instead",
 			value = "marks the file so that only read operations are allowed.",
@@ -324,9 +324,9 @@ public class DeprecatedOperators {
 
 	@operator (
 			value = IKeyword.WRITE,
-			type = ITypeProvider.FIRST_TYPE,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE)
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1)
 	@doc (
 			deprecated = "use the operator \"writable\" instead",
 			value = "marks the file so that read and write operations are allowed.",
@@ -466,7 +466,7 @@ public class DeprecatedOperators {
 
 	@operator (
 			value = { IKeyword.AT, "@" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE)
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1)
 	@doc (
 			deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent at(final IScope scope, final ISpecies s, final GamaPoint val) throws GamaRuntimeException {
@@ -535,7 +535,7 @@ public class DeprecatedOperators {
 	@operator (
 			value = { "copy_between" /* , "copy" */ },
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.LIST })
 	@doc (
 			deprecated = "Deprecated. Use copy_between(list, int, int) instead")
@@ -695,7 +695,7 @@ public class DeprecatedOperators {
 	@operator (
 			value = { "neighbours_of" },
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH })
 	@doc (
 			deprecated = "use neighbors_of instead",
@@ -768,7 +768,7 @@ public class DeprecatedOperators {
 	@Deprecated
 	@operator (
 			value = "path_between",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH })
 	@doc (
 			value = "The shortest path between a list of two objects in a graph",

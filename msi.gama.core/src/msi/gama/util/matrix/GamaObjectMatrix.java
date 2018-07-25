@@ -162,7 +162,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	// @Override
 	// @operator(value = IKeyword.APPEND_VERTICALLY, content_type =
-	// ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	// ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category={IOperatorCategory.MATRIX})
 	public IMatrix<?> _opAppendVertically(final IScope scope, final IMatrix<?> b) {
 		final GamaObjectMatrix a = this;
 		final Object[] ma = a.getMatrix();
@@ -189,7 +189,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	// @Override
 	// @operator(value = IKeyword.APPEND_HORYZONTALLY, content_type =
-	// ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
+	// ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category={IOperatorCategory.MATRIX})
 	public GamaObjectMatrix _opAppendHorizontally(final IScope scope, final IMatrix<?> b) {
 		// GamaObjectMatrix a = this;
 		final GamaObjectMatrix aprime = _reverse(scope);

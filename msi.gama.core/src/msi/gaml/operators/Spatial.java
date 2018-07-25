@@ -129,9 +129,9 @@ public abstract class Spatial {
 				value = "using",
 				category = { IOperatorCategory.SPATIAL },
 				concept = { IConcept.TOPOLOGY, IConcept.SPATIAL_COMPUTATION },
-				type = ITypeProvider.FIRST_TYPE,
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-				index_type = ITypeProvider.FIRST_KEY_TYPE)
+				type = ITypeProvider.TYPE_AT_INDEX + 1,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1)
 		@doc (
 				value = "Allows to specify in which topology a spatial computation should take place.",
 				usages = { @usage (
@@ -888,7 +888,7 @@ public abstract class Spatial {
 			if (P0 == null || P1 == null || P2 == null || P3 == null) { return null; }
 			return GamaGeometryType.buildPolyline(cubicBezierCurve(P0, P1, P2, P3, 10));
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -904,10 +904,11 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient) {
-			return  BezierCurve(scope, P0, P1,coefficient, true, 10, 0.5);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient) {
+			return BezierCurve(scope, P0, P1, coefficient, true, 10, 0.5);
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -923,10 +924,11 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right) {
-			return  BezierCurve(scope, P0, P1,coefficient, right, 10, 0.5);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final boolean right) {
+			return BezierCurve(scope, P0, P1, coefficient, right, 10, 0.5);
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -942,8 +944,9 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right, final int nbPoints) {
-			return  BezierCurve(scope, P0, P1,coefficient, right, nbPoints, 0.5);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final boolean right, final int nbPoints) {
+			return BezierCurve(scope, P0, P1, coefficient, right, nbPoints, 0.5);
 		}
 
 		@operator (
@@ -961,15 +964,18 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
-			if (P0 == null || P1 == null ) { return null; }
-			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x)*proportion,P0.y + (P1.y - P0.y)*proportion,P0.z + (P1.z - P0.z)*proportion);
-			double val = coefficient * P0.euclidianDistanceTo(P1);
-			double heading = Relations.towards(scope, P0, P1) ;
-			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
-			return BezierCurve(scope,P0,P01,P1,nbPoints);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
+			if (P0 == null || P1 == null) { return null; }
+			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x) * proportion, P0.y + (P1.y - P0.y) * proportion,
+					P0.z + (P1.z - P0.z) * proportion);
+			final double val = coefficient * P0.euclidianDistanceTo(P1);
+			final double heading = Relations.towards(scope, P0, P1);
+			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val,
+					P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
+			return BezierCurve(scope, P0, P01, P1, nbPoints);
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -985,14 +991,17 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final int nbPoints, final double proportion, final double angle) {
-			IShape shape = BezierCurve(scope,P0,P1,coefficient,false,nbPoints,proportion);
-			shape = Transformations.rotated_by(scope, shape, angle, new GamaPoint(P0.x - P1.x,P0.y - P1.y,P0.z - P1.z));
-			GamaPoint newPt0 = (GamaPoint) shape.getPoints().get(0);
-			shape = Transformations.translated_by(scope, shape, new GamaPoint(P0.x - newPt0.x,P0.y - newPt0.y,P0.z - newPt0.z));
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final int nbPoints, final double proportion, final double angle) {
+			IShape shape = BezierCurve(scope, P0, P1, coefficient, false, nbPoints, proportion);
+			shape = Transformations.rotated_by(scope, shape, angle,
+					new GamaPoint(P0.x - P1.x, P0.y - P1.y, P0.z - P1.z));
+			final GamaPoint newPt0 = (GamaPoint) shape.getPoints().get(0);
+			shape = Transformations.translated_by(scope, shape,
+					new GamaPoint(P0.x - newPt0.x, P0.y - newPt0.y, P0.z - newPt0.z));
 			return shape;
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -1008,10 +1017,11 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final int nbPoints, final double angle) {
-			return BezierCurve(scope,P0,P1,coefficient,nbPoints,0.5,angle);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final int nbPoints, final double angle) {
+			return BezierCurve(scope, P0, P1, coefficient, nbPoints, 0.5, angle);
 		}
-		
+
 		@operator (
 				value = { "curve" },
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
@@ -1027,11 +1037,10 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
-	public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final Double coefficient, final double angle) {
-			return BezierCurve(scope,P0,P1,coefficient,10,0.5,angle);
+		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+				final Double coefficient, final double angle) {
+			return BezierCurve(scope, P0, P1, coefficient, 10, 0.5, angle);
 		}
-		
-		
 
 		@operator (
 				value = { "curve" },
@@ -1058,7 +1067,7 @@ public abstract class Spatial {
 
 		private static List<IShape> quadraticBezierCurve(final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 				final int nbPoints) {
-			final List<IShape> points = new ArrayList<IShape>();
+			final List<IShape> points = new ArrayList<>();
 			for (int i = 0; i < nbPoints; i++) {
 				final double x = quadraticBezier(P0.x, P1.x, P2.x, (double) i / (nbPoints - 1));
 				final double y = quadraticBezier(P0.y, P1.y, P2.y, (double) i / (nbPoints - 1));
@@ -1070,7 +1079,7 @@ public abstract class Spatial {
 
 		private static List<IShape> cubicBezierCurve(final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 				final GamaPoint P3, final int nbPoints) {
-			final List<IShape> points = new ArrayList<IShape>();
+			final List<IShape> points = new ArrayList<>();
 			for (int i = 0; i < nbPoints; i++) {
 				final double x = cubicBezier(P0.x, P1.x, P2.x, P3.x, (double) i / (nbPoints - 1));
 				final double y = cubicBezier(P0.y, P1.y, P2.y, P3.y, (double) i / (nbPoints - 1));
@@ -1473,7 +1482,8 @@ public abstract class Spatial {
 								return EnhancedPrecisionOp.difference(g1, g2);
 							} catch (final RuntimeException e4) {
 								try {
-									return g1.difference(g2.buffer(Math.min(0.01, g2.getArea()/ 1000), 10, BufferParameters.CAP_FLAT));
+									return g1.difference(g2.buffer(Math.min(0.01, g2.getArea() / 1000), 10,
+											BufferParameters.CAP_FLAT));
 								} catch (final RuntimeException last) {
 									return null; // return g1; ??
 								}
@@ -1600,8 +1610,7 @@ public abstract class Spatial {
 					}
 				}
 			}
-			if (simpleMinGeom != null)
-				return simpleMinGeom;
+			if (simpleMinGeom != null) { return simpleMinGeom; }
 			return complexMinGeom;
 		}
 
@@ -1632,31 +1641,20 @@ public abstract class Spatial {
 					}
 				}
 			}
-			if (simpleMinGeom != null)
-				return simpleMinGeom;
+			if (simpleMinGeom != null) { return simpleMinGeom; }
 			return complexMinGeom;
 		}
 
-		/*private static int indexClosestSegment(final Geometry geom, final Coordinate coord) {
-			int index = -1;
-			final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(coord);
-			double distMin = Double.MAX_VALUE;
-			for (int i = 0; i < geom.getCoordinates().length - 1; i++) {
-				final Coordinate cc = geom.getCoordinates()[i];
-				if (cc.equals(coord)) { return -1; }
-				final Coordinate[] coordinates = new Coordinate[2];
-				coordinates[0] = cc;
-				coordinates[1] = geom.getCoordinates()[i + 1];
-				final Geometry geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createLineString(coordinates);
-				final double dist = geom_Tmp.distance(pt);
-				if (dist < distMin) {
-					distMin = dist;
-					index = i;
-				}
-			}
-			if (geom.getCoordinates()[geom.getCoordinates().length - 1].equals(coord)) { return -1; }
-			return index;
-		}*/
+		/*
+		 * private static int indexClosestSegment(final Geometry geom, final Coordinate coord) { int index = -1; final
+		 * Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(coord); double distMin = Double.MAX_VALUE; for (int i =
+		 * 0; i < geom.getCoordinates().length - 1; i++) { final Coordinate cc = geom.getCoordinates()[i]; if
+		 * (cc.equals(coord)) { return -1; } final Coordinate[] coordinates = new Coordinate[2]; coordinates[0] = cc;
+		 * coordinates[1] = geom.getCoordinates()[i + 1]; final Geometry geom_Tmp =
+		 * GeometryUtils.GEOMETRY_FACTORY.createLineString(coordinates); final double dist = geom_Tmp.distance(pt); if
+		 * (dist < distMin) { distMin = dist; index = i; } } if (geom.getCoordinates()[geom.getCoordinates().length -
+		 * 1].equals(coord)) { return -1; } return index; }
+		 */
 
 		@operator (
 				value = "masked_by",
@@ -1671,7 +1669,7 @@ public abstract class Spatial {
 				Integer precision) {
 			final IAgent a = scope.getAgent();
 			final List<IShape> obst =
-					obstacles == null ? new ArrayList<IShape>() : obstacles.listValue(scope, Types.GEOMETRY, false);
+					obstacles == null ? new ArrayList<>() : obstacles.listValue(scope, Types.GEOMETRY, false);
 			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (precision == null) {
 				precision = 120;
@@ -1689,7 +1687,7 @@ public abstract class Spatial {
 					}
 				}
 				final Geometry gbuff = pt.buffer(percep_dist, precision / 4);
-				final List<IShape> geoms = new ArrayList<IShape>();
+				final List<IShape> geoms = new ArrayList<>();
 				for (int k = 1; k < gbuff.getNumPoints(); k++) {
 					final IList coordinates = GamaListFactory.create(Types.POINT, 4);
 					coordinates.add(location);
@@ -1744,8 +1742,7 @@ public abstract class Spatial {
 
 				if (g != null && geom.intersects(g)) {
 					gR = Spatial.Operators.minus(scope, gR, g);
-					if (gR == null)
-						return null;
+					if (gR == null) { return null; }
 					if (gR.getGeometries().size() > 1) {
 						for (final IShape sh : gR.getGeometries()) {
 							if (!ref.disjoint(sh.getInnerGeometry())) {
@@ -1818,7 +1815,7 @@ public abstract class Spatial {
 					coords2[k] = coords[i];
 					k++;
 				}
-				final List<Geometry> geoms1 = new ArrayList<Geometry>();
+				final List<Geometry> geoms1 = new ArrayList<>();
 				geoms1.add(GeometryUtils.GEOMETRY_FACTORY.createLineString(coords1));
 				geoms1.add(GeometryUtils.GEOMETRY_FACTORY.createLineString(coords2));
 				geoms = geoms1;
@@ -1866,7 +1863,7 @@ public abstract class Spatial {
 					coords2[k] = coords[i];
 					k++;
 				}
-				final List<Geometry> geoms1 = new ArrayList<Geometry>();
+				final List<Geometry> geoms1 = new ArrayList<>();
 				geoms1.add(GeometryUtils.GEOMETRY_FACTORY.createLineString(coords1));
 				geoms1.add(GeometryUtils.GEOMETRY_FACTORY.createLineString(coords2));
 				geoms = geoms1;
@@ -1877,13 +1874,13 @@ public abstract class Spatial {
 				}
 			}
 			if (geom.getAttributes() != null) {
-				for (IShape li : lines) {
-					for (String at : geom.getAttributes().keySet()) 
+				for (final IShape li : lines) {
+					for (final String at : geom.getAttributes().keySet()) {
 						li.setAttribute(at, geom.getAttribute(at));
+					}
 				}
 			}
-				
-			
+
 			return lines;
 		}
 	}
@@ -1916,9 +1913,17 @@ public abstract class Spatial {
 								// equals = "a geometry corresponding to the geometry of
 								// the agent applying the operator scaled by a
 								// coefficient of 2",
-								@example ( value = "circle(10) * 2", equals = "circle(20)", test = false),
-								@example ( value = "(circle(10) * 2).location with_precision 9", equals = "(circle(20)).location with_precision 9"),
-								@example ( value = "(circle(10) * 2).height with_precision 9", equals = "(circle(20)).height with_precision 9", returnType="float")}) })
+								@example (
+										value = "circle(10) * 2",
+										equals = "circle(20)",
+										test = false),
+								@example (
+										value = "(circle(10) * 2).location with_precision 9",
+										equals = "(circle(20)).location with_precision 9"),
+								@example (
+										value = "(circle(10) * 2).height with_precision 9",
+										equals = "(circle(20)).height with_precision 9",
+										returnType = "float") }) })
 		public static IShape scaled_by(final IScope scope, final IShape g, final Double coefficient) {
 			return new GamaShape(g, null, null, null, coefficient);
 			// return g1.scaledBy(scope, coefficient);
@@ -1999,8 +2004,10 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operands a float and an integer, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand",
 						examples = { @example (
-								value = "circle(5) + (5,32)", equals = "circle(10)", test=false) }) })
-		@test("(circle(5) + (5,32)).height with_precision 5 = 20.0")
+								value = "circle(5) + (5,32)",
+								equals = "circle(10)",
+								test = false) }) })
+		@test ("(circle(5) + (5,32)).height with_precision 5 = 20.0")
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
 				final Integer numberOfSegments) {
 			if (g == null) { return null; }
@@ -2017,8 +2024,10 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operands a float, an integer and one of #round, #square or #flat, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand and a flat, square or round end cap style",
 						examples = { @example (
-								value = "circle(5) + (5,32,#round)", equals = "circle(10)", test = false) }) })
-		@test("(circle(5) + (5,32,#round)).height with_precision 5 = 20.0")	
+								value = "circle(5) + (5,32,#round)",
+								equals = "circle(10)",
+								test = false) }) })
+		@test ("(circle(5) + (5,32,#round)).height with_precision 5 = 20.0")
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
 				final Integer numberOfSegments, final Integer endCap) {
 			if (g == null) { return null; }
@@ -2035,9 +2044,11 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance. The number of segments used by default is 8 and the end cap style is #round",
 						examples = { @example (
-								value = "circle(5) + 5", equals = "circle(10)", test = false) }) })
-		@test("(circle(5) + 5).height with_precision 1 = 20.0")
-		@test("(circle(5) + 5).location with_precision 9 = (circle(10)).location with_precision 9")		
+								value = "circle(5) + 5",
+								equals = "circle(10)",
+								test = false) }) })
+		@test ("(circle(5) + 5).height with_precision 1 = 20.0")
+		@test ("(circle(5) + 5).location with_precision 9 = (circle(10)).location with_precision 9")
 		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			final Geometry gg = g.getInnerGeometry().buffer(size);
@@ -2235,15 +2246,17 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
-		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance, final Double triangulationTolerance) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance, false );
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
+				final Double triangulationTolerance) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
+					triangulationTolerance, clippingTolerance, false);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
 			}
 			return geoms;
 		}
-		
+
 		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
@@ -2255,15 +2268,17 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
-		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance, final Double triangulationTolerance, final boolean approxiClipping) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), triangulationTolerance,clippingTolerance, approxiClipping );
+		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
+				final Double triangulationTolerance, final boolean approxiClipping) {
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
+					triangulationTolerance, clippingTolerance, approxiClipping);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
 			}
 			return geoms;
 		}
-		
+
 		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
@@ -2276,14 +2291,15 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,clippingTolerance, false );
+			final List<LineString> netw =
+					GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0, clippingTolerance, false);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
 			}
 			return geoms;
 		}
-		
+
 		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
@@ -2296,14 +2312,14 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
-			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0,0.0, false );
+			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final LineString ls : netw) {
 				geoms.add(new GamaShape(ls));
 			}
 			return geoms;
 		}
-		
+
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
@@ -2321,7 +2337,6 @@ public abstract class Spatial {
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
 		}
 
-		
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
@@ -2338,7 +2353,7 @@ public abstract class Spatial {
 			if (g == null) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance, false);
 		}
-		
+
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
@@ -2354,10 +2369,8 @@ public abstract class Spatial {
 		public static IList<IShape> triangulate(final IScope scope, final IList<IShape> gs) {
 			if (gs == null || gs.isEmpty()) { return null; }
 			return GeometryUtils.triangulation(scope, gs);
-		} 
+		}
 
-
-		
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
@@ -2370,11 +2383,13 @@ public abstract class Spatial {
 						value = "triangulate(self,0.1, 1.0)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
-		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance, final Double triangulationTolerance) {
+		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance,
+				final Double triangulationTolerance) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance, false);
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance,
+					false);
 		}
-		
+
 		@operator (
 				value = { "triangulate", "to_triangles" },
 				content_type = IType.GEOMETRY,
@@ -2387,12 +2402,13 @@ public abstract class Spatial {
 						value = "triangulate(self,0.1, 1.0)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
-		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance, final Double triangulationTolerance, final boolean approxClip) {
+		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance,
+				final Double triangulationTolerance, final boolean approxClip) {
 			if (g == null) { return null; }
-			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance, approxClip);
+			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), triangulationTolerance, clipTolerance,
+					approxClip);
 		}
 
-		
 		@operator (
 				value = "voronoi",
 				content_type = IType.GEOMETRY,
@@ -2653,7 +2669,7 @@ public abstract class Spatial {
 			// cols, rows
 			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false, "");
 		}
-		
+
 		@operator (
 				value = "to_sub_geometries",
 				content_type = IType.GEOMETRY,
@@ -2665,13 +2681,13 @@ public abstract class Spatial {
 						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4])",
 						equals = "a list of three geometries corresponding to 3 sub-geometries",
 						test = false) })
-		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates ) {
+		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, final IList<Double> rates) {
 			if (geom == null) { return GamaListFactory.create(Types.GEOMETRY); }
-			
-			double dimension = geom.getArea() / 2000.0;
-			return splitGeometries(scope,geom,rates,dimension);
+
+			final double dimension = geom.getArea() / 2000.0;
+			return splitGeometries(scope, geom, rates, dimension);
 		}
-		
+
 		@operator (
 				value = "to_sub_geometries",
 				content_type = IType.GEOMETRY,
@@ -2683,61 +2699,52 @@ public abstract class Spatial {
 						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4], 1.0)",
 						equals = "a list of three geometries corresponding to 3 sub-geometries using cubes of 1m size",
 						test = false) })
-		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, IList<Double> rates, Double dimension )
-				throws GamaRuntimeException {
+		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, final IList<Double> rates,
+				final Double dimension) throws GamaRuntimeException {
 			if (geom == null || rates == null || rates.isEmpty()) { return GamaListFactory.create(Types.GEOMETRY); }
 			final IList<IShape> nwGeoms = GamaListFactory.create(Types.GEOMETRY);
-			if (geom.isPoint()) {nwGeoms.add(geom.copy(scope)); }
-			else if (geom.isLine()) {
-				IList<Double> translatedRates = GamaListFactory.create(Types.FLOAT);
-				Double sum = (Double) Containers.sum(scope, rates);
+			if (geom.isPoint()) {
+				nwGeoms.add(geom.copy(scope));
+			} else if (geom.isLine()) {
+				final IList<Double> translatedRates = GamaListFactory.create(Types.FLOAT);
+				final Double sum = (Double) Containers.sum(scope, rates);
 				double accu = 0;
 				for (int i = 0; i < rates.size() - 1; i++) {
 					accu += rates.get(i);
-					translatedRates.add(accu/sum);
+					translatedRates.add(accu / sum);
 				}
-				IList<GamaPoint> pts = Punctal.points_along(geom, translatedRates);
+				final IList<GamaPoint> pts = Punctal.points_along(geom, translatedRates);
 				IShape g = geom.copy(scope);
-				for (GamaPoint pt: pts) {
-					IList<IShape> shapes = Operators.split_at(g, pt);
+				for (final GamaPoint pt : pts) {
+					final IList<IShape> shapes = Operators.split_at(g, pt);
 					nwGeoms.add(shapes.get(0));
 					g = shapes.get(1);
 				}
 				nwGeoms.add(g);
-			}
-			else if (geom.getArea() > 0){
+			} else if (geom.getArea() > 0) {
 				Comparator<IShape> comp;
 				if (geom.getWidth() > geom.getHeight()) {
-					 comp = new Comparator<IShape>() {
-							@Override
-							public int compare(IShape o1, IShape o2) {
-								return Double.compare(o1.getLocation().getX(), o2.getLocation().getX());
-							}
-					 };
+					comp = (o1, o2) -> Double.compare(o1.getLocation().getX(), o2.getLocation().getX());
 				} else {
-					comp = new Comparator<IShape>() {
-						@Override
-						public int compare(IShape o1, IShape o2) {
-							return Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
-						}
-				 };
+					comp = (o1, o2) -> Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
 				}
-				List<IShape> listSq = toSquares(scope, geom, dimension).stream().sorted(comp).collect(Collectors.toList());
-				Double sum = (Double) Containers.sum(scope, rates);
-				int totalNumber = listSq.size();
-				for (Double rate : rates ) {
-					int number = Math.min((int) (rate / sum * totalNumber + 0.5), listSq.size());
-					IList<IShape> squares = GamaListFactory.create(Types.GEOMETRY);
+				final List<IShape> listSq =
+						toSquares(scope, geom, dimension).stream().sorted(comp).collect(Collectors.toList());
+				final Double sum = (Double) Containers.sum(scope, rates);
+				final int totalNumber = listSq.size();
+				for (final Double rate : rates) {
+					final int number = Math.min((int) (rate / sum * totalNumber + 0.5), listSq.size());
+					final IList<IShape> squares = GamaListFactory.create(Types.GEOMETRY);
 					for (int i = 0; i < number; i++) {
 						squares.add(listSq.remove(0));
 					}
 					if (squares.size() > 0) {
-						IShape unionG = Transformations.clean(scope, Operators.union(scope, squares));
+						final IShape unionG = Transformations.clean(scope, Operators.union(scope, squares));
 						nwGeoms.add(unionG);
-						
+
 					}
 				}
-				
+
 			}
 			return nwGeoms;
 		}
@@ -2789,7 +2796,9 @@ public abstract class Spatial {
 					final Optional<IShape> opt = geoms.stream(scope)
 							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry()));
 					final IShape matchingGeom = opt.isPresent() ? opt.get() : null;
-					if (matchingGeom == null ||matchingGeom.getAttributes() == null ) continue;
+					if (matchingGeom == null || matchingGeom.getAttributes() == null) {
+						continue;
+					}
 					for (final String att : matchingGeom.getAttributes().keySet()) {
 						line.setAttribute(att, matchingGeom.getAttribute(att));
 					}
@@ -2798,8 +2807,6 @@ public abstract class Spatial {
 
 			return split_lines;
 		}
-
-		
 
 		@operator (
 				value = "clean",
@@ -2829,9 +2836,10 @@ public abstract class Spatial {
 			}
 			return g.copy(scope);
 		}
-		
+
 		@operator (
 				value = "clean_network",
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
@@ -2844,26 +2852,27 @@ public abstract class Spatial {
 						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
 						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
 						isExecutable = false) })
-		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, double tolerance, boolean splitlines, boolean keepMainGraph) {
+		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
+				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
-			IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
-			geoms.removeIf(a -> ! a.getGeometry().isLine());
-			if (geoms.isEmpty()) return GamaListFactory.create();
+			final IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
+			geoms.removeIf(a -> !a.getGeometry().isLine());
+			if (geoms.isEmpty()) { return GamaListFactory.create(); }
 			IList<IShape> results = GamaListFactory.create();
-			
+
 			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
 			boolean modif = true;
 			while (modif) {
-				for (IShape geom : geomsTmp) {
-					GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
-					modif = connectLine(scope,ptF,geom,true,geoms,results,tolerance);
+				for (final IShape geom : geomsTmp) {
+					final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+					modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
 					if (modif) {
 						geomsTmp = GamaListFactory.create();
 						geomsTmp.addAll(geoms);
 						break;
 					}
-					GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
-					modif = connectLine(scope,ptL,geom,false,geoms,results,tolerance);
+					final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+					modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
 					if (modif) {
 						geomsTmp = GamaListFactory.create();
 						geomsTmp.addAll(geoms);
@@ -2873,41 +2882,41 @@ public abstract class Spatial {
 					geoms.remove(geom);
 				}
 			}
-			results.removeIf(a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
+			results.removeIf(
+					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
 			if (splitlines) {
-				results =Transformations.split_lines(scope, results, true);
+				results = Transformations.split_lines(scope, results, true);
 			}
 			if (keepMainGraph) {
-				IGraph graph = Graphs.spatialFromEdges(scope,results);
+				IGraph graph = Graphs.spatialFromEdges(scope, results);
 				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);
 				return graph.getEdges();
 			}
 			return results;
 		}
-		
-		
-		
-		private static boolean connectLine(IScope scope, GamaPoint pt, IShape shape, boolean first,IList<IShape> geoms,IList<IShape> results, double tolerance) {
-			IList<IShape> tot = (IList<IShape>) geoms.copy(scope);
+
+		private static boolean connectLine(final IScope scope, final GamaPoint pt, final IShape shape,
+				final boolean first, final IList<IShape> geoms, final IList<IShape> results, final double tolerance) {
+			final IList<IShape> tot = (IList<IShape>) geoms.copy(scope);
 			tot.addAll(results);
 			tot.remove(shape);
-			IShape closest = Queries.closest_to(scope, tot, pt);
-			if (closest.intersects(shape)) return false;
+			final IShape closest = Queries.closest_to(scope, tot, pt);
+			if (closest.intersects(shape)) { return false; }
 			if (closest.euclidianDistanceTo(pt) <= tolerance) {
-				GamaPoint fp = (GamaPoint) closest.getPoints().firstValue(scope);
-				if (pt.equals3D(fp)) return false;
-				GamaPoint lp = (GamaPoint) closest.getPoints().lastValue(scope);
-				if (pt.equals3D(lp)) return false;
-				if ((pt.euclidianDistanceTo(fp)) <= tolerance) {
-					modifyPoint(scope,shape,fp,first);
+				final GamaPoint fp = (GamaPoint) closest.getPoints().firstValue(scope);
+				if (pt.equals3D(fp)) { return false; }
+				final GamaPoint lp = (GamaPoint) closest.getPoints().lastValue(scope);
+				if (pt.equals3D(lp)) { return false; }
+				if (pt.euclidianDistanceTo(fp) <= tolerance) {
+					modifyPoint(scope, shape, fp, first);
 					return false;
-				} else if ((pt.euclidianDistanceTo(lp)) <= tolerance) {
-					modifyPoint(scope,shape,lp,first);
+				} else if (pt.euclidianDistanceTo(lp) <= tolerance) {
+					modifyPoint(scope, shape, lp, first);
 					return false;
 				} else {
-					GamaPoint ptS = Punctal.closest_points_with(pt, closest).get(1);
-					modifyPoint(scope,shape,ptS,first);
-					IList<IShape> spliL = Operators.split_at(closest, ptS);
+					final GamaPoint ptS = Punctal.closest_points_with(pt, closest).get(1);
+					modifyPoint(scope, shape, ptS, first);
+					final IList<IShape> spliL = Operators.split_at(closest, ptS);
 					if (results.contains(closest)) {
 						results.remove(closest);
 						results.addAll(spliL);
@@ -2920,13 +2929,18 @@ public abstract class Spatial {
 			}
 			return false;
 		}
-		
-		/*if (first) {g <- line([pt] + (g.points - first(g.points)));}
-		else {g <- line((g.points - last(g.points)) + [pt]);}
-		return g;*/
-		private static void modifyPoint(IScope scope, IShape shape, GamaPoint pt, boolean first) {
-			if (first) shape.getInnerGeometry().getCoordinates()[0] = pt;
-			else  shape.getInnerGeometry().getCoordinates()[shape.getInnerGeometry().getCoordinates().length-1] = pt;
+
+		/*
+		 * if (first) {g <- line([pt] + (g.points - first(g.points)));} else {g <- line((g.points - last(g.points)) +
+		 * [pt]);} return g;
+		 */
+		private static void modifyPoint(final IScope scope, final IShape shape, final GamaPoint pt,
+				final boolean first) {
+			if (first) {
+				shape.getInnerGeometry().getCoordinates()[0] = pt;
+			} else {
+				shape.getInnerGeometry().getCoordinates()[shape.getInnerGeometry().getCoordinates().length - 1] = pt;
+			}
 			shape.getInnerGeometry().geometryChanged();
 		}
 
@@ -3042,7 +3056,7 @@ public abstract class Spatial {
 		@operator (
 				value = "path_between",
 				type = IType.PATH,
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
 				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION,
 						IConcept.TOPOLOGY })
@@ -3062,7 +3076,7 @@ public abstract class Spatial {
 		@operator (
 				value = "path_between",
 				type = IType.PATH,
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH },
 				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION,
 						IConcept.TOPOLOGY })
@@ -3088,8 +3102,9 @@ public abstract class Spatial {
 				if (previous != null) {
 					// TODO Take the case of ILocation
 					final GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
-					if (path != null && path.getEdgeList() != null)
+					if (path != null && path.getEdgeList() != null) {
 						edges.addAll(path.getEdgeList());
+					}
 				}
 				previous = gg;
 			}
@@ -3237,8 +3252,6 @@ public abstract class Spatial {
 			}
 		}
 
-		
-		
 		@operator (
 				value = "path_between",
 
@@ -3604,8 +3617,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
 		public static ILocation centroidArea(final IScope scope, final IShape g) {
-			if (g == null || g.getInnerGeometry() == null)
-				return null;
+			if (g == null || g.getInnerGeometry() == null) { return null; }
 			final Centroid cent = new Centroid(g.getInnerGeometry());
 			return new GamaPoint(cent.getCentroid());
 		}
@@ -3858,7 +3870,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = "neighbors_at",
-				content_type = ITypeProvider.FIRST_TYPE,
+				content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION, IConcept.NEIGHBORS })
@@ -3879,7 +3891,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = "at_distance",
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION })
@@ -3901,8 +3913,9 @@ public abstract class Spatial {
 							final IList<IAgent> results = GamaListFactory.create();
 							final IAgent ag = scope.getAgent();
 							for (final IShape sp : list.iterable(scope)) {
-								if (ag.euclidianDistanceTo(sp) <= distance)
+								if (ag.euclidianDistanceTo(sp) <= distance) {
 									results.add((IAgent) sp);
+								}
 							}
 							results.remove(ag);
 							return results;
@@ -3937,7 +3950,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "inside" },
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION })
@@ -3964,7 +3977,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "overlapping" },
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION })
@@ -4011,7 +4024,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "closest_to" },
-				type = ITypeProvider.FIRST_CONTENT_TYPE,
+				type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION })
@@ -4029,8 +4042,7 @@ public abstract class Spatial {
 						"agent_closest_to" })
 		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
-			if (list == null)
-				return null;
+			if (list == null) { return null; }
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return _closest(scope, In.list(scope, list), source);
@@ -4041,7 +4053,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "farthest_to" },
-				type = ITypeProvider.FIRST_CONTENT_TYPE,
+				type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
 						IConcept.AGENT_LOCATION })
@@ -4231,7 +4243,7 @@ public abstract class Spatial {
 
 		@operator (
 				value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" },
-				content_type = ITypeProvider.FIRST_TYPE,
+				content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL,
 						IOperatorCategory.STATISTICAL },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION,
@@ -4249,7 +4261,7 @@ public abstract class Spatial {
 					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) { return groups; }
-			final Set<IAgent> clusteredCells = new THashSet<IAgent>();
+			final Set<IAgent> clusteredCells = new THashSet<>();
 			for (final IAgent ag : agents.iterable(scope)) {
 				if (!clusteredCells.contains(ag)) {
 					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
@@ -4262,7 +4274,7 @@ public abstract class Spatial {
 				final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
 			final IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			final List<IAgent> ags =
-					new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, currentAg, distance, filter));
+					new ArrayList<>(scope.getTopology().getNeighborsOf(scope, currentAg, distance, filter));
 			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for (final IAgent ag : ags) {
@@ -4300,7 +4312,7 @@ public abstract class Spatial {
 
 			Set<IList> minFusion = null;
 
-			final Map<Set<IList>, Double> distances = new HashMap<Set<IList>, Double>();
+			final Map<Set<IList>, Double> distances = new HashMap<>();
 			for (final IAgent ag : agents.iterable(scope)) {
 				final IList group = GamaListFactory.create(Types.AGENT);
 				group.add(ag);
@@ -4313,7 +4325,7 @@ public abstract class Spatial {
 				final IList g1 = groups.get(i);
 				for (int j = i + 1; j < nb; j++) {
 					final IList g2 = groups.get(j);
-					final Set<IList> distGp = new THashSet<IList>();
+					final Set<IList> distGp = new THashSet<>();
 					distGp.add(g1);
 					distGp.add(g2);
 					final IAgent a = (IAgent) g1.get(0);
@@ -4329,7 +4341,7 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				
+
 				IList<IList> fusionL = GamaListFactory.create();
 				fusionL.addAll(minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
@@ -4343,7 +4355,7 @@ public abstract class Spatial {
 				groupeF.add(g1);
 
 				for (final IList groupe : groups) {
-					final Set<IList> newDistGp = new THashSet<IList>();
+					final Set<IList> newDistGp = new THashSet<>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;
@@ -4438,9 +4450,8 @@ public abstract class Spatial {
 								isExecutable = false) }) })
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
 			final GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
-			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows)
-				throw GamaRuntimeException
-						.error("A squared weight matrix should be given for the moran index computation", scope);
+			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows) { throw GamaRuntimeException
+					.error("A squared weight matrix should be given for the moran index computation", scope); }
 			final int N = vals.size();
 			Double I = 0.0;
 			Double sumWeights = 0.0;
@@ -4610,8 +4621,7 @@ public abstract class Spatial {
 							.error("The 'dem' operator requires image files. Either " + demFile.getPath(scope) + " or "
 									+ textureFile.getPath(scope) + " is not an image", scope); }
 			final IGraphics graphics = scope.getGraphics();
-			if (graphics == null || graphics.cannotDraw())
-				return null;
+			if (graphics == null || graphics.cannotDraw()) { return null; }
 			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null, false);
 			attributes.setHeight(z_factor);
 

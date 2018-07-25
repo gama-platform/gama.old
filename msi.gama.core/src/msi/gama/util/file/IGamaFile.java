@@ -68,8 +68,8 @@ import msi.gaml.types.IType;
 		@variable (
 				name = IKeyword.CONTENTS,
 				type = ITypeProvider.WRAPPED,
-				of = ITypeProvider.FIRST_CONTENT_TYPE,
-				index = ITypeProvider.FIRST_KEY_TYPE,
+				of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				index = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the contents of the receiver file in the form of a container") }) })
 @SuppressWarnings ({ "rawtypes" })
 public interface IGamaFile<C extends IModifiableContainer, Contents>

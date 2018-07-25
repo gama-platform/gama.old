@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DrivingOperators {
 
-	@operator(value = "as_driving_graph", content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.FIRST_CONTENT_TYPE, concept = {
+	@operator(value = "as_driving_graph", content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2, index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, concept = {
 			IConcept.GRAPH, IConcept.TRANSPORT })
 	@doc(value = "creates a graph from the list/map of edges given as operand and connect the node to the edge", examples = {
 			@example(value = "as_driving_graph(road,node)  --:  build a graph while using the road agents as edges and the node agents as nodes", isExecutable = false) }, see = {

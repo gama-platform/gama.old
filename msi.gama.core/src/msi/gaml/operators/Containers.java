@@ -206,7 +206,7 @@ public class Containers {
 
 		@operator (
 				value = "every",
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.CONTAINER },
 				can_be_const = true)
 		@doc (
@@ -221,7 +221,7 @@ public class Containers {
 		@operator (
 				value = { "copy_between" /* , "copy" */ },
 				can_be_const = true,
-				content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.LIST },
 				concept = { IConcept.CONTAINER, IConcept.LIST })
 		@doc (
@@ -274,7 +274,7 @@ public class Containers {
 
 	@operator (
 			value = { "grid_at" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.POINT, IOperatorCategory.GRID },
 			concept = { IConcept.GRID, IConcept.POINT })
 	@doc (
@@ -299,8 +299,8 @@ public class Containers {
 	@operator (
 			value = { "distinct", "remove_duplicates" },
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -378,7 +378,7 @@ public class Containers {
 	@operator (
 			value = { "first", "first_of" },
 			can_be_const = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -390,7 +390,7 @@ public class Containers {
 	@operator (
 			value = { "last", "last_of" },
 			can_be_const = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -562,7 +562,7 @@ public class Containers {
 	@operator (
 			value = "last_index_of",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_KEY_TYPE,
+			type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MAP },
 			concept = { IConcept.MAP })
 	@doc (
@@ -582,7 +582,7 @@ public class Containers {
 	@operator (
 			value = "inter",
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -617,7 +617,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -638,8 +638,8 @@ public class Containers {
 											equals = "[1,2,3,4,5,6]") }) },
 			see = { "" + IKeyword.PLUS })
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
-		final IList result =
-				(IList) notNull(scope, source).listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
+		final IList result = (IList) notNull(scope, source)
+				.listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
 		result.removeAll(notNull(scope, l).listValue(scope, Types.NO_TYPE, false));
 		return result;
 	}
@@ -647,7 +647,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -672,7 +672,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = {})
 	@doc (
@@ -691,7 +691,7 @@ public class Containers {
 
 	@operator (
 			value = "of_generic_species",
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = IOperatorCategory.SPECIES,
 			concept = { IConcept.SPECIES })
 	@doc (
@@ -724,7 +724,7 @@ public class Containers {
 
 	@operator (
 			value = "of_species",
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = IOperatorCategory.SPECIES,
 			concept = { IConcept.SPECIES })
 	@doc (
@@ -758,8 +758,8 @@ public class Containers {
 			value = { "::" },
 			can_be_const = true,
 			type = IType.PAIR,
-			index_type = ITypeProvider.FIRST_TYPE,
-			content_type = ITypeProvider.SECOND_TYPE,
+			index_type = ITypeProvider.TYPE_AT_INDEX + 1,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "produces a new pair combining the left and the right operands",
@@ -806,7 +806,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = {})
 	@doc (
@@ -856,9 +856,9 @@ public class Containers {
 	@operator (
 			value = { "group_by" },
 			iterator = true,
-			index_type = ITypeProvider.SECOND_TYPE,
+			index_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			content_type = IType.LIST,
-			content_type_content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type_content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
@@ -890,7 +890,7 @@ public class Containers {
 
 	@operator (
 			value = { "last_with" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			expected_content_type = IType.BOOL,
 			category = IOperatorCategory.CONTAINER,
@@ -928,7 +928,7 @@ public class Containers {
 
 	@operator (
 			value = { "first_with" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			expected_content_type = IType.BOOL,
 			category = IOperatorCategory.CONTAINER,
@@ -967,7 +967,7 @@ public class Containers {
 
 	@operator (
 			value = { "max_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1002,7 +1002,7 @@ public class Containers {
 	@operator (
 			value = "sum",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR, IType.STRING },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 			concept = { IConcept.STATISTIC, IConcept.COLOR })
@@ -1054,7 +1054,7 @@ public class Containers {
 
 	@operator (
 			value = { "sum_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			expected_content_type = { IType.FLOAT, IType.POINT, IType.COLOR, IType.INT, IType.STRING },
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
@@ -1099,7 +1099,7 @@ public class Containers {
 
 	@operator (
 			value = { "product_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1122,7 +1122,7 @@ public class Containers {
 	@operator (
 			value = "mean",
 			can_be_const = true,
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 			concept = { IConcept.STATISTIC, IConcept.COLOR })
@@ -1150,7 +1150,7 @@ public class Containers {
 
 	@operator (
 			value = { "mean_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1172,7 +1172,7 @@ public class Containers {
 
 	@operator (
 			value = { "variance_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1186,7 +1186,7 @@ public class Containers {
 
 	@operator (
 			value = { "min_of" },
-			type = ITypeProvider.SECOND_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1219,7 +1219,7 @@ public class Containers {
 
 	@operator (
 			value = "among",
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc (
@@ -1272,7 +1272,7 @@ public class Containers {
 
 	@operator (
 			value = { "sort_by", "sort" },
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
@@ -1304,7 +1304,7 @@ public class Containers {
 
 	@operator (
 			value = { "where", "select" },
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			expected_content_type = IType.BOOL,
 			category = IOperatorCategory.CONTAINER,
@@ -1340,7 +1340,7 @@ public class Containers {
 
 	@operator (
 			value = { "with_max_of" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1373,7 +1373,7 @@ public class Containers {
 
 	@operator (
 			value = { "with_min_of" },
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
@@ -1441,7 +1441,7 @@ public class Containers {
 
 	@operator (
 			value = { "collect" },
-			content_type = ITypeProvider.SECOND_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
@@ -1529,8 +1529,8 @@ public class Containers {
 	@operator (
 			value = { "index_by" },
 			iterator = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.SECOND_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
@@ -1552,8 +1552,8 @@ public class Containers {
 	@operator (
 			value = { "as_map" },
 			iterator = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = ITypeProvider.SECOND_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 2,
 			expected_content_type = IType.PAIR,
 			category = IOperatorCategory.MAP,
 			concept = { IConcept.CONTAINER, IConcept.MAP })
@@ -1585,8 +1585,8 @@ public class Containers {
 	@operator (
 			value = { "create_map" },
 			iterator = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.MAP,
 			expected_content_type = ITypeProvider.BOTH,
 			concept = { IConcept.CONTAINER, IConcept.MAP })
@@ -1644,7 +1644,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			content_type = ITypeProvider.BOTH,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
@@ -1689,7 +1689,7 @@ public class Containers {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			content_type = ITypeProvider.BOTH,
 			category = IOperatorCategory.CONTAINER,
 			concept = {})

@@ -158,9 +158,9 @@ public class System {
 
 	@operator (
 			value = { IKeyword._DOT, IKeyword.OF },
-			type = ITypeProvider.SECOND_TYPE,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = ITypeProvider.SECOND_KEY_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.ATTRIBUTE })
 	@doc (
@@ -196,8 +196,8 @@ public class System {
 
 	@operator (
 			value = "copy",
-			type = ITypeProvider.FIRST_TYPE,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM })
 	@doc (

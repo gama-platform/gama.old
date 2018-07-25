@@ -103,7 +103,7 @@ public interface IMatrix<T>
 
 	@operator (
 			value = "row_at",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			can_be_const = true,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
@@ -117,7 +117,7 @@ public interface IMatrix<T>
 
 	@operator (
 			value = "column_at",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			can_be_const = true,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
@@ -132,7 +132,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Returns a matrix containing the addition of  the elements of two matrices in argument "))
@@ -141,7 +141,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiplies the two matrices operands"))
@@ -159,7 +159,7 @@ public interface IMatrix<T>
 	@operator (
 			value = ".",
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -173,7 +173,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a subtraction between the two matrix operands"))
@@ -182,7 +182,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a multiplication between the matrix operand and the float operand"))
@@ -191,7 +191,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Performs a multiplication between the two matrix operands"))
@@ -200,7 +200,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the float operand"))
@@ -209,7 +209,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the integer operand"))
@@ -218,7 +218,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the float operand to all the elements in the matrix"))
@@ -227,7 +227,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the int operand to all the elements in the matrix"))
@@ -236,7 +236,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the float operand from all the elements in the matrix"))
@@ -245,7 +245,7 @@ public interface IMatrix<T>
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the int operand from all the elements in the matrix"))
@@ -321,7 +321,7 @@ public interface IMatrix<T>
 	@operator (
 			value = "transpose",
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -336,7 +336,7 @@ public interface IMatrix<T>
 			value = "inverse",
 			can_be_const = true,
 			content_type = IType.FLOAT,
-		//	ITypeProvider.FIRST_CONTENT_TYPE,
+		//	ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (

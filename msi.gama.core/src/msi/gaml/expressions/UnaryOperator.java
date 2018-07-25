@@ -9,12 +9,12 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE;
+import static msi.gama.precompiler.ITypeProvider.CONTENT_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE;
-import static msi.gama.precompiler.ITypeProvider.FIRST_KEY_TYPE;
-import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
+import static msi.gama.precompiler.ITypeProvider.KEY_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.NONE;
+import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -147,8 +147,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			if (t2 == Types.NO_TYPE) { return firstType; }
 			return t2;
 		}
-		return t == FIRST_TYPE ? child.getGamlType() : t == FIRST_CONTENT_TYPE ? child.getGamlType().getContentType()
-				: t == FIRST_KEY_TYPE ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
+		return t == TYPE_AT_INDEX + 1 ? child.getGamlType()
+				: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType()
+						: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
 	}
 
 	protected void computeType() {

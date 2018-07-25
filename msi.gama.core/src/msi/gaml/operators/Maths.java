@@ -817,7 +817,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
@@ -832,7 +832,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiply all the elements in the matrix operand by the first operand"))
@@ -900,7 +900,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
@@ -917,7 +917,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
@@ -991,7 +991,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
@@ -1009,7 +1009,7 @@ public class Maths {
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (

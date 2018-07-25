@@ -147,7 +147,7 @@ public class Random {
 		return RANDOM(scope).createBinomial(n, p);
 	}
 
-	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.RANDOM,
+	@operator(value = "shuffle", content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = { IOperatorCategory.RANDOM,
 			IOperatorCategory.CONTAINER }, concept = { IConcept.RANDOM })
 	@doc(value = "The elements of the operand in random order.", usages = {
 			@usage(value = "if the operand is empty, returns an empty list (or string, matrix)") }, examples = {
@@ -163,7 +163,7 @@ public class Random {
 	}
 
 	// @operator(value = "shuffle", content_type =
-	// ITypeProvider.FIRST_CONTENT_TYPE)
+	// ITypeProvider.CONTENT_TYPE_AT_INDEX + 1)
 	// @doc(examples = { "shuffle (bug) --: shuffle the list of all agents of
 	// the `bug` species" })
 	// public static IList opShuffle(final IScope scope, final ISpecies target)
@@ -172,7 +172,7 @@ public class Random {
 	// scope.getAgentScope().getPopulationFor(target).getAgentsList());
 	// }
 
-	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = { IOperatorCategory.RANDOM,
+	@operator(value = "shuffle", content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = { IOperatorCategory.RANDOM,
 			IOperatorCategory.MATRIX }, concept = {})
 	@doc(examples = {
 			@example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)", test = false) })
@@ -315,7 +315,7 @@ public class Random {
 		return -1;
 	}
 
-	@operator(value = "sample", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+	@operator(value = "sample", type = ITypeProvider.TYPE_AT_INDEX + 1, content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement", examples = {
 			@example(value = "sample([2,10,1],2,false)", equals = "[1,2]", test = false) })
@@ -337,7 +337,7 @@ public class Random {
 		return result;
 	}
 
-	@operator(value = "sample", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+	@operator(value = "sample", type = ITypeProvider.TYPE_AT_INDEX + 1, content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement with given weights", examples = {
 			@example(value = "sample([2,10,1],2,false,[0.1,0.7,0.2])", equals = "[10,2]", test = false) })

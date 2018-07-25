@@ -82,8 +82,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 		String result;
 		if (documentation == null) {
 			result = "Type " + getName() + getSupportName();
-		} else
+		} else {
 			result = documentation.value();
+		}
 		return result + getFieldDocumentation();
 	}
 
@@ -92,8 +93,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public String getFieldDocumentation() {
-		if (getters == null)
-			return "";
+		if (getters == null) { return ""; }
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append("<b><br/>Fields :</b><ul>");
 		for (final OperatorProto f : getters.values()) {

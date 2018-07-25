@@ -76,7 +76,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	public static interface Addressable<KeyType, ValueType> {
 
 		@operator(value = { IKeyword.AT,
-				"@" }, can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+				"@" }, can_be_const = true, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 						IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 		@doc(value = "the element at the right operand index of the container", masterDoc = true, comment = "The first element of the container is located at the index 0. "
 				+ "In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException."
@@ -104,7 +104,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		 * @return
 		 * @throws GamaRuntimeException
 		 */
-		@operator(value = { "internal_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+		@operator(value = { "internal_at" }, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 				IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 		@doc(value = "For internal use only. Corresponds to the implementation of the access to containers with [index]", see = {
 				IKeyword.AT })
@@ -160,7 +160,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					"contains_all", "contains_any" })
 	public boolean contains(IScope scope, Object o) throws GamaRuntimeException;
 
-	@operator(value = "first", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+	@operator(value = "first", can_be_const = true, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 	@doc(value = "the first value of the operand", masterDoc = true, comment = "the first operator behavior depends on the nature of the operand", usages = {
 			@usage(value = "if it is a list, first returns the first element of the list, or nil if the list is empty", examples = {
@@ -175,7 +175,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					"last" })
 	public ValueType firstValue(IScope scope) throws GamaRuntimeException;
 
-	@operator(value = "last", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+	@operator(value = "last", can_be_const = true, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 	@doc(value = "the last element of the operand", masterDoc = true, comment = "the last operator behavior depends on the nature of the operand", usages = {
 			@usage(value = "if it is a list, last returns the last element of the list, or nil if the list is empty", examples = {
@@ -214,7 +214,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			@usage(value = "if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise") })
 	public boolean isEmpty(IScope scope);
 
-	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.TYPE_AT_INDEX + 1, content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 	@doc(value = "the operand elements in the reversed order in a copy of the operand.", masterDoc = true, comment = "the reverse operator behavior depends on the nature of the operand", usages = {
 			@usage(value = "if it is a list, reverse returns a copy of the operand list with elements in the reversed order", examples = {
@@ -231,7 +231,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * @return one of the values stored in this container using GAMA.getRandom()
 	 */
-	@operator(value = { "one_of", "any" }, can_be_const = false, type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+	@operator(value = { "one_of", "any" }, can_be_const = false, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.CONTAINER })
 	@doc(value = "one of the values stored in this container  at a random key", masterDoc = true, comment = "the one_of operator behavior depends on the nature of the operand", usages = {
 			@usage(value = "if the operand is empty, one_of returns nil", examples = {

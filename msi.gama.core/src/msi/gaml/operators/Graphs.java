@@ -284,7 +284,7 @@ public class Graphs {
 
 	@operator (
 			value = "source_of",
-			type = ITypeProvider.FIRST_KEY_TYPE,
+			type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE, IConcept.NODE })
 	@doc (
@@ -313,7 +313,7 @@ public class Graphs {
 
 	@operator (
 			value = "target_of",
-			type = ITypeProvider.FIRST_KEY_TYPE,
+			type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE, IConcept.NODE })
 	@doc (
@@ -363,7 +363,7 @@ public class Graphs {
 	@operator (
 			value = "in_edges_of",
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc (
@@ -386,7 +386,7 @@ public class Graphs {
 
 	@operator (
 			value = "edge_between",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IConcept.EDGE })
 	@doc (
 			value = "returns the edge linking two nodes",
@@ -428,7 +428,7 @@ public class Graphs {
 	@operator (
 			value = "out_edges_of",
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
 	@doc (
@@ -855,7 +855,7 @@ public class Graphs {
 	@operator (
 			value = { "neighbors_of" },
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc (
@@ -880,7 +880,7 @@ public class Graphs {
 	@operator (
 			value = "predecessors_of",
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc (
@@ -905,7 +905,7 @@ public class Graphs {
 
 	@operator (
 			value = "successors_of",
-			content_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.NEIGHBORS })
 	@doc (
@@ -934,7 +934,7 @@ public class Graphs {
 
 	@operator (
 			value = "as_edge_graph",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			index_type = IType.GEOMETRY,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.CAST, IConcept.MAP, IConcept.LIST, IConcept.EDGE })
@@ -961,7 +961,7 @@ public class Graphs {
 
 	@operator (
 			value = "as_edge_graph",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			index_type = IType.GEOMETRY,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.CAST, IConcept.MAP, IConcept.LIST, IConcept.EDGE })
@@ -995,7 +995,7 @@ public class Graphs {
 
 	@operator (
 			value = "as_edge_graph",
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = {})
 	@doc (
@@ -1020,7 +1020,7 @@ public class Graphs {
 	@operator (
 			value = "as_intersection_graph",
 			content_type = IType.GEOMETRY,
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.CAST })
 	@doc (
@@ -1047,7 +1047,7 @@ public class Graphs {
 	@operator (
 			value = "as_distance_graph",
 			content_type = IType.GEOMETRY,
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE, IConcept.CAST })
 	@doc (
@@ -1070,7 +1070,7 @@ public class Graphs {
 	@operator (
 			value = "grid_cells_to_graph",
 			content_type = IType.GEOMETRY,
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.GRID, IConcept.CAST, IConcept.NEIGHBORS })
 	@doc (
@@ -1132,7 +1132,7 @@ public class Graphs {
 
 	@operator (
 			value = "spatial_graph",
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
 	@doc (
@@ -1167,8 +1167,8 @@ public class Graphs {
 
 	@operator (
 			value = "directed",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -1182,8 +1182,8 @@ public class Graphs {
 
 	@operator (
 			value = "undirected",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc (
@@ -1197,8 +1197,8 @@ public class Graphs {
 
 	@operator (
 			value = "with_weights",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.GRAPH_WEIGHT })
 	@doc (
@@ -1225,8 +1225,8 @@ public class Graphs {
 
 	@operator (
 			value = "with_weights",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = {})
 	@doc (
@@ -1251,8 +1251,8 @@ public class Graphs {
 
 	@operator (
 			value = "with_optimizer_type",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION,
 					IConcept.ALGORITHM })
@@ -1277,8 +1277,8 @@ public class Graphs {
 	@operator (
 			value = "add_node",
 			type = IType.GRAPH,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc (
@@ -1295,8 +1295,8 @@ public class Graphs {
 
 	@operator (
 			value = "remove_node_from",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc (
@@ -1314,8 +1314,8 @@ public class Graphs {
 
 	@operator (
 			value = "rewire_n",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc (
@@ -1337,8 +1337,8 @@ public class Graphs {
 	@operator (
 			value = "add_edge",
 			type = IType.GRAPH,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc (
@@ -1356,7 +1356,7 @@ public class Graphs {
 
 	@operator (
 			value = "path_between",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -1380,7 +1380,7 @@ public class Graphs {
 	@operator (
 			value = "paths_between",
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -1403,7 +1403,7 @@ public class Graphs {
 	@operator (
 			value = "max_flow_between",
 			type = IType.LIST,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -1423,7 +1423,7 @@ public class Graphs {
 	@operator (
 			value = "as_path",
 			type = IType.PATH,
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 			concept = { IConcept.GRAPH, IConcept.CAST })
 	@doc (
@@ -1686,8 +1686,8 @@ public class Graphs {
 
 	@operator (
 			value = "load_shortest_paths",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
 			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc (
@@ -1729,8 +1729,8 @@ public class Graphs {
 
 	@operator (
 			value = "layout",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -1762,8 +1762,8 @@ public class Graphs {
 
 	@operator (
 			value = "layout",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_KEY_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 
 			category = { IOperatorCategory.GRAPH },
 			concept = {})
@@ -1796,7 +1796,7 @@ public class Graphs {
 
 	@operator (
 			value = "strahler",
-			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH, IConcept.EDGE })
 	@doc (
 			value = "retur for each edge, its strahler number")

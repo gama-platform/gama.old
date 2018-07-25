@@ -86,8 +86,8 @@ public class Logic {
 
 	@operator (
 			value = "?",
-			type = ITypeProvider.SECOND_TYPE,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL, IConcept.TERNARY })
 	@doc (

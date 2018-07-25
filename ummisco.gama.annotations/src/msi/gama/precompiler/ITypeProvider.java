@@ -16,47 +16,80 @@ package msi.gama.precompiler;
  *
  */
 public interface ITypeProvider {
-
+	/**
+	 * Internal value used to distinguish fixed constants from the "index-based" constants below
+	 */
+	static final int INDEXED_TYPES = -100;
+	/**
+	 * The type returned is the type of the argument at index 1...n (i.e., 1 for the first element, 2 for the second,
+	 * etc.) so that, for instance, TYPE_AT_INDEX + 2 represents the type of the SECOND argument (equivalent to
+	 * SECOND_TYPE). Musth be followed by "+ n" with n>0 to be significant.
+	 */
+	static final int TYPE_AT_INDEX = -200;
+	/**
+	 * The type returned is the contents type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
+	 * second, etc.) so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the FIRST argument
+	 * (equivalent to FIRST_CONTENT_TYPE). Musth be followed by "+ n" with n>0 to be significant.
+	 */
+	static final int CONTENT_TYPE_AT_INDEX = -300;
+	/**
+	 * The type returned is the key type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
+	 * second, etc.) so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the THIRD argument. Musth
+	 * be followed by "+ n" with n>0 to be significant.
+	 */
+	static final int KEY_TYPE_AT_INDEX = -400;
 	/**
 	 * The type returned is the content type of the first child of the expression
+	 * 
+	 * @deprecated use CONTENT_TYPE_AT_INDEX + 1 instead (or OWNER_CONTENT_TYPE in case of a field)
 	 */
-	static final int FIRST_CONTENT_TYPE = -20;
+	@Deprecated static final int FIRST_CONTENT_TYPE = CONTENT_TYPE_AT_INDEX + 1;
 	/**
 	 * The type returned is the content type of the first child (owner) of the expression
 	 */
 	static final int OWNER_CONTENT_TYPE = FIRST_CONTENT_TYPE;
 	/**
 	 * The type returned is the key type of the first child of the expression
+	 * 
+	 * @deprecated use KEY_TYPE_AT_INDEX + 1 instead (or OWNER_KEY_TYPE in case of a field)
 	 */
-	static final int FIRST_KEY_TYPE = -23;
+	@Deprecated static final int FIRST_KEY_TYPE = KEY_TYPE_AT_INDEX + 1;
 	/**
 	 * The type returned is the key type of the first child (owner) of the expression
 	 */
 	static final int OWNER_KEY_TYPE = FIRST_KEY_TYPE;
 	/**
 	 * The type returned is the content type of the second child of the expression
+	 * 
+	 * @deprecated use CONTENT_TYPE_AT_INDEX+2 instead
 	 */
-	static final int SECOND_CONTENT_TYPE = -19;
+	@Deprecated static final int SECOND_CONTENT_TYPE = CONTENT_TYPE_AT_INDEX + 2;
 	/**
 	 * The type returned is the key type of the second child of the expression
+	 * 
+	 * @deprecated use KEY_TYPE_AT_INDEX + 2 instead
 	 */
-	static final int SECOND_KEY_TYPE = -24;
+	@Deprecated static final int SECOND_KEY_TYPE = KEY_TYPE_AT_INDEX + 2;
 	/**
 	 * The type returned is the type denoted by the second child
 	 */
 	static final int SECOND_DENOTED_TYPE = -32;
 	/**
 	 * The type returned is the type of the first child of the expression
+	 * 
+	 * @deprecated use TYPE_AT_INDEX + 1 instead (or OWNER_TYPE in case of a field)
 	 */
-	static final int FIRST_TYPE = -18;
+	@Deprecated static final int FIRST_TYPE = TYPE_AT_INDEX + 1;
 	/**
 	 * For variables, represents the type of the owner (i.e. the species) holding this attribute
 	 */
 	static final int OWNER_TYPE = FIRST_TYPE;
 	/**
 	 * The type returned is the type of the second child of the expression
+	 * 
+	 * @deprecated use TYPE_AT_INDEX + 2 instead
 	 */
-	static final int SECOND_TYPE = -17;
+	@Deprecated static final int SECOND_TYPE = TYPE_AT_INDEX + 2;
 	/**
 	 * The type returned is the type of the second child of the expression or its contents type if it is a container
 	 */
@@ -107,27 +140,5 @@ public interface ITypeProvider {
 	 * 2, 4]]) should get int as a content type.
 	 */
 	static final int FIRST_ELEMENT_CONTENT_TYPE = -22;
-	/**
-	 * Internal value used to distinguish previous constants from the "index-based" constants below
-	 */
-	static final int INDEXED_TYPES = -100;
-	/**
-	 * The type returned is the type of the argument at index 1...n (i.e., 1 for the first element, 3 for the second,
-	 * etc.) so that, for instance, TYPE_AT_INDEX + 2 represents the type of the SECOND argument (equivalent to
-	 * SECOND_TYPE). Musth be followed by "+ n" with n>0 to be significant.
-	 */
-	static final int TYPE_AT_INDEX = -200;
-	/**
-	 * The type returned is the contents type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
-	 * second, etc.) so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the FIRST argument
-	 * (equivalent to FIRST_CONTENT_TYPE). Musth be followed by "+ n" with n>0 to be significant.
-	 */
-	static final int CONTENT_TYPE_AT_INDEX = -300;
-	/**
-	 * The type returned is the key type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
-	 * second, etc.) so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the THIRD argument. Musth
-	 * be followed by "+ n" with n>0 to be significant.
-	 */
-	static final int KEY_TYPE_AT_INDEX = -400;
 
 }

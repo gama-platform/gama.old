@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 @vars ({ @variable (
 		name = "spanning_tree",
 		type = IType.LIST,
-		of = ITypeProvider.FIRST_CONTENT_TYPE,
+		of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 		doc = { @doc ("Returns the list of edges that compose the minimal spanning tree of this graph") }),
 		@variable (
 				name = "circuit",
@@ -57,12 +57,12 @@ import msi.gaml.types.IType;
 		@variable (
 				name = "edges",
 				type = IType.LIST,
-				of = ITypeProvider.FIRST_CONTENT_TYPE,
+				of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of edges of the receiver graph") }),
 		@variable (
 				name = "vertices",
 				type = IType.LIST,
-				of = ITypeProvider.FIRST_KEY_TYPE,
+				of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of vertices of the receiver graph") }) })
 @SuppressWarnings ({ "rawtypes" })
 public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>,

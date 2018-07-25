@@ -413,7 +413,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_TYPE, // FIXME This is
+			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME This is
 												// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
@@ -436,7 +436,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_TYPE, // FIXME this is
+			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME this is
 												// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
@@ -470,7 +470,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph",
@@ -481,7 +481,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph",
@@ -492,7 +492,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph",
@@ -503,7 +503,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph",
@@ -514,7 +514,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "node",
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph. The second parameter indicates which weight the node should have in the graph",
@@ -525,7 +525,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "node",
-			type = ITypeProvider.FIRST_TYPE,
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph",
@@ -536,7 +536,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "nodes",
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as nodes of a graph",
@@ -547,7 +547,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edges",
-			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as edges of a graph",

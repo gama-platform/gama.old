@@ -62,7 +62,7 @@ import msi.gaml.variables.IVariable;
 		@variable (
 				name = ISpecies.POPULATION,
 				type = IType.LIST,
-				of = ITypeProvider.FIRST_CONTENT_TYPE,
+				of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				doc = @doc ("The population that corresponds to this species in an instance of its host")) })
 public interface ISpecies
 		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {

@@ -40,12 +40,12 @@ import msi.gaml.types.Types;
 @vars ({ @variable (
 		name = GamaMap.KEYS,
 		type = IType.LIST,
-		of = ITypeProvider.FIRST_KEY_TYPE,
+		of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 		doc = { @doc ("Returns the list of keys of this map (in their order of insertion)") }),
 		@variable (
 				name = GamaMap.VALUES,
 				type = IType.LIST,
-				of = ITypeProvider.FIRST_CONTENT_TYPE,
+				of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of values of this map (in their order of insertion)") }),
 		@variable (
 				name = GamaMap.PAIRS,
@@ -374,8 +374,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 			value = "reverse",
 			can_be_const = true,
 			type = IType.MAP,
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = ITypeProvider.FIRST_CONTENT_TYPE,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc ("Specialization of the reverse operator for maps. Reverses keys and values")

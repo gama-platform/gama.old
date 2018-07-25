@@ -262,7 +262,7 @@ public class Cast {
 
 	@operator (
 			value = "list_with",
-			content_type = ITypeProvider.SECOND_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			can_be_const = false,
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
@@ -279,7 +279,7 @@ public class Cast {
 
 	@operator (
 			value = "matrix_with",
-			content_type = ITypeProvider.SECOND_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.CONTAINER })
@@ -320,7 +320,7 @@ public class Cast {
 
 	@operator (
 			value = { IKeyword.SPECIES, "species_of" },
-			content_type = ITypeProvider.FIRST_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.SPECIES })
 	@doc (

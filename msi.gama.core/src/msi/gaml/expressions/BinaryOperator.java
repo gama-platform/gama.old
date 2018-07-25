@@ -22,7 +22,7 @@ import msi.gaml.operators.Cast;
 /**
  * The Class BinaryOperator.
  */
-public class BinaryOperator extends NAryOperator {
+public class BinaryOperator extends AbstractNAryOperator {
 
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
