@@ -95,8 +95,9 @@ public class BinaryOperator extends NAryOperator {
 
 		IDescription definitionDescription;
 
-		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression... args) {
-			super(proto, context, args);
+		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression target,
+				final IVarExpression var) {
+			super(proto, context, target, var);
 			definitionDescription = context;
 		}
 
@@ -143,7 +144,7 @@ public class BinaryOperator extends NAryOperator {
 
 		@Override
 		public BinaryVarOperator copy() {
-			return new BinaryVarOperator(prototype, null, exprs);
+			return new BinaryVarOperator(prototype, null, exprs[0], (IVarExpression) exprs[1]);
 		}
 	}
 

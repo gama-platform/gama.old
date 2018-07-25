@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.7.jar" sourcepath="streamex 0.6.7/streamex-src-0.6.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-ext-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="streamex 0.6.2/streamex-0.6.4.jar" sourcepath="streamex 0.6.2/streamex-0.6.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-algebra-1.0.9.jar"/>

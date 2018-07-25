@@ -62,7 +62,7 @@ public class OperatorProto extends AbstractProto {
 	public final boolean isVarOrField, canBeConst, iterator;
 	public final IType returnType;
 	public final GamaGetter helper;
-	public Signature signature;
+	public final Signature signature;
 	public final boolean[] lazy;
 	public final int typeProvider, contentTypeProvider, keyTypeProvider;
 	public final int[] expectedContentType;
@@ -77,14 +77,16 @@ public class OperatorProto extends AbstractProto {
 					return UnaryOperator.create(this, context, exprs);
 				case 2:
 					if (isVarOrField) {
-						if (!(exprs[1] instanceof IVarExpression)) {
-							if (context != null) {
-								context.error("Attribute " + exprs[1].literalValue() + " unknown for "
-										+ exprs[0].getGamlType() + " instances");
-							}
-							return null;
-						}
-						return new BinaryOperator.BinaryVarOperator(this, context, exprs);
+						// if (!(exprs[1] instanceof IVarExpression)) {
+						// if (context != null) {
+						// context.error(
+						// "Attribute " + exprs[1].literalValue() + " unknown for "
+						// + exprs[0].getGamlType() + " instances",
+						// IGamlIssue.UNKNOWN_VAR, currentEObject);
+						// }
+						// return null;
+						// }
+						return new BinaryOperator.BinaryVarOperator(this, context, exprs[0], (IVarExpression) exprs[1]);
 					}
 					return BinaryOperator.create(this, context, exprs);
 				default:
@@ -94,23 +96,26 @@ public class OperatorProto extends AbstractProto {
 			// this can happen when optimizing the code
 			// in that case, report an error and return null as it means that
 			// the code is not functional
-			context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, currentEObject);
+			if (context != null) {
+				context.error("This code is not functional: " + e.getMessage(), IGamlIssue.GENERAL, currentEObject);
+			}
 			return null;
 		} catch (final Exception e) {
 			// this can happen when optimizing the code
 			// in that case, report an error and return null as it means that
 			// the code is not functional
-			context.error("The compiler encountered an internal error: " + e.getMessage(), IGamlIssue.GENERAL,
-					currentEObject);
+			if (context != null) {
+				context.error("The compiler encountered an internal error: " + e.getMessage(), IGamlIssue.GENERAL,
+						currentEObject);
+			}
 			return null;
 		}
 	}
 
 	public OperatorProto(final String name, final AnnotatedElement method, final GamaGetter helper,
-			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final IType returnType,
-			final Signature signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
-			final int keyTypeProvider, final int contentTypeContentTypeProvider, final int[] expectedContentType,
-			final String plugin) {
+			final boolean canBeConst, final boolean isVarOrField, final IType returnType, final Signature signature,
+			final boolean lazy, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
+			final int contentTypeContentTypeProvider, final int[] expectedContentType, final String plugin) {
 		super(name, method, plugin);
 		if (name.equals(IKeyword.AS)) {
 			AS = this;
@@ -152,19 +157,15 @@ public class OperatorProto extends AbstractProto {
 			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
 			final Class signature, final boolean lazy, final int typeProvider, final int contentTypeProvider,
 			final int keyTypeProvider, final int[] expectedContentType) {
-		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField,
-				/* doc, */Types.get(returnType), new Signature(signature), lazy, typeProvider, contentTypeProvider,
-				keyTypeProvider, ITypeProvider.NONE, expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField, Types.get(returnType),
+				new Signature(signature), lazy, typeProvider, contentTypeProvider, keyTypeProvider, ITypeProvider.NONE,
+				expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
-	public OperatorProto(final OperatorProto op, final IType gamaType) {
+	private OperatorProto(final OperatorProto op, final IType gamaType) {
 		this(op.name, op.support, op.helper, op.canBeConst, op.isVarOrField, op.returnType, new Signature(gamaType),
 				true, op.typeProvider, op.contentTypeProvider, op.keyTypeProvider, op.contentTypeContentTypeProvider,
 				op.expectedContentType, op.plugin);
-	}
-
-	public void setSignature(final IType... t) {
-		signature = new Signature(t);
 	}
 
 	@Override

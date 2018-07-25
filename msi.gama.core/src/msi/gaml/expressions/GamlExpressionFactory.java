@@ -196,10 +196,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final Signature sig = new Signature(args).simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
 		boolean matches = any(ops.keySet(), s -> sig.matchesDesiredSignature(s));
-		// boolean matches = StreamEx.ofKeys(ops).anyMatch(s -> sig.matchesDesiredSignature(s));
 		if (!matches) {
 			// Check if a varArg is not a possibility
-			// matches = StreamEx.ofKeys(ops).anyMatch(s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
 			matches = any(ops.keySet(), s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
 		}
 		return matches;
@@ -227,17 +225,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
 			final Iterable<Signature> matching =
-					(filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s)));
-			// final Signature[] filtered = StreamEx.ofKeys(ops)
-			// .filter(s -> originalUserSignature.matchesDesiredSignature(s)).toArray(Signature.class);
+					filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s));
 			final int size = Iterables.size(matching);
-			// final int size = filtered.length;
 			if (size == 0) {
 				// It is a varArg, we call recursively the method
-				return createOperator(op, context, eObject, (createList(args)));
+				return createOperator(op, context, eObject, createList(args));
 			} else if (size == 1) {
 				// Only one choice
-				// userSignature = filtered[0];
 				userSignature = get(matching, 0);
 			} else {
 				// Several choices, we take the closest
@@ -280,7 +274,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return OperatorProto.AS.create(context, null, toCast, type);
 	}
 
-	public IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
+	private IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
 			final IExpression... args) {
 		// We finally make an instance of the operator and init it with the arguments
 		final IExpression copy = proto.create(context, eObject, args);
