@@ -83,12 +83,13 @@ public abstract class SymbolDescription implements IDescription {
 
 	protected boolean hasFacetsNotIn(final Set<String> others) {
 		if (facets == null) { return false; }
-		return !visitFacets((name, exp) -> {
-			if (others.contains(name)) { return true; }
+		return !visitFacets((facetName, exp) -> {
+			if (others.contains(facetName)) { return true; }
 			return false;
 		});
 	}
 
+	@Override
 	public final SymbolSerializer<? extends SymbolDescription> getSerializer() {
 		final SymbolProto p = getMeta();
 		SymbolSerializer<? extends SymbolDescription> d = p.getSerializer();
@@ -206,8 +207,8 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	protected void compileTypeProviderFacets() {
-		visitFacets((name, exp) -> {
-			if (typeProviderFacets.contains(name)) {
+		visitFacets((facetName, exp) -> {
+			if (typeProviderFacets.contains(facetName)) {
 				exp.compile(SymbolDescription.this);
 			}
 			return true;
@@ -216,7 +217,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public SymbolProto getMeta() {
+	public final SymbolProto getMeta() {
 		return proto;
 	}
 
@@ -412,31 +413,31 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean hasAttribute(final String name) {
+	public boolean hasAttribute(final String aName) {
 		return false;
 	}
 
 	@Override
-	public boolean manipulatesVar(final String name) {
+	public boolean manipulatesVar(final String aName) {
 		return false;
 	}
 
-	protected boolean hasAction(final String name, final boolean superInvocation) {
+	protected boolean hasAction(final String aName, final boolean superInvocation) {
 		return false;
 	}
 
 	@Override
-	public IVarDescriptionProvider getDescriptionDeclaringVar(final String name) {
-		return hasAttribute(name) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringVar(name);
+	public IVarDescriptionProvider getDescriptionDeclaringVar(final String aName) {
+		return hasAttribute(aName) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringVar(aName);
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
-		return enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name, superInvocation);
+	public IDescription getDescriptionDeclaringAction(final String aName, final boolean superInvocation) {
+		return enclosing == null ? null : enclosing.getDescriptionDeclaringAction(aName, superInvocation);
 	}
 
 	@Override
-	public IExpression getVarExpr(final String name, final boolean asField) {
+	public IExpression getVarExpr(final String aName, final boolean asField) {
 		return null;
 	}
 
@@ -505,7 +506,7 @@ public abstract class SymbolDescription implements IDescription {
 	 * @see msi.gama.common.interfaces.IDescription#getAction(java.lang.String)
 	 */
 	@Override
-	public ActionDescription getAction(final String name) {
+	public ActionDescription getAction(final String aName) {
 		return null;
 	}
 
@@ -543,7 +544,6 @@ public abstract class SymbolDescription implements IDescription {
 
 	protected boolean isSynthetic() {
 		return false;
-		// return enclosing != null && enclosing.isSynthetic();
 	}
 
 	@Override
@@ -605,7 +605,8 @@ public abstract class SymbolDescription implements IDescription {
 
 		// If a custom validator has been defined, run it
 		if (proto.getValidator() != null) {
-			proto.getValidator().validate(this);
+			final boolean semantic = proto.getValidator().validate(this, element);
+			if (!semantic) { return null; }
 		}
 
 		return this;
@@ -619,7 +620,6 @@ public abstract class SymbolDescription implements IDescription {
 		// Special case for "do", which can accept (at parsing time) any facet
 		final boolean isDo = DO.equals(getKeyword()) || INVOKE.equals(getKeyword());
 		final boolean isBuiltIn = isBuiltIn();
-		final SymbolProto proto = getMeta();
 		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
 		if (missingFacets != null && !Iterables.isEmpty(missingFacets)) {
 			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET);
@@ -696,6 +696,7 @@ public abstract class SymbolDescription implements IDescription {
 			}
 			return true;
 		});
+
 		return ok;
 
 	}
@@ -720,7 +721,6 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public final ISymbol compile() {
-		final SymbolProto proto = getMeta();
 		validate();
 		final ISymbol cs = proto.create(this);
 		if (cs == null) { return null; }
@@ -740,7 +740,6 @@ public abstract class SymbolDescription implements IDescription {
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
 	protected Iterable<? extends ISymbol> compileChildren() {
-		// return Iterables.filter(transform(getChildren(), each -> each.compile()), each -> each != null);
 
 		final List<ISymbol> lce = new ArrayList<>();
 		visitChildren(desc -> {
@@ -754,13 +753,13 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public Iterable<IDescription> getChildrenWithKeyword(final String keyword) {
-		return Iterables.filter(getOwnChildren(), each -> each.getKeyword().equals(keyword));
+	public Iterable<IDescription> getChildrenWithKeyword(final String aKeyword) {
+		return Iterables.filter(getOwnChildren(), each -> each.getKeyword().equals(aKeyword));
 	}
 
 	@Override
-	public IDescription getChildWithKeyword(final String keyword) {
-		return Iterables.find(getOwnChildren(), each -> each.getKeyword().equals(keyword), null);
+	public IDescription getChildWithKeyword(final String aKeyword) {
+		return Iterables.find(getOwnChildren(), each -> each.getKeyword().equals(aKeyword), null);
 	}
 	//
 	// @Override
@@ -798,7 +797,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	}
 
-	public IDescription getSimilarChild(final IDescription container, final IDescription desc) {
+	public static IDescription getSimilarChild(final IDescription container, final IDescription desc) {
 		final IDescription[] found = new IDescription[1];
 		container.visitChildren(d -> {
 			if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {

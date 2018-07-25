@@ -39,8 +39,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	final protected IExpression child;
 	final OperatorProto prototype;
 
-	public static IExpression create(final OperatorProto proto, final IDescription context,
-			final IExpression... child) {
+	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e =
@@ -160,8 +159,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			// fields as well
 			if (contentType.isContainer() && contentType.getKeyType() == Types.NO_TYPE
 					&& contentType.getContentType() == Types.NO_TYPE) {
-				contentType =
-						GamaType.from(contentType, child.getGamlType().getKeyType(), child.getGamlType().getContentType());
+				contentType = GamaType.from(contentType, child.getGamlType().getKeyType(),
+						child.getGamlType().getContentType());
 			}
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
 			type = GamaType.from(type, keyType, contentType);

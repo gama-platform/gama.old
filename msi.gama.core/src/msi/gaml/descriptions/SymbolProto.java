@@ -24,9 +24,9 @@ import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
+import msi.gaml.compilation.IValidator;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
 import msi.gaml.statements.Facets;
@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
 public class SymbolProto extends AbstractProto {
 
 	private final ISymbolConstructor constructor;
-	private final IDescriptionValidator validator;
+	private final IValidator validator;
 	private SymbolSerializer serializer;
 	private final SymbolFactory factory;
 
@@ -63,8 +63,7 @@ public class SymbolProto extends AbstractProto {
 			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
 			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
 			final boolean isUniqueInContext, final boolean nameUniqueInContext, final ISymbolConstructor constr,
-			final IDescriptionValidator validator, final SymbolSerializer serializer, final String name,
-			final String plugin) {
+			final IValidator validator, final SymbolSerializer serializer, final String name, final String plugin) {
 		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
@@ -81,7 +80,7 @@ public class SymbolProto extends AbstractProto {
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
 			final Builder<String> builder = ImmutableSet.builder();
-			this.possibleFacets = new THashMap<String, FacetProto>();
+			this.possibleFacets = new THashMap<>();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
 				f.setOwner(getTitle());
@@ -200,7 +199,7 @@ public class SymbolProto extends AbstractProto {
 		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
 	}
 
-	IDescriptionValidator getValidator() {
+	IValidator getValidator() {
 		return validator;
 	}
 
@@ -250,8 +249,7 @@ public class SymbolProto extends AbstractProto {
 	 */
 	public Iterable<String> getMissingMandatoryFacets(final Facets facets) {
 		if (facets == null || facets.isEmpty()) {
-			if (mandatoryFacets == null || mandatoryFacets.isEmpty())
-				return null;
+			if (mandatoryFacets == null || mandatoryFacets.isEmpty()) { return null; }
 			return mandatoryFacets;
 		}
 		return Iterables.filter(mandatoryFacets, each -> !facets.containsKey(each));

@@ -29,6 +29,8 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaGetter;
+import msi.gaml.compilation.IValidator;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
@@ -60,6 +62,7 @@ public class OperatorProto extends AbstractProto {
 			"and", "at", "is", "group_by", "index_of", "last_index_of", "index_by", "count", "sort", "::", "as_map"));
 
 	public final boolean isVarOrField, canBeConst, iterator;
+	public final IValidator semanticValidator;
 	public final IType returnType;
 	public final GamaGetter helper;
 	public final Signature signature;
@@ -70,11 +73,14 @@ public class OperatorProto extends AbstractProto {
 
 	public IExpression create(final IDescription context, final EObject currentEObject, final IExpression... exprs) {
 		try {
-
+			if (semanticValidator != null) {
+				final boolean semantic = semanticValidator.validate(context, currentEObject, exprs);
+				if (!semantic) { return null; }
+			}
 			switch (signature.size()) {
 				case 1:
-					if (isVarOrField) { return new TypeFieldExpression(this, context, exprs); }
-					return UnaryOperator.create(this, context, exprs);
+					if (isVarOrField) { return new TypeFieldExpression(this, context, exprs[0]); }
+					return UnaryOperator.create(this, context, exprs[0]);
 				case 2:
 					if (isVarOrField) {
 						// if (!(exprs[1] instanceof IVarExpression)) {
@@ -121,6 +127,14 @@ public class OperatorProto extends AbstractProto {
 			AS = this;
 		}
 		this.iterator = IExpressionCompiler.ITERATORS.contains(name);
+		IValidator tempValidator = null;
+		if (method != null) {
+			final validator val = method.getAnnotation(validator.class);
+			try {
+				tempValidator = val != null ? val.value().newInstance() : null;
+			} catch (InstantiationException | IllegalAccessException e) {}
+		}
+		semanticValidator = tempValidator;
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
 		this.isVarOrField = isVarOrField;
@@ -245,18 +259,18 @@ public class OperatorProto extends AbstractProto {
 	 */
 	public String getPattern(final boolean withVariables) {
 		final int size = signature.size();
-		final String name = getName();
+		final String aName = getName();
 		if (size == 1 || size > 2) {
-			if (noMandatoryParenthesis.contains(name)) {
-				return name + signature.asPattern(withVariables);
+			if (noMandatoryParenthesis.contains(aName)) {
+				return aName + signature.asPattern(withVariables);
 			} else {
-				return name + "(" + signature.asPattern(withVariables) + ")";
+				return aName + "(" + signature.asPattern(withVariables) + ")";
 			}
 		} else { // size == 2
-			if (binaries.contains(name)) {
-				return signature.get(0).asPattern() + " " + name + " " + signature.get(1).asPattern();
+			if (binaries.contains(aName)) {
+				return signature.get(0).asPattern() + " " + aName + " " + signature.get(1).asPattern();
 			} else {
-				return name + "(" + signature.asPattern(withVariables) + ")";
+				return aName + "(" + signature.asPattern(withVariables) + ")";
 			}
 		}
 	}

@@ -172,7 +172,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final boolean name_unique, final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd,
 			final String omissible, final ISymbolConstructor sc) {
 
-		IDescriptionValidator validator2 = null;
+		IValidator validator2 = null;
 		SymbolSerializer serializer2 = null;
 		final validator v = (validator) c.getAnnotation(validator.class);
 		final serializer s = (serializer) c.getAnnotation(serializer.class);

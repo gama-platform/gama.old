@@ -125,6 +125,10 @@ public interface IDescription
 
 	public abstract EObject getUnderlyingElement(Object facet);
 
+	default EObject getUnderlyingElement() {
+		return getUnderlyingElement(null);
+	}
+
 	public abstract SymbolProto getMeta();
 
 	public abstract IDescription getEnclosingDescription();

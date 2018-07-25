@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TypeFieldExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TypeFieldExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,8 +18,8 @@ import msi.gaml.descriptions.OperatorProto;
 
 public class TypeFieldExpression extends UnaryOperator {
 
-	public TypeFieldExpression(final OperatorProto proto, final IDescription context, final IExpression... exprs) {
-		super(proto, context, exprs);
+	public TypeFieldExpression(final OperatorProto proto, final IDescription context, final IExpression expr) {
+		super(proto, context, expr);
 	}
 
 	@Override
@@ -38,9 +37,7 @@ public class TypeFieldExpression extends UnaryOperator {
 
 	@Override
 	public String toString() {
-		if (child == null) {
-			return prototype.signature.toString() + "." + getName();
-		}
+		if (child == null) { return prototype.signature.toString() + "." + getName(); }
 		return child.serialize(false) + "." + getName();
 	}
 

@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import org.eclipse.emf.ecore.EObject;
+
 import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -32,7 +34,7 @@ import msi.gaml.types.Types;
  * 
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IDescriptionValidator<T extends IDescription> extends IKeyword {
+public interface IDescriptionValidator<T extends IDescription> extends IValidator {
 
 	public static final ImmutableSet<String> RESERVED = ImmutableSet
 			.copyOf(new String[] { IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
@@ -42,11 +44,23 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 	 * description have all been already validated (and their expressions compiled), so everything is accessible here to
 	 * make a finer validation with respect to the specificites of the symbol. This interface is not supposed to change
 	 * the description unless it is absolutely necessary. It is supposed to attach warnings and errors to the
-	 * description instead.
+	 * description instead. Alternatively, developers may want to override validate(IDescription, EObject,
+	 * IExpression[]), which allows to veto the validation by returning false
 	 * 
 	 * @param description
 	 */
 	public void validate(T description);
+
+	/**
+	 * In that particular implementation, arguments will always be empty. Returning false will veto the validation
+	 * process
+	 */
+	@SuppressWarnings ("unchecked")
+	@Override
+	default boolean validate(final IDescription description, final EObject emfContext, final IExpression... arguments) {
+		validate((T) description);
+		return true;
+	}
 
 	public static class Assert {
 
@@ -66,8 +80,9 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 					|| Types.intFloatCase(receiverType, assignedType)) {
 				if (!Types.isEmptyContainerCase(receiverType, expr2)) {
 					context.warning(
-							receiverDescription + " of type " + receiverType.getGamlType() + " is assigned a value of type "
-									+ assignedType.getGamlType() + ", which will be casted to " + receiverType.getGamlType(),
+							receiverDescription + " of type " + receiverType.getGamlType()
+									+ " is assigned a value of type " + assignedType.getGamlType()
+									+ ", which will be casted to " + receiverType.getGamlType(),
 							IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
 				}
 			}

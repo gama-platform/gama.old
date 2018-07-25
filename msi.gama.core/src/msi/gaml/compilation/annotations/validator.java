@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.IValidator;
 
 /**
  * Allows to declare a custom validator for Symbols. This validator, if declared on subclasses of Symbol, will be called
@@ -18,10 +18,10 @@ import msi.gaml.compilation.IDescriptionValidator;
  */
 
 @Retention (RetentionPolicy.RUNTIME)
-@Target (ElementType.TYPE)
+@Target ({ ElementType.METHOD, ElementType.TYPE })
 @Inherited
 @SuppressWarnings ({ "rawtypes" })
 public @interface validator {
 
-	Class<? extends IDescriptionValidator> value();
+	Class<? extends IValidator> value();
 }
