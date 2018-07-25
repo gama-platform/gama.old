@@ -242,6 +242,28 @@ public class GeometryUtils {
 		}
 		return pts;
 	}
+	
+	public static Coordinate[] extractPoints(final IShape triangle1, final IShape triangle2) {
+		final Coordinate[] coords = triangle1.getInnerGeometry().getCoordinates();
+		final Coordinate[] c1 = { coords[0], coords[1] };
+		final Coordinate[] c2 = { coords[1], coords[2] };
+		final Coordinate[] c3 = { coords[2], coords[3] };
+		final LineString l1 = GEOMETRY_FACTORY.createLineString(c1);
+		final LineString l2 = GEOMETRY_FACTORY.createLineString(c2);
+		final LineString l3 = GEOMETRY_FACTORY.createLineString(c3);
+		final Coordinate[] pts = new Coordinate[3];
+		if (nbCommonPoints(l1, triangle2.getInnerGeometry()) == 2) {
+			pts[1] = l1.getCentroid().getCoordinate();
+		} else if (nbCommonPoints(l2, triangle2.getInnerGeometry()) == 2) {
+			pts[1] = l2.getCentroid().getCoordinate();
+		} else if (nbCommonPoints(l3, triangle2.getInnerGeometry()) == 2) {
+			pts[1] = l3.getCentroid().getCoordinate();
+		}
+
+		pts[0] = triangle1.getCentroid();
+		pts[2] = triangle2.getCentroid();
+		return pts;
+	}
 
 	public static IList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
 		final Envelope env = geom.getEnvelope();
@@ -537,12 +559,24 @@ public class GeometryUtils {
 		final List<LineString> network = new ArrayList<LineString>();
 		final IList polys = GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip,approxClipping);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
-		final Collection<GamaShape> nodes = graph.vertexSet();
-		for (final GamaShape node : nodes) {
-			final Coordinate[] coordsArr =
-					GeometryUtils.extractPoints(node, new HashSet(Graphs.neighborsOf(scope, graph, node)));
-			if (coordsArr != null) {
-				network.add(GEOMETRY_FACTORY.createLineString(coordsArr));
+	//	final Collection<GamaShape> nodes = graph.vertexSet();
+		IList<IList> ccs =  Graphs.connectedComponentOf(scope, graph);
+		for (final IList cc : ccs) {
+			if (cc.size() > 2) {
+				for (final Object o : cc) {
+					GamaShape node = (GamaShape) o;
+					final Coordinate[] coordsArr =
+							GeometryUtils.extractPoints(node, new HashSet(Graphs.neighborsOf(scope, graph, node)));
+					if (coordsArr != null) {
+						network.add(GEOMETRY_FACTORY.createLineString(coordsArr));
+					}
+				}
+			} else if (cc.size() == 2) {
+				final Coordinate[] coordsArr =
+						GeometryUtils.extractPoints((GamaShape)cc.get(0),(GamaShape) cc.get(1));
+				if (coordsArr != null) {
+					network.add(GEOMETRY_FACTORY.createLineString(coordsArr));
+				}
 			}
 		}
 		return network;
