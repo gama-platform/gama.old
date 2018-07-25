@@ -310,7 +310,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	});
 
 	final GamaCommand linkCommand =
-			new GamaCommand("navigator/navigator.link2", "", "Stay in sync with the editor", e -> link.run());
+			new GamaCommand("navigator/navigator.link3", "", "Stay in sync with the editor", e -> link.run());
 
 	/**
 	 * Method createToolItem()
