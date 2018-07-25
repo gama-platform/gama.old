@@ -293,9 +293,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		final Object cont = list.value(scope);
 		if (isDirect) { return (IContainer.Modifiable) cont; }
 		if (cont instanceof IShape) { return ((IShape) cont).getOrCreateAttributes(); }
-		throw GamaRuntimeException.warning(
-				"Cannot use " + list.serialize(false) + ", of type " + list.getGamlType().toString() + ", as a container",
-				scope);
+		throw GamaRuntimeException.warning("Cannot use " + list.serialize(false) + ", of type "
+				+ list.getGamlType().toString() + ", as a container", scope);
 	}
 
 	/**
@@ -426,7 +425,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph",
@@ -449,7 +448,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			type = ITypeProvider.TYPE_AT_INDEX + 3,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph",
@@ -460,7 +459,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			type = ITypeProvider.TYPE_AT_INDEX + 3,
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph",
