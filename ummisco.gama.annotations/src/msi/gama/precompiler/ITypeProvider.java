@@ -17,39 +17,58 @@ package msi.gama.precompiler;
  */
 public interface ITypeProvider {
 
-	/*
-	 * The content type is provided by the content type of the first child of the expression
+	/**
+	 * The type returned is the content type of the first child of the expression
 	 */
 	static final int FIRST_CONTENT_TYPE = -20;
+	/**
+	 * The type returned is the content type of the first child (owner) of the expression
+	 */
 	static final int OWNER_CONTENT_TYPE = FIRST_CONTENT_TYPE;
+	/**
+	 * The type returned is the key type of the first child of the expression
+	 */
 	static final int FIRST_KEY_TYPE = -23;
+	/**
+	 * The type returned is the key type of the first child (owner) of the expression
+	 */
 	static final int OWNER_KEY_TYPE = FIRST_KEY_TYPE;
-	/*
-	 * The content type is provided by the content type of the second child of the expression
+	/**
+	 * The type returned is the content type of the second child of the expression
 	 */
 	static final int SECOND_CONTENT_TYPE = -19;
+	/**
+	 * The type returned is the key type of the second child of the expression
+	 */
 	static final int SECOND_KEY_TYPE = -24;
+	/**
+	 * The type returned is the type denoted by the second child
+	 */
 	static final int SECOND_DENOTED_TYPE = -32;
-	/*
-	 * The content type is provided by the type of the first child of the expression
+	/**
+	 * The type returned is the type of the first child of the expression
 	 */
 	static final int FIRST_TYPE = -18;
 	/**
 	 * For variables, represents the type of the owner (i.e. the species) holding this attribute
 	 */
 	static final int OWNER_TYPE = FIRST_TYPE;
-	/*
-	 * The content type is provided by the type of the second child of the expression
+	/**
+	 * The type returned is the type of the second child of the expression
 	 */
 	static final int SECOND_TYPE = -17;
-	static final int SECOND_CONTENT_TYPE_OR_TYPE = -25;
-	static final int FIRST_CONTENT_TYPE_OR_TYPE = -26;
-
 	/**
-	 * The type of the model itself
+	 * The type returned is the type of the second child of the expression or its contents type if it is a container
+	 */
+	static final int SECOND_CONTENT_TYPE_OR_TYPE = -25;
+	/**
+	 * The type returned is the type of the first child of the expression or its contents type if it is a container
+	 */
+	static final int FIRST_CONTENT_TYPE_OR_TYPE = -26;
+	/**
+	 * The type returned is the type of the current model (simulation)
 	 */
 	static final int MODEL_TYPE = -27;
-
 	/**
 	 * The generic type experiment (which does not exist as a type -- at least not yet)
 	 */
@@ -59,40 +78,53 @@ public interface ITypeProvider {
 	 */
 	static final int MIRROR_TYPE = -28;
 	/**
-	 * The type of the macro-agent
+	 * The type returned is the type of the macro-agent
 	 */
 	static final int MACRO_TYPE = -29;
-	/*
-	 * The type returned is the type of the internal buffer of the object (file)
+	/**
+	 * The type returned is the type of the internal buffer of the object (when it is a file)
 	 */
 	static final int WRAPPED = -30;
-	/*
-	 * The content type is provided by the type of the expression itself (i.e. species)
+	/**
+	 * The type returned is the type of the expression itself (i.e. species)
 	 */
 	static final int TYPE = -14;
-	/*
-	 * The content type cannot be computed
+	/**
+	 * The type should not (or cannot) be computed
 	 */
 	static final int NONE = -13;
-	/*
-	 * The type or content type are provided by both or all operands (which must match).
+	/**
+	 * The type returned is the common supertype of both operands (which must match, otherwise unknown is returned).
 	 */
 	static final int BOTH = -21;
+	/**
+	 * The type returned is the common supertype of all operands (which must match, otherwise unknown is returned)
+	 */
 	static final int ALL = BOTH;
-	/*
-	 * The content type is provided by the content type of the first element of the child (if the child is a container)
-	 * -- EXPERIMENTAL RIGHT NOW (and probably limited to the matrix and as_matrix operators) e.g. : matrix ([[4, 5,
-	 * 6],[1, 2, 4]]) should get int as a content type.
+	/**
+	 * The type returned is the content type of the first element of the child (if the child is a container) --
+	 * EXPERIMENTAL RIGHT NOW (and probably limited to the matrix and as_matrix operators) e.g. : matrix ([[4, 5, 6],[1,
+	 * 2, 4]]) should get int as a content type.
 	 */
 	static final int FIRST_ELEMENT_CONTENT_TYPE = -22;
-
 	/**
-	 * The type, content type, key type are provided by the element computed by its index. 0 for the first element, 1
-	 * for the second, etc. For instance, TYPE_AT_INDEX + 2 will represent the third argument
+	 * Internal value used to distinguish previous constants from the "index-based" constants below
 	 */
 	static final int INDEXED_TYPES = -100;
+	/**
+	 * The type returned is the type of the argument at index 0...n (i.e., 0 for the first element, 1 for the second,
+	 * etc. so that, for instance, TYPE_AT_INDEX + 2 represents the type of the THIRD argument
+	 */
 	static final int TYPE_AT_INDEX = -200;
+	/**
+	 * The type returned is the contents type of the argument at index 0...n (i.e., 0 for the first element, 1 for the
+	 * second, etc. so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the SECOND argument
+	 */
 	static final int CONTENT_TYPE_AT_INDEX = -300;
+	/**
+	 * The type returned is the key type of the argument at index 0...n (i.e., 0 for the first element, 1 for the
+	 * second, etc. so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the FOURTH argument
+	 */
 	static final int KEY_TYPE_AT_INDEX = -400;
 
 }

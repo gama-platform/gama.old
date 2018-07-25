@@ -48,14 +48,14 @@ public class NAryOperator extends AbstractNAryOperator {
 		int index = -1;
 		int kind_of_index = -1;
 		if (typeProvider < INDEXED_TYPES) {
-			if (typeProvider >= TYPE_AT_INDEX) {
-				index = typeProvider - TYPE_AT_INDEX;
+			if (typeProvider > TYPE_AT_INDEX) {
+				index = typeProvider - TYPE_AT_INDEX - 1;
 				kind_of_index = GamaType.TYPE;
-			} else if (typeProvider >= CONTENT_TYPE_AT_INDEX) {
-				index = typeProvider - CONTENT_TYPE_AT_INDEX;
+			} else if (typeProvider > CONTENT_TYPE_AT_INDEX) {
+				index = typeProvider - CONTENT_TYPE_AT_INDEX - 1;
 				kind_of_index = GamaType.CONTENT;
-			} else if (typeProvider >= KEY_TYPE_AT_INDEX) {
-				index = typeProvider - KEY_TYPE_AT_INDEX;
+			} else if (typeProvider > KEY_TYPE_AT_INDEX) {
+				index = typeProvider - KEY_TYPE_AT_INDEX - 1;
 				kind_of_index = GamaType.KEY;
 			}
 			if (index != -1 && exprs != null && index < exprs.length) {
