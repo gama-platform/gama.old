@@ -83,6 +83,9 @@ public class ModelAssembler {
 				if (pragmas.contains(IKeyword.NO_WARNING)) {
 					collector.setNoWarning();
 				}
+				if (pragmas.contains(IKeyword.NO_EXPERIMENT)) {
+					collector.setNoExperiment();
+				}
 			}
 
 		}

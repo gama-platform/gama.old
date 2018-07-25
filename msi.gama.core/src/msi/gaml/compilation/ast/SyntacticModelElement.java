@@ -48,12 +48,6 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		super(keyword, facets, statement);
 		if (path != null) {
 			final String p = path;
-			// try {
-			// p = path.getCanonicalPath();
-			// } catch (final IOException e) {
-			// e.printStackTrace();
-			// p = path.getAbsolutePath();
-			// }
 			this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
 		} else {
 			// Case of ill resources (compilation of blocks)

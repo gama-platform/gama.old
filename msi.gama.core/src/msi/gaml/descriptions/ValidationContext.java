@@ -33,7 +33,7 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
 	final URI resourceURI;
 	final ICollector<GamlCompilationError> importedErrors = new Collector.Ordered<>();
-	private boolean noWarning, noInfo, hasSyntaxErrors;
+	private boolean noWarning, noInfo, hasSyntaxErrors, noExperiment;
 	private final IDocManager docDelegate;
 
 	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
@@ -165,6 +165,14 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	public boolean hasErrorOn(final EObject... objects) {
 		final List<EObject> list = Arrays.asList(objects);
 		return StreamEx.of(items()).filter(IS_ERROR).findAny(p -> list.contains(p.getStatement())).isPresent();
+	}
+
+	public void setNoExperiment() {
+		noExperiment = true;
+	}
+
+	public boolean getNoExperiment() {
+		return noExperiment;
 	}
 
 }

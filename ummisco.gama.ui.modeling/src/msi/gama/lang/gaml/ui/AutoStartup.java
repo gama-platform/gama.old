@@ -60,9 +60,6 @@ public class AutoStartup implements IStartup {
 	public static final Pref<Boolean> EDITBOX_ENABLED =
 			GamaPreferences.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	public static final Pref<Boolean> EDITOR_SHOW_TOOLBAR =
-			GamaPreferences.create("pref_editor_show_toolbar", "Show edition toolbar by default", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).hidden();
 	static final Pref<GamaFont> EDITOR_BASE_FONT =
 			GamaPreferences.create("pref_editor_font", "Font of editors", () -> getDefaultFontData(), IType.FONT)
 					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).onChange(font -> {

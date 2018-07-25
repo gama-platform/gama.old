@@ -365,7 +365,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		toolbarParent.setBackground(IGamaColors.WHITE.color());
 
 		// Asking the editor to fill the rest
-		final Composite editor = new Composite(toolbarParent, SWT.BORDER);
+		final int style = GamaToolbarFactory.REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? SWT.NONE : SWT.BORDER;
+		final Composite editor = new Composite(toolbarParent, style);
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());
@@ -497,7 +498,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
-			WorkbenchHelper.asyncRun(() -> {
+			WorkbenchHelper.runInUI("Editor refresh", 50, (m) -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
 				if (PlatformHelper.isWindows()) {
@@ -540,7 +541,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 					}
 				}
-				if (!GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
+				if (newState.showNewExperiment
+						&& !GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
 					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", GamaIcons.create("small.plus").image(),
 							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
 							SWT.LEFT);
@@ -557,7 +559,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
 		final String platformString = getURI().toPlatformString(true);
 		final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		final WrappedGamaFile file = (WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
+		final WrappedGamaFile file =
+				(WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
 		NavigatorRoot.getInstance().getManager().refreshResource(file);
 		NavigatorRoot.getInstance().getManager().resourceChanged(null);
 		if (newExperiments == null && state != null) {

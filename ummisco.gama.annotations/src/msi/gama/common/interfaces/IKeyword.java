@@ -290,6 +290,7 @@ public interface IKeyword {
 	public static final String NODE = "node";
 	public static final String NO_INFO = "no_info";
 	public static final String NO_WARNING = "no_warning";
+	public static final String NO_EXPERIMENT = "no_experiment";
 	public static final String NULL = "nil";
 	public static final String NUMBER = "number";
 	public static final String NB_COLS = "nb_cols";
