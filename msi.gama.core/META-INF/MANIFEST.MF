@@ -302,6 +302,7 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    org.codehaus.commons.compiler,
    msi.gama.metamodel.agent",
+ msi.gaml.compilation.annotations,
  msi.gaml.compilation.ast,
  msi.gaml.compilation.kernel,
  msi.gaml.descriptions;
