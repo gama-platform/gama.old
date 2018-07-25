@@ -38,6 +38,8 @@ import org.eclipse.ui.navigator.CommonViewer;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.GamlFileExtension;
@@ -130,30 +132,34 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		WorkbenchHelper.runInUI("Resource changes", 5, (m) -> {
 			if (viewer.getControl().isDisposed()) { return; }
 			viewer.getControl().setRedraw(false);
-			try {
-				for (final Runnable r : postEventActions) {
-					r.run();
-				}
-			} finally {
+			final List<Runnable> runnables;
+			synchronized (postEventActions) {
+				runnables = ImmutableList.copyOf(postEventActions);
 				postEventActions.clear();
 			}
-			try {
-				for (final VirtualContent<?> r : toRefresh) {
-					if (!viewer.getControl().isDisposed()) {
-						viewer.refresh(r);
-					}
-				}
-			} finally {
+
+			for (final Runnable r : runnables) {
+				r.run();
+			}
+			final Set<VirtualContent<?>> refreshables;
+			synchronized (toRefresh) {
+				refreshables = ImmutableSet.copyOf(toRefresh);
 				toRefresh.clear();
 			}
-			try {
-				for (final VirtualContent<?> r : toUpdate) {
-					if (!viewer.getControl().isDisposed()) {
-						viewer.update(r, null);
-					}
+			for (final VirtualContent<?> r : refreshables) {
+				if (!viewer.getControl().isDisposed()) {
+					viewer.refresh(r);
 				}
-			} finally {
+			}
+			final Set<VirtualContent<?>> updatables;
+			synchronized (toUpdate) {
+				updatables = ImmutableSet.copyOf(toUpdate);
 				toUpdate.clear();
+			}
+			for (final VirtualContent<?> r : updatables) {
+				if (!viewer.getControl().isDisposed()) {
+					viewer.update(r, null);
+				}
 			}
 			if (toReveal != null) {
 				final VirtualContent<?> vc = findWrappedInstanceOf(toReveal);
