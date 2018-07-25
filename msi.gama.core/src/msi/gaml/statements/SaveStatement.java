@@ -654,39 +654,26 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 					if (itemType.id() == IType.MATRIX) {
 						final String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
-						for (int i = 0; i < tmpValue.length - 1; i++) {
-							String val = Cast.toGaml(tmpValue[i]);
-							if (val.startsWith("'") && val.endsWith("'")
-									|| val.startsWith("\"") && val.endsWith("\"")) {
-								val = val.substring(1, val.length() - 1);
-							}
-							if (tmpValue[i].contains(";")) {
+						for (int i = 0; i < tmpValue.length ; i++) {
+							
+							String val = toCleanString(tmpValue[i]);
+							
+							/*if (tmpValue[i].contains(";")) {
 								final String[] valueSplitted = val.split(";");
 								fw.write(valueSplitted[0]);
 								val = valueSplitted[1];
 								fw.write(Strings.LN);
-							}
+							}*/
 							fw.write(val + ",");
 						}
-						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
-							val = val.substring(1, val.length() - 1);
-						}
-						fw.write(val + Strings.LN);
+						
+						fw.write(Strings.LN);
 					} else {
-						for (int i = 0; i < values.size() - 1; i++) {
-							String val = Cast.toGaml(values.get(i)).replace(';', ',');
-							if (val.startsWith("'") && val.endsWith("'")
-									|| val.startsWith("\"") && val.endsWith("\"")) {
-								val = val.substring(1, val.length() - 1);
-							}
-							fw.write(val + ",");
+						for (int i = 0; i < values.size() ; i++) {
+							fw.write(toCleanString(values.get(i)) + ",");
 						}
-						String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
-							val = val.substring(1, val.length() - 1);
-						}
-						fw.write(val + Strings.LN);
+						
+						fw.write(Strings.LN);
 					}
 				}
 
@@ -698,6 +685,21 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			throw GamaRuntimeException.create(e, scope);
 		}
 
+	}
+	
+	public String toCleanString(Object o) {
+		String val = Cast.toGaml(o).replace(';', ',');
+		if (val.startsWith("'") && val.endsWith("'")
+				|| val.startsWith("\"") && val.endsWith("\"")) {
+			val = val.substring(1, val.length() - 1);
+		}
+	
+		if (o instanceof String) {
+			val = val.replace("\\'", "'");
+			val = val.replace("\\\"", "\"");
+			
+		}
+		return val;
 	}
 
 	public String type(final ITyped var) {
