@@ -536,12 +536,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 					toolbar.sep(4, SWT.LEFT);
 				} else {
 					int i = 0;
-					for (final String e : state.abbreviations) {
-						enableButton(i++, e, listener);
+					if (newState.showExperiments) {
+						for (final String e : state.abbreviations) {
+							enableButton(i++, e, listener);
 
+						}
 					}
 				}
-				if (newState.showNewExperiment
+				if (newState.showExperiments
 						&& !GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
 					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", GamaIcons.create("small.plus").image(),
 							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),

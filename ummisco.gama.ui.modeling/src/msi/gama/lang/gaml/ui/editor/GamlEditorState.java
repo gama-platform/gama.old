@@ -30,7 +30,7 @@ public class GamlEditorState {
 	boolean hasImportedErrors;
 	boolean hasExperiments;
 	boolean hasNullStatus;
-	final boolean showNewExperiment;
+	final boolean showExperiments;
 	public final List<String> experiments;
 	public final List<String> abbreviations;
 	final List<String> types;
@@ -43,11 +43,11 @@ public class GamlEditorState {
 			importedErrors = hasImportedErrors ? status.getImportedErrorsAsStrings() : Collections.EMPTY_MAP;
 			hasInternalErrors = status.hasInternalErrors() || status.hasInternalSyntaxErrors();
 			hasNullStatus = false;
-			showNewExperiment = !status.getNoExperiment();
+			showExperiments = !status.getNoExperiment();
 		} else {
 			hasNullStatus = true;
 			importedErrors = Collections.EMPTY_MAP;
-			showNewExperiment = true;
+			showExperiments = true;
 		}
 		final int n = Iterables.size(descriptions);
 		if (n > 0) {
@@ -74,7 +74,7 @@ public class GamlEditorState {
 		final GamlEditorState state = (GamlEditorState) old;
 		return state.hasNullStatus == hasNullStatus && state.hasImportedErrors == hasImportedErrors
 				&& state.hasInternalErrors == hasInternalErrors && state.experiments.equals(experiments)
-				&& state.showNewExperiment == showNewExperiment && state.types.equals(types);
+				&& state.showExperiments == showExperiments && state.types.equals(types);
 	}
 
 	public GamaUIColor getColor() {
