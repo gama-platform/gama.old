@@ -25,7 +25,7 @@ class TextExecuter extends DrawExecuter {
 
 	TextExecuter(final IExpression item) throws GamaRuntimeException {
 		super(item);
-		constText = item.isConst() ? Cast.asString(null, item.value(null)) : null;
+		constText = item.isConst() ? Cast.asString(null, item.getConstValue()) : null;
 	}
 
 	@Override

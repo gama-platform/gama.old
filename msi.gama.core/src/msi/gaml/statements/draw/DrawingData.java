@@ -50,6 +50,14 @@ public class DrawingData {
 	@FunctionalInterface
 	interface Evaluator<V> {
 		V value(IScope scope);
+
+		default V getConstValue() {
+			try {
+				return value(null);
+			} catch (final RuntimeException e) {
+				return null;
+			}
+		}
 	}
 
 	abstract class Attribute<T extends IType, V> implements Evaluator<V> {
@@ -94,7 +102,8 @@ public class DrawingData {
 	}
 
 	<T extends IType<V>, V> Attribute create(final IExpression exp, final Evaluator ev, final T type, final V def) {
-		if (exp != null && exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.value(null), null, true)); }
+		if (exp != null
+				&& exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.getConstValue(), null, true)); }
 		if (exp == null) { return new ConstantAttribute(def); }
 		return new ExpressionAttribute(ev);
 	}

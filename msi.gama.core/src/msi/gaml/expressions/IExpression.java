@@ -27,6 +27,21 @@ import msi.gaml.types.IType;
  */
 public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
+	/**
+	 * Convenience method for obtaining the constant value without passing a scope. Should be invoked after testing the
+	 * expression with isConst(). All runtime exceptions are caught and the method returns null in case of exceptions.
+	 * Typically useful in validation contexts
+	 * 
+	 * @return
+	 */
+	default Object getConstValue() {
+		try {
+			return value(null);
+		} catch (final RuntimeException e) {
+			return null;
+		}
+	}
+
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 
 	public abstract boolean isConst();

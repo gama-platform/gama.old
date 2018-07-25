@@ -10,7 +10,9 @@
 package msi.gaml.operators;
 
 import java.awt.Color;
+import java.util.Arrays;
 
+import org.eclipse.emf.ecore.EObject;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 
@@ -27,6 +29,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.compilation.IOperatorValidator;
+import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.GamaColorType;
 import msi.gaml.types.IType;
@@ -440,6 +446,28 @@ public class Colors {
 		return blend(color1, color2, 0.5);
 	}
 
+	public static class BrewerValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			if (arguments[0].isConst()) {
+				final Object palette = arguments[0].getConstValue();
+				if (palette instanceof String) {
+					final String p = (String) palette;
+					final ColorBrewer brewer = ColorBrewer.instance();
+					if (!brewer.hasPalette(p)) {
+						context.error("Palette " + p + " does not exist. Available palette names are: "
+								+ Arrays.toString(brewer.getPaletteNames()), UNKNOWN_ARGUMENT, emfContext);
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+	}
+
+	@validator (BrewerValidator.class)
 	@operator (
 			value = "brewer_colors",
 			can_be_const = false,
@@ -467,6 +495,7 @@ public class Colors {
 		return colors;
 	}
 
+	@validator (BrewerValidator.class)
 	@operator (
 			value = "brewer_colors",
 			can_be_const = false,

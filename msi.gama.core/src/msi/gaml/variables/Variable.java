@@ -232,7 +232,7 @@ public class Variable extends Symbol implements IVariable {
 			if (amongExpression == null || initExpression == null) { return; }
 			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst()) { return; }
 			final ListExpression list = (ListExpression) amongExpression;
-			final Object init = initExpression.value(null);
+			final Object init = initExpression.getConstValue();
 			if (!list.containsValue(init)) {
 				vd.warning(
 						"The initial value of " + vd.getName()
@@ -272,7 +272,8 @@ public class Variable extends Symbol implements IVariable {
 							IKeyword.VAR);
 					return;
 				}
-				if (!cd.getGamlType().equals(Types.NO_TYPE) && cd.getGamlType().id() != targetedVar.getGamlType().id()) {
+				if (!cd.getGamlType().equals(Types.NO_TYPE)
+						&& cd.getGamlType().id() != targetedVar.getGamlType().id()) {
 					final String p = "Parameter '" + cd.getParameterName() + "' ";
 					cd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES,
 							IKeyword.TYPE);

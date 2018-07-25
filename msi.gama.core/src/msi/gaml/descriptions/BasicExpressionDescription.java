@@ -151,16 +151,14 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		compile(context);
-		if (expression == null)
-			return Types.NO_TYPE;
+		if (expression == null) { return Types.NO_TYPE; }
 		if (expression instanceof TypeExpression) { return ((TypeExpression) expression).getDenotedType(); }
-		if (expression.isConst())
-			return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
+		if (expression.isConst()) { return context
+				.getTypeNamed(GamaStringType.staticCast(null, expression.getConstValue(), true)); }
 
 		final String s = expression.literalValue();
 		final ITypesManager tm = context.getModelDescription().getTypesManager();
-		if (tm.containsType(s))
-			return tm.get(s);
+		if (tm.containsType(s)) { return tm.get(s); }
 
 		return expression.getGamlType();
 	}

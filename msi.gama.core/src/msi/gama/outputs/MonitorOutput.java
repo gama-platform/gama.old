@@ -107,7 +107,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 	private void setColor(final IExpression facet) {
 		colorExpression = facet;
 		if (facet != null && facet.isConst()) {
-			constantColor = Types.COLOR.cast(null, facet.value(null), null, false);
+			constantColor = Types.COLOR.cast(null, facet.getConstValue(), null, false);
 		}
 	}
 
@@ -152,8 +152,9 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		if (getValue() != null) {
 			try {
 				lastValue = getValue().value(getScope());
-				if (history != null)
+				if (history != null) {
 					history.add(lastValue);
+				}
 			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
@@ -203,8 +204,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 
 	public void saveHistory() {
 		if (getScope() == null) { return; }
-		if (history == null || history.isEmpty())
-			return;
+		if (history == null || history.isEmpty()) { return; }
 		Files.newFolder(getScope(), monitorFolder);
 		String file =
 				monitorFolder + "/" + "monitor_" + getName() + "_cycle_" + getScope().getClock().getCycle() + ".csv";
@@ -213,9 +213,9 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 			final CsvWriter w = new CsvWriter(bw, CsvWriter.Letters.COMMA);
 			for (final Object o : history) {
 				String[] strings = null;
-				if (o instanceof Number)
+				if (o instanceof Number) {
 					strings = new String[] { o.toString() };
-				else if (o instanceof List) {
+				} else if (o instanceof List) {
 					final List<?> l = (List<?>) o;
 					strings = new String[l.size()];
 					for (int i = 0; i < strings.length; i++) {

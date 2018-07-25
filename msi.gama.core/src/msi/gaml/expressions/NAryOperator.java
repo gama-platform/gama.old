@@ -30,7 +30,7 @@ public class NAryOperator extends AbstractNAryOperator {
 		final NAryOperator u = new NAryOperator(proto, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e =
-					GAML.getExpressionFactory().createConst(u.value(null), u.getGamlType(), u.serialize(false));
+					GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
 			// System.out.println(" ==== Simplification of " + u.toGaml() + "
 			// into " + e.toGaml());
 			return e;

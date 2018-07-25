@@ -334,13 +334,13 @@ public class Types {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
 				// if (expr2.isConst()) {
-				// final Object o = expr2.value(null);
+				// final Object o = expr2.getConstValue();
 				// return ((List) o).isEmpty();
 				// }
 				break;
 			case IType.MAP:
 				if (expr2 instanceof MapExpression) { return ((MapExpression) expr2).isEmpty(); }
-				// if (expr2.isConst()) { return ((Map) expr2.value(null)).isEmpty(); }
+				// if (expr2.isConst()) { return ((Map) expr2.getConstValue()).isEmpty(); }
 		}
 		return false;
 	}

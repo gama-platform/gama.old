@@ -33,7 +33,7 @@ class FileExecuter extends DrawExecuter {
 
 	FileExecuter(final IExpression item) throws GamaRuntimeException {
 		super(item);
-		constImg = item.isConst() ? (GamaFile) Types.FILE.cast(null, item.value(null), null, false) : null;
+		constImg = item.isConst() ? (GamaFile) Types.FILE.cast(null, item.getConstValue(), null, false) : null;
 	}
 
 	@Override
@@ -52,8 +52,9 @@ class FileExecuter extends DrawExecuter {
 				final Envelope3D expected = Envelope3D.of(attributes.getLocation());
 				expected.expandBy(size.getX() / 2, size.getY() / 2);
 				final Envelope visible = g.getVisibleRegion();
-				if (visible != null)
+				if (visible != null) {
 					if (!visible.intersects(expected)) { return null; }
+				}
 			}
 			// XXX EXPERIMENTAL
 		}
@@ -68,8 +69,9 @@ class FileExecuter extends DrawExecuter {
 						data.getCurrentColor(), data.border.value, scope.getAgent(), data.lineWidth.value, imageFile);
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
-		if (!gisFile)
+		if (!gisFile) {
 			attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
+		}
 		if (imageFile) {
 			// If the size is provided, we automatically center the file
 			final Scaling3D size = attributes.getSize();

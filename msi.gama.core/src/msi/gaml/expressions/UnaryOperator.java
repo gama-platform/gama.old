@@ -43,7 +43,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e =
-					GAML.getExpressionFactory().createConst(u.value(null), u.getGamlType(), u.serialize(false));
+					GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
 			return e;
 		}
 		return u;

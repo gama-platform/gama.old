@@ -127,7 +127,7 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		void acceptValue() {
 			if (value.isConst()) {
-				constantValue = value.value(null);
+				constantValue = value.getConstValue();
 			}
 		}
 

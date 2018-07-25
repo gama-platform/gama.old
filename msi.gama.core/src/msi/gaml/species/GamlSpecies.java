@@ -292,7 +292,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 			// Issue 1138
 			final IExpression freq = desc.getFacetExpr(FREQUENCY);
-			if (freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.value(null))) {
+			if (freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.getConstValue())) {
 				for (final VariableDescription vd : sd.getAttributes()) {
 					if (vd.getFacet(UPDATE, VALUE) != null) {
 						vd.warning(vd.getName() + " will never be updated because " + desc.getName()

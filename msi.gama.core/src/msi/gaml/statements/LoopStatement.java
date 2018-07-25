@@ -439,7 +439,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		Times() throws GamaRuntimeException {
 			if (times.isConst()) {
-				constantTimes = Types.INT.cast(null, times.value(null), null, false);
+				constantTimes = Types.INT.cast(null, times.getConstValue(), null, false);
 			}
 		}
 

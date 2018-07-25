@@ -41,7 +41,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		// if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()
 		// ) {
 		// IExpression e =
-		// GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
+		// GAML.getExpressionFactory().createConst(u.getConstValue(), u.getType(),
 		// u.serialize(false));
 		// // System.out.println(" ==== Simplification of " + u.toGaml() + "
 		// into " + e.toGaml());
@@ -66,7 +66,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 				keys[i] = pair.exprs[0];
 				vals[i] = pair.exprs[1];
 			} else if (e instanceof ConstantExpression && e.getGamlType().getGamlType() == Types.PAIR) {
-				final GamaPair pair = (GamaPair) e.value(null);
+				final GamaPair pair = (GamaPair) e.getConstValue();
 				final Object left = pair.key;
 				final Object right = pair.value;
 				keys[i] = GAML.getExpressionFactory().createConst(left, e.getGamlType().getKeyType());

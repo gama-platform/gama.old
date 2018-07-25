@@ -142,7 +142,7 @@ public class SpeciesDescription extends TypeDescription {
 				final ListExpression list = (ListExpression) expr;
 				for (final IExpression exp : list.getElements()) {
 					if (exp instanceof SkillConstantExpression) {
-						addSkill(((ISkill) exp.value(null)).getDescription());
+						addSkill(((ISkill) exp.getConstValue()).getDescription());
 					}
 				}
 			}

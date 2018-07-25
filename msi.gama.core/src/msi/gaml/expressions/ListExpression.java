@@ -39,7 +39,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 		// if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue())
 		// {
 		// final IExpression e =
-		// GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
+		// GAML.getExpressionFactory().createConst(u.getConstValue(), u.getType(),
 		// u.serialize(false));
 		// // System.out.println(" ==== Simplification of " + u.toGaml() + "
 		// // into " + e.toGaml());
@@ -75,7 +75,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 		if (o == null) { return false; }
 		for (final IExpression exp : elements) {
 			if (!(exp instanceof ConstantExpression)) { return false; }
-			final Object e = exp.value(null);
+			final Object e = exp.getConstValue();
 			if (o.equals(e)) { return true; }
 		}
 		return false;

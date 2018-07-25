@@ -48,11 +48,11 @@ class ShapeExecuter extends DrawExecuter {
 	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
 			throws GamaRuntimeException {
 		super(item);
-		constantShape = item.isConst() ? Cast.asGeometry(null, item.value(null)) : null;
+		constantShape = item.isConst() ? Cast.asGeometry(null, item.getConstValue()) : null;
 		hasArrows = beginArrow != null || endArrow != null;
 		if (beginArrow != null) {
 			if (beginArrow.isConst()) {
-				constantBegin = Cast.asFloat(null, beginArrow.value(null));
+				constantBegin = Cast.asFloat(null, beginArrow.getConstValue());
 				this.beginArrow = null;
 			} else {
 				constantBegin = null;
@@ -64,7 +64,7 @@ class ShapeExecuter extends DrawExecuter {
 		}
 		if (endArrow != null) {
 			if (endArrow.isConst()) {
-				constantEnd = Cast.asFloat(null, endArrow.value(null));
+				constantEnd = Cast.asFloat(null, endArrow.getConstValue());
 				this.endArrow = null;
 			} else {
 				constantEnd = null;
@@ -106,9 +106,10 @@ class ShapeExecuter extends DrawExecuter {
 				&& /* !GAMA.isInHeadLessMode() */ !scope.getExperiment().isHeadless()) {
 			final Envelope e = shape.getEnvelope();
 			final Envelope visible = gr.getVisibleRegion();
-			if (visible != null)
+			if (visible != null) {
 				if (!visible.intersects(e)) { return null; }
-			// XXX EXPERIMENTAL
+				// XXX EXPERIMENTAL
+			}
 		}
 
 		// The textures are computed as well in advance

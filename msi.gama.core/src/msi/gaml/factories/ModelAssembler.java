@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModelAssembler.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModelAssembler.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -60,7 +59,7 @@ import msi.gaml.types.Types;
  * @since 15 avr. 2014
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelAssembler {
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
@@ -68,19 +67,22 @@ public class ModelAssembler {
 			final Map<String, ModelDescription> mm) {
 		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
 		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
-		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes = new TOrderedHashMap[1];
+		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes =
+				new TOrderedHashMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
 		Facets globalFacets = null;
 		if (source.hasFacet(IKeyword.PRAGMA)) {
 			final Facets facets = source.copyFacets(null);
-			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().value(null);
+			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().getConstValue();
 			collector.resetInfoAndWarning();
 			if (pragmas != null) {
-				if (pragmas.contains(IKeyword.NO_INFO))
+				if (pragmas.contains(IKeyword.NO_INFO)) {
 					collector.setNoInfo();
-				if (pragmas.contains(IKeyword.NO_WARNING))
+				}
+				if (pragmas.contains(IKeyword.NO_WARNING)) {
 					collector.setNoWarning();
+				}
 			}
 
 		}
@@ -90,10 +92,11 @@ public class ModelAssembler {
 			final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
 			if (currentModel != null) {
 				if (currentModel.hasFacets()) {
-					if (globalFacets == null)
+					if (globalFacets == null) {
 						globalFacets = new Facets(currentModel.copyFacets(null));
-					else
+					} else {
 						globalFacets.putAll(currentModel.copyFacets(null));
+					}
 				}
 				currentModel.visitChildren(element -> globalNodes.addChild(element));
 				SyntacticVisitor visitor = element -> addSpeciesNode(element, speciesNodes, collector);
@@ -103,8 +106,9 @@ public class ModelAssembler {
 				// (see DiffusionStatement)
 				currentModel.visitGrids(visitor);
 				visitor = element -> {
-					if (experimentNodes[0] == null)
+					if (experimentNodes[0] == null) {
 						experimentNodes[0] = new TOrderedHashMap();
+					}
 					addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
 
 				};
@@ -119,26 +123,24 @@ public class ModelAssembler {
 		// be able to look for resources. These working paths come from the
 		// imported models
 
-		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null
-				: ImmutableSet.copyOf(
-						Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
-		
+		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null : ImmutableSet
+				.copyOf(Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
 
-		if(mm != null) {			
-			for(ModelDescription m1:mm.values()){
-				for(String im:m1.getAlternatePaths()) {
-					absoluteAlternatePathAsStrings=Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
+		if (mm != null) {
+			for (final ModelDescription m1 : mm.values()) {
+				for (final String im : m1.getAlternatePaths()) {
+					absoluteAlternatePathAsStrings =
+							Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
 				}
 			}
 		}
 
-		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
-				source.getElement(), null, ModelDescription.ROOT, null, globalFacets, collector,
-				absoluteAlternatePathAsStrings);
+		final ModelDescription model =
+				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null,
+						ModelDescription.ROOT, null, globalFacets, collector, absoluteAlternatePathAsStrings);
 
-		final Collection<String> allModelNames = models.size() == 1 ? null
-				: ImmutableSet
-						.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
+		final Collection<String> allModelNames = models.size() == 1 ? null : ImmutableSet
+				.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
 		model.setImportedModelNames(allModelNames);
 		model.isDocumenting(document);
 
@@ -154,7 +156,7 @@ public class ModelAssembler {
 			addMicroSpecies(model, speciesNode, tempSpeciesCache);
 			return true;
 		});
-		if (experimentNodes[0] != null)
+		if (experimentNodes[0] != null) {
 			experimentNodes[0].forEachEntry((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					addExperiment(s, model, experimentNode, tempSpeciesCache);
@@ -162,6 +164,7 @@ public class ModelAssembler {
 				});
 				return true;
 			});
+		}
 
 		// Parent the species and the experiments of the model (all are now
 		// known).
@@ -170,7 +173,7 @@ public class ModelAssembler {
 			return true;
 		});
 
-		if (experimentNodes[0] != null)
+		if (experimentNodes[0] != null) {
 			experimentNodes[0].forEachEntry((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					parentExperiment(model, experimentNode);
@@ -178,15 +181,17 @@ public class ModelAssembler {
 				});
 				return true;
 			});
+		}
 
 		// Initialize the hierarchy of types
 		model.buildTypes();
 		// hqnghi build micro-models as types
-		if (mm != null)
+		if (mm != null) {
 			for (final Entry<String, ModelDescription> entry : mm.entrySet()) {
 				model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
 			}
-		// end-hqnghi
+			// end-hqnghi
+		}
 
 		// Make species and experiments recursively create their attributes,
 		// actions....
@@ -197,7 +202,7 @@ public class ModelAssembler {
 			return true;
 		});
 
-		if (experimentNodes[0] != null)
+		if (experimentNodes[0] != null) {
 			experimentNodes[0].forEachEntry((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
@@ -205,6 +210,7 @@ public class ModelAssembler {
 				});
 				return true;
 			});
+		}
 
 		// Complement recursively the different species (incl. the world). The
 		// recursion is hierarchical
@@ -214,8 +220,7 @@ public class ModelAssembler {
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
 			if (sd.isExperiment()) {
-				if (!sd.finalizeDescription())
-					return null;
+				if (!sd.finalizeDescription()) { return null; }
 			}
 		}
 
@@ -224,8 +229,7 @@ public class ModelAssembler {
 			createSchedulerSpecies(model);
 		}
 
-		if (!model.finalizeDescription())
-			return null;
+		if (!model.finalizeDescription()) { return null; }
 
 		if (document) {
 			collector.document(model);
@@ -236,36 +240,30 @@ public class ModelAssembler {
 
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
 		final DirectedGraph<SpeciesDescription, Object> hierarchy = new SimpleDirectedGraph<>(Object.class);
-		final DescriptionVisitor visitor = new DescriptionVisitor<SpeciesDescription>() {
-
-			@Override
-			public boolean visit(final SpeciesDescription desc) {
-				if (desc instanceof ModelDescription)
-					return true;
-				final SpeciesDescription sd = desc.getParent();
-				if (sd == null || sd == desc)
-					return false;
-				hierarchy.addVertex(desc);
-				if (!sd.isBuiltIn()) {
-					hierarchy.addVertex(sd);
-					hierarchy.addEdge(sd, desc);
-				}
-				return true;
+		final DescriptionVisitor visitor = desc -> {
+			if (desc instanceof ModelDescription) { return true; }
+			final SpeciesDescription sd = ((SpeciesDescription) desc).getParent();
+			if (sd == null || sd == desc) { return false; }
+			hierarchy.addVertex((SpeciesDescription) desc);
+			if (!sd.isBuiltIn()) {
+				hierarchy.addVertex(sd);
+				hierarchy.addEdge(sd, (SpeciesDescription) desc);
 			}
+			return true;
 		};
 		model.visitAllSpecies(visitor);
 		return () -> new TopologicalOrderIterator<>(hierarchy);
 	}
 
 	private void createSchedulerSpecies(final ModelDescription model) {
-		final SpeciesDescription sd = (SpeciesDescription) DescriptionFactory.create(SPECIES, model, NAME,
-				"_internal_global_scheduler");
+		final SpeciesDescription sd =
+				(SpeciesDescription) DescriptionFactory.create(SPECIES, model, NAME, "_internal_global_scheduler");
 		sd.finalizeDescription();
 		if (model.hasFacet(SCHEDULES)) {
-			//remove the warning as GAMA integrates a working workaround to use this facet at the global level
-			//model.warning(
-			//		"'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
-			//		IGamlIssue.DEPRECATED, NAME);
+			// remove the warning as GAMA integrates a working workaround to use this facet at the global level
+			// model.warning(
+			// "'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
+			// IGamlIssue.DEPRECATED, NAME);
 			sd.setFacet(SCHEDULES, model.getFacet(SCHEDULES));
 			model.removeFacets(SCHEDULES);
 		}
@@ -323,8 +321,8 @@ public class ModelAssembler {
 			final Map<String, SpeciesDescription> cache) {
 		// Create the species description without any children. Passing
 		// explicitly an empty list and not null;
-		final SpeciesDescription mDesc = (SpeciesDescription) DescriptionFactory.create(micro, macro,
-				Collections.EMPTY_LIST);
+		final SpeciesDescription mDesc =
+				(SpeciesDescription) DescriptionFactory.create(micro, macro, Collections.EMPTY_LIST);
 		cache.put(mDesc.getName(), mDesc);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
@@ -348,8 +346,8 @@ public class ModelAssembler {
 	}
 
 	/**
-	 * Recursively complements a species and its micro-species. Add variables,
-	 * behaviors (actions, reflex, task, states, ...), aspects to species.
+	 * Recursively complements a species and its micro-species. Add variables, behaviors (actions, reflex, task, states,
+	 * ...), aspects to species.
 	 *
 	 * @param macro
 	 *            the macro-species
@@ -357,9 +355,7 @@ public class ModelAssembler {
 	 *            the structure of micro-species
 	 */
 	void complementSpecies(final SpeciesDescription species, final ISyntacticElement node) {
-		if (species == null) {
-			return;
-		}
+		if (species == null) { return; }
 		species.copyJavaAdditions();
 		node.visitChildren(element -> {
 			final IDescription childDesc = DescriptionFactory.create(element, species, null);
@@ -380,9 +376,7 @@ public class ModelAssembler {
 	void parentExperiment(final ModelDescription model, final ISyntacticElement micro) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = model.getExperiment(micro.getName());
-		if (mDesc == null) {
-			return;
-		}
+		if (mDesc == null) { return; }
 		final String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "experiment"
 		// No cache needed for experiments ??
@@ -397,9 +391,7 @@ public class ModelAssembler {
 			final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = cache.get(micro.getName());
-		if (mDesc == null || mDesc.isExperiment()) {
-			return;
-		}
+		if (mDesc == null || mDesc.isExperiment()) { return; }
 		String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "agent"
 		if (p == null) {
@@ -415,8 +407,7 @@ public class ModelAssembler {
 	}
 
 	/**
-	 * Lookup first in the cache passed in argument, then in the built-in
-	 * species
+	 * Lookup first in the cache passed in argument, then in the built-in species
 	 * 
 	 * @param cache
 	 * @return
