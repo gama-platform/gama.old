@@ -112,18 +112,21 @@ public interface ITypeProvider {
 	 */
 	static final int INDEXED_TYPES = -100;
 	/**
-	 * The type returned is the type of the argument at index 0...n (i.e., 0 for the first element, 1 for the second,
-	 * etc. so that, for instance, TYPE_AT_INDEX + 2 represents the type of the THIRD argument
+	 * The type returned is the type of the argument at index 1...n (i.e., 1 for the first element, 3 for the second,
+	 * etc.) so that, for instance, TYPE_AT_INDEX + 2 represents the type of the SECOND argument (equivalent to
+	 * SECOND_TYPE). Musth be followed by "+ n" with n>0 to be significant.
 	 */
 	static final int TYPE_AT_INDEX = -200;
 	/**
-	 * The type returned is the contents type of the argument at index 0...n (i.e., 0 for the first element, 1 for the
-	 * second, etc. so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the SECOND argument
+	 * The type returned is the contents type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
+	 * second, etc.) so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the FIRST argument
+	 * (equivalent to FIRST_CONTENT_TYPE). Musth be followed by "+ n" with n>0 to be significant.
 	 */
 	static final int CONTENT_TYPE_AT_INDEX = -300;
 	/**
-	 * The type returned is the key type of the argument at index 0...n (i.e., 0 for the first element, 1 for the
-	 * second, etc. so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the FOURTH argument
+	 * The type returned is the key type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
+	 * second, etc.) so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the THIRD argument. Musth
+	 * be followed by "+ n" with n>0 to be significant.
 	 */
 	static final int KEY_TYPE_AT_INDEX = -400;
 
