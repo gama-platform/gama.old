@@ -237,7 +237,7 @@ public class NetworkSkill extends MessagingSkill {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<IAgent> getRegisteredAgents(final IScope scope) {
+	protected List<IAgent> getRegisteredAgents(final IScope scope) {
 		return (List<IAgent>) scope.getSimulation().getAttribute(REGISTERED_AGENTS);
 	}
 
@@ -246,7 +246,7 @@ public class NetworkSkill extends MessagingSkill {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, IConnector> getRegisteredServers(final IScope scope) {
+	protected Map<String, IConnector> getRegisteredServers(final IScope scope) {
 		return (Map<String, IConnector>) scope.getSimulation().getAttribute(REGISTRED_SERVER);
 	}
 
