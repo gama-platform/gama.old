@@ -87,7 +87,15 @@ public class FileUtils {
 
 	// Add a thin layer of workspace-based searching in order to resolve linked resources.
 	// Should be able to catch most of the calls to relative resources as well
-	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist) {
+	static public String constructAbsoluteFilePath(final IScope scope, final String filePath, final boolean mustExist) {
+		final String fp = filePath.replace("~", System.getProperty("user.home"));
+		if (isAbsolutePath(fp)) {
+			final String file = findOutsideWorkspace(fp, mustExist);
+			if (file != null) {
+				System.out.println("Hit with EFS-based search: " + file);
+				return file;
+			}
+		}
 		final IExperimentAgent a = scope.getExperiment();
 		// Necessary to ask the workspace for the containers as projects might be linked
 		final List<IContainer> paths =
@@ -99,13 +107,7 @@ public class FileUtils {
 				return file;
 			}
 		}
-		if (isAbsolutePath(fp)) {
-			final String file = findOutsideWorkspace(fp, mustExist);
-			if (file != null) {
-				System.out.println("Hit with EFS-based search: " + file);
-				return file;
-			}
-		}
+
 		System.out.println("Falling back to the previous JavaIO based search");
 		return constructAbsoluteFilePathAlternate(scope, fp, mustExist);
 	}
