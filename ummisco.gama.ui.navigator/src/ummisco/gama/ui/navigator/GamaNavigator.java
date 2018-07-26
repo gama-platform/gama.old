@@ -178,6 +178,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	}
 
 	private void restoreState() {
+		if(memento == null) { return; }
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) { return; }
 		if (KEEP_NAVIGATOR_STATE.getValue()) {
