@@ -55,7 +55,7 @@ public class AWTLayeredDisplayMultiListener
 				component.requestFocus();
 			}
 			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
-				WorkbenchHelper.getPage().activate(deco.view);
+				WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().activate(deco.view));
 			}
 			return true;
 		};
