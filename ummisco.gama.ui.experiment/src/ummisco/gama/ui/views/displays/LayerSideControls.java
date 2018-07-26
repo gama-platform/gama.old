@@ -181,8 +181,7 @@ public class LayerSideControls {
 
 		preset = EditorFactory.choose(scope, contents, "Preset camera:", "Choose...", true, view.getCameraNames(),
 				(EditorListener<String>) newValue -> {
-					if (newValue.isEmpty())
-						return;
+					if (newValue.isEmpty()) { return; }
 					data.setPresetCamera(newValue);
 					ds.updateDisplay(true);
 				});
@@ -330,13 +329,14 @@ public class LayerSideControls {
 					data.setZoomLevel(newValue.doubleValue() / 100d, true);
 					ds.updateDisplay(true);
 				});
-		rotate = EditorFactory.create(scope, contents, "Rotation angle about z-axis (degrees):",
-				Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
-				(EditorListener<Double>) newValue -> {
-					data.setZRotationAngle(newValue);
-					ds.updateDisplay(true);
-				});
-		if (view.isOpenGL())
+
+		if (view.isOpenGL()) {
+			rotate = EditorFactory.create(scope, contents, "Z-axis rotation:",
+					Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
+					(EditorListener<Double>) newValue -> {
+						data.setZRotationAngle(newValue);
+						ds.updateDisplay(true);
+					});
 			EditorFactory.create(scope, contents, "Continuous rotation", data.isRotationOn(),
 					(EditorListener<Boolean>) val -> {
 						ds.runAndUpdate(() -> {
@@ -345,6 +345,7 @@ public class LayerSideControls {
 						});
 
 					});
+		}
 		createItem(viewer, "General", null, contents);
 
 		ds.getData().addListener((p, v) -> {
@@ -358,8 +359,10 @@ public class LayerSideControls {
 					background.forceUpdateValueAsynchronously();
 					break;
 				case ROTATION:
-					rotate.getParam().setValue(scope, (double) v);
-					rotate.forceUpdateValueAsynchronously();
+					if (rotate != null) {
+						rotate.getParam().setValue(scope, (double) v);
+						rotate.forceUpdateValueAsynchronously();
+					}
 					break;
 				default:
 					;
@@ -495,7 +498,7 @@ public class LayerSideControls {
 				save.setToolTipText(
 						"Save the chart data as a CSV file when memorization of values is enabled in the preferences or via the 'memorize:' facet");
 				save.setEnabled(enabled);
-				if (enabled)
+				if (enabled) {
 					save.addSelectionListener(new SelectionAdapter() {
 
 						@Override
@@ -504,6 +507,7 @@ public class LayerSideControls {
 						}
 
 					});
+				}
 				break;
 			}
 			default:
