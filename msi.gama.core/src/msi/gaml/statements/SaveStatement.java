@@ -654,25 +654,21 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 					if (itemType.id() == IType.MATRIX) {
 						final String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
-						for (int i = 0; i < tmpValue.length ; i++) {
-							
-							String val = toCleanString(tmpValue[i]);
-							
-							/*if (tmpValue[i].contains(";")) {
-								final String[] valueSplitted = val.split(";");
-								fw.write(valueSplitted[0]);
-								val = valueSplitted[1];
-								fw.write(Strings.LN);
-							}*/
-							fw.write(val + ",");
+						for (int i = 0; i < tmpValue.length; i++) {
+							if (i > 0) {
+								fw.write(',');
+							}
+							fw.write(toCleanString(tmpValue[i]));
 						}
-						
 						fw.write(Strings.LN);
 					} else {
-						for (int i = 0; i < values.size() ; i++) {
-							fw.write(toCleanString(values.get(i)) + ",");
+						final int size = values.size();
+						for (int i = 0; i < size; i++) {
+							if (i > 0) {
+								fw.write(',');
+							}
+							fw.write(toCleanString(values.get(i)));
 						}
-						
 						fw.write(Strings.LN);
 					}
 				}
@@ -686,18 +682,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 
 	}
-	
-	public String toCleanString(Object o) {
+
+	public String toCleanString(final Object o) {
 		String val = Cast.toGaml(o).replace(';', ',');
-		if (val.startsWith("'") && val.endsWith("'")
-				|| val.startsWith("\"") && val.endsWith("\"")) {
+		if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
 			val = val.substring(1, val.length() - 1);
 		}
-	
+
 		if (o instanceof String) {
 			val = val.replace("\\'", "'");
 			val = val.replace("\\\"", "\"");
-			
+
 		}
 		return val;
 	}
@@ -754,8 +749,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final GeometryFactory geomFact = new GeometryFactory();
 			for (int i = 0; i < p.getNumInteriorRing(); i++) {
 				final LinearRing hole = (LinearRing) p.getInteriorRingN(i);
-				if ((!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates()))
-						|| (clockwise && CGAlgorithms.isCCW(hole.getCoordinates()))) {
+				if (!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates())
+						|| clockwise && CGAlgorithms.isCCW(hole.getCoordinates())) {
 					change = true;
 					final Coordinate[] coords = hole.getCoordinates();
 					ArrayUtils.reverse(coords);
