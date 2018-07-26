@@ -83,17 +83,13 @@ public interface IGamaIcons {
 	// Navigator
 
 	public static final String FOLDER_BUILTIN = "navigator/folder.library2";
-	public static final String FOLDER_BUILTIN_16 = "navigator/folder.library2.16";
 	public static final String FOLDER_PLUGIN = "navigator/folder.plugin2";
-	public static final String FOLDER_PLUGIN_16 = "navigator/folder.plugin2.16";
 	public static final String FOLDER_TEST = "navigator/folder.test2";
-	public static final String FOLDER_TEST_16 = "navigator/folder.test2.16";
 	public static final String FOLDER_PROJECT = "folder.user2";
 	public static final String FOLDER_MODEL = "folder.model3";
 	public static final String FOLDER_RESOURCES = "folder.resources2";
 	public static final String FILE_ICON = "file.icon2";
 	public static final String FOLDER_USER = "navigator/folder.user";
-	public static final String FOLDER_USER_16 = "navigator/folder.user.16";
 
 	// Editor specific
 
