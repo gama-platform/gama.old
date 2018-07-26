@@ -33,7 +33,6 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * Class TopLevelFolder.
@@ -66,7 +65,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcons.create(!PlatformHelper.isLinux() ? iconName : iconName + "_16").image();
+		icon = GamaIcons.create(iconName).image();
 		statusIcon = GamaIcons.create(statusIconName).image();
 		initializeChildren();
 	}
@@ -135,8 +134,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
 			if (osString
 					.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/", ""))) {
-				if (isTest)
-					return Location.Tests;
+				if (isTest) { return Location.Tests; }
 				return Location.Plugins;
 			}
 			return Location.Other;
@@ -180,8 +178,9 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	public void getSuffix(final StringBuilder sb) {
 		final int projectCount = children.length;
 		sb.append(projectCount).append(" project");
-		if (projectCount > 1)
+		if (projectCount > 1) {
 			sb.append("s");
+		}
 	}
 
 	@Override
