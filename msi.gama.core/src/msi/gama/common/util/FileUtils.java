@@ -49,6 +49,7 @@ public class FileUtils {
 
 	static IWorkspaceRoot ROOT = ResourcesPlugin.getWorkspace().getRoot();
 	static IFileSystem LOCAL = EFS.getLocalFileSystem();
+	static String USER_HOME = System.getProperty("user.home");
 
 	/**
 	 * Checks if is absolute path.
@@ -88,7 +89,12 @@ public class FileUtils {
 	// Add a thin layer of workspace-based searching in order to resolve linked resources.
 	// Should be able to catch most of the calls to relative resources as well
 	static public String constructAbsoluteFilePath(final IScope scope, final String filePath, final boolean mustExist) {
-		final String fp = filePath.replace("~", System.getProperty("user.home"));
+		String fp;
+		if (filePath.startsWith("~")) {
+			fp = filePath.replaceFirst("~", USER_HOME);
+		} else {
+			fp = filePath;
+		}
 		if (isAbsolutePath(fp)) {
 			final String file = findOutsideWorkspace(fp, mustExist);
 			if (file != null) {
