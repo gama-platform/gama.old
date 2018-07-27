@@ -267,12 +267,12 @@ public class GamaPreferences {
 						PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE = create("pref_display_continue_drawing",
 				"Continue to draw displays when in Modeling perspective", false, IType.BOOL).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> DISPLAY_NATIVE_FULLSCREEN = create("pref_display_fullscreen_native",
-				"Use the native mode for full-screen (experimental)", false, IType.BOOL).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN = create("pref_display_fullscreen_menu",
-				"Disable the OS menu bar when a display is full-screen", true, IType.BOOL).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> DISPLAY_TOOLBAR_FULLSCREEN = create("pref_display_fullscreen_toolbar",
-				"Show the toolbar when a display is full-screen", false, IType.BOOL).in(NAME, PRESENTATION);
+		// public static final Pref<Boolean> DISPLAY_NATIVE_FULLSCREEN = create("pref_display_fullscreen_native",
+		// "Use the native mode for full-screen (experimental)", false, IType.BOOL).in(NAME, PRESENTATION);
+		// public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN = create("pref_display_fullscreen_menu",
+		// "Disable the OS menu bar when a display is full-screen", true, IType.BOOL).in(NAME, PRESENTATION);
+		// public static final Pref<Boolean> DISPLAY_TOOLBAR_FULLSCREEN = create("pref_display_fullscreen_toolbar",
+		// "Show the toolbar when a display is full-screen", false, IType.BOOL).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 				"Enable fast snapshots (uncomplete when the display is obscured by others but much faster)", false,
 				IType.BOOL).in(NAME, PRESENTATION);

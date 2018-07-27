@@ -91,15 +91,17 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void setSynchronized(final boolean sync) {
 		synchro = sync;
-		if (view != null)
+		if (view != null) {
 			view.updateToolbarState();
+		}
 	}
 
 	@Override
 	public void setPaused(final boolean pause) {
 		super.setPaused(pause);
-		if (view != null)
+		if (view != null) {
 			view.updateToolbarState();
+		}
 	}
 
 	@Override

@@ -45,12 +45,23 @@ public class GamaToolbar2 extends Composite {
 	private GamaToolbarSimple left, right;
 	private boolean hasTooltip;
 	final int height;
+	boolean isVisible = true;
 
 	public GamaToolbar2(final Composite parent, final int style, final int height) {
 		super(parent, SWT.NONE);
 		this.height = height;
 		createLayout();
 		createToolbars();
+	}
+
+	@Override
+	public void setVisible(final boolean visible) {
+		isVisible = visible;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return isVisible;
 	}
 
 	public void createLayout() {
@@ -214,7 +225,12 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	public void refresh(final boolean layout) {
+		left.layout(true, true);
+		left.update();
+		right.layout(true, true);
+		right.update();
 		layout(true, true);
+		update();
 	}
 
 	/**
@@ -307,12 +323,12 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	public void hide() {
-		toggle.show = true; // force to true
+		isVisible = true; // force to true
 		toggle.run(); // will make it false
 	}
 
 	public void show() {
-		toggle.show = true; // force to false
+		isVisible = false; // force to false
 		toggle.run(); // will make it true
 	}
 

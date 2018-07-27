@@ -65,20 +65,15 @@ public class GamaToolbarFactory {
 		return findGamaComposite(c.getParent());
 	}
 
-	public static class ToggleAction extends Action {
-
-		boolean show = true;
+	public static abstract class ToggleAction extends Action {
 
 		ToggleAction() {
 			super("Toggle toolbar", IAction.AS_PUSH_BUTTON);
 			setId("toolbar.toggle");
-			setIcon();
+			setIcon(true);
 		}
 
-		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3")
-					.descriptor());
-		}
+		protected abstract void setIcon(boolean show);
 
 	}
 
@@ -150,7 +145,7 @@ public class GamaToolbarFactory {
 		return layout;
 	}
 
-	private static Composite createToolbarComposite(final IToolbarDecoratedView view, final Composite composite) {
+	public static Composite createToolbarComposite(final Composite composite) {
 		final Composite toolbarComposite = new Composite(composite, SWT.None);
 		final GridData toolbarCompositeData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
 		toolbarComposite.setLayoutData(toolbarCompositeData2);
@@ -188,7 +183,7 @@ public class GamaToolbarFactory {
 		// view_parent = view_parent.getParent();
 		// }
 		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
-		final Composite toolbarComposite = createToolbarComposite(view, intermediateComposite);
+		final Composite toolbarComposite = createToolbarComposite(intermediateComposite);
 		final Composite childComposite = new Composite(intermediateComposite, SWT.None);
 		childComposite.setLayoutData(getLayoutDataForChild());
 		childComposite.setLayout(getLayoutForChild());
@@ -206,11 +201,18 @@ public class GamaToolbarFactory {
 
 			@Override
 			public void run() {
-				show = !show;
-				((GridData) toolbarComposite.getLayoutData()).exclude = !show;
-				toolbarComposite.setVisible(show);
-				toolbarComposite.getParent().layout();
-				setIcon();
+				final boolean show = !tb.isVisible();
+				tb.setVisible(show);
+				((GridData) tb.getParent().getLayoutData()).exclude = !show;
+				tb.getParent().setVisible(show);
+				tb.getParent().getParent().layout();
+				setIcon(show);
+			}
+
+			@Override
+			protected void setIcon(final boolean show) {
+				setImageDescriptor(GamaIcons
+						.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3").descriptor());
 			}
 		};
 

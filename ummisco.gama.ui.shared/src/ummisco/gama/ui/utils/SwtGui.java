@@ -181,7 +181,11 @@ public class SwtGui implements IGui {
 				final IWorkbenchPage page = WorkbenchHelper.getPage();
 				if (page != null) {
 					page.zoomOut();
-					result[0] = page.showView(viewId, secondaryId, code);
+					final String second = secondaryId == null ? null
+							: secondaryId + "@@@" + String.valueOf(System.currentTimeMillis());
+					// The goal here is to address #2441 by randomizing the ids of views.
+					System.out.println("Opening view " + viewId + " " + second);
+					result[0] = page.showView(viewId, second, code);
 				}
 			} catch (final Exception e) {
 				result[0] = e;
@@ -456,7 +460,6 @@ public class SwtGui implements IGui {
 		for (final IViewReference ref : viewRefs) {
 			final IWorkbenchPart part = ref.getPart(false);
 			if (part instanceof IGamaView.Display) {
-
 				result.add(((IGamaView.Display) part).getDisplaySurface());
 			}
 		}

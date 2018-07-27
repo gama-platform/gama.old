@@ -55,7 +55,6 @@ public abstract class GamaViewPart extends ViewPart
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
 	private StateListener toolbarUpdater;
-	// Action toggle;
 	private Composite rootComposite;
 
 	public enum UpdatePriority {
@@ -101,8 +100,9 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void updateToolbarState() {
-		if (toolbarUpdater != null)
+		if (toolbarUpdater != null) {
 			toolbarUpdater.updateToReflectState();
+		}
 	}
 
 	@Override
@@ -114,7 +114,13 @@ public abstract class GamaViewPart extends ViewPart
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		OutputPartsManager.install();
-		final String s_id = site.getSecondaryId();
+		String s_id = site.getSecondaryId();
+		if (s_id != null) {
+			final int i = s_id.indexOf("@@@");
+			if (i != -1) {
+				s_id = s_id.substring(0, i);
+			}
+		}
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
 
@@ -155,8 +161,9 @@ public abstract class GamaViewPart extends ViewPart
 			if (shouldBeClosedWhenNoExperiments()) {
 				// System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
 				WorkbenchHelper.asyncRun(() -> {
-					if (shouldBeClosedWhenNoExperiments())
+					if (shouldBeClosedWhenNoExperiments()) {
 						close(GAMA.getRuntimeScope());
+					}
 				});
 
 			}
@@ -183,8 +190,7 @@ public abstract class GamaViewPart extends ViewPart
 	public void createPartControl(final Composite composite) {
 		this.rootComposite = composite;
 		composite.addDisposeListener(this);
-		if (needsOutput() && getOutput() == null)
-			return;
+		if (needsOutput() && getOutput() == null) { return; }
 		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
 		ownCreatePartControl(getParentComposite());
 		// activateContext();

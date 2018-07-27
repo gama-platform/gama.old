@@ -46,7 +46,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public DisplayOverlay overlay;
 	public GamaToolbar2 toolbar;
 
-	boolean isOverlayTemporaryVisible, sideControlsVisible, interactiveConsoleVisible, simulationControlsVisible;
+	boolean isOverlayTemporaryVisible, sideControlsVisible, interactiveConsoleVisible;
 	protected IPerspectiveListener perspectiveListener;
 	final GamaCommand toggleSideControls, toggleOverlay, takeSnapshot, toggleFullScreen, toggleInteractiveConsole,
 			runExperiment, stepExperiment, closeExperiment;
@@ -83,37 +83,42 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
-			adaptToolbarToFullScreen(false);
 			if (interactiveConsoleVisible) {
 				toggleInteractiveConsole();
-			}
-			if (simulationControlsVisible) {
-				toggleSimulationControls();
 			}
 			view.controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
+			adaptToolbar();
 			view.setFocus();
 		} else {
-			adaptToolbarToFullScreen(true);
 			fullScreenShell = createFullScreenShell();
 			normalParentOfFullScreenControl = view.controlToSetFullScreen().getParent();
 			view.controlToSetFullScreen().setParent(fullScreenShell);
 			createOverlay();
+			adaptToolbar();
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
 			view.getZoomableControls()[0].forceFocus();
-			if (GamaPreferences.Displays.DISPLAY_TOOLBAR_FULLSCREEN.getValue()) {
-				toggleSimulationControls();
-			}
 		}
 	}
 
-	private void adaptToolbarToFullScreen(final boolean entering) {
-		fs.setImage(GamaIcons.create(entering ? "display.fullscreen3" : "display.fullscreen2").image());
+	Composite tp;
 
-		if (entering) {
+	public void toggleToolbar() {
+		if (toolbar.isVisible()) {
+			toolbar.hide();
+		} else {
+			toolbar.show();
+		}
+	}
+
+	private void adaptToolbar() {
+		final boolean isFullScreen = isFullScreen();
+		fs.setImage(GamaIcons.create(isFullScreen ? "display.fullscreen3" : "display.fullscreen2").image());
+		toolbar.wipe(SWT.LEFT, true);
+		if (isFullScreen) { // We're entering full screen
 			toolbar.button(toggleSideControls, SWT.LEFT);
 			toolbar.button(toggleOverlay, SWT.LEFT);
 			toolbar.button(toggleInteractiveConsole, SWT.LEFT);
@@ -121,9 +126,27 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(runExperiment, SWT.LEFT);
 			toolbar.button(stepExperiment, SWT.LEFT);
 			toolbar.button(closeExperiment, SWT.LEFT);
-		} else {
-			toolbar.wipe(SWT.LEFT, true);
+			tp = toolbar.getParent();
+			final Composite forToolbar =
+					GamaToolbarFactory.createToolbarComposite(view.getParentComposite().getParent());
+			toolbar.setParent(forToolbar);
+		} else { // We're leaving full screen
+			final Composite forToolbar = toolbar.getParent();
+			toolbar.setParent(tp);
+			tp = null;
+			if (forToolbar != null && !forToolbar.isDisposed()) {
+				forToolbar.dispose();
+			}
+			view.getParentComposite().getParent().layout(true, true);
 		}
+		if (toolbar.isVisible()) {
+			toolbar.show();
+			toolbar.refresh(true);
+		} else {
+			toolbar.hide();
+		}
+		toolbar.getParent().layout();
+
 	}
 
 	public void createOverlay() {
@@ -162,7 +185,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		keyAndMouseListener = new SWTLayeredDisplayMultiListener(this, view.getDisplaySurface());
 		menuManager = new DisplaySurfaceMenu(view.getDisplaySurface(), view.getParentComposite(), presentationMenu());
 		if (view.getOutput().getData().fullScreen() > -1) {
-			toggleFullScreen();
+			WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
 		}
 	}
 
@@ -275,23 +298,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		sidePanel.layout(true, true);
 	}
 
-	Composite tp;
-
-	public void toggleSimulationControls() {
-		if (simulationControlsVisible) {
-			toolbar.setParent(tp);
-			tp = null;
-			view.getParentComposite().getParent().layout(true, true);
-			simulationControlsVisible = false;
-		} else {
-			tp = toolbar.getParent();
-			toolbar.setParent(view.getParentComposite().getParent());
-			simulationControlsVisible = true;
-		}
-		toolbar.layout(true, true);
-		toolbar.getParent().layout();
-	}
-
 	private MenuManager presentationMenu() {
 		final MenuManager mm = new MenuManager();
 
@@ -299,19 +305,17 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		mm.setImageDescriptor(GamaIcons.create("display.sidebar2").descriptor());
 		mm.add(toggleSideControls.toAction());
 		mm.add(toggleOverlay.toAction());
-		mm.add(new Action("Toggle toolbar (FullScreen Only) " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
+		mm.add(new Action("Toggle toolbar " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
 				GamaIcons.create("display.fullscreen.toolbar2").descriptor()) {
 
 			@Override
 			public boolean isEnabled() {
-				return isFullScreen();
+				return true;
 			}
 
 			@Override
 			public void run() {
-				if (isFullScreen()) {
-					toggleSimulationControls();
-				}
+				toggleToolbar();
 			}
 		});
 		return mm;

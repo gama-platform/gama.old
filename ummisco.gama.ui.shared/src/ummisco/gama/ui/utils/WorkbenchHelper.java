@@ -53,7 +53,6 @@ import com.google.common.cache.LoadingCache;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.preferences.GamaPreferences;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.views.IGamlEditor;
 
@@ -273,16 +272,19 @@ public class WorkbenchHelper {
 		}
 		final Rectangle bounds = monitors[monitorId].getBounds();
 
-		Shell fullScreenShell =
-				new Shell(WorkbenchHelper.getDisplay(), (GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue()
-						? SWT.ON_TOP | SWT.SYSTEM_MODAL : SWT.APPLICATION_MODAL) | SWT.NO_TRIM);
+		final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
 		fullScreenShell.setBounds(bounds);
-		if (GamaPreferences.Displays.DISPLAY_NATIVE_FULLSCREEN.getValue()) {
-			fullScreenShell = new Shell(SWT.NO_TRIM | SWT.ON_TOP);
-			fullScreenShell.setMaximized(true);
-			fullScreenShell.setBounds(bounds);
-			fullScreenShell.setFullScreen(true);
-		}
+
+		// Shell fullScreenShell =
+		// new Shell(WorkbenchHelper.getDisplay(), (GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue()
+		// ? SWT.ON_TOP | SWT.SYSTEM_MODAL : SWT.APPLICATION_MODAL) | SWT.NO_TRIM);
+		// fullScreenShell.setBounds(bounds);
+		// if (GamaPreferences.Displays.DISPLAY_NATIVE_FULLSCREEN.getValue()) {
+		// fullScreenShell = new Shell(SWT.NO_TRIM | SWT.ON_TOP);
+		// fullScreenShell.setMaximized(true);
+		// fullScreenShell.setBounds(bounds);
+		// fullScreenShell.setFullScreen(true);
+		// }
 		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;

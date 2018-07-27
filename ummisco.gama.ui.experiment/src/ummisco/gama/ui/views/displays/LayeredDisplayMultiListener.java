@@ -48,9 +48,7 @@ public class LayeredDisplayMultiListener {
 					}
 					break;
 				case 't':
-					if (deco.isFullScreen()) {
-						deco.toggleSimulationControls();
-					}
+					deco.toggleToolbar();
 			}
 		};
 	}
