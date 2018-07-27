@@ -178,7 +178,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	}
 
 	private void restoreState() {
-		if(memento == null) { return; }
+		if (memento == null) { return; }
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) { return; }
 		if (KEEP_NAVIGATOR_STATE.getValue()) {
@@ -261,9 +261,16 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 		final Object element = selection.getFirstElement();
 		if (element instanceof VirtualContent && ((VirtualContent<?>) element).handleDoubleClick()) {
-			return;
+			// return;
 		} else {
 			super.handleDoubleClick(anEvent);
+		}
+		if (element instanceof WrappedContainer || element instanceof TopLevelFolder) {
+			final CommonViewer tree = getCommonViewer();
+			if (tree.getExpandedState(element)) {
+				final Object[] contents = ((VirtualContent<?>) element).getNavigatorChildren();
+				tree.reveal(contents[contents.length - 1]);
+			}
 		}
 	}
 
@@ -325,7 +332,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		// tb.menu(importCommand, SWT.RIGHT);
 		// tb.menu(newCommand, SWT.RIGHT);
 		// tb.sep(24, SWT.RIGHT);
-		if (PlatformHelper.isWindows()) {
+		if (PlatformHelper.isWindows() || PlatformHelper.isLinux()) {
 			tb.sep(24, SWT.RIGHT);
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
 			linkItem = tb.check(linkCommand, SWT.RIGHT);
