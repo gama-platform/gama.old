@@ -10,7 +10,9 @@
  **********************************************************************************************/
 package msi.gama.application.workbench;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.widgets.Display;
@@ -41,15 +43,20 @@ public class PerspectiveHelper {
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 	public static IPerspectiveDescriptor currentSimulationPerspective = null;
 
-	// private static void cleanPerspectives() {
-	// final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-	// for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
-	// if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
-	// !desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
-	// reg.deletePerspective(desc);
-	// }
-	// }
-	// }
+	static {
+		cleanPerspectives();
+	}
+
+	private static void cleanPerspectives() {
+		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
+			if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
+				!desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
+				reg.deletePerspective(desc);
+			}
+		}
+
+	}
 
 	public static IPerspectiveRegistry getPerspectiveRegistry() {
 		return PlatformUI.getWorkbench().getPerspectiveRegistry();
@@ -81,6 +88,8 @@ public class PerspectiveHelper {
 		final PerspectiveRegistry pr = (PerspectiveRegistry) getPerspectiveRegistry();
 		IPerspectiveDescriptor tempDescriptor = pr.findPerspectiveWithId(id);
 		if ( tempDescriptor == null ) {
+			getPerspectiveRegistry()
+				.revertPerspective(getPerspectiveRegistry().findPerspectiveWithId(PERSPECTIVE_SIMULATION_ID));
 			tempDescriptor = new SimulationPerspectiveDescriptor(id);
 		}
 		return tempDescriptor;
@@ -98,8 +107,18 @@ public class PerspectiveHelper {
 		}
 	}
 
+	public static Set<String> listCurrentPerspectives() {
+		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		final Set<String> result = new HashSet<>();
+		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
+			result.add(desc.getId());
+		}
+		return result;
+	}
+
 	public static boolean openPerspective(final String perspectiveId, final boolean immediately,
 		final boolean withAutoSave) {
+		System.out.println("Current perspectives: " + listCurrentPerspectives());
 		if ( perspectiveId == null ) { return false; }
 		if ( perspectiveId.equals(currentPerspectiveId) ) { return true; }
 
