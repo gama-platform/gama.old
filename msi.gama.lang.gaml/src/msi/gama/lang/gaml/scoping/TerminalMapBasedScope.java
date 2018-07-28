@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TerminalMapBasedScope.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TerminalMapBasedScope.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -22,7 +21,6 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
 
 public class TerminalMapBasedScope implements IScope {
 
@@ -30,7 +28,7 @@ public class TerminalMapBasedScope implements IScope {
 
 	protected TerminalMapBasedScope(final THashMap<QualifiedName, IEObjectDescription> elements) {
 		this.elements = elements;
-		elements.compact();
+		// elements.compact();
 	}
 
 	@Override
@@ -46,9 +44,7 @@ public class TerminalMapBasedScope implements IScope {
 	@Override
 	public Iterable<IEObjectDescription> getElements(final QualifiedName name) {
 		final IEObjectDescription result = elements.get(name);
-		if (result == null) {
-			return Collections.emptyList();
-		}
+		if (result == null) { return Collections.emptyList(); }
 		return Collections.singleton(result);
 	}
 
@@ -62,16 +58,12 @@ public class TerminalMapBasedScope implements IScope {
 	public List<IEObjectDescription> getElements(final EObject object) {
 		final URI uri = EcoreUtil2.getPlatformResourceOrNormalizedURI(object);
 		final IEObjectDescription[] result = new IEObjectDescription[1];
-		elements.forEachValue(new TObjectProcedure<IEObjectDescription>() {
-
-			@Override
-			public boolean execute(final IEObjectDescription input) {
-				if (input.getEObjectOrProxy() == object || uri.equals(input.getEObjectURI())) {
-					result[0] = input;
-					return false;
-				}
-				return true;
+		elements.forEachValue(input -> {
+			if (input.getEObjectOrProxy() == object || uri.equals(input.getEObjectURI())) {
+				result[0] = input;
+				return false;
 			}
+			return true;
 		});
 
 		return result[0] == null ? Collections.EMPTY_LIST : Arrays.asList(result);
