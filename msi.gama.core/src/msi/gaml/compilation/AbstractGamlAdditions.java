@@ -74,13 +74,14 @@ import msi.gaml.types.Types;
 
 /**
  *
- * The class AbstractGamlAdditions. Default base implementation for plugins' gaml additions.
+ * The class AbstractGamlAdditions. Default base implementation for plugins'
+ * gaml additions.
  *
  * @author drogoul
  * @since 17 mai 2012
  *
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static final Set<String> CONSTANTS = new HashSet();
@@ -88,7 +89,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = input -> ADDITIONS.get(input);
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
-	// public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<>();
+	// public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
+	// new THashMap<>();
 	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new THashMap<>();
 
 	protected static String[] S(final String... strings) {
@@ -183,7 +185,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if (s != null) {
 				serializer2 = s.value().newInstance();
 			}
-		} catch (InstantiationException | IllegalAccessException e) {}
+		} catch (InstantiationException | IllegalAccessException e) {
+		}
 
 		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
@@ -333,6 +336,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 */
 	protected IDescription desc(final int keyword, final String... facets) {
 		final IType t = Types.get(keyword);
+		if (t == null) { throw new RuntimeException("Types not defined"); }
 		return desc(t.toString(), facets);
 	}
 
@@ -359,8 +363,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Map<String, OperatorProto> getAllFields(final Class clazz) {
-		final List<Class> classes =
-				JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
+		final List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET,
+				FIELDS.keySet());
 		final Map<String, OperatorProto> fieldsMap = new TOrderedHashMap();
 		for (final Class c : classes) {
 			for (final OperatorProto desc : FIELDS.get(c)) {
