@@ -55,6 +55,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
@@ -62,7 +63,6 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
@@ -177,9 +177,12 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 				new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 	}
 
+	AffineTransform imageTransform = new AffineTransform();
+
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		final AffineTransform saved = currentRenderer.getTransform();
+		// final AffineTransform saved = currentRenderer.getTransform();
+		imageTransform.setToIdentity();
 		double curX, curY;
 		if (attributes.getLocation() == null) {
 			curX = getXOffsetInPixels();
@@ -188,6 +191,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curX = xFromModelUnitsToPixels(attributes.getLocation().getX());
 			curY = yFromModelUnitsToPixels(attributes.getLocation().getY());
 		}
+		imageTransform.translate(curX, curY);
 		double curWidth, curHeight;
 		if (attributes.getSize() == null) {
 			curWidth = getLayerWidth();
@@ -196,15 +200,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curWidth = wFromModelUnitsToPixels(attributes.getSize().getX());
 			curHeight = hFromModelUnitsToPixels(attributes.getSize().getY());
 		}
+
 		if (attributes.getAngle() != null) {
-			currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + curWidth / 2d, curY + curHeight / 2d);
+			imageTransform.rotate(Maths.toRad * attributes.getAngle(), curWidth / 2d, curHeight / 2d);
+			// currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + curWidth / 2d, curY + curHeight / 2d);
 		}
-		currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
-				(int) curHeight, null);
+
+		imageTransform.scale(curWidth / img.getWidth(), curHeight / img.getHeight());
+		currentRenderer.drawImage(img, imageTransform, null);
+		// currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
+		// (int) curHeight, null);
 		if (attributes.getBorder() != null) {
 			drawGridLine(img, attributes.getBorder());
 		}
-		currentRenderer.setTransform(saved);
+		// currentRenderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		if (highlight) {
 			highlightRectangleInPixels(rect);
@@ -252,7 +261,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
 		final float ascent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getAscent();
 		final float descent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getDescent();
-		r.setFrame(r.getX(), r.getY(), r.getWidth(), Math.min(r.getHeight(), (ascent + descent)));
+		r.setFrame(r.getX(), r.getY(), r.getWidth(), Math.min(r.getHeight(), ascent + descent));
 
 		final double rWidth = r.getWidth();
 		final double rHeight = r.getHeight();
@@ -451,6 +460,23 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Rectangle2D result = temporaryEnvelope;
 		temporaryEnvelope = null;
 		return result;
+	}
+
+	final Rectangle2D chartRect = new Rectangle2D.Double();
+	static final FileDrawingAttributes CONSTANT_CHART_ATTRIBUTES = new FileDrawingAttributes(null, true);
+
+	@Override
+	public Rectangle2D drawChart(final ChartOutput chart) {
+
+		final BufferedImage im =
+				chart.getImage(getLayerWidth(), getLayerHeight(), getSurface().getData().isAntialias());
+		currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(), null);
+		// return drawImage(im, CONSTANT_CHART_ATTRIBUTES);
+		return chartRect;
+
+		// chartRect.setFrame(getXOffsetInPixels(), getYOffsetInPixels(), getLayerWidth(), getLayerHeight());
+		// chart.draw(currentRenderer, chartRect, getSurface().getData().isAntialias());
+		// return chartRect;
 	}
 
 }

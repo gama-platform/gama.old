@@ -64,23 +64,19 @@ public class GridLayer extends ImageLayer {
 	@Override
 	public void reloadOn(final IDisplaySurface surface) {
 		super.reloadOn(surface);
-		if (image != null)
+		if (image != null) {
 			image.flush();
+		}
 	}
 
 	@Override
 	protected Envelope3D buildImage(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
-		if (g == null)
-			return null;
+		if (g == null) { return null; }
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) definition).getEnvironment();
 			final ILocation p = m.getDimensions();
-			if (g.is2D()) {
-				image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY());
-			} else {
-				image = ImageUtils.createPremultipliedBlankImage((int) p.getX(), (int) p.getY());
-			}
+				image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY(), !g.is2D());
 		}
 		return null;
 

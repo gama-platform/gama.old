@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -48,6 +49,8 @@ public interface IGraphics {
 	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 
 	public abstract Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes);
+
+	public abstract Rectangle2D drawChart(ChartOutput chart);
 
 	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
 

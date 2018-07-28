@@ -742,6 +742,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void dispose() {
+		if (chartoutput != null) {
+			chartoutput.dispose(null);
+		}
+		chartoutput = null;
 		// chart = null;
 		super.dispose();
 	}

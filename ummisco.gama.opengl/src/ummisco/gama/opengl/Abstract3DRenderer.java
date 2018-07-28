@@ -39,6 +39,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -439,6 +440,18 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		if (attributes.getBorder() != null) {
 			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
 		}
+		return rect;
+	}
+
+	@Override
+	public Rectangle2D drawChart(final ChartOutput chart) {
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
+		int x = getLayerWidth();
+		int y = getLayerHeight();
+		x = (int) (Math.min(x, y) * 0.80);
+		y = x;
+		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
+		sceneBuffer.getSceneToUpdate().addImage(im, new FileDrawingAttributes(null, true));
 		return rect;
 	}
 

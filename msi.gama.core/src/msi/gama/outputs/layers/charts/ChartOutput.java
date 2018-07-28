@@ -11,7 +11,9 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,7 +39,7 @@ public abstract class ChartOutput {
 	static final int RADAR_CHART = 6;
 	static final int HEATMAP_CHART = 7;
 
-	LinkedHashMap<String, Integer> serieLastUpdate = new LinkedHashMap<String, Integer>();
+	LinkedHashMap<String, Integer> serieLastUpdate = new LinkedHashMap<>();
 
 	public int lastUpdateCycle = -1;
 	public boolean ismyfirststep = true;
@@ -54,12 +56,12 @@ public abstract class ChartOutput {
 	boolean y2_logscale = false;
 	boolean use_second_y_axis = false;
 
-	boolean title_visible=true;
-	boolean x_tick_value_visible=true;
-	boolean y_tick_value_visible=true;
-	boolean x_tick_line_visible=true;
-	boolean y_tick_line_visible=true;
-	
+	boolean title_visible = true;
+	boolean x_tick_value_visible = true;
+	boolean y_tick_value_visible = true;
+	boolean x_tick_line_visible = true;
+	boolean y_tick_line_visible = true;
+
 	ChartOutput chartOutput = null;
 	Color backgroundColor = GamaColor.WHITE;
 	Color axesColor = null;
@@ -107,7 +109,9 @@ public abstract class ChartOutput {
 
 	// HashMap<String,Object> chartParameters=new HashMap<String,Object>();
 
-	public abstract BufferedImage getImage(IScope scope, int sizex, int sizey, boolean antiAlias);
+	public abstract BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias);
+
+	public abstract void draw(Graphics2D currentRenderer, Rectangle2D rect, boolean antialias);
 
 	public ChartOutput(final IScope scope, final String name, final IExpression typeexp) {
 		final String t = typeexp == null ? IKeyword.SERIES : Cast.asString(scope, typeexp.value(scope));
@@ -137,6 +141,7 @@ public abstract class ChartOutput {
 
 	public void step(final IScope scope) {
 		chartdataset.updatedataset(scope, getChartCycle(scope));
+		updateOutput(scope);
 	}
 
 	public void initdataset() {
@@ -273,10 +278,12 @@ public abstract class ChartOutput {
 		axesColor = color;
 
 	}
+
 	public void setTickColorValue(final IScope scope, final GamaColor color) {
 		tickColor = color;
 
 	}
+
 	public final Color getAxesColorValue(final IScope scope) {
 		return axesColor;
 
@@ -299,7 +306,7 @@ public abstract class ChartOutput {
 	}
 
 	public String getTickFontFace(final IScope scope) {
-			return tickFontFace;
+		return tickFontFace;
 	}
 
 	public void setLabelFontFace(final IScope scope, final String value) {
@@ -309,7 +316,7 @@ public abstract class ChartOutput {
 	}
 
 	public String getLabelFontFace(final IScope scope) {
-		return	labelFontFace;
+		return labelFontFace;
 	}
 
 	public void setLegendFontFace(final IScope scope, final String value) {
@@ -317,8 +324,9 @@ public abstract class ChartOutput {
 			legendFontFace = value;
 		}
 	}
+
 	public String getLegendFontFace(final IScope scope) {
-		return	legendFontFace;
+		return legendFontFace;
 	}
 
 	public void setTitleFontFace(final IScope scope, final String value) {
@@ -328,7 +336,7 @@ public abstract class ChartOutput {
 	}
 
 	public String getTitleFontFace(final IScope scope) {
-		return	titleFontFace;
+		return titleFontFace;
 	}
 
 	public void setTickFontSize(final IScope scope, final int value) {
@@ -336,7 +344,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getTickFontSize(final IScope scope) {
-		return  tickFontSize;
+		return tickFontSize;
 	}
 
 	public void setLabelFontSize(final IScope scope, final int value) {
@@ -360,7 +368,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getTitleFontSize(final IScope scope) {
-		return  titleFontSize;
+		return titleFontSize;
 	}
 
 	public void setTickFontStyle(final IScope scope, final String value) {
@@ -370,7 +378,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getTickFontStyle(final IScope scope) {
-			return tickFontStyle;
+		return tickFontStyle;
 	}
 
 	public void setLabelFontStyle(final IScope scope, final String value) {
@@ -380,7 +388,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getLabelFontStyle(final IScope scope) {
-			return labelFontStyle;
+		return labelFontStyle;
 	}
 
 	public void setLegendFontStyle(final IScope scope, final String value) {
@@ -390,7 +398,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getLegendFontStyle(final IScope scope) {
-			return legendFontStyle;
+		return legendFontStyle;
 	}
 
 	public void setTitleFontStyle(final IScope scope, final String value) {
@@ -400,7 +408,7 @@ public abstract class ChartOutput {
 	}
 
 	public int getTitleFontStyle(final IScope scope) {
-			return titleFontStyle;
+		return titleFontStyle;
 	}
 
 	public void setXLabel(final IScope scope, final String asString) {
@@ -426,6 +434,7 @@ public abstract class ChartOutput {
 		return ylabel;
 
 	}
+
 	public void setY2Label(final IScope scope, final String asString) {
 		// TODO Auto-generated method stub
 		y2label = asString;
@@ -437,51 +446,52 @@ public abstract class ChartOutput {
 		return y2label;
 
 	}
+
 	public boolean getUseXRangeInterval(final IScope scope) {
 		return usexrangeinterval;
 	}
 
-	public void setUseXRangeInterval(final IScope scope, boolean usexrangeinterval) {
+	public void setUseXRangeInterval(final IScope scope, final boolean usexrangeinterval) {
 		this.usexrangeinterval = usexrangeinterval;
 	}
 
-	public boolean getUseXRangeMinMax(final IScope scope ) {
+	public boolean getUseXRangeMinMax(final IScope scope) {
 		return usexrangeminmax;
 	}
 
-	public void setUseXRangeMinMax(final IScope scope, boolean usexrangeminmax) {
+	public void setUseXRangeMinMax(final IScope scope, final boolean usexrangeminmax) {
 		this.usexrangeminmax = usexrangeminmax;
 	}
 
-	public boolean getUseYRangeInterval(final IScope scope ) {
+	public boolean getUseYRangeInterval(final IScope scope) {
 		return useyrangeinterval;
 	}
 
-	public void setUseYRangeInterval(final IScope scope, boolean useyrangeinterval) {
+	public void setUseYRangeInterval(final IScope scope, final boolean useyrangeinterval) {
 		this.useyrangeinterval = useyrangeinterval;
 	}
 
-	public boolean getUseYRangeMinMax(final IScope scope ) {
+	public boolean getUseYRangeMinMax(final IScope scope) {
 		return useyrangeminmax;
 	}
 
-	public void setUseYRangeMinMax(final IScope scope, boolean useyrangeminmax) {
+	public void setUseYRangeMinMax(final IScope scope, final boolean useyrangeminmax) {
 		this.useyrangeminmax = useyrangeminmax;
 	}
 
-	public boolean getUseY2RangeInterval(final IScope scope ) {
+	public boolean getUseY2RangeInterval(final IScope scope) {
 		return usey2rangeinterval;
 	}
 
-	public void setUseY2RangeInterval(final IScope scope, boolean useyrangeinterval) {
+	public void setUseY2RangeInterval(final IScope scope, final boolean useyrangeinterval) {
 		this.usey2rangeinterval = useyrangeinterval;
 	}
 
-	public boolean getUseY2RangeMinMax(final IScope scope ) {
+	public boolean getUseY2RangeMinMax(final IScope scope) {
 		return usey2rangeminmax;
 	}
 
-	public void setUseY2RangeMinMax(final IScope scope, boolean useyrangeminmax) {
+	public void setUseY2RangeMinMax(final IScope scope, final boolean useyrangeminmax) {
 		this.usey2rangeminmax = useyrangeminmax;
 	}
 
@@ -508,10 +518,11 @@ public abstract class ChartOutput {
 
 	public double[] getXRangeMinMax(final IScope scope) {
 		// TODO Auto-generated method stub
-		double[] res={xrangemin,xrangemax};
+		final double[] res = { xrangemin, xrangemax };
 		return res;
 
 	}
+
 	public double getXRangeMin(final IScope scope) {
 		// TODO Auto-generated method stub
 		return xrangemin;
@@ -542,9 +553,10 @@ public abstract class ChartOutput {
 		this.yrangemax = maxValue;
 
 	}
+
 	public double[] getYRangeMinMax(final IScope scope) {
 		// TODO Auto-generated method stub
-		double[] res={yrangemin,yrangemax};
+		final double[] res = { yrangemin, yrangemax };
 		return res;
 
 	}
@@ -560,6 +572,7 @@ public abstract class ChartOutput {
 		return yrangemax;
 
 	}
+
 	public double getY2RangeInterval(final IScope scope) {
 		return this.y2rangeinterval;
 	}
@@ -578,9 +591,10 @@ public abstract class ChartOutput {
 		this.y2rangemax = maxValue;
 
 	}
+
 	public double[] getY2RangeMinMax(final IScope scope) {
 		// TODO Auto-generated method stub
-		double[] res={y2rangemin,y2rangemax};
+		final double[] res = { y2rangemin, y2rangemax };
 		return res;
 
 	}
@@ -596,7 +610,6 @@ public abstract class ChartOutput {
 		return y2rangemax;
 
 	}
-
 
 	public void setXTickUnit(final IScope scope, final double r) {
 		this.xtickunit = r;
@@ -696,6 +709,7 @@ public abstract class ChartOutput {
 		// TODO Auto-generated method stub
 		y_logscale = asBool;
 	}
+
 	public boolean getX_LogScale(final IScope scope) {
 		// TODO Auto-generated method stub
 		return x_logscale;
@@ -705,67 +719,83 @@ public abstract class ChartOutput {
 		// TODO Auto-generated method stub
 		return y_logscale;
 	}
+
 	public void setY2_LogScale(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		y2_logscale = asBool;
 	}
+
 	public boolean getY2_LogScale(final IScope scope) {
 		// TODO Auto-generated method stub
 		return y2_logscale;
 	}
+
 	public void setUseSecondYAxis(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		use_second_y_axis = asBool;
 	}
+
 	public boolean getUseSecondYAxis(final IScope scope) {
 		// TODO Auto-generated method stub
 		return use_second_y_axis;
-//		return false;
+		// return false;
 	}
+
 	public void setXTickValueVisible(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		x_tick_value_visible = asBool;
 	}
+
 	public boolean getXTickValueVisible(final IScope scope) {
 		// TODO Auto-generated method stub
 		return x_tick_value_visible;
-//		return false;
+		// return false;
 	}
+
 	public void setYTickValueVisible(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		y_tick_value_visible = asBool;
 	}
+
 	public boolean getYTickValueVisible(final IScope scope) {
 		// TODO Auto-generated method stub
 		return y_tick_value_visible;
-//		return false;
+		// return false;
 	}
+
 	public void setTitleVisible(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		title_visible = asBool;
 	}
+
 	public boolean getTitleVisible(final IScope scope) {
 		// TODO Auto-generated method stub
 		return title_visible;
-//		return false;
+		// return false;
 	}
+
 	public void setXTickLineVisible(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		x_tick_line_visible = asBool;
 	}
+
 	public boolean getXTickLineVisible(final IScope scope) {
 		// TODO Auto-generated method stub
 		return x_tick_line_visible;
-//		return false;
+		// return false;
 	}
+
 	public void setYTickLineVisible(final IScope scope, final Boolean asBool) {
 		// TODO Auto-generated method stub
 		y_tick_line_visible = asBool;
 	}
+
 	public boolean getYTickLineVisible(final IScope scope) {
 		// TODO Auto-generated method stub
 		return y_tick_line_visible;
-//		return false;
+		// return false;
 	}
+
+	public void dispose(final IScope scope) {}
 
 }

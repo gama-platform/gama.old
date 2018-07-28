@@ -701,7 +701,7 @@ public class OpenGL {
 		if (file == null) { return null; }
 		Texture texture = null;
 		if (isAnimated || !useCache) {
-			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache);
+			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true);
 			texture = getTexture(image);
 
 		} else {
@@ -716,7 +716,7 @@ public class OpenGL {
 
 	private static Texture buildTexture(final GL gl, final File file) {
 		try {
-			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file, true);
+			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file, true, true);
 			return buildTexture(gl, im);
 		} catch (final GLException e) {
 			e.printStackTrace();
@@ -731,7 +731,7 @@ public class OpenGL {
 	public static Texture buildTexture(final GL gl, final BufferedImage image) {
 		try {
 			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(),
-					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), false);
+					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), true);
 			final Texture texture = new Texture(gl, data);
 			data.flush();
 			return texture;
@@ -747,7 +747,7 @@ public class OpenGL {
 			if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {
 				final int width = getClosestPow(image.getWidth());
 				final int height = getClosestPow(image.getHeight());
-				corrected = ImageUtils.createCompatibleImage(width, height);
+				corrected = ImageUtils.createCompatibleImage(width, height, true);
 				final Graphics2D g2 = corrected.createGraphics();
 				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);

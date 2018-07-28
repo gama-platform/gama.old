@@ -258,7 +258,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int previousHeight = getHeight();
 		final int width = w == -1 ? previousWidth : w;
 		final int height = h == -1 ? previousHeight : h;
-		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
+		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
 		while (!rendered) {

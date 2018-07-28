@@ -11,45 +11,67 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.block.*;
+import org.jfree.chart.block.BlockBorder;
+import org.jfree.chart.event.ChartProgressEvent;
+import org.jfree.chart.event.ChartProgressListener;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.data.general.Dataset;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-public class ChartJFreeChartOutput extends ChartOutput {
+public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressListener {
+
+	private BufferedImage createCompatibleImage(final int sizeX, final int sizeY) {
+		if ((int) r.getWidth() != sizeX || (int) r.getHeight() != sizeY) {
+			r.setRect(0, 0, sizeX, sizeY);
+			if (cache != null) {
+				cache.flush();
+			}
+			cache = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+		}
+		return cache;
+	}
 
 	public static final Shape[] defaultmarkers =
 			org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
+	boolean oldAntiAlias;
 
 	public ChartRenderingInfo info;
-	ArrayList<Dataset> jfreedataset = new ArrayList<Dataset>();
+	ArrayList<Dataset> jfreedataset = new ArrayList<>();
 	JFreeChart chart = null;
+	Rectangle2D r = new Rectangle2D.Double();
+	BufferedImage cache;
 	AbstractRenderer defaultrenderer;
-	HashMap<String, Integer> IdPosition = new HashMap<String, Integer>(); // serie
-																			// id-nb
-																			// for
-																			// arraylists/table
-																			// requirements
-	HashMap<String, AbstractRenderer> RendererSet = new HashMap<String, AbstractRenderer>(); // one
-																								// renderer
-																								// for
-																								// each
-																								// serie
+	HashMap<String, Integer> IdPosition = new HashMap<>(); // serie
+															// id-nb
+															// for
+															// arraylists/table
+															// requirements
+	HashMap<String, AbstractRenderer> RendererSet = new HashMap<>(); // one
+																		// renderer
+																		// for
+																		// each
+																		// serie
 	int nbseries = 0; // because there is always one dataset, so it is difficult
-						// to count...
+	// A filed aiming at controlling the rate at which charts can be produced. Directly controlled by the
+	// ChartProgressListener
+	private volatile boolean ready = true;
+	// to count...
 
 	public ChartJFreeChartOutput(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
@@ -65,12 +87,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		if (string1 != null) {
 			final String t = Cast.asString(scope, string1.value(scope));
 			type = IKeyword.SERIES.equals(t) ? SERIES_CHART
-					: IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
-							: IKeyword.PIE.equals(t) ? PIE_CHART
-									: IKeyword.RADAR.equals(t) ? RADAR_CHART
-											: IKeyword.HEATMAP.equals(t) ? HEATMAP_CHART
-													: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
-															: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
+					: IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART
+							: IKeyword.RADAR.equals(t) ? RADAR_CHART
+									: IKeyword.HEATMAP.equals(t) ? HEATMAP_CHART : IKeyword.BOX_WHISKER.equals(t)
+											? BOX_WHISKER_CHART : IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
 
 		}
 
@@ -112,15 +132,46 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		return newChart;
 	}
 
-	@Override
-	public BufferedImage getImage(final IScope scope, final int sizex, final int sizey, final boolean antiAlias) {
-		getJFChart().setAntiAlias(antiAlias);
-		getJFChart().setTextAntiAlias(antiAlias);
+	private Graphics2D getGraphics(final int sizeX, final int sizeY) {
+		return createCompatibleImage(sizeX, sizeY).createGraphics();
+	}
 
+	@Override
+	public BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias) {
+		if (!ready) { return cache; }
+		if (antiAlias != oldAntiAlias) {
+			oldAntiAlias = antiAlias;
+			getJFChart().setAntiAlias(antiAlias);
+			getJFChart().setTextAntiAlias(antiAlias);
+		}
+		final Graphics2D g2D = getGraphics(sizeX, sizeY);
+		chart.draw(g2D, r, info);
+		g2D.dispose();
+		return cache;
+
+	}
+
+	@Override
+	public void chartProgress(final ChartProgressEvent event) {
+		ready = event.getType() == ChartProgressEvent.DRAWING_FINISHED;
+	}
+
+	@Override
+	public void draw(final Graphics2D g2D, final Rectangle2D area, final boolean antiAlias) {
+		// if (!ready) { return; }
+		if (antiAlias != oldAntiAlias) {
+			oldAntiAlias = antiAlias;
+			chart.setAntiAlias(antiAlias);
+			chart.setTextAntiAlias(antiAlias);
+		}
+		chart.draw(g2D, area, info);
+	}
+
+	@Override
+	public void step(final IScope scope) {
+		chartdataset.updatedataset(scope, getChartCycle(scope));
+		if (!ready) { return; }
 		updateOutput(scope);
-		final BufferedImage buf = chart.createBufferedImage(sizex, sizey, info);
-		// System.out.println(info);
-		return buf;
 	}
 
 	protected void initRenderer(final IScope scope) {
@@ -134,14 +185,13 @@ public class ChartJFreeChartOutput extends ChartOutput {
 
 		initRenderer(scope);
 		final Plot plot = chart.getPlot();
-		
+
 		chart.setBorderVisible(false);
 		plot.setOutlineVisible(false);
 		chart.setTitle(this.getName());
 		chart.getTitle().setVisible(true);
 		chart.getTitle().setFont(getTitleFont());
-		if (!this.getTitleVisible(scope))
-		{
+		if (!this.getTitleVisible(scope)) {
 			chart.getTitle().setVisible(false);
 		}
 		if (textColor != null) {
@@ -171,6 +221,8 @@ public class ChartJFreeChartOutput extends ChartOutput {
 				chart.getLegend().setItemPaint(textColor);
 			}
 		}
+
+		chart.addProgressListener(this);
 
 	}
 
@@ -212,6 +264,17 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	@Override
 	public JFreeChart getJFChart() {
 		return chart;
+	}
+
+	@Override
+	public void dispose(final IScope scope) {
+		if (cache != null) {
+			cache.flush();
+		}
+		cache = null;
+		clearDataSet(scope);
+		jfreedataset.clear();
+		chart = null;
 	}
 
 }

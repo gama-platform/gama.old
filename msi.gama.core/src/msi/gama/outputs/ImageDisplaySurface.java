@@ -149,7 +149,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	private void createBuffImage() {
-		buffImage = ImageUtils.createCompatibleImage(width, height);
+		buffImage = ImageUtils.createCompatibleImage(width, height, false);
 		g2 = (Graphics2D) buffImage.getGraphics();
 		displayGraphics = new AWTDisplayGraphics((Graphics2D) buffImage.getGraphics());
 		((AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D) buffImage.getGraphics());

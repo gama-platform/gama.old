@@ -41,7 +41,11 @@ import msi.gama.runtime.IScope;
 public class ImageUtils {
 
 	private final static BufferedImage NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
-	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().build();
+	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
+			.removalListener(notification -> ((BufferedImage) notification.getValue()).flush()).build();
+	private final Cache<String, BufferedImage> openGLCache =
+			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
+					.removalListener(notification -> ((BufferedImage) notification.getValue()).flush()).build();
 	private final Cache<String, GifDecoder> gifCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
 			.removalListener(notification -> ((GifDecoder) notification.getValue()).dispose()).build();
 
@@ -66,10 +70,6 @@ public class ImageUtils {
 
 	private ImageUtils() {}
 
-	public boolean contains(final String s) {
-		return cache.getIfPresent(s) != null;
-	}
-
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName, final boolean useCache)
 			throws IOException {
 		if (useCache) {
@@ -80,7 +80,7 @@ public class ImageUtils {
 		}
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
-		final BufferedImage result = getImageFromFile(f, useCache);
+		final BufferedImage result = getImageFromFile(f, useCache, false);
 		return result == NO_IMAGE ? null : result;
 	}
 
@@ -96,7 +96,7 @@ public class ImageUtils {
 		return gif.getDuration();
 	}
 
-	private BufferedImage privateReadFromFile(final File file) throws IOException {
+	private BufferedImage privateReadFromFile(final File file, final boolean forOpenGL) throws IOException {
 		// System.out.println("READING " + file.getName());
 		BufferedImage result = NO_IMAGE;
 		if (file == null) { return result; }
@@ -121,7 +121,7 @@ public class ImageUtils {
 		}
 
 		try {
-			result = ImageIO.read(file);
+			result = forOpenGL ? ImageIO.read(file) : toCompatibleImage(ImageIO.read(file));
 		} catch (final Exception e) {
 			return NO_IMAGE;
 		}
@@ -134,7 +134,7 @@ public class ImageUtils {
 		return d;
 	}
 
-	public BufferedImage getImageFromFile(final File file, final boolean useCache) {
+	public BufferedImage getImageFromFile(final File file, final boolean useCache, final boolean forOpenGL) {
 		final BufferedImage image;
 		String name, ext = null;
 		try {
@@ -149,9 +149,13 @@ public class ImageUtils {
 					image = privateReadGifFromFile(file).getImage();
 				}
 			} else if (useCache) {
-				image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
+				if (forOpenGL) {
+					image = openGLCache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, true));
+				} else {
+					image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, false));
+				}
 			} else {
-				image = privateReadFromFile(file);
+				image = privateReadFromFile(file, forOpenGL);
 			}
 			return image == NO_IMAGE ? null : image;
 		} catch (final ExecutionException | IOException e) {
@@ -160,30 +164,27 @@ public class ImageUtils {
 		return null;
 	}
 
-	static boolean DEBUG_OPTION = true;
+	static boolean NO_GRAPHICS_ENVIRONMENT = false;
 
 	public static BufferedImage createPremultipliedBlankImage(final int width, final int height) {
 		return new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024,
 				BufferedImage.TYPE_INT_ARGB_PRE);
 	}
 
-	public static BufferedImage createCompatibleImage(final int width, final int height) {
+	public static BufferedImage createCompatibleImage(final int width, final int height, final boolean forOpenGL) {
+		if (forOpenGL) { return createPremultipliedBlankImage(width, height); }
 		BufferedImage new_image = null;
-		if (DEBUG_OPTION || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) {
+		if (NO_GRAPHICS_ENVIRONMENT || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) {
 			new_image = new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024,
 					BufferedImage.TYPE_INT_ARGB);
 		} else {
-			// final GraphicsConfiguration gfx_config =
-			// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 			new_image = getCachedGC().createCompatibleImage(width, height);
 		}
 		return new_image;
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		if (GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) { return image; }
-		// final GraphicsConfiguration gfx_config =
-		// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		if (NO_GRAPHICS_ENVIRONMENT || GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) { return image; }
 
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return it
@@ -192,10 +193,9 @@ public class ImageUtils {
 
 		// image is not optimized, so create a new image that is
 		final BufferedImage new_image =
-				// getCachedGC().createCompatibleImage(image.getWidth(),
-				// image.getHeight(), image.getTransparency());
-				new BufferedImage(image.getWidth() != 0 ? image.getWidth() : 1024,
-						image.getHeight() != 0 ? image.getHeight() : 1024, BufferedImage.TYPE_INT_ARGB);
+				getCachedGC().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+		// new BufferedImage(image.getWidth() != 0 ? image.getWidth() : 1024,
+		// image.getHeight() != 0 ? image.getHeight() : 1024, BufferedImage.TYPE_INT_ARGB);
 		// get the graphics context of the new image to draw the old image on
 		final Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 
@@ -352,6 +352,7 @@ public class ImageUtils {
 
 	public void clearCache(final String pathName) {
 		cache.invalidate(pathName);
+		openGLCache.invalidate(pathName);
 
 	}
 
