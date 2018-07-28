@@ -619,7 +619,4 @@ public abstract class AbstractAgent implements IAgent {
 		return o == this;
 	}
 
-	@Override
-	public abstract int hashCode();
-
 }

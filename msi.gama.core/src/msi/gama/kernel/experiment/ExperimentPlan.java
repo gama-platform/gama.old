@@ -490,6 +490,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public synchronized void open() {
+
 		createAgent();
 		scope.getGui().prepareForExperiment(scope, this);
 		agent.schedule(agent.getScope());

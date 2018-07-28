@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -812,8 +811,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
 		if (filter.accept(scope, source, toTest)) { return toTest.getAgent(); }
 		final List<IAgent> agents =
-				new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, (filter.getSpecies() != null)
-						&& (toTest.getAgent() != null) && filter.getSpecies().equals(toTest.getAgent().getSpecies())));
+				new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, filter.getSpecies() != null
+						&& toTest.getAgent() != null && filter.getSpecies().equals(toTest.getAgent().getSpecies())));
 		agents.remove(source);
 		if (agents.isEmpty()) { return null; }
 		return (IAgent) scope.getRandom().shuffle(agents).get(0);
@@ -1821,12 +1820,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public class MinimalGridAgent extends AbstractAgent implements IGridAgent {
 
 			private final IShape geometry;
-			private final int hashCode;
 
 			public MinimalGridAgent(final int index) {
 				super(index);
 				geometry = matrix[index].getGeometry();
-				hashCode = Objects.hash(getPopulation(), index);
 			}
 
 			@Override
@@ -2027,10 +2024,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return bands.get(getIndex());
 			}
 
-			@Override
-			public final int hashCode() {
-				return hashCode;
-			}
 		}
 
 	}

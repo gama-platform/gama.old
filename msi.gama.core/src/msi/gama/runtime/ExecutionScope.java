@@ -29,6 +29,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.benchmark.StopWatch;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
@@ -458,9 +459,14 @@ public class ExecutionScope implements IScope {
 		try (StopWatch w = GAMA.benchmark(this, a)) {
 			return f.apply(a);
 		} catch (final Throwable ex) {
-			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
-			GAMA.reportAndThrowIfNeeded(this, g, true);
-			return FAILED;
+			if (ex instanceof OutOfMemoryError) {
+				GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
+				return FAILED;
+			} else {
+				final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+				GAMA.reportAndThrowIfNeeded(this, g, true);
+				return FAILED;
+			}
 		}
 	}
 

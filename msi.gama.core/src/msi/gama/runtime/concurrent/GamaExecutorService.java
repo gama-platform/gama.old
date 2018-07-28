@@ -11,11 +11,17 @@ package msi.gama.runtime.concurrent;
 
 import static msi.gama.common.preferences.GamaPreferences.create;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -34,6 +40,18 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;;
 
 public abstract class GamaExecutorService {
+
+	public static final UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> {
+
+		if (e instanceof OutOfMemoryError) {
+			GAMA.getGui().tell("GAMA is out of memory. Experiment " + GAMA.getExperiment().getName()
+					+ " will be closed. Try to increase the memory allocated to the platform in the preferences");
+			GAMA.closeAllExperiments(true, true);
+		} else {
+			e.printStackTrace();
+		}
+
+	};
 
 	public static ForkJoinPool AGENT_PARALLEL_EXECUTOR;
 	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
@@ -71,11 +89,40 @@ public abstract class GamaExecutorService {
 		if (AGENT_PARALLEL_EXECUTOR != null) {
 			AGENT_PARALLEL_EXECUTOR.shutdown();
 		}
-		AGENT_PARALLEL_EXECUTOR = new ForkJoinPool(nb);
+		AGENT_PARALLEL_EXECUTOR = new ForkJoinPool(nb) {
+			@Override
+			public UncaughtExceptionHandler getUncaughtExceptionHandler() {
+				return EXCEPTION_HANDLER;
+			};
+		};
 		if (SIMULATION_PARALLEL_EXECUTOR != null) {
 			SIMULATION_PARALLEL_EXECUTOR.shutdown();
 		}
-		SIMULATION_PARALLEL_EXECUTOR = Executors.newFixedThreadPool(nb);
+		SIMULATION_PARALLEL_EXECUTOR =
+				new ThreadPoolExecutor(nb, nb, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()) {
+
+					@Override
+					protected void afterExecute(final Runnable r, Throwable t) {
+						super.afterExecute(r, t);
+						if (t == null && r instanceof Future<?>) {
+							try {
+								final Future<?> future = (Future<?>) r;
+								if (future.isDone()) {
+									future.get();
+								}
+							} catch (final CancellationException ce) {
+								t = ce;
+							} catch (final ExecutionException ee) {
+								t = ee.getCause();
+							} catch (final InterruptedException ie) {
+								Thread.currentThread().interrupt(); // ignore/reset
+							}
+						}
+						if (t != null) {
+							EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), t);
+						}
+					}
+				};
 	}
 
 	public static enum Caller {

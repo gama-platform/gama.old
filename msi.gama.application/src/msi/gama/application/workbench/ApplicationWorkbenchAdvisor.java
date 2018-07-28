@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -35,6 +36,7 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
@@ -49,6 +51,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	@Override
 	public void initialize(final IWorkbenchConfigurer configurer) {
+
 		ResourcesPlugin.getPlugin().getStateLocation();
 		try {
 			super.initialize(configurer);
@@ -62,6 +65,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
 			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
 			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
+			if ( Display.getCurrent() != null ) {
+				Display.getCurrent().getThread().setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+			}
 		} catch (final CoreException e) {
 			// e.printStackTrace();
 		}
@@ -223,9 +229,13 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				final int severity = statusAdapter.getStatus().getSeverity();
 				if ( severity == IStatus.INFO || severity == IStatus.CANCEL ) { return; }
 				final Throwable e = statusAdapter.getStatus().getException();
+				if ( e instanceof OutOfMemoryError ) {
+					GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), e);
+				}
 				final String message = statusAdapter.getStatus().getMessage();
 				// Stupid Eclipse
-				if ( !message.contains("File toolbar contribution item") ) {
+				if ( !message.contains("File toolbar contribution item") &&
+					!message.contains("Duplicate template id") ) {
 					System.out.println("GAMA Caught a workbench message : " + message);
 				}
 				if ( e != null ) {

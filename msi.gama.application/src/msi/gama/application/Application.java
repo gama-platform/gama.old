@@ -71,6 +71,17 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+			if ( e instanceof OutOfMemoryError ) {
+				final boolean close = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Out of memory",
+					"GAMA is out of memory and will likely crash. Do you want to close now ?");
+				if ( close ) {
+					System.exit(0);
+				}
+				e.printStackTrace();
+			}
+
+		});
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion("1.7.0");
 		createProcessor();

@@ -13,6 +13,7 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -123,6 +124,9 @@ public abstract class AbstractExpression implements IExpression {
 	public final Object value(final IScope scope) {
 		try (StopWatch w = GAMA.benchmark(scope, this)) {
 			return _value(scope);
+		} catch (final OutOfMemoryError e) {
+			GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), e);
+			return null;
 		}
 	}
 

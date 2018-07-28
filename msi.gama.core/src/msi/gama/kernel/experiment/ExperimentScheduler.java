@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentScheduler.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentScheduler.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,6 +17,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
 
@@ -41,6 +41,7 @@ public class ExperimentScheduler implements Runnable {
 		this.experiment = experiment;
 		if (!experiment.isHeadless()) {
 			executionThread = new Thread(null, this, "Front end scheduler");
+			executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {
@@ -97,9 +98,7 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	private void clean() {
-		if (toStop.isEmpty()) {
-			return;
-		}
+		if (toStop.isEmpty()) { return; }
 		synchronized (toStop) {
 			for (final IStepable s : toStop) {
 				final IScope scope = toStep.get(s);
@@ -165,8 +164,9 @@ public class ExperimentScheduler implements Runnable {
 			if (scope != null && scope.interrupted()) {
 				toStop.add(stepable);
 			} else {
-				if (!(e instanceof GamaRuntimeException))
+				if (!(e instanceof GamaRuntimeException)) {
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+				}
 			}
 		}
 

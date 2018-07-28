@@ -27,7 +27,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	public ExperimentController(final IExperimentPlan experiment) {
 		this.scheduler = new ExperimentScheduler(experiment);
-		commands = new ArrayBlockingQueue<Integer>(10);
+		commands = new ArrayBlockingQueue<>(10);
 		this.experiment = experiment;
 	}
 
@@ -37,6 +37,17 @@ public class ExperimentController implements Runnable, IExperimentController {
 			commandThread = null;
 		} else {
 			commandThread = new Thread(this, "Front end controller");
+			commandThread.setUncaughtExceptionHandler((t, e) -> {
+
+				if (e instanceof OutOfMemoryError) {
+					GAMA.getGui().tell("GAMA is out of memory. Experiment " + experiment.getName()
+							+ " will be closed. Try to increase the memory allocated to the platform in the preferences");
+					GAMA.closeAllExperiments(true, true);
+				} else {
+					e.printStackTrace();
+				}
+
+			});
 			commandThread.start();
 		}
 

@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
-import one.util.streamex.StreamEx;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with everything their
@@ -74,7 +74,14 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IPopulation<? extends IAgent>[] getMicroPopulations() {
 		if (getAttributes() == null) { return NO_POP; }
 		if (microPopulations == null) {
-			microPopulations = StreamEx.ofValues(getAttributes(), this::isPopulation).toArray(IPopulation.class);
+			final List<IPopulation<?>> pops = new ArrayList<>();
+			getAttributes().forEachEntry((s, o) -> {
+				if (isPopulation(s)) {
+					pops.add((IPopulation<?>) o);
+				}
+				return true;
+			});
+			microPopulations = pops.toArray(new IPopulation[pops.size()]);
 			if (microPopulations.length == 0) {
 				microPopulations = NO_POP;
 			}
