@@ -353,6 +353,7 @@ public class WorkbenchHelper {
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
+
 				run.accept(monitor);
 				return Status.OK_STATUS;
 			}

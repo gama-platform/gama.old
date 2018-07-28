@@ -49,7 +49,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void open() {
 		super.open();
-		GAMA.getGui().run(getScope(), opener, shouldOpenAsynchronously());
+		GAMA.getGui().run("Opening " + getName(), opener, shouldOpenAsynchronously());
 	}
 
 	public boolean shouldOpenAsynchronously() {

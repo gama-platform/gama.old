@@ -397,9 +397,13 @@ public class HeadlessListener implements IGui {
 	public void clearErrors(final IScope scope) {}
 
 	@Override
-	public void run(final IScope scope, final Runnable opener, final boolean asynchronous) {
+	public void run(final String taskName, final Runnable opener, final boolean asynchronous) {
 		if (opener != null) {
-			opener.run();
+			if (asynchronous) {
+				new Thread(opener).start();
+			} else {
+				opener.run();
+			}
 		}
 	}
 

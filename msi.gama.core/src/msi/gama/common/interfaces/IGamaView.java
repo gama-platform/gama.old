@@ -39,12 +39,6 @@ public interface IGamaView {
 
 		IDisplaySurface getDisplaySurface();
 
-		/**
-		 * For some views (esp. the ones based on Swing), it is necessary to wait a while after opening it, in order for
-		 * the view to be fully realized
-		 */
-		public void waitToBeRealized();
-
 		public void toggleFullScreen();
 
 		public boolean isFullScreen();

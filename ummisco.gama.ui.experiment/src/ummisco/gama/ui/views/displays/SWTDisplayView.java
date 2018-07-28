@@ -55,9 +55,9 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 
 	}
 
-	@Override
-	public void waitToBeRealized() {
-		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTDisplayView.this));
-	}
+	// @Override
+	// public void waitToBeRealized() {
+	// WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTDisplayView.this));
+	// }
 
 }

@@ -13,10 +13,9 @@ global
 
 experiment "Different series" type: gui
 {
-	float minimum_cycle_duration <- 0.2;
 	output
 	{
-		display "data_cumulative_serie_spline_chart" type: java2D
+		display "data_cumulative_serie_spline_chart" type: java2D synchronized: true
 		{
 			chart "Nice cumulative series chart" type: series background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style:
 			'italic' tick_font: 'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Serif' label_font_size: 18 label_font_style: 'plain' legend_font: 'SanSerif'

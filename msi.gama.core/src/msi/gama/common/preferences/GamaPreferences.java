@@ -259,9 +259,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_DISPLAY_ORDER =
 				create("pref_display_same_order", "Stack displays in the order defined in the model", true, IType.BOOL)
 						.in(NAME, PRESENTATION);
-		public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",
-				"Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)", 200,
-				IType.INT).between(0, 1000).in(NAME, PRESENTATION);
+		// public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",
+		// "Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)", 200,
+		// IType.INT).between(0, 1000).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
 				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL).in(NAME,
 						PRESENTATION);

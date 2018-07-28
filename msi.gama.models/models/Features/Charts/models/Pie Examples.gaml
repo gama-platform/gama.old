@@ -13,10 +13,9 @@ global
 
 experiment "Different Pies" type: gui
 {
-	float minimum_cycle_duration <- 0.2;
 	output
 	{
-		display "data_pie_chart" type: java2D
+		display "data_pie_chart" type: java2D synchronized: true
 		{
 			chart "Nice Ring Pie Chart" type: pie style: ring background: # darkblue color: # lightgreen axes: # yellow title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic'
 			tick_font: 'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Arial' label_font_size: 32 label_font_style: 'bold' x_label: 'Nice Xlabel' y_label:

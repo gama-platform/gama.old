@@ -419,14 +419,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	protected IGamaView.Display getView() {
 		return (Display) view;
 	}
-
-	@Override
-	public void open() {
-		super.open();
-		if (getView() != null) {
-			getView().waitToBeRealized();
-		}
-	}
+	//
+	// @Override
+	// public void open() {
+	// super.open();
+	// // if (getView() != null) {
+	// // getView().waitToBeRealized();
+	// // }
+	// }
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {

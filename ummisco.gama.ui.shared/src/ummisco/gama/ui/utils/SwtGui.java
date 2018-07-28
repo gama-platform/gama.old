@@ -576,9 +576,10 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void run(final IScope scope, final Runnable r, final boolean asynchronous) {
+	public void run(final String taskName, final Runnable r, final boolean asynchronous) {
+
 		if (asynchronous) {
-			WorkbenchHelper.asyncRun(r);
+			WorkbenchHelper.runInUI(taskName, 0, (m) -> r.run());
 		} else {
 			WorkbenchHelper.run(r);
 		}

@@ -18,9 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.java2d.swing.SwingControl;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
@@ -91,26 +89,26 @@ public class AWTDisplayView extends LayeredDisplayView {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
-
-	@Override
-	public void waitToBeRealized() {
-		//if (PlatformHelper.isWin32()) { return; }
-		final long start = System.currentTimeMillis();
-		long now = start;
-		boolean openable = false;
-
-		while (/* isVisible && */ !openable) {
-			try {
-				Thread.sleep(GamaPreferences.Displays.CORE_OUTPUT_DELAY.getValue());
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-			now = System.currentTimeMillis();
-			openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
-		}
-		// System.out.println("Realized in " + (now - start) + "ms");
-
-	}
+	//
+	// @Override
+	// public void waitToBeRealized() {
+	// // if (PlatformHelper.isWin32()) { return; }
+	// final long start = System.currentTimeMillis();
+	// final long now = start;
+	// final boolean openable = false;
+	//
+	// // while (/* isVisible && */ !openable) {
+	// // try {
+	// // Thread.sleep(GamaPreferences.Displays.CORE_OUTPUT_DELAY.getValue());
+	// // } catch (final InterruptedException e) {
+	// // e.printStackTrace();
+	// // }
+	// // now = System.currentTimeMillis();
+	// // openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
+	// // }
+	// // System.out.println("Realized in " + (now - start) + "ms");
+	//
+	// }
 
 	@Override
 	public List<String> getCameraNames() {
