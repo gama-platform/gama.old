@@ -470,6 +470,7 @@ Export-Package: com.kitfox.svg;
  org.jfree.chart.block,
  org.jfree.chart.editor,
  org.jfree.chart.entity,
+ org.jfree.chart.event,
  org.jfree.chart.labels;
   uses:="org.jfree.data.xy,
    org.jfree.util,
