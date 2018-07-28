@@ -95,9 +95,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	}
 
 	@Override
-	public void postWindowRestore() throws WorkbenchException {
-
-	}
+	public void postWindowRestore() throws WorkbenchException {}
 
 	@Override
 	public void postWindowCreate() {
@@ -107,6 +105,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public void postWindowOpen() {
+		PerspectiveHelper.cleanPerspectives();
 		GAMA.getGui().openWelcomePage(true);
 	}
 

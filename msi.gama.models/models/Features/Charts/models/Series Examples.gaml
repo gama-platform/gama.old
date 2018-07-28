@@ -13,8 +13,12 @@ global
 
 experiment "Different series" type: gui
 {
+	
+	
+	layout #split;
 	output
 	{
+
 		display "data_cumulative_serie_spline_chart" type: java2D synchronized: true
 		{
 			chart "Nice cumulative series chart" type: series background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style:

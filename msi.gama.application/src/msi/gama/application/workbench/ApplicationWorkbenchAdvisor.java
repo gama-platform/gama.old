@@ -166,6 +166,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			saveEclipsePreferences();
 			GAMA.closeAllExperiments(true, true);
 			PerspectiveHelper.deleteCurrentSimulationPerspective();
+			// So that they are not saved to the workbench.xmi file
+			PerspectiveHelper.cleanPerspectives();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

@@ -13,6 +13,7 @@ global
 
 experiment "Different radars" type: gui
 {
+	layout #split;
 	output
 	{
 		display "nice_radar_chart" synchronized: true

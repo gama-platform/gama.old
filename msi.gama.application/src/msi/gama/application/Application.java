@@ -40,7 +40,7 @@ public class Application implements IApplication {
 			super(display);
 		}
 
-		private final ArrayList<String> filesToOpen = new ArrayList<String>(1);
+		private final ArrayList<String> filesToOpen = new ArrayList<>(1);
 
 		@Override
 		public void handleEvent(final Event event) {
@@ -65,8 +65,7 @@ public class Application implements IApplication {
 
 	public static void createProcessor() {
 		final Display display = Display.getDefault();
-		if ( display == null )
-			return;
+		if ( display == null ) { return; }
 		processor = new OpenDocumentEventProcessor(display);
 	}
 
@@ -75,8 +74,7 @@ public class Application implements IApplication {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion("1.7.0");
 		createProcessor();
-		if ( checkWorkspace() == EXIT_OK )
-			return EXIT_OK;
+		if ( checkWorkspace() == EXIT_OK ) { return EXIT_OK; }
 		Display display = null;
 		try {
 			display = Display.getDefault();
@@ -84,8 +82,9 @@ public class Application implements IApplication {
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
 			return IApplication.EXIT_OK;
 		} finally {
-			if ( display != null )
+			if ( display != null ) {
 				display.dispose();
+			}
 			final Location instanceLoc = Platform.getInstanceLocation();
 			if ( instanceLoc != null ) {
 				instanceLoc.release();

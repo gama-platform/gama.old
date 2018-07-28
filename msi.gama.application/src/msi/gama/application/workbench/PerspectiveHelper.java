@@ -11,10 +11,14 @@
 package msi.gama.application.workbench;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -43,19 +47,41 @@ public class PerspectiveHelper {
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 	public static IPerspectiveDescriptor currentSimulationPerspective = null;
 
-	static {
-		cleanPerspectives();
+	static boolean matches(final String id) {
+		return !id.equals(PerspectiveHelper.PERSPECTIVE_SIMULATION_ID) && id.contains(PERSPECTIVE_SIMULATION_FRAGMENT);
 	}
 
-	private static void cleanPerspectives() {
+	public static void cleanPerspectives() {
+		final EModelService e = PlatformUI.getWorkbench().getService(EModelService.class);
+		final MApplication a = PlatformUI.getWorkbench().getService(MApplication.class);
+
+		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
+			element -> matches(element.getElementId()));
+		for ( final PerspectiveImpl p : perspectives ) {
+			System.out.println("Dirty perspective implementation found and removed: " + p.getElementId());
+			p.getParent().getChildren().remove(p);
+		}
+
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
-			if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
-				!desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
+			if ( matches(desc.getId()) ) {
+				System.out.println("Dirty perspective descriptor found and removed: " + desc.getId());
 				reg.deletePerspective(desc);
 			}
 		}
 
+		System.out.println("Current perspectives: " + listCurrentPerspectives());
+	}
+
+	public static void deletePerspectiveFromApplication(final IPerspectiveDescriptor d) {
+		final MApplication a = PlatformUI.getWorkbench().getService(MApplication.class);
+		final EModelService e = PlatformUI.getWorkbench().getService(EModelService.class);
+		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
+			element -> element.getElementId().contains(d.getId()));
+		for ( final PerspectiveImpl p : perspectives ) {
+			System.out.println("Dirty perspective implementation found and removed: " + p.getElementId());
+			p.getParent().getChildren().remove(p);
+		}
 	}
 
 	public static IPerspectiveRegistry getPerspectiveRegistry() {
@@ -118,7 +144,6 @@ public class PerspectiveHelper {
 
 	public static boolean openPerspective(final String perspectiveId, final boolean immediately,
 		final boolean withAutoSave) {
-		System.out.println("Current perspectives: " + listCurrentPerspectives());
 		if ( perspectiveId == null ) { return false; }
 		if ( perspectiveId.equals(currentPerspectiveId) ) { return true; }
 
@@ -305,6 +330,7 @@ public class PerspectiveHelper {
 			if ( page != null ) {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
+				deletePerspectiveFromApplication(currentSimulationPerspective);
 				System.out.println("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
