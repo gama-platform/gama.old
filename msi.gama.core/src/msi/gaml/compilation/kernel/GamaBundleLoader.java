@@ -58,6 +58,10 @@ public class GamaBundleLoader {
 		e.printStackTrace();
 	}
 
+	public static final String LINE = "\n\n****************************************************************************************************\n\n";
+	public static final String ERROR_MESSAGE = LINE
+			+ "The initialization of GAML artefacts went wrong. If you use the developer version, please clean and recompile all plugins. \nOtherwise post an issue at https://github.com/gama-platform/gama/issues"
+			+ LINE;
 	public volatile static boolean LOADED = false;
 	public volatile static boolean ERRORED = false;
 	public volatile static Exception LAST_EXCEPTION = null;
@@ -117,17 +121,20 @@ public class GamaBundleLoader {
 		}
 		// LOG(">GAMA plugins with language additions: "
 		// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
-		// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e ->
+		// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e
+		// ->
 		// e.getSymbolicName()).toSet());
-		// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e -> e.getSymbolicName()).toSet());
+		// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e
+		// -> e.getSymbolicName()).toSet());
 
 		// We remove the core plugin, in order to build it first (important)
 		GAMA_PLUGINS.remove(CORE_PLUGIN);
 		try {
 			preBuild(CORE_PLUGIN);
 		} catch (final Exception e2) {
-			LOG("Error in loading plugin " + CORE_PLUGIN.getSymbolicName());
-			ERROR(e2);
+			System.err.println(ERROR_MESSAGE);
+			System.err.println("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
+			System.exit(0);
 			return;
 		}
 		// We then build the other extensions to the language
@@ -136,8 +143,9 @@ public class GamaBundleLoader {
 			try {
 				preBuild(addition);
 			} catch (final Exception e1) {
-				LOG("Error in loading plugin " + addition.getSymbolicName());
-				ERROR(e1);
+				System.err.println(ERROR_MESSAGE);
+				System.err.println("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
+				System.exit(0);
 				return;
 			}
 		}
@@ -204,18 +212,18 @@ public class GamaBundleLoader {
 	}
 
 	private static void performStaticInitializations() {
-//		new Thread(() -> {
-			// final long start = System.currentTimeMillis();
-			IExpressionCompiler.OPERATORS.forEachValue(object -> {
-				object.compact();
-				return true;
-			});
-			IExpressionCompiler.OPERATORS.compact();
-//		}).start();
+		// new Thread(() -> {
+		// final long start = System.currentTimeMillis();
+		IExpressionCompiler.OPERATORS.forEachValue(object -> {
+			object.compact();
+			return true;
+		});
+		IExpressionCompiler.OPERATORS.compact();
+		// }).start();
 
 	}
 
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
 		GamaClassLoader.getInstance().addBundle(bundle);
 
@@ -251,7 +259,8 @@ public class GamaBundleLoader {
 	}
 
 	/**
-	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
+	 * The list of GAMA_PLUGINS declaring models, together with the inner path to
+	 * the folder containing model projects
 	 * 
 	 * @return
 	 */

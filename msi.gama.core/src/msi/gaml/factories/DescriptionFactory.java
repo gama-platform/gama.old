@@ -48,7 +48,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class DescriptionFactory {
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
@@ -170,8 +170,8 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 			final IDescription superDesc, final Iterable<IDescription> children, final Facets facets) {
-		final IDescription result =
-				create(SyntacticFactory.create(keyword, facets, children != null), superDesc, children);
+		final IDescription result = create(SyntacticFactory.create(keyword, facets, children != null), superDesc,
+				children);
 		return result;
 	}
 
@@ -254,7 +254,13 @@ public class DescriptionFactory {
 		final String keyword = source.getKeyword();
 		final SymbolProto md = DescriptionFactory.getProto(keyword, superDesc);
 		if (md == null) {
-			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(), keyword);
+			if (superDesc == null) // We are in the initialization of GAMA. Only issue is to emit a runtime
+									// exception
+			{
+				throw new RuntimeException("Description of " + keyword + " cannot be built");
+			} else
+				superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(),
+						keyword);
 			return null;
 		}
 		Iterable<IDescription> children = cp;
