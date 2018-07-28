@@ -47,7 +47,6 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
@@ -343,15 +342,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// AD: addressing the deprecation of the "trace:" facet
 			final IExpressionDescription trace = d.getFacet(TRACE);
 			if (trace != null) {
-				d.visitChildren(new DescriptionVisitor<IDescription>() {
-
-					@Override
-					public boolean visit(final IDescription layer) {
-						if (!layer.hasFacet(TRACE)) {
-							layer.setFacet(TRACE, trace);
-						}
-						return true;
+				d.visitChildren(layer -> {
+					if (!layer.hasFacet(TRACE)) {
+						layer.setFacet(TRACE, trace);
 					}
+					return true;
 				});
 
 			}
@@ -393,6 +388,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public IOverlayProvider<OverlayInfo> getOverlayProvider() {
 		return overlayInfo;
+	}
+
+	@Override
+	public boolean shouldOpenAsynchronously() {
+		// OpenGL views need to be opened synchronously
+		return !data.isOpenGL();
 	}
 
 	@Override

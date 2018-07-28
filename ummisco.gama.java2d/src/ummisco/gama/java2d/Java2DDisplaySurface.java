@@ -309,7 +309,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void updateDisplay(final boolean force) {
 		if (disposed) { return; }
 		rendered = false;
-		repaint();
+		EventQueue.invokeLater(() -> repaint());
 	}
 
 	@Override
@@ -327,6 +327,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 		updateDisplay(true);
 	}
+
+	@Override
+	public void validate() {}
+
+	@Override
+	public void doLayout() {}
 
 	private void zoom(final boolean in) {
 		final Point origin = getOrigin();
@@ -400,6 +406,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
 			temp_focus = null;
 			focusOn(geometry);
+			rendered = true;
 			return;
 		}
 

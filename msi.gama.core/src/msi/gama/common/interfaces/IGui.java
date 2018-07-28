@@ -142,7 +142,7 @@ public interface IGui {
 
 	void updateDecorator(String string);
 
-	void run(IScope scope, Runnable opener);
+	void run(IScope scope, Runnable opener, boolean asynchronous);
 
 	void setFocusOn(IShape o);
 

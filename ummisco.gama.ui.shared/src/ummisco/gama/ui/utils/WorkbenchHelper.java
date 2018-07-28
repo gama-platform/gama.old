@@ -181,6 +181,17 @@ public class WorkbenchHelper {
 		return null;
 	}
 
+	public static boolean isDisplay(final String id) {
+		if (!id.startsWith(SwtGui.GL_LAYER_VIEW_ID) && !id.startsWith(SwtGui.LAYER_VIEW_ID)) { return false; }
+		final IWorkbenchPage page = WorkbenchHelper.getPage();
+		if (page == null) { return false; } // Closing the workbench
+		final IViewReference ref = page.findViewReference(id);
+		return ref != null;
+		// final IViewPart view = ref.getView(false);
+		// if (view instanceof IGamaView.Display) { return (IGamaView.Display) view; }
+		// return <
+	}
+
 	public static IViewPart findView(final String id, final String second, final boolean restore) {
 		final IWorkbenchPage page = WorkbenchHelper.getPage();
 		if (page == null) { return null; } // Closing the workbench

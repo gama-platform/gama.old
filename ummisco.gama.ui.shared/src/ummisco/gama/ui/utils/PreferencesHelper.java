@@ -71,7 +71,7 @@ public class PreferencesHelper {
 
 	public static final Pref<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 			.create("pref_button_font", "Font of buttons and dialogs",
-					() -> new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
+					() -> new GamaFont(GamaFonts.getBaseFont(), SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
 			.onChange(newValue -> GamaFonts.setLabelFont(newValue));
 

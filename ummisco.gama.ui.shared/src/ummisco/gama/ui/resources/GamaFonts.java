@@ -15,13 +15,14 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
 import ummisco.gama.ui.utils.GraphicsHelper;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamaFonts {
 
-	public static Font systemFont = WorkbenchHelper.getDisplay().getSystemFont();
-	public static FontData baseData = systemFont.getFontData()[0];
-	public static String baseFont = baseData.getName();
+	private static Font systemFont;
+	private static FontData baseData;
+	private static String baseFont;
 	public static int baseSize = 11;
 	private static java.awt.Font awtBaseFont;
 	public static Font expandFont;
@@ -40,10 +41,54 @@ public class GamaFonts {
 	public static Font categoryHelpFont;
 	public static Font categoryBoldHelpFont;
 
+	private static java.awt.Font getAwtBaseFont() {
+		if (awtBaseFont == null) {
+			awtBaseFont = PreferencesHelper.BASE_BUTTON_FONT.getValue();
+		}
+		return awtBaseFont;
+	}
+
+	private static void setAwtBaseFont(final java.awt.Font awtBaseFont) {
+		GamaFonts.awtBaseFont = awtBaseFont;
+	}
+
+	public static String getBaseFont() {
+		if (baseFont == null) {
+			baseFont = getBaseData().getName();
+		}
+		return baseFont;
+	}
+
+	public static void setBaseFont(final String baseFont) {
+		GamaFonts.baseFont = baseFont;
+	}
+
+	public static FontData getBaseData() {
+		if (baseData == null) {
+			baseData = getSystemFont().getFontData()[0];
+		}
+		return baseData;
+	}
+
+	public static void setBaseData(final FontData baseData) {
+		GamaFonts.baseData = baseData;
+	}
+
+	public static Font getSystemFont() {
+		if (systemFont == null) {
+			systemFont = WorkbenchHelper.getDisplay().getSystemFont();
+		}
+		return systemFont;
+	}
+
+	public static void setSystemFont(final Font systemFont) {
+		GamaFonts.systemFont = systemFont;
+	}
+
 	static void initFonts() {
 		// System.out.println("System font = " + Arrays.toString(systemFont.getFontData()));
 		final Display d = WorkbenchHelper.getDisplay();
-		FontData fd = new FontData(awtBaseFont.getName(), awtBaseFont.getSize(), awtBaseFont.getStyle());
+		FontData fd = new FontData(getAwtBaseFont().getName(), getAwtBaseFont().getSize(), getAwtBaseFont().getStyle());
 		final FontData original = fd;
 		labelFont = new Font(d, fd);
 		final FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
@@ -84,7 +129,7 @@ public class GamaFonts {
 	}
 
 	public static void setLabelFont(final java.awt.Font font) {
-		awtBaseFont = font;
+		setAwtBaseFont(font);
 		final FontData fd = GraphicsHelper.toSwtFontData(WorkbenchHelper.getDisplay(), font, true);
 		setLabelFont(new Font(WorkbenchHelper.getDisplay(), fd));
 	}

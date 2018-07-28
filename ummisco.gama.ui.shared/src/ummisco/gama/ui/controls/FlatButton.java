@@ -82,7 +82,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private FlatButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		setFont(GamaFonts.systemFont);
+		setFont(GamaFonts.getSystemFont());
 		addPaintListener(this);
 		addListeners();
 	}

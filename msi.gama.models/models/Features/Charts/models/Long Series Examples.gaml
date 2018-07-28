@@ -44,7 +44,7 @@ experiment "Long series" type: gui
 {
 	output
 	{
-		display "long_series" type: java2D
+		display "long_series" type: java2D synchronized: true
 		{
 			chart "Long series values" type: series x_label: "#points to draw at each step"
 

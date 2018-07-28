@@ -12,9 +12,8 @@ global
 }
 
 experiment "Multiple displays" type: gui {
-	float minimum_cycle_duration<-0.2;
 	output {
-		display "nice_bar_chart" {
+		display "nice_bar_chart" synchronized: true {
 			chart "Nice Cumulative Bar Chart" type:histogram 
 			 	background: #darkblue
 			 	color: #lightgreen 

@@ -56,10 +56,9 @@ global
 
 experiment "Different heatmaps" type: gui
 {
-	float minimum_cycle_duration <- 0.2;
 	output
 	{
-		display "NIce Heatmap" type: java2D
+		display "NIce Heatmap" type: java2D synchronized: true
 		{
 			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic' tick_font:
 			'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Serif' label_font_size: 18 label_font_style: 'plain' legend_font: 'SanSerif' legend_font_size: 18
@@ -104,10 +103,9 @@ experiment "Different heatmaps" type: gui
 
 experiment Heatmap type: gui
 {
-	float minimum_cycle_duration <- 0.2;
 	output
 	{
-		display "list_heatmap" type: java2D
+		display "list_heatmap" type: java2D synchronized: true
 		{
 			chart "list_heatmap" type: heatmap
 			{

@@ -13,10 +13,9 @@ global
 
 experiment "Different radars" type: gui
 {
-	float minimum_cycle_duration <- 0.2;
 	output
 	{
-		display "nice_radar_chart"
+		display "nice_radar_chart" synchronized: true
 		{
 			chart "Nice Cumulative Radar Chart" type: radar background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style:
 			'italic' tick_font: 'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Arial' label_font_size: 18 label_font_style: 'bold' legend_font: 'SanSerif'

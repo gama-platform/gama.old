@@ -397,7 +397,7 @@ public class HeadlessListener implements IGui {
 	public void clearErrors(final IScope scope) {}
 
 	@Override
-	public void run(final IScope scope, final Runnable opener) {
+	public void run(final IScope scope, final Runnable opener, final boolean asynchronous) {
 		if (opener != null) {
 			opener.run();
 		}

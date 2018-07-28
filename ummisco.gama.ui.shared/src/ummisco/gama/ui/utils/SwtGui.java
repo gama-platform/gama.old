@@ -69,7 +69,6 @@ import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
 import ummisco.gama.ui.parameters.EditorsDialog;
-import ummisco.gama.ui.resources.GamaFonts;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -85,7 +84,7 @@ public class SwtGui implements IGui {
 	private ILocation mouseLocationInModel;
 
 	static {
-		GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
+		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
 		PreferencesHelper.initialize();
 	}
 
@@ -577,9 +576,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void run(final IScope scope, final Runnable r) {
-		WorkbenchHelper.run(r);
-
+	public void run(final IScope scope, final Runnable r, final boolean asynchronous) {
+		if (asynchronous) {
+			WorkbenchHelper.asyncRun(r);
+		} else {
+			WorkbenchHelper.run(r);
+		}
 	}
 
 	@Override
