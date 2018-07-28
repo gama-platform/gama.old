@@ -40,7 +40,7 @@ import msi.gama.runtime.IScope;
 
 public class ImageUtils {
 
-	private final static BufferedImage NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
+	private static BufferedImage NO_IMAGE;
 	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
 			.removalListener(notification -> ((BufferedImage) notification.getValue()).flush()).build();
 	private final Cache<String, BufferedImage> openGLCache =
@@ -57,6 +57,13 @@ public class ImageUtils {
 					.getDefaultConfiguration();
 		}
 		return cachedGC;
+	}
+
+	public static BufferedImage getNoImage() {
+		if (NO_IMAGE == null) {
+			NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
+		}
+		return NO_IMAGE;
 	}
 
 	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
@@ -81,7 +88,7 @@ public class ImageUtils {
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
 		final BufferedImage result = getImageFromFile(f, useCache, false);
-		return result == NO_IMAGE ? null : result;
+		return result == getNoImage() ? null : result;
 	}
 
 	public int getFrameCount(final String path) {
@@ -98,7 +105,7 @@ public class ImageUtils {
 
 	private BufferedImage privateReadFromFile(final File file, final boolean forOpenGL) throws IOException {
 		// System.out.println("READING " + file.getName());
-		BufferedImage result = NO_IMAGE;
+		BufferedImage result = getNoImage();
 		if (file == null) { return result; }
 		final String name = file.getName();
 		String ext = null;
@@ -123,7 +130,7 @@ public class ImageUtils {
 		try {
 			result = forOpenGL ? ImageIO.read(file) : toCompatibleImage(ImageIO.read(file));
 		} catch (final Exception e) {
-			return NO_IMAGE;
+			return getNoImage();
 		}
 		return result;
 	}
@@ -157,7 +164,7 @@ public class ImageUtils {
 			} else {
 				image = privateReadFromFile(file, forOpenGL);
 			}
-			return image == NO_IMAGE ? null : image;
+			return image == getNoImage() ? null : image;
 		} catch (final ExecutionException | IOException e) {
 			e.printStackTrace();
 		}
