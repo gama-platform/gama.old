@@ -100,23 +100,11 @@ init {
 	//Stack displays in the order defined in the model
 	write sample(gama.pref_display_same_order);
 
-	//Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)
-	write sample(gama.pref_display_delay_views);
-
 	//Display a border around display views
 	write sample(gama.pref_display_show_border);
 
 	//Continue to draw displays when in Modeling perspective
 	write sample(gama.pref_display_continue_drawing);
-
-	//Use the native mode for full-screen (experimental)
-	write sample(gama.pref_display_fullscreen_native);
-
-	//Disable the OS menu bar when a display is full-screen
-	write sample(gama.pref_display_fullscreen_menu);
-
-	//Show the toolbar when a display is full-screen
-	write sample(gama.pref_display_fullscreen_toolbar);
 
 	//Enable fast snapshots (uncomplete when the display is obscured by others but much faster)
 	write sample(gama.pref_display_fast_snapshot);
@@ -457,15 +445,6 @@ init {
 	//Pragma color
 	write sample(gama.pref_pragma_color);
 
-	//Location of the preferences dialog on screen
-	write sample(gama.dialog_location);
-
-	//Size of the preferences dialog on screen
-	write sample(gama.dialog_size);
-
-	//Tab selected in the preferences dialog
-	write sample(gama.dialog_tab);
-
 }
 }
 
@@ -568,23 +547,11 @@ init {
 	//Stack displays in the order defined in the model
 	gama.pref_display_same_order <- true;
 
-	//Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)
-	gama.pref_display_delay_views <- 986;
-
 	//Display a border around display views
 	gama.pref_display_show_border <- false;
 
 	//Continue to draw displays when in Modeling perspective
 	gama.pref_display_continue_drawing <- false;
-
-	//Use the native mode for full-screen (experimental)
-	gama.pref_display_fullscreen_native <- false;
-
-	//Disable the OS menu bar when a display is full-screen
-	gama.pref_display_fullscreen_menu <- false;
-
-	//Show the toolbar when a display is full-screen
-	gama.pref_display_fullscreen_toolbar <- false;
 
 	//Enable fast snapshots (uncomplete when the display is obscured by others but much faster)
 	gama.pref_display_fast_snapshot <- false;
@@ -925,14 +892,6 @@ init {
 	//Pragma color
 	gama.pref_pragma_color <- rgb (122, 122, 122,255);
 
-	//Location of the preferences dialog on screen
-	gama.dialog_location <- {435.0,163.0,0.0};
-
-	//Size of the preferences dialog on screen
-	gama.dialog_size <- {1385.0,970.0,0.0};
-
-	//Tab selected in the preferences dialog
-	gama.dialog_tab <- 0;
 
 }
 }
