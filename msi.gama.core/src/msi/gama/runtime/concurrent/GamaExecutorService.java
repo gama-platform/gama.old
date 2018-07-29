@@ -44,8 +44,10 @@ public abstract class GamaExecutorService {
 	public static final UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> {
 
 		if (e instanceof OutOfMemoryError) {
-			GAMA.getGui().tell("GAMA is out of memory. Experiment " + GAMA.getExperiment().getName()
-					+ " will be closed. Try to increase the memory allocated to the platform in the preferences");
+			GAMA.getGui().run("Closing", () -> GAMA.getGui().tell("GAMA is out of memory. Experiment "
+					+ GAMA.getExperiment().getName()
+					+ " will be closed. Try to increase the memory allocated to the platform in the preferences. It is also advised to quit GAMA and relaunch it."),
+					true);
 			GAMA.closeAllExperiments(true, true);
 		} else {
 			e.printStackTrace();

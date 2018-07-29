@@ -98,7 +98,7 @@ public class FileUtils {
 		if (isAbsolutePath(fp)) {
 			final String file = findOutsideWorkspace(fp, mustExist);
 			if (file != null) {
-				System.out.println("Hit with EFS-based search: " + file);
+				// System.out.println("Hit with EFS-based search: " + file);
 				return file;
 			}
 		}
@@ -109,7 +109,7 @@ public class FileUtils {
 		for (final IContainer folder : paths) {
 			final String file = findInWorkspace(fp, folder, mustExist);
 			if (file != null) {
-				System.out.println("Hit with workspace-based search: " + file);
+				// System.out.println("Hit with workspace-based search: " + file);
 				return file;
 			}
 		}

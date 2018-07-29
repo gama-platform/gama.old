@@ -14,6 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class ExperimentController implements Runnable, IExperimentController {
@@ -37,17 +38,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			commandThread = null;
 		} else {
 			commandThread = new Thread(this, "Front end controller");
-			commandThread.setUncaughtExceptionHandler((t, e) -> {
-
-				if (e instanceof OutOfMemoryError) {
-					GAMA.getGui().tell("GAMA is out of memory. Experiment " + experiment.getName()
-							+ " will be closed. Try to increase the memory allocated to the platform in the preferences");
-					GAMA.closeAllExperiments(true, true);
-				} else {
-					e.printStackTrace();
-				}
-
-			});
+			commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 			commandThread.start();
 		}
 

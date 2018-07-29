@@ -76,14 +76,14 @@ public class Application implements IApplication {
 				final boolean close = MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Out of memory",
 					"GAMA is out of memory and will likely crash. Do you want to close now ?");
 				if ( close ) {
-					System.exit(0);
+					this.stop();
 				}
 				e.printStackTrace();
 			}
 
 		});
 		Display.setAppName("Gama Platform");
-		Display.setAppVersion("1.7.0");
+		Display.setAppVersion("1.8.0");
 		createProcessor();
 		if ( checkWorkspace() == EXIT_OK ) { return EXIT_OK; }
 		Display display = null;
