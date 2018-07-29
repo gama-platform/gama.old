@@ -167,7 +167,7 @@ experiment "Several charts" type: gui {
 		}
 	
 	}
-	
+	permanent layout: horizontal([vertical([0::6721,2::3279])::5000,vertical([1::5000,horizontal([3::5000,4::5000])::5000])::5000]) tabs:true toolbars:true;
 	//The different displays
 	output {
 		display Ants type: opengl {

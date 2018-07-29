@@ -15,7 +15,7 @@ experiment "Different series" type: gui
 {
 	
 	
-	layout #split;
+	layout #split toolbars: false;
 	output
 	{
 
