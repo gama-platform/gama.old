@@ -10,12 +10,15 @@
 package msi.gama.kernel.root;
 
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -36,6 +39,7 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.MemoryUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.ICollector;
@@ -105,7 +109,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	public static final String WORKSPACE_PATH = "workspace_path";
 	public static final String MACHINE_TIME = "machine_time";
-	private final IScope scope;
+	private final Timer polling = new Timer();
+	final IScope scope;
+	private TimerTask currentTask;
 
 	public PlatformAgent() {
 		this(new GamaPopulation<PlatformAgent>(null,
@@ -115,10 +121,54 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public PlatformAgent(final IPopulation<PlatformAgent> pop, final int index) {
 		super(pop, index);
 		scope = new ExecutionScope(this, "Gama platform scope");
+		if (GamaPreferences.Runtime.CORE_MEMORY_POLLING.getValue()) {
+			startPollingMemory();
+		}
+		GamaPreferences.Runtime.CORE_MEMORY_POLLING.onChange((newValue) -> {
+			if (newValue) {
+				startPollingMemory();
+			} else {
+				stopPollingMemory();
+			}
+		});
+		GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.onChange((newValue) -> {
+			stopPollingMemory();
+			startPollingMemory();
+		});
+	}
+
+	private void startPollingMemory() {
+		if (currentTask == null) {
+			currentTask = new TimerTask() {
+				@Override
+				public void run() {
+					if (MemoryUtils.memoryIsLow()) {
+						final IExperimentAgent agent = getExperiment();
+						if (agent != null) {
+							final long mb = (long) (MemoryUtils.availableMemory() / 1000000d);
+							final GamaRuntimeException e = GamaRuntimeException.warning("Memory is low (" + mb
+									+ " megabytes). You should close the experiment, exit GAMA and give it more memory",
+									agent.getScope());
+							GAMA.reportError(scope, e, false);
+						}
+					}
+				}
+			};
+		}
+		polling.scheduleAtFixedRate(currentTask, 0, 1000 * GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.getValue());
+	}
+
+	private void stopPollingMemory() {
+		if (currentTask != null) {
+			currentTask.cancel();
+			currentTask = null;
+		}
 	}
 
 	@Override
 	public Object primDie(final IScope scope) {
+		stopPollingMemory();
+		polling.cancel();
 		GAMA.closeAllExperiments(false, true);
 		scope.getGui().exit();
 		return null;

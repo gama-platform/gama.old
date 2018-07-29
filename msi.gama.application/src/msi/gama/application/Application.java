@@ -142,9 +142,12 @@ public class Application implements IApplication {
 				final String ret = WorkspacePreferences.checkWorkspaceDirectory(lastUsedWs, false, false, false);
 				if ( ret != null ) {
 					if ( ret.equals("models") ) {
-						remember = !MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
-							"Outdated version of the models library",
-							"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
+						final MessageDialog dialog = new MessageDialog(Display.getDefault().getActiveShell(),
+							"Different version of the models library",
+							MessageDialog.getImage(MessageDialog.DLG_IMG_QUESTION),
+							"The workspace contains a different version of the models library. Do you want to use another workspace ?",
+							MessageDialog.QUESTION, 1, "Use another workspace", "No, thanks");
+						remember = dialog.open() == 1;
 
 					} else {
 						remember = false;

@@ -224,10 +224,22 @@ public class GamaPreferences {
 				"Only display (in the UI and in headless runs) failed and aborted tests", false, IType.BOOL)
 						.in(NAME, TESTS).withComment(", if true, only aborted and failed tests are displayed");
 
+		public static final String MEMORY = "Memory";
+		public static final Pref<Boolean> CORE_MEMORY_POLLING =
+				create("pref_check_memory", "Monitor memory and emit a warning if it is low", true, IType.BOOL)
+						.in(NAME, MEMORY).activates("pref_memory_threshold", "pref_memory_frequency");
+		public static final Pref<Integer> CORE_MEMORY_PERCENTAGE = create("pref_memory_threshold",
+				"Trigger warnings when the percentage of available memory is below", 20, IType.INT).in(NAME, MEMORY);
+		public static final Pref<Integer> CORE_MEMORY_FREQUENCY = create("pref_memory_frequency",
+				"Interval (in seconds) at which memory should be monitored", 2, IType.INT).in(NAME, MEMORY);
+		public static final Pref<Boolean> CORE_MEMORY_ACTION = create("pref_memory_action",
+				"If true, when running out of memory, GAMA will try to close the experiment, otherwise it exits", true,
+				IType.BOOL).in(NAME, MEMORY);
 		/**
 		 * Errors & warnings
 		 */
 		public static final String ERRORS = "Runtime errors";
+
 		public static final Pref<Boolean> CORE_SHOW_ERRORS =
 				create("pref_errors_display", "Show execution errors", true, IType.BOOL).in(NAME, ERRORS)
 						.activates("pref_errors_number", "pref_errors_recent_first", "pref_display_show_errors");

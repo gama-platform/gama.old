@@ -85,18 +85,27 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final GamaTree<String> tree) {
+
 		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
 		if (!WorkaroundForIssue1353.isInstalled()
-				&& StreamEx.of(displays).anyMatch((d) -> (!d.getOutput().getData().isOpenGL()))) {
+				&& StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
 			WorkaroundForIssue1353.install();
 		}
 		if (tree == null) { return; }
+		// System.out.println("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
+		// + tree.getRoot().getChildren().get(0).getWeight());
+		if (tree.getRoot().getChildren().get(0).getWeight() == null) {
+			tree.getRoot().getChildren().get(0).setWeight(5000);
+		}
 		final List<MPlaceholder> holders = listDisplayViews();
 		final MPartStack displayStack = getDisplaysPlaceholder();
+		if (displayStack == null) { return; }
+		displayStack.setToBeRendered(true);
 		final MElementContainer<?> root = displayStack.getParent();
 		hideDisplays(displayStack, holders);
 		process(root, tree.getRoot().getChildren().get(0), holders);
 		showDisplays(root, holders);
+		activateDisplays(holders, true);
 	}
 
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
@@ -105,11 +114,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static MPartStack getDisplaysPlaceholder() {
 		final Object displayStack = getModelService().find("displays", getApplication());
-		return (displayStack instanceof MPartStack) ? (MPartStack) displayStack : null;
+//		System.out.println("Element displays found : " + displayStack);
+		return displayStack instanceof MPartStack ? (MPartStack) displayStack : null;
 	}
 
 	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
+//		root.setToBeRendered(true);
 		WorkbenchHelper.getDisplayViews().forEach(v -> {
 			if (PerspectiveHelper.keepToolbars()) {
 				v.showToolbar();
@@ -117,7 +128,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				v.hideToolbar();
 			}
 		});
-		holders.forEach((ph) -> ph.setVisible(true));
+		holders.forEach((ph) -> {
+			ph.setVisible(true);
+//			ph.setToBeRendered(true);
+		});
 		activateDisplays(holders, true);
 	}
 
@@ -164,7 +178,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
-				IN_ACTIVE_PERSPECTIVE, e -> findDisplay(e.getElementId()) != null);
+				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
 		holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
 				String.valueOf(findDisplay(h.getElementId()).getIndex())));
 		return holders;

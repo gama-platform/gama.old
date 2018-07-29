@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
+import msi.gama.runtime.MemoryUtils;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
@@ -109,28 +110,33 @@ public class PreferencesHelper {
 
 					});
 
+	public static String PATH;
+	public static String TEXT;
+
 	public static void initialize() {
 		final int memory = readMaxMemoryInMegabytes();
-		if (memory > 0) {
-			final Pref<Integer> p = GamaPreferences
-					.create("pref_memory_max", "Maximum memory allocated in Mb (requires restart)", memory, 1)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
-			p.onChange(newValue -> {
-				changeMaxMemory(newValue);
-				GamaPreferencesView.setRestartRequired();
-			});
+		final Pref<Integer> p = GamaPreferences
+				.create("pref_memory_max", TEXT, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1)
+				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
+		if (memory == 0) {
+			p.disabled();
 		}
+		p.onChange(newValue -> {
+			changeMaxMemory(newValue);
+			GamaPreferencesView.setRestartRequired();
+		});
 
 	}
 
 	public static int readMaxMemoryInMegabytes() {
-		String loc;
 		try {
-			loc = Platform.getConfigurationLocation().getURL().getPath();
-			File dir = new File(loc);
+			PATH = Platform.getConfigurationLocation().getURL().getPath();
+			File dir = new File(PATH);
 			dir = dir.getParentFile();
-			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
+			PATH = dir.getAbsolutePath() + "/Gama.ini";
+			final File ini = new File(PATH);
 			if (ini.exists()) {
+				TEXT = "Maximum memory allocated in Mb (requires to restart GAMA)";
 				try (final FileInputStream stream = new FileInputStream(ini);
 						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
 					String s = reader.readLine();
@@ -168,6 +174,8 @@ public class PreferencesHelper {
 						s = reader.readLine();
 					}
 				}
+			} else {
+				TEXT = "The max. memory allocated needs to be set in Eclipse (developer version) or in Gama.ini file";
 			}
 		} catch (final IOException e) {}
 		return 0;
