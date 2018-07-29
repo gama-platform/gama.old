@@ -17,6 +17,7 @@
  *******************************************************************************/
 package ummisco.gama.ui.utils;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 
 public class PlatformHelper {
@@ -25,6 +26,7 @@ public class PlatformHelper {
 	private static boolean isWindows = "win32".equals(platformString);
 	private static boolean isMac = "cocoa".equals(platformString) || "carbon".equals(platformString);
 	private static boolean isLinux = "gtk".equals(platformString);
+	private static Boolean isDeveloper;
 
 	private PlatformHelper() {}
 
@@ -38,6 +40,14 @@ public class PlatformHelper {
 
 	public static boolean isMac() {
 		return isMac;
+	}
+
+	public static boolean isDeveloper() {
+		if (isDeveloper == null) {
+			isDeveloper = Platform.getInstallLocation() == null
+					|| Platform.getInstallLocation().getURL().getPath().contains("org.eclipse.pde.core");
+		}
+		return isDeveloper;
 	}
 
 	/**

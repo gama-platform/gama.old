@@ -110,33 +110,55 @@ public class PreferencesHelper {
 
 					});
 
-	public static String PATH;
-	public static String TEXT;
+	public static File findIniFile() {
+		final String path = Platform.getConfigurationLocation().getURL().getPath();
+		System.out.println("Install location of GAMA is " + path);
+		File dir = new File(path);
+		File result = findIn(dir);
+		if (result == null) {
+			if (PlatformHelper.isMac()) {
+				dir = new File(path + "Gama.app/Contents/MacOS");
+				result = findIn(dir);
+				if (result == null) {
+					dir = new File(path + "Gama.app/Eclipse");
+					result = findIn(dir);
+				}
+			} else {
+				dir = dir.getParentFile();
+				result = findIn(dir);
+			}
+		}
+		return result;
+	}
+
+	private static File findIn(final File path) {
+		System.out.println("Looking for ini file in " + path);
+		final File ini = new File(path.getAbsolutePath() + "/Gama.ini");
+		return ini.exists() ? ini : null;
+	}
 
 	public static void initialize() {
-		final int memory = readMaxMemoryInMegabytes();
+		final File ini = findIniFile();
+		final int memory = readMaxMemoryInMegabytes(ini);
+		final String text = ini == null || memory == 0
+				? "The max. memory allocated needs to be set in Eclipse (developer version) or in Gama.ini file"
+				: "Maximum memory allocated in Mb (requires to restart GAMA)";
 		final Pref<Integer> p = GamaPreferences
-				.create("pref_memory_max", TEXT, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1)
+				.create("pref_memory_max", text, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1)
 				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
 		if (memory == 0) {
 			p.disabled();
 		}
 		p.onChange(newValue -> {
-			changeMaxMemory(newValue);
+			changeMaxMemory(ini, newValue);
 			GamaPreferencesView.setRestartRequired();
 		});
 
 	}
 
-	public static int readMaxMemoryInMegabytes() {
+	public static int readMaxMemoryInMegabytes(final File ini) {
 		try {
-			PATH = Platform.getConfigurationLocation().getURL().getPath();
-			File dir = new File(PATH);
-			dir = dir.getParentFile();
-			PATH = dir.getAbsolutePath() + "/Gama.ini";
-			final File ini = new File(PATH);
-			if (ini.exists()) {
-				TEXT = "Maximum memory allocated in Mb (requires to restart GAMA)";
+			if (ini != null) {
 				try (final FileInputStream stream = new FileInputStream(ini);
 						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
 					String s = reader.readLine();
@@ -174,24 +196,17 @@ public class PreferencesHelper {
 						s = reader.readLine();
 					}
 				}
-			} else {
-				TEXT = "The max. memory allocated needs to be set in Eclipse (developer version) or in Gama.ini file";
 			}
 		} catch (final IOException e) {}
 		return 0;
 
 	}
 
-	public static void changeMaxMemory(final int memory) {
+	public static void changeMaxMemory(final File ini, final int memory) {
 		final int mem = memory < 128 ? 128 : memory;
-		String loc;
 		try {
-			loc = Platform.getConfigurationLocation().getURL().getPath();
-			File dir = new File(loc);
-			dir = dir.getParentFile();
-			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
 			final List<String> contents = new ArrayList<>();
-			if (ini.exists()) {
+			if (ini != null) {
 				try (final FileInputStream stream = new FileInputStream(ini);
 						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
 					String s = reader.readLine();
