@@ -123,7 +123,7 @@ public class ModelScene {
 	}
 
 	private double computeVisualZIncrement() {
-		if (objectNumber == 0) { return 0d; }
+		if (objectNumber <= 1) { return 0d; }
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 		final double maxZ = renderer.getMaxEnvDim() / 2000d;
 		// The increment is simply

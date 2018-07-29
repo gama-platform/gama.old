@@ -125,7 +125,7 @@ public class LayeredDisplayData {
 	private GamaPoint cameraUpVector = null;
 	private String presetCamera = "";
 	private int cameraLens = 45;
-	private double splitDistance = 0.25;
+	private Double splitDistance;
 	private final boolean isDrawingPolygons = true;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
@@ -380,7 +380,7 @@ public class LayeredDisplayData {
 	 */
 	public void setCameraPos(final GamaPoint point) {
 		if (point == null) { return; }
-		final GamaPoint c = point.withPrecision(3);
+		final GamaPoint c = point;
 		if (cameraPos != null) {
 			if (c.equals(cameraPos)) {
 				return;
@@ -407,9 +407,9 @@ public class LayeredDisplayData {
 	 */
 	public void setCameraLookPos(final GamaPoint point) {
 		if (point == null) { return; }
-		final GamaPoint c = point.withPrecision(3);
+		final GamaPoint c = point;
 		if (cameraLookPos != null) {
-			if (c.x == cameraLookPos.x && c.y == cameraLookPos.y && c.z == cameraLookPos.z) {
+			if (c.equals(cameraLookPos)) {
 				return;
 			} else {
 				cameraLookPos.setLocation(c);
@@ -434,9 +434,9 @@ public class LayeredDisplayData {
 	 */
 	public void setCameraUpVector(final GamaPoint point, final boolean notify) {
 		if (point == null) { return; }
-		final GamaPoint c = point.withPrecision(3);
+		final GamaPoint c = point;
 		if (cameraUpVector != null) {
-			if (c.x == cameraUpVector.x && c.y == cameraUpVector.y && c.z == cameraUpVector.z) {
+			if (c.equals(cameraUpVector)) {
 				return;
 			} else {
 				cameraUpVector.setLocation(c);
@@ -611,6 +611,9 @@ public class LayeredDisplayData {
 	}
 
 	public Double getSplitDistance() {
+		if (splitDistance == null) {
+			splitDistance = getEnvHeight() / 20d;
+		}
 		return splitDistance;
 	}
 

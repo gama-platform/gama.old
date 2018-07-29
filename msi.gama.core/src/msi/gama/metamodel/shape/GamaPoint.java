@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import static java.lang.Math.sqrt;
+import static msi.gaml.operators.Maths.round;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.util.NumberUtil;
@@ -23,7 +26,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -279,8 +281,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 		if (o instanceof GamaPoint) {
 			final double tolerance = GamaPreferences.External.TOLERANCE_POINTS.getValue();
-			if (tolerance > 0.0)
-				return equalsWithTolerance((GamaPoint) o, tolerance);
+			if (tolerance > 0.0) { return equalsWithTolerance((GamaPoint) o, tolerance); }
 			return equals3D((GamaPoint) o);
 		}
 		return super.equals(o);
@@ -288,12 +289,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equalsWithTolerance(final Coordinate c, final double tolerance) {
-		if (tolerance == 0.0)
-			return equals3D(c);
+		if (tolerance == 0.0) { return equals3D(c); }
 		if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) { return false; }
 		if (!NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) { return false; }
-		if (!Double.isNaN(z) && !Double.isNaN(c.z) && !NumberUtil.equalsWithTolerance(this.z, c.z, tolerance))
-			return false;
+		if (!Double.isNaN(z) && !Double.isNaN(c.z)
+				&& !NumberUtil.equalsWithTolerance(this.z, c.z, tolerance)) { return false; }
 
 		return true;
 	}
@@ -321,7 +321,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		final double dx = p.getX() - x;
 		final double dy = p.getY() - y;
 		final double dz = p.getZ() - z;
-		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	public double euclidianDistanceTo(final GamaPoint p) {
@@ -668,22 +668,19 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if (threshold == 0) { return this; }
 
 		if (Math.abs(x) <= threshold) {
-			final double inverse = 1 / Math.sqrt(y * y + z * z);
+			final double inverse = 1 / sqrt(y * y + z * z);
 			return new GamaPoint(0, inverse * z, -inverse * y);
 		} else if (Math.abs(y) <= threshold) {
-			final double inverse = 1 / Math.sqrt(x * x + z * z);
+			final double inverse = 1 / sqrt(x * x + z * z);
 			return new GamaPoint(-inverse * z, 0, inverse * x);
 		}
-		final double inverse = 1 / Math.sqrt(x * x + y * y);
+		final double inverse = 1 / sqrt(x * x + y * y);
 		return new GamaPoint(inverse * y, -inverse * x, 0);
 
 	}
 
 	public GamaPoint withPrecision(final int i) {
-		final double x = Maths.round(this.x, i);
-		final double y = Maths.round(this.y, i);
-		final double z = Maths.round(this.z, i);
-		return new GamaPoint(x, y, z);
+		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}
 
 }

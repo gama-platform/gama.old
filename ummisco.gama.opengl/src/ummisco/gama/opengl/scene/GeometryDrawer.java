@@ -391,7 +391,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Polygon polygon = envelope.yNegated().toGeometry();
 		gl.setCurrentColor(0, 0.5, 0, 0.15);
 		gl.setZIncrement(0);
-		drawPolyhedron(polygon, true, gl.getMaxZ(), DEFAULT_BORDER);
+		drawPolyhedron(polygon, true, envelope.getMaxZ(), DEFAULT_BORDER);
 	}
 
 	/**

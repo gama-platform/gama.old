@@ -12,7 +12,6 @@ package ummisco.gama.opengl;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.nio.BufferOverflowException;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -59,6 +58,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	private KeystoneDrawer keystone;
 	private boolean renderToTexture;
+	private GLU glu;
 
 	@Override
 	public void setDisplaySurface(final IDisplaySurface d) {
@@ -77,6 +77,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		WorkbenchHelper.run(() -> getCanvas().setVisible(visible));
+		glu = new GLU();
 		lightHelper = new LightHelper(this);
 		gl = drawable.getGL().getGL2();
 		openGL.setGL2(gl);
@@ -88,7 +89,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		initializeCanvasListeners();
 		updateCameraPosition();
-		updatePerspective();
+		// updatePerspective();
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of
 		// the problems of resizing of views.
@@ -231,27 +232,38 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	protected final void updatePerspective() {
-		final int height = openGL.getViewHeight();
-		final double aspect = (double) openGL.getViewWidth() / (double) (height == 0 ? 1 : height);
+		final double height = openGL.getViewHeight();
+		double aspect = openGL.getViewWidth() / (height == 0 ? 1d : height);
+		if (aspect == 0) {
+			aspect = 1;
+		}
+
 		final double maxDim = getMaxEnvDim();
 		if (!data.isOrtho()) {
-			try {
-				final double zNear = maxDim / 100;
-				double fW, fH;
-				final double fovY = this.data.getCameralens();
-				if (aspect > 1.0) {
-					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
-					fW = fH * aspect;
-				} else {
-					fW = Math.tan(fovY / 360 * Math.PI) * zNear;
-					fH = fW / aspect;
-				}
-				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 100);
-			} catch (final BufferOverflowException e) {
-				System.out.println("Buffer overflow exception");
-			}
+			// try {
+			// if (aspect > 1d) {
+			final double zNear = maxDim / 1000d;
+			final double zFar = maxDim * 1000d;
+			final double fovY = surface.getData().getCameralens();
+			glu.gluPerspective(fovY, aspect, zNear, zFar);
+			// }
+
+			// final double zNear = maxDim / 1000d;
+			// double fW, fH;
+			// final double fovY = this.data.getCameralens();
+			// if (aspect > 1d) {
+			// fH = Math.tan(fovY * Maths.toRad) * zNear;
+			// fW = fH * aspect;
+			// } else {
+			// fW = Math.tan(fovY * Maths.toRad) * zNear;
+			// fH = fW / aspect;
+			// }
+			// gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 1000);
+			// } catch (final BufferOverflowException e) {
+			// System.out.println("Buffer overflow exception");
+			// }
 		} else {
-			if (aspect >= 1.0) {
+			if (aspect >= 1d) {
 				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 			} else {
 				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
@@ -399,9 +411,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
 		if (gl == null) { return GamaPoint.NULL_POINT; }
-		int realy = 0;// GL y coord pos
+		double realy = 0;// GL y coord pos
 		final double[] wcoord = new double[4];
-		final int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
+		final double x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
 		final GLU glu = GLU.createGLU(gl);
 		realy = viewport[3] - y;
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
@@ -409,10 +421,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		glu.gluUnProject(x, realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
 		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 		final GamaPoint v3 = v2.minus(v1).normalized();
-		final float distance =
-				(float) (camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
+		final double distance = camera.getPosition().z / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3);
 		final GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
-
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
