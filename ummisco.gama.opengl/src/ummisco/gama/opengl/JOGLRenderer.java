@@ -12,6 +12,7 @@ package ummisco.gama.opengl;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.nio.BufferOverflowException;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -29,6 +30,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import ummisco.gama.opengl.scene.AbstractObject;
@@ -232,6 +234,37 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	protected final void updatePerspective() {
+		final int height = openGL.getViewHeight();
+		final double aspect = (double) openGL.getViewWidth() / (double) (height == 0 ? 1 : height);
+		final double maxDim = getMaxEnvDim();
+		if (!data.isOrtho()) {
+			try {
+				final double zNear = maxDim / 100;
+				double fW, fH;
+				final double fovY = this.data.getCameralens();
+				if (aspect > 1.0) {
+					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fW = fH * aspect;
+				} else {
+					fW = Math.tan(fovY / 360 * Math.PI) * zNear;
+					fH = fW / aspect;
+				}
+				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 100);
+			} catch (final BufferOverflowException e) {
+				System.out.println("Buffer overflow exception");
+			}
+		} else {
+			if (aspect >= 1.0) {
+				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
+			} else {
+				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
+			}
+			gl.glTranslated(0d, 0d, maxDim * 0.05);
+		}
+		camera.animate();
+	}
+
+	protected final void updatePerspective2() {
 		final double height = openGL.getViewHeight();
 		double aspect = openGL.getViewWidth() / (height == 0 ? 1d : height);
 		if (aspect == 0) {
@@ -240,28 +273,28 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		final double maxDim = getMaxEnvDim();
 		if (!data.isOrtho()) {
-			// try {
-			// if (aspect > 1d) {
-			final double zNear = maxDim / 1000d;
-			final double zFar = maxDim * 1000d;
-			final double fovY = surface.getData().getCameralens();
-			glu.gluPerspective(fovY, aspect, zNear, zFar);
-			// }
+			try {
+				// if (aspect > 1d) {
+				// final double zNear = maxDim / 1000d;
+				// final double zFar = maxDim * 1000d;
+				// final double fovY = surface.getData().getCameralens();
+				// glu.gluPerspective(fovY, aspect, zNear, zFar);
+				// }
 
-			// final double zNear = maxDim / 1000d;
-			// double fW, fH;
-			// final double fovY = this.data.getCameralens();
-			// if (aspect > 1d) {
-			// fH = Math.tan(fovY * Maths.toRad) * zNear;
-			// fW = fH * aspect;
-			// } else {
-			// fW = Math.tan(fovY * Maths.toRad) * zNear;
-			// fH = fW / aspect;
-			// }
-			// gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 1000);
-			// } catch (final BufferOverflowException e) {
-			// System.out.println("Buffer overflow exception");
-			// }
+				final double zNear = maxDim / 100d;
+				double fW, fH;
+				final double fovY = this.data.getCameralens();
+				if (aspect > 1d) {
+					fH = Math.tan(fovY * Maths.toRad) * zNear;
+					fW = fH * aspect;
+				} else {
+					fW = Math.tan(fovY * Maths.toRad) * zNear;
+					fH = fW / aspect;
+				}
+				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 100);
+			} catch (final BufferOverflowException e) {
+				System.out.println("Buffer overflow exception");
+			}
 		} else {
 			if (aspect >= 1d) {
 				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
