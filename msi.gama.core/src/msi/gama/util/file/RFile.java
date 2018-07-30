@@ -91,7 +91,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 	}
 
 	public void doRFileEvaluate(final IScope scope, final IContainer param) {
-		final int size = param.length(scope);
+		// final int size = param.length(scope);
 		// if ( size == 0 ) { throw GamaRuntimeException.error("Missing
 		// Parameter Exception", scope); }
 

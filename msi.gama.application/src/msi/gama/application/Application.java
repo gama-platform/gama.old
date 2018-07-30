@@ -19,6 +19,7 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
@@ -144,7 +145,7 @@ public class Application implements IApplication {
 					if ( ret.equals("models") ) {
 						final MessageDialog dialog = new MessageDialog(Display.getDefault().getActiveShell(),
 							"Different version of the models library",
-							MessageDialog.getImage(MessageDialog.DLG_IMG_QUESTION),
+							Display.getCurrent().getSystemImage(SWT.ICON_QUESTION),
 							"The workspace contains a different version of the models library. Do you want to use another workspace ?",
 							MessageDialog.QUESTION, 1, "Use another workspace", "No, thanks");
 						remember = dialog.open() == 1;

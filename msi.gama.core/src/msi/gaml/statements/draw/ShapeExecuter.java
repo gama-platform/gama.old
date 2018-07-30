@@ -17,7 +17,6 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
@@ -81,7 +80,7 @@ class ShapeExecuter extends DrawExecuter {
 	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
 		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
 		if (shape == null) { return null; }
-		final Geometry geom = shape.getInnerGeometry();
+		// final Geometry geom = shape.getInnerGeometry();
 		final ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
 		// otherwise we just pre-translate it (the rotation in 3D will be
@@ -175,29 +174,29 @@ class ShapeExecuter extends DrawExecuter {
 		return result;
 	}
 
-	private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
-		if (!hasArrows) { return g1; }
-		final ICoordinates points = GeometryUtils.getContourCoordinates(g1);
-		final int size = points.size();
-		if (size < 2) { return g1; }
-		Geometry end = null, begin = null;
-		if (endArrow != null || constantEnd != null) {
-			final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
-			if (width > 0) {
-				end = GamaGeometryType
-						.buildArrow(points.at(size - 2), points.at(size - 1), width, width + width / 3, fill)
-						.getInnerGeometry();
-			}
-		}
-		if (beginArrow != null || constantBegin != null) {
-			final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
-			if (width > 0) {
-				begin = GamaGeometryType.buildArrow(points.at(1), points.at(0), width, width + width / 3, fill)
-						.getInnerGeometry();
-			}
-		}
-		return GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(new Geometry[] { g1, begin, end });
-	}
+	// private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
+	// if (!hasArrows) { return g1; }
+	// final ICoordinates points = GeometryUtils.getContourCoordinates(g1);
+	// final int size = points.size();
+	// if (size < 2) { return g1; }
+	// Geometry end = null, begin = null;
+	// if (endArrow != null || constantEnd != null) {
+	// final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
+	// if (width > 0) {
+	// end = GamaGeometryType
+	// .buildArrow(points.at(size - 2), points.at(size - 1), width, width + width / 3, fill)
+	// .getInnerGeometry();
+	// }
+	// }
+	// if (beginArrow != null || constantBegin != null) {
+	// final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
+	// if (width > 0) {
+	// begin = GamaGeometryType.buildArrow(points.at(1), points.at(0), width, width + width / 3, fill)
+	// .getInnerGeometry();
+	// }
+	// }
+	// return GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(new Geometry[] { g1, begin, end });
+	// }
 
 	private IShape addArrows(final IScope scope, final IShape g1, final Boolean fill) {
 		if (!hasArrows) { return g1; }

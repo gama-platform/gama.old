@@ -9,11 +9,8 @@
  **********************************************************************************************/
 package msi.gama.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +36,6 @@ import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SkillDescription;
@@ -83,26 +79,24 @@ public class GAML {
 	}
 
 	private static String[] HTML_TAGS =
-		{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
+			{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
 	private static String[] REPLACEMENTS = { Strings.LN, Strings.LN, "", "", "", "", "", "", Strings.LN + "- ", "" };
 
 	public static String toText(final String s) {
-		if (s == null) {
-			return "";
-		}
+		if (s == null) { return ""; }
 		return breakStringToLines(StringUtils.replaceEach(s, HTML_TAGS, REPLACEMENTS), 120, Strings.LN);
 	}
 
-	private static String multiLine(final String longString, final String splitter, final int maxLength) {
-		return Arrays.stream(longString.split(splitter)).collect(ArrayList<String>::new, (l, s) -> {
-			final Function<ArrayList<String>, Integer> id = list -> list.size() - 1;
-			if (l.size() == 0
-					|| l.get(id.apply(l)).length() != 0 && l.get(id.apply(l)).length() + s.length() >= maxLength) {
-				l.add("");
-			}
-			l.set(id.apply(l), l.get(id.apply(l)) + (l.get(id.apply(l)).length() == 0 ? "" : splitter) + s);
-		}, (l1, l2) -> l1.addAll(l2)).stream().reduce((s1, s2) -> s1 + "\n" + s2).get();
-	}
+	// private static String multiLine(final String longString, final String splitter, final int maxLength) {
+	// return Arrays.stream(longString.split(splitter)).collect(ArrayList<String>::new, (l, s) -> {
+	// final Function<ArrayList<String>, Integer> id = list -> list.size() - 1;
+	// if (l.size() == 0
+	// || l.get(id.apply(l)).length() != 0 && l.get(id.apply(l)).length() + s.length() >= maxLength) {
+	// l.add("");
+	// }
+	// l.set(id.apply(l), l.get(id.apply(l)) + (l.get(id.apply(l)).length() == 0 ? "" : splitter) + s);
+	// }, (l1, l2) -> l1.addAll(l2)).stream().reduce((s1, s2) -> s1 + "\n" + s2).get();
+	// }
 
 	/**
 	 * Indicates that a String search operation yielded no results.
@@ -199,9 +193,7 @@ public class GAML {
 	public static String getDocumentationOn(final String query) {
 		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
 		final Multimap<GamlIdiomsProvider<?>, IGamlDescription> results = GamlIdiomsProvider.forName(keyword);
-		if (results.isEmpty()) {
-			return "No result found";
-		}
+		if (results.isEmpty()) { return "No result found"; }
 		final StringBuilder sb = new StringBuilder();
 		final int max = results.keySet().stream().mapToInt(each -> each.name.length()).max().getAsInt();
 		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
@@ -211,7 +203,7 @@ public class GAML {
 			sb.append(" ||").append(Strings.LN).append(separator);
 			for (final IGamlDescription d : list) {
 				sb.append("== ").append(toText(d.getTitle())).append(Strings.LN).append(toText(provider.document(d)))
-				.append(Strings.LN);
+						.append(Strings.LN);
 			}
 		});
 
@@ -260,22 +252,18 @@ public class GAML {
 		if (sd != null) {
 			results.put("Skill", sd.getDocumentation());
 		}
-		GamaSkillRegistry.INSTANCE.visitSkills(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				final SkillDescription sd = (SkillDescription) desc;
-				final VariableDescription var = sd.getAttribute(keyword);
-				if (var != null) {
-					results.put("Attribute of skill " + desc.getName(), var.getDocumentation());
-				}
-				final ActionDescription action = sd.getAction(keyword);
-				if (action != null) {
-					results.put("Primitive of skill " + desc.getName(),
-							action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
-				}
-				return true;
+		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
+			final SkillDescription sd1 = (SkillDescription) desc;
+			final VariableDescription var = sd1.getAttribute(keyword);
+			if (var != null) {
+				results.put("Attribute of skill " + desc.getName(), var.getDocumentation());
 			}
+			final ActionDescription action = sd1.getAction(keyword);
+			if (action != null) {
+				results.put("Primitive of skill " + desc.getName(),
+						action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
+			}
+			return true;
 		});
 		// Types
 		final IType<?> t = Types.builtInTypes.containsType(keyword) ? Types.get(keyword) : null;
@@ -306,9 +294,7 @@ public class GAML {
 		if (exp != null) {
 			results.put("Constant", exp.getDocumentation());
 		}
-		if (results.isEmpty()) {
-			return "No result found";
-		}
+		if (results.isEmpty()) { return "No result found"; }
 		final StringBuilder sb = new StringBuilder();
 		final int max = results.keySet().stream().mapToInt(each -> each.length()).max().getAsInt();
 		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
@@ -366,18 +352,14 @@ public class GAML {
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final boolean onlyExpression) throws GamaRuntimeException {
-		if (agent == null) {
-			throw GamaRuntimeException.error("Agent is nil", GAMA.getRuntimeScope());
-		}
+		if (agent == null) { throw GamaRuntimeException.error("Agent is nil", GAMA.getRuntimeScope()); }
 		final IExecutionContext tempContext = agent.getScope().getExecutionContext();
 		return compileExpression(expression, agent, tempContext, onlyExpression);
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final IExecutionContext tempContext, final boolean onlyExpression) throws GamaRuntimeException {
-		if (agent == null) {
-			throw GamaRuntimeException.error("Agent is nil", tempContext.getScope());
-		}
+		if (agent == null) { throw GamaRuntimeException.error("Agent is nil", tempContext.getScope()); }
 		final IDescription context = agent.getSpecies().getDescription();
 		try {
 			final IExpression result = getExpressionFactory().createExpr(expression, context, tempContext);
@@ -407,9 +389,7 @@ public class GAML {
 		if (a == null) { return null; }
 		final IScope scope = a.getScope();
 		final ITopLevelAgent agent = scope.getExperiment();
-		if (agent == null) {
-			return null;
-		}
+		if (agent == null) { return null; }
 		return (ExperimentDescription) agent.getSpecies().getDescription();
 	}
 

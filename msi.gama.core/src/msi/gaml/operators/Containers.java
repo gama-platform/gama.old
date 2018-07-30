@@ -137,10 +137,6 @@ public class Containers {
 		return notNull(scope, c).stream(scope);
 	}
 
-	private static StreamEx parallelStream(final IScope scope, final IContainer c) {
-		return notNull(scope, c).parallelStream(scope);
-	}
-
 	public static GamaListSupplier listOf(final IType t) {
 		return new GamaListSupplier(t);
 	}

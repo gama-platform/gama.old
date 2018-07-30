@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -64,7 +63,7 @@ public class GamaGridFile extends GamaGisFile {
 	private GamaGridReader reader;
 	private GridCoverage2D coverage;
 	public int nbBands;
-	
+
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
@@ -102,7 +101,7 @@ public class GamaGridFile extends GamaGisFile {
 				final String NL = System.getProperty("line.separator");
 
 				try (Scanner scanner = new Scanner(getFile(scope))) {
-					final int cpt = 0;
+					// final int cpt = 0;
 					while (scanner.hasNextLine()) {
 						final String line = scanner.nextLine();
 
@@ -139,7 +138,7 @@ public class GamaGridFile extends GamaGisFile {
 		int numRows, numCols;
 		IShape geom;
 		Number noData = -9999;
-		
+
 		GamaGridReader(final IScope scope, final InputStream fis, final boolean fillBuffer)
 				throws GamaRuntimeException {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
@@ -229,35 +228,40 @@ public class GamaGridFile extends GamaGisFile {
 					rect.getOrCreateAttributes();
 					if (doubleValues) {
 						final double[] vd = (double[]) vals;
-						if (i == 0)
+						if (i == 0) {
 							nbBands = vd.length;
+						}
 						rect.getAttributes().put("grid_value", vd[0]);
 						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
 					} else if (intValues) {
 						final int[] vi = (int[]) vals;
-						if (i == 0)
+						if (i == 0) {
 							nbBands = vi.length;
+						}
 						final double v = Double.valueOf(vi[0]);
 						rect.getAttributes().put("grid_value", v);
 						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (longValues) {
 						final long[] vi = (long[]) vals;
-						if (i == 0)
+						if (i == 0) {
 							nbBands = vi.length;
+						}
 						final double v = Double.valueOf(vi[0]);
 						rect.getAttributes().put("grid_value", v);
 						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (floatValues) {
 						final float[] vi = (float[]) vals;
-						if (i == 0)
+						if (i == 0) {
 							nbBands = vi.length;
+						}
 						final double v = Double.valueOf(vi[0]);
 						rect.getAttributes().put("grid_value", v);
 						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (byteValues) {
 						final byte[] bv = (byte[]) vals;
-						if (i == 0)
+						if (i == 0) {
 							nbBands = bv.length;
+						}
 						if (bv.length == 1) {
 							final double v = Double.valueOf(((byte[]) vals)[0]);
 							rect.getAttributes().put("grid_value", v);
@@ -420,28 +424,23 @@ public class GamaGridFile extends GamaGisFile {
 	public GridCoverage2D getCoverage() {
 		return coverage;
 	}
-	
-	
-	
-	
-	
-	public Double valueOf(IScope scope, ILocation loc) {
+
+	public Double valueOf(final IScope scope, final ILocation loc) {
 		if (getBuffer() == null) {
 			fillBuffer(scope);
 		}
-		
+
 		Object vals = null;
 		try {
-			vals = coverage.evaluate(
-				new DirectPosition2D(loc.getX(), loc.getY()));
-		} catch (Exception e) {
+			vals = coverage.evaluate(new DirectPosition2D(loc.getX(), loc.getY()));
+		} catch (final Exception e) {
 			vals = reader.noData.doubleValue();
 		}
-		boolean doubleValues = vals instanceof double[];
-		boolean	intValues = vals instanceof int[];
-		boolean	byteValues = vals instanceof byte[];
-		boolean	longValues = vals instanceof long[];
-		boolean	floatValues = vals instanceof float[];
+		final boolean doubleValues = vals instanceof double[];
+		final boolean intValues = vals instanceof int[];
+		final boolean byteValues = vals instanceof byte[];
+		final boolean longValues = vals instanceof long[];
+		final boolean floatValues = vals instanceof float[];
 		Double val = null;
 		if (doubleValues) {
 			final double[] vd = (double[]) vals;
@@ -468,6 +467,5 @@ public class GamaGridFile extends GamaGisFile {
 		}
 		return val;
 	}
-	
 
 }

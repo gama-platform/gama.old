@@ -19,8 +19,8 @@ import msi.gaml.types.IType;
 		doc = @doc ("GIF files represent a particular type of image files, which can be animated"))
 public class GamaGifFile extends GamaImageFile {
 
-	private int averageDelay;
-	private int frameCount;
+	// private int averageDelay;
+	// private int frameCount;
 
 	public GamaGifFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
