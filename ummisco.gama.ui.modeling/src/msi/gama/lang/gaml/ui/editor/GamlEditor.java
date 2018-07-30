@@ -80,7 +80,6 @@ import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.spelling.SpellingService;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.XtextUIMessages;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -160,8 +159,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	static {
 		final IPreferenceStore store = EditorsUI.getPreferenceStore();
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
-		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
-		store.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
+		store.setDefault("spellingEnabled", false);
+		store.setValue("spellingEnabled", false);
 
 	}
 
