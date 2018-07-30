@@ -6,32 +6,25 @@
 */
 model URLImageImport
 
-
-global
-{
-	string address <- "http://gama-platform.org/assets/gamaws/img/logo_xs_border_117.png";
-	image_file image <- image_file(address);
+global {
+	image_file image <- image_file("https://raw.githubusercontent.com/wiki/gama-platform/gama/resources/images/general/GamaPlatform.png");
+	geometry shape <- envelope(image);
 	// We modify a bit the image
-	matrix<int> transpose <- transpose(image.contents);
-	image_file copy;
-	init
-	{
-		// We create a file with the new contents
-		copy <- image_file("../images/local_copy.png", transpose);
+	matrix<int> shuffle <- shuffle(image.contents);
+	// We create a file with the new contents
+	image_file copy <- image_file("../images/local_copy.jpg", shuffle);
+	init {
 		// And save it
 		save copy;
 	}
 
 }
 
-experiment urlImage
-{
-	output
-	{
-		display 'display' background: # black
-		{
-			image "URL Image" file: image.path size: { 0.5, 0.5 };
-			image "Copy" file: copy.path size: { 0.5, 0.5 } position: { 0.5, 0.5 };
+experiment urlImage {
+	output {
+		display 'display' background: #white {
+			image "Copy" file: copy.path ;
+			image "URL Image" file: image.path ;
 		}
 
 	}
