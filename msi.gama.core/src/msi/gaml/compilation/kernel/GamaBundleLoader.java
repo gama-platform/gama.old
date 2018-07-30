@@ -58,7 +58,8 @@ public class GamaBundleLoader {
 		e.printStackTrace();
 	}
 
-	public static final String LINE = "\n\n****************************************************************************************************\n\n";
+	public static final String LINE =
+			"\n\n****************************************************************************************************\n\n";
 	public static final String ERROR_MESSAGE = LINE
 			+ "The initialization of GAML artefacts went wrong. If you use the developer version, please clean and recompile all plugins. \nOtherwise post an issue at https://github.com/gama-platform/gama/issues"
 			+ LINE;
@@ -160,10 +161,12 @@ public class GamaBundleLoader {
 				if (cd != null) {
 					CreateStatement.addDelegate(cd);
 				}
-			} catch (final CoreException e1) {
-				CreateStatement.removeDelegate(cd);
-				ERROR(e1);
+			} catch (final Exception e1) {
+				System.err.println(ERROR_MESSAGE);
+				System.err.println("Error in loading CreateStatement delegate : " + e1.getMessage());
+				System.exit(0);
 				return;
+
 			}
 		}
 
@@ -174,8 +177,12 @@ public class GamaBundleLoader {
 				// TODO Add the defining plug-in
 				EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
 			} catch (final CoreException e1) {
-				ERROR(e1);
+
+				System.err.println(ERROR_MESSAGE);
+				System.err.println("Error in loading EventLayerStatement delegate : " + e1.getMessage());
+				System.exit(0);
 				return;
+
 			}
 		}
 
@@ -223,7 +230,7 @@ public class GamaBundleLoader {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
 		GamaClassLoader.getInstance().addBundle(bundle);
 
@@ -259,8 +266,7 @@ public class GamaBundleLoader {
 	}
 
 	/**
-	 * The list of GAMA_PLUGINS declaring models, together with the inner path to
-	 * the folder containing model projects
+	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
 	 * 
 	 * @return
 	 */

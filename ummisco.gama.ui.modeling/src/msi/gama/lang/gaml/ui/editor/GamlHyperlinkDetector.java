@@ -27,6 +27,7 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 
 import com.google.inject.Inject;
 
+import msi.gama.common.util.FileUtils;
 import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -91,7 +92,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	}
 
 	public URI getURI(final StringLiteral resolved) {
-		return FileOpener.getURI(resolved.getOp(), resolved.eResource().getURI());
+		return FileUtils.getURI(resolved.getOp(), resolved.eResource().getURI());
 	}
 
 	private IHyperlink[] importHyperlinks(final IXtextDocument document, final IRegion region) {

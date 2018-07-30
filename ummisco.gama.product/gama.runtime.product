@@ -33,6 +33,7 @@ openFile
 -XX:+UseParallelGC
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
+-Dosgi.locking=none
       </vmArgs>
       <vmArgsLin>
          <argsX86>-Xms256m -Xmx1024m</argsX86>
@@ -71,7 +72,6 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
@@ -263,24 +263,14 @@ openFile
    </plugins>
 
    <features>
+      <feature id="ummisco.gama.feature.dependencies"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
-      <feature id="org.eclipse.emf.ecore"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
-      <feature id="org.eclipse.ecf.core.feature"/>
-      <feature id="org.eclipse.emf.common"/>
-      <feature id="org.eclipse.ecf.filetransfer.feature"/>
-      <feature id="org.eclipse.ecf.core.ssl.feature"/>
-      <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
-      <feature id="org.eclipse.e4.rcp"/>
-      <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.dependencies"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier"/>

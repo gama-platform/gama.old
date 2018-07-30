@@ -446,6 +446,33 @@
 			extensions="gaml,experiment">
 		</provider>
 	</extension>
+ <extension
+       point="org.eclipse.ui.views">
+    <view
+          allowMultiple="false"
+          category="msi.gama.gui.category.gama"
+          class="org.eclipse.ui.views.contentoutline.ContentOutline"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.outline2.png"
+          id="msi.gama.application.outline"
+          name="Outline"
+          restorable="true">
+    </view>
+    <view
+          allowMultiple="false"
+          category="msi.gama.gui.category.gama"
+          class="ummisco.gama.ui.views.SyntaxErrorsView"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
+          id="msi.gama.application.problems"
+          name="Validation"
+          restorable="true">
+    </view>
+    <view
+          class="msi.gama.lang.gaml.ui.templates.TemplatesView"
+          id="msi.gama.lang.gaml.ui.templates"
+          name="Templates"
+          restorable="true">
+    </view>
+ </extension>
 	<extension point="org.eclipse.team.core.fileTypes">
 		<fileTypes
 			extension="gaml"
@@ -498,33 +525,6 @@
           </enablement>
        </decorator>
 	</extension>
-    <extension
-          point="org.eclipse.ui.views">
-       <view
-             allowMultiple="false"
-             category="msi.gama.gui.category.gama"
-             class="org.eclipse.ui.views.contentoutline.ContentOutline"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.outline2.png"
-             id="msi.gama.application.outline"
-             name="Outline"
-             restorable="true">
-       </view>
-       <view
-             allowMultiple="false"
-             category="msi.gama.gui.category.gama"
-             class="ummisco.gama.ui.views.SyntaxErrorsView"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
-             id="msi.gama.application.problems"
-             name="Validation"
-             restorable="true">
-       </view>
-       <view
-             class="msi.gama.lang.gaml.ui.templates.TemplatesView"
-             id="msi.gama.lang.gaml.ui.templates"
-             name="Templates"
-             restorable="true">
-       </view>
-    </extension>
     <extension
           point="org.eclipse.ui.startup">
        <startup

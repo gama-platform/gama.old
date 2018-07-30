@@ -7,7 +7,7 @@
  * 
  *
  **********************************************************************************************/
-package msi.gama.lang.gaml.ui.reference;
+package ummisco.gama.ui.utils;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
@@ -18,7 +18,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 import ummisco.gama.ui.access.GamlSearchField;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class GamlReferenceTools.

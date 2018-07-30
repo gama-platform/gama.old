@@ -12,6 +12,7 @@ package msi.gama.application.workbench;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -35,6 +36,7 @@ import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 
@@ -77,15 +79,15 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public void postStartup() {
 		super.postStartup();
+		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
+		System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return;
-		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
-		}
 
+		}
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 		}
-
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {

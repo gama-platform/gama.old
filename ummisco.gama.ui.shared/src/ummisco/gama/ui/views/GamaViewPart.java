@@ -15,7 +15,6 @@ import static com.google.common.collect.Iterables.transform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -315,8 +314,36 @@ public abstract class GamaViewPart extends ViewPart
 			}
 		} else {
 
-			setPartName(StringUtils.overlay(old, agent.getName(), first + 1, second));
+			setPartName(overlay(old, agent.getName(), first + 1, second));
 		}
+	}
+
+	// To avoid a dependency towards apache.commons.lang
+	private String overlay(final String str, String overlay, int start, int end) {
+		if (str == null) { return null; }
+		if (overlay == null) {
+			overlay = "";
+		}
+		final int len = str.length();
+		if (start < 0) {
+			start = 0;
+		}
+		if (start > len) {
+			start = len;
+		}
+		if (end < 0) {
+			end = 0;
+		}
+		if (end > len) {
+			end = len;
+		}
+		if (start > end) {
+			final int temp = start;
+			start = end;
+			end = temp;
+		}
+		return new StringBuilder(len + start - end + overlay.length() + 1).append(str.substring(0, start))
+				.append(overlay).append(str.substring(end)).toString();
 	}
 
 	@Override

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -144,7 +143,7 @@ public class WorkspaceModelsManager {
 	private IFile findAndLoadIFile(final String filePath) {
 		// GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
 		// No error in case of an empty argument
-		if ( filePath == null || filePath.isEmpty() || StringUtils.isWhitespace(filePath) ) { return null; }
+		if ( isBlank(filePath) ) { return null; }
 		final IPath path = new Path(filePath);
 
 		// 1st case: the path can be identified as a file residing in the workspace
@@ -157,6 +156,16 @@ public class WorkspaceModelsManager {
 			"File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
 				Arrays.toString(CommandLineArgs.getApplicationArgs()));
 		return null;
+	}
+
+	private boolean isBlank(final String cs) {
+		if ( cs == null ) { return true; }
+		if ( cs.isEmpty() ) { return true; }
+		final int sz = cs.length();
+		for ( int i = 0; i < sz; i++ ) {
+			if ( !Character.isWhitespace(cs.charAt(i)) ) { return false; }
+		}
+		return true;
 	}
 
 	/**

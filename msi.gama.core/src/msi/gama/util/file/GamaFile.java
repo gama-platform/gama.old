@@ -64,11 +64,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 				.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope); }
 		if (originalPath.startsWith("http")) {
 			url = buildURL(scope, originalPath);
-		} else
+		} else {
 			url = null;
-		if (url != null)
+		}
+		if (url != null) {
 			if (forReading) {
-				setPath(fetchFromURL(scope));
+				setPath(FileUtils.constructAbsoluteFilePath(scope, fetchFromURL(scope), forReading));
 				if (getPath(scope) == null) {
 					// We do not attempt to create the file. It will probably be taken in charge later directly from the
 					// URL or there has been an error trying to download it.
@@ -78,6 +79,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 			} else {
 				setPath(getTempFilePathFromURL(scope));
 			}
+		}
 	}
 
 	public boolean isRemote() {
@@ -156,8 +158,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	public String getTempFilePathFromURL(final IScope scope) {
-		final String suffix = url.getPath().replaceAll("/", "_");
-		final String pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
+		final String pathName = FileUtils.constructAbsoluteTempFilePath(scope, url);
 		return pathName;
 	}
 
@@ -348,9 +349,9 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	public String getPath(final IScope scope) {
 		if (localPath == null) {
-			if (scope == null || scope.getExperiment() == null)
+			if (scope == null || scope.getExperiment() == null) {
 				localPath = originalPath;
-			else {
+			} else {
 				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist()));
 				checkValidity(scope);
 			}
@@ -511,8 +512,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		if (overwrite && getFile(scope).exists()) {
 			getFile(scope).delete();
 		}
-		if (!writable)
-			throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope);
+		if (!writable) { throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope); }
 		// This will save to the local file
 		flushBuffer(scope, saveFacets);
 		if (isRemote()) {

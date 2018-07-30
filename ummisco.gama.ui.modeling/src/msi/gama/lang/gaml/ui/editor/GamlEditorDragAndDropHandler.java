@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -42,10 +39,10 @@ import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.xtext.ui.editor.model.XtextDocument;
 
+import msi.gama.common.util.FileUtils;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.ParametricFileType;
-import ummisco.gama.ui.commands.FileOpener;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.utils.PlatformHelper;
 
@@ -301,12 +298,11 @@ public class GamlEditorDragAndDropHandler {
 				// the returned string is platform independant, but it is not
 				path = path.replace('\\', '/');
 			}
-			final IFileStore external = EFS.getLocalFileSystem().getStore(new Path(path));
-			final IFileInfo info = external.fetchInfo();
-			if (info.isDirectory() || !info.exists()) {
+
+			if (FileUtils.isDirectoryOrNullExternalFile(path)) {
 				continue;
 			}
-			final IFile file = FileOpener.getFileSystemFile(path, editor.getURI());
+			final IFile file = FileUtils.linkAndGetExternalFile(path, editor.getURI());
 			if (file != null) {
 				files.add(file);
 			}

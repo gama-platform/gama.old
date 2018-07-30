@@ -24,11 +24,11 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.editor.GamlEditorBindings;
-import msi.gama.lang.gaml.ui.reference.GamlReferenceSearch;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.utils.GamlReferenceSearch;
 
 public class AutoStartup implements IStartup {
 

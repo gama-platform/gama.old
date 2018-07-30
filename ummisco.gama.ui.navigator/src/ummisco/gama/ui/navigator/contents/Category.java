@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-import ummisco.gama.ui.commands.FileOpener;
+import msi.gama.common.util.FileUtils;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -73,18 +73,16 @@ public class Category extends VirtualContent<WrappedFile> {
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (fileNames.isEmpty()) {
-			return EMPTY;
-		}
+		if (fileNames.isEmpty()) { return EMPTY; }
 		final List<LinkedFile> files = new ArrayList<>();
 		final IFile file = getParent().getResource();
 		final String filePath = file.getFullPath().toString();
-		URI uri = URI.createURI(filePath, false);
+		final URI uri = URI.createURI(filePath, false);
 		for (final String s : fileNames) {
 			if (s.startsWith("http")) {
 				continue;
 			}
-			final IFile newFile = FileOpener.getFile(s, uri);
+			final IFile newFile = FileUtils.getFile(s, uri);
 			if (newFile != null && newFile.exists()) {
 				final LinkedFile proxy = new LinkedFile(this, newFile, s);
 				files.add(proxy);
@@ -114,8 +112,7 @@ public class Category extends VirtualContent<WrappedFile> {
 	}
 
 	@Override
-	public void getSuffix(final StringBuilder sb) {
-	}
+	public void getSuffix(final StringBuilder sb) {}
 
 	@Override
 	public int findMaxProblemSeverity() {

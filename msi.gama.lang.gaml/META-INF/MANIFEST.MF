@@ -38,6 +38,5 @@ Export-Package: gaml.additions,
  msi.gama.lang.gaml.validation,
  msi.gama.lang.gaml.gaml.impl,
  msi.gama.lang.gaml.gaml.util
-Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

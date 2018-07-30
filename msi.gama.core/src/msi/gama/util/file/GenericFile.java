@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.OldFileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,9 +30,7 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 
 	@Override
 	public boolean shouldExist() {
-		if (shouldExist) {
-			return super.shouldExist();
-		}
+		if (shouldExist) { return super.shouldExist(); }
 		return false;
 	}
 
@@ -53,7 +51,7 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null) { return; }
-		if (FileUtils.isBinaryFile(scope, getFile(scope))) {
+		if (OldFileUtils.isBinaryFile(scope, getFile(scope))) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException
 					.warning("Problem identifying the contents of " + getFile(scope).getAbsolutePath(), scope), false);
 			setBuffer(GamaListFactory.create());

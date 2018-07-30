@@ -21,6 +21,46 @@
       <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <includes
+         id="org.eclipse.e4.rcp"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.rcp"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.core.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.core.ssl.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.filetransfer.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.filetransfer.httpclient4.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.ecf.filetransfer.ssl.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.ecore"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.emf.common"
+         version="0.0.0"/>
+
    <plugin
          id="org.eclipse.core.commands"
          download-size="0"
@@ -134,20 +174,6 @@
 
    <plugin
          id="org.eclipse.equinox.p2.operations"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.log4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.logging"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -844,14 +870,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xtext.logging"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.smap"
          download-size="0"
          install-size="0"
@@ -992,6 +1010,20 @@
 
    <plugin
          id="org.eclipse.xtext.ui.codetemplates.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.log4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.slf4j.api"
          download-size="0"
          install-size="0"
          version="0.0.0"

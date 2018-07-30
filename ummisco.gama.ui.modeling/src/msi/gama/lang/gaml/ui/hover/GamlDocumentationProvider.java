@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.util.FileUtils;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -43,7 +44,6 @@ import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
-import ummisco.gama.ui.commands.FileOpener;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
@@ -60,8 +60,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		if (o instanceof StringLiteral) {
 			final URI iu = detector.getURI((StringLiteral) o);
 			if (iu != null) {
-				if (FileOpener.isFileExistingInWorkspace(iu)) {
-					final IFile file = FileOpener.getWorkspaceFile(iu);
+				if (FileUtils.isFileExistingInWorkspace(iu)) {
+					final IFile file = FileUtils.getWorkspaceFile(iu);
 					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 					if (data != null) {
 						String s = data.getDocumentation();
@@ -74,8 +74,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 						return "This workspace " + ext + " file has no metadata associated with it";
 					}
 				} else { // absolute file
-					final IFile file =
-							FileOpener.getFileSystemFile(((StringLiteral) o).getOp(), o.eResource().getURI());
+					final IFile file = FileUtils.linkAndGetExternalFile(((StringLiteral) o).getOp(), o.eResource().getURI());
 					if (file == null) { return "This file is outside the workspace and cannot be found."; }
 					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 					if (data != null) {

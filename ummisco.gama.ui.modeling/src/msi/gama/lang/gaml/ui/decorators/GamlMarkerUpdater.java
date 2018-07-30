@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlMarkerUpdater.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlMarkerUpdater.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -52,15 +51,13 @@ public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 		final CheckMode normalAndFastMode = CheckMode.NORMAL_AND_FAST;
 
 		for (final Pair<IStorage, IProject> pair : mapper.getStorages(uri)) {
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 			if (pair.getFirst() instanceof IFile) {
 				final IFile file = (IFile) pair.getFirst();
 
 				if (delta.getNew() != null) {
-					if (resourceSet == null)
-						throw new IllegalArgumentException("resourceSet may not be null for changed resources.");
+					if (resourceSet == null) { throw new IllegalArgumentException(
+							"resourceSet may not be null for changed resources."); }
 
 					final Resource resource = resourceSet.getResource(uri, true);
 
@@ -100,7 +97,7 @@ public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 		try {
 			file.deleteMarkers(IMarkerContributor.MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		} catch (final CoreException e) {
-			LOG.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 	}
 
