@@ -92,6 +92,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		super(plugin);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void configure(final Binder binder) {
 
@@ -115,7 +116,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
 	}
 
-	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
+			bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
 	}
 
@@ -124,7 +126,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	@Override
-	@SingletonBinding(eager = true)
+	@SingletonBinding (
+			eager = true)
 	public Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider() {
 		return msi.gama.lang.gaml.ui.labeling.GamlLabelProvider.class;
 	}

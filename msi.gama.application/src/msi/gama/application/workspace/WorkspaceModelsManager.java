@@ -73,7 +73,7 @@ public class WorkspaceModelsManager {
 	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
 	public static final QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
-	private static String BUILTIN_VERSION = null;
+	// private static String BUILTIN_VERSION = null;
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 

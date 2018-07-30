@@ -742,9 +742,10 @@ public class PopulationInspectView extends GamaViewPart
 				writer.writeRecord(ss);
 			}
 
-			writer.close();
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, getScope());
+		} finally {
+			writer.close();
 		}
 	}
 

@@ -125,6 +125,7 @@ Export-Package: com.kitfox.svg;
  net.sourceforge.jtds.jdbcx,
  net.sourceforge.jtds.jdbcx.proxy,
  one.util.streamex,
+ org.apache.commons.compress.compressors.bzip2,
  org.apache.commons.dbcp;
   uses:="javax.naming.spi,
    org.apache.commons.pool.impl,

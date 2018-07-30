@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'MySqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MySqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -31,17 +30,9 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * Created date: 19-Apr-2013
- * Modified:
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
  *
- * 15-Jan-2014
- * Fix null error of getInsertString methods
- * Fix date/time error of getInsertString methods
+ * 15-Jan-2014 Fix null error of getInsertString methods Fix date/time error of getInsertString methods
  *
  * Last Modified: 15-Jan-2014
  */
@@ -122,7 +113,7 @@ public class MySqlConnection extends SqlConnection {
 		try {
 			final List<Integer> geoColumn = getGeometryColumns(rsmd);
 			final int nbCol = rsmd.getColumnCount();
-			int i = 1;
+			// int i = 1;
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of col:" + nbCol);
 			// }
@@ -153,7 +144,7 @@ public class MySqlConnection extends SqlConnection {
 					}
 				}
 				repRequest.add(rowList);
-				i++;
+				// i++;
 			}
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of row:" + i);
@@ -169,7 +160,7 @@ public class MySqlConnection extends SqlConnection {
 	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		final int numberOfColumns = rsmd.getColumnCount();
-		final List<Integer> geoColumn = new ArrayList<Integer>();
+		final List<Integer> geoColumn = new ArrayList<>();
 		for (int i = 1; i <= numberOfColumns; i++) {
 			//
 			// if ( DEBUG ) {
@@ -182,11 +173,9 @@ public class MySqlConnection extends SqlConnection {
 			// }
 
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL Type: -3 - TypeName: geometry - size:
-			 * 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size:
-			 * 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName:
-			 * geometry - size: 2147483647 st_asbinary(geom): - Type: -2 -
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL Type: -3 -
+			 * TypeName: geometry - size: 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
+			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647 st_asbinary(geom): - Type: -2 -
 			 * TypeName: bytea - size: 2147483647
 			 */
 			// Search column with Geometry type
@@ -206,11 +195,9 @@ public class MySqlConnection extends SqlConnection {
 		final IList<Object> columnType = GamaListFactory.create();
 		for (int i = 1; i <= numberOfColumns; i++) {
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL Type: -3 - TypeName: geometry - size:
-			 * 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size:
-			 * 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName:
-			 * geometry - size: 2147483647
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL Type: -3 -
+			 * TypeName: geometry - size: 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
+			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 */
 			// Search column with Geometry type
 			if (vender.equalsIgnoreCase(MYSQL) && rsmd.getColumnType(i) == -2
@@ -234,9 +221,8 @@ public class MySqlConnection extends SqlConnection {
 		String colStr = "";
 		String valueStr = "";
 		// Check size of parameters
-		if (values.size() != col_no) {
-			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-		}
+		if (values.size() != col_no) { throw new IndexOutOfBoundsException(
+				"Size of columns list and values list are not equal"); }
 		// Get column name
 		for (int i = 0; i < col_no; i++) {
 			if (i == col_no - 1) {
@@ -376,9 +362,8 @@ public class MySqlConnection extends SqlConnection {
 			final IList<Object> col_Types = getColumnTypeName(rsmd);
 			final int col_no = col_Names.size();
 			// Check size of parameters
-			if (values.size() != col_Names.size()) {
-				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-			}
+			if (values.size() != col_Names.size()) { throw new IndexOutOfBoundsException(
+					"Size of columns list and values list are not equal"); }
 
 			if (DEBUG) {
 				scope.getGui().debug("list of column Name:" + col_Names);

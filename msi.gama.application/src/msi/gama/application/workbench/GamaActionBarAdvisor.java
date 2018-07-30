@@ -453,7 +453,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * Creates the feature-dependent actions for the menu bar.
 	 */
 	private void makeFeatureDependentActions(final IWorkbenchWindow window) {
-		//		final AboutInfo[] infos = null;
+		// final AboutInfo[] infos = null;
 
 		final IPreferenceStore prefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 
@@ -504,10 +504,10 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 			IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
 	}
 
-	private IContributionItem getRevertItem() {
-		return getItem(ActionFactory.REVERT.getId(), ActionFactory.REVERT.getCommandId(), null, null,
-			WorkbenchMessages.Workbench_revert, WorkbenchMessages.Workbench_revertToolTip, null);
-	}
+	// private IContributionItem getRevertItem() {
+	// return getItem(ActionFactory.REVERT.getId(), ActionFactory.REVERT.getCommandId(), null, null,
+	// WorkbenchMessages.Workbench_revert, WorkbenchMessages.Workbench_revertToolTip, null);
+	// }
 
 	private IContributionItem getRefreshItem() {
 		return getItem(ActionFactory.REFRESH.getId(), ActionFactory.REFRESH.getCommandId(),
@@ -538,7 +538,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 		final CommandContributionItemParameter commandParm = new CommandContributionItemParameter(getWindow(), actionId,
 			commandId, null, image != null ? icons.desc(image) : null, null, null, label, null, tooltip,
-				CommandContributionItem.STYLE_PUSH, null, false);
+			CommandContributionItem.STYLE_PUSH, null, false);
 		return new CommandContributionItem(commandParm);
 	}
 }

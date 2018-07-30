@@ -209,8 +209,8 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		String file =
 				monitorFolder + "/" + "monitor_" + getName() + "_cycle_" + getScope().getClock().getCycle() + ".csv";
 		file = FileUtils.constructAbsoluteFilePath(getScope(), file, false);
-		try (final BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-			final CsvWriter w = new CsvWriter(bw, CsvWriter.Letters.COMMA);
+		try (final BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+				final CsvWriter w = new CsvWriter(bw, CsvWriter.Letters.COMMA)) {
 			for (final Object o : history) {
 				String[] strings = null;
 				if (o instanceof Number) {

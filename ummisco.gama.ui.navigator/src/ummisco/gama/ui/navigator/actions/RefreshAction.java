@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -133,16 +132,16 @@ public class RefreshAction extends WorkspaceAction {
 	 */
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
-		final List<IResource> resources = new ArrayList<>();
+		final List<IResource> resources1 = new ArrayList<>();
 		for (final IResource r : super.getSelectedResources()) {
 			if (r.isAccessible()) {
-				resources.add(r);
+				resources1.add(r);
 			}
 		}
-		if (resources.isEmpty()) {
-			resources.add(ResourcesPlugin.getWorkspace().getRoot());
+		if (resources1.isEmpty()) {
+			resources1.add(ResourcesPlugin.getWorkspace().getRoot());
 		}
-		return resources;
+		return resources1;
 	}
 
 	/**
@@ -181,15 +180,15 @@ public class RefreshAction extends WorkspaceAction {
 	/**
 	 * Returns whether the given resource is a descendent of any of the resources in the given list.
 	 *
-	 * @param resources
+	 * @param resources1
 	 *            the list of resources (element type: <code>IResource</code>)
 	 * @param child
 	 *            the resource to check
 	 * @return <code>true</code> if <code>child</code> is a descendent of any of the elements of <code>resources</code>
 	 */
-	private boolean isDescendent2(final List<IResource> resources, final IResource child) {
+	private boolean isDescendent2(final List<IResource> resources1, final IResource child) {
 		final IResource parent = child.getParent();
-		return parent != null && (resources.contains(parent) || isDescendent2(resources, parent));
+		return parent != null && (resources1.contains(parent) || isDescendent2(resources1, parent));
 	}
 
 	/**
@@ -214,7 +213,7 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
-		final ISchedulingRule rule = null;
+		// final ISchedulingRule rule = null;
 		// final IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
 
 		// List<? extends IResource> actionResources = new ArrayList<>(resources);
@@ -265,8 +264,8 @@ public class RefreshAction extends WorkspaceAction {
 			checkLocationDeleted((IProject) resource);
 		} else if (resource.getType() == IResource.ROOT) {
 			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				checkLocationDeleted(projects[i]);
+			for (final IProject project : projects) {
+				checkLocationDeleted(project);
 			}
 		}
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -279,8 +278,9 @@ public class RefreshAction extends WorkspaceAction {
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 				final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
-				if (refresh != null)
+				if (refresh != null) {
 					refresh.completeRefresh(resources);
+				}
 				return Status.OK_STATUS;
 			};
 		};

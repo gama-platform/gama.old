@@ -46,7 +46,7 @@ public class SqlUtils {
 		final String database = (String) params.get("database");
 		final String user = (String) params.get("user");
 		final String passwd = (String) params.get("passwd");
-		final String extension = (String) params.get("extension");
+		// final String extension = (String) params.get("extension");
 		// thai.truongminh@gmail.com
 		// Move transform arg of select to a key in params
 		// boolean transform = scope.hasArg("transform") ? (Boolean)
@@ -163,8 +163,8 @@ public class SqlUtils {
 
 			int srid = 0;
 			if (bigEndian) {
-				for (int i = 0; i < sridBytes.length; i++) {
-					srid = (srid << 8) + (sridBytes[i] & 0xff);
+				for (final byte sridByte : sridBytes) {
+					srid = (srid << 8) + (sridByte & 0xff);
 				}
 			} else {
 				for (int i = 0; i < sridBytes.length; i++) {

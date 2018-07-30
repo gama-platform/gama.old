@@ -51,8 +51,8 @@ import msi.gaml.operators.Strings;
 @SuppressWarnings ({ "unchecked" })
 public abstract class MdxConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for
-												// release version
+	// private static final boolean DEBUG = false; // Change DEBUG = false for
+	// release version
 	protected static final String MONDRIAN = "mondrian";
 	protected static final String MONDRIANXMLA = "mondrian/xmla";
 	protected static final String MSAS = "ssas/xmla"; // Micrsoft SQL Server
@@ -492,14 +492,14 @@ public abstract class MdxConnection {
 	public void getCellSetMetaData(final CellSet cellSet) {
 		CellSetMetaData cellSetMD = null;
 		NamedList<CellSetAxisMetaData> cellSetAxisMD = null;
-		NamedList<Property> properties = null;
-		Cube cube = null;
-		final CellSetAxisMetaData filterAxisMD = null;
+		// NamedList<Property> properties = null;
+		// Cube cube = null;
+		// final CellSetAxisMetaData filterAxisMD = null;
 		try {
 			cellSetMD = cellSet.getMetaData();
 			cellSetAxisMD = cellSetMD.getAxesMetaData(); // MAP<K,V>
-			properties = cellSetMD.getCellProperties();
-			cube = cellSetMD.getCube();
+			// properties = cellSetMD.getCellProperties();
+			// cube = cellSetMD.getCube();
 			// print
 			// System.out.println("CellSetAxis Meta Data");
 			final int m = cellSetAxisMD.size();

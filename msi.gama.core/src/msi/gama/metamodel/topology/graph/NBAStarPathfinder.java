@@ -21,11 +21,11 @@ import msi.gama.util.graph._Edge;
 import msi.gama.util.graph._Vertex;
 
 /**
- * This pathfinding algorithm is due to Wim Pijls and Henk Post in "Yet another
- * bidirectional algorithm for shortest paths." 15 June 2009.
+ * This pathfinding algorithm is due to Wim Pijls and Henk Post in "Yet another bidirectional algorithm for shortest
+ * paths." 15 June 2009.
  * <p>
- * <b>This class is not thread-safe.</b> If you need it in different threads,
- * make sure each thread has its own object of this class.
+ * <b>This class is not thread-safe.</b> If you need it in different threads, make sure each thread has its own object
+ * of this class.
  *
  * @author Rodion "rodde" Efremov
  * @version 1.61 (Oct 13, 2016)
@@ -40,9 +40,8 @@ public final class NBAStarPathfinder<V, E> {
 	private final Map<V, Double> DISTANCEB = new HashMap<>();
 	private final Set<V> CLOSED = new HashSet<>();
 	private final Map<V, _Vertex<V, E>> vertices = new IdentityHashMap<>();
-	
-	private boolean stopWhenPathFound = false;
 
+	private boolean stopWhenPathFound = false;
 
 	private double fA;
 	private double fB;
@@ -54,16 +53,14 @@ public final class NBAStarPathfinder<V, E> {
 	protected GamaGraph<V, E> graph;
 	protected boolean isSpatialGraph;
 
-	public NBAStarPathfinder(GamaGraph<V, E> graph, boolean stopWhenPathFound) {
+	public NBAStarPathfinder(final GamaGraph<V, E> graph, final boolean stopWhenPathFound) {
 		this.graph = graph;
 		isSpatialGraph = graph instanceof GamaSpatialGraph;
 		this.stopWhenPathFound = stopWhenPathFound;
 	}
 
-	public IList<E> search(V sourceNode, V targetNode) {
-		if (sourceNode.equals(targetNode)) {
-			return GamaListFactory.create();
-		}
+	public IList<E> search(final V sourceNode, final V targetNode) {
+		if (sourceNode.equals(targetNode)) { return GamaListFactory.create(); }
 
 		init(sourceNode, targetNode);
 
@@ -75,61 +72,57 @@ public final class NBAStarPathfinder<V, E> {
 			}
 		}
 
-		if (touchNode == null) {
-			return GamaListFactory.create();
-		}
+		if (touchNode == null) { return GamaListFactory.create(); }
 
 		return tracebackPath();
 	}
 
 	private void expandInForwardDirection() {
-		V currentNode = OPENA.remove().getNode();
-		if (CLOSED.contains(currentNode)) {
-			return;
-		}
-		_Vertex<V, E> cv = graph.getVertex(currentNode);
-		if(cv == null){
-			// TODO: add a "node not found in graph" log message 
+		final V currentNode = OPENA.remove().getNode();
+		if (CLOSED.contains(currentNode)) { return; }
+		final _Vertex<V, E> cv = graph.getVertex(currentNode);
+		if (cv == null) {
+			// TODO: add a "node not found in graph" log message
 			return;
 		}
 		vertices.put(currentNode, cv);
 		CLOSED.add(currentNode);
 
-		if (DISTANCEA.get(currentNode)
-				+ estimateDistanceBetween(currentNode, targetNode) >= bestPathLength
+		if (DISTANCEA.get(currentNode) + estimateDistanceBetween(currentNode, targetNode) >= bestPathLength
 				|| DISTANCEA.get(currentNode) + fB
 						- estimateDistanceBetween(currentNode, sourceNode) >= bestPathLength) {
 			// Reject the 'currentNode'.
 		} else {
 			// Stabilize the 'currentNode'.
 			Collection<Object> edges = null;
-			if (graph.isDirected())
+			if (graph.isDirected()) {
 				edges = cv.getOutEdges();
-			else {
+			} else {
 				edges = new ArrayList<>(cv.getOutEdges());
 				edges.addAll(cv.getInEdges());
 			}
-			for (Object edge :edges) {
+			for (final Object edge : edges) {
 				final _Edge<V, E> eg = graph.getEdge(edge);
-				final V childNode =  (V)(graph.isDirected() ? eg.getTarget() : ((eg.getTarget().equals(currentNode) ? eg.getSource() : eg.getTarget())));
+				final V childNode = (V) (graph.isDirected() ? eg.getTarget()
+						: eg.getTarget().equals(currentNode) ? eg.getSource() : eg.getTarget());
 				if (CLOSED.contains(childNode)) {
 					continue;
 				}
-				double tentativeDistance = DISTANCEA.get(currentNode) +eg.getWeight();
+				final double tentativeDistance = DISTANCEA.get(currentNode) + eg.getWeight();
 				if (!DISTANCEA.containsKey(childNode) || DISTANCEA.get(childNode) > tentativeDistance) {
-					
+
 					DISTANCEA.put(childNode, tentativeDistance);
 					PARENTSA.put(childNode, currentNode);
-					HeapEntry e = new HeapEntry(childNode,
+					final HeapEntry e = new HeapEntry(childNode,
 							tentativeDistance + estimateDistanceBetween(childNode, targetNode));
 					OPENA.add(e);
 
 					if (DISTANCEB.containsKey(childNode)) {
-						double pathLength = tentativeDistance + DISTANCEB.get(childNode);
+						final double pathLength = tentativeDistance + DISTANCEB.get(childNode);
 						if (bestPathLength > pathLength) {
 							bestPathLength = pathLength;
 							touchNode = childNode;
-							if (stopWhenPathFound) return;
+							if (stopWhenPathFound) { return; }
 						}
 					}
 				}
@@ -140,62 +133,60 @@ public final class NBAStarPathfinder<V, E> {
 			fA = OPENA.peek().getDistance();
 		}
 	}
-	
+
 	private void expandInBackwardDirection() {
-		V currentNode = OPENB.remove().getNode();
-		
-		if (CLOSED.contains(currentNode)) {
-			return;
-		}
-		_Vertex<V, E> cv = graph.getVertex(currentNode);
-		if(cv == null){
-			// TODO: add a "node not found in graph" log message 
+		final V currentNode = OPENB.remove().getNode();
+
+		if (CLOSED.contains(currentNode)) { return; }
+		final _Vertex<V, E> cv = graph.getVertex(currentNode);
+		if (cv == null) {
+			// TODO: add a "node not found in graph" log message
 			return;
 		}
 		vertices.put(currentNode, cv);
-		
+
 		CLOSED.add(currentNode);
 
-		if (DISTANCEB.get(currentNode)
-				+ estimateDistanceBetween(currentNode, sourceNode) >= bestPathLength
+		if (DISTANCEB.get(currentNode) + estimateDistanceBetween(currentNode, sourceNode) >= bestPathLength
 				|| DISTANCEB.get(currentNode) + fA
 						- estimateDistanceBetween(currentNode, targetNode) >= bestPathLength) {
 			// Reject the node 'currentNode'.
 		} else {
 			Collection<Object> edges = null;
-			if (graph.isDirected())
+			if (graph.isDirected()) {
 				edges = cv.getInEdges();
-			else {
+			} else {
 				edges = new ArrayList<>(cv.getInEdges());
 				edges.addAll(cv.getOutEdges());
 			}
-			for (Object edge :edges) {
+			for (final Object edge : edges) {
 				final _Edge<V, E> eg = graph.getEdge(edge);
-				final V parentNode = (V)(graph.isDirected() ? eg.getSource(): ( (eg.getSource().equals(currentNode) ? eg.getTarget() : eg.getSource())));
+				final V parentNode = (V) (graph.isDirected() ? eg.getSource()
+						: eg.getSource().equals(currentNode) ? eg.getTarget() : eg.getSource());
 				if (CLOSED.contains(parentNode)) {
 					continue;
 				}
 
-				double tentativeDistance = DISTANCEB.get(currentNode) + eg.getWeight();
+				final double tentativeDistance = DISTANCEB.get(currentNode) + eg.getWeight();
 				if (!DISTANCEB.containsKey(parentNode) || DISTANCEB.get(parentNode) > tentativeDistance) {
 					DISTANCEB.put(parentNode, tentativeDistance);
 					PARENTSB.put(parentNode, currentNode);
-					HeapEntry e = new HeapEntry(parentNode,
+					final HeapEntry e = new HeapEntry(parentNode,
 							tentativeDistance + estimateDistanceBetween(parentNode, sourceNode));
 					OPENB.add(e);
 
 					if (DISTANCEA.containsKey(parentNode)) {
-						double pathLength = tentativeDistance + DISTANCEA.get(parentNode);
+						final double pathLength = tentativeDistance + DISTANCEA.get(parentNode);
 
 						if (bestPathLength > pathLength) {
 							bestPathLength = pathLength;
 							touchNode = parentNode;
 
-							if (stopWhenPathFound) return;
+							if (stopWhenPathFound) { return; }
 						}
 					}
 				}
-				
+
 			}
 		}
 
@@ -203,10 +194,8 @@ public final class NBAStarPathfinder<V, E> {
 			fB = OPENB.peek().getDistance();
 		}
 	}
-	
-	
 
-	private void init(V sourceNode, V targetNode) {
+	private void init(final V sourceNode, final V targetNode) {
 		OPENA.clear();
 		OPENB.clear();
 		PARENTSA.clear();
@@ -215,7 +204,7 @@ public final class NBAStarPathfinder<V, E> {
 		DISTANCEB.clear();
 		CLOSED.clear();
 
-		double totalDistance = estimateDistanceBetween(sourceNode, targetNode);
+		final double totalDistance = estimateDistanceBetween(sourceNode, targetNode);
 
 		fA = totalDistance;
 		fB = totalDistance;
@@ -224,8 +213,8 @@ public final class NBAStarPathfinder<V, E> {
 		this.sourceNode = sourceNode;
 		this.targetNode = targetNode;
 
-		OPENA.add(new HeapEntry(sourceNode, fA));
-		OPENB.add(new HeapEntry(targetNode, fB));
+		OPENA.add(new HeapEntry<>(sourceNode, fA));
+		OPENB.add(new HeapEntry<>(targetNode, fB));
 		PARENTSA.put(sourceNode, null);
 		PARENTSB.put(targetNode, null);
 		DISTANCEA.put(sourceNode, 0.0);
@@ -233,12 +222,12 @@ public final class NBAStarPathfinder<V, E> {
 	}
 
 	/**
-	 * Reconstructs a shortest path from the data structures maintained by a
-	 * <b>bidirectional</b> pathfinding algorithm.
+	 * Reconstructs a shortest path from the data structures maintained by a <b>bidirectional</b> pathfinding algorithm.
+	 * 
 	 * @return the shortest path object.
 	 */
 	protected IList<E> tracebackPath() {
-		List<V> path = new ArrayList<>();
+		final List<V> path = new ArrayList<>();
 		V currentNodeId = touchNode;
 
 		while (currentNodeId != null) {
@@ -246,7 +235,7 @@ public final class NBAStarPathfinder<V, E> {
 			currentNodeId = PARENTSA.get(currentNodeId);
 		}
 
-		Collections.<V> reverse(path);
+		Collections.reverse(path);
 
 		if (PARENTSB != null) {
 			currentNodeId = PARENTSB.get(touchNode);
@@ -258,26 +247,29 @@ public final class NBAStarPathfinder<V, E> {
 		}
 		final IList<E> edgePath = GamaListFactory.create();
 		V cn = path.get(0);
-		for (int i = 1; i < path.size(); i ++) {
-			V tn = path.get(i);
+		for (int i = 1; i < path.size(); i++) {
+			final V tn = path.get(i);
 			_Vertex<V, E> vcn = vertices.get(cn);
 			if (vcn == null) {
 				final V cn2 = cn;
-				Optional<V> ocn = vertices.keySet().stream().filter(a -> a.equals(cn2)).findFirst();
+				final Optional<V> ocn = vertices.keySet().stream().filter(a -> a.equals(cn2)).findFirst();
 				if (ocn.isPresent()) {
-					 vcn = vertices.get(ocn.get());
-				} else 
+					vcn = vertices.get(ocn.get());
+				} else {
 					return edgePath;
+				}
 			}
-			List<E> edges = new ArrayList<>(vcn.edgesTo(tn)) ;
-			if (!graph.isDirected()) edges.addAll(vertices.get(tn).edgesTo(cn));
-			if (edges.size() == 1 ) {
+			final List<E> edges = new ArrayList<>(vcn.edgesTo(tn));
+			if (!graph.isDirected()) {
+				edges.addAll(vertices.get(tn).edgesTo(cn));
+			}
+			if (edges.size() == 1) {
 				edgePath.add(edges.get(0));
-			} else if (edges.size() > 1 ){
+			} else if (edges.size() > 1) {
 				double minV = Double.MAX_VALUE;
 				E minE = null;
-				for (E e : edges) {
-					double w = graph.getEdgeWeight(e);
+				for (final E e : edges) {
+					final double w = graph.getEdgeWeight(e);
 					if (w < minV) {
 						minV = w;
 						minE = e;
@@ -285,7 +277,7 @@ public final class NBAStarPathfinder<V, E> {
 				}
 				edgePath.add(minE);
 			}
-			
+
 			cn = tn;
 		}
 		return edgePath;
@@ -302,7 +294,7 @@ public final class NBAStarPathfinder<V, E> {
 		private final V nodeId;
 		private final double distance; // The priority key.
 
-		public HeapEntry(V nodeId, double distance) {
+		public HeapEntry(final V nodeId, final double distance) {
 			this.nodeId = nodeId;
 			this.distance = distance;
 		}
@@ -316,12 +308,12 @@ public final class NBAStarPathfinder<V, E> {
 		}
 
 		@Override
-		public int compareTo(HeapEntry o) {
+		public int compareTo(final HeapEntry o) {
 			return Double.compare(distance, o.distance);
 		}
 	}
 
-	public double estimateDistanceBetween(V node1, V node2) {
+	public double estimateDistanceBetween(final V node1, final V node2) {
 		if (isSpatialGraph) {
 			final GamaPoint pt1 = (GamaPoint) ((IShape) node1).getLocation();
 			final GamaPoint pt2 = (GamaPoint) ((IShape) node2).getLocation();

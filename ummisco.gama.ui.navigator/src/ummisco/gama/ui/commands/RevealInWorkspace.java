@@ -26,7 +26,7 @@ public class RevealInWorkspace extends AbstractHandler implements IHandler {
 		if (!(part instanceof GamaNavigator)) { return null; }
 		final GamaNavigator nav = (GamaNavigator) part;
 		final List<Object> selection = sel.toList();
-		final List<WrappedFile> newSelection = new ArrayList();
+		final List<WrappedFile> newSelection = new ArrayList<>();
 		for (final Object o : selection) {
 			if (o instanceof LinkedFile) {
 				newSelection.add(((LinkedFile) o).getTarget());

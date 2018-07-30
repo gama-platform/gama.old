@@ -170,7 +170,7 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	// Connect connection parameters with the new parameter
 	public Map<String, Object> createConnectionParams(final IScope scope, final Map<String, Object> params) {
-		final Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		final Map<String, Object> connectionParameters = new HashMap<>();
 
 		final String dbtype = (String) params.get("dbtype");
 		final String host = (String) params.get("host");
@@ -221,7 +221,7 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	// Connect connection parameters with connection attributes of the object
 	public Map<String, Object> createConnectionParams(final IScope scope) {
-		final Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		final Map<String, Object> connectionParameters = new HashMap<>();
 
 		if (dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS)) {
 			connectionParameters.put("host", host);
@@ -265,7 +265,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
 	 */
 	public DataStore Connect(final IScope scope) throws Exception {
-		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		Map<String, Object> connectionParameters = new HashMap<>();
 		connectionParameters = createConnectionParams(scope);
 		DataStore dStore;
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
@@ -279,7 +279,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 * Create a connection to database with the connection parameter params
 	 */
 	public DataStore Connect(final IScope scope, final Map<String, Object> params) throws IOException {
-		Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		Map<String, Object> connectionParameters = new HashMap<>();
 		connectionParameters = createConnectionParams(scope, params);
 
 		DataStore dStore;
@@ -310,9 +310,9 @@ public class GamaSqlConnection extends GamaGisFile {
 		final String user = (String) params.get("user");
 		final String passwd = (String) params.get("passwd");
 		final String table = (String) params.get("table");
-		final String filter = (String) params.get("filter");
+		// final String filter = (String) params.get("filter");
 
-		final Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		final Map<String, Object> connectionParameters = new HashMap<>();
 		connectionParameters.put("host", host);
 		connectionParameters.put("dbtype", dbtype);
 		connectionParameters.put("port", port);
@@ -368,7 +368,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			computeProjection(scope, env); // ??
 			// reader = store.getFeatureReader();
 			reader = queryInfo.getRecordSet().features();
-			final int i = 0;
+			// final int i = 0;
 			while (reader.hasNext()) {
 				scope.getGui().getStatus(scope).setSubStatusCompletion(index++ / size);
 				final Feature feature = reader.next();

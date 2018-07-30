@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'MSSQLConnection.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MSSQLConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -31,22 +30,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * Created date: 19-Apr-2013
- * Modified: *
- * 26-Apr-2013:
- * Remove driver msi.gama.ext/sqljdbc4.jar
- * add driver msi.gama.ext/jtds-1.2.6.jar
- * Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
- * Edit ConnectDB for new driver
- * Add new condition for geometry type 2004 (it look like postgres)
- * 15-Jan-2014
- * Fix null error of getInsertString methods
- * Fix date/time error of getInsertString methods
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
+ * * 26-Apr-2013: Remove driver msi.gama.ext/sqljdbc4.jar add driver msi.gama.ext/jtds-1.2.6.jar Change driver name for
+ * MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver Edit ConnectDB for new
+ * driver Add new condition for geometry type 2004 (it look like postgres) 15-Jan-2014 Fix null error of getInsertString
+ * methods Fix date/time error of getInsertString methods
  *
  * Last Modified: 15-Jan-2014
  */
@@ -116,7 +104,7 @@ public class MSSQLConnection extends SqlConnection {
 		try {
 			final List<Integer> geoColumn = getGeometryColumns(rsmd);
 			final int nbCol = rsmd.getColumnCount();
-			int i = 1;
+			// int i = 1;
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of col:" + nbCol);
 			// }
@@ -147,7 +135,7 @@ public class MSSQLConnection extends SqlConnection {
 					}
 				}
 				repRequest.add(rowList);
-				i++;
+				// i++;
 			}
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Number of row:" + i);
@@ -163,7 +151,7 @@ public class MSSQLConnection extends SqlConnection {
 	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		// TODO Auto-generated method stub
 		final int numberOfColumns = rsmd.getColumnCount();
-		final List<Integer> geoColumn = new ArrayList<Integer>();
+		final List<Integer> geoColumn = new ArrayList<>();
 		for (int i = 1; i <= numberOfColumns; i++) {
 
 			// if ( DEBUG ) {
@@ -176,13 +164,10 @@ public class MSSQLConnection extends SqlConnection {
 			// }
 
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL with sqljdbc4 driver Type: -3/ with jdts
-			 * driver type=2004 - TypeName: geometry - size: 2147483647 - In
-			 * SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
-			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size:
-			 * 2147483647 st_asbinary(geom): - Type: -2 - TypeName: bytea -
-			 * size: 2147483647
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL with sqljdbc4
+			 * driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647 - In SQLITE Type:
+			 * 2004 - TypeName: BLOB - size: 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size:
+			 * 2147483647 st_asbinary(geom): - Type: -2 - TypeName: bytea - size: 2147483647
 			 */
 			// Search column with Geometry type
 			// if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3
@@ -202,11 +187,9 @@ public class MSSQLConnection extends SqlConnection {
 		final IList<Object> columnType = GamaListFactory.create();
 		for (int i = 1; i <= numberOfColumns; i++) {
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL with sqljdbc4 driver Type: -3/ with jdts
-			 * driver type=2004 - TypeName: geometry - size: 2147483647 - In
-			 * SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
-			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size:
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL with sqljdbc4
+			 * driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647 - In SQLITE Type:
+			 * 2004 - TypeName: BLOB - size: 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size:
 			 * 2147483647
 			 */
 			// Search column with Geometry type
@@ -232,9 +215,8 @@ public class MSSQLConnection extends SqlConnection {
 		String colStr = "";
 		String valueStr = "";
 		// Check size of parameters
-		if (values.size() != col_no) {
-			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-		}
+		if (values.size() != col_no) { throw new IndexOutOfBoundsException(
+				"Size of columns list and values list are not equal"); }
 		// Get column name
 		for (int i = 0; i < col_no; i++) {
 			if (i == col_no - 1) {
@@ -369,9 +351,8 @@ public class MSSQLConnection extends SqlConnection {
 			final IList<Object> col_Types = getColumnTypeName(rsmd);
 			final int col_no = col_Names.size();
 			// Check size of parameters
-			if (values.size() != col_Names.size()) {
-				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-			}
+			if (values.size() != col_Names.size()) { throw new IndexOutOfBoundsException(
+					"Size of columns list and values list are not equal"); }
 
 			// Insert command
 			// set parameter value

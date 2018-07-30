@@ -812,7 +812,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (ag instanceof IAgent) {
 					for (final IExpression variable : attributeValues) {
 						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-						if (variable.getGamlType().equals(IType.STRING)) {
+						if (variable.getGamlType().equals(Types.STRING)) {
 							if (val == null) {
 								val = "";
 							} else {

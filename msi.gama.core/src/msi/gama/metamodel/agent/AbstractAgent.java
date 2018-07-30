@@ -614,9 +614,4 @@ public abstract class AbstractAgent implements IAgent {
 
 	}
 
-	@Override
-	public final boolean equals(final Object o) {
-		return o == this;
-	}
-
 }

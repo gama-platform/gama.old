@@ -115,7 +115,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			c.addDoubleArray("vectorParam", vectorParam);
 
 			// Adding the codes in file
-			final List<String> R_statements = new ArrayList<String>();
+			final List<String> R_statements = new ArrayList<>();
 
 			// tmthai.begin----------------------------------------------------------------------------
 			final String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
@@ -127,19 +127,17 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			}
 
 			// FileReader fr = new FileReader(RFile);
-			final FileReader fr = new FileReader(fullPath);
-			// tmthai.end----------------------------------------------------------------------------
+			try (FileReader fr = new FileReader(fullPath); BufferedReader br = new BufferedReader(fr)) {
+				// tmthai.end----------------------------------------------------------------------------
 
-			final BufferedReader br = new BufferedReader(fr);
-			String statement;
+				String statement;
 
-			while ((statement = br.readLine()) != null) {
-				c.addRCode(statement);
-				R_statements.add(statement);
-				// java.lang.System.out.println(statement);
+				while ((statement = br.readLine()) != null) {
+					c.addRCode(statement);
+					R_statements.add(statement);
+					// java.lang.System.out.println(statement);
+				}
 			}
-			br.close();
-			fr.close();
 			caller.setRCode(c);
 
 			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -193,7 +191,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			// }
 
 			final RCode c = new RCode();
-			final List<String> R_statements = new ArrayList<String>();
+			final List<String> R_statements = new ArrayList<>();
 
 			// tmthai.begin----------------------------------------------------------------------------
 			final String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
@@ -204,23 +202,21 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			}
 
 			// FileReader fr = new FileReader(RFile);
-			final FileReader fr = new FileReader(fullPath);
-			// tmthai.end----------------------------------------------------------------------------
+			try (final FileReader fr = new FileReader(fullPath); final BufferedReader br = new BufferedReader(fr);) {
 
-			final BufferedReader br = new BufferedReader(fr);
-			String statement;
-			while ((statement = br.readLine()) != null) {
-				c.addRCode(statement);
-				R_statements.add(statement);
-				// java.lang.System.out.println(statement);
-				if (DEBUG) {
-					scope.getGui().debug("Stats.R_compute.statement:" + statement);
+				// tmthai.end----------------------------------------------------------------------------
+
+				String statement;
+				while ((statement = br.readLine()) != null) {
+					c.addRCode(statement);
+					R_statements.add(statement);
+					// java.lang.System.out.println(statement);
+					if (DEBUG) {
+						scope.getGui().debug("Stats.R_compute.statement:" + statement);
+					}
+
 				}
-
 			}
-
-			fr.close();
-			br.close();
 			caller.setRCode(c);
 
 			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);

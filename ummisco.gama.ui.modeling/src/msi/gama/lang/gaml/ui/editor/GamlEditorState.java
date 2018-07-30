@@ -68,13 +68,50 @@ public class GamlEditorState {
 		}
 	}
 
-	@Override
-	public boolean equals(final Object old) {
+	public boolean equals2(final Object old) {
 		if (!(old instanceof GamlEditorState)) { return false; }
 		final GamlEditorState state = (GamlEditorState) old;
 		return state.hasNullStatus == hasNullStatus && state.hasImportedErrors == hasImportedErrors
 				&& state.hasInternalErrors == hasInternalErrors && state.experiments.equals(experiments)
 				&& state.showExperiments == showExperiments && state.types.equals(types);
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (experiments == null ? 0 : experiments.hashCode());
+		result = prime * result + (hasImportedErrors ? 1231 : 1237);
+		result = prime * result + (hasInternalErrors ? 1231 : 1237);
+		result = prime * result + (hasNullStatus ? 1231 : 1237);
+		result = prime * result + (showExperiments ? 1231 : 1237);
+		result = prime * result + (types == null ? 0 : types.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		final GamlEditorState other = (GamlEditorState) obj;
+		if (experiments == null) {
+			if (other.experiments != null) { return false; }
+		} else if (!experiments.equals(other.experiments)) { return false; }
+		if (hasImportedErrors != other.hasImportedErrors) { return false; }
+		if (hasInternalErrors != other.hasInternalErrors) { return false; }
+		if (hasNullStatus != other.hasNullStatus) { return false; }
+		if (showExperiments != other.showExperiments) { return false; }
+		if (types == null) {
+			if (other.types != null) { return false; }
+		} else if (!types.equals(other.types)) { return false; }
+		return true;
 	}
 
 	public GamaUIColor getColor() {

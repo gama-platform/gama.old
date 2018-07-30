@@ -108,7 +108,8 @@ public abstract class GamaExecutorService {
 				new ThreadPoolExecutor(nb, nb, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()) {
 
 					@Override
-					protected void afterExecute(final Runnable r, Throwable t) {
+					protected void afterExecute(final Runnable r, final Throwable exception) {
+						Throwable t = exception;
 						super.afterExecute(r, t);
 						if (t == null && r instanceof Future<?>) {
 							try {

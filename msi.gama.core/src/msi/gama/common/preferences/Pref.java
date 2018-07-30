@@ -38,7 +38,7 @@ public class Pref<T> implements IParameter {
 	boolean slider = true; // by default
 	String[] enables, disables;
 	Set<IPreferenceChangeListener<T>> listeners = new HashSet<>();
-	private T[] v;
+	// private T[] v;
 
 	Pref(final String key, final int type) {
 		this.type = type;

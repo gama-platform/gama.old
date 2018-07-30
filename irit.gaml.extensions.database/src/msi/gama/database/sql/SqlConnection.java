@@ -471,7 +471,7 @@ public abstract class SqlConnection {
 
 		Envelope3D envelope;
 		// get Column name
-		final IList colNames = (IList) gamaList.get(0);
+		// final IList colNames = (IList) gamaList.get(0);
 		// get Column type
 		final IList colTypes = (IList) gamaList.get(1);
 		final int index = colTypes.indexOf(GEOMETRYTYPE);

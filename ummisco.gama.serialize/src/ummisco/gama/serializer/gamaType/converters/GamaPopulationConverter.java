@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaPopulationConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaPopulationConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,7 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.util.GamaList;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaPopulationConverter implements Converter {
 
 	ConverterScope convertScope;
@@ -33,11 +32,11 @@ public class GamaPopulationConverter implements Converter {
 	public boolean canConvert(final Class arg0) {
 		// TODO management of other GamaPopulation (grid)
 
-		final Class sc = arg0.getSuperclass();
-		final Class<?>[] allInterface = arg0.getInterfaces();
-		for (final Class<?> c : allInterface) {
-			final Class scs = c.getSuperclass();
-		}
+		// final Class sc = arg0.getSuperclass();
+		// final Class<?>[] allInterface = arg0.getInterfaces();
+		// for (final Class<?> c : allInterface) {
+		// final Class scs = c.getSuperclass();
+		// }
 
 		// if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) ||
 		// GamlAgent.class.equals(arg0.getSuperclass())){

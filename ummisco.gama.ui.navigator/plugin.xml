@@ -904,7 +904,7 @@ type="java.lang.Object">
        <command
              categoryId="msi.gama.category"
              defaultHandler="ummisco.gama.ui.commands.RevealInWorkspace"
-             id="ummisco.gama.ui.navigator.command1"
+             id="ummisco.gama.navigator.reveal"
              name="Reveal in Workspace">
        </command>
     </extension>

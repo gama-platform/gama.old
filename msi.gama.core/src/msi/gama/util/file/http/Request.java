@@ -83,11 +83,11 @@ public class Request {
 			final Object currentValue = params.get(name);
 			if (currentValue != null) {
 				if (currentValue instanceof Collection) {
-					final Collection<Object> values = (Collection) currentValue;
+					final Collection values = (Collection) currentValue;
 					values.add(value);
 				} else {
 					// upgrade single value to set of values
-					final Collection<Object> values = new ArrayList<>();
+					final Collection values = new ArrayList<>();
 					values.add(currentValue);
 					values.add(value);
 					params.put(name, values);
@@ -230,9 +230,8 @@ public class Request {
 	}
 
 	/**
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#useCaches"> URLConnection.useCaches
-	 * </a> <br>
+	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#useCaches">
+	 * URLConnection.useCaches </a> <br>
 	 * If you don't want your requests delivered from a cache, you don't have to call this method, because
 	 * <code>false</code> is the default.
 	 *

@@ -10,7 +10,6 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
 import org.geotools.data.sqlserver.SQLServerDataStoreFactory;
-import org.geotools.jdbc.JDBCDataStore;
 
 public class GeoSQL {
 
@@ -40,7 +39,8 @@ public class GeoSQL {
 		}
 		try {
 			final MySQLDataStoreFactory sqlDSF = new MySQLDataStoreFactory();
-			final JDBCDataStore jdbcDataSore = sqlDSF.createDataStore(params);
+			// final JDBCDataStore jdbcDataSore =
+			sqlDSF.createDataStore(params);
 			// System.out.println("1.3:JDBC Data Store: " +
 			// jdbcDataSore.toString());
 			// System.out.println("parameter: " + sqlDSF.getParametersInfo());
@@ -63,7 +63,8 @@ public class GeoSQL {
 		try {
 			final SQLServerDataStoreFactory sqlDSF2 = new SQLServerDataStoreFactory();
 			// JDBCDataStore jdbcDataSore2= sqlDSF2.createDataStore(params2);
-			final BasicDataSource jdbcDataSore2 = sqlDSF2.createDataSource(params2);
+			// final BasicDataSource jdbcDataSore2 =
+			sqlDSF2.createDataSource(params2);
 			// System.out.println("2.3:" + jdbcDataSore2.toString());
 		} catch (final Exception e) {
 			System.out.println("2.4Loi :" + e.toString());
@@ -83,8 +84,7 @@ public class GeoSQL {
 
 	public static void main(final String[] args)
 			throws IOException, ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-		@SuppressWarnings("unused")
-		final GeoSQL mySQL = new GeoSQL();
+		@SuppressWarnings ("unused") final GeoSQL mySQL = new GeoSQL();
 	}
 
 }

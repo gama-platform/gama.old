@@ -13,7 +13,7 @@ public class GamaGraphFile extends GamaFile<IGraph, Object> {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GamaGraphFile(final IScope scope, final String pathName, final IGraph container) {
+	public GamaGraphFile(final IScope scope, final String pathName, final IGraph<?, ?> container) {
 		super(scope, pathName, container);
 		// TODO Auto-generated constructor stub
 	}
@@ -24,6 +24,7 @@ public class GamaGraphFile extends GamaFile<IGraph, Object> {
 		return null;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IContainerType getGamlType() {
 		// TODO Auto-generated method stub

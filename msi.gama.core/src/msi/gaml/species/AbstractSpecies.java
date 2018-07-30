@@ -61,10 +61,10 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected final boolean isGrid, isGraph;
-	protected final Map<String, ISpecies> microSpecies = new THashMap<String, ISpecies>();
-	private final Map<String, IVariable> variables = new TOrderedHashMap<String, IVariable>();
-	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<String, AspectStatement>();
-	private final Map<String, ActionStatement> actions = new TOrderedHashMap<String, ActionStatement>();
+	protected final Map<String, ISpecies> microSpecies = new THashMap<>();
+	private final Map<String, IVariable> variables = new TOrderedHashMap<>();
+	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<>();
+	private final Map<String, ActionStatement> actions = new TOrderedHashMap<>();
 	private final Map<String, UserCommandStatement> userCommands = new TOrderedHashMap();
 	private final List<IStatement> behaviors = new ArrayList<>();
 	protected ISpecies macroSpecies, parentSpecies;
@@ -234,7 +234,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public List<ISpecies> getSelfWithParents() {
-		final List<ISpecies> retVal = new ArrayList<ISpecies>();
+		final List<ISpecies> retVal = new ArrayList<>();
 		retVal.add(this);
 		ISpecies currentParent = this.getParentSpecies();
 		while (currentParent != null) {
@@ -271,11 +271,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public String getParentName() {
 		return getDescription().getParentName();
-	}
-
-	@Override
-	public boolean equals(final Object other) {
-		return this == other;
 	}
 
 	@Override
@@ -340,7 +335,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public List<String> getAspectNames() {
-		return new ArrayList<String>(aspects.keySet());
+		return new ArrayList<>(aspects.keySet());
 	}
 
 	@Override
@@ -378,7 +373,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			}
 		}
 		control.setChildren(behaviors);
-		behaviors.forEach(b->b.setEnclosing(this));
+		behaviors.forEach(b -> b.setEnclosing(this));
 		control.verifyBehaviors(this);
 	}
 
@@ -536,8 +531,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	public ISkill getSkillInstanceFor(final Class skillClass) {
-		if (skillClass == null)
-			return null;
+		if (skillClass == null) { return null; }
 		if (skillClass.isAssignableFrom(control.getClass())) { return control; }
 		return getSkillInstanceFor(getDescription(), skillClass);
 	}
@@ -546,8 +540,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		for (final SkillDescription sk : sd.getSkills()) {
 			if (skillClass.isAssignableFrom(sk.getJavaBase())) { return sk.getInstance(); }
 		}
-		if (sd.getParent() != null && sd.getParent() != sd)
-			return getSkillInstanceFor(sd.getParent(), skillClass);
+		if (sd.getParent() != null && sd.getParent() != sd) { return getSkillInstanceFor(sd.getParent(), skillClass); }
 		return null;
 	}
 

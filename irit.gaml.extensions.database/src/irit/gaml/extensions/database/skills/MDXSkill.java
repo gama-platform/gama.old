@@ -150,7 +150,8 @@ public class MDXSkill extends Skill {
 		// String selectStr = (String) scope.getArg("select", IType.STRING);
 		// GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>)
 		// scope.getArg("values", IType.LIST):null;
-		final boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		// final boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) :
+		// false;
 
 		// String mdxStr = scope.hasArg("mdx") ? (String) scope.getArg("mdx",
 		// IType.STRING):null;

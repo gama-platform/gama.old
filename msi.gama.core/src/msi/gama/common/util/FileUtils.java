@@ -186,27 +186,22 @@ public class FileUtils {
 	public static IFile linkAndGetExternalFile(final String path, final URI workspaceResource) {
 		final IFolder folder = createExternalFolder(workspaceResource);
 		if (folder == null) { return null; }
-		IFile file = findExistingLinkedFile(folder, path);
-		if (file != null) { return file; }
-		file = correctlyNamedFile(folder, new Path(path).lastSegment());
-		return createLinkedFile(path, file);
-	}
-
-	public static IFile getFileSystemFile(final URI uri, final URI workspaceResource) {
-		final IFolder folder = createExternalFolder(workspaceResource);
-		if (folder == null) { return null; }
-
-		final String uriString = URI.decode(uri.isFile() ? uri.toFileString() : uri.toString());
 		// We try to find an existing file linking to this uri (in case it has been
 		// renamed, for instance)
-		IFile file = findExistingLinkedFile(folder, uriString);
+		IFile file = findExistingLinkedFile(folder, path);
 		if (file != null) { return file; }
 		// We get the file with the same last name
 		// If it already exists, we need to find it a new name as it doesnt point to the
 		// same absolute file
-		file = correctlyNamedFile(folder, uri.lastSegment());
-		return createLinkedFile(uriString, file);
+
+		file = correctlyNamedFile(folder, new Path(path).lastSegment());
+		return createLinkedFile(path, file);
 	}
+
+	// public static IFile linkAndGetExternalFile(final URI uri, final URI workspaceResource) {
+	// final String path = URI.decode(uri.isFile() ? uri.toFileString() : uri.toString());
+	// return linkAndGetExternalFile(URI.decode(path), workspaceResource);
+	// }
 
 	private static IFile createLinkedFile(final String path, final IFile file) {
 		final java.net.URI javaURI = new java.io.File(path).toURI();
@@ -289,11 +284,7 @@ public class FileUtils {
 	}
 
 	public static String constructAbsoluteTempFilePath(final IScope scope, final URL url) {
-		final String suffix = url.getPath().replaceAll("/", "_");
-		if (!CACHE.exists()) {
-			CACHE.mkdirs();
-		}
-		return CACHE.getAbsolutePath() + "/" + suffix;
+		return CACHE.getAbsolutePath() + "/" + url.getPath().replaceAll("/", "_");
 	}
 
 	public static void cleanCache() {
