@@ -12,13 +12,13 @@ global
 // We fist load the folder of icons
 	file icons <- folder("../includes/icons/");
 	// And filter the file names that contain "png"
-	list<string> file_list <- icons select (string(each) contains ("png"));
-	// We give an arbitrary size to the world
+	list<image_file> file_list <- icons select (each contains ("png")) collect (png_file: image_file(icons.path + "/" + png_file));
+	// We give an arbitrary size to the world 
 	geometry shape <- envelope(200);
 	init
 	{
 	// We create a number of people equivalent to the number of icons
-		create people number: length(file_list);
+		create people number: length(file_list) ;
 	}
 
 }
@@ -26,7 +26,7 @@ global
 species people skills: [moving]
 {
 // Each people is provided with the path of its icon (can be changed dynamically, of course)
-	string icon <- icons.path + "/" + file_list[int(self)];
+	image_file icon <- file_list[int(self)];
 	// 'increment' is used to change the size dynamically
 	int increment <- 1;
 	// The size with which the icon will be displayed (w.r.t. to the size of the world). It is incremented or decremented each step
@@ -59,11 +59,16 @@ species people skills: [moving]
 	}
 
 	// The default aspect will be used when no other aspect is invoked in displays
-	aspect default
+	aspect opengl
 	{
 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
-		draw image_file(icon) size: size rotate: heading;
-	}
+		draw icon size: size rotate: heading at: location + {0, 0, size};
+ 	}
+ 	
+ 	aspect java2d {
+ 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
+		draw icon size: size rotate: heading;
+ 	}
 
 }
 
@@ -71,12 +76,20 @@ experiment Icons
 {
 	// We slow down the simulation in order to see something !
 	float minimum_cycle_duration <- 100 # msec;
+	layout #split;
 	output
 	{
-		display Colorful type: opengl
+		
+		display "Colorful in 3D" type: opengl
 		{
-			// We simply display people, which will use their default aspect
-			species people;
+			// We simply display people, which will use their aspect named opengl
+			species people aspect: opengl;
+		}
+		
+		display "Colorful in 2D" type:  java2D {
+			
+			// Idem for java2D
+			species people aspect: java2d;
 		}
 
 	}

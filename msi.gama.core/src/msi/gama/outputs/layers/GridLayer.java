@@ -69,14 +69,13 @@ public class GridLayer extends ImageLayer {
 		}
 	}
 
-	@Override
-	protected Envelope3D buildImage(final IScope scope) {
+	protected Envelope3D computeImage(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
 		if (g == null) { return null; }
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) definition).getEnvironment();
 			final ILocation p = m.getDimensions();
-				image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY(), !g.is2D());
+			image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY(), !g.is2D());
 		}
 		return null;
 
@@ -84,7 +83,7 @@ public class GridLayer extends ImageLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		buildImage(scope);
+		computeImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		GamaColor lineColor = null;
 		if (turnGridOn) {

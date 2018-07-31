@@ -40,6 +40,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -228,8 +229,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	 */
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		if (!writable || getBuffer() == null || getBuffer().isEmpty(scope))
-			return;
+		if (!writable || getBuffer() == null || getBuffer().isEmpty(scope)) { return; }
 		try {
 			final File f = getFile(scope);
 			f.setWritable(true);
@@ -253,12 +253,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		final BufferedImage image;
 		try {
 			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache);
-			if (image == null) { throw GamaRuntimeException.error(
-					"This image format (." + getExtension(scope)
-							+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+			if (image == null) { throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
+					+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
 					scope); }
 		} catch (final IOException e) {
-			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), true);
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeFileException.create(e, scope), true);
 			return null;
 		}
 		// }
@@ -272,15 +271,13 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public int getWidth(final IScope scope) {
 		final BufferedImage image = loadImage(scope, true);
-		if (image == null)
-			return 0;
+		if (image == null) { return 0; }
 		return image.getWidth();
 	}
 
 	public int getHeight(final IScope scope) {
 		final BufferedImage image = loadImage(scope, true);
-		if (image == null)
-			return 0;
+		if (image == null) { return 0; }
 		return image.getHeight();
 
 	}

@@ -34,6 +34,7 @@ openFile
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
 -Dosgi.locking=none
+-Dosgi.checkConfiguration=false
       </vmArgs>
       <vmArgsLin>
          <argsX86>-Xms256m -Xmx1024m</argsX86>

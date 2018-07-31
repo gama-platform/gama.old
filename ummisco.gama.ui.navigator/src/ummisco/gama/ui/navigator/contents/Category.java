@@ -78,12 +78,13 @@ public class Category extends VirtualContent<WrappedFile> {
 		final IFile file = getParent().getResource();
 		final String filePath = file.getFullPath().toString();
 		final URI uri = URI.createURI(filePath, false);
-		for (final String s : fileNames) {
+		for (final String fn : fileNames) {
+			final String s = URI.decode(fn);
 			if (s.startsWith("http")) {
 				continue;
 			}
-			final IFile newFile = FileUtils.getFile(s, uri);
-			if (newFile != null && newFile.exists()) {
+			final IFile newFile = FileUtils.getFile(s, uri, true);
+			if (newFile != null) {
 				final LinkedFile proxy = new LinkedFile(this, newFile, s);
 				files.add(proxy);
 			}

@@ -333,7 +333,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	public void dispose() {
 		// FIXME Remove the listeners
-		WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
+		try {
+			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
+		} catch (final Exception e) {
+
+		}
 		if (keyAndMouseListener != null) {
 			keyAndMouseListener.dispose();
 		}

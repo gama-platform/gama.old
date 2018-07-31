@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -45,12 +46,13 @@ public class Webb {
 	static Integer readTimeout = 3 * 60000; // 5 minutes
 	static int jsonIndentFactor = -1;
 
-	Boolean followRedirects;
+	Boolean followRedirects = true;
 	String baseUri;
 	Map<String, Object> defaultHeaders;
 	SSLSocketFactory sslSocketFactory;
 	HostnameVerifier hostnameVerifier;
 	RetryManager retryManager;
+	Proxy proxy;
 
 	protected Webb() {}
 
@@ -169,6 +171,16 @@ public class Webb {
 	 */
 	public void setHostnameVerifier(final HostnameVerifier hostnameVerifier) {
 		this.hostnameVerifier = hostnameVerifier;
+	}
+
+	/**
+	 * Sets a proxy object to be used for opening the connection. See {@link URL#openConnection(Proxy)}
+	 * 
+	 * @param proxy
+	 *            the proxy to be used or <tt>null</tt> for no proxy.
+	 */
+	public void setProxy(final Proxy proxy) {
+		this.proxy = proxy;
 	}
 
 	/**
@@ -332,7 +344,11 @@ public class Webb {
 				uri += "?" + WebbUtils.queryString(request.params);
 			}
 			final URL apiUrl = new URL(uri);
-			connection = (HttpURLConnection) apiUrl.openConnection();
+			if (proxy != null) {
+				connection = (HttpURLConnection) apiUrl.openConnection(proxy);
+			} else {
+				connection = (HttpURLConnection) apiUrl.openConnection();
+			}
 
 			prepareSslConnection(connection);
 			connection.setRequestMethod(request.method.name());

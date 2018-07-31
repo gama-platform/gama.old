@@ -674,6 +674,7 @@ public class OpenGL {
 	}
 
 	public void cacheTexture(final File file) {
+		if (file == null) { return; }
 		initializeStaticTexture(file);
 	}
 
@@ -742,6 +743,7 @@ public class OpenGL {
 	}
 
 	public static BufferedImage correctImage(final BufferedImage image, final boolean force) {
+		if (image == null) { throw new NullPointerException(); }
 		BufferedImage corrected = image;
 		if (GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() || force) {
 			if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {

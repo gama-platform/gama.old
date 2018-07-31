@@ -10,16 +10,13 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -48,7 +45,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		implements IGamaFile<Container, Contents> {
 
 	private File file;
-	protected String localPath;
+	protected final String localPath;
 	protected final String originalPath;
 	protected final URL url;
 	protected boolean writable = false;
@@ -60,6 +57,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	private GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
+		String tempPath = originalPath;
 		if (originalPath == null) { throw GamaRuntimeException
 				.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope); }
 		if (originalPath.startsWith("http")) {
@@ -69,17 +67,21 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		}
 		if (url != null) {
 			if (forReading) {
-				setPath(FileUtils.constructAbsoluteFilePath(scope, fetchFromURL(scope), forReading));
-				if (getPath(scope) == null) {
+				tempPath = FileUtils.constructAbsoluteFilePath(scope, fetchFromURL(scope), forReading);
+				if (tempPath == null) {
 					// We do not attempt to create the file. It will probably be taken in charge later directly from the
 					// URL or there has been an error trying to download it.
-					setPath("");
-					return;
+					tempPath = "";
 				}
 			} else {
-				setPath(getTempFilePathFromURL(scope));
+				tempPath = FileUtils.constructAbsoluteTempFilePath(scope, url);
 			}
+		} else {
+			tempPath = FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist());
 		}
+
+		localPath = tempPath;
+		checkValidity(scope);
 	}
 
 	public boolean isRemote() {
@@ -111,24 +113,8 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	protected String fetchFromURL(final IScope scope) {
-		String pathName = null;
 		if (!automaticallyFetchFromURL()) { return null; }
-		final String urlPath = url.toExternalForm();
-		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
-		pathName = getTempFilePathFromURL(scope);
-		scope.getGui().getStatus(scope).beginSubStatus(status);
-		final Webb web = Webb.create();
-		try {
-			try (InputStream in = web.get(urlPath).ensureSuccess().connectTimeout(20000).readTimeout(20000)
-					.retry(3, false).asStream().getBody();) {
-				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-		} catch (final IOException | WebbException e) {
-			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			scope.getGui().getStatus(scope).endSubStatus(status);
-		}
-		return pathName;
+		return FileUtils.fetchToTempFile(scope, url);
 	}
 
 	protected void sendToURL(final IScope scope) throws GamaRuntimeException {
@@ -144,7 +130,6 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		} finally {
 			scope.getGui().getStatus(scope).endSubStatus(status);
 		}
-
 	}
 
 	/**
@@ -155,11 +140,6 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 */
 	protected String getHttpContentType() {
 		return "text/plain";
-	}
-
-	public String getTempFilePathFromURL(final IScope scope) {
-		final String pathName = FileUtils.constructAbsoluteTempFilePath(scope, url);
-		return pathName;
 	}
 
 	protected URL buildURL(final IScope scope, final String urlPath) throws GamaRuntimeException {
@@ -335,7 +315,10 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	// @getter( IKeyword.EXTENSION)
 	public String getExtension(final IScope scope) {
-		final String path = getPath(scope).toLowerCase();
+		// In order to avoid too many calls to the file system, we can safely consider that the extension of files
+		// remain the same between the urls, local paths and links to external paths
+		final String path = getOriginalPath().toLowerCase();
+		// final String path = getPath(scope).toLowerCase();
 		final int mid = path.lastIndexOf(".");
 		if (mid == -1) { return ""; }
 		return path.substring(mid + 1, path.length());
@@ -348,14 +331,6 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public String getPath(final IScope scope) {
-		if (localPath == null) {
-			if (scope == null || scope.getExperiment() == null) {
-				localPath = originalPath;
-			} else {
-				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist()));
-				checkValidity(scope);
-			}
-		}
 		return localPath;
 	}
 
@@ -457,7 +432,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "file('" + getPath(null) + "')";
+		return "file('" + getPath(GAMA.getRuntimeScope()) + "')";
 	}
 
 	@Override
@@ -521,8 +496,8 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	}
 
-	protected void setPath(final String path) {
-		this.localPath = path;
-	}
+	// protected void setPath(final String path) {
+	// this.localPath = path;
+	// }
 
 }

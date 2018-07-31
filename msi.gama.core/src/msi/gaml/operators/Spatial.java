@@ -9,9 +9,10 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -60,7 +61,6 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -4650,16 +4650,17 @@ public abstract class Spatial {
 						equals = "a list of points",
 						isExecutable = false) },
 				see = {})
-		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile textureFileName) {
+		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile file) {
 
 			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
 			BufferedImage texture = null;
 			int rows, cols, x, y;
 
-			try {
-				texture = ImageUtils.getInstance().getImageFromFile(scope, textureFileName.getPath(scope), true);
-			} catch (final IOException e) {
-				e.printStackTrace();
+			if (file instanceof GamaImageFile) {
+				texture = ((GamaImageFile) file).getImage(scope, true);
+			} else {
+				if (file == null) { throw error("File is null in rgb_to_xyz", scope); }
+				throw error("Impossible to read points from " + file.getPath(scope), scope);
 			}
 			if (texture == null) { return points; }
 			rows = texture.getHeight() - 1;

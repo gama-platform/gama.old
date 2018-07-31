@@ -41,6 +41,8 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 			put(IMarker.SEVERITY_ERROR, GamaIcons.create("overlay.error2").descriptor());
 			put(LINK_OK, GamaIcons.create("overlay.ok").descriptor());
 			put(LINK_BROKEN, GamaIcons.create("overlay.link.broken").descriptor());
+			put(WEBLINK_OK, GamaIcons.create("overlay.cloud").descriptor());
+			put(WEBLINK_BROKEN, GamaIcons.create("overlay.link.broken").descriptor());
 		}
 	};
 
@@ -48,6 +50,8 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final int CLOSED = -2;
 	public static final int LINK_OK = -3;
 	public static final int LINK_BROKEN = -4;
+	public static final int WEBLINK_OK = -5;
+	public static final int WEBLINK_BROKEN = -6;
 	public static Object[] EMPTY = new Object[0];
 	public static WrappedProject[] EMPTY_PROJECTS = new WrappedProject[0];
 

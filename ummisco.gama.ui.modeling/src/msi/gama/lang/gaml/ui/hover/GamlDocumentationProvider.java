@@ -74,7 +74,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 						return "This workspace " + ext + " file has no metadata associated with it";
 					}
 				} else { // absolute file
-					final IFile file = FileUtils.linkAndGetExternalFile(((StringLiteral) o).getOp(), o.eResource().getURI());
+					final IFile file = FileUtils.createLinkToExternalFile(((StringLiteral) o).getOp(), o.eResource().getURI());
 					if (file == null) { return "This file is outside the workspace and cannot be found."; }
 					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 					if (data != null) {

@@ -11,6 +11,11 @@ package msi.gama.common.preferences;
 
 import static msi.gama.common.util.StringUtils.toJavaString;
 import static msi.gama.util.GamaDate.fromISOString;
+import static msi.gaml.operators.Cast.asBool;
+import static msi.gaml.operators.Cast.asFloat;
+import static msi.gaml.operators.Cast.asInt;
+import static msi.gaml.operators.Cast.asPoint;
+import static msi.gaml.operators.Cast.asString;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -31,7 +36,6 @@ import org.geotools.referencing.CRS;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
-import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -45,12 +49,7 @@ import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
-import msi.gaml.types.GamaBoolType;
-import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaFontType;
-import msi.gaml.types.GamaIntegerType;
-import msi.gaml.types.GamaPointType;
-import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 
 /**
@@ -380,16 +379,21 @@ public class GamaPreferences {
 						RENDERING);
 	}
 
-	public static class OpenGL {
-		public static final String NAME = "OpenGL";
-		/**
-		 * Rendering
-		 */
-
-	}
-
 	public static class External {
 		public static final String NAME = "Data and Operators";
+		/**
+		 * Http connections
+		 */
+		public static final String HTTP = "Http connections";
+		public static final Pref<Integer> CORE_HTTP_CONNECT_TIMEOUT =
+				create("pref_http_connect_timeout", "Connection timeout (in ms)", 20000, IType.INT).in(NAME, HTTP);
+		public static final Pref<Integer> CORE_HTTP_READ_TIMEOUT =
+				create("pref_http_read_timeout", "Read timeout (in ms)", 20000, IType.INT).in(NAME, HTTP);
+		public static final Pref<Integer> CORE_HTTP_RETRY_NUMBER = create("pref_http_retry_number",
+				"Number of times to retry if connection cannot be established", 3, IType.INT).in(NAME, HTTP);
+		public static final Pref<Boolean> CORE_HTTP_EMPTY_CACHE = create("pref_http_empty_cache",
+				"Empty the local cache of files downloaded from the web", true, IType.BOOL).in(NAME, HTTP);
+
 		/**
 		 * Random numbers
 		 */
@@ -569,100 +573,43 @@ public class GamaPreferences {
 	}
 
 	private static void register(final Pref gp) {
-		// System.out.println("+++ Registering preference " + gp.key + " in
-		// store");
 		final IScope scope = null;
 		final String key = gp.key;
 		if (key == null) { return; }
 		prefs.put(key, gp);
-		Object value = gp.value;
-		switch (gp.type) {
-			case IType.POINT:
-				if (storeKeys.contains(key)) {
-					final String val = store.get(key, GamaStringType.staticCast(scope, value, false));
-					gp.setValue(scope, GamaPointType.staticCast(scope, val, false));
-				}
-				// else {
-				// store.put(key, GamaStringType.staticCast(scope, value, false));
-				// }
-				break;
-			case IType.INT:
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope, store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false)));
-				}
-				// else {
-				// store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
-				// }
-				break;
-			case IType.FLOAT:
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope, store.getDouble(key, GamaFloatType.staticCast(scope, value, null, false)));
-				}
-				// else {
-				// store.putDouble(key, GamaFloatType.staticCast(scope, value, null, false));
-				// }
-				break;
-			case IType.BOOL:
-				value = GamaBoolType.staticCast(scope, value, null, false);
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope, store.getBoolean(key, (Boolean) value));
-				}
-				// else {
-				// store.putBoolean(key, (Boolean) value);
-				// }
-				break;
-			case IType.STRING:
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope,
-							store.get(key, StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false))));
-				}
-				// else {
-				// store.put(key, StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false)));
-				// }
-				break;
-			case IType.FILE:
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope, new GenericFile(store.get(key, ""), false));
-				}
-				// else {
-				// store.put(key, value == null ? "" : ((IGamaFile) value).getPath(scope));
-				// }
-				break;
-			case IType.COLOR:
-				// Stores the preference as an int but create a color
-				if (storeKeys.contains(key)) {
-					final int val = store.getInt(key, GamaIntegerType.staticCast(scope, value, null, false));
-					gp.setValue(scope, GamaColor.getInt(val));
-				}
-				// else {
-				// store.putInt(key, GamaIntegerType.staticCast(scope, value, null, false));
-				// }
-				break;
-			case IType.FONT:
-				if (storeKeys.contains(key)) {
-					final String val = store.get(key, GamaStringType.staticCast(scope, value, false));
-					gp.setValue(scope, GamaFontType.staticCast(scope, val, false));
-				}
-				// else {
-				// store.put(key, GamaStringType.staticCast(scope, value, false));
-				// }
-				break;
-			case IType.DATE:
-				if (storeKeys.contains(key)) {
-					final String val = toJavaString(store.get(key, GamaStringType.staticCast(scope, value, false)));
-					gp.setValue(scope, fromISOString(val));
-				}
-				// else {
-				// store.put(key, GamaStringType.staticCast(scope, value, false));
-				// }
-				break;
-			default:
-				if (storeKeys.contains(key)) {
-					gp.setValue(scope, store.get(key, GamaStringType.staticCast(scope, value, false)));
-				}
-				// else {
-				// store.put(key, GamaStringType.staticCast(scope, value, false));
-				// }
+		final Object value = gp.value;
+		if (storeKeys.contains(key)) {
+			switch (gp.type) {
+				case IType.POINT:
+					gp.init(() -> asPoint(scope, store.get(key, asString(scope, value)), false));
+					break;
+				case IType.INT:
+					gp.init(() -> store.getInt(key, asInt(scope, value)));
+					break;
+				case IType.FLOAT:
+					gp.init(() -> store.getDouble(key, asFloat(scope, value)));
+					break;
+				case IType.BOOL:
+					gp.init(() -> store.getBoolean(key, asBool(scope, value)));
+					break;
+				case IType.STRING:
+					gp.init(() -> store.get(key, toJavaString(asString(scope, value))));
+					break;
+				case IType.FILE:
+					gp.init(() -> new GenericFile(store.get(key, (String) value), false));
+					break;
+				case IType.COLOR:
+					gp.init(() -> GamaColor.getInt(store.getInt(key, asInt(scope, value))));
+					break;
+				case IType.FONT:
+					gp.init(() -> GamaFontType.staticCast(scope, store.get(key, asString(scope, value)), false));
+					break;
+				case IType.DATE:
+					gp.init(() -> fromISOString(toJavaString(store.get(key, asString(scope, value)))));
+					break;
+				default:
+					gp.init(() -> store.get(key, asString(scope, value)));
+			}
 		}
 		try {
 			store.flush();
@@ -695,13 +642,12 @@ public class GamaPreferences {
 				store.putBoolean(key, (Boolean) value);
 				break;
 			case IType.STRING:
-				store.put(key, StringUtils.toJavaString((String) value));
+				store.put(key, toJavaString((String) value));
 				break;
 			case IType.FILE:
 				store.put(key, ((GamaFile) value).getPath(null));
 				break;
 			case IType.COLOR:
-				// Stores the preference as an int but create a color
 				final int code = ((GamaColor) value).getRGB();
 				store.putInt(key, code);
 				break;
@@ -712,8 +658,7 @@ public class GamaPreferences {
 				store.put(key, value.toString());
 				break;
 			case IType.DATE:
-				final GamaDate d = (GamaDate) value;
-				store.put(key, StringUtils.toJavaString(d.toISOString()));
+				store.put(key, toJavaString(((GamaDate) value).toISOString()));
 				break;
 			default:
 				store.put(key, (String) value);

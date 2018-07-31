@@ -9,15 +9,21 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
+
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import msi.gama.util.file.GamaGridFile;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.types.GamaFileType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -27,38 +33,76 @@ import msi.gaml.types.GamaFileType;
  */
 public class ImageLayer extends AbstractLayer {
 
-	GamaImageFile file = null;
-	GamaGridFile grid = null;
-	private String imageFileName = "";
+	// Cache a copy of both to avoid reloading them each time.
 	Envelope3D env;
+	GamaImageFile cachedFile;
+	IExpression file;
+	boolean isPotentiallyVariable;
+	boolean isFile;
 
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
 		super(layer);
-		buildImage(scope);
-	}
-
-	protected Envelope3D buildImage(final IScope scope) {
-		final String newImage = ((ImageLayerStatement) definition).getImageFileName();
-		if (imageFileName != null && imageFileName.equals(newImage)) { return env; }
-		imageFileName = newImage;
-		if (imageFileName == null || imageFileName.length() == 0) {
-			file = null;
-			grid = null;
+		file = getStatement().file;
+		isFile = file.getGamlType().getGamlType().equals(Types.FILE);
+		isPotentiallyVariable = !file.isContextIndependant();
+		if (!isFile) {
+			if (file.isConst() || !isPotentiallyVariable) {
+				final String constantFilePath = Cast.asString(scope, file.value(scope));
+				cachedFile = createFileFromString(scope, constantFilePath);
+				isFile = true;
+			}
 		} else {
-			@SuppressWarnings ("rawtypes") final GamaImageFile f =
-					GamaFileType.createImageFile(scope, imageFileName, null);
-			if (f != null) {
-				file = f;
-				env = file.getGeoDataFile(scope) == null ? scope.getSimulation().getEnvelope()
-						: file.computeEnvelope(scope);
+			if (!isPotentiallyVariable) {
+				cachedFile = createFileFromFileExpression(scope);
+				isFile = true;
 			}
 		}
-		return env;
+	}
+
+	private GamaImageFile createFileFromFileExpression(final IScope scope) {
+		final GamaFile result = (GamaFile) file.value(scope);
+		return verifyFile(scope, result);
+	}
+
+	private GamaImageFile createFileFromString(final IScope scope, final String imageFileName) {
+		final GamaImageFile result = GamaFileType.createImageFile(scope, imageFileName, null);
+		return verifyFile(scope, result);
+	}
+
+	private GamaImageFile verifyFile(final IScope scope, final GamaFile input) {
+		if (input == cachedFile) { return cachedFile; }
+		if (input == null) { throw error("Not a file" + file.serialize(false), scope); }
+		if (!(input instanceof GamaImageFile)) { throw error("Not an image:" + input.getPath(scope), scope); }
+		final GamaImageFile result = (GamaImageFile) input;
+		try {
+			result.getImage(scope, !getStatement().getRefresh());
+		} catch (final GamaRuntimeFileException ex) {
+			throw ex;
+		} catch (final Throwable e) {
+			throw GamaRuntimeFileException.create(e, scope);
+		}
+		cachedFile = result;
+		env = computeEnvelope(scope, result);
+		return result;
+	}
+
+	private Envelope3D computeEnvelope(final IScope scope, final GamaImageFile file) {
+		return file.getGeoDataFile(scope) != null ? file.computeEnvelope(scope) : scope.getSimulation().getEnvelope();
+	}
+
+	public ImageLayerStatement getStatement() {
+		return (ImageLayerStatement) this.definition;
+	}
+
+	protected GamaImageFile buildImage(final IScope scope) {
+		if (!isPotentiallyVariable) { return cachedFile; }
+		return isFile ? createFileFromFileExpression(scope)
+				: createFileFromString(scope, Cast.asString(scope, file.value(scope)));
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		buildImage(scope);
+		final GamaImageFile file = buildImage(scope);
 		if (file == null) { return; }
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 		attributes.setUseCache(!definition.getRefresh());
@@ -71,8 +115,29 @@ public class ImageLayer extends AbstractLayer {
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		cachedFile = null;
+		env = null;
+	}
+
+	@Override
 	public String getType() {
 		return "Image layer";
+	}
+
+	/**
+	 * @param newValue
+	 */
+	public void setImageFileName(final IScope scope, final String newValue) {
+		createFileFromString(scope, newValue);
+		isFile = true;
+		isPotentiallyVariable = false;
+	}
+
+	public String getImageFileName(final IScope scope) {
+		if (cachedFile != null && !isPotentiallyVariable) { return cachedFile.getPath(scope); }
+		return "Unknown";
 	}
 
 }

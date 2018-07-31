@@ -12,8 +12,12 @@ package msi.gama.common.util;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -33,8 +37,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.http.Webb;
+import msi.gama.util.file.http.WebbException;
 
 /**
  * The class FileUtils.
@@ -45,15 +54,22 @@ import msi.gama.runtime.IScope;
  */
 public class FileUtils {
 
+	public static ThreadLocal<Webb> WEB = ThreadLocal.withInitial(() -> Webb.create());
+	public static final String URL_SEPARATOR_REPLACEMENT = "+_+";
+	public static final String COPY_OF = "copy of ";
+	public static final String HOME = "~";
+	public static final String SEPARATOR = "/";
+	public static final String CACHE_FOLDER_NAME = SEPARATOR + ".cache";
+	public static final IPath EXTERNAL_FOLDER_PATH = new Path("external");
 	static IWorkspaceRoot ROOT = ResourcesPlugin.getWorkspace().getRoot();
-	static IFileSystem LOCAL = EFS.getLocalFileSystem();
+	static IFileSystem FILE_SYSTEM = EFS.getLocalFileSystem();
 	static String USER_HOME = System.getProperty("user.home");
-	static final URI WORKSPACE =
+	static final URI WORKSPACE_URI =
 			URI.createURI(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().toString(), false);
 	static final File CACHE;
 
 	static {
-		CACHE = new File(ROOT.getLocation().toFile().getAbsolutePath() + "/.cache");
+		CACHE = new File(ROOT.getLocation().toFile().getAbsolutePath() + CACHE_FOLDER_NAME);
 		if (!CACHE.exists()) {
 			CACHE.mkdirs();
 		}
@@ -77,26 +93,37 @@ public class FileUtils {
 	static public String constructAbsoluteFilePath(final IScope scope, final String filePath, final boolean mustExist) {
 		String fp;
 		if (filePath.startsWith("~")) {
-			fp = filePath.replaceFirst("~", USER_HOME);
+			fp = filePath.replaceFirst(HOME, USER_HOME);
 		} else {
 			fp = filePath;
 		}
 		if (isAbsolutePath(fp)) {
-			final String file = findOutsideWorkspace(fp, mustExist);
+			URI modelBase = null;
+			if (scope != null) {
+				final IModel m = scope.getModel();
+				if (m != null) {
+					modelBase = m.getURI();
+				}
+			}
+			final String file = findOutsideWorkspace(fp, modelBase, mustExist);
 			if (file != null) {
 				// System.out.println("Hit with EFS-based search: " + file);
 				return file;
 			}
 		}
-		final IExperimentAgent a = scope.getExperiment();
-		// Necessary to ask the workspace for the containers as projects might be linked
-		final List<IContainer> paths =
-				a.getWorkingPaths().stream().map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
-		for (final IContainer folder : paths) {
-			final String file = findInWorkspace(fp, folder, mustExist);
-			if (file != null) {
-				// System.out.println("Hit with workspace-based search: " + file);
-				return file;
+		if (scope != null) {
+			final IExperimentAgent a = scope.getExperiment();
+			// No need to search more if the experiment is null
+			if (a == null) { return fp; }
+			// Necessary to ask the workspace for the containers as projects might be linked
+			final List<IContainer> paths = a.getWorkingPaths().stream()
+					.map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
+			for (final IContainer folder : paths) {
+				final String file = findInWorkspace(fp, folder, mustExist);
+				if (file != null) {
+					// System.out.println("Hit with workspace-based search: " + file);
+					return file;
+				}
 			}
 		}
 
@@ -118,12 +145,44 @@ public class FileUtils {
 		// getLocation() works for regular and linked files
 	}
 
-	private static String findOutsideWorkspace(final String fp, final boolean mustExist) {
-		final IFileStore file = LOCAL.getStore(new Path(fp));
+	private static String findOutsideWorkspace(final String fp, final URI modelBase, final boolean mustExist) {
 		if (!mustExist) { return fp; }
+		final IFileStore file = FILE_SYSTEM.getStore(new Path(fp));
 		final IFileInfo info = file.fetchInfo();
-		if (info.exists()) { return fp; }
+		if (info.exists()) {
+			final IFile linkedFile = createLinkToExternalFile(fp, modelBase);
+			if (linkedFile == null) { return fp; }
+			return linkedFile.getLocation().toFile().getAbsolutePath();
+		}
 		return null;
+	}
+
+	public static IFile createLinkToExternalFile(final String path, final URI workspaceResource) {
+		// Always try to return the full file, without creating a link, if the file happens to be in the workspace
+		// (manageable by it)
+		final IPath filePath = new Path(path);
+		final IResource[] resources = ROOT.findFilesForLocation(filePath);
+		if (resources.length > 0) {
+			final IResource r = resources[0];
+			if (r instanceof IFile) { return (IFile) r; }
+		}
+
+		final IFolder folder = createExternalFolder(workspaceResource);
+		if (folder == null) { return null; }
+		// We try to find an existing file linking to this uri (in case it has been
+		// renamed, for instance)
+		IFile file = findExistingLinkedFile(folder, path);
+		if (file != null) { return file; }
+		// We get the file with the same last name
+		// If it already exists, we need to find it a new name as it doesnt point to the
+		// same absolute file
+		String fileName = new Path(path).lastSegment();
+		final int i = fileName.lastIndexOf(URL_SEPARATOR_REPLACEMENT);
+		if (i > -1) {
+			fileName = fileName.substring(i + URL_SEPARATOR_REPLACEMENT.length());
+		}
+		file = correctlyNamedFile(folder, fileName);
+		return createLinkedFile(path, file);
 	}
 
 	/**
@@ -156,7 +215,7 @@ public class FileUtils {
 					root = existingResource;
 				}
 				if (root == null) {
-					root = WORKSPACE;
+					root = WORKSPACE_URI;
 				}
 				final URI iu = first.resolve(root);
 				if (isFileExistingInWorkspace(iu)) { return iu; }
@@ -174,28 +233,13 @@ public class FileUtils {
 		return false;
 	}
 
-	public static IFile getFile(final String path, final URI root) {
+	public static IFile getFile(final String path, final URI root, final boolean mustExist) {
 		final URI uri = getURI(path, root);
 		if (uri != null) {
 			if (uri.isPlatformResource()) { return getWorkspaceFile(uri); }
-			return linkAndGetExternalFile(path, root);
+			return createLinkToExternalFile(path, root);
 		}
 		return null;
-	}
-
-	public static IFile linkAndGetExternalFile(final String path, final URI workspaceResource) {
-		final IFolder folder = createExternalFolder(workspaceResource);
-		if (folder == null) { return null; }
-		// We try to find an existing file linking to this uri (in case it has been
-		// renamed, for instance)
-		IFile file = findExistingLinkedFile(folder, path);
-		if (file != null) { return file; }
-		// We get the file with the same last name
-		// If it already exists, we need to find it a new name as it doesnt point to the
-		// same absolute file
-
-		file = correctlyNamedFile(folder, new Path(path).lastSegment());
-		return createLinkedFile(path, file);
 	}
 
 	// public static IFile linkAndGetExternalFile(final URI uri, final URI workspaceResource) {
@@ -218,7 +262,7 @@ public class FileUtils {
 		String fn = fileName;
 		do {
 			file = folder.getFile(fn);
-			fn = "copy of " + fn;
+			fn = COPY_OF + fn;
 		} while (file.exists());
 		return file;
 	}
@@ -249,7 +293,7 @@ public class FileUtils {
 		final IFile root = getWorkspaceFile(workspaceResource);
 		final IProject project = root.getProject();
 		if (!project.exists()) { return null; }
-		final IFolder folder = project.getFolder(new Path("external"));
+		final IFolder folder = project.getFolder(EXTERNAL_FOLDER_PATH);
 		if (!folder.exists()) {
 			try {
 				folder.create(true, true, null);
@@ -284,26 +328,51 @@ public class FileUtils {
 	}
 
 	public static String constructAbsoluteTempFilePath(final IScope scope, final URL url) {
-		return CACHE.getAbsolutePath() + "/" + url.getPath().replaceAll("/", "_");
+		return CACHE.getAbsolutePath() + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
+				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT);
+
 	}
 
 	public static void cleanCache() {
-		for (final File f : CACHE.listFiles()) {
-			if (!f.isDirectory()) {
-				try {
-					f.delete();
-				} catch (final Throwable e) {
-					e.printStackTrace();
+		if (GamaPreferences.External.CORE_HTTP_EMPTY_CACHE.getValue()) {
+			for (final File f : CACHE.listFiles()) {
+				if (!f.isDirectory()) {
+					try {
+						f.delete();
+					} catch (final Throwable e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 	}
 
 	public static boolean isDirectoryOrNullExternalFile(final String path) {
-		final IFileStore external = LOCAL.getStore(new Path(path));
+		final IFileStore external = FILE_SYSTEM.getStore(new Path(path));
 		final IFileInfo info = external.fetchInfo();
 		if (info.isDirectory() || !info.exists()) { return true; }
 		return false;
+	}
+
+	public static String fetchToTempFile(final IScope scope, final URL url) {
+		final String pathName = constructAbsoluteTempFilePath(scope, url);
+		final String urlPath = url.toExternalForm();
+		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf(SEPARATOR));
+		scope.getGui().getStatus(scope).beginSubStatus(status);
+		final Webb web = WEB.get();
+		try {
+			try (InputStream in = web.get(urlPath).ensureSuccess()
+					.connectTimeout(GamaPreferences.External.CORE_HTTP_CONNECT_TIMEOUT.getValue())
+					.readTimeout(GamaPreferences.External.CORE_HTTP_READ_TIMEOUT.getValue())
+					.retry(GamaPreferences.External.CORE_HTTP_RETRY_NUMBER.getValue(), false).asStream().getBody();) {
+				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (final IOException | WebbException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			scope.getGui().getStatus(scope).endSubStatus(status);
+		}
+		return pathName;
 	}
 
 }

@@ -20,7 +20,7 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 	private boolean shouldExist;
 
 	public GenericFile(final String pathName) throws GamaRuntimeException {
-		super(null, pathName);
+		super(GAMA.getRuntimeScope(), pathName);
 	}
 
 	public GenericFile(final String pathName, final boolean shouldExist) {

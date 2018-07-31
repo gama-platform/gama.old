@@ -77,6 +77,15 @@ public class ImageUtils {
 
 	private ImageUtils() {}
 
+	/**
+	 * fileName is supposed to be already absolute, and to have been checked before, as the calls come from GamaFile
+	 * 
+	 * @param scope
+	 * @param fileName
+	 * @param useCache
+	 * @return
+	 * @throws IOException
+	 */
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName, final boolean useCache)
 			throws IOException {
 		if (useCache) {
@@ -85,8 +94,8 @@ public class ImageUtils {
 			final GifDecoder gif = gifCache.getIfPresent(fileName);
 			if (gif != null) { return gif.getImage(); }
 		}
-		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
-		final File f = new File(s);
+		// final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
+		final File f = new File(fileName);
 		final BufferedImage result = getImageFromFile(f, useCache, false);
 		return result == getNoImage() ? null : result;
 	}

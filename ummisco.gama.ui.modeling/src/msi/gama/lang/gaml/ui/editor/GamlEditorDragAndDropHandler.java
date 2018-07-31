@@ -302,7 +302,7 @@ public class GamlEditorDragAndDropHandler {
 			if (FileUtils.isDirectoryOrNullExternalFile(path)) {
 				continue;
 			}
-			final IFile file = FileUtils.linkAndGetExternalFile(path, editor.getURI());
+			final IFile file = FileUtils.createLinkToExternalFile(path, editor.getURI());
 			if (file != null) {
 				files.add(file);
 			}

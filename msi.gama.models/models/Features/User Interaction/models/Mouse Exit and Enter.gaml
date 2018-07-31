@@ -12,8 +12,8 @@ model MouseExitandEnter
 global {
 	bool closed <- false;
 	init {
-		create eyes with: [location::{30,50}];
-		create eyes with: [location::{60,50}];
+		create eyes with: [location::{25,30}];
+		create eyes with: [location::{65,30}];
 	}
 }
 
@@ -37,7 +37,12 @@ species eyes {
 experiment Run {
 	output {
 		display Eyes type: opengl draw_env: false {
-
+			graphics face {
+				draw circle(60) color: #gamaorange;
+			}
+			graphics mouth {
+				draw curve({20,80},{70, 80},  (cos(location towards #user_location))) + 5  depth: 5;
+			}
 			species eyes aspect: inside;
 			species eyes aspect: outside transparency: closed ? 0.1 : 0.5;
 			event mouse_exit action:{closed <- true;};

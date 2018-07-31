@@ -9,8 +9,9 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.outputs.layers.ImageLayerStatement.ImageLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -22,15 +23,13 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
-import msi.gama.util.GAML;
-import msi.gama.util.GamaColor;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -142,14 +141,33 @@ import msi.gaml.types.Types;
 										isExecutable = false) }) },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 				IKeyword.OVERLAY, IKeyword.POPULATION })
+@validator (ImageLayerValidator.class)
 public class ImageLayerStatement extends AbstractLayerStatement {
+
+	public static class ImageLayerValidator implements IDescriptionValidator {
+
+		@Override
+		public void validate(final IDescription description) {
+			if (!description.hasFacet(GIS)) {
+				if (!description.hasFacet(NAME) && !description.hasFacet(FILE)) {
+					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE,
+							IGamlIssue.MISSING_FACET);
+				}
+			} else {
+				if (description.hasFacet(FILE)) {
+					description.error("gis: and file: cannot be defined at the same time",
+							IGamlIssue.CONFLICTING_FACETS);
+				}
+			}
+		}
+
+	}
+
+	IExpression file;
 
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-
-		imageFileExpression = getFacet(IKeyword.FILE, IKeyword.NAME);
-		gisExpression = getFacet(IKeyword.GIS);
-		colorExpression = getFacet(IKeyword.COLOR);
+		file = getFacet(IKeyword.FILE, IKeyword.NAME);
 	}
 
 	/**
@@ -164,86 +182,26 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		return exp;
 	}
 
-	final IExpression imageFileExpression;
-	IExpression gisExpression;
-	final IExpression colorExpression;
-	String constantImage = null;
-	String currentImage = null;
-	GamaColor color = null;
-
-	public GamaColor getColor() {
-		return color;
-	}
-
 	@Override
 	public LayerType getType() {
-		if (gisExpression == null) { return LayerType.IMAGE; }
-		return LayerType.GIS;
-	}
-
-	public String getImageFileName() {
-		return currentImage;
+		if (hasFacet(IKeyword.GIS)) { return LayerType.GIS; }
+		return LayerType.IMAGE;
 	}
 
 	// FIXME Use GamaImageFile
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
-		if (gisExpression == null) {
-			if (constantImage == null) {
-				// Redefined to allow replacing the "name" attribute by "file"
-				IExpression tag = getFacet(IKeyword.NAME);
-				if (tag == null) {
-					tag = getFacet(IKeyword.FILE);
-				}
-				if (tag == null) { throw GamaRuntimeException
-						.error("Missing properties " + IKeyword.NAME + " and " + IKeyword.FILE, scope); }
-				if (tag.isConst()) {
-					setName(Cast.asString(scope, tag.value(scope)));
-				} else {
-					setName(tag.serialize(false));
-				}
-				if (imageFileExpression == null) { throw GamaRuntimeException.error("Image file not defined", scope); }
-				if (imageFileExpression.isConst()) {
-					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
-					currentImage = constantImage;
-					try {
-						ImageUtils.getInstance().getImageFromFile(scope, constantImage, !getRefresh());
-					} catch (final GamaRuntimeFileException ex) {
-						constantImage = null;
-						throw ex;
-					} catch (final Throwable e) {
-						constantImage = null;
-						throw GamaRuntimeException.create(e, scope);
-					}
-				}
-			}
+		if (file.isConst()) {
+			setName(Cast.asString(scope, file.value(scope)));
+		} else {
+			setName(file.serialize(false));
 		}
 		return true;
 	}
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
-		if (gisExpression == null) {
-			currentImage =
-					constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));
-		}
 		return true;
-	}
-
-	/**
-	 * @throws GamlException
-	 * @throws GamaRuntimeException
-	 * @param newValue
-	 */
-	public void setGisLayerName(final IScope scope, final String newValue) throws GamaRuntimeException {
-		gisExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
-	}
-
-	/**
-	 * @param newValue
-	 */
-	public void setImageFileName(final String newValue) {
-		constantImage = newValue;
 	}
 
 }

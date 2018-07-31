@@ -16,7 +16,6 @@ import java.util.List;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
@@ -118,7 +117,8 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			final List<String> R_statements = new ArrayList<>();
 
 			// tmthai.begin----------------------------------------------------------------------------
-			final String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
+			final String fullPath = RFile; // AD already absolute FileUtils.constructAbsoluteFilePath(scope, RFile,
+											// true);
 			if (DEBUG) {
 				scope.getGui().debug("Stats.R_compute_param.RScript:" + RPath);
 				scope.getGui().debug("Stats.R_compute_param.Param:" + vectorParam.toString());
@@ -194,7 +194,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			final List<String> R_statements = new ArrayList<>();
 
 			// tmthai.begin----------------------------------------------------------------------------
-			final String fullPath = FileUtils.constructAbsoluteFilePath(scope, RFile, true);
+			final String fullPath = RFile; // FileUtils.constructAbsoluteFilePath(scope, RFile, true);
 			if (DEBUG) {
 				scope.getGui().debug("Stats.R_compute.RScript:" + RPath);
 				scope.getGui().debug("Stats.R_compute.RFile:" + RFile);

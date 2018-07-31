@@ -29,7 +29,10 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 	public int countModels() {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
-			image = GamaIcons.create(modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
+			final boolean isExternal = getName().equals("external");
+			image = GamaIcons.create(
+					isExternal ? "file.svn2" : modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL)
+					.image();
 			font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;
 		}

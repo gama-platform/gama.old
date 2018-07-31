@@ -13,7 +13,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.test.TestStatement;
@@ -43,5 +48,16 @@ public interface IModel extends ISpecies {
 	public abstract Collection<String> getImportedPaths();
 
 	public abstract List<TestStatement> getAllTests();
+
+	@Override
+	public default URI getURI() {
+		final ModelDescription md = (ModelDescription) getDescription();
+		if (md == null) { return null; }
+		final EObject o = md.getUnderlyingElement();
+		if (o == null) { return null; }
+		final Resource r = o.eResource();
+		if (r == null) { return null; }
+		return r.getURI();
+	}
 
 }

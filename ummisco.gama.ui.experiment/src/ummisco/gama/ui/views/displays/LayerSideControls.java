@@ -34,6 +34,7 @@ import msi.gama.outputs.layers.AgentLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.GridLayerStatement;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.ImageLayerStatement;
 import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.outputs.layers.charts.ChartLayerStatement;
@@ -456,23 +457,23 @@ public class LayerSideControls {
 			case IMAGE: {
 				if (definition instanceof ImageLayerStatement) {
 					EditorFactory.create(container.getScope(), compo, "Image:",
-							((ImageLayerStatement) definition).getImageFileName(), false, newValue -> {
-								((ImageLayerStatement) definition).setImageFileName(newValue);
+							((ImageLayer) layer).getImageFileName(GAMA.getRuntimeScope()), false, newValue -> {
+								((ImageLayer) layer).setImageFileName(GAMA.getRuntimeScope(), newValue);
 								updateIfPaused(layer, container);
 							});
 				}
 				break;
 
 			}
-			case GIS: {
-				EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
-						((ImageLayerStatement) definition).getImageFileName(), newValue -> {
-							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
-									newValue.getName(GAMA.getRuntimeScope()));
-							updateIfPaused(layer, container);
-						});
-				break;
-			}
+			// case GIS: {
+			// EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
+			// ((ImageLayerStatement) definition).getImageFileName(GAMA.getRuntimeScope()), newValue -> {
+			// ((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
+			// newValue.getName(GAMA.getRuntimeScope()));
+			// updateIfPaused(layer, container);
+			// });
+			// break;
+			// }
 			case CHART: {
 				final Button b = new Button(compo, SWT.PUSH);
 				b.setText("Properties");
