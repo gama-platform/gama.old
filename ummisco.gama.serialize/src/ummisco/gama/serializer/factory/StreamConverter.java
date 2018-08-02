@@ -49,6 +49,7 @@ public abstract class StreamConverter {
 		{
 			StreamConverter.registerConverter(dataStreamer,c);
 		}
+//		dataStreamer.setMode(XStream.ID_REFERENCES);
 		return dataStreamer;
 	}
 	

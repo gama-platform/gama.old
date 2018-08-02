@@ -21,12 +21,13 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SavedAgentConverter implements Converter {
 
-	private final static String TAG = "IMacroAgent";
 	ConverterScope convertScope;
 
 	public SavedAgentConverter(final ConverterScope s) {
@@ -49,9 +50,12 @@ public class SavedAgentConverter implements Converter {
 		final ArrayList<Object> datas = new ArrayList<Object>();
 
 		for (final String ky : savedAgt.getKeys()) {
-			keys.add(ky);
-			datas.add(savedAgt.get(ky));
-		}
+			Object val = savedAgt.get(ky);
+			if( !(val instanceof ExperimentAgent) && !(val instanceof SimulationAgent) ) {
+				keys.add(ky);
+				datas.add(val);				
+			}
+		}		
 
 		writer.startNode("variables");
 		writer.startNode("keys");
@@ -61,22 +65,16 @@ public class SavedAgentConverter implements Converter {
 		context.convertAnother(datas);
 		writer.endNode();
 		writer.endNode();
+		
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if ( (inPop != null) && (inPop.size() > 0)) {
-			writer.startNode("innerPopulations");
-			context.convertAnother(inPop);
-			writer.endNode();
-		}
-
-		writer.startNode(TAG);
-		context.convertAnother(true);
+		writer.startNode("innerPopulations");
+		context.convertAnother(inPop);
 		writer.endNode();
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		
-//		System.out.println("read saved agent");
 		reader.moveDown();
 		final String indexStr = reader.getValue();
 		final Integer index = Integer.parseInt(indexStr);
@@ -96,12 +94,7 @@ public class SavedAgentConverter implements Converter {
 		
 		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = null;
-		if (reader.getNodeName().equals("innerPopulations")) {
-			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
-			reader.moveUp();
-			reader.moveDown();
-		}
-		final Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
+		inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
 		reader.moveUp();
 
 		final SavedAgent agtToReturn = new SavedAgent(index, localData, inPop);
