@@ -183,7 +183,7 @@ public class SwtGui implements IGui {
 					final String second = secondaryId == null ? null
 							: secondaryId + "@@@" + String.valueOf(System.currentTimeMillis());
 					// The goal here is to address #2441 by randomizing the ids of views.
-					System.out.println("Opening view " + viewId + " " + second);
+					// System.out.println("Opening view " + viewId + " " + second);
 					result[0] = page.showView(viewId, second, code);
 				}
 			} catch (final Exception e) {

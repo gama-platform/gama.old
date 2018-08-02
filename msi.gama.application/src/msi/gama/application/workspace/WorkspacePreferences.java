@@ -11,6 +11,7 @@
 package msi.gama.application.workspace;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -168,6 +169,8 @@ public class WorkspacePreferences {
 			return "The selected path is not a directory";
 		}
 
+		testWorkspaceSanity(f);
+
 		final File wsTest = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 		if ( fromDialog ) {
 			if ( !wsTest.exists() ) {
@@ -216,6 +219,30 @@ public class WorkspacePreferences {
 			if ( !b ) { return ""; }
 		}
 		return null;
+	}
+
+	public static void testWorkspaceSanity(final File workspace) {
+		System.out.println("[GAMA] Checking for workspace sanity");
+		File[] files = workspace.listFiles((FileFilter) file -> file.getName().equals(".metadata"));
+		if ( files.length == 0 ) { return; }
+		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
+		for ( final File log : logs ) {
+			log.delete();
+		}
+		files = files[0].listFiles((FileFilter) file -> file.getName().equals(".plugins"));
+		if ( files.length == 0 ) { return; }
+		files = files[0].listFiles((FileFilter) file -> file.getName().equals("org.eclipse.core.resources"));
+		if ( files.length == 0 ) { return; }
+		files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
+		if ( files.length == 0 ) { return; }
+		if ( MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
+			"The workspace appears to be corrupted (probably due to a previous crash. Would you like GAMA to clean it ? Once it is done, you should exit the platform and restart it again to complete the cleaning process.") ) {
+			for ( final File file : files ) {
+				file.delete();
+			}
+			return;
+		}
+		System.out.println("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
 	}
 
 	public static String getModelIdentifier() {

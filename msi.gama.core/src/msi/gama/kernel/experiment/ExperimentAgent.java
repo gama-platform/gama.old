@@ -186,14 +186,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public String getDefinedRng() {
 		if (GamaPreferences.External.CORE_RND_EDITABLE
 				.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG)
-						.value(null); }
+						.value(scope); }
 		return GamaPreferences.External.CORE_RNG.getValue();
 	}
 
 	public Double getDefinedSeed() {
 		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
-			final Double result = p.isDefined() ? (Double) p.value(null) : null;
+			final Double result = p.isDefined() ? (Double) p.value(scope) : null;
 			return result;
 		}
 		return GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()

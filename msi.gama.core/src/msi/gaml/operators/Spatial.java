@@ -426,7 +426,7 @@ public abstract class Spatial {
 																		// originx;
 			final double worldHeight = scope.getTopology().getHeight();// -
 																		// originy;
-			final double max = FastMath.max(worldWidth, worldHeight);
+			final double max = Math.max(worldWidth, worldHeight);
 			final double min_point_x = originx + Maths.cos(min_angle) * max;
 			final double min_point_y = originy + Maths.sin(min_angle) * max;
 			final ILocation minPoint = new GamaPoint(min_point_x, min_point_y);

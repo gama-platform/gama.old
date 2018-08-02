@@ -25,7 +25,7 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * Class WrappedFile.
+ * Class LinkedFile.
  *
  * @author drogoul
  * @since 5 févr. 2015
