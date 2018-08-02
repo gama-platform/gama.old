@@ -236,9 +236,11 @@ public class WorkspacePreferences {
 		files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
 		if ( files.length == 0 ) { return; }
 		if ( MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
-			"The workspace appears to be corrupted (probably due to a previous crash. Would you like GAMA to clean it ? Once it is done, you should exit the platform and restart it again to complete the cleaning process.") ) {
+			"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ? Once it is done, you should exit the platform and restart it again to complete the cleaning process.") ) {
 			for ( final File file : files ) {
-				file.delete();
+				if ( file.exists() ) {
+					file.delete();
+				}
 			}
 			return;
 		}
