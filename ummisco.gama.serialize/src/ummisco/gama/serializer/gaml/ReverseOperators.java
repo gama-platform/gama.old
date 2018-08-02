@@ -10,10 +10,7 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gaml;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -61,21 +58,11 @@ public class ReverseOperators {
 	@operator(value = "unSerializeSimulationFromFile")
 	@doc(value = "")
 	public static int unSerializeSimulationFromFile(final IScope scope, final GamaSavedSimulationFile file) {
-		final ConverterScope cScope = new ConverterScope(scope);
-		final XStream xstream = StreamConverter.loadAndBuild(cScope);
-
-		String stringFile = file.getBuffer().get(0);
-		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);
-		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
-		final SimulationAgent simAgent = expAgt.getSimulation();
-
-		simAgent.updateWith(scope, saveAgt);
-
-		return 1;
+		return unSerializeSimulationFromXML(scope, file.getBuffer().get(0));
 	}
 
 	@operator(value = "unSerializeSimulation")
-	@doc(value="unSerializeSimulation")//, deprecated ="Still in alpha version, do not use it.")
+	@doc(value="unSerializeSimulation")
 	// TODO: this should not be an operator .... 
 	// TODO: should be check ....
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
@@ -87,20 +74,6 @@ public class ReverseOperators {
 		final SimulationAgent simAgent = expAgt.getSimulation();
 
 		simAgent.updateWith(scope, saveAgt);
-
-		// exp.getSimulation().dispose();
-
-		// SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
-		// SimulationAgent simAgt = (SimulationAgent) xstream.fromXML(simul);
-
-		// SimulationPopulation simPop = exp.getSimulationPopulation();
-		// agt.restoreTo(scope, simPop);
-
-		// SimulationAgent simAgt = exp.getSimulation();
-		// cScope.setSimulationAgent(simAgt);
-
-		// agt = (SavedAgent) xstream.fromXML(simul);
-		// simAgt = (SimulationAgent) xstream.fromXML(simul);
 
 		return 1;
 	}
@@ -129,7 +102,7 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "saveSimulation")
-	@doc(value = "")//, deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "")
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgt = expAgt.getSimulation();

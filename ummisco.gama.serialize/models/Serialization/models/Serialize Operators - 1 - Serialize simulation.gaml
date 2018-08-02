@@ -14,8 +14,6 @@ global {
 
 experiment Model1 type: gui {
 
-	list<string> history <- [];
-
 	reflex store { 
 		write "================ store " + self + " - " + cycle;
 		string serial <- serializeAgent(self.simulation);

@@ -54,6 +54,8 @@ experiment Model4 type: gui {
 	
 	reflex restore when: (cycle = 4) {
 		write "================ restore " + self + " - " + cycle;
+		write "Restor from: ";		
+		write save_step;
 		int serial <- unSerializeSimulation(save_step);
 		write "================ END restore " + self + " - " + cycle;			
 	}

@@ -5,8 +5,11 @@
 
 package ummisco.gama.serializer.gaml;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.thoughtworks.xstream.XStream;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.statements.Arguments;
@@ -14,7 +17,10 @@ import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.IType;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.metamodel.agent.SavedAgent;
 import msi.gaml.types.Types;
+import ummisco.gama.serializer.factory.StreamConverter;
+import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
 /**
  * Class CreateFromSavecSimulationDelegate.
@@ -46,7 +52,20 @@ public class CreateFromSavedSimulationDelegate implements ICreateDelegate {
 			final Object source, final Arguments init, final CreateStatement statement) {
 		final GamaSavedSimulationFile file = (GamaSavedSimulationFile) source;
 
-		ReverseOperators.unSerializeSimulationFromFile( scope, file) ;
+	// FIXME : previous version, but alter the simulation...
+	// 	ReverseOperators.unSerializeSimulationFromFile( scope, file) ;
+				
+		final ConverterScope cScope = new ConverterScope(scope);
+		final XStream xstream = StreamConverter.loadAndBuild(cScope);
+
+		String stringFile = file.getBuffer().get(0);
+		System.out.println(stringFile);
+		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);
+		
+		HashMap mapSavedAgt = new HashMap<String, Object>();
+		mapSavedAgt.put("SavedAgent", saveAgt);
+		
+		inits.add(mapSavedAgt);
 		
 		return true;
 	}
