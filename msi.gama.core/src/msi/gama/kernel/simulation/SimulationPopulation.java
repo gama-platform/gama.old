@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
@@ -107,7 +108,15 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		if (toBeScheduled) {
 			sim.prepareGuiForSimulation(scope);
 		}
-		createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
+		
+		Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(0);
+		Object firstValue =  (firstInitValues != null && !firstInitValues.isEmpty()) ? firstInitValues.values().toArray()[0] : null;
+		if(firstValue != null && firstValue instanceof SavedAgent) {
+			sim.updateWith(scope, (SavedAgent) firstValue);
+		} else {
+			createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
+		}
+		
 		if (toBeScheduled) {
 			if (isRestored) {
 				sim.initOutputs();
