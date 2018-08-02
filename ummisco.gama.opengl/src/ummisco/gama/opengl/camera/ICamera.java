@@ -96,4 +96,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract void setUpVector(double i, double j, double k);
 
+	public abstract double getDistance();
+
 }

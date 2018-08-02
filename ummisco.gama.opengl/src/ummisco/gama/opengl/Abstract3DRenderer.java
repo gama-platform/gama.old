@@ -140,7 +140,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected Envelope3D ROIEnvelope = null;
 	// relative to rotation helper
 	protected boolean drawRotationHelper = false;
-	protected GamaPoint rotationHelperPosition = null;
 
 	// CACHES FOR TEXTURES, FONTS AND GEOMETRIES
 
@@ -404,7 +403,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public GamaPoint getRotationHelperPosition() {
-		return rotationHelperPosition;
+		return camera.getTarget();
 	}
 
 	public GamaPoint getWorldsDimensions() {
@@ -508,20 +507,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		}
 	}
 
-	public void startDrawRotationHelper(final GamaPoint pos) {
-		rotationHelperPosition = pos;
+	public void startDrawRotationHelper() {
 		drawRotationHelper = true;
-		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
-				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
-				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		final double size = distance / 10; // the size of the displayed axis
 		if (currentScene != null) {
-			currentScene.startDrawRotationHelper(pos, size);
+			currentScene.startDrawRotationHelper();
 		}
 	}
 
 	public void stopDrawRotationHelper() {
-		rotationHelperPosition = null;
 		drawRotationHelper = false;
 		if (currentScene != null) {
 			currentScene.stopDrawRotationHelper();
@@ -665,5 +658,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	@Override
 	public int getHeightForOverlay() {
 		return getViewHeight();
+	}
+
+	public double sizeOfRotationElements() {
+		return Math.min(getMaxEnvDim() / 4d, camera.getDistance() / 6d);
 	}
 }

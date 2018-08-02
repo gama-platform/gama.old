@@ -15,6 +15,7 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
 import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
+import static msi.gaml.types.GamaGeometryType.buildCircle;
 
 import java.awt.Color;
 
@@ -23,7 +24,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D.Heterogeneous;
@@ -33,6 +33,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -85,7 +86,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * computes a number of properties attached to the geometry object, and calls the main drawing method
 	 */
 	@Override
-	protected void _draw(final GeometryObject object) {
+	protected final void _draw(final GeometryObject object) {
 		final boolean push = object.getRotation() != null || object.getInitRotation() != null
 				|| object.getDimensions() != null || object.getFile() != null;
 		try {
@@ -402,12 +403,23 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * @param distance
 	 *            the distance used as a reference (between the camera and its target)
 	 */
-	public void drawRotationHelper(final GamaPoint pos, final double distance) {
+	public void drawRotationHelperOld(final GamaPoint pos, final double distance) {
 		gl.setZIncrement(0);
 		gl.setCurrentColor(Color.gray, 0.3);
 		final double height = Math.min(gl.getMaxWorldDim() / 4, distance / 6d);
-		final Geometry point = GeometryUtils.GEOMETRY_FACTORY.createPoint(pos.yNegated()).buffer(height);
+		final Geometry point = GamaGeometryType.buildCircle(height, pos.yNegated()).getInnerGeometry();
 		drawSphere(point, true, height, DEFAULT_BORDER);
+	}
+
+	public void drawRotationHelper(final GamaPoint target, final double distance, final double height) {
+		gl.pushMatrix();
+		gl.getGL().glLoadIdentity();
+		gl.setZIncrement(0);
+		gl.setCurrentColor(Color.gray, 0.3);
+		final GamaPoint position = target.yNegated().add(0, 0, -height);
+		final Geometry point = buildCircle(height, position).getInnerGeometry();
+		drawSphere(point, true, height, DEFAULT_BORDER);
+		gl.popMatrix();
 	}
 
 }

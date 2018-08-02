@@ -56,10 +56,10 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	@Override
 	void fillWithObjects(final List<AbstractObject> list) {
-		final double size = renderer.getMaxEnvDim();
+		final double max = renderer.getMaxEnvDim();
 		if (renderer.useShader()) {
 			for (int i = 0; i < 3; i++) {
-				final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
+				final GamaPoint p = new GamaPoint(i == 0 ? max : 0, i == 1 ? max : 0, i == 2 ? max : 0);
 
 				// build axis
 				list.add(new GeometryObject(GamaGeometryType.buildLine(origin, p), COLORS[i], IShape.Type.LINESTRING,
@@ -73,14 +73,14 @@ public class AxesLayerObject extends StaticLayerObject.World {
 				list.add(strObj);
 
 				// build arrows
-				final GeometryObject arrow = new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6),
+				final GeometryObject arrow = new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), max / 6),
 						COLORS[i], IShape.Type.POLYGON, false);
 				list.add(arrow);
 			}
 		} else {
 			for (int i = 0; i < 3; i++) {
-				final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
-				final GamaShape axis2 = (GamaShape) GamaGeometryType.buildLineCylinder(origin, p, size / 40);
+				final GamaPoint p = new GamaPoint(i == 0 ? max : 0, i == 1 ? max : 0, i == 2 ? max : 0);
+				final GamaShape axis2 = (GamaShape) GamaGeometryType.buildLineCylinder(origin, p, max / 40);
 				final AxisAngle rotation = i == 0 ? new AxisAngle(Rotation3D.PLUS_J, 90)
 						: i == 1 ? new AxisAngle(Rotation3D.MINUS_I, 90) : null;
 				// build axis
@@ -95,7 +95,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 				// build arrows
 
-				GamaShape s = (GamaShape) GamaGeometryType.buildCone3D(size / 15, size / 6, origin);
+				GamaShape s = (GamaShape) GamaGeometryType.buildCone3D(max / 15, max / 6, origin);
 				s = new GamaShape(s, null, rotation, p.times(0.98));
 				final GeometryObject arrow = new GeometryObject(s, COLORS[i], IShape.Type.CONE, false);
 

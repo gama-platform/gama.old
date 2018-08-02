@@ -195,8 +195,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			geometryDrawer.drawROIHelper(ROIEnvelope);
 		}
 		if (drawRotationHelper) {
-			geometryDrawer.drawRotationHelper(rotationHelperPosition,
-					camera.getPosition().distance3D(rotationHelperPosition));
+			geometryDrawer.drawRotationHelper(camera.getTarget(), camera.getDistance(), sizeOfRotationElements());
 		}
 		//
 		if (keystone.isKeystoneInAction()) {

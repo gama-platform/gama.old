@@ -1016,7 +1016,9 @@ public class OpenGL {
 		final int stacks = slices;
 		textured = true;
 		geometryCache.put(SPHERE, BuiltInGeometry.assemble().faces(compileAsList(() -> {
+			translateBy(0d, 0d, 1d);
 			drawSphere(1.0, slices, stacks);
+			translateBy(0, 0, -1d);
 		})));
 		geometryCache.put(CYLINDER, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
 			drawDisk(0d, 1d, slices, slices / 3);

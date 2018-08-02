@@ -241,11 +241,14 @@ public class ModelScene {
 		}
 	}
 
-	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
+	public void startDrawRotationHelper() {
 		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
 		if (worldLayer != null) {
+			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
 			worldLayer.setOffset(pivotPoint.yNegated());
+			final double size = renderer.sizeOfRotationElements();
 			final double ratio = size / renderer.getMaxEnvDim();
+			// see if it is necessary ?
 			worldLayer.setScale(new GamaPoint(ratio, ratio, ratio));
 
 		}

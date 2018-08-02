@@ -257,7 +257,7 @@ public class LayerObject {
 	}
 
 	public void setOffset(final GamaPoint offset) {
-		this.offset = offset;
+		this.offset = new GamaPoint(offset);
 	}
 
 	public GamaPoint getScale() {
@@ -269,7 +269,8 @@ public class LayerObject {
 	}
 
 	public void setScale(final GamaPoint scale) {
-		this.scale.setLocation(scale);
+		this.scale = new GamaPoint(scale);
+		// this.scale.setLocation(scale);
 	}
 
 	public StringObject addString(final String string, final DrawingAttributes attributes) {
@@ -383,27 +384,6 @@ public class LayerObject {
 	public boolean isOverlay() {
 		return overlay;
 	}
-
-	// public SimpleLayer toSimpleLayer() {
-	//
-	// final List<DrawingEntity> drawingEntityList = new ArrayList<DrawingEntity>();
-	// // we don't send the "constantRedrawnLayer" (like the rotation helper)
-	// if (!constantRedrawnLayer) {
-	// for (final List<AbstractObject> list : objects) {
-	// for (final AbstractObject object : list) {
-	// final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
-	// .generateDrawingEntities(renderer.getSurface().getScope(), object, false, this, null);
-	// // explicitly passes null for the OpenGL context
-	// if (drawingEntities != null) {
-	// for (final DrawingEntity drawingEntity : drawingEntities) {
-	// drawingEntityList.add(drawingEntity);
-	// }
-	// }
-	// }
-	// }
-	// }
-	// return new SimpleLayer(getOffset(), getScale(), alpha, drawingEntityList);
-	// }
 
 	public int numberOfTraces() {
 		return objects == null ? 1 : objects.size();

@@ -48,21 +48,22 @@ public class CameraArcBall extends AbstractCamera {
 		final double sinT = Math.sin(factorT);
 		final double cosP = Math.cos(factorP);
 		final double sinP = Math.sin(factorP);
-		setPosition(distance * cosT * sinP + target.x, distance * sinT * sinP + target.y, distance * cosP + target.z);
+		setPosition(getDistance() * cosT * sinP + target.x, getDistance() * sinT * sinP + target.y,
+				getDistance() * cosP + target.z);
 	}
 
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
 
 		final GamaPoint p = position.minus(target);
-		distance = p.norm();
+		setDistance(p.norm());
 
 		theta = Maths.toDeg * Math.atan2(p.y, p.x);
 		// See issue on camera_pos
 		if (theta == 0) {
 			theta = -90;
 		}
-		phi = Maths.toDeg * Math.acos(p.z / distance);
+		phi = Maths.toDeg * Math.acos(p.z / getDistance());
 	}
 
 	private void translateCameraFromScreenPlan(final double x_translation_in_screen,
@@ -93,11 +94,12 @@ public class CameraArcBall extends AbstractCamera {
 		final double y_translation_in_world = theta_vect_y_norm + phi_vect_y_norm;
 		final double z_translation_in_world = theta_vect_z_norm + phi_vect_z_norm;
 
-		setPosition(position.x - x_translation_in_world * distance / 1000,
-				position.y - y_translation_in_world * distance / 1000,
-				position.z - z_translation_in_world * distance / 1000);
-		setTarget(target.x - x_translation_in_world * distance / 1000, target.y - y_translation_in_world * distance / 1000,
-				target.z - z_translation_in_world * distance / 1000);
+		setPosition(position.x - x_translation_in_world * getDistance() / 1000,
+				position.y - y_translation_in_world * getDistance() / 1000,
+				position.z - z_translation_in_world * getDistance() / 1000);
+		setTarget(target.x - x_translation_in_world * getDistance() / 1000,
+				target.y - y_translation_in_world * getDistance() / 1000,
+				target.z - z_translation_in_world * getDistance() / 1000);
 
 		updateSphericalCoordinatesFromLocations();
 	}
@@ -200,7 +202,7 @@ public class CameraArcBall extends AbstractCamera {
 				} else {
 					final double envWidth = data.getEnvWidth();
 					final double envHeight = data.getEnvHeight();
-					distance = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
+					setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR);
 					setTarget(envWidth / 2d, -envHeight / 2d, 0);
 					phi = 0;
 					theta = -90.00;
@@ -212,7 +214,7 @@ public class CameraArcBall extends AbstractCamera {
 			} else {
 				final double envWidth = data.getEnvWidth();
 				final double envHeight = data.getEnvHeight();
-				distance = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
+				setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR);
 				setTarget(envWidth / 2d, -envHeight / 2d, 0);
 				phi = 0;
 				theta = -90.00;
@@ -356,20 +358,21 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public Double zoomLevel() {
-		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / distance;
+		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / getDistance();
 	}
 
 	@Override
 	public void zoom(final double level) {
-		distance = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level;
+		setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level);
 		updateCartesianCoordinatesFromAngles();
 	}
 
 	@Override
 	public void zoom(final boolean in) {
 		if (keystoneMode) { return; }
-		final double step = distance != 0d ? distance / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
-		distance = distance + (in ? -step : step);
+		final double step =
+				getDistance() != 0d ? getDistance() / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
+		setDistance(getDistance() + (in ? -step : step));
 		getRenderer().data.setZoomLevel(zoomLevel(), true);
 	}
 
@@ -377,7 +380,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void zoomRoi(final Envelope3D env) {
 		final int width = (int) env.getWidth();
 		final int height = (int) env.getHeight();
-		distance = 1.5 * (width > height ? width : height);
+		setDistance(1.5 * (width > height ? width : height));
 		// y is already negated
 		setTarget(env.centre());
 		getRenderer().data.setZoomLevel(zoomLevel(), true);
@@ -388,9 +391,9 @@ public class CameraArcBall extends AbstractCamera {
 		final ILocation p = shape.getLocation();
 		final double extent = shape.getEnvelope().maxExtent();
 		if (extent == 0) {
-			distance = p.getZ() + getRenderer().getMaxEnvDim() / 10;
+			setDistance(p.getZ() + getRenderer().getMaxEnvDim() / 10);
 		} else {
-			distance = extent * 1.5;
+			setDistance(extent * 1.5);
 		}
 		// y is NOT negated in IShapes
 		setTarget(p.getCentroid().yNegated());
@@ -516,11 +519,20 @@ public class CameraArcBall extends AbstractCamera {
 	protected void drawRotationHelper() {
 		if (isDrawingRotateHelper) {
 			if (ctrlPressed) {
-				getRenderer().startDrawRotationHelper(target);
+				getRenderer().startDrawRotationHelper();
 			} else {
 				getRenderer().stopDrawRotationHelper();
 			}
 		}
+	}
+
+	@Override
+	public double getDistance() {
+		return distance;
+	}
+
+	private void setDistance(final double distance) {
+		this.distance = distance;
 	}
 
 }// End of Class CameraArcBall

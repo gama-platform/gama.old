@@ -54,6 +54,11 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
+	public double getDistance() {
+		return position.minus(target).norm();
+	}
+
+	@Override
 	public void animate() {
 		super.animate();
 		if (isForward()) {

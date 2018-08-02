@@ -13,11 +13,11 @@ global {
 	
 	bool emptiness <- false;
 	
-	int size <- 10;
-	list<geometry> geometries2D <-[ point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size), square(size) - square(size / 2)];
-	list<geometry> texturedGeometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size),square(size) - square(size / 2) ];	
-	list<geometry> geometries3D <-[sphere(size/2), line ([{0,0},{size,size}],1), polyline([{0,0},{size/2,size/2},{0,size}],1),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
-    list<geometry> texturedGeometries <-[sphere(size/2),line ([{0,0},{size,size}],1), polyline([{0,0},{size/2,size/2},{0,size}],1), plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
+	int size <- 10 ;
+	list<geometry> geometries2D <-[ point([0,0]),circle(size),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size), square(size) - square(size / 2)];
+	list<geometry> texturedGeometries2D <-[point([0,0]), circle(size),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size),square(size) - square(size / 2) ];	
+	list<geometry> geometries3D <-[sphere(size), cone3D(size, size*2),line ([{0,0},{size,size}],1), polyline([{0,0},{size/2,size/2},{0,size}],1),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
+    list<geometry> texturedGeometries <-[sphere(size), cone3D(size, size*2), line ([{0,0},{size,size}],1), polyline([{0,0},{size/2,size/2},{0,size}],1), plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
     
    	int angle <- 0 update: (angle+1) mod 360;
 	
@@ -99,13 +99,21 @@ species TexturedGeometry3D{
 	file myTexture;
 
 	aspect default {
-		draw myGeometry rotated_by (-angle, {1,0,1}) texture:myTexture.path at:location ;
+		draw myGeometry rotated_by (-angle, {0,0,1}) texture:myTexture.path at:location ;
     }
 }
 
 experiment "3D Shapes"  type: gui {
 	parameter "Are geometries empty?" var: emptiness ;
+	int old_pref <- gama.pref_display_slice_number;
+	init {
+		
+		gama.pref_display_slice_number <- 64;
+	}
 	
+	abort {
+		gama.pref_display_slice_number <- old_pref;
+	}
 	output {
 		display View1 type:opengl background:rgb(10,40,55)   {
 			species Geometry2D aspect:default;
