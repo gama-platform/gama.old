@@ -257,7 +257,11 @@ public class LayerObject {
 	}
 
 	public void setOffset(final GamaPoint offset) {
-		this.offset = new GamaPoint(offset);
+		if (offset != null) {
+			this.offset = new GamaPoint(offset);
+		} else {
+			this.offset = null;
+		}
 	}
 
 	public GamaPoint getScale() {
