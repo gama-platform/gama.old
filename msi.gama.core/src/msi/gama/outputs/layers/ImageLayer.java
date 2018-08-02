@@ -42,7 +42,7 @@ public class ImageLayer extends AbstractLayer {
 
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
 		super(layer);
-		file = getStatement().file;
+		file = ((ImageLayerStatement) definition).file;
 		isFile = file.getGamlType().getGamlType().equals(Types.FILE);
 		isPotentiallyVariable = !file.isContextIndependant();
 		if (!isFile) {
@@ -75,7 +75,7 @@ public class ImageLayer extends AbstractLayer {
 		if (!(input instanceof GamaImageFile)) { throw error("Not an image:" + input.getPath(scope), scope); }
 		final GamaImageFile result = (GamaImageFile) input;
 		try {
-			result.getImage(scope, !getStatement().getRefresh());
+			result.getImage(scope, !definition.getRefresh());
 		} catch (final GamaRuntimeFileException ex) {
 			throw ex;
 		} catch (final Throwable e) {
@@ -88,10 +88,6 @@ public class ImageLayer extends AbstractLayer {
 
 	private Envelope3D computeEnvelope(final IScope scope, final GamaImageFile file) {
 		return file.getGeoDataFile(scope) != null ? file.computeEnvelope(scope) : scope.getSimulation().getEnvelope();
-	}
-
-	public ImageLayerStatement getStatement() {
-		return (ImageLayerStatement) this.definition;
 	}
 
 	protected GamaImageFile buildImage(final IScope scope) {

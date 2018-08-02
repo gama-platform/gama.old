@@ -36,7 +36,7 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 
 // FIXME This class nees to be entirely rewritten ...
 
-public class GridLayer extends ImageLayer {
+public class GridLayer extends AbstractLayer {
 
 	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
 
@@ -53,10 +53,9 @@ public class GridLayer extends ImageLayer {
 	}
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
-		super(scope, layer);
+		super(layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
 		final GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) layer).getEnvironment();
-		// final ILocation p = m.getDimensions();
 		final Envelope env = scope.getRoot().getGeometry().getEnvelope();
 		cellSize = new GamaPoint(env.getWidth() / m.numCols, env.getHeight() / m.numRows);
 	}
