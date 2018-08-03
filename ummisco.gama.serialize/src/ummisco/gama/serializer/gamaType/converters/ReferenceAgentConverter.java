@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.agent.ReferenceAgent;
-import msi.gama.metamodel.agent.ReferenceAgent.ReferenceToAgent;
+import msi.gama.metamodel.agent.ReferenceToAgent;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ReferenceAgentConverter implements Converter {
