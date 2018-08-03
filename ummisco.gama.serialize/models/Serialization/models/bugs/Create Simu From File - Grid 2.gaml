@@ -31,7 +31,7 @@ experiment reloadSimu type: gui {
 	}
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black ;
+	//		grid vegetation_cell lines: #black ;
 			species prey aspect: base;					
 		}
 	}	

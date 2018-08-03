@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.agent.ReferenceAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -710,11 +712,21 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 
+		// This list is updated during all the updateWith of the simulation.
+		// When all the agents will be created (end of this updateWith), 
+		// all the references will be replaced by the corresponding agent.
+		List<ReferenceAgent> list_ref = new ArrayList<>();
+		
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
 		for (final String name : attr.keySet()) {
-			this.setDirectVarValue(scope, name, attr.get(name));
-			// this.setAttribute(name, attr.get(name));
+			Object attrValue = attr.get(name);
+			if( attrValue instanceof ReferenceAgent) {
+				((ReferenceAgent) attrValue).setAgentAndAttrName(this,name);
+				list_ref.add((ReferenceAgent) attrValue);
+			}
+			
+			this.setDirectVarValue(scope, name, attrValue);
 		}
 
 		// Update Clock
@@ -735,7 +747,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		if (savedAgentInnerPop != null) {
 			for (final String savedAgentMicroPopName : savedAgentInnerPop.keySet()) {
-				final IPopulation<? extends IAgent> simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
+				final IPopulation<? extends IAgent> simuMicroPop = getPopulationFor(savedAgentMicroPopName);
+				// final IPopulation<? extends IAgent> simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
 
 				if (simuMicroPop != null) {
 					// Build a map name::innerPopAgentSavedAgt :
@@ -748,19 +761,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 					final Map<String, IAgent> mapSimuAgtName = new THashMap<>();
 
-					// IAgent[] microPopArray = simuMicroPop.toArray();
-
 					for (final IAgent agt : simuMicroPop.toArray()) {
 						mapSimuAgtName.put(agt.getName(), agt);
 					}
-
-					// for(int i = 0 ; i < simuMicroPop.size() ; i ++){
-					// IAgent agt = simuMicroPop.getAgent(i);
-					// String t = agt.getName();
-					// mapSimuAgtName.put((String)
-					// (simuMicroPop.getAgent(i).getName()),
-					// simuMicroPop.getAgent(i));
-					// }
 
 					for (final Entry<String, SavedAgent> e : mapSavedAgtName.entrySet()) {
 						final IAgent agt = mapSimuAgtName.get(e.getKey());
@@ -772,15 +775,22 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							mapSimuAgtName.remove(e.getKey());
 						} else { // the SavedAgent is not in the Simulation,
 									// then create it
-							// List<Map<String,Object>> initialValues = new
-							// ArrayList<>();
-							// initialValues.add(e.getValue().getVariables());
-							// simuMicroPop.createAgents(s, 1, initialValues,
-							// true, true);
+
 							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(),
 									true, true);
 						}
-					}
+						
+						// Find the agt and all the references 
+						final IAgent currentAgent = (agt == null) ? simuMicroPop.getAgent(e.getValue().getIndex()): agt;
+						
+						for (final String name : e.getValue().keySet()) {
+							Object attrValue = e.getValue().get(name);
+							if( attrValue instanceof ReferenceAgent) {
+								((ReferenceAgent) attrValue).setAgentAndAttrName(currentAgent,name);
+								list_ref.add((ReferenceAgent) attrValue);
+							}
+						}
+					}	
 
 					// For all remaining agents in the mapSimuAgtName, kill them
 					for (final IAgent remainingAgent : mapSimuAgtName.values()) {
@@ -790,10 +800,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 						// microPop.clear();
 						// microPop.firePopulationCleared();
 					}
+					
+					// Update all the references !
+					updateReferences(scope, list_ref);
 				}
 			}
 		}
 
+	}
+	
+	private void updateReferences(IScope scope, List<ReferenceAgent> list_ref) {
+		list_ref.stream().forEach(
+			ref -> ref.getAgt().setDirectVarValue(scope, ref.getAttributeName(), ref.getReferencedAgent(this))
+		);
+		
+//		for(ReferenceAgent ref : list_ref) {	
+//			ref.getAgt().setDirectVarValue(scope, ref.getAttributeName(), ref.getReferencedAgent(this));
+//		}
 	}
 
 	public void adoptTopologyOf(final SimulationAgent root) {

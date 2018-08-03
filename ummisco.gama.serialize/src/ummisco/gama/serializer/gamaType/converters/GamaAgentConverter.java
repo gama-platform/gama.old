@@ -10,11 +10,10 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
+import msi.gama.metamodel.agent.ReferenceAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 
 import java.util.List;
@@ -35,6 +34,8 @@ public class GamaAgentConverter implements Converter {
 	
 	@Override
 	public boolean canConvert(final Class arg0) {
+		if(ReferenceAgent.class.equals(arg0)) {return false;}
+		
 		if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) || GamlAgent.class.equals(arg0.getSuperclass())){
 			return true;
 		}
@@ -66,7 +67,12 @@ public class GamaAgentConverter implements Converter {
 		
 		writer.startNode("agentReference");
 		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
-		writer.setValue(agt.getName());
+		
+		//ReferenceSavedAgent refAft = new ReferenceSavedAgent(agt, null, (ReferenceToAgent) null);
+		ReferenceAgent refAft = new ReferenceAgent(null, null, agt);		
+		context.convertAnother(refAft);
+		
+		//writer.setValue(agt.getName());
 		System.out.println("===========END ConvertAnother : GamaAgent truc youpi");
 		
 		writer.endNode();
@@ -76,24 +82,25 @@ public class GamaAgentConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		// TODO manage MinimalAgent and MinimalGridAgent 
 		reader.moveDown();
-		SimulationAgent simAgt = convertScope.getSimulationAgent();
-		List<IAgent> lagt;
-		if(simAgt == null) {
-			lagt = (convertScope.getScope()).getSimulation().getAgents(convertScope.getScope());
-		} else {
-			lagt = simAgt.getAgents(convertScope.getScope());
-		}
+		//SimulationAgent simAgt = convertScope.getSimulationAgent();
+		//List<IAgent> lagt;
+		//if(simAgt == null) {
+		//	lagt = (convertScope.getScope()).getSimulation().getAgents(convertScope.getScope());
+		//} else {
+		//	lagt = simAgt.getAgents(convertScope.getScope());
+		//}
+		ReferenceAgent agt = (ReferenceAgent) arg1.convertAnother(null, ReferenceAgent.class);
 		
-		boolean found = false;
-		int i = 0;
-		IAgent agt = null;
-		while(!found && (i < lagt.size())) {
-			if(lagt.get(i).getName().equals(reader.getValue())) {
-				found = true;
-				agt = lagt.get(i);
-			}
-			i++;
-		}
+		//boolean found = false;
+		//int i = 0;
+		//IAgent agt = null;
+		//while(!found && (i < lagt.size())) {
+		//	if(lagt.get(i).getName().equals(reader.getValue())) {
+		//		found = true;
+		//		agt = lagt.get(i);
+		//	}
+		//	i++;
+		//}
 		reader.moveUp();
 		return agt;
 	}
