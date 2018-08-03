@@ -26,6 +26,7 @@ public class Pref<T> implements IParameter {
 	static int ORDER = 0;
 
 	private final int order = ORDER++;
+	private final boolean inGaml;
 
 	String key, title, tab, group, comment;
 	boolean disabled = false; // by default
@@ -40,9 +41,10 @@ public class Pref<T> implements IParameter {
 	Set<IPreferenceChangeListener<T>> listeners = new HashSet<>();
 	// private T[] v;
 
-	Pref(final String key, final int type) {
+	Pref(final String key, final int type, final boolean inGaml) {
 		this.type = type;
 		this.key = key;
+		this.inGaml = inGaml;
 	}
 
 	public Pref<T> group(final String g) {
@@ -301,6 +303,10 @@ public class Pref<T> implements IParameter {
 
 	public boolean isHidden() {
 		return hidden;
+	}
+
+	public boolean inGaml() {
+		return inGaml;
 	}
 
 }

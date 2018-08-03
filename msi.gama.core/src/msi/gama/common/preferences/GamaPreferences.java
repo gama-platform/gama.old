@@ -83,27 +83,27 @@ public class GamaPreferences {
 		 */
 		public static final String STARTUP = "Startup";
 		public static final Pref<Boolean> CORE_SHOW_PAGE =
-				create("pref_show_welcome_page", "Display welcome page", true, IType.BOOL).in(NAME, STARTUP);
+				create("pref_show_welcome_page", "Display welcome page", true, IType.BOOL, false).in(NAME, STARTUP);
 		public static final Pref<Boolean> CORE_SHOW_MAXIMIZED =
-				create("pref_show_maximized", "Maximize GAMA window", true, IType.BOOL).in(NAME, STARTUP);
+				create("pref_show_maximized", "Maximize GAMA window", true, IType.BOOL, false).in(NAME, STARTUP);
 		/**
 		 * Menus
 		 */
 		public static final String MENUS = "Menus";
 		public static final Pref<Integer> CORE_MENU_SIZE =
-				create("pref_menu_size", "Break down agents in menus every", 50, IType.INT).between(10, 100).in(NAME,
-						MENUS);
+				create("pref_menu_size", "Break down agents in menus every", 50, IType.INT, false).between(10, 100)
+						.in(NAME, MENUS);
 		/**
 		 * Console
 		 */
 		public static final String CONSOLE = "Console";
-		public static final Pref<Integer> CORE_CONSOLE_SIZE =
-				create("pref_console_size", "Max. number of characters to display (-1 = unlimited)", 20000, IType.INT)
-						.in(NAME, CONSOLE);
-		public static final Pref<Integer> CORE_CONSOLE_BUFFER = create("pref_console_buffer",
-				"Max. number of characters to keep when paused (-1 = unlimited)", 20000, IType.INT).in(NAME, CONSOLE);
+		public static final Pref<Integer> CORE_CONSOLE_SIZE = create("pref_console_size",
+				"Max. number of characters to display (-1 = unlimited)", 20000, IType.INT, true).in(NAME, CONSOLE);
+		public static final Pref<Integer> CORE_CONSOLE_BUFFER =
+				create("pref_console_buffer", "Max. number of characters to keep when paused (-1 = unlimited)", 20000,
+						IType.INT, true).in(NAME, CONSOLE);
 		public static final Pref<Boolean> CORE_CONSOLE_WRAP =
-				create("pref_console_wrap", "Wrap long lines (can slow down output)", false, IType.BOOL).in(NAME,
+				create("pref_console_wrap", "Wrap long lines (can slow down output)", false, IType.BOOL, true).in(NAME,
 						CONSOLE);
 		/**
 		 * Appearance
@@ -114,17 +114,17 @@ public class GamaPreferences {
 		 */
 		public static final String SIMULATIONS = "Simulations";
 		public static final Pref<Boolean> CORE_SIMULATION_NAME = create("pref_append_simulation_name",
-				"Append the name of simulations to their outputs", false, IType.BOOL).in(NAME, SIMULATIONS);
+				"Append the name of simulations to their outputs", false, IType.BOOL, true).in(NAME, SIMULATIONS);
 		public static final Pref<GamaColor>[] SIMULATION_COLORS = new Pref[5];
 
 		public static Pref<Boolean> KEEP_NAVIGATOR_STATE = create("pref_keep_navigator_state",
-				"Maintain the state of the navigator across sessions", true, IType.BOOL).in(NAME, STARTUP);
+				"Maintain the state of the navigator across sessions", true, IType.BOOL, false).in(NAME, STARTUP);
 
 		static {
 			for (int i = 0; i < 5; i++) {
 				SIMULATION_COLORS[i] = create("pref_simulation_color_" + i,
-						"Color of Simulation " + i + " in the UI (console, view tabs) ", BASIC_COLORS[i], IType.COLOR)
-								.in(NAME, SIMULATIONS);
+						"Color of Simulation " + i + " in the UI (console, view tabs) ", BASIC_COLORS[i], IType.COLOR,
+						true).in(NAME, SIMULATIONS);
 			}
 		}
 
@@ -143,51 +143,57 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIONS = "Options";
 		public static final Pref<Boolean> CORE_PERSPECTIVE = create("pref_switch_perspective",
-				"Switch to modeling perspective when editing a model", false, IType.BOOL).in(NAME, OPTIONS);
+				"Switch to modeling perspective when editing a model", false, IType.BOOL, false).in(NAME, OPTIONS);
 		/**
 		 * Validation
 		 */
 		// public static final String VALIDATION = "Validation of Models";
 		public static final Pref<Boolean> WARNINGS_ENABLED =
-				create("pref_editor_enable_warnings", "Show warning markers in the editor", true, IType.BOOL).in(NAME,
-						OPTIONS);
+				create("pref_editor_enable_warnings", "Show warning markers in the editor", true, IType.BOOL, false)
+						.in(NAME, OPTIONS);
 
 		public static final Pref<Boolean> INFO_ENABLED =
-				create("pref_editor_enable_infos", "Show information markers in the editor", true, IType.BOOL).in(NAME,
-						OPTIONS);
+				create("pref_editor_enable_infos", "Show information markers in the editor", true, IType.BOOL, false)
+						.in(NAME, OPTIONS);
 
 		public static final Pref<Boolean> EDITOR_PERSPECTIVE_SAVE =
-				create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL)
-						.in(Modeling.NAME, Modeling.OPTIONS).activates("pref_editor_ask_save");
-		public static Pref<String> OPERATORS_MENU_SORT =
-				GamaPreferences.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING)
-						.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
-		public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
-				.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL).in(NAME, TEXT);
+				create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL,
+						false).in(Modeling.NAME, Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
+				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
+				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
+		public static final Pref<Boolean> CORE_CLOSE_CURLY =
+				GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL, false)
+						.in(NAME, TEXT);
 		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
-				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL).in(NAME, TEXT);
+				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL, false)
+				.in(NAME, TEXT);
 		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
-				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL).in(NAME, TEXT);
+				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL, false).in(NAME, TEXT);
 		public static final Pref<Boolean> EDITOR_CLEAN_UP =
-				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL)
+				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false)
 						.in(NAME, GamaPreferences.Modeling.OPTIONS);
-		public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
-				.create("pref_editor_save_all", "Save all editors before lauching an experiment", true, IType.BOOL)
-				.in(NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static final Pref<Boolean> EDITOR_SAVE =
+				GamaPreferences
+						.create("pref_editor_save_all", "Save all editors before lauching an experiment", true,
+								IType.BOOL, false)
+						.in(NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = GamaPreferences.create("pref_editor_drag_resources",
-				"Drag files and resources as references in GAML files", true, IType.BOOL).in(NAME, OPTIONS);
-		public static final Pref<Boolean> EDITOR_SAVE_ASK = GamaPreferences
-				.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL).in(NAME, OPTIONS);
+				"Drag files and resources as references in GAML files", true, IType.BOOL, false).in(NAME, OPTIONS);
+		public static final Pref<Boolean> EDITOR_SAVE_ASK =
+				GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL, false)
+						.in(NAME, OPTIONS);
 		public static final Pref<Boolean> EDITBOX_ENABLED = GamaPreferences
-				.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL)
+				.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL, false)
 				.in(NAME, TEXT);
 		public static final Pref<GamaFont> EDITOR_BASE_FONT = GamaPreferences
-				.create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT).in(NAME, TEXT);
-		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = GamaPreferences
-				.create("pref_editor_background_color", "Background color of editors", (GamaColor) null, IType.COLOR)
-				.in(NAME, TEXT);
+				.create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT, false).in(NAME, TEXT);
+		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
+				GamaPreferences.create("pref_editor_background_color", "Background color of editors", (GamaColor) null,
+						IType.COLOR, false).in(NAME, TEXT);
 		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
-				.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL).in(NAME, TEXT);
+				.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL, false)
+				.in(NAME, TEXT);
 
 		// .activates("pref_tests_period");
 		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
@@ -226,16 +232,15 @@ public class GamaPreferences {
 		 * Running experiments
 		 */
 		public static final String EXECUTION = "Experiments";
-		public static final Pref<Boolean> CORE_AUTO_RUN =
-				create("pref_experiment_auto_run", "Auto-run experiments when they are launched", false, IType.BOOL)
-						.in(NAME, EXECUTION);
-		public static final Pref<Boolean> CORE_ASK_CLOSING = create("pref_experiment_ask_closing",
-				"Ask to close the previous experiment when launching a new one", true, IType.BOOL).in(NAME, EXECUTION);
-		public static final Pref<Double> CORE_DELAY_STEP =
-				create("pref_experiment_default_step", "Default step for the delay slider (in sec.)", 0.01, IType.FLOAT)
-						.in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_AUTO_RUN = create("pref_experiment_auto_run",
+				"Auto-run experiments when they are launched", false, IType.BOOL, true).in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_ASK_CLOSING =
+				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
+						true, IType.BOOL, true).in(NAME, EXECUTION);
+		public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
+				"Default step for the delay slider (in sec.)", 0.01, IType.FLOAT, true).in(NAME, EXECUTION);
 		public static final Pref<Boolean> CORE_SYNC =
-				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL)
+				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
 		/**
 		 * Concurrency
@@ -246,52 +251,54 @@ public class GamaPreferences {
 		 */
 		public static final String TESTS = "Tests";
 		public static final Pref<Boolean> TESTS_SORTED =
-				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL).in(NAME, TESTS)
-						.withComment(", if true, aborted and failed tests are displayed first");
+				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL, false)
+						.in(NAME, TESTS).withComment(", if true, aborted and failed tests are displayed first");
 		public static final Pref<Boolean> RUN_TESTS =
-				create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL)
+				create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL, false)
 						.in(NAME, TESTS).disabled().hidden();
 		public static final Pref<Boolean> START_TESTS =
-				create("pref_start_tests", "Run tests at each start of the platform", false, IType.BOOL).in(NAME,
+				create("pref_start_tests", "Run tests at each start of the platform", false, IType.BOOL, false).in(NAME,
 						TESTS);
 		public static final Pref<Boolean> USER_TESTS =
-				create("pref_user_tests", "Include user-defined tests in the tests suite", false, IType.BOOL)
+				create("pref_user_tests", "Include user-defined tests in the tests suite", false, IType.BOOL, false)
 						.in(NAME, TESTS).withComment(", if true, will run user models with 'test' experiments");
 		public static final Pref<Boolean> FAILED_TESTS = create("pref_failed_tests",
-				"Only display (in the UI and in headless runs) failed and aborted tests", false, IType.BOOL)
+				"Only display (in the UI and in headless runs) failed and aborted tests", false, IType.BOOL, true)
 						.in(NAME, TESTS).withComment(", if true, only aborted and failed tests are displayed");
 
 		public static final String MEMORY = "Memory";
 		public static final Pref<Boolean> CORE_MEMORY_POLLING =
-				create("pref_check_memory", "Monitor memory and emit a warning if it is low", true, IType.BOOL)
+				create("pref_check_memory", "Monitor memory and emit a warning if it is low", true, IType.BOOL, true)
 						.in(NAME, MEMORY).activates("pref_memory_threshold", "pref_memory_frequency");
-		public static final Pref<Integer> CORE_MEMORY_PERCENTAGE = create("pref_memory_threshold",
-				"Trigger warnings when the percentage of available memory is below", 20, IType.INT).in(NAME, MEMORY);
+		public static final Pref<Integer> CORE_MEMORY_PERCENTAGE =
+				create("pref_memory_threshold", "Trigger warnings when the percentage of available memory is below", 20,
+						IType.INT, true).in(NAME, MEMORY);
 		public static final Pref<Integer> CORE_MEMORY_FREQUENCY = create("pref_memory_frequency",
-				"Interval (in seconds) at which memory should be monitored", 2, IType.INT).in(NAME, MEMORY);
+				"Interval (in seconds) at which memory should be monitored", 2, IType.INT, true).in(NAME, MEMORY);
 		public static final Pref<Boolean> CORE_MEMORY_ACTION = create("pref_memory_action",
 				"If true, when running out of memory, GAMA will try to close the experiment, otherwise it exits", true,
-				IType.BOOL).in(NAME, MEMORY);
+				IType.BOOL, true).in(NAME, MEMORY);
 		/**
 		 * Errors & warnings
 		 */
 		public static final String ERRORS = "Runtime errors";
 
 		public static final Pref<Boolean> CORE_SHOW_ERRORS =
-				create("pref_errors_display", "Show execution errors", true, IType.BOOL).in(NAME, ERRORS)
+				create("pref_errors_display", "Show execution errors", true, IType.BOOL, true).in(NAME, ERRORS)
 						.activates("pref_errors_number", "pref_errors_recent_first", "pref_display_show_errors");
-		public static final Pref<Boolean> ERRORS_IN_DISPLAYS =
-				create("pref_display_show_errors", "Show errors thrown in displays and outputs", false, IType.BOOL)
-						.in(NAME, ERRORS);
+		public static final Pref<Boolean> ERRORS_IN_DISPLAYS = create("pref_display_show_errors",
+				"Show errors thrown in displays and outputs", false, IType.BOOL, true).in(NAME, ERRORS);
 		public static final Pref<Integer> CORE_ERRORS_NUMBER =
-				create("pref_errors_number", "Number of errors to display", 10, IType.INT).in(NAME, ERRORS).between(1,
-						null);
+				create("pref_errors_number", "Number of errors to display", 10, IType.INT, true).in(NAME, ERRORS)
+						.between(1, null);
 		public static final Pref<Boolean> CORE_RECENT =
-				create("pref_errors_recent_first", "Display most recent first", true, IType.BOOL).in(NAME, ERRORS);
+				create("pref_errors_recent_first", "Display most recent first", true, IType.BOOL, true).in(NAME,
+						ERRORS);
 		public static final Pref<Boolean> CORE_REVEAL_AND_STOP =
-				create("pref_errors_stop", "Stop simulation at first error", true, IType.BOOL).in(NAME, ERRORS);
+				create("pref_errors_stop", "Stop simulation at first error", true, IType.BOOL, true).in(NAME, ERRORS);
 		public static final Pref<Boolean> CORE_WARNINGS =
-				create("pref_errors_warnings_errors", "Treat warnings as errors", false, IType.BOOL).in(NAME, ERRORS);
+				create("pref_errors_warnings_errors", "Treat warnings as errors", false, IType.BOOL, true).in(NAME,
+						ERRORS);
 
 	}
 
@@ -303,19 +310,19 @@ public class GamaPreferences {
 		 */
 		public static final List<String> LAYOUTS = Arrays.asList("None", "Stacked", "Split", "Horizontal", "Vertical");
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
-				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING)
+				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
 						.among(LAYOUTS.toArray(new String[0])).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> CORE_DISPLAY_ORDER =
-				create("pref_display_same_order", "Stack displays in the order defined in the model", true, IType.BOOL)
-						.in(NAME, PRESENTATION);
+		public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
+				"Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		// public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",
 		// "Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)", 200,
 		// IType.INT).between(0, 1000).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
-				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL).in(NAME,
-						PRESENTATION);
-		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE = create("pref_display_continue_drawing",
-				"Continue to draw displays when in Modeling perspective", false, IType.BOOL).in(NAME, PRESENTATION);
+				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL, true)
+						.in(NAME, PRESENTATION);
+		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE =
+				create("pref_display_continue_drawing", "Continue to draw displays when in Modeling perspective", false,
+						IType.BOOL, true).in(NAME, PRESENTATION);
 		// public static final Pref<Boolean> DISPLAY_NATIVE_FULLSCREEN = create("pref_display_fullscreen_native",
 		// "Use the native mode for full-screen (experimental)", false, IType.BOOL).in(NAME, PRESENTATION);
 		// public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN = create("pref_display_fullscreen_menu",
@@ -324,17 +331,17 @@ public class GamaPreferences {
 		// "Show the toolbar when a display is full-screen", false, IType.BOOL).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 				"Enable fast snapshots (uncomplete when the display is obscured by others but much faster)", false,
-				IType.BOOL).in(NAME, PRESENTATION);
+				IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_TOOLBAR =
-				create("pref_display_show_toolbar", "Show the display top toolbar", true, IType.BOOL).in(NAME,
+				create("pref_display_show_toolbar", "Show the display top toolbar", true, IType.BOOL, true).in(NAME,
 						PRESENTATION);
 		public static final Pref<Boolean> CORE_OVERLAY =
-				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL)
+				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL, true)
 						.in(NAME, PRESENTATION).activates("pref_display_show_scale", "pref_display_show_fps");
 		public static final Pref<Boolean> CORE_SCALE =
-				create("pref_display_show_scale", "Show scale bar", false, IType.BOOL).in(NAME, PRESENTATION);
+				create("pref_display_show_scale", "Show scale bar", false, IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_SHOW_FPS =
-				create("pref_display_show_fps", "Show number of frames per second", false, IType.BOOL).in(NAME,
+				create("pref_display_show_fps", "Show number of frames per second", false, IType.BOOL, true).in(NAME,
 						PRESENTATION);
 
 		/**
@@ -342,79 +349,78 @@ public class GamaPreferences {
 		 */
 		public static final String CHARTS = "Charts Preferences";
 		public static final Pref<Boolean> CHART_FLAT =
-				create("pref_display_flat_charts", "Display 'flat' histograms", false, IType.BOOL).in(NAME, CHARTS);
-		public static final Pref<Boolean> CHART_MEMORIZE =
-				create("pref_display_memorize_charts", "Keep values in memory (to save them as CSV)", true, IType.BOOL)
-						.in(NAME, CHARTS);
+				create("pref_display_flat_charts", "Display 'flat' histograms", false, IType.BOOL, true).in(NAME,
+						CHARTS);
+		public static final Pref<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
+				"Keep values in memory (to save them as CSV)", true, IType.BOOL, true).in(NAME, CHARTS);
 		public static final Pref<Boolean> CHART_GRIDLINES =
-				create("pref_chart_display_gridlines", "Display grid lines", true, IType.BOOL).in(NAME, CHARTS);
+				create("pref_chart_display_gridlines", "Display grid lines", true, IType.BOOL, true).in(NAME, CHARTS);
 		/**
 		 * Drawing methods and defaults
 		 */
 		public static final String DRAWING = "Default Rendering Properties";
 		public static final Pref<String> CORE_DISPLAY =
 				create("pref_display_default", "Default rendering method (Java2D for 2D, OpenGL for 3D)", "Java2D",
-						IType.STRING).among("Java2D", "OpenGL").in(NAME, DRAWING);
+						IType.STRING, true).among("Java2D", "OpenGL").in(NAME, DRAWING);
 		public static final Pref<Boolean> CORE_ANTIALIAS =
-				create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL).in(NAME, DRAWING);
+				create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL, true).in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_BACKGROUND =
 				create("pref_display_background_color", "Default background color ('background' facet of 'display')",
-						() -> GamaColor.getNamed("white"), IType.COLOR).in(NAME, DRAWING);
+						() -> GamaColor.getNamed("white"), IType.COLOR, true).in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_HIGHLIGHT = create("pref_display_highlight_color",
-				"Default highlight color", () -> new GamaColor(0, 200, 200), IType.COLOR).in(NAME, DRAWING);
+				"Default highlight color", () -> new GamaColor(0, 200, 200), IType.COLOR, true).in(NAME, DRAWING);
 		public static final Pref<String> CORE_SHAPE =
-				create("pref_display_default_shape", "Defaut shape of agents", "shape", IType.STRING)
+				create("pref_display_default_shape", "Defaut shape of agents", "shape", IType.STRING, true)
 						.among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(NAME, DRAWING);
 		public static final Pref<Double> CORE_SIZE =
-				create("pref_display_default_size", "Default size of agents", 1.0, IType.FLOAT).between(0.01, null)
-						.in(NAME, DRAWING);
+				create("pref_display_default_size", "Default size of agents", 1.0, IType.FLOAT, true)
+						.between(0.01, null).in(NAME, DRAWING);
 		public static final Pref<GamaColor> CORE_COLOR = create("pref_display_default_color", "Default color of agents",
-				() -> GamaColor.getNamed("yellow"), IType.COLOR).in(NAME, DRAWING);
+				() -> GamaColor.getNamed("yellow"), IType.COLOR, true).in(NAME, DRAWING);
 		/**
 		 * Options
 		 */
 		public static final String OPTIONS = "Advanced ";
 		public static final Pref<Boolean> DISPLAY_ONLY_VISIBLE = create("pref_display_visible_agents",
-				"Only display visible agents (faster, may create visual oddities)", false, IType.BOOL).in(NAME,
+				"Only display visible agents (faster, may create visual oddities)", false, IType.BOOL, true).in(NAME,
 						OPTIONS);
 		public static final Pref<Boolean> DISPLAY_NO_ACCELERATION = create("pref_display_no_java2d_acceleration",
-				"Disable acceleration for Java2D (necessary on some configurations)", false, IType.BOOL).in(NAME,
+				"Disable acceleration for Java2D (necessary on some configurations)", false, IType.BOOL, true).in(NAME,
 						OPTIONS);
 		/**
 		 * OPENGL
 		 */
 		public static final String RENDERING = "OpenGL Rendering Properties";
 		public static final Pref<Boolean> CORE_DRAW_ENV =
-				create("pref_display_show_referential", "Draw 3D axes", true, IType.BOOL).in(NAME, RENDERING);
+				create("pref_display_show_referential", "Draw 3D axes", true, IType.BOOL, true).in(NAME, RENDERING);
 		public static final Pref<Boolean> DRAW_ROTATE_HELPER =
-				create("pref_display_show_rotation", "Draw rotation axes", true, IType.BOOL).in(NAME, RENDERING);
-		public static final Pref<Double> CORE_LINE_WIDTH =
-				create("pref_display_line_width", "Default line width (facet 'width' of 'draw')", 1.2d, IType.FLOAT)
-						.in(NAME, RENDERING);
-		public static final Pref<Boolean> ONLY_VISIBLE_FACES =
-				create("pref_display_visible_faces", "Draw only the 'external' faces of objects", false, IType.BOOL)
-						.in(NAME, RENDERING).hidden();
+				create("pref_display_show_rotation", "Draw rotation axes", true, IType.BOOL, true).in(NAME, RENDERING);
+		public static final Pref<Double> CORE_LINE_WIDTH = create("pref_display_line_width",
+				"Default line width (facet 'width' of 'draw')", 1.2d, IType.FLOAT, true).in(NAME, RENDERING);
+		public static final Pref<Boolean> ONLY_VISIBLE_FACES = create("pref_display_visible_faces",
+				"Draw only the 'external' faces of objects", false, IType.BOOL, true).in(NAME, RENDERING).hidden();
 		public static final Pref<Integer> DISPLAY_SLICE_NUMBER =
-				create("pref_display_slice_number", "Number of slices of circular geometries", 16, IType.INT).in(NAME,
-						RENDERING);
+				create("pref_display_slice_number", "Number of slices of circular geometries", 16, IType.INT, true)
+						.in(NAME, RENDERING);
 		/**
 		 * Options
 		 */
 		// public static final String OPTIONS = "OpenGL ";
 		public static final Pref<Double> OPENGL_ZOOM =
-				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT)
+				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0, 1);
 		public static final Pref<Integer> OPENGL_FPS =
-				create("pref_display_max_fps", "Max. number of frames per second", 20, IType.INT).in(NAME, RENDERING);
+				create("pref_display_max_fps", "Max. number of frames per second", 20, IType.INT, true).in(NAME,
+						RENDERING);
 		// public static final Pref<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
 		// "Enable OpenGL background loading of textures (faster, but can cause issues on Linux and Windows)",
 		// false, IType.BOOL).in(NAME, OPTIONS);
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
-				IType.BOOL).in(NAME, RENDERING);
+				IType.BOOL, true).in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
-				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL).in(NAME,
-						RENDERING);
+				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
+						.in(NAME, RENDERING);
 	}
 
 	public static class External {
@@ -424,28 +430,30 @@ public class GamaPreferences {
 		 */
 		public static final String HTTP = "Http connections";
 		public static final Pref<Integer> CORE_HTTP_CONNECT_TIMEOUT =
-				create("pref_http_connect_timeout", "Connection timeout (in ms)", 20000, IType.INT).in(NAME, HTTP);
+				create("pref_http_connect_timeout", "Connection timeout (in ms)", 20000, IType.INT, true).in(NAME,
+						HTTP);
 		public static final Pref<Integer> CORE_HTTP_READ_TIMEOUT =
-				create("pref_http_read_timeout", "Read timeout (in ms)", 20000, IType.INT).in(NAME, HTTP);
+				create("pref_http_read_timeout", "Read timeout (in ms)", 20000, IType.INT, true).in(NAME, HTTP);
 		public static final Pref<Integer> CORE_HTTP_RETRY_NUMBER = create("pref_http_retry_number",
-				"Number of times to retry if connection cannot be established", 3, IType.INT).in(NAME, HTTP);
+				"Number of times to retry if connection cannot be established", 3, IType.INT, true).in(NAME, HTTP);
 		public static final Pref<Boolean> CORE_HTTP_EMPTY_CACHE = create("pref_http_empty_cache",
-				"Empty the local cache of files downloaded from the web", true, IType.BOOL).in(NAME, HTTP);
+				"Empty the local cache of files downloaded from the web", true, IType.BOOL, true).in(NAME, HTTP);
 
 		/**
 		 * Random numbers
 		 */
 		public static final String RNG = "Random number generation";
 		public static final Pref<String> CORE_RNG =
-				create("pref_rng_name", "Default random number generator", IKeyword.MERSENNE, IType.STRING)
+				create("pref_rng_name", "Default random number generator", IKeyword.MERSENNE, IType.STRING, true)
 						.among(GENERATOR_NAMES).in(NAME, RNG);
 		public static final Pref<Boolean> CORE_SEED_DEFINED =
-				create("pref_rng_define_seed", "Define a default seed", false, IType.BOOL)
+				create("pref_rng_define_seed", "Define a default seed", false, IType.BOOL, true)
 						.activates("pref_rng_default_seed").in(NAME, RNG);
 		public static final Pref<Double> CORE_SEED =
-				create("pref_rng_default_seed", "Default seed value (0 is undefined)", 1d, IType.FLOAT).in(NAME, RNG);
+				create("pref_rng_default_seed", "Default seed value (0 is undefined)", 1d, IType.FLOAT, true).in(NAME,
+						RNG);
 		public static final Pref<Boolean> CORE_RND_EDITABLE =
-				create("pref_rng_in_parameters", "Include in the parameters", false, IType.BOOL).in(NAME, RNG);
+				create("pref_rng_in_parameters", "Include in the parameters", false, IType.BOOL, true).in(NAME, RNG);
 		/**
 		 * Dates
 		 */
@@ -455,25 +463,25 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIMIZATIONS = "Operators options";
 		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
-				"Optimize constant expressions (experimental)", false, IType.BOOL).in(NAME, OPTIMIZATIONS);
+				"Optimize constant expressions (experimental)", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
-				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL).in(NAME,
+				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
 						OPTIMIZATIONS);
 		public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
-				"Use faster (but less accurate) arithmetic functions", false, IType.BOOL).in(NAME, OPTIMIZATIONS);
+				"Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
-				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL).in(NAME,
-						OPTIMIZATIONS);
+				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
+						.in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION = create("pref_optimize_path_computation",
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
-				IType.BOOL).in(NAME, OPTIMIZATIONS);
+				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
 				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-				IType.BOOL).in(NAME, OPTIMIZATIONS);
+				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
 		public static final Pref<Double> TOLERANCE_POINTS =
-				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT).in(NAME,
-						OPTIMIZATIONS);
+				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT, true)
+						.in(NAME, OPTIMIZATIONS);
 
 		/**
 		 * Paths to libraries
@@ -481,29 +489,29 @@ public class GamaPreferences {
 		public static final String PATHS = "External libraries support";
 		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
 				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
-						() -> new GenericFile("Enter path", false), IType.FILE).in(NAME, PATHS);
+						() -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
 		public static final String jriFile = System.getProperty("os.name").startsWith("Mac") ? "libjri.jnilib"
 				: System.getProperty("os.name").startsWith("Linux") ? "libjri.so" : "jri.dll";
 
 		public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
 				"Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
-				() -> new GenericFile(getDefaultRPath(), false), IType.FILE).in(NAME, PATHS);
+				() -> new GenericFile(getDefaultRPath(), false), IType.FILE, true).in(NAME, PATHS);
 		/**
 		 * GeoTools
 		 */
 		public static final String GEOTOOLS =
 				"GIS Coordinate Reference Systems (http://spatialreference.org/ref/epsg/ for EPSG codes)";
 		public static final Pref<Boolean> LIB_TARGETED =
-				create("pref_gis_auto_crs", "Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL)
-						.deactivates("pref_gis_default_crs").in(NAME, GEOTOOLS);
+				create("pref_gis_auto_crs", "Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL,
+						true).deactivates("pref_gis_default_crs").in(NAME, GEOTOOLS);
 		public static final Pref<Boolean> LIB_PROJECTED = create("pref_gis_same_crs",
 				"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true,
-				IType.BOOL).deactivates("pref_gis_initial_crs").in(NAME, GEOTOOLS);
+				IType.BOOL, true).deactivates("pref_gis_initial_crs").in(NAME, GEOTOOLS);
 		public static final Pref<Boolean> LIB_USE_DEFAULT =
 				create("pref_gis_save_crs", "When no CRS is provided, save the GIS data with the current CRS", true,
-						IType.BOOL).deactivates("pref_gis_output_crs").in(NAME, GEOTOOLS);
+						IType.BOOL, true).deactivates("pref_gis_output_crs").in(NAME, GEOTOOLS);
 		public static final Pref<Integer> LIB_TARGET_CRS =
-				create("pref_gis_default_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT)
+				create("pref_gis_default_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
@@ -511,7 +519,7 @@ public class GamaPreferences {
 						});
 
 		public static final Pref<Integer> LIB_INITIAL_CRS =
-				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT)
+				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
@@ -519,7 +527,7 @@ public class GamaPreferences {
 						});
 
 		public static final Pref<Integer> LIB_OUTPUT_CRS =
-				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT)
+				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
@@ -582,11 +590,12 @@ public class GamaPreferences {
 		return prefs;
 	}
 
-	public static <T> Pref<T> create(final String key, final String title, final T value, final int type) {
+	public static <T> Pref<T> create(final String key, final String title, final T value, final int type,
+			final boolean inGaml) {
 		if (key.contains(".") || key.contains(" ")) {
 			System.out.println("WARNING. Preference " + key + " cannot be used as a variable");
 		}
-		final Pref<T> e = new Pref<T>(key, type).named(title).in(Interface.NAME, "").init(value);
+		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(value);
 		register(e);
 		return e;
 	}
@@ -601,11 +610,11 @@ public class GamaPreferences {
 	 * @return
 	 */
 	public static <T> Pref<T> create(final String key, final String title, final ValueProvider<T> provider,
-			final int type) {
+			final int type, final boolean inGaml) {
 		if (key.contains(".") || key.contains(" ")) {
 			System.out.println("WARNING. Preference " + key + " cannot be used as a variable");
 		}
-		final Pref<T> e = new Pref<T>(key, type).named(title).in(Interface.NAME, "").init(provider);
+		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(provider);
 		register(e);
 		return e;
 	}
@@ -782,7 +791,7 @@ public class GamaPreferences {
 			final StringBuilder read = new StringBuilder(1000);
 			final StringBuilder write = new StringBuilder(1000);
 			for (final Pref e : entries) {
-				if (e.isHidden()) {
+				if (e.isHidden() || !e.inGaml()) {
 					continue;
 				}
 				read.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);

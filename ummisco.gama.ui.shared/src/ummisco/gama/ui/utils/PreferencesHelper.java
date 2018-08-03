@@ -45,39 +45,39 @@ public class PreferencesHelper {
 
 	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
 			.create("pref_shapefile_background_color", "Shapefile viewer fill color",
-					() -> GamaColor.getNamed("lightgray"), IType.COLOR)
+					() -> GamaColor.getNamed("lightgray"), IType.COLOR, false)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
 			GamaPreferences
 					.create("pref_shapefile_line_color", "Shapefile viewer line color",
-							() -> GamaColor.getNamed("black"), IType.COLOR)
+							() -> GamaColor.getNamed("black"), IType.COLOR, false)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
 			.create("pref_error_text_color", "Text color of errors",
-					() -> GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
+					() -> GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR, true)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	public static final Pref<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
 			.create("pref_warning_text_color", "Text color of warnings",
-					() -> GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
+					() -> GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR, true)
 			.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	public static final Pref<GamaColor> IMAGE_VIEWER_BACKGROUND =
 			GamaPreferences
 					.create("pref_image_background_color", "Image viewer background color",
-							() -> GamaColor.getNamed("white"), IType.COLOR)
+							() -> GamaColor.getNamed("white"), IType.COLOR, false)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static final Pref<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 			.create("pref_button_font", "Font of buttons and dialogs",
-					() -> new GamaFont(GamaFonts.getBaseFont(), SWT.BOLD, GamaFonts.baseSize), IType.FONT)
+					() -> new GamaFont(GamaFonts.getBaseFont(), SWT.BOLD, GamaFonts.baseSize), IType.FONT, false)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE)
 			.onChange(newValue -> GamaFonts.setLabelFont(newValue));
 
 	public static Pref<String> COLOR_MENU_SORT =
-			GamaPreferences.create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING)
+			GamaPreferences.create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING, false)
 					.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS).onChange(pref -> {
 						if (pref.equals(GamaColorMenu.SORT_NAMES[0])) {
@@ -91,24 +91,24 @@ public class PreferencesHelper {
 						}
 					});
 	public static Pref<Boolean> COLOR_MENU_REVERSE =
-			GamaPreferences.create("pref_menu_colors_reverse", "Reverse order", false, IType.BOOL)
+			GamaPreferences.create("pref_menu_colors_reverse", "Reverse order", false, IType.BOOL, false)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
 					.onChange(pref -> GamaColorMenu.setReverse(pref ? -1 : 1));
 	public static Pref<Boolean> COLOR_MENU_GROUP =
-			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL)
+			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL, false)
 					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
 					.onChange(pref -> GamaColorMenu.breakdown = pref);
-	public static final Pref<Boolean> NAVIGATOR_METADATA =
-			GamaPreferences.create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE).onChange(newValue -> {
-						final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-						try {
-							mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
-						} catch (final CoreException e) {
-							e.printStackTrace();
-						}
+	public static final Pref<Boolean> NAVIGATOR_METADATA = GamaPreferences
+			.create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL, false)
+			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE).onChange(newValue -> {
+				final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
+				try {
+					mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
+				} catch (final CoreException e) {
+					e.printStackTrace();
+				}
 
-					});
+			});
 
 	public static File findIniFile() {
 		final String path = Platform.getConfigurationLocation().getURL().getPath();
@@ -144,7 +144,7 @@ public class PreferencesHelper {
 				? "The max. memory allocated needs to be set in Eclipse (developer version) or in Gama.ini file"
 				: "Maximum memory allocated in Mb (requires to restart GAMA)";
 		final Pref<Integer> p = GamaPreferences
-				.create("pref_memory_max", text, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1)
+				.create("pref_memory_max", text, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1, false)
 				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
 		if (memory == 0) {
 			p.disabled();

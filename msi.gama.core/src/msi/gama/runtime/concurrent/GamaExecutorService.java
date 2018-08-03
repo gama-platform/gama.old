@@ -64,22 +64,23 @@ public abstract class GamaExecutorService {
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();// sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
-			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL)
+			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Boolean> CONCURRENCY_GRID =
-			create("pref_parallel_grids", "Make grids schedule their agents in parallel", false, IType.BOOL)
+			create("pref_parallel_grids", "Make grids schedule their agents in parallel", false, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Boolean> CONCURRENCY_SPECIES =
-			create("pref_parallel_species", "Make species schedule their agents in parallel", false, IType.BOOL)
+			create("pref_parallel_species", "Make species schedule their agents in parallel", false, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Integer> CONCURRENCY_THRESHOLD =
-			create("pref_parallel_threshold", "Number under which agents are executed sequentially", 20, IType.INT)
-					.between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+			create("pref_parallel_threshold", "Number under which agents are executed sequentially", 20, IType.INT,
+					true).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Integer> CONCURRENCY_THREADS_NUMBER =
 			create("pref_parallel_threads",
 					"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors()
 							+ ")",
-					4, IType.INT).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
+					4, IType.INT, true).between(1, null)
+							.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
 							.onChange(newValue -> {
 								setConcurrencyLevel(newValue);
 								System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",

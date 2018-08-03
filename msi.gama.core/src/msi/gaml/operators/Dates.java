@@ -89,7 +89,7 @@ public class Dates {
 
 	public final static Pref<String> DATES_CUSTOM_FORMATTER = GamaPreferences.create("pref_date_custom_formatter",
 			"Custom date pattern (https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)",
-			DEFAULT_FORMAT, IType.STRING).in(GamaPreferences.External.NAME, GamaPreferences.External.DATES)
+			DEFAULT_FORMAT, IType.STRING, true).in(GamaPreferences.External.NAME, GamaPreferences.External.DATES)
 			.onChange((e) -> {
 				try {
 					FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e), null));
@@ -103,7 +103,7 @@ public class Dates {
 
 	public final static Pref<String> DATES_DEFAULT_FORMATTER = GamaPreferences
 			.create("pref_date_default_formatter", "Default date pattern for writing dates (i.e. string(date1))",
-					CUSTOM_KEY, IType.STRING)
+					CUSTOM_KEY, IType.STRING, true)
 			.in(GamaPreferences.External.NAME, GamaPreferences.External.DATES)
 			.among(ISO_LOCAL_KEY, ISO_OFFSET_KEY, ISO_ZONED_KEY, ISO_SIMPLE_KEY, CUSTOM_KEY).onChange((e) -> {
 				DEFAULT_VALUE = e;
@@ -111,11 +111,11 @@ public class Dates {
 			});
 
 	public final static Pref<GamaDate> DATES_STARTING_DATE = GamaPreferences
-			.create("pref_date_starting_date", "Default starting date of models", GamaDateType.EPOCH, IType.DATE)
+			.create("pref_date_starting_date", "Default starting date of models", GamaDateType.EPOCH, IType.DATE, true)
 			.in(GamaPreferences.External.NAME, GamaPreferences.External.DATES);
 
 	public final static Pref<Double> DATES_TIME_STEP =
-			GamaPreferences.create("pref_date_time_step", "Default time step of models", 1d, IType.FLOAT)
+			GamaPreferences.create("pref_date_time_step", "Default time step of models", 1d, IType.FLOAT, true)
 					.in(GamaPreferences.External.NAME, GamaPreferences.External.DATES).between(1d, null);
 
 	static {

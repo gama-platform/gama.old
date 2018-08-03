@@ -70,12 +70,11 @@ import ummisco.gama.ui.views.toolbar.Selector;
 public class GamaPreferencesView {
 
 	static Pref<GamaPoint> DIALOG_LOCATION = GamaPreferences.create("dialog_location",
-			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT).hidden();
-	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences
-			.create("dialog_size", "Size of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT)
-			.hidden();
-	static Pref<Integer> DIALOG_TAB =
-			GamaPreferences.create("dialog_tab", "Tab selected in the preferences dialog", -1, IType.INT).hidden();
+			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences.create("dialog_size",
+			"Size of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+	static Pref<Integer> DIALOG_TAB = GamaPreferences
+			.create("dialog_tab", "Tab selected in the preferences dialog", -1, IType.INT, false).hidden();
 
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
 	public static int NB_DIVISIONS = 2;
@@ -263,11 +262,17 @@ public class GamaPreferencesView {
 		final Menu m = new Menu(ed.getLabel());
 		final MenuItem title = new MenuItem(m, SWT.PUSH);
 		title.setEnabled(false);
-		title.setText(e.getKey());
-		@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
-		final MenuItem i = new MenuItem(m, SWT.PUSH);
-		i.setText("Copy name to clipboard");
-		i.addSelectionListener((Selector) se -> WorkbenchHelper.copy(e.getKey()));
+
+		if (e.inGaml()) {
+			title.setText("Use gama." + e.getKey() + " in GAML");
+			@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
+			final MenuItem i = new MenuItem(m, SWT.PUSH);
+			i.setText("Copy name to clipboard");
+			i.addSelectionListener((Selector) se -> WorkbenchHelper.copy("gama." + e.getKey()));
+		} else {
+			title.setText("Not assignable from GAML");
+			@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
+		}
 		final MenuItem i2 = new MenuItem(m, SWT.PUSH);
 		i2.setText("Revert to default value");
 		i2.addSelectionListener((Selector) se -> {
@@ -290,7 +295,7 @@ public class GamaPreferencesView {
 		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		doc.setFont(GamaFonts.boldHelpFont);
 		doc.setText(
-				"Preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
+				"Some preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
 
 		final Composite group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
@@ -334,7 +339,7 @@ public class GamaPreferencesView {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final FileDialog fd = new FileDialog(shell, SWT.SAVE);
-				fd.setFileName("preferences.gaml");
+				fd.setFileName("Preferences.gaml");
 				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
 				final String path = fd.open();

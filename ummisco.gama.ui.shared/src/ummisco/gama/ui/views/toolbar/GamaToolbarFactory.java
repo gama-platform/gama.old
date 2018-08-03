@@ -40,7 +40,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 public class GamaToolbarFactory {
 
 	public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
-			.create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL)
+			.create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL, false)
 			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static class GamaComposite extends Composite {
