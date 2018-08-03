@@ -146,7 +146,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		properties =
 				new PropertyDialogAction(new SameShellProvider(getSite().getShell()), getSite().getSelectionProvider());
 		findControl.initialize();
-		// getCommonViewer().getControl().addDisposeListener(e -> saveState());
+
 	}
 
 	@Override
@@ -192,7 +192,12 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				}
 			}
 
-			getCommonViewer().setExpandedElements(contents.toArray(new VirtualContent[0]));
+			final VirtualContent<?>[] sel = contents.toArray(new VirtualContent[0]);
+			if (sel.length > 0) {
+				getCommonViewer().setExpandedElements(sel);
+				getCommonViewer().setSelection(new StructuredSelection(sel[sel.length - 1]));
+			}
+
 		}
 	}
 
