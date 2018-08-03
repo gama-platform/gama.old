@@ -42,7 +42,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLException;
-import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellatorCallback;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
@@ -53,7 +52,6 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.vividsolutions.jts.geom.Polygon;
 
-import jogamp.opengl.glu.GLUquadricImpl;
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -99,8 +97,8 @@ public class OpenGL {
 	private GL2 gl;
 	private final GLUT glut;
 	private int viewWidth, viewHeight;
-	private float layerScalingFactor = 1f;
 	private final PickingState pickingState;
+	private boolean overlay;
 
 	// Textures
 	private final LoadingCache<BufferedImage, Texture> volatileTextures;
@@ -110,19 +108,18 @@ public class OpenGL {
 	private final Envelope3D textureEnvelope = new Envelope3D();
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
 	private boolean textured;
-	// private final int currentTexture = NO_TEXTURE;
 	private int primaryTexture = NO_TEXTURE;
 	private int alternateTexture = NO_TEXTURE;
-	// private boolean unit0Defined, unit1Defined;
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
 
 	// Colors
 	private Color currentColor;
 	private double currentObjectAlpha = 1d;
 	private boolean isAntiAlias;
+	private boolean lighted;
 
 	// Text
-	boolean inRasterTextMode;
+	private boolean inRasterTextMode;
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
 
 	// Geometries
@@ -144,8 +141,6 @@ public class OpenGL {
 	private double currentZIncrement, currentZTranslation, maxZ, savedZTranslation;
 	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
-	private final Rotation3D tempRotation = Rotation3D.identity();
-	private GLUquadricImpl quadric;
 	private int originalViewHeight;
 	private int originalViewWidth;
 
@@ -259,10 +254,6 @@ public class OpenGL {
 		currentZIncrement = z;
 	}
 
-	public void setLayerScalingFactor(final float s) {
-		layerScalingFactor = s;
-	}
-
 	/**
 	 * Computes the translation in Z to enable z-fighting, using the current z increment, computed by ModelScene. The
 	 * translations are cumulative
@@ -292,8 +283,6 @@ public class OpenGL {
 	public double getMaxZ() {
 		return maxZ;
 	}
-
-	boolean lighted;
 
 	/**
 	 * Returns the previous state
@@ -822,8 +811,10 @@ public class OpenGL {
 		if (!inRasterTextMode) {
 			beginRasterTextMode();
 		}
+		final boolean previous = setLighting(false);
 		gl.glRasterPos3d(x, y, z);
 		glut.glutBitmapString(font, s);
+		setLighting(previous);
 		exitRasterTextMode();
 	}
 
@@ -842,23 +833,23 @@ public class OpenGL {
 		if (!inRasterTextMode) {
 			beginRasterTextMode();
 		}
+		final boolean previous = setLighting(false);
 		for (int i = 0; i < seq.length; i++) {
 			gl.glRasterPos3d(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2] + currentZTranslation);
 			glut.glutBitmapString(font, seq[i]);
 		}
+		setLighting(previous);
 		exitRasterTextMode();
 	}
 
 	private void exitRasterTextMode() {
 		gl.glEnable(GL.GL_BLEND);
-		gl.glEnable(GLLightingFunc.GL_LIGHTING);
 		popMatrix();
 		inRasterTextMode = false;
 	}
 
 	private void beginRasterTextMode() {
 		pushMatrix();
-		gl.glDisable(GLLightingFunc.GL_LIGHTING);
 		gl.glDisable(GL.GL_BLEND);
 		inRasterTextMode = true;
 	}
@@ -878,8 +869,8 @@ public class OpenGL {
 	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z,
 			final GamaPoint anchor) {
 
-		final TextRenderer r = textRendererCache.get(font.getName(), (int) Math.round(font.getSize() / zoomLevel.get()),
-				font.getStyle());
+		final TextRenderer r = textRendererCache.get(font.getName(),
+				(int) Math.round(font.getSize() / (overlay ? 1d : zoomLevel.get())), font.getStyle());
 		if (r == null) { return; }
 
 		if (getCurrentColor() != null) {
@@ -888,30 +879,12 @@ public class OpenGL {
 		r.begin3DRendering();
 		final Rectangle2D bounds = r.getBounds(string);
 		final float scale = 0.15f;
-		// final float scale = 1f / (float) (viewHeight / getWorldHeight());
-		// final float scalex = 1f / (float) (viewWidth / getWorldWidth());
-		// final GamaPoint boundsPoint = pixelToWorldScaler.apply(new GamaPoint(bounds.getWidth(), bounds.getHeight()));
 		final double curX = x - bounds.getWidth() * scale * anchor.x;
 		final double curY = y + bounds.getY() * scale * anchor.y;
 
 		r.draw3D(string, (float) curX, (float) curY, (float) (z + currentZTranslation), scale);
 		r.flush();
 		r.end3DRendering();
-	}
-
-	public void perspectiveOrthoText(final String string, final Font font, final double x, final double y,
-			final double z) {
-		final TextRenderer r =
-				textRendererCache.get(font.getName(), font.getSize() * (int) layerScalingFactor, font.getStyle());
-		if (r == null) { return; }
-		if (getCurrentColor() != null) {
-			r.setColor(getCurrentColor());
-		}
-		final float scale = 1f / (float) (viewHeight / getWorldHeight());
-		r.beginRendering(1, 1);
-		r.draw3D(string, (float) x, (float) y, (float) z, scale);
-		r.flush();
-		r.endRendering();
 	}
 
 	public double getMaxWorldDim() {
@@ -1247,7 +1220,7 @@ public class OpenGL {
 		setLineWidth(object.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getColor());
-		if (object.isFilled()) {
+		if (object.isFilled() && !object.isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
 		}
 
@@ -1256,7 +1229,7 @@ public class OpenGL {
 	public void endObject(final AbstractObject object) {
 		disableTextures();
 		translateByZIncrement();
-		if (object.isFilled()) {
+		if (object.isFilled() && !object.isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		}
 
@@ -1268,6 +1241,14 @@ public class OpenGL {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		gl.glClearDepth(1.0f);
 
+	}
+
+	public void beginOverlay() {
+		overlay = true;
+	}
+
+	public void endOverlay() {
+		overlay = false;
 	}
 
 }

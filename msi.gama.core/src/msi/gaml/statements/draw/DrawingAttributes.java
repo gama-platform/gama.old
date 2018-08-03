@@ -33,6 +33,7 @@ public abstract class DrawingAttributes {
 	protected final ColorProperties colorProperties = new ColorProperties();
 	protected GeometricProperties geometryProperties = GeometricProperties.create();
 	protected boolean selected;
+	protected boolean synthetic; // if the attributes have been built on the fly
 	protected GamaColor highlight;
 
 	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
@@ -50,6 +51,14 @@ public abstract class DrawingAttributes {
 
 	public int getIndex() {
 		return uniqueIndex;
+	}
+
+	public void setSynthetic(final boolean s) {
+		synthetic = s;
+	}
+
+	public boolean isSynthetic() {
+		return synthetic;
 	}
 
 	public boolean isSelected() {

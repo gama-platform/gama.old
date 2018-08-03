@@ -170,4 +170,8 @@ public abstract class AbstractObject {
 		return attributes.isLighting();
 	}
 
+	public boolean isSynthetic() {
+		return attributes.isSynthetic();
+	}
+
 }

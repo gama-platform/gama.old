@@ -12,6 +12,7 @@ package ummisco.gama.opengl.scene;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
+import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ILayer;
@@ -103,7 +104,7 @@ public class ModelScene {
 				layers.put(ROTATION_HELPER_KEY, rotLayer);
 			}
 		}
-		gl.pushMatrix();
+		gl.pushIdentity(GL2.GL_MODELVIEW);
 		gl.setZIncrement(zIncrement);
 
 		for (final LayerObject layer : layers.values()) {
@@ -119,7 +120,7 @@ public class ModelScene {
 		}
 		gl.setZIncrement(0);
 		rendered = true;
-		gl.popMatrix();
+		gl.pop(GL2.GL_MODELVIEW);
 	}
 
 	private double computeVisualZIncrement() {

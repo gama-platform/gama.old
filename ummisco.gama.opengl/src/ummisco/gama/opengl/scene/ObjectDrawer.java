@@ -26,7 +26,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	void draw(final T object) {
 		gl.beginObject(object);
 		_draw(object);
-		gl.disableTextures();
+		gl.endObject(object);
 	}
 
 	/**
