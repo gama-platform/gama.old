@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import static msi.gama.common.preferences.GamaPreferences.create;
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 import static ummisco.gama.ui.navigator.contents.NavigatorRoot.getInstance;
 
@@ -48,8 +47,6 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
-import msi.gaml.types.IType;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
@@ -69,10 +66,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	//
 	// static Pref<String> NAVIGATOR_EXPANDED_STATE =
 	// create("pref_navigator_state", "Navigator", "", IType.STRING).hidden();
-
-	static Pref<Boolean> KEEP_NAVIGATOR_STATE =
-			create("pref_keep_navigator_state", "Maintain the state of the navigator across sessions", true, IType.BOOL)
-					.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.STARTUP);
 
 	IAction link;
 	ToolItem linkItem;
@@ -158,7 +151,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	@Override
 	public void saveState(final IMemento newMemento) {
-		if (KEEP_NAVIGATOR_STATE.getValue()) {
+		if (GamaPreferences.Interface.KEEP_NAVIGATOR_STATE.getValue()) {
 			final StringBuilder sb = new StringBuilder();
 			for (final Object o : getCommonViewer().getExpandedElements()) {
 				final String name =
@@ -181,7 +174,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		if (memento == null) { return; }
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) { return; }
-		if (KEEP_NAVIGATOR_STATE.getValue()) {
+		if (GamaPreferences.Interface.KEEP_NAVIGATOR_STATE.getValue()) {
 			final List<VirtualContent<?>> contents = new ArrayList<>();
 			final String[] names = saved.split("@@");
 			for (final String s : names) {

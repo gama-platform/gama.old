@@ -41,6 +41,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaFont;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
@@ -51,6 +52,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * Class GamaPreferencesView.
@@ -115,6 +117,9 @@ public class GamaPreferences {
 				"Append the name of simulations to their outputs", false, IType.BOOL).in(NAME, SIMULATIONS);
 		public static final Pref<GamaColor>[] SIMULATION_COLORS = new Pref[5];
 
+		public static Pref<Boolean> KEEP_NAVIGATOR_STATE = create("pref_keep_navigator_state",
+				"Maintain the state of the navigator across sessions", true, IType.BOOL).in(NAME, STARTUP);
+
 		static {
 			for (int i = 0; i < 5; i++) {
 				SIMULATION_COLORS[i] = create("pref_simulation_color_" + i,
@@ -150,6 +155,39 @@ public class GamaPreferences {
 		public static final Pref<Boolean> INFO_ENABLED =
 				create("pref_editor_enable_infos", "Show information markers in the editor", true, IType.BOOL).in(NAME,
 						OPTIONS);
+
+		public static final Pref<Boolean> EDITOR_PERSPECTIVE_SAVE =
+				create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL)
+						.in(Modeling.NAME, Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static Pref<String> OPERATORS_MENU_SORT =
+				GamaPreferences.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING)
+						.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
+		public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
+				.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
+				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
+				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL).in(NAME, TEXT);
+		public static final Pref<Boolean> EDITOR_CLEAN_UP =
+				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL)
+						.in(NAME, GamaPreferences.Modeling.OPTIONS);
+		public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
+				.create("pref_editor_save_all", "Save all editors before lauching an experiment", true, IType.BOOL)
+				.in(NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = GamaPreferences.create("pref_editor_drag_resources",
+				"Drag files and resources as references in GAML files", true, IType.BOOL).in(NAME, OPTIONS);
+		public static final Pref<Boolean> EDITOR_SAVE_ASK = GamaPreferences
+				.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL).in(NAME, OPTIONS);
+		public static final Pref<Boolean> EDITBOX_ENABLED = GamaPreferences
+				.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL)
+				.in(NAME, TEXT);
+		public static final Pref<GamaFont> EDITOR_BASE_FONT = GamaPreferences
+				.create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT).in(NAME, TEXT);
+		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = GamaPreferences
+				.create("pref_editor_background_color", "Background color of editors", (GamaColor) null, IType.COLOR)
+				.in(NAME, TEXT);
+		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
+				.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL).in(NAME, TEXT);
 
 		// .activates("pref_tests_period");
 		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
@@ -739,10 +777,14 @@ public class GamaPreferences {
 
 	public static void savePreferencesTo(final String path) {
 		try (FileWriter os = new FileWriter(path)) {
-			final List<Pref> entries = new ArrayList(prefs.values());
+			final List<Pref<? extends Object>> entries = StreamEx.ofValues(prefs).sortedBy((p) -> p.getName()).toList();
+
 			final StringBuilder read = new StringBuilder(1000);
 			final StringBuilder write = new StringBuilder(1000);
 			for (final Pref e : entries) {
+				if (e.isHidden()) {
+					continue;
+				}
 				read.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);
 				read.append(Strings.TAB).append("write sample(gama.").append(e.getName()).append(");")
 						.append(Strings.LN).append(Strings.LN);
@@ -777,7 +819,6 @@ public class GamaPreferences {
 	static Experiments e_ = new Experiments();
 	static Simulations s_ = new Simulations();
 	static Displays d_ = new Displays();
-	// static OpenGL o = new OpenGL();
 	static External ext_ = new External();
 
 }

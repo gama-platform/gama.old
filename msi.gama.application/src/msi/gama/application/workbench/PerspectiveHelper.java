@@ -31,14 +31,8 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
-import msi.gaml.types.IType;
 
 public class PerspectiveHelper {
-
-	public static final Pref<Boolean> EDITOR_PERSPECTIVE_SAVE = GamaPreferences
-		.create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL)
-		.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -160,7 +154,7 @@ public class PerspectiveHelper {
 		}
 		if ( activePage == null ) { return false; }
 
-		if ( EDITOR_PERSPECTIVE_SAVE.getValue() ) {
+		if ( GamaPreferences.Modeling.EDITOR_PERSPECTIVE_SAVE.getValue() ) {
 			activePage.saveAllEditors(false);
 		}
 

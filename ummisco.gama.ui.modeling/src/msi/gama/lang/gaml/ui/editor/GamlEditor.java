@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import static msi.gama.lang.gaml.ui.AutoStartup.EDITOR_DRAG_RESOURCES;
 import static org.eclipse.xtext.validation.CheckMode.NORMAL_AND_FAST;
 
 import java.util.Collections;
@@ -106,9 +105,9 @@ import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxDecoratorPartListener;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
@@ -175,7 +174,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	GamaToolbar2 toolbar;
 	Composite toolbarParent;
 	private EditorSearchControls findControl;
-	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
+	boolean decorationEnabled = GamaPreferences.Modeling.EDITBOX_ENABLED.getValue();
 	// boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
 	@Inject public IResourceSetProvider resourceSetProvider;
@@ -284,7 +283,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void dispose() {
 		decorator = null;
-		EDITOR_DRAG_RESOURCES.removeChangeListener(dndChangedListener);
+		GamaPreferences.Modeling.EDITOR_DRAG_RESOURCES.removeChangeListener(dndChangedListener);
 		GamlResourceServices.removeResourceListener(this);
 
 		super.dispose();
@@ -595,7 +594,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void beforeSave() {
-		if (!AutoStartup.EDITOR_CLEAN_UP.getValue()) { return; }
+		if (!GamaPreferences.Modeling.EDITOR_CLEAN_UP.getValue()) { return; }
 		final SourceViewer sv = getInternalSourceViewer();
 		final Point p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
@@ -814,13 +813,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			// this.fSourceViewerDecorationSupport.updateOverviewDecorations();
 
 			this.getVerticalRuler().getControl()
-					.setBackground(GamaColors.get(AutoStartup.EDITOR_BACKGROUND_COLOR.getValue()).color());
+					.setBackground(GamaColors.get(GamaPreferences.Modeling.EDITOR_BACKGROUND_COLOR.getValue()).color());
 
 			final Iterator e = ((CompositeRuler) getVerticalRuler()).getDecoratorIterator();
 			while (e.hasNext()) {
 				final IVerticalRulerColumn column = (IVerticalRulerColumn) e.next();
-				column.getControl()
-						.setBackground(GamaColors.get(AutoStartup.EDITOR_BACKGROUND_COLOR.getValue()).color());
+				column.getControl().setBackground(
+						GamaColors.get(GamaPreferences.Modeling.EDITOR_BACKGROUND_COLOR.getValue()).color());
 				column.redraw();
 			}
 		}
@@ -836,13 +835,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected void initializeDragAndDrop(final ISourceViewer viewer) {
-		EDITOR_DRAG_RESOURCES.addChangeListener(dndChangedListener);
+		GamaPreferences.Modeling.EDITOR_DRAG_RESOURCES.addChangeListener(dndChangedListener);
 		super.initializeDragAndDrop(viewer);
 	}
 
 	@Override
 	protected void installTextDragAndDrop(final ISourceViewer viewer) {
-		dndHandler.install(!EDITOR_DRAG_RESOURCES.getValue());
+		dndHandler.install(!GamaPreferences.Modeling.EDITOR_DRAG_RESOURCES.getValue());
 	}
 
 	@Override

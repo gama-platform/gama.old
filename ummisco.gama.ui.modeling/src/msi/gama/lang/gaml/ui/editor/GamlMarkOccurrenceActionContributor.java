@@ -19,8 +19,6 @@ import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import com.google.inject.Singleton;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
-import msi.gaml.types.IType;
 
 /**
  * The class GamlMarkOccurrenceActionContributor.
@@ -46,18 +44,13 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 
 	}
 
-	// Preference here is an instance variable, but only one will be created as this class is a singleton.
-	public final Pref<Boolean> EDITOR_MARK_OCCURRENCES =
-			GamaPreferences.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT)
-					.onChange(newValue -> stateChanged(newValue));
-
 	@Override
 	public void initialize(final IPreferenceStoreAccess preferenceStoreAccess) {
+		GamaPreferences.Modeling.EDITOR_MARK_OCCURRENCES.onChange(newValue -> stateChanged(newValue));
 		access = preferenceStoreAccess;
 		preferenceStoreAccess.getWritablePreferenceStore().setDefault(getPreferenceKey(),
-				EDITOR_MARK_OCCURRENCES.getValue());
+				GamaPreferences.Modeling.EDITOR_MARK_OCCURRENCES.getValue());
 		preferenceStoreAccess.getWritablePreferenceStore().setValue(getPreferenceKey(),
-				EDITOR_MARK_OCCURRENCES.getValue());
+				GamaPreferences.Modeling.EDITOR_MARK_OCCURRENCES.getValue());
 	}
 }

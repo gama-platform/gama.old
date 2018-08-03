@@ -24,8 +24,6 @@ import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Binder;
 
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
@@ -42,7 +40,6 @@ import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.types.IType;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -52,10 +49,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	private static boolean initialized;
 
 	// Disabled for the moment
-	public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
-			.create("pref_optimize_fast_compilation",
-					"Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).hidden();
+	// public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
+	//// .create("pref_optimize_fast_compilation",
+	//// "Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
+	//// .in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).hidden();
 
 	public static void staticInitialize() {
 		if (!initialized) {
@@ -137,6 +134,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	// contributed by
 	// org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
+	@Override
 	public Class<? extends org.eclipse.xtext.resource.containers.IAllContainersState.Provider>
 			bindIAllContainersState$Provider() {
 		return org.eclipse.xtext.resource.containers.ResourceSetBasedAllContainersStateProvider.class;
@@ -152,6 +150,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	// contributed by
 	// org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
+	@Override
 	public void configureIResourceDescriptionsPersisted(final com.google.inject.Binder binder) {
 		binder.bind(org.eclipse.xtext.resource.IResourceDescriptions.class)
 				.annotatedWith(com.google.inject.name.Names
@@ -160,6 +159,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	// contributed by org.eclipse.xtext.generator.formatting.FormatterFragment
+	@Override
 	public Class<? extends org.eclipse.xtext.formatting.IFormatter> bindIFormatter() {
 		return msi.gama.lang.gaml.formatting.GamlFormatter.class;
 	}

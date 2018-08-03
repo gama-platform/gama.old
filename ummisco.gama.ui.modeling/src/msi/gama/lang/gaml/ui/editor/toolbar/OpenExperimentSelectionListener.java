@@ -12,7 +12,7 @@ package msi.gama.lang.gaml.ui.editor.toolbar;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.events.SelectionEvent;
 
-import msi.gama.lang.gaml.ui.AutoStartup;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditorState;
 import msi.gama.runtime.GAMA;
@@ -54,8 +54,8 @@ public class OpenExperimentSelectionListener implements Selector {
 		// final IGui gui = GAMA.getRegularGui();
 		// We refuse to run if there is no XtextGui available.
 		editor.doSave(null);
-		if (AutoStartup.EDITOR_SAVE.getValue()) {
-			WorkbenchHelper.getPage().saveAllEditors(AutoStartup.EDITOR_SAVE_ASK.getValue());
+		if (GamaPreferences.Modeling.EDITOR_SAVE.getValue()) {
+			WorkbenchHelper.getPage().saveAllEditors(GamaPreferences.Modeling.EDITOR_SAVE_ASK.getValue());
 		}
 		String name = (String) ((FlatButton) e.widget).getData("exp");
 		final int i = state.abbreviations.indexOf(name);

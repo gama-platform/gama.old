@@ -13,7 +13,6 @@ import static org.eclipse.jface.preference.PreferenceConverter.setValue;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IStartup;
@@ -21,62 +20,14 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.editor.GamlEditorBindings;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
-import msi.gaml.types.IType;
 import ummisco.gama.ui.utils.GamlReferenceSearch;
 
 public class AutoStartup implements IStartup {
-
-	public static Pref<String> OPERATORS_MENU_SORT =
-			GamaPreferences.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING)
-					.among("Name", "Category").in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.MENUS)
-					.onChange(newValue -> OperatorsReferenceMenu.byName = newValue.equals("Name"));
-	public static final Pref<Boolean> CORE_CLOSE_CURLY =
-			GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	public static final Pref<Boolean> CORE_CLOSE_SQUARE =
-			GamaPreferences.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
-			GamaPreferences.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	public static final Pref<Boolean> EDITOR_CLEAN_UP =
-			GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
-	public static final Pref<Boolean> EDITOR_SAVE = GamaPreferences
-			.create("pref_editor_save_all", "Save all editors before lauching an experiment", true, IType.BOOL)
-			.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
-	public static final Pref<Boolean> EDITOR_DRAG_RESOURCES =
-			GamaPreferences.create("pref_editor_drag_resources", "Drag files and resources as references in GAML files",
-					true, IType.BOOL).in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
-	public static final Pref<Boolean> EDITOR_SAVE_ASK =
-			GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS);
-	public static final Pref<Boolean> EDITBOX_ENABLED =
-			GamaPreferences.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT);
-	static final Pref<GamaFont> EDITOR_BASE_FONT =
-			GamaPreferences.create("pref_editor_font", "Font of editors", () -> getDefaultFontData(), IType.FONT)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).onChange(font -> {
-						try {
-							final FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
-							setValue(EditorsPlugin.getDefault().getPreferenceStore(), TEXT_FONT, newValue);
-						} catch (final Exception e) {}
-					});
-	public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
-			GamaPreferences
-					.create("pref_editor_background_color", "Background color of editors", () -> getDefaultBackground(),
-							IType.COLOR)
-					.in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.TEXT).onChange(c -> {
-						final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
-						PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
-								AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-					});
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()
@@ -87,13 +38,25 @@ public class AutoStartup implements IStartup {
 	}
 
 	public static GamaFont getDefaultFontData() {
-		final FontData fd = PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(),
-				JFaceResources.TEXT_FONT);
+		final FontData fd = PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(), TEXT_FONT);
 		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
 	}
 
 	@Override
 	public void earlyStartup() {
+		GamaPreferences.Modeling.EDITOR_BASE_FONT.init(() -> getDefaultFontData()).onChange(font -> {
+			try {
+				final FontData newValue = new FontData(font.getName(), font.getSize(), font.getStyle());
+				setValue(EditorsPlugin.getDefault().getPreferenceStore(), TEXT_FONT, newValue);
+			} catch (final Exception e) {}
+		});
+		GamaPreferences.Modeling.EDITOR_BACKGROUND_COLOR.init(() -> getDefaultBackground()).onChange(c -> {
+			final RGB rgb = new RGB(c.getRed(), c.getGreen(), c.getBlue());
+			PreferenceConverter.setValue(EditorsPlugin.getDefault().getPreferenceStore(),
+					AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
+			GamaPreferences.Modeling.OPERATORS_MENU_SORT
+					.onChange(newValue -> OperatorsReferenceMenu.byName = newValue.equals("Name"));
+		});
 		GamlRuntimeModule.staticInitialize();
 		GamlEditorBindings.install();
 		GamlReferenceSearch.install();

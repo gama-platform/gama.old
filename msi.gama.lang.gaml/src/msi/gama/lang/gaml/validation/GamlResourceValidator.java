@@ -26,8 +26,6 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.GamlRuntimeModule;
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 
@@ -41,8 +39,9 @@ public class GamlResourceValidator implements IResourceValidator {
 
 		@Override
 		public void accept(final Issue t) {
-			if (result == null)
+			if (result == null) {
 				result = new ArrayList<>();
+			}
 			result.add(t);
 		}
 	}
@@ -53,20 +52,22 @@ public class GamlResourceValidator implements IResourceValidator {
 		// We resolve the cross references
 		EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
 		// And collect the syntax / linking issues
-		for (int i = 0; i < resource.getErrors().size(); i++)
+		for (int i = 0; i < resource.getErrors().size(); i++) {
 			converter.convertResourceDiagnostic(resource.getErrors().get(i), Severity.ERROR, acceptor);
+		}
 		// We then ask the resource to validate itself
 		final GamlResource r = (GamlResource) resource;
 		// Enables faster compilation (but less accurate error reporting in
 		// navigator)
-		if (GamlRuntimeModule.ENABLE_FAST_COMPIL.getValue()) {
-			if (GamlResourceServices.isEdited(r) || !GamlResourceIndexer.isImported(r))
-				r.validate();
-		} else
-			r.validate();
+		// if (GamlRuntimeModule.ENABLE_FAST_COMPIL.getValue()) {
+		// if (GamlResourceServices.isEdited(r) || !GamlResourceIndexer.isImported(r))
+		// r.validate();
+		// } else
+		r.validate();
 		// And collect the semantic errors from its error collector
-		for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren())
+		for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren()) {
 			converter.convertValidatorDiagnostic(d, acceptor);
+		}
 		GamlResourceServices.discardValidationContext(r);
 		return acceptor.result == null ? Collections.EMPTY_LIST : acceptor.result;
 	}

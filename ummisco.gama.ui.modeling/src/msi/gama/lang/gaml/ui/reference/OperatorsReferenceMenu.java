@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.lang.gaml.ui.AutoStartup;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
@@ -45,7 +45,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	@Override
 	protected void fillMenu() {
 		if (byName == null) {
-			byName = AutoStartup.OPERATORS_MENU_SORT.getValue().equals("Name");
+			byName = GamaPreferences.Modeling.OPERATORS_MENU_SORT.getValue().equals("Name");
 		}
 		// final Menu sub = sub("Sort by...");
 		// sep();
