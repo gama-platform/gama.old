@@ -118,7 +118,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		}
 		
 		if (toBeScheduled) {
-			if (isRestored) {
+			if (isRestored || (firstValue != null && firstValue instanceof SavedAgent)) {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);
