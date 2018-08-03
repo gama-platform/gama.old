@@ -48,7 +48,7 @@ public class ReferenceToAgent {
 	public IAgent getReferencedAgent(SimulationAgent sim) {
 
 		IPopulation<? extends IAgent> pop = sim.getPopulationFor(species.get(species.size()-1));
-		IAgent referencedAgt = pop.get(index.get(index.size()-1));
+		IAgent referencedAgt = pop.getAgent(index.get(index.size()-1));
 		
 		for(int i = index.size()-2 ; i >= 0; i--) {
 			pop = sim.getPopulationFor(species.get(i));
