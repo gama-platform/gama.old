@@ -585,9 +585,14 @@
                <iterate
                      ifEmpty="false"
                      operator="and">
-                  <adapt
-                        type="org.eclipse.core.resources.IResource">
-                  </adapt>
+                  <or>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                     </adapt>
+                     <instanceof
+                           value="ummisco.gama.ui.navigator.contents.VirtualContent">
+                     </instanceof>
+                  </or>
                </iterate>
             </with>
          </enablement>
@@ -903,7 +908,6 @@ type="java.lang.Object">
           point="org.eclipse.ui.commands">
        <command
              categoryId="msi.gama.category"
-             defaultHandler="ummisco.gama.ui.commands.RevealInWorkspace"
              id="ummisco.gama.navigator.reveal"
              name="Reveal in Workspace">
        </command>

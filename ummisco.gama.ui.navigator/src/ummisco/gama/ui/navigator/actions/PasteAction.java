@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 import org.eclipse.ui.part.ResourceTransfer;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import ummisco.gama.ui.navigator.contents.UserProjectsFolder;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -73,15 +74,7 @@ public class PasteAction extends SelectionListenerAction {
 		this.clipboard = clipboard;
 		setToolTipText(WorkbenchNavigatorMessages.PasteAction_Paste_selected_resource_s_);
 		setId(PasteAction.ID);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "HelpId"); //$NON-NLS-1$
-		// TODO INavigatorHelpContextIds.PASTE_ACTION);
-	}
-
-	@Override
-	protected List<? extends IResource> getSelectedResources() {
-		if (getStructuredSelection().isEmpty()) { return new ArrayList<>(); }
-		final Object o = getStructuredSelection().getFirstElement();
-		return super.getSelectedResources();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "HelpId");
 	}
 
 	/**
@@ -108,10 +101,49 @@ public class PasteAction extends SelectionListenerAction {
 	 * @return true=one or more resources are linked. false=none of the resources are linked
 	 */
 	private boolean isLinked(final IResource[] resources) {
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].isLinked()) { return true; }
+		for (final IResource resource : resources) {
+			if (resource.isLinked()) { return true; }
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the elements in the current selection that are not <code>IResource</code>s.
+	 *
+	 * @return list of elements (element type: <code>Object</code>)
+	 */
+	@Override
+	protected List<?> getSelectedNonResources() {
+		final List<?> result = new ArrayList(super.getSelectedNonResources());
+		result.removeIf((o) -> o instanceof UserProjectsFolder);
+		return result;
+	}
+
+	/**
+	 * Returns the elements in the current selection that are <code>IResource</code>s.
+	 *
+	 * @return list of resource elements (element type: <code>IResource</code>)
+	 */
+	@Override
+	protected List<? extends IResource> getSelectedResources() {
+		final List<?> ss = getStructuredSelection().toList();
+		final boolean hasUser = hasUser(ss);
+		final List<IResource> result = new ArrayList(super.getSelectedResources());
+		if (hasUser) {
+			result.add(ResourcesPlugin.getWorkspace().getRoot());
+		}
+		return result;
+	}
+
+	private boolean hasUser(final List<?> ss) {
+		boolean hasUser = false;
+		for (final Object o : ss) {
+			if (o instanceof UserProjectsFolder) {
+				hasUser = true;
+				break;
+			}
+		}
+		return hasUser;
 	}
 
 	/**
@@ -126,9 +158,9 @@ public class PasteAction extends SelectionListenerAction {
 		if (resourceData != null && resourceData.length > 0) {
 			if (resourceData[0].getType() == IResource.PROJECT) {
 				// enablement checks for all projects
-				for (int i = 0; i < resourceData.length; i++) {
+				for (final IResource element : resourceData) {
 					final CopyProjectOperation operation = new CopyProjectOperation(shell);
-					operation.copyProject((IProject) resourceData[i]);
+					operation.copyProject((IProject) element);
 				}
 			} else {
 				// enablement should ensure that we always have access to a container
@@ -187,11 +219,10 @@ public class PasteAction extends SelectionListenerAction {
 				resourceData != null && resourceData.length > 0 && resourceData[0].getType() == IResource.PROJECT;
 
 		if (isProjectRes) {
-			for (int i = 0; i < resourceData.length; i++) {
+			for (final IResource element : resourceData) {
 				// make sure all resource data are open projects
 				// can paste open projects regardless of selection
-				if (resourceData[i].getType() != IResource.PROJECT
-						|| ((IProject) resourceData[i]).isOpen() == false) { return false; }
+				if (element.getType() != IResource.PROJECT || ((IProject) element).isOpen() == false) { return false; }
 			}
 			return true;
 		}
@@ -219,16 +250,16 @@ public class PasteAction extends SelectionListenerAction {
 
 			if (targetResource.getType() == IResource.FOLDER) {
 				// don't try to copy folder to self
-				for (int i = 0; i < resourceData.length; i++) {
-					if (targetResource.equals(resourceData[i])) { return false; }
+				for (final IResource element : resourceData) {
+					if (targetResource.equals(element)) { return false; }
 				}
 			}
 			return true;
 		}
 		final TransferData[] transfers = clipboard.getAvailableTypes();
 		final FileTransfer fileTransfer = FileTransfer.getInstance();
-		for (int i = 0; i < transfers.length; i++) {
-			if (fileTransfer.isSupportedType(transfers[i])) { return true; }
+		for (final TransferData transfer : transfers) {
+			if (fileTransfer.isSupportedType(transfer)) { return true; }
 		}
 		return false;
 	}
@@ -248,8 +279,9 @@ public class PasteAction extends SelectionListenerAction {
 						final List<File> files = Arrays.<File> asList(f.listFiles());
 						final List<String> names = new ArrayList<>();
 						for (final File toCopy : files) {
-							if (toCopy.getName().equals(".project"))
+							if (toCopy.getName().equals(".project")) {
 								continue;
+							}
 							names.add(toCopy.getAbsolutePath());
 						}
 						op.copyFiles(names.toArray(new String[0]), container);
@@ -282,7 +314,8 @@ public class PasteAction extends SelectionListenerAction {
 	public void handlePasteIntoUserModels() {
 		final FileTransfer transfer = FileTransfer.getInstance();
 		final String[] selection = (String[]) clipboard.getContents(transfer);
-		if (selection != null && selection.length != 0)
+		if (selection != null && selection.length != 0) {
 			handlePaste(selection);
+		}
 	}
 }
