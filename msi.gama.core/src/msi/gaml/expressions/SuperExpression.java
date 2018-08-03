@@ -13,7 +13,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
@@ -51,6 +51,6 @@ public class SuperExpression extends VariableExpression {
 	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

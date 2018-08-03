@@ -77,7 +77,7 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
 		final SpeciesDescription sd = this.getDefinitionDescription().getSpeciesContext();
 		if (species.equals(sd)) {
 			result.add(sd.getAttribute(getName()));

@@ -13,7 +13,7 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -104,6 +104,6 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

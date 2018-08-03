@@ -26,8 +26,8 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
@@ -256,7 +256,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+		prototype.collectImplicitVarsOf(species, result);
 		if (exprs != null) {
 			for (final IExpression e : exprs) {
 				if (e != null) {

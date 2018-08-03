@@ -15,7 +15,7 @@ import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
@@ -56,7 +56,7 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	public abstract boolean shouldBeParenthesized();
 
-	public abstract void collectUsedVarsOf(IDescription species, ICollector<VariableDescription> result);
+	public abstract void collectUsedVarsOf(SpeciesDescription species, ICollector<VariableDescription> result);
 
 	default boolean isContextIndependant() {
 		return true;

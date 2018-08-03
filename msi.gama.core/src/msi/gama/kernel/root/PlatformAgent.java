@@ -45,7 +45,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Containers;
@@ -346,7 +346,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 	@Override
 	public IType<?> getGamlType() {

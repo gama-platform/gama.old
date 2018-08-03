@@ -28,8 +28,10 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.GamaGetter;
 import msi.gaml.compilation.IValidator;
+import msi.gaml.compilation.annotations.depends_on;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.expressions.BinaryOperator;
@@ -70,6 +72,7 @@ public class OperatorProto extends AbstractProto {
 	public final int typeProvider, contentTypeProvider, keyTypeProvider;
 	public final int[] expectedContentType;
 	public final int contentTypeContentTypeProvider;
+	public final String[] depends_on;
 
 	public IExpression create(final IDescription context, final EObject currentEObject, final IExpression... exprs) {
 		try {
@@ -82,18 +85,8 @@ public class OperatorProto extends AbstractProto {
 					if (isVarOrField) { return new TypeFieldExpression(this, context, exprs[0]); }
 					return UnaryOperator.create(this, context, exprs[0]);
 				case 2:
-					if (isVarOrField) {
-						// if (!(exprs[1] instanceof IVarExpression)) {
-						// if (context != null) {
-						// context.error(
-						// "Attribute " + exprs[1].literalValue() + " unknown for "
-						// + exprs[0].getGamlType() + " instances",
-						// IGamlIssue.UNKNOWN_VAR, currentEObject);
-						// }
-						// return null;
-						// }
-						return new BinaryOperator.BinaryVarOperator(this, context, exprs[0], (IVarExpression) exprs[1]);
-					}
+					if (isVarOrField) { return new BinaryOperator.BinaryVarOperator(this, context, exprs[0],
+							(IVarExpression) exprs[1]); }
 					return BinaryOperator.create(this, context, exprs);
 				default:
 					return NAryOperator.create(this, exprs);
@@ -128,13 +121,17 @@ public class OperatorProto extends AbstractProto {
 		}
 		this.iterator = IExpressionCompiler.ITERATORS.contains(name);
 		IValidator tempValidator = null;
+		String[] dependencies = null;
 		if (method != null) {
 			final validator val = method.getAnnotation(validator.class);
 			try {
 				tempValidator = val != null ? val.value().newInstance() : null;
 			} catch (InstantiationException | IllegalAccessException e) {}
+			final depends_on d = method.getAnnotation(depends_on.class);
+			dependencies = d != null ? d.value() : null;
 		}
 		semanticValidator = tempValidator;
+		depends_on = dependencies;
 		this.returnType = returnType;
 		this.canBeConst = canBeConst;
 		this.isVarOrField = isVarOrField;
@@ -283,6 +280,15 @@ public class OperatorProto extends AbstractProto {
 
 	public OperatorProto copyWithSignature(final IType gamaType) {
 		return new OperatorProto(this, gamaType);
+	}
+
+	public void collectImplicitVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+		if (depends_on == null) { return; }
+		for (final String s : depends_on) {
+			if (species.hasAttribute(s)) {
+				result.add(species.getAttribute(s));
+			}
+		}
 	}
 
 }

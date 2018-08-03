@@ -15,6 +15,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
@@ -68,5 +69,5 @@ public class TempVariableExpression extends VariableExpression {
 	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 }
