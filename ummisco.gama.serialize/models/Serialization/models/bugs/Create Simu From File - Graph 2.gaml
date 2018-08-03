@@ -7,7 +7,8 @@
 
 model CreateSimuGraph2
 
-import "../Memorize Experiment - Topology - Graph - 2 - Moving agents.gaml"
+// import "../Memorize Experiment - Topology - Graph - 2 - Moving agents.gaml"
+import "../Memorize Experiment - Topology - Graph - 1.gaml"
 
 
 experiment saveSimu type: gui {
@@ -19,7 +20,7 @@ experiment saveSimu type: gui {
 	output {
 		display main_display {
 			species road aspect: geom;
-			species people aspect: base;						
+		//	species people aspect: base;						
 		}
 	}	
 }
@@ -33,7 +34,24 @@ experiment reloadSimu type: gui {
 	output {
 		display main_display {
 			species road aspect: geom;
-			species people aspect: base;						
+		//	species people aspect: base;						
+		}
+	}	
+}
+
+experiment reloadSingleSimu type: gui {
+	
+	action _init_ {
+		create simulation from: saved_simulation_file("graph2.gsim");	
+	}
+
+	reflex w {
+//		write sample(simulation);
+	}
+	output {
+		display main_display {
+			species road aspect: geom;
+		//	species people aspect: base;						
 		}
 	}	
 }
