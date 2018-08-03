@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LabelExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LabelExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -97,17 +96,17 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 		final StringBuilder b = new StringBuilder();
 		for (final char c : value.toCharArray()) {
 			switch (c) {
-			case '[':
-			case ' ':
-				break;
-			case ']':
-			case ',': {
-				result.add(b.toString());
-				b.setLength(0);
-				break;
-			}
-			default:
-				b.append(c);
+				case '[':
+				case ' ':
+					break;
+				case ']':
+				case ',': {
+					result.add(b.toString());
+					b.setLength(0);
+					break;
+				}
+				default:
+					b.append(c);
 			}
 		}
 		return result;
@@ -138,8 +137,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public void setName(final String newName) {
-	}
+	public void setName(final String newName) {}
 
 	@Override
 	public IType<String> getGamlType() {
@@ -172,11 +170,9 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-	}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

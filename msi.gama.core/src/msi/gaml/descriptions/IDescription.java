@@ -216,7 +216,8 @@ public interface IDescription
 		return sb.toString();
 	}
 
-	public default void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+	public default void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<VariableDescription> result) {
 		this.visitFacets((name, exp) -> {
 			final IExpression expression = exp.getExpression();
 			if (expression != null) {

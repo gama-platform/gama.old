@@ -145,6 +145,7 @@ public class LayerObject {
 		final GamaPoint scale = getScale();
 
 		if (overlay) {
+			gl.beginOverlay();
 			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
 			// Addition to fix #2228 and #2222
 			gl.suspendZTranslation();
@@ -191,6 +192,7 @@ public class LayerObject {
 		} finally {
 			gl.popMatrix();
 			if (overlay) {
+				gl.endOverlay();
 				// Addition to fix #2228 and #2222
 				gl.resumeZTranslation();
 				gl.pop(GL2.GL_MODELVIEW);
@@ -304,6 +306,7 @@ public class LayerObject {
 
 		attributes.setLocation(newLoc);
 		attributes.setTexture(o);
+		attributes.setSynthetic(true);
 		return addGeometry(geometry, attributes);
 	}
 

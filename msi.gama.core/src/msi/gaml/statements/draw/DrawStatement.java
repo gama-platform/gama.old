@@ -42,6 +42,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -233,6 +234,18 @@ public class DrawStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final StatementDescription description) {
+			final IExpressionDescription persp = description.getFacet("bitmap");
+			if (persp != null) {
+				if (description.getFacet(PERSPECTIVE) != null) {
+					description.removeFacets("bitmap");
+				} else {
+					final IExpression e = persp.getExpression();
+					final IExpression newExp =
+							GAML.getExpressionFactory().createOperator("not", description, persp.getTarget(), e);
+					description.setFacet(PERSPECTIVE, newExp);
+				}
+			}
+
 			final IExpressionDescription geom = description.getFacet(GEOMETRY);
 			if (geom != null) {
 				for (final String s : Arrays.asList(TEXT, SHAPE, IMAGE)) {
@@ -296,7 +309,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		font = getFacet(FONT);
 		texture = getFacet(TEXTURE);
 		material = getFacet(IKeyword.MATERIAL);
-		perspective = getFacet("bitmap", PERSPECTIVE);
+		perspective = getFacet(PERSPECTIVE);
 		lineWidth = getFacet(WIDTH);
 		lighting = getFacet(IKeyword.LIGHTED);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);

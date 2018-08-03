@@ -98,6 +98,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
+import msi.gaml.compilation.annotations.depends_on;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -414,6 +415,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square", "triangle" })
+		@depends_on (IKeyword.SHAPE)
 		public static IShape cone(final IScope scope, final Integer p1, final Integer p2) {
 			if (p1 == null || p2 == null) { return null; }
 			final Double min_angle = Maths.checkHeading(p1);

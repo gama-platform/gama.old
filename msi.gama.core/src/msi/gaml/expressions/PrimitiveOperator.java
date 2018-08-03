@@ -21,6 +21,7 @@ import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.operators.Cast;
@@ -87,8 +88,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	@Override
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
-		sb.append("action ").append(getName()).append(" defined in species ").append(target.getGamlType().getSpeciesName())
-				.append(" returns ").append(getGamlType().getTitle());
+		sb.append("action ").append(getName()).append(" defined in species ")
+				.append(target.getGamlType().getSpeciesName()).append(" returns ").append(getGamlType().getTitle());
 		return sb.toString();
 
 	}
@@ -154,7 +155,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
 		if (parameters != null) {
 			parameters.forEachEntry((name, exp) -> {
 				final IExpression expression = exp.getExpression();
