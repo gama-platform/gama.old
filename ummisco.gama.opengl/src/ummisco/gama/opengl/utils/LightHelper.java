@@ -61,10 +61,11 @@ public class LightHelper {
 			// directional light
 			data.setLightType(1, "direction");
 			data.setLightDirection(1, new GamaPoint(0.5, 0.5, -1, 0));
-			if (renderer.useShader())
+			if (renderer.useShader()) {
 				data.setDiffuseLightColor(1, new GamaColor(255, 255, 255, 255));
-			else
+			} else {
 				data.setDiffuseLightColor(1, new GamaColor(127, 127, 127, 255));
+			}
 		}
 
 		// set material properties which will be assigned by glColor
@@ -125,9 +126,9 @@ public class LightHelper {
 				// DRAW THE LIGHT IF NEEDED
 				if (lightProperties.drawLight && lightProperties.id != 0) {
 					// disable the lighting during the time the light is drawn
-					openGL.disableLighting();
+					final boolean previous = openGL.setLighting(false);
 					drawLight(openGL, size, worldWidth, worldHeight, lightProperties, lightPosition);
-					openGL.enableLighting();
+					openGL.setLighting(previous);
 				}
 			} else {
 				openGL.getGL().glDisable(GL2.GL_LIGHT0 + lightProperties.id);

@@ -139,6 +139,12 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("the size of the arrow, located at the end of the drawn geometry")),
 				@facet (
+						name = IKeyword.LIGHTED,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc (
+								value = "Whether the object should be lighted or not (only applicable in the context of opengl displays)")),
+				@facet (
 						name = PERSPECTIVE,
 						type = IType.BOOL,
 						optional = true,
@@ -275,7 +281,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private final DrawExecuter executer;
 	private final IExpression size, depth, rotate, at, empty, border, color, font, texture, perspective, material,
-			lineWidth;
+			lineWidth, lighting;
 	private final ThreadLocal<DrawingData> data;
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
@@ -292,9 +298,10 @@ public class DrawStatement extends AbstractStatementSequence {
 		material = getFacet(IKeyword.MATERIAL);
 		perspective = getFacet("bitmap", PERSPECTIVE);
 		lineWidth = getFacet(WIDTH);
+		lighting = getFacet(IKeyword.LIGHTED);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
 		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, getFacet(IKeyword.ANCHOR), empty,
-				border, color, font, texture, material, perspective, lineWidth));
+				border, color, font, texture, material, perspective, lineWidth, lighting));
 		if (item == null) {
 			executer = null;
 		} else {

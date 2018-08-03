@@ -16,10 +16,10 @@ public class ColorProperties {
 	List<?> textures;
 	GamaColor[] colors;
 	boolean empty;
+	boolean lighting = true;
 
 	public GamaColor getFillColor() {
-		if (empty)
-			return null;
+		if (empty) { return null; }
 		if (fill == null) {
 			if (colors != null) { return colors[0]; }
 			if (textures != null) { return TEXTURED_COLOR; }
@@ -30,17 +30,14 @@ public class ColorProperties {
 	}
 
 	public GamaColor getBorderColor() {
-		if (empty && border == null)
-			return fill;
+		if (empty && border == null) { return fill; }
 		return border;
 	}
 
 	public GamaColor[] getColors() {
-		if (empty)
-			return null;
+		if (empty) { return null; }
 		if (colors == null) {
-			if (fill == null)
-				return null;
+			if (fill == null) { return null; }
 			return new GamaColor[] { fill };
 		}
 		return colors;
@@ -71,6 +68,11 @@ public class ColorProperties {
 		return this;
 	}
 
+	ColorProperties withLighting(final boolean lighting) {
+		this.lighting = lighting;
+		return this;
+	}
+
 	ColorProperties toNoBorder() {
 		border = null;
 		return this;
@@ -90,32 +92,30 @@ public class ColorProperties {
 	}
 
 	public boolean isAnimated() {
-		if (textures == null)
-			return false;
+		if (textures == null) { return false; }
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile))
-			return false;
+		if (!(o instanceof GamaGifFile)) { return false; }
 		return true;
 	}
 
 	public int getFrameCount() {
-		if (textures == null)
-			return 1;
+		if (textures == null) { return 1; }
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile))
-			return 1;
+		if (!(o instanceof GamaGifFile)) { return 1; }
 		return ((GamaGifFile) o).getFrameCount();
 
 	}
 
 	public int getAverageDelay() {
-		if (textures == null)
-			return 0;
+		if (textures == null) { return 0; }
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile))
-			return 0;
+		if (!(o instanceof GamaGifFile)) { return 0; }
 		return ((GamaGifFile) o).getAverageDelay();
 
+	}
+
+	public boolean isLighting() {
+		return lighting;
 	}
 
 }

@@ -47,6 +47,7 @@ public class GeometryObject extends AbstractObject {
 		this(geometry, color, type, JOGLRenderer.getLineWidth());
 		attributes.setEmpty(empty);
 		attributes.setHeight(geometry.getDepth());
+		attributes.withLighting(false);
 	}
 
 	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final double lineWidth) {

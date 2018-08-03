@@ -145,7 +145,7 @@ public class KeystoneDrawer implements IKeystoneState {
 
 		openGL.pushIdentity(GL2.GL_PROJECTION);
 		gl.glOrtho(0, 1, 0, 1, 1, -1);
-		openGL.disableLighting();
+		openGL.setLighting(false);
 
 		vertices.visit((id, x, y, z) -> {
 			// cornersInPixels[id].setToNull();
@@ -180,7 +180,7 @@ public class KeystoneDrawer implements IKeystoneState {
 			openGL.pop(GL2.GL_MODELVIEW);
 		}, 4, true);
 		openGL.pop(GL2.GL_MODELVIEW);
-		openGL.enableLighting();
+		openGL.setLighting(true);
 		openGL.pop(GL2.GL_PROJECTION);
 
 	}
@@ -356,12 +356,8 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	@Override
 	public boolean isKeystoneInAction() {
-		if (drawKeystoneHelper) {
-			return true;
-		}
-		if (!renderer.data.isKeystoneDefined()) {
-			return false;
-		}
+		if (drawKeystoneHelper) { return true; }
+		if (!renderer.data.isKeystoneDefined()) { return false; }
 		return true;
 	}
 

@@ -28,15 +28,15 @@ public class FileDrawingAttributes extends DrawingAttributes {
 
 	public FileDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
-			final Double lineWidth, final boolean isImage) {
-		super(size, rotation, location, color, border);
+			final Double lineWidth, final boolean isImage, final Boolean lighting) {
+		super(size, rotation, location, color, border, lighting);
 		this.agentIdentifier = AgentIdentifier.of(agent);
 		setLineWidth(lineWidth == null ? GamaPreferences.Displays.CORE_LINE_WIDTH.getValue() : lineWidth);
 		this.isImage = isImage;
 	}
 
 	public FileDrawingAttributes(final GamaPoint location, final boolean isImage) {
-		super(null, null, location, null, null);
+		super(null, null, location, null, null, null);
 		agentIdentifier = null;
 		setLineWidth(GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		this.isImage = isImage;

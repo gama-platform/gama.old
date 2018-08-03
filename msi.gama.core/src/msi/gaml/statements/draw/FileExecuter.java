@@ -64,9 +64,9 @@ class FileExecuter extends DrawExecuter {
 
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
 			final boolean gisFile) {
-		final FileDrawingAttributes attributes =
-				new FileDrawingAttributes(Scaling3D.of(data.size.value), data.rotation.value, data.location.value,
-						data.getCurrentColor(), data.border.value, scope.getAgent(), data.lineWidth.value, imageFile);
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(Scaling3D.of(data.size.value),
+				data.rotation.value, data.location.value, data.getCurrentColor(), data.border.value, scope.getAgent(),
+				data.lineWidth.value, imageFile, data.lighting.value);
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
 		if (!gisFile) {

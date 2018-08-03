@@ -448,6 +448,7 @@ public interface IKeyword {
 	public static final String WHISKER = "whisker"; // new type of datachart
 	public static final String WHILE = "while";
 	public static final String WIDTH = "width";
+	public static final String LIGHTED = "lighted";
 	public static final String WITH = "with";
 	public static final String WORLD_AGENT_NAME = "world";
 	public static final String WRITABLE = "writable";

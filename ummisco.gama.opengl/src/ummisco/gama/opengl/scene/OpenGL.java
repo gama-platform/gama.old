@@ -293,12 +293,27 @@ public class OpenGL {
 		return maxZ;
 	}
 
-	public void disableLighting() {
-		gl.glDisable(GL2.GL_LIGHTING);
+	boolean lighted;
+
+	/**
+	 * Returns the previous state
+	 * 
+	 * @param lighted
+	 * @return
+	 */
+	public boolean setLighting(final boolean lighted) {
+		if (this.lighted == lighted) { return lighted; }
+		if (lighted) {
+			gl.glEnable(GL2.GL_LIGHTING);
+		} else {
+			gl.glDisable(GL2.GL_LIGHTING);
+		}
+		this.lighted = lighted;
+		return !lighted;
 	}
 
-	public void enableLighting() {
-		gl.glEnable(GL2.GL_LIGHTING);
+	public boolean getLighting() {
+		return lighted;
 	}
 
 	public void matrixMode(final int mode) {
@@ -448,9 +463,9 @@ public class OpenGL {
 	}
 
 	public void drawLine(final ICoordinates yNegatedVertices, final int number) {
-		this.disableLighting();
+		final boolean previous = this.setLighting(false);
 		drawVertices(GL.GL_LINE_STRIP, yNegatedVertices, number, true);
-		this.enableLighting();
+		this.setLighting(previous);
 	}
 
 	/**
@@ -1232,11 +1247,19 @@ public class OpenGL {
 		setLineWidth(object.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getColor());
+		if (object.isFilled()) {
+			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
+		}
+
 	}
 
 	public void endObject(final AbstractObject object) {
 		disableTextures();
 		translateByZIncrement();
+		if (object.isFilled()) {
+			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+		}
+
 	}
 
 	public void beginScene(final Color backgroundColor) {

@@ -28,8 +28,8 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public ShapeDrawingAttributes(final Scaling3D size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
 			final GamaColor border, final List textures, final GamaMaterial material, final IAgent agent,
-			final IShape.Type type, final Double lineWidth) {
-		super(size, rotation, location, color, border, agent, lineWidth, false);
+			final IShape.Type type, final Double lineWidth, final Boolean lighting) {
+		super(size, rotation, location, color, border, agent, lineWidth, false, lighting);
 		setHeightIfAbsent(depth);
 		setEmpty(empty);
 		setTextures(textures);
@@ -52,7 +52,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
 	public ShapeDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border,
 			final IShape.Type type) {
-		this(null, null, null, location, color == null, color, null, border, null, null, null, type, null);
+		this(null, null, null, location, color == null, color, null, border, null, null, null, type, null, null);
 	}
 
 	/**
@@ -68,12 +68,13 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border,
 			final Double lineWidth) {
 		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null, agent,
-				shape.getGeometricalType(), lineWidth);
+				shape.getGeometricalType(), lineWidth, null);
 	}
 
 	public void setHeightIfAbsent(final Double d) {
-		if (getHeight() == null)
+		if (getHeight() == null) {
 			setHeight(d);
+		}
 	}
 
 	/**

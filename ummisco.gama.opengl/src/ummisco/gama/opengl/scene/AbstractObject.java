@@ -106,7 +106,9 @@ public abstract class AbstractObject {
 		if (isPicking) {
 			gl.registerForSelection(attributes.getIndex());
 		}
+		final boolean previous = gl.setLighting(isLighting());
 		drawer.draw(this);
+		gl.setLighting(previous);
 		if (isPicking) {
 			gl.markIfSelected(attributes);
 		}
@@ -162,6 +164,10 @@ public abstract class AbstractObject {
 
 	public Envelope3D getEnvelope(final OpenGL gl) {
 		return null;
+	}
+
+	public boolean isLighting() {
+		return attributes.isLighting();
 	}
 
 }

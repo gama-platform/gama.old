@@ -28,7 +28,7 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	public TextDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final GamaPoint anchor, final GamaColor color, final GamaFont font,
 			final Boolean perspective) {
-		super(size, rotation, location, color, null);
+		super(size, rotation, location, color, null, null);
 		this.font = font;
 		this.anchor = anchor;
 		this.perspective = perspective == null ? true : perspective.booleanValue();

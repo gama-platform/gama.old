@@ -25,6 +25,7 @@ global
 
 species people skills: [moving]
 {
+	
 // Each people is provided with the path of its icon (can be changed dynamically, of course)
 	image_file icon <- file_list[int(self)];
 	// 'increment' is used to change the size dynamically
@@ -55,19 +56,20 @@ species people skills: [moving]
 	// The default behavior of people is to move around
 	reflex default
 	{
+	//	heading <- heading + 30;
 		do wander amplitude: 100.0;
 	}
 
 	// The default aspect will be used when no other aspect is invoked in displays
 	aspect opengl
-	{
+	{ 
 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
-		draw icon size: size rotate: heading at: location + {0, 0, size};
+		draw sphere(size/4) lighted: false rotate:heading empty: false texture: icon at: location + {0,0,increment} color: rgb (251, 217, 113,255);
  	}
  	
  	aspect java2d {
  		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
-		draw icon size: size rotate: heading;
+		draw icon size: size/2 rotate: heading;
  	}
 
 }

@@ -36,7 +36,7 @@ public abstract class DrawingAttributes {
 	protected GamaColor highlight;
 
 	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
-			final GamaColor color, final GamaColor border) {
+			final GamaColor color, final GamaColor border, final Boolean lighting) {
 		setBorder(border);
 		setColor(color);
 		setSize(size);
@@ -44,6 +44,7 @@ public abstract class DrawingAttributes {
 		if (rotation != null) {
 			setRotation(rotation.key, rotation.value);
 		}
+		withLighting(lighting);
 		uniqueIndex = INDEX++;
 	}
 
@@ -62,11 +63,17 @@ public abstract class DrawingAttributes {
 	public abstract IShape.Type getType();
 
 	public DrawingAttributes(final GamaPoint location, final GamaColor color) {
-		this(null, null, location, color, null);
+		this(null, null, location, color, null, true);
 	}
 
 	public void setColor(final GamaColor fill) {
 		colorProperties.withFill(fill);
+	}
+
+	public DrawingAttributes withLighting(final Boolean lighting) {
+		if (lighting == null) { return this; }
+		colorProperties.withLighting(lighting);
+		return this;
 	}
 
 	protected void setColors(final List<GamaColor> cc) {
@@ -210,6 +217,10 @@ public abstract class DrawingAttributes {
 
 	public GamaPoint getAnchor() {
 		return IUnits.bottom_left;
+	}
+
+	public boolean isLighting() {
+		return colorProperties.isLighting();
 	}
 
 }

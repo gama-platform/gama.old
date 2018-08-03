@@ -168,14 +168,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		openGL.resetMatrix(GL2.GL_MODELVIEW);
 
-		if (data.isLightOn()) {
+		final boolean lighted = data.isLightOn();
+		openGL.setLighting(lighted);
+		if (lighted) {
 			openGL.pushMatrix();
-			openGL.enableLighting();
 			lightHelper.setAmbiantLight(openGL, data.getAmbientLightColor());
 			lightHelper.updateDiffuseLightValue(openGL);
 			openGL.popMatrix();
-		} else {
-			openGL.disableLighting();
 		}
 
 		rotateModel();
@@ -183,7 +182,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		drawScene();
 
 		openGL.disableTextures();
-		openGL.disableLighting();
+		openGL.setLighting(false);
 		if (data.isShowfps()) {
 			final int fps = (int) canvas.getAnimator().getLastFPS();
 			openGL.setCurrentColor(Color.black);

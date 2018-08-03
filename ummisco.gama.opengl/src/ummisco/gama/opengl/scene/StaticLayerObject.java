@@ -29,13 +29,13 @@ public class StaticLayerObject extends LayerObject {
 		@Override
 		public void draw(final OpenGL gl) {
 			if (renderer.getPickingState().isPicking()) { return; }
-			gl.disableLighting();
+			final boolean previous = gl.setLighting(false);
 			if (currentList.isEmpty()) {
 				fillWithObjects(currentList);
 			}
 			gl.suspendZTranslation();
 			super.draw(gl);
-			gl.enableLighting();
+			gl.setLighting(previous);
 			gl.resumeZTranslation();
 
 		}

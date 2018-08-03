@@ -123,6 +123,7 @@ public class DrawingData {
 	final Attribute<GamaMaterialType, GamaMaterial> material;
 	final Attribute<GamaBoolType, Boolean> perspective;
 	final Attribute<GamaFloatType, Double> lineWidth;
+	final Attribute<GamaBoolType, Boolean> lighting;
 
 	final Attribute[] ATTRIBUTES;
 
@@ -130,7 +131,7 @@ public class DrawingData {
 			final IExpression locationExp, final IExpression anchorExp, final IExpression emptyExp,
 			final IExpression borderExp, final IExpression colorExp, final IExpression fontExp,
 			final IExpression textureExp, final IExpression materialExp, final IExpression perspectiveExp,
-			final IExpression lineWidthExp) {
+			final IExpression lineWidthExp, final IExpression lightingExp) {
 		this.size = create(sizeExp, (scope) -> {
 			if (sizeExp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(scope, sizeExp.value(scope));
@@ -140,6 +141,7 @@ public class DrawingData {
 				return (GamaPoint) sizeExp.value(scope);
 			}
 		}, Types.POINT, null);
+		this.lighting = create(lightingExp, Types.BOOL, true);
 		this.depth = create(depthExp, Types.FLOAT, null);
 		this.rotation = create(rotationExp, (scope) -> {
 			if (rotationExp.getGamlType().getGamlType() == Types.PAIR) {
@@ -194,7 +196,7 @@ public class DrawingData {
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
 		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		ATTRIBUTES = new Attribute[] { size, location, anchor, depth, colors, rotation, empty, border, font, texture,
-				material, perspective, lineWidth };
+				material, perspective, lineWidth, lighting };
 	}
 
 	public DrawingData computeAttributes(final IScope scope) {

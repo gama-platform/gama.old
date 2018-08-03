@@ -121,7 +121,7 @@ class ShapeExecuter extends DrawExecuter {
 		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(Scaling3D.of(data.size.value),
 				data.depth.value, data.rotation.value, data.location.value, data.empty.value, data.getCurrentColor(),
 				data.getColors(), data.border.value, data.texture.value, data.material.value, scope.getAgent(),
-				shape.getGeometricalType(), data.lineWidth.value);
+				shape.getGeometricalType(), data.lineWidth.value, data.lighting.value);
 		// We push the depth of the geometry if none have been specified already
 		attributes.setHeightIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		// We push the (perhaps new) location of the shape to the attributes.
