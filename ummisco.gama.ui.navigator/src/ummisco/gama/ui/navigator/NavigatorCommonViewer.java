@@ -6,7 +6,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.INavigatorContentService;
 
 import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 
@@ -22,7 +21,7 @@ public class NavigatorCommonViewer extends CommonViewer {
 		NavigatorContentProvider.FILE_CHILDREN_ENABLED = false;
 		final IStructuredSelection currentSelection = (IStructuredSelection) getSelection();
 		if (currentSelection == null || currentSelection.isEmpty()) {
-			super.expandAll(); // .expandToLevel(3);
+			super.expandAll();
 		} else {
 			final Iterator<?> it = currentSelection.iterator();
 			while (it.hasNext()) {
@@ -39,12 +38,6 @@ public class NavigatorCommonViewer extends CommonViewer {
 		this.refresh(false);
 		getControl().setRedraw(true);
 
-	}
-
-	@Override
-	public INavigatorContentService getNavigatorContentService() {
-		// TODO Auto-generated method stub
-		return super.getNavigatorContentService();
 	}
 
 }

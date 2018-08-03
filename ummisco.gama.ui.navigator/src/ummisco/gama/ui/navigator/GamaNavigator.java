@@ -44,7 +44,6 @@ import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
-import org.eclipse.ui.navigator.IDescriptionProvider;
 
 import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
@@ -63,40 +62,17 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 import ummisco.gama.ui.views.toolbar.Selector;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
-	//
-	// static Pref<String> NAVIGATOR_EXPANDED_STATE =
-	// create("pref_navigator_state", "Navigator", "", IType.STRING).hidden();
-
 	IAction link;
 	ToolItem linkItem;
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
-	private IDescriptionProvider commonDescriptionProvider;
 	private PropertyDialogAction properties;
 	private NavigatorSearchControl findControl;
 
 	@Override
 	protected CommonNavigatorManager createCommonManager() {
 		final CommonNavigatorManager manager = new CommonNavigatorManager(this, memento);
-
-		commonDescriptionProvider = anElement -> {
-			if (anElement instanceof IStructuredSelection) {
-				final IStructuredSelection selection = (IStructuredSelection) anElement;
-				if (selection.isEmpty()) { return ""; }
-				String message = null;
-				if (selection.size() > 1) {
-					message = "Multiple elements";
-				} else if (selection.getFirstElement() instanceof VirtualContent) {
-					message = ((VirtualContent<?>) selection.getFirstElement()).getName();
-				} else if (selection.getFirstElement() instanceof IResource) {
-					message = ((IResource) selection.getFirstElement()).getName();
-				}
-				return message;
-			}
-			return "";
-		};
 		getCommonViewer().addPostSelectionChangedListener(this);
-
 		return manager;
 	}
 
@@ -106,7 +82,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	final GamaCommand expandAll = new GamaCommand("action.toolbar.expand2", "", "Fully expand current folder(s)",
 			e -> getCommonViewer().expandAll());
 
-	@SuppressWarnings ("deprecation")
 	@Override
 	public void createPartControl(final Composite compo) {
 		this.parent = GamaToolbarFactory.createToolbars(this, compo);
@@ -129,10 +104,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		}
 		linkItem.setSelection(link.isChecked());
 		tb.update(true);
-		// linkItem.setSelection(link.isChecked());
-		// final Action a = linkCommand.toCheckAction();
-		// a.setChecked(link.isChecked());
-		// toolbar.insertBefore("toolbar.toggle", a);
 		tb.insertBefore("toolbar.toggle", byDate.toCheckAction());
 		tb.insertBefore("toolbar.toggle", expandAll.toAction());
 		tb.insertBefore(expandAll.getId(), collapseAll.toAction());
@@ -191,7 +162,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					}
 				}
 			}
-
 			final VirtualContent<?>[] sel = contents.toArray(new VirtualContent[0]);
 			if (sel.length > 0) {
 				getCommonViewer().setExpandedElements(sel);
@@ -199,13 +169,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			}
 
 		}
-	}
-
-	@Override
-	public CommonViewer createCommonViewer(final Composite p) {
-		final CommonViewer commonViewer = super.createCommonViewer(p);
-		return commonViewer;
-
 	}
 
 	@Override
@@ -217,7 +180,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		} else {
 			current = (VirtualContent<?>) getCommonViewer().getStructuredSelection().getFirstElement();
 		}
-
 		StructuredSelection newSelection = new StructuredSelection();
 		if (selection instanceof StructuredSelection) {
 			newSelection = (StructuredSelection) selection;
@@ -229,7 +191,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				}
 			}
 		}
-
 		if (current instanceof WrappedSyntacticContent) {
 			final Object o = newSelection.getFirstElement();
 			if (o instanceof WrappedFile) {
@@ -284,22 +245,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		};
 	}
 
-	// final GamaCommand importCommand = new GamaCommand("navigator/navigator.import2", "", "Import...", trigger -> {
-	// final GamaNavigatorImportMenu menu =
-	// new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
-	// final ToolItem target = (ToolItem) trigger.widget;
-	// final ToolBar toolBar = target.getParent();
-	// menu.open(toolBar, trigger);
-	// });
-	//
-	// final GamaCommand newCommand = new GamaCommand("navigator/navigator.new2", "", "New...", trigger -> {
-	// final GamaNavigatorNewMenu menu =
-	// new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
-	// final ToolItem target = (ToolItem) trigger.widget;
-	// final ToolBar toolBar = target.getParent();
-	// menu.open(toolBar, trigger);
-	// });
-
 	final GamaCommand byDate = new GamaCommand("action.toolbar.sort2", "", "Sort by modification date", trigger -> {
 		final boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
@@ -327,9 +272,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
-		// tb.menu(importCommand, SWT.RIGHT);
-		// tb.menu(newCommand, SWT.RIGHT);
-		// tb.sep(24, SWT.RIGHT);
 		if (PlatformHelper.isWindows() || PlatformHelper.isLinux()) {
 			tb.sep(24, SWT.RIGHT);
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
@@ -366,7 +308,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final Image image = element.getStatusImage();
 		final GamaUIColor color = element.getStatusColor();
 		final Selector l = e -> properties.run();
-
 		final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
 		t.getControl().setToolTipText(tooltip == null ? message : tooltip);
 	}
