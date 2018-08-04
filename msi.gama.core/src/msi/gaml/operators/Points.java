@@ -21,6 +21,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 11 dec. 2010
@@ -30,134 +31,171 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class Points {
 
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = { IConcept.POINT })
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y} instead.")
+	// // "special" operator introduced in the parser for the points
+	// public static ILocation toPoint(final Double a, final Double b) {
+	// return new GamaPoint(a, b);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y} instead.")
+	// // "special" operator introduced in the parser for the points
+	// public static ILocation toPoint(final Integer a, final Double b) {
+	// return new GamaPoint(a, b);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y} instead.")
+	// // "special" operator introduced in the parser for the points
+	// public static ILocation toPoint(final Double a, final Integer b) {
+	// return new GamaPoint(a, b);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y} instead.")
+	// // "special" operator introduced in the parser for the points
+	// public static ILocation toPoint(final Integer a, final Integer b) {
+	// return new GamaPoint(a, b);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	// public static ILocation toPoint(final Double x, final Double y, final Double z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Integer x, final Double y, final Double z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Integer x, final Integer y, final Double z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Integer x, final Integer y, final Integer z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Double x, final Integer y, final Double z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Double x, final Integer y, final Integer z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+	// @operator (
+	// value = IKeyword.POINT,
+	// can_be_const = true,
+	// category = IOperatorCategory.POINT,
+	// concept = {})
+	// @doc (
+	// value = "internal use only. Use the standard construction {x,y, z} instead.")
+	//
+	// public static ILocation toPoint(final Double x, final Double y, final Integer z) {
+	// return new GamaPoint(x, y, z);
+	// }
+	//
+
 	@operator (
 			value = IKeyword.POINT,
 			can_be_const = true,
 			category = IOperatorCategory.POINT,
-			concept = { IConcept.POINT })
-	@doc (
-			value = "internal use only. Use the standard construction {x,y} instead.")
-	// "special" operator introduced in the parser for the points
-	public static ILocation toPoint(final Double a, final Double b) {
-		return new GamaPoint(a, b);
+			internal = true)
+	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
+		if (scope != null) {
+			scope.setHorizontalPixelContext();
+		}
+		final double x = Cast.asFloat(scope, xExp.value(scope));
+		if (scope != null) {
+			scope.setVerticalPixelContext();
+		}
+		final double y = Cast.asFloat(scope, yExp.value(scope));
+		return new GamaPoint(x, y);
 	}
 
 	@operator (
 			value = IKeyword.POINT,
 			can_be_const = true,
 			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y} instead.")
-	// "special" operator introduced in the parser for the points
-	public static ILocation toPoint(final Integer a, final Double b) {
-		return new GamaPoint(a, b);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y} instead.")
-	// "special" operator introduced in the parser for the points
-	public static ILocation toPoint(final Double a, final Integer b) {
-		return new GamaPoint(a, b);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y} instead.")
-	// "special" operator introduced in the parser for the points
-	public static ILocation toPoint(final Integer a, final Integer b) {
-		return new GamaPoint(a, b);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-	public static ILocation toPoint(final Double x, final Double y, final Double z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Integer x, final Double y, final Double z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Integer x, final Integer y, final Double z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Integer x, final Integer y, final Integer z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Double x, final Integer y, final Double z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Double x, final Integer y, final Integer z) {
-		return new GamaPoint(x, y, z);
-	}
-
-	@operator (
-			value = IKeyword.POINT,
-			can_be_const = true,
-			category = IOperatorCategory.POINT,
-			concept = {})
-	@doc (
-			value = "internal use only. Use the standard construction {x,y, z} instead.")
-
-	public static ILocation toPoint(final Double x, final Double y, final Integer z) {
+			internal = true)
+	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
+			final IExpression zExp) {
+		if (scope != null) {
+			scope.setHorizontalPixelContext();
+		}
+		final double x = Cast.asFloat(scope, xExp.value(scope));
+		if (scope != null) {
+			scope.setVerticalPixelContext();
+		}
+		final double y = Cast.asFloat(scope, yExp.value(scope));
+		final double z = Cast.asFloat(scope, zExp.value(scope));
 		return new GamaPoint(x, y, z);
 	}
 
@@ -178,8 +216,7 @@ public class Points {
 									equals = "{0.5,1.25}") }))
 	@test ("{5, 7.5} / 2.5 = {2,3}")
 	public static ILocation divide(final IScope scope, final GamaPoint p, final Double d) {
-		if (d == 0d)
-			throw GamaRuntimeException.error("Division by zero", scope);
+		if (d == 0d) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return new GamaPoint(p.x / d, p.y / d, p.z / d);
 	}
 
@@ -193,8 +230,7 @@ public class Points {
 	@test ("{2,5} / 4 = {0.5,1.25}")
 	@test ("is_error({2,5} / 0)")
 	public static ILocation divide(final IScope scope, final GamaPoint p, final Integer d) {
-		if (d == 0)
-			throw GamaRuntimeException.error("Division by zero", scope);
+		if (d == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
 		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z / d.doubleValue());
 	}
 
@@ -208,8 +244,7 @@ public class Points {
 	@test ("{2,5} * 4.0 = {8.0,20.0}")
 	@test ("{2,5} * 0.0 = {0.0,0.0}")
 	public static ILocation multiply(final GamaPoint p1, final Double d) {
-		if (p1 == null)
-			return new GamaPoint();
+		if (p1 == null) { return new GamaPoint(); }
 		return new GamaPoint(p1.x * d, p1.y * d, p1.z * d);
 	}
 
@@ -231,8 +266,7 @@ public class Points {
 	@test ("{2,5} * 4 = {8,20}")
 	@test ("{2,5} * 0 = {0,0}")
 	public static ILocation multiply(final GamaPoint p1, final Integer d) {
-		if (p1 == null)
-			return new GamaPoint();
+		if (p1 == null) { return new GamaPoint(); }
 		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z * d.doubleValue());
 	}
 
@@ -251,8 +285,7 @@ public class Points {
 							equals = "34.0")))
 	@test ("{2,5} * {4.5, 5} = 34.0")
 	public static Double multiply(final GamaPoint p1, final GamaPoint p) {
-		if (p1 == null || p == null)
-			return 0d;
+		if (p1 == null || p == null) { return 0d; }
 		return p1.x * p.x + p1.y * p.y + p1.z * p.z;
 	}
 
@@ -275,8 +308,7 @@ public class Points {
 	@test ("norm({0,0}) = 0.0")
 	@test ("norm({1,0}) = norm({0,1})")
 	public static Double norm(final IScope scope, final GamaPoint p) throws GamaRuntimeException {
-		if (p == null)
-			return 0d;
+		if (p == null) { return 0d; }
 		return Maths.sqrt(scope, p.x * p.x + p.y * p.y + p.z * p.z);
 	}
 
@@ -297,10 +329,8 @@ public class Points {
 			value = "point p <- {1, 2}; p + {0, 0} = p",
 			warning = true)
 	public static ILocation add(final GamaPoint p1, final GamaPoint p) {
-		if (p1 == null)
-			return p;
-		if (p == null)
-			return p1;
+		if (p1 == null) { return p; }
+		if (p == null) { return p1; }
 		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z);
 	}
 
@@ -320,8 +350,7 @@ public class Points {
 									value = "{1, 2} + 4.5",
 									equals = "{5.5, 6.5,4.5}") }))
 	public static ILocation add(final GamaPoint p1, final Double p) {
-		if (p1 == null)
-			return new GamaPoint(p, p, p);
+		if (p1 == null) { return new GamaPoint(p, p, p); }
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
@@ -333,8 +362,7 @@ public class Points {
 	@doc (
 			value = "Returns a point with coordinate summing of the two operands.")
 	public static ILocation add(final GamaPoint p1, final Integer p) {
-		if (p1 == null)
-			return new GamaPoint(p, p, p);
+		if (p1 == null) { return new GamaPoint(p, p, p); }
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
@@ -354,8 +382,7 @@ public class Points {
 									value = "{1, 2} - 4",
 									equals = "{-3.0,-2.0,-4.0}") }))
 	public static ILocation subtract(final GamaPoint p1, final Double p) {
-		if (p1 == null)
-			return new GamaPoint(-p, -p, -p);
+		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
@@ -391,10 +418,8 @@ public class Points {
 							value = "{1, 2} - {4, 5}",
 							equals = "{-3.0, -3.0}")))
 	public static ILocation subtract(final GamaPoint p1, final GamaPoint p) {
-		if (p == null)
-			return p1;
-		if (p1 == null)
-			return p.negated();
+		if (p == null) { return p1; }
+		if (p1 == null) { return p.negated(); }
 		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z);
 	}
 
@@ -406,8 +431,7 @@ public class Points {
 	@doc (
 			value = "Returns a point with coordinate resulting from the first operand minus the second operand.")
 	public static ILocation subtract(final GamaPoint p1, final Integer p) {
-		if (p1 == null)
-			return new GamaPoint(-p, -p, -p);
+		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
@@ -422,8 +446,7 @@ public class Points {
 					equals = "{12345.79, 12345.79, 12345.79}") },
 			see = "round")
 	public static ILocation round(final ILocation v, final Integer precision) {
-		if (v == null)
-			return null;
+		if (v == null) { return null; }
 		return new GamaPoint(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision),
 				Maths.round(v.getZ(), precision));
 	}
@@ -439,8 +462,7 @@ public class Points {
 					equals = "{12345.79,12345.79,12345.79}") },
 			see = "round")
 	public static ILocation round(final ILocation v) {
-		if (v == null)
-			return null;
+		if (v == null) { return null; }
 		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
 	}
 
