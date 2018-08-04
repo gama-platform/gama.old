@@ -35,9 +35,9 @@ public class StaticLayerObject extends LayerObject {
 			}
 
 			gl.suspendZTranslation();
-			// final boolean previous = gl.setLighting(false);
+			final boolean previous = gl.setLighting(false);
 			super.draw(gl);
-			// gl.setLighting(previous);
+			gl.setLighting(previous);
 			gl.resumeZTranslation();
 
 		}

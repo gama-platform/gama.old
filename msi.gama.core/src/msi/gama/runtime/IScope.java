@@ -806,4 +806,10 @@ public interface IScope extends Closeable, IBenchmarkable {
 
 	public GamaRuntimeException getCurrentError();
 
+	public abstract void setHorizontalPixelContext();
+
+	public abstract void setVerticalPixelContext();
+
+	public abstract boolean isHorizontalPixelContext();
+
 }

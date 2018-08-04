@@ -749,4 +749,19 @@ class TemporaryScope implements IScope, IExecutionContext {
 		return vars.containsKey(name);
 	}
 
+	@Override
+	public void setHorizontalPixelContext() {
+
+	}
+
+	@Override
+	public void setVerticalPixelContext() {
+
+	}
+
+	@Override
+	public boolean isHorizontalPixelContext() {
+		return false;
+	}
+
 }

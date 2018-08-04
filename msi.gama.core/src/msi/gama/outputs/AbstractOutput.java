@@ -115,6 +115,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if (!isOpen()) { return false; }
 		if (isPaused()) { return false; }
 		final IScope scope = getScope();
+		if (scope == null || scope.interrupted()) { return false; }
 		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0
 				&& scope.getClock().getCycle() % refreshRate == 0;
 	}

@@ -73,6 +73,7 @@ public class ExecutionScope implements IScope {
 		private IGui gui;
 		private ITypesManager types;
 		private GamaRuntimeException currentError;
+		boolean horizontalPixelContext = false;
 
 		void clear() {
 			each = null;
@@ -917,6 +918,23 @@ public class ExecutionScope implements IScope {
 	@Override
 	public GamaRuntimeException getCurrentError() {
 		return additionalContext.currentError;
+	}
+
+	@Override
+	public void setHorizontalPixelContext() {
+		additionalContext.horizontalPixelContext = true;
+
+	}
+
+	@Override
+	public void setVerticalPixelContext() {
+		additionalContext.horizontalPixelContext = false;
+
+	}
+
+	@Override
+	public boolean isHorizontalPixelContext() {
+		return additionalContext.horizontalPixelContext;
 	}
 
 }

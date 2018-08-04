@@ -72,7 +72,7 @@ public class TextRenderersCache {
 	}
 
 	public TextRenderer get(final String font, final int s, final int style) {
-		final int size = s > 150 ? 150 : s;
+		final int size = s > 300 ? 300 : s;
 		if (size < 6) { return null; }
 		Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
 		if (map1 == null) {

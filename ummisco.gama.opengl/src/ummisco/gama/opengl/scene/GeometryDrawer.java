@@ -15,7 +15,6 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.getHolesNumber;
 import static msi.gama.common.geometry.GeometryUtils.getTypeOf;
 import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
-import static msi.gaml.types.GamaGeometryType.buildCircle;
 
 import java.awt.Color;
 
@@ -403,23 +402,23 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * @param distance
 	 *            the distance used as a reference (between the camera and its target)
 	 */
-	public void drawRotationHelperOld(final GamaPoint pos, final double distance) {
-		gl.setZIncrement(0);
-		gl.setCurrentColor(Color.gray, 0.3);
-		final double height = Math.min(gl.getMaxWorldDim() / 4, distance / 6d);
-		final Geometry point = GamaGeometryType.buildCircle(height, pos.yNegated()).getInnerGeometry();
-		drawSphere(point, true, height, DEFAULT_BORDER);
-	}
-
 	public void drawRotationHelper(final GamaPoint target, final double distance, final double height) {
-		gl.pushMatrix();
-		gl.getGL().glLoadIdentity();
 		gl.setZIncrement(0);
 		gl.setCurrentColor(Color.gray, 0.3);
 		final GamaPoint position = target.yNegated().add(0, 0, -height);
-		final Geometry point = buildCircle(height, position).getInnerGeometry();
+		final Geometry point = GamaGeometryType.buildCircle(height, position).getInnerGeometry();
 		drawSphere(point, true, height, DEFAULT_BORDER);
-		gl.popMatrix();
 	}
+	//
+	// public void drawRotationHelper(final GamaPoint target, final double distance, final double height) {
+	// gl.pushMatrix();
+	// gl.getGL().glLoadIdentity();
+	// gl.setZIncrement(0);
+	// gl.setCurrentColor(Color.gray, 0.3);
+	// final GamaPoint position = target.yNegated().add(0, 0, -height);
+	// final Geometry point = buildCircle(height, position).getInnerGeometry();
+	// drawSphere(point, true, height, DEFAULT_BORDER);
+	// gl.popMatrix();
+	// }
 
 }
