@@ -33,4 +33,9 @@ public class DisplayHeightUnitExpression extends UnitConstantExpression {
 
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
 }

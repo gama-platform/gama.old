@@ -32,4 +32,9 @@ public class DisplayWidthUnitExpression extends UnitConstantExpression {
 		return false;
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
 }

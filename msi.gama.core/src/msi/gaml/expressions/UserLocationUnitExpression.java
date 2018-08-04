@@ -30,4 +30,9 @@ public class UserLocationUnitExpression extends UnitConstantExpression {
 		return false;
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
 }

@@ -31,4 +31,9 @@ public class ZoomUnitExpression extends UnitConstantExpression {
 		return false;
 	}
 
+	@Override
+	public boolean isContextIndependant() {
+		return false;
+	}
+
 }
