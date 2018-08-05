@@ -22,8 +22,10 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. macOS High Sierra]
+ - PC Model: [if applicable, can be useful for displays, OpenGL problems)]
  - GAMA version: [e.g. git, 1.7.1, etc.]
- - Java version [e.g. 1.8]
+ - Java version: [e.g. 1.8]
+ - Graphics cards / Display system: [can be useful for displays, OpenGL problems]
 
 **Additional context**
 Add any other context about the problem here.
