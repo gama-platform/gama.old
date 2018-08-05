@@ -78,10 +78,8 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (!g.is2D() && !isDynamic() && hasBeenDrawnOnce)
-			return;
-		if (g.isNotReadyToUpdate() && hasBeenDrawnOnce)
-			return;
+		if (!g.is2D() && !isDynamic() && hasBeenDrawnOnce) { return; }
+		if (g.isNotReadyToUpdate() && hasBeenDrawnOnce) { return; }
 		if (definition != null) {
 			definition.getBox().compute(scope);
 			setPositionAndSize(definition.getBox(), g);
@@ -115,20 +113,45 @@ public abstract class AbstractLayer implements ILayer {
 		ILocation point = box.getPosition();
 		// Computation of x
 		final double x = point.getX();
-		final double relative_x = Math.abs(x) <= 1 ? pixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
+
+		double relative_x;
+		if (!box.isRelativePosition()) {
+			relative_x = g.getxRatioBetweenPixelsAndModelUnits() * x;
+		} else {
+			relative_x = Math.abs(x) <= 1 ? pixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
+		}
 		final double absolute_x = Math.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
 		// Computation of y
+
 		final double y = point.getY();
-		final double relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
+		double relative_y;
+		if (!box.isRelativePosition()) {
+			relative_y = g.getyRatioBetweenPixelsAndModelUnits() * y;
+		} else {
+			relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
+		}
+
+		relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
 		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
 		point = box.getSize();
 		// Computation of width
 		final double w = point.getX();
-		final double absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
+		double absolute_width;
+		if (!box.isRelativeSize()) {
+			absolute_width = g.getxRatioBetweenPixelsAndModelUnits() * w;
+		} else {
+			absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
+		}
 		// Computation of height
 		final double h = point.getY();
-		final double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
+		double absolute_height;
+		if (!box.isRelativeSize()) {
+			absolute_height = g.getyRatioBetweenPixelsAndModelUnits() * h;
+		} else {
+			absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
+		}
+
 		getSizeInPixels().setLocation(absolute_width, absolute_height);
 		getPositionInPixels().setLocation(absolute_x, absolute_y);
 	}

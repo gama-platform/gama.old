@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.function.Predicate;
+
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
@@ -69,6 +71,10 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 	 */
 	public default IType<?> getDenotedType() {
 		return getGamlType();
+	}
+
+	public default boolean findAny(final Predicate<IExpression> predicate) {
+		return predicate.test(this);
 	}
 
 }

@@ -115,7 +115,7 @@ species ant skills: [moving] control: fsm {
 	}
 	aspect text {
 		if use_icons {
-			draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: {7,5} ;
+			draw  hasFood ? image_file(ant_shape_full) : image_file(ant_shape_empty) rotate: heading at: location size: {7,5} ;
 		} else {
 			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 		}

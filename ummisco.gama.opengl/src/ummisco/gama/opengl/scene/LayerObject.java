@@ -18,11 +18,15 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
@@ -145,7 +149,6 @@ public class LayerObject {
 		final GamaPoint scale = getScale();
 
 		if (overlay) {
-			gl.beginOverlay();
 			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
 			// Addition to fix #2228 and #2222
 			gl.suspendZTranslation();
@@ -192,7 +195,6 @@ public class LayerObject {
 		} finally {
 			gl.popMatrix();
 			if (overlay) {
-				gl.endOverlay();
 				// Addition to fix #2228 and #2222
 				gl.resumeZTranslation();
 				gl.pop(GL2.GL_MODELVIEW);
@@ -203,17 +205,25 @@ public class LayerObject {
 	}
 
 	private void addFrame(final OpenGL gl) {
-		final double width = layer.getDefinition().getBox().getSize().getX();
-		final double height = layer.getDefinition().getBox().getSize().getY();
-
+		GamaPoint scale = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
+		final IScope scope = renderer.getSurface().getScope();
+		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
+		if (expr != null) {
+			scale = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
+			if (scale.x <= 1) {
+				scale.x *= renderer.getEnvWidth();
+			}
+			if (scale.y <= 1) {
+				scale.y *= renderer.getEnvHeight();
+			}
+		}
 		gl.pushMatrix();
-		gl.translateBy(offset.x, -offset.y - height, 0);
-		gl.scaleBy(width, height, 1);
+		gl.translateBy(0, -scale.y, 0);
+		gl.scaleBy(scale.x, scale.y, 1);
 		gl.setCurrentColor(((OverlayLayer) layer).getBackground());
 		gl.setCurrentObjectAlpha(((OverlayLayer) layer).getDefinition().getTransparency());
 		gl.drawCachedGeometry(IShape.Type.ROUNDED, true, null);
 		gl.popMatrix();
-		gl.translateBy(offset.x, -offset.y, 0);
 	}
 
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {

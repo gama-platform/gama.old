@@ -10,6 +10,7 @@
 package msi.gaml.expressions;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
@@ -279,6 +280,22 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	public boolean isEmpty() {
 		return keys.length == 0;
+	}
+
+	@Override
+	public boolean findAny(final Predicate<IExpression> predicate) {
+		if (predicate.test(this)) { return true; }
+		if (keys != null) {
+			for (final IExpression e : keys) {
+				if (e.findAny(predicate)) { return true; }
+			}
+		}
+		if (vals != null) {
+			for (final IExpression e : vals) {
+				if (e.findAny(predicate)) { return true; }
+			}
+		}
+		return false;
 	}
 
 }

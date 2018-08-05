@@ -468,8 +468,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (experimentOutputs == null) {
 			experimentOutputs = ExperimentOutputManager.createEmpty();
 		}
-		if (layout != null) {
-			experimentOutputs.setLayout(layout);
+		if (experimentOutputs.getLayout() == null) {
+			if (layout != null) {
+				experimentOutputs.setLayout(layout);
+			} else if (originalSimulationOutputs.getLayout() != null) {
+				experimentOutputs.setLayout(originalSimulationOutputs.getLayout());
+			}
 		}
 		if (fileOutputDescription != null) {
 			createOutput(fileOutputDescription);

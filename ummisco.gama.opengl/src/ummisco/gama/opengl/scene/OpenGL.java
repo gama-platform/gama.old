@@ -98,7 +98,6 @@ public class OpenGL {
 	private final GLUT glut;
 	private int viewWidth, viewHeight;
 	private final PickingState pickingState;
-	private boolean overlay;
 
 	// Textures
 	private final LoadingCache<BufferedImage, Texture> volatileTextures;
@@ -131,6 +130,7 @@ public class OpenGL {
 	// World
 	final double worldX, worldY;
 	final Function<GamaPoint, GamaPoint> pixelToWorldScaler;
+	final Supplier<GamaPoint> ratioBetweenPixelsAndWorldUnits;
 	final Supplier<Double> zoomLevel;
 
 	// Working objects
@@ -190,6 +190,8 @@ public class OpenGL {
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
 		pixelToWorldScaler = (pixelCoord) -> renderer.getOpenGLPointFromWindowPoint(pixelCoord);
 		zoomLevel = () -> renderer.getZoomLevel();
+		ratioBetweenPixelsAndWorldUnits = () -> new GamaPoint(renderer.getxRatioBetweenPixelsAndModelUnits(),
+				renderer.getyRatioBetweenPixelsAndModelUnits());
 	}
 
 	public void dispose() {
@@ -868,9 +870,9 @@ public class OpenGL {
 	 */
 	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z,
 			final GamaPoint anchor) {
-
-		final TextRenderer r = textRendererCache.get(font.getName(),
-				(int) Math.round(font.getSize() / (overlay ? 1d : zoomLevel.get())), font.getStyle());
+		final float multiplier = 2f;
+		final int fontSize = (int) (font.getSize() * multiplier);
+		final TextRenderer r = textRendererCache.get(font.getName(), fontSize, font.getStyle());
 		if (r == null) { return; }
 
 		if (getCurrentColor() != null) {
@@ -878,7 +880,10 @@ public class OpenGL {
 		}
 		r.begin3DRendering();
 		final Rectangle2D bounds = r.getBounds(string);
-		final float scale = 0.15f;
+
+		final float ratio = (float) ratioBetweenPixelsAndWorldUnits.get().y;
+		final float scale = 1f / ratio / multiplier;
+
 		final double curX = x - bounds.getWidth() * scale * anchor.x;
 		final double curY = y + bounds.getY() * scale * anchor.y;
 
@@ -1242,13 +1247,4 @@ public class OpenGL {
 		gl.glClearDepth(1.0f);
 
 	}
-
-	public void beginOverlay() {
-		overlay = true;
-	}
-
-	public void endOverlay() {
-		overlay = false;
-	}
-
 }

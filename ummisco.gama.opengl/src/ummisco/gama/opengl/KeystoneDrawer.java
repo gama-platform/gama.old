@@ -34,8 +34,6 @@ public class KeystoneDrawer implements IKeystoneState {
 	private int indexBufferIndex;
 	private KeystoneShaderProgram shader;
 	private boolean worldCorners = false;
-	// private final Envelope3D[] cornersInPixels = new Envelope3D[] { new Envelope3D(0, 0, 0, 0, 0, 0),
-	// new Envelope3D(0, 0, 0, 0, 0, 0), new Envelope3D(0, 0, 0, 0, 0, 0), new Envelope3D(0, 0, 0, 0, 0, 0) };
 	private static final Color[] FILL_COLORS = new Color[] { NamedGamaColor.getNamed("gamared").withAlpha(0.5),
 			NamedGamaColor.getNamed("gamablue").withAlpha(0.5), NamedGamaColor.getNamed("black").withAlpha(0.5) };
 

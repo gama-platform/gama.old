@@ -68,18 +68,6 @@ public class LayerManager implements ILayerManager {
 		disabledLayers.clear();
 	}
 
-	@Override
-	public void recomputeBounds(final IGraphics g) {
-		final IScope scope = this.surface.getScope();
-		if (overlay != null)
-			overlay.recomputeBounds(g, scope);
-		for (final ILayer d : enabledLayers) {
-			d.recomputeBounds(g, scope);
-		}
-		for (final ILayer d : disabledLayers) {
-			d.recomputeBounds(g, scope);
-		}
-	}
 
 	@Override
 	public ILayer addLayer(final ILayer d) {
@@ -112,16 +100,16 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		if (geometry == null)
-			return null;
+		if (geometry == null) { return null; }
 		Rectangle2D result = null;
 		for (final ILayer display : enabledLayers) {
 			final Rectangle2D r = display.focusOn(geometry, s);
 			if (r != null) {
-				if (result == null)
+				if (result == null) {
 					result = new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-				else
+				} else {
 					result.add(r);
+				}
 			}
 		}
 		return result;
@@ -166,8 +154,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
-		if (g == null || g.cannotDraw())
-			return;
+		if (g == null || g.cannotDraw()) { return; }
 		final IScope scope = surface.getScope();
 		// If the experiment is already closed
 		if (scope == null || scope.interrupted()) { return; }

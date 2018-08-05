@@ -117,10 +117,11 @@ species ant skills: [moving] control: fsm {	float speed <- 1.0;
 		if (destination != nil) {
 			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1;
 		}
-
+		if (state != "wandering") {
 		draw circle(4) empty: true color: #white;
-		draw string(self as int) color: #white font: font("Helvetica", 12 * #zoom, #bold) at: my location - {1, 1, -0.5};
-		draw state color: #yellow font: font("Helvetica", 10 * #zoom, #plain) at: my location + {1, 1, 0.5} perspective: false;
+		draw string(self as int) color: #white font: font("Helvetica", 14 , #bold) at: my location - {1, 1, -0.5};
+
+		draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5} ;}
 	}}
 
 experiment Ant type: gui {
@@ -130,7 +131,7 @@ experiment Ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants  type: opengl {
+		display Ants  type: opengl synchronized: true {
 			image '../images/soil.jpg' ;
 			agents "Grid" transparency: 0.4  value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info ;

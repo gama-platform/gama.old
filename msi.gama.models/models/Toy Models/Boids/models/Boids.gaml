@@ -188,8 +188,10 @@ species boids skills: [moving] {
 //Species obstacle that represents the obstacles avoided by the boids agents using the skill moving
 species obstacle skills: [moving] {
 	float speed <- 2.0;
-	geometry shape <- triangle(15);
-	
+
+	init {
+		shape <- triangle(15);
+	}	
 	//Reflex to move the obstacles if it is available
 	reflex move_obstacles when: moving_obstacles {
 		//Will make the agent go to a boid with a 50% probability
@@ -208,7 +210,7 @@ species obstacle skills: [moving] {
 }
 
 
-experiment boids_gui type: gui {
+experiment boids_gui type: gui autorun: true{
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
@@ -229,7 +231,7 @@ experiment boids_gui type: gui {
 	float minimum_cycle_duration <- 0.01;
 
 	output {
-		display Sky  background: #blue type: opengl { 
+		display Sky  background: #blue type: opengl synchronized: true fullscreen: 0 toolbar: false{ 
 			image '../images/sky.jpg' refresh: false;
 			species boids aspect: image trace: 10 fading: true ;
 			species boids_goal;

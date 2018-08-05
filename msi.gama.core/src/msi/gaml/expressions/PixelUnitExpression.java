@@ -24,7 +24,12 @@ public class PixelUnitExpression extends UnitConstantExpression {
 		if (scope == null) { return 1d; }
 		final IGraphics g = scope.getGraphics();
 		if (g == null) { return 1d; }
-		final double ratio = g.getyRatioBetweenPixelsAndModelUnits();
+		double ratio;
+		if (scope.isHorizontalPixelContext()) {
+			ratio = g.getxRatioBetweenPixelsAndModelUnits();
+		} else {
+			ratio = g.getyRatioBetweenPixelsAndModelUnits();
+		}
 		if (ratio == 0d) { return 1d; }
 		final Double v = 1d / ratio;
 		return v;
@@ -32,6 +37,11 @@ public class PixelUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public boolean isConst() {
+		return false;
+	}
+
+	@Override
+	public boolean isContextIndependant() {
 		return false;
 	}
 

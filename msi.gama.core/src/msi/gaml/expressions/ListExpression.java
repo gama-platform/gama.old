@@ -10,6 +10,7 @@
 package msi.gaml.expressions;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
@@ -206,6 +207,17 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	@Override
 	public OperatorProto getPrototype() {
 		return null;
+	}
+
+	@Override
+	public boolean findAny(final Predicate<IExpression> predicate) {
+		if (predicate.test(this)) { return true; }
+		if (elements != null) {
+			for (final IExpression e : elements) {
+				if (e.findAny(predicate)) { return true; }
+			}
+		}
+		return false;
 	}
 
 }

@@ -77,12 +77,11 @@ species people skills: [moving]
 experiment Icons
 {
 	// We slow down the simulation in order to see something !
-	float minimum_cycle_duration <- 100 # msec;
 	layout #split;
 	output
 	{
 		
-		display "Colorful in 3D" type: opengl
+		display "Colorful in 3D" type: opengl synchronized: true
 		{
 			// We simply display people, which will use their aspect named opengl
 			species people aspect: opengl;

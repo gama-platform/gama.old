@@ -16,6 +16,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
@@ -43,13 +44,14 @@ public class LayerBox implements IDisplayLayerBox {
 	Integer currentTrace;
 	Boolean currentSelectable;
 
-	ILocation constantPosition = null;
-	ILocation constantSize = null;
-	Double constantTransparency = null;
-	Boolean constantRefresh = null;
-	Boolean constantFading = null;
-	Integer constantTrace = null;
-	Boolean constantSelectable = null;
+	boolean positionIsRelative, sizeIsRelative;
+	ILocation constPosition = null;
+	ILocation constSize = null;
+	Double constTransparency = null;
+	Boolean constRefresh = null;
+	Boolean constFading = null;
+	Integer constTrace = null;
+	Boolean constSelectable = null;
 
 	boolean constantBoundingBox = false;
 
@@ -70,31 +72,31 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setConstantBoundingBox(final boolean b) {
 		constantBoundingBox = b;
 		if (b) {
-			constantPosition = currentPosition;
-			constantSize = currentSize;
+			constPosition = currentPosition;
+			constSize = currentSize;
 		} else {
-			constantPosition = null;
-			constantSize = null;
+			constPosition = null;
+			constSize = null;
 		}
 	}
 
 	@Override
 	public void compute(final IScope scope) throws GamaRuntimeException {
 		try {
-			currentTransparency = constantTransparency == null
+			currentTransparency = constTransparency == null
 					? 1d - Math.min(Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d)
-					: constantTransparency;
-			currentSelectable =
-					constantSelectable == null ? Cast.asBool(scope, selectable.value(scope)) : constantSelectable;
+					: constTransparency;
+			currentSelectable = constSelectable == null ? Cast.asBool(scope, selectable.value(scope)) : constSelectable;
 			if (!constantBoundingBox) {
-				currentPosition = constantPosition == null ? Cast.asPoint(scope, loc.value(scope)) : constantPosition;
-				currentSize = constantSize == null ? Cast.asPoint(scope, size.value(scope)) : constantSize;
+				currentPosition = constPosition == null ? Cast.asPoint(scope, loc.value(scope)) : constPosition;
+				currentSize = constSize == null ? Cast.asPoint(scope, size.value(scope)) : constSize;
 			}
-			currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
-			currentTrace =
-					constantTrace == null ? trace.getGamlType().id() == IType.BOOL && Cast.asBool(scope, trace.value(scope))
-							? Integer.MAX_VALUE : Cast.asInt(scope, trace.value(scope)) : constantTrace;
-			currentFading = constantFading == null ? Cast.asBool(scope, fading.value(scope)) : constantFading;
+			currentRefresh = constRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constRefresh;
+			currentTrace = constTrace == null
+					? trace.getGamlType().id() == IType.BOOL && Cast.asBool(scope, trace.value(scope))
+							? Integer.MAX_VALUE : Cast.asInt(scope, trace.value(scope))
+					: constTrace;
+			currentFading = constFading == null ? Cast.asBool(scope, fading.value(scope)) : constFading;
 
 		} catch (final Throwable e) {
 			throw GamaRuntimeException.create(e, scope);
@@ -104,7 +106,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setTransparency(final IScope scope, final IExpression t) throws GamaRuntimeException {
 		if (t != null) {
-			constantTransparency = null;
+			constTransparency = null;
 			transparency = t;
 			if (t.isConst()) {
 				setTransparency(Cast.asFloat(scope, t.value(scope)));
@@ -115,9 +117,10 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if (p != null) {
-			constantPosition = null;
+			constPosition = null;
 			constantBoundingBox = false;
 			loc = p;
+			positionIsRelative = !p.findAny((e) -> e instanceof PixelUnitExpression);
 			if (p.isConst()) {
 				setPosition(Cast.asPoint(scope, loc.value(scope)));
 			}
@@ -127,9 +130,10 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setSize(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if (e != null) {
-			constantSize = null;
+			constSize = null;
 			constantBoundingBox = false;
 			size = e;
+			sizeIsRelative = !e.findAny((p) -> p instanceof PixelUnitExpression);
 			if (e.isConst()) {
 				setSize(Cast.asPoint(scope, size.value(scope)));
 			}
@@ -139,7 +143,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setRefresh(final IScope scope, final IExpression r) throws GamaRuntimeException {
 		if (r != null) {
-			constantRefresh = null;
+			constRefresh = null;
 			refresh = r;
 			if (r.isConst()) {
 				setRefresh(Cast.asBool(scope, r.value(scope)));
@@ -150,7 +154,7 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setTransparency(final double f) {
-		currentTransparency = constantTransparency = 1d - Math.min(Math.max(f, 0d), 1d);
+		currentTransparency = constTransparency = 1d - Math.min(Math.max(f, 0d), 1d);
 	}
 
 	@Override
@@ -160,8 +164,8 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setSize(final double width, final double height, final double depth) {
-		currentSize = constantSize = new GamaPoint(width, height, depth);
-		if (constantPosition != null) {
+		currentSize = constSize = new GamaPoint(width, height, depth);
+		if (constPosition != null) {
 			constantBoundingBox = true;
 		}
 	}
@@ -173,15 +177,15 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setPosition(final double x, final double y, final double z) {
-		currentPosition = constantPosition = new GamaPoint(x, y, z);
-		if (constantSize != null) {
+		currentPosition = constPosition = new GamaPoint(x, y, z);
+		if (constSize != null) {
 			constantBoundingBox = true;
 		}
 	}
 
 	@Override
 	public void setRefresh(final Boolean r) {
-		currentRefresh = constantRefresh = r;
+		currentRefresh = constRefresh = r;
 
 	}
 
@@ -213,7 +217,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setTrace(final IScope scope, final IExpression r) {
 		if (r != null) {
-			constantTrace = null;
+			constTrace = null;
 			trace = r;
 			if (r.isConst()) {
 				if (r.getGamlType().id() == IType.BOOL) {
@@ -230,7 +234,7 @@ public class LayerBox implements IDisplayLayerBox {
 	 * @param asBool
 	 */
 	private void setTrace(final Integer t) {
-		currentTrace = constantTrace = t;
+		currentTrace = constTrace = t;
 	}
 
 	/**
@@ -242,7 +246,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setFading(final IScope scope, final IExpression r) {
 		if (r != null) {
-			constantFading = null;
+			constFading = null;
 			fading = r;
 			if (r.isConst()) {
 				setFading(Cast.asBool(scope, r.value(scope)));
@@ -253,7 +257,7 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setSelectable(final IScope scope, final IExpression r) {
 		if (r != null) {
-			constantSelectable = null;
+			constSelectable = null;
 			fading = r;
 			if (r.isConst()) {
 				setSelectable(Cast.asBool(scope, r.value(scope)));
@@ -265,12 +269,12 @@ public class LayerBox implements IDisplayLayerBox {
 	 * @param asBool
 	 */
 	private void setFading(final Boolean b) {
-		currentFading = constantFading = b;
+		currentFading = constFading = b;
 	}
 
 	@Override
 	public void setSelectable(final Boolean b) {
-		currentSelectable = constantSelectable = b;
+		currentSelectable = constSelectable = b;
 	}
 
 	/**
@@ -296,6 +300,15 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public Boolean isSelectable() {
 		return currentSelectable;
+	}
+
+	@Override
+	public boolean isRelativePosition() {
+		return positionIsRelative;
+	}
+
+	public boolean isRelativeSize() {
+		return sizeIsRelative;
 	}
 
 }

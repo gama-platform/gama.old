@@ -62,7 +62,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("Whether the displays should show their tab or not")) })
 
 @inside (
-		kinds = { ISymbolKind.EXPERIMENT })
+		kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT })
 @doc (
 		value = "Represents the layout of the display views of simulations and experiments",
 		usages = { @usage (

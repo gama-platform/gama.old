@@ -48,7 +48,9 @@ import msi.gaml.types.IType;
 				name = LAYOUT,
 				type = IType.NONE,
 				optional = true,
-				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal() and vertical() operators")),
+				doc = @doc (
+						deprecated = "Use the layout statement inside 'output' or 'permanent'",
+						value = "Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal() and vertical() operators")),
 				@facet (
 						name = "toolbars",
 						type = IType.BOOL,
@@ -88,7 +90,6 @@ import msi.gaml.types.IType;
 								value = "}",
 								isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
-	LayoutStatement layout;
 
 	public static ExperimentOutputManager createEmpty() {
 		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
@@ -136,10 +137,6 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	public synchronized void dispose(final IScope scope) {
 		GAMA.getGui().cleanAfterExperiment(scope);
 		super.dispose();
-	}
-
-	public void setLayout(final LayoutStatement layout) {
-		this.layout = layout;
 	}
 
 }

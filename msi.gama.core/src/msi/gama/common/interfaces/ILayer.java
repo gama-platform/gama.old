@@ -167,7 +167,6 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 		return getDefinition().serialize(includingBuiltIn);
 	}
 
-	default void recomputeBounds(final IGraphics g, final IScope scope) {}
 
 	@Override
 	default int compareTo(final ILayer o) {

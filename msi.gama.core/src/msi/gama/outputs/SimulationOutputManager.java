@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimulationOutputManager.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -28,17 +27,36 @@ import msi.gaml.factories.DescriptionFactory;
  *
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
-@symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = {})
-@inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
-@doc(value = "`output` blocks define how to visualize a simulation (with one or more display blocks that define separate windows). It will include a set of displays, monitors and files statements. It will be taken into account only if the experiment type is `gui`.", usages = {
-		@usage(value = "Its basic syntax is: ", examples = {
-				@example(value = "experiment exp_name type: gui {", isExecutable = false),
-				@example(value = "   // [inputs]", isExecutable = false),
-				@example(value = "   output {", isExecutable = false),
-				@example(value = "      // [display, file, inspect, layout or monitor statements]", isExecutable = false),
-				@example(value = "   }", isExecutable = false),
-				@example(value = "}", isExecutable = false) }) }, see = { IKeyword.DISPLAY, IKeyword.MONITOR,
-						IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
+@symbol (
+		name = IKeyword.OUTPUT,
+		kind = ISymbolKind.OUTPUT,
+		with_sequence = true,
+		concept = {})
+@inside (
+		kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
+@doc (
+		value = "`output` blocks define how to visualize a simulation (with one or more display blocks that define separate windows). It will include a set of displays, monitors and files statements. It will be taken into account only if the experiment type is `gui`.",
+		usages = { @usage (
+				value = "Its basic syntax is: ",
+				examples = { @example (
+						value = "experiment exp_name type: gui {",
+						isExecutable = false),
+						@example (
+								value = "   // [inputs]",
+								isExecutable = false),
+						@example (
+								value = "   output {",
+								isExecutable = false),
+						@example (
+								value = "      // [display, file, inspect, layout or monitor statements]",
+								isExecutable = false),
+						@example (
+								value = "   }",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }) },
+		see = { IKeyword.DISPLAY, IKeyword.MONITOR, IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
 public class SimulationOutputManager extends AbstractOutputManager {
 
 	public static SimulationOutputManager createEmpty() {
@@ -69,9 +87,9 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	}
 
 	@Override
-	public void dispose(IScope scope) {
+	public void dispose(final IScope scope) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

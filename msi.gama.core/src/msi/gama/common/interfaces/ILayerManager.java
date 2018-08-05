@@ -82,6 +82,4 @@ public interface ILayerManager extends ItemList<ILayer> {
 	 */
 	boolean isProvidingWorldCoordinates();
 
-	void recomputeBounds(IGraphics g);
-
 }

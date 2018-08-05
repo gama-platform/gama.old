@@ -20,6 +20,7 @@ import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ITypeProvider;
@@ -308,5 +309,16 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			ee.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw ee;
 		}
+	}
+
+	@Override
+	public boolean findAny(final Predicate<IExpression> predicate) {
+		if (predicate.test(this)) { return true; }
+		if (exprs != null) {
+			for (final IExpression e : exprs) {
+				if (e.findAny(predicate)) { return true; }
+			}
+		}
+		return false;
 	}
 }

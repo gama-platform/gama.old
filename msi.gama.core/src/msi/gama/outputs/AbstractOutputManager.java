@@ -11,6 +11,7 @@ package msi.gama.outputs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +33,8 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
-	protected final Map<String, IOutput> outputs = new TOrderedHashMap<>();
+	LayoutStatement layout;
+	protected final TOrderedHashMap<String, IOutput> outputs = new TOrderedHashMap<>();
 	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<>();
 
 	protected int displayIndex;
@@ -124,7 +126,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		for (final ISymbol s : commands) {
-			if (s instanceof IOutput) {
+			if (s instanceof LayoutStatement) {
+				layout = (LayoutStatement) s;
+			} else if (s instanceof IOutput) {
 				final IOutput o = (IOutput) s;
 				add(o);
 				o.setUserCreated(false);
@@ -193,7 +197,16 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 			if (!open(scope, output)) { return false; }
 		}
+
 		return true;
+	}
+
+	public void setLayout(final LayoutStatement layout) {
+		this.layout = layout;
+	}
+
+	public LayoutStatement getLayout() {
+		return layout;
 	}
 
 	@Override
@@ -221,9 +234,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		final ImmutableList<IOutput> stepable = ImmutableList
-				.copyOf(Iterables.filter(this, each -> each.isRefreshable() && each.getScope().step(each).passed()));
-		for (final IOutput o : stepable) {
+		final List<IOutput> copy = new ArrayList<>(outputs.values());
+		final Iterable<IOutput> filtered =
+				Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
+		for (final IOutput o : filtered) {
 			o.update();
 		}
 		return true;

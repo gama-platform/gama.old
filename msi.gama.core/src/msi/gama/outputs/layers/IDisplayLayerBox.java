@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IDisplayLayerBox.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IDisplayLayerBox.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,6 +42,10 @@ public interface IDisplayLayerBox {
 	public abstract void setSize(final ILocation p);
 
 	public abstract void setSize(final double width, final double height, final double depth);
+
+	public abstract boolean isRelativePosition();
+
+	public abstract boolean isRelativeSize();
 
 	public abstract void setPosition(final ILocation p);
 

@@ -13,7 +13,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.nio.BufferOverflowException;
+import java.util.function.Function;
 
+import com.google.common.base.Strings;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
@@ -30,7 +32,6 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import ummisco.gama.opengl.scene.AbstractObject;
@@ -51,6 +52,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends Abstract3DRenderer {
+	private static final boolean DEBUG = false;
 	final int[] viewport = new int[4];
 	final double mvmatrix[] = new double[16];
 	final double projmatrix[] = new double[16];
@@ -58,8 +60,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	private StringDrawer stringDrawer;
 	private FieldDrawer fieldDrawer;
 
+	// Ratios between pixels and model units
+	double xRatio, yRatio;
+
 	private KeystoneDrawer keystone;
-	private boolean renderToTexture;
 	private GLU glu;
 
 	@Override
@@ -227,7 +231,39 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 		keystone.reshape(width, height);
-		// shouldRecomputeLayerBounds = true;
+		final double[] pixelSize = new double[4];
+		glu.gluProject(getEnvWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, pixelSize, 0);
+		final double initialEnvWidth = pixelSize[0];
+		final double initialEnvHeight = pixelSize[1];
+		final double envWidthInPixels = 2 * pixelSize[0] - width;
+		final double envHeightInPixels = 2 * pixelSize[1] - height;
+		final double windowWidthInModelUnits = getEnvWidth() * width / envWidthInPixels;
+		final double windowHeightInModelUnits = getEnvHeight() * height / envHeightInPixels;
+		xRatio = width / windowWidthInModelUnits / camera.zoomLevel();
+		yRatio = height / windowHeightInModelUnits / camera.zoomLevel();
+		if (DEBUG) {
+			debugSizes(width, height, initialEnvWidth, initialEnvHeight, envWidthInPixels, envHeightInPixels);
+			// shouldRecomputeLayerBounds = true;
+		}
+		surface.updateDisplay(true);
+	}
+
+	private void debugSizes(final int width, final int height, final double initialEnvWidth,
+			final double initialEnvHeight, final double envWidth, final double envHeight) {
+		final int pad = 35;
+		final Function<String, String> PAD = (s) -> Strings.padEnd(s, pad, ' ');
+		System.out.println("---------------------------------------------------");
+		System.out.println("----------------- RESHAPING -----------------------");
+		System.out.println("---------------------------------------------------");
+		System.out.println(PAD.apply("Current size of window ") + width + " | " + height);
+		System.out.println(PAD.apply("Zoom level ") + camera.zoomLevel());
+		System.out.println(PAD.apply("Size of env in units ") + getEnvWidth() + " | " + getEnvHeight());
+		System.out.println(PAD.apply("Ratio width/height in units ") + getEnvWidth() / getEnvHeight());
+		System.out.println(PAD.apply("Initial Size of env in pixels ") + initialEnvWidth + " | " + initialEnvHeight);
+		System.out.println(PAD.apply("Size of env in pixels ") + envWidth + " | " + envHeight);
+		System.out.println(PAD.apply("Ratio width/height in pixels ") + envWidth / envHeight);
+		System.out.println(PAD.apply("Current XRatio pixels/env in units ") + xRatio + " | " + yRatio);
+		// surface.updateDisplay(true);
 	}
 
 	@Override
@@ -253,48 +289,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			}
 		} else {
 			if (aspect >= 1.0) {
-				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
-			} else {
-				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
-			}
-			gl.glTranslated(0d, 0d, maxDim * 0.05);
-		}
-		camera.animate();
-	}
-
-	protected final void updatePerspective2() {
-		final double height = openGL.getViewHeight();
-		double aspect = openGL.getViewWidth() / (height == 0 ? 1d : height);
-		if (aspect == 0) {
-			aspect = 1;
-		}
-
-		final double maxDim = getMaxEnvDim();
-		if (!data.isOrtho()) {
-			try {
-				// if (aspect > 1d) {
-				// final double zNear = maxDim / 1000d;
-				// final double zFar = maxDim * 1000d;
-				// final double fovY = surface.getData().getCameralens();
-				// glu.gluPerspective(fovY, aspect, zNear, zFar);
-				// }
-
-				final double zNear = maxDim / 100d;
-				double fW, fH;
-				final double fovY = this.data.getCameralens();
-				if (aspect > 1d) {
-					fH = Math.tan(fovY * Maths.toRad) * zNear;
-					fW = fH * aspect;
-				} else {
-					fW = Math.tan(fovY * Maths.toRad) * zNear;
-					fH = fW / aspect;
-				}
-				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 100);
-			} catch (final BufferOverflowException e) {
-				System.out.println("Buffer overflow exception");
-			}
-		} else {
-			if (aspect >= 1d) {
 				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 			} else {
 				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
@@ -445,7 +439,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		double realy = 0;// GL y coord pos
 		final double[] wcoord = new double[4];
 		final double x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
-		final GLU glu = GLU.createGLU(gl);
 		realy = viewport[3] - y;
 		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
 		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
@@ -457,8 +450,17 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
+	@Override
+	public double getxRatioBetweenPixelsAndModelUnits() {
+		return xRatio;
+	}
+
+	@Override
+	public double getyRatioBetweenPixelsAndModelUnits() {
+		return yRatio;
+	}
+
 	public double[] getPixelWidthAndHeightOfWorld() {
-		final GLU glu = GLU.createGLU(gl);
 		final double[] coord = new double[4];
 		glu.gluProject(getEnvWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
 		return coord;
@@ -470,13 +472,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 * @see msi.gama.common.interfaces.IGraphics#beginOverlay(msi.gama.outputs.layers.OverlayLayer)
 	 */
 	@Override
-	public void beginOverlay(final OverlayLayer layer) {
-		// final ModelScene scene = sceneBuffer.getSceneToUpdate();
-		// if (scene != null) {
-		// scene.beginOverlay();
-		// }
-
-	}
+	public void beginOverlay(final OverlayLayer layer) {}
 
 	/**
 	 * Method endOverlay()
@@ -484,9 +480,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 * @see msi.gama.common.interfaces.IGraphics#endOverlay()
 	 */
 	@Override
-	public void endOverlay() {
-
-	}
+	public void endOverlay() {}
 
 	@Override
 	public boolean mouseInROI(final Point mousePosition) {

@@ -17,6 +17,8 @@ import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
+import java.util.function.Predicate;
+
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -214,6 +216,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			visitor.visit((IOperator) child);
 		}
 
+	}
+
+	@Override
+	public boolean findAny(final Predicate<IExpression> predicate) {
+		if (predicate.test(this)) { return true; }
+		if (child != null && child.findAny(predicate)) { return true; }
+		return false;
 	}
 
 }
