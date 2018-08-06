@@ -35,7 +35,6 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 			if (sd != null) {
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
-				sd.showEditors(showEditors);
 			}
 			ArrangeDisplayViews.execute(layout);
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
