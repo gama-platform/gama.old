@@ -607,18 +607,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 			} else if (type.equals("csv")) {
 				final IType itemType = item.getGamlType();
-				final boolean isAgent = itemType.isAgentType() || itemType.getContentType().isAgentType();
+				final SpeciesDescription sd;
+				if (itemType.isAgentType()) {
+					sd = itemType.getSpecies();
+				} else if (itemType.getContentType().isAgentType()) {
+					sd = itemType.getContentType().getSpecies();
+				} else {
+					sd = null;
+				}
 				final Object value = item.value(scope);
 				final IList values = itemType.isContainer() ? Cast.asList(scope, value)
 						: GamaListFactory.create(scope, itemType, value);
-				if (values.isEmpty()) {
-					fw.close();
-					return;
-				}
-				if (isAgent) {
-					final Collection<String> attributeNames =
-							values instanceof IPopulation ? ((IPopulation) values).getSpecies().getAttributeNames(scope)
-									: values.getGamlType().getContentType().getSpecies().getAttributeNames();
+				if (values.isEmpty()) { return; }
+				if (sd != null) {
+					final Collection<String> attributeNames = sd.getAttributeNames();
 					attributeNames.removeAll(NON_SAVEABLE_ATTRIBUTE_NAMES);
 					if (header) {
 						// final IAgent ag0 = Cast.asAgent(scope,
