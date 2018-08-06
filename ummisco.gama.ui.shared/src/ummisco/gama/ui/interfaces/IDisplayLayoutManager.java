@@ -11,7 +11,7 @@ package ummisco.gama.ui.interfaces;
 
 public interface IDisplayLayoutManager {
 
-	void applyLayout(Object layout, boolean keepTabs, boolean keepToolbars);
+	void applyLayout(Object layout, boolean keepTabs, boolean keepToolbars, boolean showEditors);
 
 	public void hideScreen();
 

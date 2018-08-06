@@ -411,8 +411,8 @@ public class HeadlessListener implements IGui {
 	public void setFocusOn(final IShape o) {}
 
 	@Override
-	public void applyLayout(final IScope scope, final Object layout, final boolean keepTabs,
-			final boolean keepToolbars) {}
+	public void applyLayout(final IScope scope, final Object layout, final boolean keepTabs, final boolean keepToolbars,
+			final boolean showEditors) {}
 
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}

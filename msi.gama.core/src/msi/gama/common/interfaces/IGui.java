@@ -146,7 +146,7 @@ public interface IGui {
 
 	void setFocusOn(IShape o);
 
-	void applyLayout(IScope scope, Object layout, boolean keepTabs, boolean keepToolbars);
+	void applyLayout(IScope scope, Object layout, boolean keepTabs, boolean keepToolbars, boolean showEditors);
 
 	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
 

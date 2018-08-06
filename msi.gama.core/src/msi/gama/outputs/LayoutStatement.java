@@ -10,8 +10,6 @@
 package msi.gama.outputs;
 
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
-import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
-import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -23,8 +21,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
@@ -50,6 +46,11 @@ import msi.gaml.types.IType;
 				type = IType.NONE,
 				optional = true,
 				doc = @doc ("Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal() and vertical() operators")),
+				@facet (
+						name = "editors",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the editors should initially be visible or not")),
 				@facet (
 						name = "toolbars",
 						type = IType.BOOL,
@@ -78,21 +79,6 @@ public class LayoutStatement extends Symbol {
 
 	public LayoutStatement(final IDescription desc) {
 		super(desc);
-	}
-
-	public boolean apply(final IScope scope) {
-		final Object layout = getFacetValue(scope, IKeyword.VALUE, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-		final boolean tabs = getFacetValue(scope, "tabs", true);
-		final boolean toolbars = getFacetValue(scope, "toolbars", true);
-		scope.getGui().hideScreen();
-
-		scope.getGui().applyLayout(scope, layout, tabs, toolbars);
-		scope.getGui().showScreen();
-		if (scope.getExperiment().getSpecies().isAutorun()) {
-			GAMA.startFrontmostExperiment();
-		}
-		return true;
-
 	}
 
 	@Override

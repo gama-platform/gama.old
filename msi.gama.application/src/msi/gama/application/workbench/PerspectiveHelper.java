@@ -259,6 +259,15 @@ public class PerspectiveHelper {
 		}
 	}
 
+	public final static boolean showEditors() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return ((SimulationPerspectiveDescriptor) d).showEditors;
+		} else {
+			return false;
+		}
+	}
+
 	public static class SimulationPerspectiveFactory implements IPerspectiveFactory {
 
 		final IPerspectiveFactory original;
@@ -279,6 +288,7 @@ public class PerspectiveHelper {
 
 		boolean keepTabs = true;
 		boolean keepToolbars = true;
+		boolean showEditors = false;
 
 		SimulationPerspectiveDescriptor(final String id) {
 			super(id, id, getSimulationDescriptor());
@@ -341,6 +351,10 @@ public class PerspectiveHelper {
 
 		public void keepToolbars(final boolean b) {
 			keepToolbars = b;
+		}
+
+		public void showEditors(final boolean b) {
+			showEditors = b;
 		}
 
 	}
