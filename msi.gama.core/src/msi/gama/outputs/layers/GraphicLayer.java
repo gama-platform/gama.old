@@ -17,12 +17,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GraphicLayer extends AbstractLayer {
 
-	protected GraphicLayer(final ILayerStatement layer) {
+	public GraphicLayer(final ILayerStatement layer) {
 		super(layer);
 	}
 
 	@Override
-	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	protected void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgent();
 		scope.execute(((GraphicLayerStatement) definition).getAspect(), agent, null);
 	}

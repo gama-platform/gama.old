@@ -82,7 +82,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
 		if (currentLayer == null) { return getDisplayWidth() / data.getEnvWidth(); }
-		return currentLayer.getSizeInPixels().x / data.getEnvWidth();
+		return currentLayer.getData().getSizeInPixels().x / data.getEnvWidth();
 	}
 
 	@Override
@@ -92,24 +92,30 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		} else if (currentLayer instanceof OverlayLayer) {
 			return getxRatioBetweenPixelsAndModelUnits();
 		} else {
-			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
+			return currentLayer.getData().getSizeInPixels().y / data.getEnvHeight();
 		}
 	}
 
 	@Override
 	public double getXOffsetInPixels() {
-		return currentLayer == null ? origin.x : currentLayer.getPositionInPixels().getX();
+		return currentLayer == null ? origin.x : currentLayer.getData().getPositionInPixels().getX();
 	}
 
 	@Override
 	public double getYOffsetInPixels() {
-		return currentLayer == null ? origin.y : currentLayer.getPositionInPixels().getY();
+		return currentLayer == null ? origin.y : currentLayer.getData().getPositionInPixels().getY();
 	}
 
 	@Override
 	public boolean beginDrawingLayers() {
 		return true;
 	}
+
+	@Override
+	public void beginOverlay(final OverlayLayer layer) {}
+
+	@Override
+	public void endOverlay() {}
 
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
@@ -155,11 +161,11 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	public int getLayerWidth() {
-		return currentLayer == null ? getDisplayWidth() : currentLayer.getSizeInPixels().x;
+		return currentLayer == null ? getDisplayWidth() : currentLayer.getData().getSizeInPixels().x;
 	}
 
 	public int getLayerHeight() {
-		return currentLayer == null ? getDisplayHeight() : currentLayer.getSizeInPixels().y;
+		return currentLayer == null ? getDisplayHeight() : currentLayer.getData().getSizeInPixels().y;
 	}
 
 	@Override

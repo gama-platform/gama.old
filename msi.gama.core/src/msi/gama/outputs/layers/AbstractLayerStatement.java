@@ -9,9 +9,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.primitives.Ints;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -38,7 +35,6 @@ import msi.gaml.expressions.IExpression;
 		symbols = IKeyword.DISPLAY)
 public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
 
-	private IDisplayLayerBox box;
 	LayeredDisplayOutput output;
 	protected boolean layerToCreate = true;
 
@@ -48,11 +44,10 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION), getFacet(IKeyword.SIZE),
-				getRefreshFacet(), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING), getFacet(IKeyword.SELECTABLE)));
 		setName(desc.getName());
 	}
 
+	@Override
 	public IExpression getRefreshFacet() {
 		return getFacet(IKeyword.REFRESH);
 	}
@@ -79,8 +74,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	public LayeredDisplayData getLayeredDisplayData() {
-		if (output == null)
-			return null;
+		if (output == null) { return null; }
 		return output.getData();
 	}
 
@@ -96,54 +90,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	protected abstract boolean _step(IScope scope);
 
 	@Override
-	public final Double getTransparency() {
-		return getBox().getTransparency();
-	}
-
-	@Override
-	public final Boolean getRefresh() {
-		return getBox().getRefresh();
-	}
-
-	@Override
-	public final Integer getTrace() {
-		return getBox().getTrace();
-	}
-
-	@Override
-	public final Boolean getFading() {
-		return getBox().getFading();
-	}
-
-	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {}
-
-	public List<? extends ISymbol> getChildren() {
-		return Collections.EMPTY_LIST;
-	}
-
-	public void setBox(final IDisplayLayerBox box) {
-		this.box = box;
-	}
-
-	@Override
-	public IDisplayLayerBox getBox() {
-		return box;
-	}
-
-	@Override
-	public void setTransparency(final Double transparency) {
-		getBox().setTransparency(transparency);
-	}
-
-	@Override
-	public void setRefresh(final Boolean refresh) {
-		getBox().setRefresh(refresh);
-	}
-
-	@Override
-	public void setSelectable(final Boolean s) {
-		getBox().setSelectable(s);
-	}
 
 }

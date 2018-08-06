@@ -179,7 +179,7 @@ public class GamlResourceServices {
 		}
 	}
 
-	public static GamlResource getTemporaryResource(final IDescription existing) {
+	public synchronized static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
 		GamlResource r = null;
 		if (existing != null) {

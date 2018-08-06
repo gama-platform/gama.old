@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -21,6 +23,9 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.IOperatorValidator;
+import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -30,144 +35,26 @@ import msi.gaml.expressions.IExpression;
  *
  */
 public class Points {
+	public static class PointValidator implements IOperatorValidator {
 
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = { IConcept.POINT })
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y} instead.")
-	// // "special" operator introduced in the parser for the points
-	// public static ILocation toPoint(final Double a, final Double b) {
-	// return new GamaPoint(a, b);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y} instead.")
-	// // "special" operator introduced in the parser for the points
-	// public static ILocation toPoint(final Integer a, final Double b) {
-	// return new GamaPoint(a, b);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y} instead.")
-	// // "special" operator introduced in the parser for the points
-	// public static ILocation toPoint(final Double a, final Integer b) {
-	// return new GamaPoint(a, b);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y} instead.")
-	// // "special" operator introduced in the parser for the points
-	// public static ILocation toPoint(final Integer a, final Integer b) {
-	// return new GamaPoint(a, b);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	// public static ILocation toPoint(final Double x, final Double y, final Double z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Integer x, final Double y, final Double z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Integer x, final Integer y, final Double z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Integer x, final Integer y, final Integer z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Double x, final Integer y, final Double z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Double x, final Integer y, final Integer z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
-	// @operator (
-	// value = IKeyword.POINT,
-	// can_be_const = true,
-	// category = IOperatorCategory.POINT,
-	// concept = {})
-	// @doc (
-	// value = "internal use only. Use the standard construction {x,y, z} instead.")
-	//
-	// public static ILocation toPoint(final Double x, final Double y, final Integer z) {
-	// return new GamaPoint(x, y, z);
-	// }
-	//
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			for (final IExpression expr : arguments) {
+				if (!expr.getGamlType().isNumber()) {
+					context.error("Points can only be built with int or float coordinates", WRONG_TYPE, emfContext);
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
 	@operator (
 			value = IKeyword.POINT,
 			can_be_const = true,
 			category = IOperatorCategory.POINT,
 			internal = true)
+	@validator (PointValidator.class)
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
 		if (scope != null) {
 			scope.setHorizontalPixelContext();
@@ -185,6 +72,7 @@ public class Points {
 			can_be_const = true,
 			category = IOperatorCategory.POINT,
 			internal = true)
+	@validator (PointValidator.class)
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
 		if (scope != null) {

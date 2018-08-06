@@ -49,11 +49,6 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 				return new DisplayWidthUnitExpression(doc);
 			case "display_height":
 				return new DisplayHeightUnitExpression(doc);
-			case "view_x":
-			case "view_y":
-			case "view_width":
-			case "view_height":
-				return new ViewUnitExpression(unit, doc);
 			case "now":
 				return new NowUnitExpression(unit, doc);
 			case "camera_location":
@@ -68,8 +63,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 				return new CurrentErrorUnitExpression(doc);
 
 		}
-		if (isTime)
-			return new TimeUnitConstantExpression(val, t, unit, doc, names);
+		if (isTime) { return new TimeUnitConstantExpression(val, t, unit, doc, names); }
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 

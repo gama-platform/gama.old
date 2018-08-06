@@ -413,7 +413,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
 		if (currentLayer instanceof OverlayLayer) { return getScope().getSimulation().getEnvelope(); }
-		Envelope e = currentLayer.getVisibleRegion();
+		Envelope e = currentLayer.getData().getVisibleRegion();
 		if (e == null) {
 			e = new Envelope();
 			final Point origin = new Point(0, 0);
@@ -423,7 +423,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			xc = xc + renderer.getDrawable().getSurfaceWidth();
 			yc = yc + renderer.getDrawable().getSurfaceHeight();
 			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
-			currentLayer.setVisibleRegion(e);
+			currentLayer.getData().setVisibleRegion(e);
 		}
 		return e;
 	}
@@ -637,12 +637,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.switchCamera();
 				break;
 			case SPLIT_LAYER:
-				final double dist = (Double) value;
-				final int nbLayers = this.getManager().getItems().size();
-				final double gap = dist;
+				final double gap = (Double) value;
 				double currentElevation = 0;
 				for (final ILayer layer : this.getManager().getItems()) {
-					layer.addElevation(currentElevation);
+					layer.getData().addElevation(currentElevation);
 					currentElevation += gap;
 				}
 				updateDisplay(true);
@@ -690,7 +688,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	public void invalidateVisibleRegions() {
 		for (final ILayer layer : layerManager.getItems()) {
-			layer.setVisibleRegion(null);
+			layer.getData().setVisibleRegion(null);
 		}
 	}
 

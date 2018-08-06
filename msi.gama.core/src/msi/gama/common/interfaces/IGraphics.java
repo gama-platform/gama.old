@@ -111,10 +111,6 @@ public interface IGraphics {
 
 	public abstract boolean isNotReadyToUpdate();
 
-	public int getWidthForOverlay();
-
-	public int getHeightForOverlay();
-
 	/**
 	 * Ask the IGraphics instance to accumulate temporary envelopes
 	 * 

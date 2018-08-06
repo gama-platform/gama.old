@@ -75,7 +75,7 @@ public class ImageLayer extends AbstractLayer {
 		if (!(input instanceof GamaImageFile)) { throw error("Not an image:" + input.getPath(scope), scope); }
 		final GamaImageFile result = (GamaImageFile) input;
 		try {
-			result.getImage(scope, !definition.getRefresh());
+			result.getImage(scope, !getData().getRefresh());
 		} catch (final GamaRuntimeFileException ex) {
 			throw ex;
 		} catch (final Throwable e) {
@@ -97,11 +97,11 @@ public class ImageLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+	public void privateDraw(final IScope scope, final IGraphics dg) {
 		final GamaImageFile file = buildImage(scope);
 		if (file == null) { return; }
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
-		attributes.setUseCache(!definition.getRefresh());
+		attributes.setUseCache(!getData().getRefresh());
 		if (env != null) {
 			final GamaPoint loc = new GamaPoint(env.getMinX(), env.getMinY());
 			attributes.setLocation(loc);

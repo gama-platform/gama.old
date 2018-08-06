@@ -269,7 +269,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		if (currentLayer == null) {
 			return getDisplayWidth() / data.getEnvWidth();
 		} else if (currentLayer instanceof OverlayLayer) { return this.getViewWidth() / data.getEnvWidth(); }
-		return currentLayer.getSizeInPixels().x / data.getEnvWidth();
+		return currentLayer.getData().getSizeInPixels().x / data.getEnvWidth();
 	}
 
 	@Override
@@ -279,7 +279,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		} else if (currentLayer instanceof OverlayLayer) {
 			return this.getViewHeight() / data.getEnvHeight();
 		} else {
-			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
+			return currentLayer.getData().getSizeInPixels().y / data.getEnvHeight();
 		}
 	}
 
@@ -631,7 +631,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 		}
 		if (!layer.isOverlay()) {
-			final double currentZLayer = getMaxEnvDim() * (layer.getPosition().getZ() + layer.getAddedElevation());
+			final double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
 			double zScale = layer.getExtent().getZ();
 			if (zScale <= 0) {
 				zScale = 1;
@@ -663,16 +663,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public abstract void beginPicking();
 
 	public abstract void endPicking();
-
-	@Override
-	public int getWidthForOverlay() {
-		return getViewWidth();
-	}
-
-	@Override
-	public int getHeightForOverlay() {
-		return getViewHeight();
-	}
 
 	public double sizeOfRotationElements() {
 		return Math.min(getMaxEnvDim() / 4d, camera.getDistance() / 6d);

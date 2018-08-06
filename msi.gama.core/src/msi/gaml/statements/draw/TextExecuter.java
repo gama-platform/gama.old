@@ -38,8 +38,8 @@ class TextExecuter extends DrawExecuter {
 
 	TextDrawingAttributes computeAttributes(final IScope scope, final DrawingData data) {
 		final TextDrawingAttributes attributes =
-				new TextDrawingAttributes(Scaling3D.of(data.size.value), data.rotation.value, data.location.value,
-						data.anchor.value, data.getCurrentColor(), data.font.value, data.perspective.value);
+				new TextDrawingAttributes(Scaling3D.of(data.size.value), data.rotation.value, data.getLocation(),
+						data.getAnchor(), data.getCurrentColor(), data.font.value, data.perspective.value);
 		// We push the location of the agent if none has been provided
 		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
 		return attributes;

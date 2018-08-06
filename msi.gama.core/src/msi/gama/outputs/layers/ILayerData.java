@@ -9,10 +9,14 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import java.awt.Point;
+
+import com.vividsolutions.jts.geom.Envelope;
+
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
 
 /**
  * The class IDisplayLayerBox.
@@ -21,21 +25,9 @@ import msi.gaml.expressions.IExpression;
  * @since 14 d�c. 2011
  *
  */
-public interface IDisplayLayerBox {
+public interface ILayerData {
 
-	public abstract void compute(final IScope sim) throws GamaRuntimeException;
-
-	public abstract void setTransparency(final IScope sim, final IExpression t) throws GamaRuntimeException;
-
-	public abstract void setPosition(final IScope sim, final IExpression p) throws GamaRuntimeException;
-
-	public abstract void setSize(final IScope sim, final IExpression e) throws GamaRuntimeException;
-
-	public abstract void setRefresh(final IScope sim, final IExpression r) throws GamaRuntimeException;
-
-	public abstract void setTrace(IScope scope, final IExpression t);
-
-	public abstract void setFading(IScope scope, final IExpression f);
+	public abstract void compute(final IScope sim, IGraphics g) throws GamaRuntimeException;
 
 	public abstract void setTransparency(final double f);
 
@@ -67,10 +59,18 @@ public interface IDisplayLayerBox {
 
 	public abstract Boolean isSelectable();
 
-	public abstract void setSelectable(IScope s, IExpression r);
-
 	public abstract void setSelectable(Boolean b);
 
-	public abstract void setConstantBoundingBox(boolean b);
+	Point getPositionInPixels();
+
+	Point getSizeInPixels();
+
+	void computePixelsDimensions(IGraphics g);
+
+	public abstract void addElevation(double currentElevation);
+
+	void setVisibleRegion(Envelope e);
+
+	Envelope getVisibleRegion();
 
 }

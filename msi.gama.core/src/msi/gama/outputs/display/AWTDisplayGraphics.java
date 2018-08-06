@@ -379,19 +379,19 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void beginOverlay(final OverlayLayer layer) {
 		currentRenderer = overlayRenderer;
-		currentRenderer.setColor(layer.getBackground());
+		currentRenderer.setColor(layer.getData().getBackgroundColor());
 		final int x = (int) getXOffsetInPixels();
 		final int y = (int) getYOffsetInPixels();
 		final int w = getLayerWidth();
 		final int h = getLayerHeight();
-		if (layer.isRounded()) {
+		if (layer.getData().isRounded()) {
 			currentRenderer.fillRoundRect(x, y, w, h, 10, 10);
 		} else {
 			currentRenderer.fillRect(x, y, w, h);
 		}
-		if (layer.getBorder() != null) {
-			currentRenderer.setColor(layer.getBorder());
-			if (layer.isRounded()) {
+		if (layer.getData().getBorderColor() != null) {
+			currentRenderer.setColor(layer.getData().getBorderColor());
+			if (layer.getData().isRounded()) {
 				currentRenderer.drawRoundRect(x, y, w, h, 10, 10);
 			} else {
 				currentRenderer.drawRect(x, y, w, h);
@@ -434,16 +434,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public ILocation getCameraOrientation() {
 		return GamaPoint.NULL_POINT;
-	}
-
-	@Override
-	public int getWidthForOverlay() {
-		return getDisplayWidth();
-	}
-
-	@Override
-	public int getHeightForOverlay() {
-		return getDisplayHeight();
 	}
 
 	@Override

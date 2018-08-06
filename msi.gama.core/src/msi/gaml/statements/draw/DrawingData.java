@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -45,76 +46,15 @@ import msi.gaml.types.Types;
  *
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class DrawingData {
-
-	@FunctionalInterface
-	interface Evaluator<V> {
-		V value(IScope scope);
-
-		default V getConstValue() {
-			try {
-				return value(null);
-			} catch (final RuntimeException e) {
-				return null;
-			}
-		}
-	}
-
-	abstract class Attribute<T extends IType, V> implements Evaluator<V> {
-		V value;
-
-		void refresh(final IScope scope) {
-			value = value(scope);
-		}
-	}
-
-	class ConstantAttribute<T extends IType, V> extends Attribute<T, V> {
-
-		ConstantAttribute(final V value) {
-			this.value = value;
-		}
-
-		@Override
-		void refresh(final IScope scope) {}
-
-		@Override
-		public V value(final IScope scope) {
-			return value;
-		}
-
-	}
-
-	class ExpressionAttribute<T extends IType, V> extends Attribute<T, V> {
-		final Evaluator<V> evaluator;
-
-		public ExpressionAttribute(final Evaluator<V> ev) {
-			evaluator = ev;
-		}
-
-		@Override
-		public V value(final IScope scope) {
-			return evaluator.value(scope);
-		}
-	}
-
-	<T extends IType<V>, V> Attribute create(final IExpression exp, final T type, final V def) {
-		return create(exp, (scope) -> type.cast(scope, exp.value(scope), null, true), type, def);
-	}
-
-	<T extends IType<V>, V> Attribute create(final IExpression exp, final Evaluator ev, final T type, final V def) {
-		if (exp != null
-				&& exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.getConstValue(), null, true)); }
-		if (exp == null) { return new ConstantAttribute(def); }
-		return new ExpressionAttribute(ev);
-	}
+public class DrawingData extends AttributeHolder {
 
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
-	final Attribute<GamaPointType, GamaPoint> size;
+	final Attribute<GamaPointType, ILocation> size;
 	final Attribute<GamaFloatType, Double> depth;
 	final Attribute<GamaPairType, GamaPair<Double, GamaPoint>> rotation;
-	final Attribute<GamaPointType, GamaPoint> location;
-	final Attribute<GamaPointType, GamaPoint> anchor;
+	final Attribute<GamaPointType, ILocation> location;
+	final Attribute<GamaPointType, ILocation> anchor;
 	final Attribute<GamaBoolType, Boolean> empty;
 	final Attribute<GamaColorType, GamaColor> border;
 	private final Attribute<GamaListType, IList<GamaColor>> colors;
@@ -169,7 +109,7 @@ public class DrawingData {
 				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
 				return null;
 			} else {
-				return borderExp.value(scope);
+				return (GamaColor) borderExp.value(scope);
 			}
 		}, Types.COLOR, null);
 		this.colors = create(colorExp, (scope) -> {
@@ -214,6 +154,14 @@ public class DrawingData {
 	public List<GamaColor> getColors() {
 		if (colors.value == null || colors.value.isEmpty() || colors.value.size() == 1) { return null; }
 		return colors.value;
+	}
+
+	public GamaPoint getLocation() {
+		return location.value == null ? null : location.value.toGamaPoint();
+	}
+
+	public GamaPoint getAnchor() {
+		return anchor.value == null ? null : anchor.value.toGamaPoint();
 	}
 
 }

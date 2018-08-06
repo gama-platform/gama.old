@@ -92,7 +92,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.TRANSPARENCY,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+						doc = @doc ("the transparency applied to this layer (between 0 and 1, 1 means no transparency)")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,

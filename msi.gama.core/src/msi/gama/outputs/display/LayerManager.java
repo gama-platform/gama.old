@@ -21,9 +21,17 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.AbstractLayerStatement;
+import msi.gama.outputs.layers.AgentLayer;
+import msi.gama.outputs.layers.EventLayer;
+import msi.gama.outputs.layers.GisLayer;
+import msi.gama.outputs.layers.GraphicLayer;
+import msi.gama.outputs.layers.GridLayer;
+import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.outputs.layers.SpeciesLayer;
+import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 
@@ -34,6 +42,31 @@ import msi.gama.util.GamaColor;
  *
  */
 public class LayerManager implements ILayerManager {
+
+	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
+		switch (layer.getType()) {
+			case GRID:
+				return new GridLayer(scope, layer);
+			case AGENTS:
+				return new AgentLayer(layer);
+			case SPECIES:
+				return new SpeciesLayer(layer);
+			case IMAGE:
+				return new ImageLayer(scope, layer);
+			case GIS:
+				return new GisLayer(layer);
+			case CHART:
+				return new ChartLayer(layer);
+			case EVENT:
+				return new EventLayer(layer);
+			case GRAPHICS:
+				return new GraphicLayer(layer);
+			case OVERLAY:
+				return new OverlayLayer(layer);
+			default:
+				return null;
+		}
+	}
 
 	private final List<ILayer> enabledLayers = new ArrayList<>();
 	private final List<ILayer> disabledLayers = new ArrayList<>();
@@ -46,7 +79,7 @@ public class LayerManager implements ILayerManager {
 		final List<AbstractLayerStatement> layers = output.getLayers();
 		for (final AbstractLayerStatement layer : layers) {
 			if (layer.isToCreate()) {
-				final ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
+				final ILayer result = createLayer(output.getScope(), layer);
 				if (result instanceof OverlayLayer) {
 					overlay = (OverlayLayer) result;
 				} else {
@@ -67,7 +100,6 @@ public class LayerManager implements ILayerManager {
 		enabledLayers.clear();
 		disabledLayers.clear();
 	}
-
 
 	@Override
 	public ILayer addLayer(final ILayer d) {
@@ -164,10 +196,10 @@ public class LayerManager implements ILayerManager {
 				for (int i = 0, n = enabledLayers.size(); i < n; i++) {
 					if (scope.interrupted()) { return; }
 					final ILayer dis = enabledLayers.get(i);
-					dis.drawDisplay(scope, g);
+					dis.draw(scope, g);
 				}
 				if (overlay != null) {
-					overlay.drawDisplay(scope, g);
+					overlay.draw(scope, g);
 				}
 			}
 		} catch (final Exception e) {
@@ -255,7 +287,7 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public void makeItemSelectable(final ILayer data, final boolean b) {
-		data.getDefinition().setSelectable(b);
+		data.getData().setSelectable(b);
 	}
 
 	/**

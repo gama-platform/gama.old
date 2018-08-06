@@ -37,7 +37,7 @@ public class GisLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics g) {
+	public void privateDraw(final IScope scope, final IGraphics g) {
 		final GamaColor color =
 				colorExpression == null ? GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB())
 						: Cast.asColor(scope, colorExpression.value(scope));

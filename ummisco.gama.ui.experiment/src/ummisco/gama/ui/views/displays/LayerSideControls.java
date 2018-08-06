@@ -406,17 +406,17 @@ public class LayerSideControls {
 
 		final ILayerStatement definition = layer.getDefinition();
 
-		EditorFactory.create(container.getScope(), compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1,
-				false, newValue -> {
+		EditorFactory.create(container.getScope(), compo, "Transparency:", layer.getData().getTransparency(), 0.0, 1.0,
+				0.1, false, newValue -> {
 					layer.setTransparency(1 - newValue);
 					updateIfPaused(layer, container);
 				});
-		EditorFactory.create(container.getScope(), compo, "Position:", definition.getBox().getPosition(),
+		EditorFactory.create(container.getScope(), compo, "Position:", layer.getData().getPosition(),
 				(EditorListener<ILocation>) newValue -> {
 					layer.setPosition(newValue);
 					updateIfPaused(layer, container);
 				});
-		EditorFactory.create(container.getScope(), compo, "Size:", definition.getBox().getSize(),
+		EditorFactory.create(container.getScope(), compo, "Size:", layer.getData().getSize(),
 				(EditorListener<ILocation>) newValue -> {
 					layer.setExtent(newValue);
 					updateIfPaused(layer, container);
@@ -465,15 +465,7 @@ public class LayerSideControls {
 				break;
 
 			}
-			// case GIS: {
-			// EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
-			// ((ImageLayerStatement) definition).getImageFileName(GAMA.getRuntimeScope()), newValue -> {
-			// ((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
-			// newValue.getName(GAMA.getRuntimeScope()));
-			// updateIfPaused(layer, container);
-			// });
-			// break;
-			// }
+
 			case CHART: {
 				final Button b = new Button(compo, SWT.PUSH);
 				b.setText("Properties");

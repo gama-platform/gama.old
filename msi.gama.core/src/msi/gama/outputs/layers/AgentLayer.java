@@ -43,7 +43,7 @@ public class AgentLayer extends AbstractLayer {
 	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap<>();
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
 		// performance issue
 		String aspectName = IKeyword.DEFAULT;

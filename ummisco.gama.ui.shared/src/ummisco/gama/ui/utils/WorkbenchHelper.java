@@ -209,7 +209,7 @@ public class WorkbenchHelper {
 	}
 
 	public static void setWorkbenchWindowTitle(final String title) {
-		run(() -> {
+		asyncRun(() -> {
 			if (WorkbenchHelper.getShell() != null) {
 				WorkbenchHelper.getShell().setText(title);
 			}

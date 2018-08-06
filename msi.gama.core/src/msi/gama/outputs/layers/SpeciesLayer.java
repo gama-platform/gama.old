@@ -49,7 +49,7 @@ public class SpeciesLayer extends AgentLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
 		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
 		final IMacroAgent world = scope.getSimulation();

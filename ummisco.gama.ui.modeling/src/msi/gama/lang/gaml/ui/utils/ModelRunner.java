@@ -88,7 +88,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 
 	@Override
 	public void editModel(final Object eObject) {
-		WorkbenchHelper.run(() -> editModelInternal(eObject));
+		WorkbenchHelper.asyncRun(() -> editModelInternal(eObject));
 	}
 
 	@SuppressWarnings ("unchecked")

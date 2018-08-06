@@ -23,7 +23,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
@@ -65,8 +64,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 			// check if the click has been in the center of the screen (in the
 			// intersection between the diagonals)
 			final float[] centerPosition = centerScreen(coords);
-			if (Math.abs(mouse.x - centerPosition[0]) < 0.03 && Math.abs(mouse.y - centerPosition[1]) < 0.03)
-				return 10;
+			if (Math.abs(mouse.x - centerPosition[0]) < 0.03
+					&& Math.abs(mouse.y - centerPosition[1]) < 0.03) { return 10; }
 			return -1;
 		}
 
@@ -324,9 +323,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (attributes.getSize() == null) {
 			attributes.setSize(Scaling3D.of(worldDimensions));
 		}
-		if (file instanceof GamaImageFile)
+		if (file instanceof GamaImageFile) {
 			sceneBuffer.getSceneToUpdate().addImageFile((GamaImageFile) file, attributes);
-		else if (file instanceof GamaGeometryFile) {
+		} else if (file instanceof GamaGeometryFile) {
 			sceneBuffer.getSceneToUpdate().addGeometryFile((GamaGeometryFile) file, attributes);
 		}
 		return rect;
@@ -342,26 +341,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
 		// TODO
 		return null;
-	}
-
-	/**
-	 * Method beginOverlay()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#beginOverlay(msi.gama.outputs.layers.OverlayLayer)
-	 */
-	@Override
-	public void beginOverlay(final OverlayLayer layer) {
-		// TODO
-	}
-
-	/**
-	 * Method endOverlay()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#endOverlay()
-	 */
-	@Override
-	public void endOverlay() {
-		// TODO
 	}
 
 	@Override

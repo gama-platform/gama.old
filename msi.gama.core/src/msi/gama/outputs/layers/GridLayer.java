@@ -81,7 +81,7 @@ public class GridLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+	public void privateDraw(final IScope scope, final IGraphics dg) {
 		computeImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		GamaColor lineColor = null;

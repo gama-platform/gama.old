@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import static org.eclipse.xtext.validation.CheckMode.NORMAL_AND_FAST;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,10 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.IAction;
@@ -87,7 +83,6 @@ import org.eclipse.xtext.ui.editor.model.XtextDocument;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
-import org.eclipse.xtext.ui.editor.validation.AnnotationIssueProcessor;
 import org.eclipse.xtext.ui.editor.validation.IValidationIssueProcessor;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
 import org.eclipse.xtext.ui.editor.validation.MarkerIssueProcessor;
@@ -96,6 +91,7 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.ui.validation.MarkerTypeProvider;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
+import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 
@@ -129,8 +125,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
-import ummisco.gama.ui.navigator.contents.NavigatorRoot;
-import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -160,7 +154,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
 		store.setValue("spellingEnabled", false);
-
 	}
 
 	public GamlEditor() {
@@ -176,6 +169,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	private EditorSearchControls findControl;
 	boolean decorationEnabled = GamaPreferences.Modeling.EDITBOX_ENABLED.getValue();
 	// boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
+
+	public final static boolean DEBUG = false;
+
+	public static void DEBUG(final String s) {
+		if (DEBUG) {
+			System.out.println(s);
+		}
+	}
 
 	@Inject public IResourceSetProvider resourceSetProvider;
 	@Inject Injector injector;
@@ -198,34 +199,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private URI fileURI;
 
-	// Fix for #2108 -- forces the selection of the "clicked" tab
-	// private static MouseAdapter FIX_FOR_ISSUE_2108 = new MouseAdapter() {
-	//
-	// @Override
-	// public void mouseUp(final MouseEvent e) {
-	// // System.out.println("MOUSE up IN TAB FOLDER");
-	// final CTabFolder folder = (CTabFolder) e.widget;
-	// final int x = e.x;
-	// final int y = e.y;
-	// for (final CTabItem item : folder.getItems()) {
-	// final Rectangle r = item.getBounds();
-	// if (r.contains(x, y) && !item.equals(folder.getSelection())) {
-	// System.out.println("Detected problem in editors tab selection (see #2108). Fixed.");
-	// WorkbenchHelper.runInUI("", 100, (m) -> {
-	// folder.setSelection(item);
-	// folder.layout(true, true);
-	// folder.update();
-	// return;
-	// });
-	// }
-	// }
-	// }
-	//
-	// };
-
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		super.init(site, input);
+		DEBUG("init of Editor for " + input.getName());
 		assignBoxPartListener();
 	}
 
@@ -341,15 +318,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			folder.setMinimizeVisible(true);
 			folder.setMinimumCharacters(10);
 			folder.setMRUVisible(true);
-			// Makes sure the listener is added only once
-			// folder.removeMouseListener(FIX_FOR_ISSUE_2108);
-			// folder.addMouseListener(FIX_FOR_ISSUE_2108);
+			folder.setTabHeight(16);
 		}
 
 	}
 
 	@Override
 	public void createPartControl(final Composite compo) {
+		DEBUG("Creating part control of " + this.getPartName());
 		configureTabFolder(compo);
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
 		final GridLayout layout = new GridLayout(1, false);
@@ -371,40 +347,36 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		super.createPartControl(editor);
 		toolbarParent.layout();
 		installGestures();
-		scheduleValidationJob();
+	}
+
+	@Override
+	protected void initializeDirtyStateSupport() {
+		if (getDocument() != null) {
+			fileURI = ((XtextDocument) getDocument()).getResourceURI();
+			GamlResourceServices.addResourceListener(fileURI, GamlEditor.this);
+			super.initializeDirtyStateSupport();
+			scheduleValidationJob();
+		}
 	}
 
 	private void scheduleValidationJob() {
-		fileURI = ((XtextDocument) getDocument()).getResourceURI();
-		IValidationIssueProcessor processor;
-		if (isEditable()) {
-			if (getResource() == null) {
-				processor = new AnnotationIssueProcessor(getDocument(), getSourceViewer().getAnnotationModel(),
-						issueResolver);
-			} else {
-				processor = new MarkerIssueProcessor(getResource(), getInternalSourceViewer().getAnnotationModel(),
-						markerCreator, markerTypeProvider);
+		if (!isEditable()) { return; }
+		final IValidationIssueProcessor processor = new MarkerIssueProcessor(getResource(),
+				getInternalSourceViewer().getAnnotationModel(), markerCreator, markerTypeProvider);
+		final ValidationJob validate = new ValidationJob(validator, getDocument(), processor, CheckMode.FAST_ONLY) {
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				final List<Issue> issues = getDocument().readOnly(resource -> {
+					if (resource.isValidationDisabled()) { return Collections.emptyList(); }
+					return validator.validate(resource, getCheckMode(), null);
+				});
+				processor.processIssues(issues, monitor);
+				return Status.OK_STATUS;
 			}
-			final ValidationJob validate = new ValidationJob(validator, getDocument(), processor, NORMAL_AND_FAST) {
-				@Override
-				protected IStatus run(final IProgressMonitor monitor) {
-					processor.processIssues(createIssues(monitor), monitor);
-					return Status.OK_STATUS;
-				}
 
-				@Override
-				public List<Issue> createIssues(final IProgressMonitor monitor) {
-					final List<Issue> issues = getDocument().readOnly(resource -> {
-						if (resource == null || resource.isValidationDisabled()) { return Collections.emptyList(); }
-						GamlResourceServices.addResourceListener(resource.getURI(), GamlEditor.this);
-						return validator.validate(resource, getCheckMode(), null);
-					});
-					return issues;
-				}
+		};
+		validate.schedule();
 
-			};
-			validate.schedule();
-		}
 	}
 
 	@Override
@@ -428,15 +400,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	public GamaSourceViewer getInternalSourceViewer() {
 		return (GamaSourceViewer) super.getInternalSourceViewer();
 	}
-
-	// @Override
-	// public void setFocus() {
-	// if (getSourceViewer() != null && getSourceViewer().getTextWidget() != null
-	// && !getSourceViewer().getTextWidget().isFocusControl()) {
-	// getSourceViewer().getTextWidget().setFocus();
-	// }
-	// // EditorMenu.getInstance().editorChanged();
-	// }
 
 	private void installGestures() {
 		final StyledText text = this.getInternalSourceViewer().getTextWidget();
@@ -463,27 +426,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		if (getInternalSourceViewer() == null) { return; }
 		if (getInternalSourceViewer().getControl() == null) { return; }
 		if (getInternalSourceViewer().getControl().isDisposed()) { return; }
-		/// AAAAA
 		super.handleCursorPositionChanged();
 		this.markInNavigationHistory();
 	}
 
 	private void enableButton(final int index, final String text, final SelectionListener listener) {
 		if (text == null) { return; }
-		// final boolean isBatch = state.types.get(index);
 		final String expType = state.types.get(index);
-		// final Image image = isBatch ?
-		// GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
-		// : GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
 		final Image image = IKeyword.BATCH.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
 				: IKeyword.MEMORIZE.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BACK).image()
 						: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
 
-		final ToolItem t = toolbar.button(IGamaColors.OK,
-				text/*
-					 * + "  " + GamaKeyBindings.format(GamlEditorBindings.MODIFIERS, String.valueOf(index).charAt(0))
-					 */, image, SWT.LEFT);
-		// final String type = isBatch ? "batch" : "regular";
+		final ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 		final String type =
 				IKeyword.BATCH.equals(expType) ? "batch" : IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
 
@@ -510,9 +464,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				String imageName = null;
 
 				if (msg == GamlEditorState.NO_EXP_DEFINED) {
-					// listener = new CreateExperimentSelectionListener(GamlEditor.this,
-					// toolbar.getToolbar(SWT.LEFT));
-					// imageName = "small.dropdown";
 					msg = null;
 				} else if (newState.hasImportedErrors) {
 					listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,
@@ -557,12 +508,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
-		final String platformString = getURI().toPlatformString(true);
-		final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		final WrappedGamaFile file =
-				(WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
-		NavigatorRoot.getInstance().getManager().refreshResource(file);
-		NavigatorRoot.getInstance().getManager().resourceChanged(null);
+		// final String platformString = getURI().toPlatformString(true);
+		// final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+		// final WrappedGamaFile file =
+		// (WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
+		// NavigatorRoot.getInstance().getManager().refreshResource(file);
+		// NavigatorRoot.getInstance().getManager().resourceChanged(null);
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {

@@ -13,6 +13,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.expressions.IExpression;
 
 /**
  * The class ILayerStatement. Supports the GAML definition of layers in a display
@@ -45,8 +46,7 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 
 		static LayerType get(final String s) {
 			for (final LayerType lt : values()) {
-				if (lt.name.equals(s))
-					return lt;
+				if (lt.name.equals(s)) { return lt; }
 			}
 			return null;
 		}
@@ -60,22 +60,8 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 
 	public abstract LayerType getType();
 
-	public abstract Double getTransparency();
-
-	public abstract Boolean getRefresh();
-
-	public abstract IDisplayLayerBox getBox();
-
-	public Integer getTrace();
-
-	public Boolean getFading();
-
-	public abstract void setRefresh(Boolean refresh);
-
-	public abstract void setTransparency(Double opacity);
-
 	public abstract void setDisplayOutput(IDisplayOutput output);
 
-	void setSelectable(Boolean s);
+	public abstract IExpression getRefreshFacet();
 
 }

@@ -183,32 +183,6 @@ public interface IUnits {
 	 * Special units
 	 */
 
-	// @constant(value = "view_x",
-	// category = IConstantCategory.GRAPHIC,
-	// doc = @doc("This unit, only available when running aspects or declaring
-	// displays, returns the x ordinate of the top-left corner of the view in
-	// the world") )
-	// public final static double view_x = 1;
-	//
-	// @constant(value = "view_y",
-	// category = IConstantCategory.GRAPHIC,
-	// doc = @doc("This unit, only available when running aspects or declaring
-	// displays, returns the y ordinate of the top-left corner of the view in
-	// the world") )
-	// public final static double view_y = 1;
-	//
-	// @constant(value = "view_width",
-	// category = IConstantCategory.GRAPHIC,
-	// doc = @doc("This unit, only available when running aspects or declaring
-	// displays, returns the width of the view in world units") )
-	// public final static double view_width = 1;
-	//
-	// @constant(value = "view_height",
-	// category = IConstantCategory.GRAPHIC,
-	// doc = @doc("This unit, only available when running aspects or declaring
-	// displays, returns the height of the view in world units") )
-	// public final static double view_height = 1;
-
 	@constant (
 			value = "user_location",
 			category = IConstantCategory.GRAPHIC,
@@ -250,11 +224,7 @@ public interface IUnits {
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
 			doc = @doc ("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units.")) public final static double pixels =
-					1d, px = pixels; // Represents the value
-										// of a pixel in
-										// terms
-	// of model units. Parsed early
-	// and never used as a constant.
+					1d, px = pixels;
 	@constant (
 			value = "display_width",
 			category = { IConstantCategory.GRAPHIC },

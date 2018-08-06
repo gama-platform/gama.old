@@ -192,14 +192,11 @@ public class EventLayer extends AbstractLayer {
 	}
 
 	@Override
-	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {}
+	protected void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {}
 
 	@Override
-	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (definition != null) {
-			definition.getBox().compute(scope);
-			setPositionAndSize(definition.getBox(), g);
-		}
+	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		getData().compute(scope, g);
 	}
 
 }

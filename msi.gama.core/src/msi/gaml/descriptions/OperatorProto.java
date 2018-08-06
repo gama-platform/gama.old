@@ -126,7 +126,9 @@ public class OperatorProto extends AbstractProto {
 			final validator val = method.getAnnotation(validator.class);
 			try {
 				tempValidator = val != null ? val.value().newInstance() : null;
-			} catch (InstantiationException | IllegalAccessException e) {}
+			} catch (InstantiationException | IllegalAccessException e) {
+				System.err.println("Error in creating the validator for operator " + name + " on method " + method);
+			}
 			final depends_on d = method.getAnnotation(depends_on.class);
 			dependencies = d != null ? d.value() : null;
 		}

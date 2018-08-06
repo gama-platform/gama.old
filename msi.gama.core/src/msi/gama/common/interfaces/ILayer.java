@@ -15,11 +15,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.ILayerData;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,27 +34,25 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	ILayerStatement getDefinition();
 
-	void setVisibleRegion(Envelope e);
-
-	Envelope getVisibleRegion();
-
-	Point getPositionInPixels();
-
-	Point getSizeInPixels();
+	public ILayerData getData();
 
 	default String getMenuName() {
 		return getType() + ItemList.SEPARATION_CODE + getName();
 	}
 
-	void drawDisplay(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
+	void draw(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
 
-	void dispose();
+	default void dispose() {
+
+	}
 
 	default Integer getOrder() {
 		return getDefinition().getOrder();
 	}
 
-	public abstract boolean stayProportional();
+	default boolean stayProportional() {
+		return true;
+	}
 
 	default void reloadOn(final IDisplaySurface surface) {
 		forceRedrawingOnce();
@@ -75,31 +73,37 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	}
 
 	default void setTransparency(final Double transparency) {
-		getDefinition().setTransparency(transparency);
+		getData().setTransparency(transparency);
 	}
 
 	default void setPosition(final ILocation p) {
-		getDefinition().getBox().setPosition(p);
+		getData().setPosition(p);
 	}
 
 	default ILocation getPosition() {
-		return getDefinition().getBox().getPosition();
+		return getData().getPosition();
 	}
 
 	default void setExtent(final ILocation p) {
-		getDefinition().getBox().setSize(p);
+		getData().setSize(p);
 	}
 
 	default ILocation getExtent() {
-		return getDefinition().getBox().getSize();
+		return getData().getSize();
 	}
 
 	default void setElevation(final Double elevation) {
-		final ILocation original = getDefinition().getBox().getPosition();
-		getDefinition().getBox().setPosition(original.getX(), original.getY(), elevation);
+		final ILocation original = getData().getPosition();
+		getData().setPosition(original.getX(), original.getY(), elevation);
 	}
 
-	Rectangle2D focusOn(IShape geometry, IDisplaySurface s);
+	default Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		final Envelope3D envelope = geometry.getEnvelope();
+		final Point min = this.getScreenCoordinatesFrom(envelope.getMinX(), envelope.getMinY(), s);
+		final Point max = this.getScreenCoordinatesFrom(envelope.getMaxX(), envelope.getMaxY(), s);
+		final Rectangle2D r = new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
+		return r;
+	}
 
 	default Collection<IAgent> getAgentsForMenu(final IScope scope) {
 		return Collections.EMPTY_LIST; // by default
@@ -114,19 +118,20 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	}
 
 	default boolean containsScreenPoint(final int x, final int y) {
-		final Point p = getPositionInPixels();
-		final Point s = getSizeInPixels();
+		final Point p = getData().getPositionInPixels();
+		final Point s = getData().getSizeInPixels();
 		return x >= p.x && y >= p.y && x <= p.x + s.x && y <= p.y + s.y;
 	}
 
 	default ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen, getSizeInPixels(), getPositionInPixels());
+		return g.getModelCoordinatesFrom(xOnScreen, yOnScreen, getData().getSizeInPixels(),
+				getData().getPositionInPixels());
 	}
 
 	default Point getScreenCoordinatesFrom(final double x, final double y, final IDisplaySurface g) {
 		final double xFactor = x / g.getEnvWidth();
 		final double yFactor = y / g.getEnvHeight();
-		final Point s = getSizeInPixels();
+		final Point s = getData().getSizeInPixels();
 		final int xOnDisplay = (int) (xFactor * s.x);
 		final int yOnDisplay = (int) (yFactor * s.y);
 		return new Point(xOnDisplay, yOnDisplay);
@@ -134,13 +139,11 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	}
 
 	default boolean isDynamic() {
-		return getDefinition().getRefresh() == null || getDefinition().getRefresh();
+		return getData().getRefresh() == null || getData().getRefresh();
 	}
 
 	default void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
 			final StringBuilder sb) {
-		// By default, returns the coordinates in the world. Redefined for
-		// charts
 		final ILocation point = getModelCoordinatesFrom(xOnScreen, yOnScreen, g);
 		final String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
@@ -148,13 +151,8 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	}
 
 	default Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		// Nothing to do by default
 		return Collections.EMPTY_SET;
 	}
-
-	void addElevation(double d);
-
-	double getAddedElevation();
 
 	public void forceRedrawingOnce();
 
@@ -167,22 +165,21 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 		return getDefinition().serialize(includingBuiltIn);
 	}
 
-
 	@Override
 	default int compareTo(final ILayer o) {
 		return getDefinition().compareTo(o.getDefinition());
 	}
 
 	default Integer getTrace() {
-		return getDefinition().getBox().getTrace();
+		return getData().getTrace();
 	}
 
 	default Boolean getFading() {
-		return getDefinition().getBox().getFading();
+		return getData().getFading();
 	}
 
 	default Boolean isSelectable() {
-		return getDefinition().getBox().isSelectable();
+		return getData().isSelectable();
 	}
 
 }

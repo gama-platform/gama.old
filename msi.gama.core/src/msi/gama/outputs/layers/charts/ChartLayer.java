@@ -26,21 +26,14 @@ import msi.gama.runtime.IScope;
  */
 public class ChartLayer extends AbstractLayer {
 
-	// final ChartRenderingInfo info;
 	public ChartLayer(final ILayerStatement model) {
 		super(model);
-		// info = new ChartRenderingInfo();
 	}
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		// Cannot focus
 		return null;
 	}
-
-	// private JFreeChart getChart() {
-	// return ((ChartLayerStatement) definition).getChart();
-	// }
 
 	private ChartOutput getChart() {
 		return ((ChartLayerStatement) definition).getOutput();
@@ -52,20 +45,9 @@ public class ChartLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+	public void privateDraw(final IScope scope, final IGraphics dg) {
 		try {
-			// int x = getSizeInPixels().x;
-			// int y = getSizeInPixels().y;
-			// if (!dg.is2D()) {
-			// x = (int) (Math.min(x, y) * 0.80);
-			// y = x;
-			// // x = (int) (x* 0.80);
-			// // y = (int) (y* 0.80);
-			// }
-			// final BufferedImage im = getChart().getImage(scope, x, y, dg.getSurface().getData().isAntialias());
-			// final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 			dg.drawChart(getChart());
-			// dg.drawImage(im, attributes);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
 			// Do nothing. See Issue #1605
 		}
@@ -84,7 +66,7 @@ public class ChartLayer extends AbstractLayer {
 	@Override
 	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
 			final StringBuilder sb) {
-		getChart().getModelCoordinatesInfo(xOnScreen, yOnScreen, g, positionInPixels, sb);
+		getChart().getModelCoordinatesInfo(xOnScreen, yOnScreen, g, getData().getPositionInPixels(), sb);
 	}
 
 }

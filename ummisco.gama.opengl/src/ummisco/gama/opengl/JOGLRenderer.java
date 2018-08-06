@@ -28,7 +28,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
@@ -465,22 +464,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		glu.gluProject(getEnvWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
 		return coord;
 	}
-
-	/**
-	 * Method beginOverlay()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#beginOverlay(msi.gama.outputs.layers.OverlayLayer)
-	 */
-	@Override
-	public void beginOverlay(final OverlayLayer layer) {}
-
-	/**
-	 * Method endOverlay()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#endOverlay()
-	 */
-	@Override
-	public void endOverlay() {}
 
 	@Override
 	public boolean mouseInROI(final Point mousePosition) {

@@ -20,6 +20,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -34,12 +36,21 @@ import msi.gama.common.preferences.GamaPreferences;
 
 public class PerspectiveHelper {
 
+	public final static boolean DEBUG = false;
+
+	public static void DEBUG(final String s) {
+		if ( DEBUG ) {
+			System.out.println(s);
+		}
+	}
+
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
 	public static final String PERSPECTIVE_SIMULATION_FRAGMENT = "Simulation";
 
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 	public static IPerspectiveDescriptor currentSimulationPerspective = null;
+	public static IEditorInput activeEditor;
 
 	static boolean matches(final String id) {
 		return !id.equals(PerspectiveHelper.PERSPECTIVE_SIMULATION_ID) && id.contains(PERSPECTIVE_SIMULATION_FRAGMENT);
@@ -158,6 +169,8 @@ public class PerspectiveHelper {
 			activePage.saveAllEditors(false);
 		}
 
+		memorizeActiveEditor(activePage);
+
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
@@ -172,7 +185,7 @@ public class PerspectiveHelper {
 			}
 			activateAutoSave(withAutoSave);
 			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
-				System.out.println("Destroying perspective " + oldDescriptor.getId());
+				DEBUG("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
@@ -182,7 +195,8 @@ public class PerspectiveHelper {
 				deleteCurrentSimulationPerspective();
 				currentSimulationPerspective = descriptor;
 			}
-			System.out.println("Perspective " + perspectiveId + " opened ");
+			applyActiveEditor(page);
+			DEBUG("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
 			Display.getDefault().syncExec(r);
@@ -190,6 +204,23 @@ public class PerspectiveHelper {
 			Display.getDefault().asyncExec(r);
 		}
 		return true;
+	}
+
+	private static void applyActiveEditor(final IWorkbenchPage page) {
+		if ( activeEditor == null ) { return; }
+		final IEditorPart part = page.findEditor(activeEditor);
+		if ( part != null ) {
+			page.activate(part);
+			// page.bringToTop(part);
+		}
+
+	}
+
+	private static void memorizeActiveEditor(final IWorkbenchPage page) {
+		final IEditorPart part = page.getActiveEditor();
+		if ( part == null ) { return; }
+		activeEditor = part.getEditorInput();
+
 	}
 
 	public static void activateAutoSave(final boolean activate) {

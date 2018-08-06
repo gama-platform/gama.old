@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,11 +110,8 @@ import msi.gaml.types.IType;
 				IKeyword.IMAGE, IKeyword.POPULATION })
 public class OverlayStatement extends GraphicLayerStatement implements IOverlayProvider<OverlayInfo> {
 
-	final IExpression left, right, center, round;
-	final IExpression color, background, border;
+	final IExpression left, right, center, color;
 	String leftValue, rightValue, centerValue;
-	Color bgColor, borderColor;
-	boolean rounded;
 	List<int[]> constantColors;
 	IUpdaterTarget<OverlayInfo> overlay;
 
@@ -138,9 +134,6 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 		right = getFacet(IKeyword.RIGHT);
 		center = getFacet(IKeyword.CENTER);
 		color = getFacet(IKeyword.COLOR);
-		background = getFacet(IKeyword.BACKGROUND);
-		border = getFacet(IKeyword.BORDER);
-		round = getFacet(IKeyword.ROUNDED);
 
 		if (color != null && color.isConst()) {
 			constantColors = computeColors(null);
@@ -181,9 +174,6 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 
 	@Override
 	protected boolean _step(final IScope scope) {
-		rounded = round == null ? true : Cast.asBool(scope, round.value(scope));
-		borderColor = border == null ? null : Cast.asColor(scope, border.value(scope));
-		bgColor = background == null ? Color.black : Cast.asColor(scope, background.value(scope));
 		if (overlay == null) { return true; }
 		leftValue = left == null ? null : Cast.asString(scope, left.value(scope));
 		rightValue = right == null ? null : Cast.asString(scope, right.value(scope));
@@ -200,22 +190,6 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	public void setTarget(final IUpdaterTarget<OverlayInfo> overlay, final IDisplaySurface surface) {
 		this.overlay = overlay;
 		_step(surface.getScope());
-	}
-
-	/**
-	 * @return the background color, preaffected by the transparency
-	 */
-	public Color getBackgroundColor() {
-		return new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(),
-				(int) (getBox().getTransparency() * 255));
-	}
-
-	public Color getBorderColor() {
-		return borderColor;
-	}
-
-	public boolean isRounded() {
-		return rounded;
 	}
 
 	@Override
