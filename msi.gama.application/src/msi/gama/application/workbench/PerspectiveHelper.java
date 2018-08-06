@@ -63,19 +63,19 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> matches(element.getElementId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			System.out.println("Dirty perspective implementation found and removed: " + p.getElementId());
+			DEBUG("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
 			if ( matches(desc.getId()) ) {
-				System.out.println("Dirty perspective descriptor found and removed: " + desc.getId());
+				DEBUG("Dirty perspective descriptor found and removed: " + desc.getId());
 				reg.deletePerspective(desc);
 			}
 		}
 
-		System.out.println("Current perspectives: " + listCurrentPerspectives());
+		DEBUG("Current perspectives: " + listCurrentPerspectives());
 	}
 
 	public static void deletePerspectiveFromApplication(final IPerspectiveDescriptor d) {
@@ -84,7 +84,7 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> element.getElementId().contains(d.getId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			System.out.println("Dirty perspective implementation found and removed: " + p.getElementId());
+			DEBUG("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 	}
@@ -356,7 +356,7 @@ public class PerspectiveHelper {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
 				deletePerspectiveFromApplication(currentSimulationPerspective);
-				System.out.println("Perspective destroyed: " + currentSimulationPerspective.getId());
+				DEBUG("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
 		}

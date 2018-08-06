@@ -132,7 +132,7 @@ experiment Ant type: gui {
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
 		display Ants  type: opengl synchronized: true {
-			image '../images/soil.jpg' ;
+			image '../images/soil3.jpg' ;
 			agents "Grid" transparency: 0.4  value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info ;
 		}
