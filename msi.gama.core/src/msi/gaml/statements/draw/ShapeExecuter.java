@@ -118,10 +118,10 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(Scaling3D.of(data.size.value),
-				data.depth.value, data.rotation.value, data.getLocation(), data.empty.value, data.getCurrentColor(),
-				data.getColors(), data.border.value, data.texture.value, data.material.value, scope.getAgent(),
-				shape.getGeometricalType(), data.lineWidth.value, data.lighting.value);
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(Scaling3D.of(data.size.get()),
+				data.depth.get(), data.rotation.get(), data.getLocation(), data.empty.get(), data.getCurrentColor(),
+				data.getColors(), data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
+				shape.getGeometricalType(), data.lineWidth.get(), data.lighting.get());
 		// We push the depth of the geometry if none have been specified already
 		attributes.setHeightIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		// We push the (perhaps new) location of the shape to the attributes.
@@ -181,7 +181,7 @@ class ShapeExecuter extends DrawExecuter {
 	// if (size < 2) { return g1; }
 	// Geometry end = null, begin = null;
 	// if (endArrow != null || constantEnd != null) {
-	// final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
+	// final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.get()(scope)) : constantEnd;
 	// if (width > 0) {
 	// end = GamaGeometryType
 	// .buildArrow(points.at(size - 2), points.at(size - 1), width, width + width / 3, fill)
@@ -189,7 +189,7 @@ class ShapeExecuter extends DrawExecuter {
 	// }
 	// }
 	// if (beginArrow != null || constantBegin != null) {
-	// final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
+	// final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.get()(scope)) : constantBegin;
 	// if (width > 0) {
 	// begin = GamaGeometryType.buildArrow(points.at(1), points.at(0), width, width + width / 3, fill)
 	// .getInnerGeometry();

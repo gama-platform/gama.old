@@ -23,7 +23,6 @@ import static msi.gama.common.interfaces.IKeyword.ROTATE;
 import static msi.gama.common.interfaces.IKeyword.ROUNDED;
 import static msi.gama.common.interfaces.IKeyword.SIZE;
 import static msi.gama.common.interfaces.IKeyword.TEXTURE;
-import static msi.gama.common.interfaces.IKeyword.WIDTH;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -293,28 +292,13 @@ public class DrawStatement extends AbstractStatementSequence {
 	public static final String BEGIN_ARROW = "begin_arrow";
 
 	private final DrawExecuter executer;
-	private final IExpression size, depth, rotate, at, empty, border, color, font, texture, perspective, material,
-			lineWidth, lighting;
+
 	private final ThreadLocal<DrawingData> data;
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		depth = getFacet(DEPTH);
-		size = getFacet(SIZE);
-		rotate = getFacet(ROTATE);
-		at = getFacet(AT);
-		empty = getFacet(EMPTY);
-		border = getFacet(BORDER);
-		color = getFacet(COLOR);
-		font = getFacet(FONT);
-		texture = getFacet(TEXTURE);
-		material = getFacet(IKeyword.MATERIAL);
-		perspective = getFacet(PERSPECTIVE);
-		lineWidth = getFacet(WIDTH);
-		lighting = getFacet(IKeyword.LIGHTED);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
-		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, getFacet(IKeyword.ANCHOR), empty,
-				border, color, font, texture, material, perspective, lineWidth, lighting));
+		data = ThreadLocal.withInitial(() -> new DrawingData(this));
 		if (item == null) {
 			executer = null;
 		} else {
@@ -337,8 +321,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		try {
 			// final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
 			// material, perspective, lineWidth);
-
-			final Rectangle2D result = executer.executeOn(scope, g, data.get().computeAttributes(scope));
+			data.get().refresh(scope);
+			final Rectangle2D result = executer.executeOn(scope, g, data.get());
 			if (result != null) {
 				g.accumulateTemporaryEnvelope(result);
 			}

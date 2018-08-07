@@ -32,8 +32,6 @@ public interface IVariable extends ISymbol, IParameter {
 
 	public abstract void initializeWith(IScope scope, IAgent gamaObject, Object object) throws GamaRuntimeException;
 
-	// public abstract void updateFor(IScope scope, IAgent agent) throws GamaRuntimeException;
-
 	public abstract void setVal(IScope scope, IAgent agent, Object v) throws GamaRuntimeException;
 
 	public abstract Object value(IScope scope, IAgent agent) throws GamaRuntimeException;

@@ -38,7 +38,8 @@ global torus: torus_environment{
 	int goal_duration <- 30 update: (goal_duration - 1); 
 	//Location of the goal
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
-	list images <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
+	gif_file bird0_gif_file <- gif_file("../images/bird.gif");
+
 	geometry shape <- cube(width_and_height_of_environment);
 	init {
 		//Creation of the boids agents that will be placed randomly within the environment
@@ -74,7 +75,7 @@ species boids_goal skills: [moving3D] {
 } 
 
 //Species boids that will represent the boids agents, using the skill moving
-species boids skills: [moving] {
+species boids skills: [moving3D] {
 	//Attribute for the speed of the boids
 	float speed max: maximal_speed <- maximal_speed;
 	//Range of sensing of the boids
@@ -142,7 +143,7 @@ species boids skills: [moving] {
 	}
 	
 	aspect image {
-		draw (images at (rnd(2))) size: boids_size rotate: heading color: #black ;      
+		draw bird0_gif_file size: boids_size rotate: heading::(location - boids_goal[0].location) color: #black ;      
 	}
 }
 
@@ -153,7 +154,7 @@ experiment boids_3D type: gui {
 	output {
 		
 		display Sky1 type:opengl  {
-			image 'background' file:'../images/ocean.jpg' ;
+			image 'background' file:'../images/soil6.jpg' ;
 			species boids aspect: image;
 			species boids_goal;	
 		}

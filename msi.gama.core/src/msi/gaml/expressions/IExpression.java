@@ -27,6 +27,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
+@FunctionalInterface
 public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	/**
@@ -46,19 +47,30 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 
-	public abstract boolean isConst();
+	default boolean isConst() {
+		// By default
+		return false;
+	}
 
-	public abstract String literalValue();
+	default String literalValue() {
+		return getName();
+	}
 
 	/**
 	 * Returns an expression where all the temp variables belonging to the scope passed in parameter are replaced by
 	 * constants representing their values
 	 */
-	public abstract IExpression resolveAgainst(IScope scope);
+	default IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
 
-	public abstract boolean shouldBeParenthesized();
+	default boolean shouldBeParenthesized() {
+		return true;
+	}
 
-	public abstract void collectUsedVarsOf(SpeciesDescription species, ICollector<VariableDescription> result);
+	default void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+		// Nothing by default
+	}
 
 	default boolean isContextIndependant() {
 		return true;

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.expressions.IExpression;
@@ -26,7 +26,7 @@ import msi.gaml.types.IType;
  * @since 31 mars 2012
  *
  */
-public interface IExpressionDescription extends IGamlable {
+public interface IExpressionDescription extends IGamlable, IDisposable {
 
 	public static interface IExpressionVisitor {
 
@@ -43,8 +43,6 @@ public interface IExpressionDescription extends IGamlable {
 
 	public abstract boolean equalsString(String o);
 
-	public void dispose();
-
 	public EObject getTarget();
 
 	public void setTarget(EObject target);
@@ -55,7 +53,7 @@ public interface IExpressionDescription extends IGamlable {
 
 	public abstract IExpressionDescription cleanCopy();
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public abstract IType getDenotedType(IDescription context);
 
 	public abstract void collectMetaInformation(GamlProperties meta);

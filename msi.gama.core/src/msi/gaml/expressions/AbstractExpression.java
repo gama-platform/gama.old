@@ -9,14 +9,10 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.concurrent.GamaExecutorService;
-import msi.gama.util.ICollector;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -31,29 +27,8 @@ public abstract class AbstractExpression implements IExpression {
 	protected IType type = null;
 
 	@Override
-	public String getName() {
-		return toString();
-	}
-
-	@Override
-	public void setName(final String s) {}
-
-	@Override
 	public IType<?> getGamlType() {
 		return type == null ? Types.NO_TYPE : type;
-	}
-
-	@Override
-	public String literalValue() {
-		return getName();
-	}
-
-	@Override
-	public void dispose() {}
-
-	@Override
-	public IExpression resolveAgainst(final IScope scope) {
-		return this;
 	}
 
 	protected final static void parenthesize(final StringBuilder sb, final IExpression... exp) {
@@ -83,41 +58,9 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public boolean shouldBeParenthesized() {
-		return true;
-	}
-
-	@Override
-	public String getDefiningPlugin() {
-		return null;
-	}
-
-	@Override
 	public String getTitle() {
 		// Serialized version by default
 		return serialize(false);
-	}
-
-	@Override
-	public String getDocumentation() {
-		// Return nothing by default
-		return "";
-	}
-
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		// Does nothing by default
-	}
-
-	@Override
-	public boolean isConst() {
-		// false by default
-		return false;
-	}
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
-		// Nothing by default
 	}
 
 	@Override

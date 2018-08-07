@@ -2,11 +2,10 @@ package msi.gama.kernel.experiment;
 
 import com.google.common.primitives.Ints;
 
+import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
 
-public interface IExperimentDisplayable extends Comparable<IExperimentDisplayable> {
-
-	public abstract String getName();
+public interface IExperimentDisplayable extends INamed, Comparable<IExperimentDisplayable> {
 
 	public abstract String getTitle();
 

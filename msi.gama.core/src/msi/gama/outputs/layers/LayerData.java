@@ -9,18 +9,13 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static msi.gama.common.interfaces.IKeyword.FADING;
 import static msi.gama.common.interfaces.IKeyword.POSITION;
+import static msi.gama.common.interfaces.IKeyword.REFRESH;
 import static msi.gama.common.interfaces.IKeyword.SELECTABLE;
 import static msi.gama.common.interfaces.IKeyword.SIZE;
 import static msi.gama.common.interfaces.IKeyword.TRACE;
 import static msi.gama.common.interfaces.IKeyword.TRANSPARENCY;
-import static msi.gaml.operators.Cast.asBool;
-import static msi.gaml.operators.Cast.asFloat;
-import static msi.gaml.operators.Cast.asInt;
 import static msi.gaml.types.Types.BOOL;
 import static msi.gaml.types.Types.FLOAT;
 import static msi.gaml.types.Types.INT;
@@ -37,11 +32,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.AttributeHolder;
-import msi.gaml.types.GamaBoolType;
-import msi.gaml.types.GamaFloatType;
-import msi.gaml.types.GamaIntegerType;
-import msi.gaml.types.GamaPointType;
 import msi.gaml.types.Types;
 
 /**
@@ -58,47 +50,41 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	boolean positionIsInPixels, sizeIsInPixels;
 	Envelope visibleRegion;
 
-	Attribute<GamaPointType, ILocation> size;
-	Attribute<GamaPointType, ILocation> position;
-	Attribute<GamaBoolType, Boolean> refresh;
-	final Attribute<GamaBoolType, Boolean> fading;
-	final Attribute<GamaIntegerType, Integer> trace;
-	Attribute<GamaBoolType, Boolean> selectable;
-	Attribute<GamaFloatType, Double> transparency;
+	Attribute<ILocation> size;
+	Attribute<ILocation> position;
+	Attribute<Boolean> refresh;
+	final Attribute<Boolean> fading;
+	final Attribute<Integer> trace;
+	Attribute<Boolean> selectable;
+	Attribute<Double> transparency;
 
 	public LayerData(final ILayerStatement def) throws GamaRuntimeException {
+		super(def);
 		final IExpression sizeExp = def.getFacet(SIZE);
 		sizeIsInPixels = sizeExp != null && sizeExp.findAny((p) -> p instanceof PixelUnitExpression);
-		size = create(sizeExp, POINT, new GamaPoint(1, 1, 1));
+		size = create(SIZE, sizeExp, POINT, new GamaPoint(1, 1, 1));
 		final IExpression posExp = def.getFacet(POSITION);
 		positionIsInPixels = posExp != null && posExp.findAny((p) -> p instanceof PixelUnitExpression);
-		position = create(posExp, POINT, new GamaPoint());
-		refresh = create(def.getRefreshFacet(), BOOL, true);
-		fading = create(def.getFacet(FADING), BOOL, false);
-		final IExpression traceExp = def.getFacet(TRACE);
-		trace = create(traceExp, (scope) -> traceExp.getGamlType() == BOOL && asBool(scope, traceExp.value(scope))
-				? MAX_VALUE : asInt(scope, traceExp.value(scope)), INT, 0);
-		selectable = create(def.getFacet(SELECTABLE), BOOL, true);
-		transparency = create(def.getFacet(TRANSPARENCY),
-				(scope) -> 1d - min(max(asFloat(scope, def.getFacet(TRANSPARENCY).value(scope)), 0d), 1d), FLOAT, 1d);
+		position = create(POSITION, posExp, POINT, new GamaPoint());
+		refresh = create(REFRESH, def.getRefreshFacet(), BOOL, true);
+		fading = create(FADING, BOOL, false);
+		trace = create(TRACE, (scope, exp) -> exp.getGamlType() == BOOL && Cast.asBool(scope, exp.value(scope))
+				? Integer.MAX_VALUE : Cast.asInt(scope, exp.value(scope)), INT, 0);
+		selectable = create(SELECTABLE, BOOL, true);
+		transparency = create(TRANSPARENCY,
+				(scope, exp) -> 1d - Math.min(Math.max(Cast.asFloat(scope, exp.value(scope)), 0d), 1d), FLOAT, 1d);
 
 	}
 
 	@Override
 	public void compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		size.refresh(scope);
-		position.refresh(scope);
-		refresh.refresh(scope);
-		fading.refresh(scope);
-		trace.refresh(scope);
-		selectable.refresh(scope);
-		transparency.refresh(scope);
+		this.refresh(scope);
 		computePixelsDimensions(g);
 	}
 
 	@Override
 	public void setTransparency(final double f) {
-		transparency = create(null, Types.FLOAT, 1d - Math.min(Math.max(f, 0d), 1d));
+		transparency = create(TRANSPARENCY, 1d - Math.min(Math.max(f, 0d), 1d));
 	}
 
 	@Override
@@ -108,7 +94,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public void setSize(final double width, final double height, final double depth) {
-		size = create(null, Types.POINT, new GamaPoint(width, height, depth));
+		size = create(SIZE, new GamaPoint(width, height, depth));
 		sizeIsInPixels = false;
 	}
 
@@ -119,7 +105,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public void setPosition(final double x, final double y, final double z) {
-		position = create(null, Types.POINT, new GamaPoint(x, y, z));
+		position = create(POSITION, new GamaPoint(x, y, z));
 		positionIsInPixels = false;
 	}
 
@@ -136,28 +122,28 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public final Double getTransparency() {
-		return transparency.value;
+		return transparency.get();
 	}
 
 	@Override
 	public ILocation getPosition() {
-		if (addedElevation > 0) { return position.value.toGamaPoint().plus(0, 0, addedElevation); }
-		return position.value;
+		if (addedElevation > 0) { return position.get().toGamaPoint().plus(0, 0, addedElevation); }
+		return position.get();
 	}
 
 	@Override
 	public ILocation getSize() {
-		return size.value;
+		return size.get();
 	}
 
 	@Override
 	public Boolean getRefresh() {
-		return refresh.value;
+		return refresh.get();
 	}
 
 	@Override
 	public void setSelectable(final Boolean b) {
-		selectable = create(null, Types.BOOL, b);
+		selectable = create(SELECTABLE, b);
 	}
 
 	/**
@@ -167,7 +153,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	 */
 	@Override
 	public Integer getTrace() {
-		return trace.value;
+		return trace.get();
 	}
 
 	/**
@@ -177,12 +163,12 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	 */
 	@Override
 	public Boolean getFading() {
-		return fading.value;
+		return fading.get();
 	}
 
 	@Override
 	public Boolean isSelectable() {
-		return selectable.value;
+		return selectable.get();
 	}
 
 	@Override
