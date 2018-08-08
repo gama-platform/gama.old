@@ -15,8 +15,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.metamodel.agent.ReferenceAgent;
-import msi.gama.metamodel.agent.ReferenceToAgent;
+import ummisco.gama.serializer.gamaType.reference.ReferenceAgent;
+import ummisco.gama.serializer.gamaType.reference.ReferenceToAgent;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ReferenceAgentConverter implements Converter {

@@ -12,15 +12,17 @@ package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.ArrayList;
 
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.IContainer;
+import msi.gama.util.IReference;
 import msi.gaml.types.IType;
+import ummisco.gama.serializer.gamaType.reference.ReferenceList;
 
 @SuppressWarnings({ "rawtypes" })
 public class GamaListReducer {
-	private final ArrayList<Object> valuesListReducer = new ArrayList<>();
+	private ArrayList<Object> valuesListReducer = new ArrayList<>();
 	private final IType contentTypeListReducer;
 
 	public GamaListReducer(final GamaList l) {
@@ -30,22 +32,36 @@ public class GamaListReducer {
 			valuesListReducer.add(p);
 		}
 	}
+	
+	public GamaListReducer(ArrayList<Object> values, IType type) {
+		valuesListReducer = values;
+		contentTypeListReducer = type;
+	}
 
 	public GamaList constructObject(final IScope scope) {
-	//	System.out.println("read "+contentTypeListReducer+ " "+valuesListReducer );
-	//	scope.getAgent().getPopulationFor(speciesName)
-	//	(microSpeciesName)getMicroSpecies(contentTypeListReducer);
-		return (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+
+		boolean isReference = false;
+		int i = 0;
+		while(!isReference && i < valuesListReducer.size()) {
+			isReference = IReference.isReference(valuesListReducer.get(i));
+			i++;
+		}
+		
+		return (isReference) ? 
+			new ReferenceList(this) :
+			(GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
 	}
 
-	public ArrayList<Object> getValuesListReducer() {
-		return valuesListReducer;
-	}
+	public ArrayList<Object> getValuesListReducer() { return valuesListReducer; }
+	public IType getContentTypeListReducer() { return contentTypeListReducer; }
 
-	public IType getContentTypeListReducer() {
-		return contentTypeListReducer;
+	public void unreferenceReducer(SimulationAgent sim) {
+		ArrayList<Object> listWithoutRef = new ArrayList<>();
+		
+		for(Object elt : valuesListReducer) {
+			listWithoutRef.add(IReference.getObjectWithoutReference(elt,sim));
+		}	
+			
+		valuesListReducer = listWithoutRef ;	
 	}
-	
-	
-	
 }

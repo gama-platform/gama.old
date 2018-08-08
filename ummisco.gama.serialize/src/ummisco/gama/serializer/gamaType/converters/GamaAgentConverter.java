@@ -13,8 +13,8 @@ package ummisco.gama.serializer.gamaType.converters;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
-import msi.gama.metamodel.agent.ReferenceAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
+import ummisco.gama.serializer.gamaType.reference.ReferenceAgent;
 
 import java.util.List;
 

@@ -11,19 +11,27 @@
 package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
+import msi.gama.util.IReference;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
+import ummisco.gama.serializer.gamaType.reference.ReferenceMap;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaMapReducer {
 	private final IType keysType;
 	private final IType dataType;
 	// private ArrayList<GamaPair> values = new ArrayList<GamaPair>();
-	private final HashMap valuesMapReducer = new HashMap();
+	private Map<Object,Object> valuesMapReducer = new HashMap();
 
 	public GamaMapReducer(final GamaMap m) {
 		keysType = m.getGamlType().getKeyType();
@@ -39,26 +47,47 @@ public class GamaMapReducer {
 	}
 
 	public GamaMap constructObject(final IScope scope) {
-		final GamaMap mp = GamaMapFactory.create(scope, keysType, dataType, valuesMapReducer);
+		
+		boolean isReference = false;		
+		Iterator ite = valuesMapReducer.entrySet().iterator();
+		while(!isReference && ite.hasNext()) {
+			Entry e = (Entry) ite.next();
+			isReference = IReference.isReference(e.getKey()) || IReference.isReference(e.getValue());
+		}
+	
+		return (isReference) ? 
+			new ReferenceMap(this) :
+			GamaMapFactory.create(scope, keysType, dataType, valuesMapReducer);		
+		
+	//	final GamaMap mp = GamaMapFactory.create(scope, keysType, dataType, valuesMapReducer);
 
-		// GamaMap mp = GamaMapFactory.create(keysType, dataType,values.size());
-		// for(GamaPair p:values)
-		// {
-		// mp.put(p.key, p.value);
-		// }
-		return mp;
+
+	//	return mp;
 	}
 
-	public IType getKeysType() {
-		return keysType;
+	public void unreferenceReducer(SimulationAgent sim) {
+		
+		HashMap<Object,Object> mapWithoutReferences = new HashMap<>();
+		
+		for(Entry e : valuesMapReducer.entrySet()) {
+			mapWithoutReferences.put(
+					IReference.getObjectWithoutReference(e.getKey(),sim), 
+					IReference.getObjectWithoutReference(e.getValue(),sim));
+		}
+		
+		valuesMapReducer = mapWithoutReferences;		
 	}
+		
+	
+	public IType getKeysType() { return keysType; }
 
 	public IType getDataType() {
 		return dataType;
 	}
 
-	// public ArrayList<GamaPair> getValues() {return values;}
-	public HashMap getValues() {
+	public Map<Object,Object> getValues() {
 		return valuesMapReducer;
 	}
+	
+	public void setValues(HashMap m) {valuesMapReducer = m;}
 }
