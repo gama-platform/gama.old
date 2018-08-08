@@ -1,0 +1,712 @@
+<msi.gama.metamodel.agent.SavedAgent>
+  <index>0</index>
+  <variables>
+    <keys>
+      <string>location</string>
+      <string>name</string>
+      <string>shape</string>
+      <string>step</string>
+      <string>time</string>
+      <string>rng_usage</string>
+      <string>starting_date</string>
+      <string>average_duration</string>
+      <string>seed</string>
+      <string>total_duration</string>
+      <string>color</string>
+      <string>duration</string>
+      <string>machine_time</string>
+      <string>rng</string>
+      <string>paused</string>
+      <string>cycle</string>
+      <string>current_date</string>
+      <string>roads_weight</string>
+      <string>road_network</string>
+      <string>slow_coeff</string>
+    </keys>
+    <data>
+      <msi.gama.metamodel.shape.GamaPoint>
+        <x>50.0</x>
+        <y>50.0</y>
+        <z>0.0</z>
+      </msi.gama.metamodel.shape.GamaPoint>
+      <string>Simulation 0</string>
+      <msi.gama.metamodel.shape.GamaShape>
+        <geometry class="com.vividsolutions.jts.geom.Polygon">
+          <envelope>
+            <minx>0.0</minx>
+            <maxx>100.0</maxx>
+            <miny>0.0</miny>
+            <maxy>100.0</maxy>
+          </envelope>
+          <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+            <precisionModel>
+              <modelType>
+                <name>FLOATING</name>
+              </modelType>
+              <scale>0.0</scale>
+            </precisionModel>
+            <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+            <SRID>0</SRID>
+          </factory>
+          <SRID>0</SRID>
+          <shell>
+            <envelope>
+              <minx>0.0</minx>
+              <maxx>100.0</maxx>
+              <miny>0.0</miny>
+              <maxy>100.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../factory"/>
+            <SRID>0</SRID>
+            <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+              <points>
+                <msi.gama.metamodel.shape.GamaPoint>
+                  <x>0.0</x>
+                  <y>100.0</y>
+                  <z>0.0</z>
+                </msi.gama.metamodel.shape.GamaPoint>
+                <msi.gama.metamodel.shape.GamaPoint>
+                  <x>100.0</x>
+                  <y>100.0</y>
+                  <z>0.0</z>
+                </msi.gama.metamodel.shape.GamaPoint>
+                <msi.gama.metamodel.shape.GamaPoint>
+                  <x>100.0</x>
+                  <y>0.0</y>
+                  <z>0.0</z>
+                </msi.gama.metamodel.shape.GamaPoint>
+                <msi.gama.metamodel.shape.GamaPoint>
+                  <x>0.0</x>
+                  <y>0.0</y>
+                  <z>0.0</z>
+                </msi.gama.metamodel.shape.GamaPoint>
+                <msi.gama.metamodel.shape.GamaPoint>
+                  <x>0.0</x>
+                  <y>100.0</y>
+                  <z>0.0</z>
+                </msi.gama.metamodel.shape.GamaPoint>
+              </points>
+            </points>
+          </shell>
+          <holes/>
+        </geometry>
+        <attributes>
+          <keysType class="msi.gaml.types.GamaStringType">
+            <GamaType>string</GamaType>
+          </keysType>
+          <dataType class="msi.gaml.types.GamaNoType">
+            <GamaType>unknown</GamaType>
+          </dataType>
+          <valuesMapReducer>
+            <entry>
+              <string>_shape_internal_type</string>
+              <msi.gama.metamodel.shape.IShape_-Type>BOX</msi.gama.metamodel.shape.IShape_-Type>
+            </entry>
+            <entry>
+              <string>_shape_internal_depth</string>
+              <double>100.0</double>
+            </entry>
+          </valuesMapReducer>
+        </attributes>
+      </msi.gama.metamodel.shape.GamaShape>
+      <double>1.0</double>
+      <double>5.0</double>
+      <int>28</int>
+      <msi.gama.util.GamaDate>
+        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
+          <byte>10</byte>
+          <int>1970</int>
+          <byte>1</byte>
+          <byte>1</byte>
+          <byte>-8</byte>
+          <byte>4</byte>
+        </internal>
+      </msi.gama.util.GamaDate>
+      <string>0.6</string>
+      <double>0.4813663484508569</double>
+      <string>3</string>
+      <msi.gama.util.GamaColor>
+        <value>-11902576</value>
+        <falpha>0.0</falpha>
+      </msi.gama.util.GamaColor>
+      <string>0</string>
+      <double>1.533719450976E12</double>
+      <string>mersenne</string>
+      <boolean>true</boolean>
+      <int>5</int>
+      <msi.gama.util.GamaDate>
+        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
+          <byte>10</byte>
+          <int>1970</int>
+          <byte>1</byte>
+          <byte>1</byte>
+          <byte>7</byte>
+          <byte>0</byte>
+          <byte>-6</byte>
+          <byte>4</byte>
+        </internal>
+      </msi.gama.util.GamaDate>
+      <msi.gama.util.GamaMap>
+        <keysType class="msi.gaml.types.GamaAgentType">
+          <GamaType>road</GamaType>
+        </keysType>
+        <dataType class="msi.gaml.types.GamaFloatType">
+          <GamaType>float</GamaType>
+        </dataType>
+        <valuesMapReducer>
+          <entry>
+            <msi.gama.metamodel.agent.GamlAgent>
+              <agentReference>
+                <attributeValue>
+                  <species>
+                    <string>road</string>
+                  </species>
+                  <index>
+                    <int>0</int>
+                  </index>
+                </attributeValue>
+              </agentReference>
+            </msi.gama.metamodel.agent.GamlAgent>
+            <double>240.0</double>
+          </entry>
+          <entry>
+            <msi.gama.metamodel.agent.GamlAgent>
+              <agentReference>
+                <attributeValue>
+                  <species>
+                    <string>road</string>
+                  </species>
+                  <index>
+                    <int>3</int>
+                  </index>
+                </attributeValue>
+              </agentReference>
+            </msi.gama.metamodel.agent.GamlAgent>
+            <double>40.0</double>
+          </entry>
+          <entry>
+            <msi.gama.metamodel.agent.GamlAgent>
+              <agentReference>
+                <attributeValue>
+                  <species>
+                    <string>road</string>
+                  </species>
+                  <index>
+                    <int>1</int>
+                  </index>
+                </attributeValue>
+              </agentReference>
+            </msi.gama.metamodel.agent.GamlAgent>
+            <double>40.0</double>
+          </entry>
+          <entry>
+            <msi.gama.metamodel.agent.GamlAgent>
+              <agentReference>
+                <attributeValue>
+                  <species>
+                    <string>road</string>
+                  </species>
+                  <index>
+                    <int>2</int>
+                  </index>
+                </attributeValue>
+              </agentReference>
+            </msi.gama.metamodel.agent.GamlAgent>
+            <double>80.0</double>
+          </entry>
+        </valuesMapReducer>
+      </msi.gama.util.GamaMap>
+      <msi.gama.metamodel.topology.graph.GamaSpatialGraph>
+        <nodeTypeGraphReducer class="msi.gaml.types.GamaGeometryType">
+          <GamaType>geometry</GamaType>
+        </nodeTypeGraphReducer>
+        <edgeTypeGraphReducer class="msi.gaml.types.GamaAgentType" reference="../../msi.gama.util.GamaMap/keysType"/>
+        <edgesGraphReducer>
+          <valuesListReducer>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../msi.gama.util.GamaMap/valuesMapReducer/entry/msi.gama.metamodel.agent.GamlAgent"/>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[4]/msi.gama.metamodel.agent.GamlAgent"/>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[2]/msi.gama.metamodel.agent.GamlAgent"/>
+          </valuesListReducer>
+          <contentTypeListReducer class="msi.gaml.types.GamaAgentType" reference="../../../msi.gama.util.GamaMap/keysType"/>
+        </edgesGraphReducer>
+        <edgesWeightsGraphReducer>
+          <keysType class="msi.gaml.types.GamaAgentType" reference="../../../msi.gama.util.GamaMap/keysType"/>
+          <dataType class="msi.gaml.types.GamaPairType">
+            <GamaType>null</GamaType>
+          </dataType>
+          <valuesMapReducer>
+            <entry>
+              <msi.gama.metamodel.agent.GamlAgent reference="../../../../../msi.gama.util.GamaMap/valuesMapReducer/entry/msi.gama.metamodel.agent.GamlAgent"/>
+              <double>80.0</double>
+            </entry>
+            <entry>
+              <msi.gama.metamodel.agent.GamlAgent reference="../../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[2]/msi.gama.metamodel.agent.GamlAgent"/>
+              <double>40.0</double>
+            </entry>
+            <entry>
+              <msi.gama.metamodel.agent.GamlAgent reference="../../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+              <double>40.0</double>
+            </entry>
+            <entry>
+              <msi.gama.metamodel.agent.GamlAgent reference="../../../../../msi.gama.util.GamaMap/valuesMapReducer/entry[4]/msi.gama.metamodel.agent.GamlAgent"/>
+              <double>80.0</double>
+            </entry>
+          </valuesMapReducer>
+        </edgesWeightsGraphReducer>
+        <spatial>true</spatial>
+        <directed>false</directed>
+      </msi.gama.metamodel.topology.graph.GamaSpatialGraph>
+      <double>3.0</double>
+    </data>
+  </variables>
+  <innerPopulations>
+    <byte>1</byte>
+    <byte>0</byte>
+    <byte>0</byte>
+    <float>0.5</float>
+    <float>0.5</float>
+    <int>2</int>
+    <string>road</string>
+    <list>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>0</index>
+        <variables>
+          <keys>
+            <string>location</string>
+            <string>name</string>
+            <string>shape</string>
+            <string>slow</string>
+          </keys>
+          <data>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>50.0</x>
+              <y>50.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <string>road0</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.LineString">
+                <envelope>
+                  <minx>10.0</minx>
+                  <maxx>90.0</maxx>
+                  <miny>50.0</miny>
+                  <maxy>50.0</maxy>
+                </envelope>
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                  <points>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>10.0</x>
+                      <y>50.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>90.0</x>
+                      <y>50.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                  </points>
+                </points>
+              </geometry>
+            </msi.gama.metamodel.shape.GamaShape>
+            <boolean>true</boolean>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>1</index>
+        <variables>
+          <keys>
+            <string>location</string>
+            <string>name</string>
+            <string>shape</string>
+            <string>slow</string>
+          </keys>
+          <data>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>10.0</x>
+              <y>30.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <string>road1</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.LineString">
+                <envelope>
+                  <minx>10.0</minx>
+                  <maxx>10.0</maxx>
+                  <miny>10.0</miny>
+                  <maxy>50.0</maxy>
+                </envelope>
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                  <points>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>10.0</x>
+                      <y>50.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>10.0</x>
+                      <y>10.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                  </points>
+                </points>
+              </geometry>
+            </msi.gama.metamodel.shape.GamaShape>
+            <boolean>false</boolean>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>2</index>
+        <variables>
+          <keys>
+            <string>location</string>
+            <string>name</string>
+            <string>shape</string>
+            <string>slow</string>
+          </keys>
+          <data>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>50.0</x>
+              <y>10.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <string>road2</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.LineString">
+                <envelope>
+                  <minx>10.0</minx>
+                  <maxx>90.0</maxx>
+                  <miny>10.0</miny>
+                  <maxy>10.0</maxy>
+                </envelope>
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                  <points>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>10.0</x>
+                      <y>10.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>90.0</x>
+                      <y>10.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                  </points>
+                </points>
+              </geometry>
+            </msi.gama.metamodel.shape.GamaShape>
+            <boolean>false</boolean>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>3</index>
+        <variables>
+          <keys>
+            <string>location</string>
+            <string>name</string>
+            <string>shape</string>
+            <string>slow</string>
+          </keys>
+          <data>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>90.0</x>
+              <y>30.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <string>road3</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.LineString">
+                <envelope>
+                  <minx>90.0</minx>
+                  <maxx>90.0</maxx>
+                  <miny>10.0</miny>
+                  <maxy>50.0</maxy>
+                </envelope>
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                  <points>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>90.0</x>
+                      <y>10.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                    <msi.gama.metamodel.shape.GamaPoint>
+                      <x>90.0</x>
+                      <y>50.0</y>
+                      <z>0.0</z>
+                    </msi.gama.metamodel.shape.GamaPoint>
+                  </points>
+                </points>
+              </geometry>
+            </msi.gama.metamodel.shape.GamaShape>
+            <boolean>false</boolean>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+    </list>
+    <string>people</string>
+    <list>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>0</index>
+        <variables>
+          <keys>
+            <string>name</string>
+            <string>shape</string>
+            <string>location</string>
+            <string>speed</string>
+            <string>current_path</string>
+            <string>destination</string>
+            <string>heading</string>
+            <string>real_speed</string>
+            <string>current_edge</string>
+            <string>roads_knowledge</string>
+            <string>the_target</string>
+            <string>color</string>
+            <string>size</string>
+            <string>path_to_follow</string>
+          </keys>
+          <data>
+            <string>people0</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.Point">
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+                  <point>
+                    <x>10.0</x>
+                    <y>25.0</y>
+                    <z>0.0</z>
+                  </point>
+                </coordinates>
+              </geometry>
+              <attributes>
+                <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+                <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+                <valuesMapReducer>
+                  <entry>
+                    <string>index_on_path_segment</string>
+                    <int>1</int>
+                  </entry>
+                  <entry>
+                    <string>index_on_path</string>
+                    <int>0</int>
+                  </entry>
+                </valuesMapReducer>
+              </attributes>
+            </msi.gama.metamodel.shape.GamaShape>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+            <double>1.0</double>
+            <msi.gama.util.path.GamaSpatialPath>
+              <g class="msi.gama.metamodel.topology.graph.GamaSpatialGraph" reference="../../../../../../../variables/data/msi.gama.metamodel.topology.graph.GamaSpatialGraph"/>
+              <start class="msi.gama.metamodel.shape.GamaPoint">
+                <x>10.0</x>
+                <y>25.0</y>
+                <z>0.0</z>
+              </start>
+              <target class="msi.gama.metamodel.shape.GamaPoint">
+                <x>90.0</x>
+                <y>50.0</y>
+                <z>0.0</z>
+              </target>
+              <edges>
+                <valuesListReducer>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[4]/msi.gama.metamodel.agent.GamlAgent"/>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[2]/msi.gama.metamodel.agent.GamlAgent"/>
+                </valuesListReducer>
+                <contentTypeListReducer class="msi.gaml.types.GamaNoType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+              </edges>
+              <spatial>true</spatial>
+            </msi.gama.util.path.GamaSpatialPath>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>10.0</x>
+              <y>24.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <double>270.0</double>
+            <double>5.0</double>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+            <msi.gama.util.GamaMap reference="../../../../../../variables/data/msi.gama.util.GamaMap"/>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+            <msi.gama.util.GamaColor_-NamedGamaColor>
+              <value>-16776961</value>
+              <falpha>0.0</falpha>
+              <name>blue</name>
+            </msi.gama.util.GamaColor_-NamedGamaColor>
+            <double>2.0</double>
+            <msi.gama.util.path.GamaSpatialPath reference="../msi.gama.util.path.GamaSpatialPath"/>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+      <msi.gama.metamodel.agent.SavedAgent>
+        <index>1</index>
+        <variables>
+          <keys>
+            <string>name</string>
+            <string>shape</string>
+            <string>location</string>
+            <string>speed</string>
+            <string>current_path</string>
+            <string>destination</string>
+            <string>heading</string>
+            <string>real_speed</string>
+            <string>current_edge</string>
+            <string>roads_knowledge</string>
+            <string>the_target</string>
+            <string>color</string>
+            <string>size</string>
+            <string>path_to_follow</string>
+          </keys>
+          <data>
+            <string>people1</string>
+            <msi.gama.metamodel.shape.GamaShape>
+              <geometry class="com.vividsolutions.jts.geom.Point">
+                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                <SRID>0</SRID>
+                <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+                  <point>
+                    <x>18.333333333333332</x>
+                    <y>50.0</y>
+                    <z>0.0</z>
+                  </point>
+                </coordinates>
+              </geometry>
+              <attributes>
+                <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+                <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+                <valuesMapReducer>
+                  <entry>
+                    <string>index_on_path_segment</string>
+                    <int>1</int>
+                  </entry>
+                  <entry>
+                    <string>index_on_path</string>
+                    <int>0</int>
+                  </entry>
+                </valuesMapReducer>
+              </attributes>
+            </msi.gama.metamodel.shape.GamaShape>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+            <double>1.0</double>
+            <msi.gama.util.path.GamaSpatialPath>
+              <g class="msi.gama.metamodel.topology.graph.GamaSpatialGraph" reference="../../../../../../../variables/data/msi.gama.metamodel.topology.graph.GamaSpatialGraph"/>
+              <start class="msi.gama.metamodel.shape.GamaPoint">
+                <x>18.333333333333332</x>
+                <y>50.0</y>
+                <z>0.0</z>
+              </start>
+              <target class="msi.gama.metamodel.shape.GamaPoint">
+                <x>90.0</x>
+                <y>50.0</y>
+                <z>0.0</z>
+              </target>
+              <edges>
+                <valuesListReducer>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry/msi.gama.metamodel.agent.GamlAgent"/>
+                </valuesListReducer>
+                <contentTypeListReducer class="msi.gaml.types.GamaNoType" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+              </edges>
+              <spatial>true</spatial>
+            </msi.gama.util.path.GamaSpatialPath>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>19.333333333333332</x>
+              <y>50.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
+            <double>0.0</double>
+            <double>1.6666666666666667</double>
+            <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry/msi.gama.metamodel.agent.GamlAgent"/>
+            <msi.gama.util.GamaMap>
+              <keysType class="msi.gaml.types.GamaAgentType" reference="../../../../../../../variables/data/msi.gama.util.GamaMap/keysType"/>
+              <dataType class="msi.gaml.types.GamaFloatType" reference="../../../../../../../variables/data/msi.gama.util.GamaMap/dataType"/>
+              <valuesMapReducer>
+                <entry>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry/msi.gama.metamodel.agent.GamlAgent"/>
+                  <double>80.0</double>
+                </entry>
+                <entry>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[2]/msi.gama.metamodel.agent.GamlAgent"/>
+                  <double>40.0</double>
+                </entry>
+                <entry>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+                  <double>40.0</double>
+                </entry>
+                <entry>
+                  <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[4]/msi.gama.metamodel.agent.GamlAgent"/>
+                  <double>80.0</double>
+                </entry>
+              </valuesMapReducer>
+            </msi.gama.util.GamaMap>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+            <msi.gama.util.GamaColor_-NamedGamaColor>
+              <value>-256</value>
+              <falpha>0.0</falpha>
+              <name>yellow</name>
+            </msi.gama.util.GamaColor_-NamedGamaColor>
+            <double>1.0</double>
+            <msi.gama.util.path.GamaSpatialPath reference="../msi.gama.util.path.GamaSpatialPath"/>
+          </data>
+        </variables>
+        <innerPopulations>
+          <byte>1</byte>
+          <byte>0</byte>
+          <byte>0</byte>
+          <float>0.5</float>
+          <float>0.5</float>
+          <int>0</int>
+        </innerPopulations>
+      </msi.gama.metamodel.agent.SavedAgent>
+    </list>
+  </innerPopulations>
+</msi.gama.metamodel.agent.SavedAgent>

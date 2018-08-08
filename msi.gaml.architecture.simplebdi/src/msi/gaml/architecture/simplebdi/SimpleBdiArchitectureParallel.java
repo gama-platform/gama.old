@@ -43,7 +43,7 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 		}
 
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-			computeEmotions(scope);
+//			computeEmotions(scope);
 			return null;
 		}
 		

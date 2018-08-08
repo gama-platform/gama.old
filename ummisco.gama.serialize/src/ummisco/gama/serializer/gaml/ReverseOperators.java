@@ -46,25 +46,17 @@ public class ReverseOperators {
 	@operator(value = "serializeAgent")
 	@doc(value = "")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
-
-		System.out.println("**** TODO list = Problème dans les displays");
-		System.out.println("**** TODO list = Reducer for any kind of file");
-		System.out.println("**** TODO list = Case of multi-simulation ?");
-		System.out.println("**** TODO list Improvment = simplify GamaShape");
-
 		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
 	}
 
-	@operator(value = "unSerializeSimulationFromFile")
-	@doc(value = "")
+	@operator(value = "restoreSimulationFromFile")
+	@doc(value = "restoreSimulationFromFile")
 	public static int unSerializeSimulationFromFile(final IScope scope, final GamaSavedSimulationFile file) {
 		return unSerializeSimulationFromXML(scope, file.getBuffer().get(0));
 	}
 
-	@operator(value = "unSerializeSimulation")
-	@doc(value="unSerializeSimulation")
-	// TODO: this should not be an operator .... 
-	// TODO: should be check ....
+	@operator(value = "restoreSimulation")
+	@doc(value="restoreSimulation")
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);

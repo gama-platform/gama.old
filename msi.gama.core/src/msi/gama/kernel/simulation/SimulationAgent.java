@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.ClassUtils;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -27,7 +29,6 @@ import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.agent.ReferenceAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -54,6 +55,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
+import msi.gama.util.IReference;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -715,15 +717,21 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// This list is updated during all the updateWith of the simulation.
 		// When all the agents will be created (end of this updateWith), 
 		// all the references will be replaced by the corresponding agent.
-		List<ReferenceAgent> list_ref = new ArrayList<>();
+		List<IReference> list_ref = new ArrayList<>();
 		
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
 		for (final String name : attr.keySet()) {
 			Object attrValue = attr.get(name);
-			if( attrValue instanceof ReferenceAgent) {
-				((ReferenceAgent) attrValue).setAgentAndAttrName(this,name);
-				list_ref.add((ReferenceAgent) attrValue);
+
+			boolean isReference = IReference.isReference(attrValue);
+			
+			// if( attrValue instanceof ReferenceAgent) {
+			if( isReference ) {				
+				((IReference) attrValue).setAgentAndAttrName(this,name);
+				if(!list_ref.contains(attrValue)) {
+					list_ref.add((IReference) attrValue);
+				}
 			}
 			
 			this.setDirectVarValue(scope, name, attrValue);
@@ -785,9 +793,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 						
 						for (final String name : e.getValue().keySet()) {
 							Object attrValue = e.getValue().get(name);
-							if( attrValue instanceof ReferenceAgent) {
-								((ReferenceAgent) attrValue).setAgentAndAttrName(currentAgent,name);
-								list_ref.add((ReferenceAgent) attrValue);
+							boolean isReference2 = IReference.isReference(attrValue);
+
+							if( isReference2 ) {
+							// if( attrValue instanceof ReferenceAgent) {
+								((IReference) attrValue).setAgentAndAttrName(currentAgent,name);
+								if(!list_ref.contains(attrValue)) {
+									list_ref.add((IReference) attrValue);
+								}								
 							}
 						}
 					}	
@@ -800,23 +813,22 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 						// microPop.clear();
 						// microPop.firePopulationCleared();
 					}
-					
-					// Update all the references !
-					updateReferences(scope, list_ref);
 				}
 			}
 		}
-
+		
+		// Update all the references !
+		updateReferences(scope, list_ref, this);
 	}
 	
-	private void updateReferences(IScope scope, List<ReferenceAgent> list_ref) {
-		list_ref.stream().forEach(
-			ref -> ref.getAgt().setDirectVarValue(scope, ref.getAttributeName(), ref.getReferencedAgent(this))
-		);
+	private void updateReferences(IScope scope, List<IReference> list_ref, SimulationAgent sim) {
+//		list_ref.stream().forEach(
+//			ref -> ref.resolveReferences(scope, sim)
+//		);
 		
-//		for(ReferenceAgent ref : list_ref) {	
-//			ref.getAgt().setDirectVarValue(scope, ref.getAttributeName(), ref.getReferencedAgent(this));
-//		}
+		for(IReference ref : list_ref) {	
+			ref.resolveReferences(scope, sim);
+		}
 	}
 
 	public void adoptTopologyOf(final SimulationAgent root) {

@@ -345,7 +345,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (agent.dead()) { return null; }
 			}
 		}
-		computeEmotions(scope);
+//		computeEmotions(scope);
 		updateSocialLinks(scope);
 		Object result = executePlans(scope);
 		if(!scope.getAgent().dead()){

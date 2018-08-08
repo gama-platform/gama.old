@@ -52,14 +52,10 @@ public class CreateFromSavedSimulationDelegate implements ICreateDelegate {
 			final Object source, final Arguments init, final CreateStatement statement) {
 		final GamaSavedSimulationFile file = (GamaSavedSimulationFile) source;
 
-	// FIXME : previous version, but alter the simulation...
-	// 	ReverseOperators.unSerializeSimulationFromFile( scope, file) ;
-				
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
 
 		String stringFile = file.getBuffer().get(0);
-		System.out.println(stringFile);
 		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);
 		
 		HashMap mapSavedAgt = new HashMap<String, Object>();

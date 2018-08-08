@@ -1,6 +1,6 @@
 /**
 * Name: Model1
-* Author: ben
+* Author: Benoit Gaudou
 * Description: 
 * Tags: Tag1, Tag2, TagN
 */
@@ -23,16 +23,9 @@ species people {
 
 experiment Model1 type: gui {
 
-	list<string> history <- [];
-
 	reflex store { 
-		write "================ store " + self + " - " + cycle;
-		string serial <- serializeAgent(self.simulation);
-		write serial;
-		write "================ END store " + self + " - " + cycle;		
-	}
-	
-	output {
-		
+		write "================ Serialize simulation " + self + " - " + cycle;
+		write serializeAgent(self.simulation);
+		write "================ END Serialize simulation " + self + " - " + cycle;		
 	}
 }

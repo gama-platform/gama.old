@@ -10,7 +10,6 @@
 package msi.gaml.types;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.ReferenceAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -70,9 +69,6 @@ public class GamaAgentType extends GamaType<IAgent> {
 			species = scope.getModel().getSpecies(this.species.getName());
 		}
 		if (species == null) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
-		if (obj instanceof ReferenceAgent) {
-			return (IAgent) obj;
-		}
 		if (obj instanceof IAgent) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if (obj instanceof Integer) { return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj); }
 		if (obj instanceof ILocation) {
