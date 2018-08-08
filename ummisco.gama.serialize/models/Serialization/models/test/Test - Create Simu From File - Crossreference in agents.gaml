@@ -9,15 +9,19 @@ model Model1
 
 global {
 	init {
-	//	create people number: 2;
+		create people number: 4;
 		
-	//	people(0).p <- people(1);
-	//	people(1).p <- people(0);
+		people(0).p <- people(1);
+		people(1).p <- people(0);
 	}
 }
 
 species people {
 	people p;
+	
+	aspect default {
+		draw circle(1) color: rnd_color(255);
+	}
 }
 
 experiment ModelUnserialize type: gui {
@@ -34,7 +38,7 @@ experiment ModelUnserialize type: gui {
 	
 	reflex restore when: (cycle = 4) {
 		write "================ restore " + self + " - " + cycle;
-		int serial <- unSerializeSimulation(save_step);	
+		int serial <- restoreSimulation(save_step);	
 		write "================ END restore " + self + " - " + cycle;			
 	}
 
@@ -50,11 +54,17 @@ experiment saveSimu type: gui {
 }
 
 experiment reloadSimu type: gui {
+
+	init {
+		create simulation from: saved_simulation_file("simpleSimu.gsim");	
+		write "init simulation at step " + simulation.cycle;
+	}	
 	
-//	init {
-//		create simulation from: saved_simulation_file("simpleSimu.gsim");	
-//		write "init simulation at step " + simulation.cycle;
-//	}	
+	output {
+		display d {
+			species people;
+		}
+	}		
 }
 
 experiment reloadSingleSimu type: gui {
@@ -63,4 +73,10 @@ experiment reloadSingleSimu type: gui {
 		create simulation from: saved_simulation_file("simpleSimu.gsim");	
 		write "init simulation at step " + simulation.cycle;		
 	}
+	
+	output {
+		display d {
+			species people;
+		}
+	}	
 }

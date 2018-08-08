@@ -2,31 +2,33 @@
   <index>0</index>
   <variables>
     <keys>
-      <string>name</string>
       <string>location</string>
+      <string>name</string>
       <string>shape</string>
-      <string>machine_time</string>
-      <string>seed</string>
-      <string>time</string>
-      <string>average_duration</string>
-      <string>color</string>
-      <string>total_duration</string>
-      <string>starting_date</string>
-      <string>rng</string>
-      <string>cycle</string>
-      <string>duration</string>
-      <string>rng_usage</string>
-      <string>current_date</string>
       <string>step</string>
+      <string>time</string>
+      <string>rng_usage</string>
+      <string>starting_date</string>
+      <string>average_duration</string>
+      <string>seed</string>
+      <string>total_duration</string>
+      <string>color</string>
+      <string>duration</string>
+      <string>machine_time</string>
+      <string>rng</string>
       <string>paused</string>
+      <string>cycle</string>
+      <string>current_date</string>
+      <string>toot</string>
+      <string>s</string>
     </keys>
     <data>
-      <string>Simulation 0</string>
       <msi.gama.metamodel.shape.GamaPoint>
         <x>50.0</x>
         <y>50.0</y>
         <z>0.0</z>
       </msi.gama.metamodel.shape.GamaPoint>
+      <string>Simulation 0</string>
       <msi.gama.metamodel.shape.GamaShape>
         <geometry class="com.vividsolutions.jts.geom.Polygon">
           <envelope>
@@ -106,15 +108,9 @@
           </valuesMapReducer>
         </attributes>
       </msi.gama.metamodel.shape.GamaShape>
-      <double>1.533290768714E12</double>
-      <double>0.0025183948358312724</double>
-      <double>5.0</double>
-      <string>1.0</string>
-      <msi.gama.util.GamaColor>
-        <value>-11902576</value>
-        <falpha>0.0</falpha>
-      </msi.gama.util.GamaColor>
-      <string>5</string>
+      <double>1.0</double>
+      <double>0.0</double>
+      <int>4</int>
       <msi.gama.util.GamaDate>
         <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
           <byte>10</byte>
@@ -125,24 +121,21 @@
           <byte>4</byte>
         </internal>
       </msi.gama.util.GamaDate>
-      <string>mersenne</string>
-      <int>5</int>
+      <string>0.0</string>
+      <double>0.9536464208979937</double>
       <string>0</string>
-      <int>8</int>
-      <msi.gama.util.GamaDate>
-        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
-          <byte>10</byte>
-          <int>1970</int>
-          <byte>1</byte>
-          <byte>1</byte>
-          <byte>7</byte>
-          <byte>0</byte>
-          <byte>-6</byte>
-          <byte>4</byte>
-        </internal>
-      </msi.gama.util.GamaDate>
-      <double>1.0</double>
+      <msi.gama.util.GamaColor>
+        <value>-11902576</value>
+        <falpha>0.0</falpha>
+      </msi.gama.util.GamaColor>
+      <string>0</string>
+      <double>1.533719350514E12</double>
+      <string>mersenne</string>
       <boolean>true</boolean>
+      <int>0</int>
+      <msi.gama.util.GamaDate reference="../msi.gama.util.GamaDate"/>
+      <int>0</int>
+      <string>test</string>
     </data>
   </variables>
   <innerPopulations>
@@ -158,18 +151,19 @@
         <index>0</index>
         <variables>
           <keys>
-            <string>name</string>
             <string>location</string>
+            <string>name</string>
             <string>shape</string>
-            <string>p</string>
+            <string>t</string>
+            <string>lo</string>
           </keys>
           <data>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>43.72773356735211</x>
+              <y>82.88962554041237</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
             <string>people0</string>
-            <msi.gama.metamodel.shape.GamaPoint>
-              <x>90.90966381514272</x>
-              <y>70.7390962797706</y>
-              <z>0.0</z>
-            </msi.gama.metamodel.shape.GamaPoint>
             <msi.gama.metamodel.shape.GamaShape>
               <geometry class="com.vividsolutions.jts.geom.Point">
                 <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
@@ -179,66 +173,17 @@
                 </coordinates>
               </geometry>
             </msi.gama.metamodel.shape.GamaShape>
-            <msi.gama.metamodel.agent.GamlAgent>
-              <agentReference>
-                <attributeValue>
-                  <species>
-                    <string>people</string>
-                  </species>
-                  <index>
-                    <int>1</int>
-                  </index>
-                </attributeValue>
-              </agentReference>
-            </msi.gama.metamodel.agent.GamlAgent>
-          </data>
-        </variables>
-        <innerPopulations>
-          <byte>1</byte>
-          <byte>0</byte>
-          <byte>0</byte>
-          <float>0.5</float>
-          <float>0.5</float>
-          <int>0</int>
-        </innerPopulations>
-      </msi.gama.metamodel.agent.SavedAgent>
-      <msi.gama.metamodel.agent.SavedAgent>
-        <index>1</index>
-        <variables>
-          <keys>
-            <string>name</string>
-            <string>location</string>
-            <string>shape</string>
-            <string>p</string>
-          </keys>
-          <data>
-            <string>people1</string>
-            <msi.gama.metamodel.shape.GamaPoint>
-              <x>72.92855825682393</x>
-              <y>25.608934894780354</y>
-              <z>0.0</z>
-            </msi.gama.metamodel.shape.GamaPoint>
-            <msi.gama.metamodel.shape.GamaShape>
-              <geometry class="com.vividsolutions.jts.geom.Point">
-                <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
-                <SRID>0</SRID>
-                <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
-                  <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
-                </coordinates>
-              </geometry>
-            </msi.gama.metamodel.shape.GamaShape>
-            <msi.gama.metamodel.agent.GamlAgent>
-              <agentReference>
-                <attributeValue>
-                  <species>
-                    <string>people</string>
-                  </species>
-                  <index>
-                    <int>0</int>
-                  </index>
-                </attributeValue>
-              </agentReference>
-            </msi.gama.metamodel.agent.GamlAgent>
+            <int>0</int>
+            <msi.gama.util.GamaList>
+              <valuesListReducer>
+                <int>1</int>
+                <int>2</int>
+                <int>3</int>
+              </valuesListReducer>
+              <contentTypeListReducer class="msi.gaml.types.GamaIntegerType">
+                <GamaType>int</GamaType>
+              </contentTypeListReducer>
+            </msi.gama.util.GamaList>
           </data>
         </variables>
         <innerPopulations>

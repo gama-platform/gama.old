@@ -46,17 +46,17 @@ species toto {
 
 experiment Model4 type: gui {
 
-	string save_step <- "";
+	string saved_step <- "";
 
 	init {
-		save_step <- serializeAgent(self.simulation);
+		saved_step <- serializeAgent(self.simulation);
 	}
 	
 	reflex restore when: (cycle = 4) {
 		write "================ restore " + self + " - " + cycle;
-		write "Restor from: ";		
-		write save_step;
-		int serial <- unSerializeSimulation(save_step);
+		write "Restore from: ";		
+		write saved_step;
+		int serial <- restoreSimulation(saved_step);
 		write "================ END restore " + self + " - " + cycle;			
 	}
 
