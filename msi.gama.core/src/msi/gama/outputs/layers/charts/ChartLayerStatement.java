@@ -413,7 +413,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chartoutput;
 	}
 
-	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
+	public ChartLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		lastValues = new LinkedHashMap<>();
 		lastComputeCycle = 0l;

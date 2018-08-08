@@ -98,11 +98,11 @@ import msi.gaml.types.IType;
 public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	AspectStatement aspect;
-	static int i;
+	static int LayerIndex;
 
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		final IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + i++);
+		final IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + LayerIndex++);
 		aspect = new AspectStatement(d);
 	}
 

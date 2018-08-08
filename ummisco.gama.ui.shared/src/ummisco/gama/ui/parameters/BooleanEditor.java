@@ -56,35 +56,28 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	protected void hideToolbar() {
-		if (toolbar == null || toolbar.isDisposed())
-			return;
-		this.getEditor().setBackground(getNormalBackground());
 		super.hideToolbar();
+		if (getEditor() != null) {
+			this.getEditor().setBackground(getNormalBackground());
+		}
 	}
 
 	@Override
 	protected void showToolbar() {
-		if (toolbar == null || toolbar.isDisposed())
-			return;
-		// Because of the special properties of the switch button, showToolbar requires to be redefined
-		this.getEditor().setBackground(HOVERED_BACKGROUND);
 		super.showToolbar();
-
-		// AD 26/12/15 Commented for the moment to not force the focus (see
-		// Issues #1339 and #1248)
-		// if ( combo != null ) {
-		// combo.forceFocus();
-		// } else {
-		// Control c = getEditorControl();
-		// if ( c != null ) {
-		// c.forceFocus();
-		// }
-		// }
-	}
-
-	@Override
-	protected Control createEditorControl(final Composite composite) {
-		return super.createEditorControl(composite);
+		if (getEditor() != null) {
+			this.getEditor().setBackground(HOVERED_BACKGROUND);
+			// AD 26/12/15 Commented for the moment to not force the focus (see
+			// Issues #1339 and #1248)
+			// if ( combo != null ) {
+			// combo.forceFocus();
+			// } else {
+			// Control c = getEditorControl();
+			// if ( c != null ) {
+			// c.forceFocus();
+			// }
+			// }
+		}
 	}
 
 	@Override

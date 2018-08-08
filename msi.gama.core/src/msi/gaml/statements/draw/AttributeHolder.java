@@ -52,17 +52,19 @@ public abstract class AttributeHolder {
 
 	}
 
-	class ExpressionAttribute<V> implements Attribute<V> {
+	class ExpressionAttribute<T extends IType<V>, V> implements Attribute<V> {
 		final IExpression expression;
+		final T returnType;
 		private V value;
 
-		public ExpressionAttribute(final IExpression ev) {
+		public ExpressionAttribute(final T type, final IExpression ev) {
 			expression = ev;
+			returnType = type;
 		}
 
 		@Override
 		public V value(final IScope scope) {
-			return (V) expression.value(scope);
+			return returnType.cast(scope, expression.value(scope), null, false);
 		}
 
 		@Override
@@ -131,7 +133,7 @@ public abstract class AttributeHolder {
 			if (exp.isConst()) {
 				result = new ConstantAttribute<>(type.cast(null, exp.getConstValue(), null, true));
 			} else {
-				result = new ExpressionAttribute<>(exp);
+				result = new ExpressionAttribute<>(type, exp);
 			}
 		} else {
 			result = new ConstantAttribute<>(def);

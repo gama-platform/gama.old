@@ -255,12 +255,12 @@ species candidate skills:[moving]{
 		if (active) {
 			float radius  <- 1 + (percentage_vote / 4.0);
 			if (is_elected) {
-				draw cube( radius *1.5) color: #red; 
+				draw cube( radius * 2) color: color.brighter.brighter; 
+				
+			} 
 				draw sphere(radius) color: color;
-			} else {
-				draw sphere(radius) color: color;
-			}
-			draw string(percentage_vote) size: 5 color: #white;
+			
+			draw string(percentage_vote) size: 5 color: #white anchor: #center;
 		}
 	}
 	//Action to move the candidate according to its strategy

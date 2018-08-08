@@ -134,6 +134,23 @@ experiment road_traffic type: gui
 	parameter 'Latest hour to end work' var: max_work_end category: 'People';
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
+	parameter 'Number of people agents' var: nb_people category: 'People' min: 0 max: 1000 on_change:
+	{
+		int nb <- length(people);
+		ask simulation
+		{
+			if (nb_people > nb)
+			{
+				create people number: nb_people - nb;
+			} else
+			{
+				ask (nb - nb_people) among people
+				{
+					do die;
+				}
+			}
+		}
+	};
 	output
 	{
 		display city_display type: opengl 

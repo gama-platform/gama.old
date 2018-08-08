@@ -38,8 +38,8 @@ public class ChartHistory {
 				zos.write(current.toString().getBytes(StandardCharsets.US_ASCII));
 			} catch (final IOException e) {}
 			older.add(stream.toByteArray());
-			System.out.println("LIMIT REACHED (compressing " + current.toString().getBytes().length + " bytes into "
-					+ older.get(older.size() - 1).length + " bytes)");
+			System.out.println("Chart history limit reached (compressing " + current.toString().getBytes().length
+					+ " bytes into " + older.get(older.size() - 1).length + " bytes)");
 			current.setLength(0);
 		}
 	}

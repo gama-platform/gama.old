@@ -572,10 +572,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return matrix[p];
 	}
 
-	void diffuse(final IScope scope) throws GamaRuntimeException {
-		diffuser.diffuse();
-	}
-
 	@Override
 	public void shuffleWith(final RandomUtils randomAgent) {
 		// TODO not allowed for the moment (fixed grid)
@@ -1296,7 +1292,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		diffuser = new GridDiffuser();
 		scope.getSimulation().postEndAction(s -> {
 			if (diffuser != null) {
-				diffuse(s);
+				diffuser.diffuse();
 			}
 			return null;
 		});

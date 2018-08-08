@@ -82,7 +82,7 @@ import one.util.streamex.StreamEx;
 						optional = true,
 						doc = @doc (
 								value = "(grid only), the chosen neighborhood (4, 6 or 8)",
-								deprecated = "use neighbors instead")),
+								deprecated = "use 'neighbors' instead")),
 				@facet (
 						name = IKeyword.NEIGHBORS,
 						type = IType.INT,
@@ -254,6 +254,10 @@ public class GamlSpecies extends AbstractSpecies {
 				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time",
 						IGamlIssue.CONFLICTING_FACETS, NEIGHBOURS);
 				return;
+			}
+			if (neighbours != null && neighbors == null) {
+				sd.setFacet(NEIGHBORS, neighbours);
+				sd.removeFacets(NEIGHBOURS);
 			}
 			// Issue 1311
 			if (cellWidth != null && width != null) {

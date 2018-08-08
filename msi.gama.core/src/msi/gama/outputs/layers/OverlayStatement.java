@@ -161,7 +161,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 		}
 	}
 
-	private int[] computeColor(final IScope scope, final Object color) {
+	private static int[] computeColor(final IScope scope, final Object color) {
 		final GamaColor c = Cast.asColor(scope, color);
 		final int[] rgb = new int[] { c.red(), c.green(), c.blue() };
 		return rgb;

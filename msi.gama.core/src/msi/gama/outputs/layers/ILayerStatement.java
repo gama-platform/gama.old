@@ -28,6 +28,7 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 
 		GRID(IKeyword.GRID),
 		AGENTS(IKeyword.AGENTS),
+		GRID_AGENTS("grid_agents"),
 		SPECIES(IKeyword.SPECIES),
 		IMAGE(IKeyword.IMAGE),
 		GIS(IKeyword.GIS),

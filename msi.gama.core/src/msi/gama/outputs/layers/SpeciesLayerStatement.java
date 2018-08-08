@@ -12,9 +12,10 @@ package msi.gama.outputs.layers;
 import java.util.ArrayList;
 import java.util.List;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.SpeciesLayerStatement.SpeciesLayerSerializer;
+import msi.gama.outputs.layers.SpeciesLayerStatement.SpeciesLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -26,10 +27,13 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.serializer;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
@@ -153,6 +157,7 @@ import msi.gaml.types.IType;
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 				IKeyword.IMAGE, IKeyword.OVERLAY })
 @serializer (SpeciesLayerSerializer.class)
+@validator (SpeciesLayerValidator.class)
 public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	public static class SpeciesLayerSerializer extends SymbolSerializer<StatementDescription> {
@@ -165,19 +170,41 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	}
 
+	public static class SpeciesLayerValidator implements IDescriptionValidator<StatementDescription> {
+
+		@Override
+		public void validate(final StatementDescription description) {
+			IExpressionDescription ed = description.getFacet(SPECIES);
+			SpeciesDescription target = null;
+			target = description.getGamlType().getDenotedSpecies();
+			if (target == null) {
+				// Already caught by the type checking
+				return;
+			}
+			ed = description.getFacet(ASPECT);
+			if (ed != null) {
+				final String a = description.getLitteral(ASPECT);
+				if (target.getAspect(a) != null) {
+					ed.compileAsLabel();
+				} else {
+					description.error(a + " is not the name of an aspect of " + target.getName(), IGamlIssue.GENERAL,
+							ed.getTarget());
+				}
+
+			}
+		}
+
+	}
+
 	private IExecutable aspect;
 
 	protected ISpecies hostSpecies;
 	protected ISpecies species;
 	protected List<SpeciesLayerStatement> microSpeciesLayers;
-	protected List<GridLayerStatement> gridLayers;
-	protected List<AbstractLayerStatement> subLayers;
 
 	public SpeciesLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
-		microSpeciesLayers = new ArrayList<SpeciesLayerStatement>();
-		gridLayers = new ArrayList<GridLayerStatement>();
 	}
 
 	@Override
@@ -187,7 +214,6 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if (hostSpecies == null && scope.getSimulation() != null) {
 			hostSpecies = scope.getSimulation().getSpecies();
 		}
-		// if ( hostSpecies == null ) { return false; }
 		species = Cast.asSpecies(scope, getFacet(IKeyword.SPECIES).value(scope));
 		if (species == null && hostSpecies != null) {
 			species = hostSpecies.getMicroSpecies(getName());
@@ -195,9 +221,11 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if (species == null) { throw GamaRuntimeException.error("not a suitable species to display: " + getName(),
 				scope); }
 		if (super._init(scope)) {
-			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
-				microLayer.setHostSpecies(species);
-				if (!scope.init(microLayer).passed()) { return false; }
+			if (microSpeciesLayers != null) {
+				for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
+					microLayer.hostSpecies = species;
+					if (!scope.init(microLayer).passed()) { return false; }
+				}
 			}
 		}
 		return true;
@@ -205,26 +233,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
-		if (super._step(scope)) {
-			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
-				scope.step(microLayer);
-				// if ( !scope.step(microLayer) ) { return false; }
-			}
-		} else {
-			return false;
-		}
 		return true;
-	}
-
-	@Override
-	public boolean agentsHaveChanged() {
-		return true;
-		// return population.populationHasChanged();
-	}
-
-	@Override
-	public List<? extends IAgent> computeAgents(final IScope sim) {
-		return GamaListFactory.create();
 	}
 
 	@Override
@@ -254,26 +263,21 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		return aspect;
 	}
 
-	public void setHostSpecies(final ISpecies hostSpecies) {
-		this.hostSpecies = hostSpecies;
-	}
-
 	public ISpecies getSpecies() {
 		return species;
 	}
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
-		final List<SpeciesLayerStatement> microL = new ArrayList<SpeciesLayerStatement>();
-		final List<GridLayerStatement> gridL = new ArrayList<GridLayerStatement>();
 		final List<IStatement> aspectStatements = new ArrayList<>();
 
 		for (final ISymbol c : commands) {
 			if (c instanceof SpeciesLayerStatement) {
-				microL.add((SpeciesLayerStatement) c);
-			} else if (c instanceof GridLayerStatement) {
-				gridL.add((GridLayerStatement) c);
-			} else if (c instanceof IStatement) {
+				if (microSpeciesLayers == null) {
+					microSpeciesLayers = new ArrayList<>();
+				}
+				microSpeciesLayers.add((SpeciesLayerStatement) c);
+			} else {
 				aspectStatements.add((IStatement) c);
 			}
 		}
@@ -284,22 +288,6 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 			aspect = new AspectStatement(d);
 			((AspectStatement) aspect).setChildren(aspectStatements);
 		}
-		setMicroSpeciesLayers(microL);
-		setGridLayers(gridL);
-	}
-
-	private void setMicroSpeciesLayers(final List<SpeciesLayerStatement> layers) {
-		if (layers == null) { return; }
-
-		microSpeciesLayers.clear();
-		microSpeciesLayers.addAll(layers);
-	}
-
-	private void setGridLayers(final List<GridLayerStatement> layers) {
-		if (layers == null) { return; }
-
-		gridLayers.clear();
-		gridLayers.addAll(layers);
 	}
 
 	/**
@@ -311,34 +299,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		return microSpeciesLayers;
 	}
 
-	/**
-	 * Returns a list of grid layers declared as sub-layers.
-	 *
-	 * @return
-	 */
-	public List<GridLayerStatement> getGridLayers() {
-		return gridLayers;
-	}
-
-	/**
-	 * Returns a list of grid and micro-species layers declared as sub-layers. The grid layers are put ahead in the
-	 * returned list.
-	 *
-	 * @return
-	 */
-	public List<AbstractLayerStatement> getSubLayers() {
-		if (subLayers == null) {
-			subLayers = new ArrayList<>();
-			subLayers.addAll(gridLayers);
-			subLayers.addAll(microSpeciesLayers);
-		}
-
-		return subLayers;
-	}
-
 	@Override
 	public String toString() {
-		// StringBuffer sb = new StringBuffer();
 		return "SpeciesDisplayLayer species: " + getName();
 	}
 }

@@ -56,18 +56,18 @@ public class SpeciesLayer extends AgentLayer {
 		if (world != null && !world.dead()) {
 			final IPopulation<? extends IAgent> microPop = world.getMicroPopulation(species);
 			if (microPop != null) {
-				drawPopulation(scope, g, (SpeciesLayerStatement) definition, microPop);
+				IExecutable aspect = ((SpeciesLayerStatement) definition).getAspect();
+				if (aspect == null) {
+					aspect = AspectStatement.DEFAULT_ASPECT;
+				}
+				drawPopulation(scope, g, aspect, microPop);
 			}
 		}
 	}
 
-	private void drawPopulation(final IScope scope, final IGraphics g, final SpeciesLayerStatement layer,
+	private void drawPopulation(final IScope scope, final IGraphics g, final IExecutable aspect,
 			final IPopulation<? extends IAgent> population) throws GamaRuntimeException {
-		IExecutable aspect = layer.getAspect();
-		// IAspect aspect = population.getAspect(layer.getAspectName());
-		if (aspect == null) {
-			aspect = AspectStatement.DEFAULT_ASPECT;
-		}
+
 		// draw the population. A copy of the population is made to avoid
 		// concurrent modification exceptions
 		for (final IAgent a : population.toArray()) {
@@ -84,7 +84,7 @@ public class SpeciesLayer extends AgentLayer {
 			} else {
 				result = scope.execute(aspect, a, null);
 			}
-			if(result.getValue() instanceof Rectangle2D) {				
+			if (result.getValue() instanceof Rectangle2D) {
 				final Rectangle2D r = (Rectangle2D) result.getValue();
 				if (r != null) {
 					shapes.put(a, r);
@@ -94,31 +94,21 @@ public class SpeciesLayer extends AgentLayer {
 				continue;
 			}
 			IPopulation<? extends IAgent> microPop;
-			// draw grids first...
-			// final List<GridLayerStatement> gridLayers = layer.getGridLayers();
-			// for (final GridLayerStatement gl : gridLayers) {
-			// if (a.dead()) {
-			// continue;
-			// }
-			// microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
-			// if (microPop != null && microPop.size() > 0) {
-			// // FIXME Needs to be entirely redefined using the new
-			// // interfaces
-			// // drawGridPopulation(a, gl, microPop, scope, g);
-			// }
-			// }
-
 			// then recursively draw the micro-populations
-			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
+			final List<SpeciesLayerStatement> microLayers =
+					((SpeciesLayerStatement) definition).getMicroSpeciesLayers();
 			for (final SpeciesLayerStatement ml : microLayers) {
 				// a.acquireLock();
 				if (a.dead()) {
 					continue;
 				}
 				microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
-
 				if (microPop != null && microPop.size() > 0) {
-					drawPopulation(scope, g, ml, microPop);
+					IExecutable microAspect = ml.getAspect();
+					if (microAspect == null) {
+						microAspect = AspectStatement.DEFAULT_ASPECT;
+					}
+					drawPopulation(scope, g, microAspect, microPop);
 				}
 			}
 		}

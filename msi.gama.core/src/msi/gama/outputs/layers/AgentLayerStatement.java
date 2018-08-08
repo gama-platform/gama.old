@@ -10,12 +10,10 @@
 package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -96,10 +94,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,
-						optional = true, // Changed
-											// for
-											// issue
-											// #1300
+						optional = true,
 						doc = @doc ("Human readable title of the layer")),
 				@facet (
 						name = IKeyword.FOCUS,
@@ -157,46 +152,34 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		@Override
 		public void validate(final StatementDescription description) {
 			// Should be broken down in subclasses
-			IExpressionDescription ed = description.getFacet(SPECIES);
+			IExpressionDescription ed = description.getFacet(VALUE);
 			SpeciesDescription target = null;
-			if (ed != null) {
-				target = description.getGamlType().getDenotedSpecies();
-				// target =
-				// description.getModelDescription().getSpeciesReferencedBy(description);
-				if (target == null) {
-					description.error(ed.toString() + " is not the description of a species", IGamlIssue.WRONG_TYPE,
-							ed.getTarget());
-					return;
-				}
-				if (description.getKeyword().equals(GRID_POPULATION) && !target.isGrid()) {
-					description.error(target + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
-					return;
-				}
+			target = ed.getExpression().getGamlType().getContentType().getSpecies();
+			if (target == null) {
+				// Already caught by the type checking
+				return;
 			}
 			ed = description.getFacet(ASPECT);
 			if (ed != null) {
 				final String a = description.getLitteral(ASPECT);
-				if (target != null) {
-					if (target.getAspect(a) != null) {
-						ed.compileAsLabel();
-					} else {
+				if (target.getAspect(a) != null) {
+					ed.compileAsLabel();
+				} else {
+					if (a != null && !a.equals(DEFAULT)) {
 						description.error(a + " is not the name of an aspect of " + target.getName(),
 								IGamlIssue.GENERAL, description.getFacet(ASPECT).getTarget());
 					}
 				}
+
 			}
 		}
 
 	}
 
 	private IExpression agentsExpr;
-	// final HashSet<IAgent> agents;
-	HashSet<IAgent> agentsForLayer = new HashSet<>();
 	protected String constantAspectName = null;
 	protected IExpression aspectExpr;
 	private IExecutable aspect = null;
-
-	// protected IExpression focusExpr;
 
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -208,32 +191,11 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		if (aspectExpr != null && aspectExpr.isConst()) {
 			constantAspectName = aspectExpr.literalValue();
 		}
-		// focusExpr = getFacet(IKeyword.FOCUS);
-		// agents = new HashSet();
-	}
-
-	public/* synchronized */HashSet<IAgent> getAgentsToDisplay() {
-		return agentsForLayer;
-	}
-
-	public List<? extends IAgent> computeAgents(final IScope sim) throws GamaRuntimeException {
-		// Attention ! Si agentsExpr contient un seul agent, ce sont ses
-		// composants qui vont �tre affich�s.
-		return Cast.asList(sim, getAgentsExpr().value(sim));
 	}
 
 	@Override
 	public boolean _step(final IScope scope) {
-		if (scope.getClock().getCycle() == 0 || agentsHaveChanged()) {
-			// synchronized (agentsForLayer) {
-			agentsForLayer = new HashSet<>(computeAgents(scope));
-			// }
-		}
 		return true;
-	}
-
-	public boolean agentsHaveChanged() {
-		return !getAgentsExpr().isConst();
 	}
 
 	@Override

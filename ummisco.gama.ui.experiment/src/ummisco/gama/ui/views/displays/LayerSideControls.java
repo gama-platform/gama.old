@@ -32,7 +32,6 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.AgentLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
-import msi.gama.outputs.layers.GridLayerStatement;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.ImageLayerStatement;
@@ -426,8 +425,8 @@ public class LayerSideControls {
 
 			case GRID: {
 				EditorFactory.create(container.getScope(), compo, "Draw grid:",
-						((GridLayerStatement) definition).drawLines(), (EditorListener<Boolean>) newValue -> {
-							((GridLayer) layer).setDrawLines(newValue);
+						((GridLayer) layer).getData().drawLines(), (EditorListener<Boolean>) newValue -> {
+							((GridLayer) layer).getData().setDrawLines(newValue);
 							updateIfPaused(layer, container);
 						});
 				break;

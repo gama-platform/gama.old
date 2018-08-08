@@ -71,7 +71,7 @@ public class ImageLayer extends AbstractLayer {
 
 	private GamaImageFile verifyFile(final IScope scope, final GamaFile input) {
 		if (input == cachedFile) { return cachedFile; }
-		if (input == null) { throw error("Not a file" + file.serialize(false), scope); }
+		if (input == null) { throw error("Not a file: " + file.serialize(false), scope); }
 		if (!(input instanceof GamaImageFile)) { throw error("Not an image:" + input.getPath(scope), scope); }
 		final GamaImageFile result = (GamaImageFile) input;
 		try {

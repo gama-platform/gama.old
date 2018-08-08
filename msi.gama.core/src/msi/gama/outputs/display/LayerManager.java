@@ -26,6 +26,7 @@ import msi.gama.outputs.layers.AgentLayer;
 import msi.gama.outputs.layers.EventLayer;
 import msi.gama.outputs.layers.GisLayer;
 import msi.gama.outputs.layers.GraphicLayer;
+import msi.gama.outputs.layers.GridAgentLayer;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.ImageLayer;
@@ -46,9 +47,11 @@ public class LayerManager implements ILayerManager {
 	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
 		switch (layer.getType()) {
 			case GRID:
-				return new GridLayer(scope, layer);
+				return new GridLayer(layer);
 			case AGENTS:
 				return new AgentLayer(layer);
+			case GRID_AGENTS:
+				return new GridAgentLayer(layer);
 			case SPECIES:
 				return new SpeciesLayer(layer);
 			case IMAGE:
