@@ -358,7 +358,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			DEBUG("Folder " + folder.getName() + " has been added");
 		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(folder.getParent());
-		final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
+		// final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
 		parent.initializeChildren();
 		refreshResource(parent);
 	}

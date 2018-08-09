@@ -115,7 +115,6 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			}
 			String importUri = null;
 			if (resolved instanceof Import) {
-				final Import anImport = (Import) resolved;
 				importUri = ((Import) resolved).getImportURI();
 			} else if (resolved instanceof HeadlessExperiment) {
 				importUri = ((HeadlessExperiment) resolved).getImportURI();

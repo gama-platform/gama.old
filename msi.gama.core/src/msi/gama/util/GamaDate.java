@@ -587,35 +587,35 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	// if (period.canBeComputed()) {
 	// return isIntervalReached(scope, current, period);
 	// }
-	private boolean isIntervalReached(final IScope scope, final GamaDate current, final IExpression period) {
-		// We compute the frequency (should not include the fancy stuff
-		// related to #week, #month and #year). The frequency should be
-		// expressed in seconds, so we convert it immediately to
-		// milliseconds
-		final long frequencyInMillis = (long) (Cast.asFloat(scope, period.value(scope)) * 1000);
-		// Fail fast 3: if the frequency is null, we return false
-		if (frequencyInMillis == 0) { return false; }
-
-		// We then grab the step from the scope and convert it to
-		// milliseconds
-		final long stepInMillis = scope.getClock().getStepInMillis();
-		final long elapsedTime = until(current, ChronoUnit.MILLIS);
-		final long remainder = elapsedTime % frequencyInMillis;
-		// Fail fast 5: if we have exactly reached an interval, we return
-		// true
-		if (remainder == 0) {
-			System.out.println("We return true for " + current + " because the remainder is 0 between the elapsed_time "
-					+ elapsedTime + " and the frequency " + frequencyInMillis);
-			return true;
-		}
-		// Finally, we return if the step is greater than the remainder
-		final boolean result = stepInMillis > remainder;
-		if (result) {
-			System.out.println("We return true for " + current + " because the step " + stepInMillis
-					+ " is greater than the remainder " + remainder);
-		}
-		return result;
-	}
+	// private boolean isIntervalReached(final IScope scope, final GamaDate current, final IExpression period) {
+	// // We compute the frequency (should not include the fancy stuff
+	// // related to #week, #month and #year). The frequency should be
+	// // expressed in seconds, so we convert it immediately to
+	// // milliseconds
+	// final long frequencyInMillis = (long) (Cast.asFloat(scope, period.value(scope)) * 1000);
+	// // Fail fast 3: if the frequency is null, we return false
+	// if (frequencyInMillis == 0) { return false; }
+	//
+	// // We then grab the step from the scope and convert it to
+	// // milliseconds
+	// final long stepInMillis = scope.getClock().getStepInMillis();
+	// final long elapsedTime = until(current, ChronoUnit.MILLIS);
+	// final long remainder = elapsedTime % frequencyInMillis;
+	// // Fail fast 5: if we have exactly reached an interval, we return
+	// // true
+	// if (remainder == 0) {
+	// System.out.println("We return true for " + current + " because the remainder is 0 between the elapsed_time "
+	// + elapsedTime + " and the frequency " + frequencyInMillis);
+	// return true;
+	// }
+	// // Finally, we return if the step is greater than the remainder
+	// final boolean result = stepInMillis > remainder;
+	// if (result) {
+	// System.out.println("We return true for " + current + " because the step " + stepInMillis
+	// + " is greater than the remainder " + remainder);
+	// }
+	// return result;
+	// }
 
 	public double getDuration(final IScope scope, final TimeUnitConstantExpression exp, final Double number) {
 		final String name = exp.getName();

@@ -57,7 +57,7 @@ public class ExecutionScope implements IScope {
 	private static final String ATTRIBUTES = "%_attributes_%";
 	private static int SCOPE_NUMBER = 0;
 
-	private final String name;
+	private final String scopeName;
 	protected IExecutionContext executionContext;
 	protected AgentExecutionContext agentContext;
 	protected final SpecialContext additionalContext = new SpecialContext();
@@ -69,10 +69,10 @@ public class ExecutionScope implements IScope {
 		Object each;
 		IGraphics graphics;
 		public ITopology topology;
-		private ITopLevelAgent rootAgent;
-		private IGui gui;
-		private ITypesManager types;
-		private GamaRuntimeException currentError;
+		ITopLevelAgent rootAgent;
+		IGui gui;
+		ITypesManager types;
+		GamaRuntimeException currentError;
 		boolean horizontalPixelContext = false;
 
 		void clear() {
@@ -143,7 +143,7 @@ public class ExecutionScope implements IScope {
 			name += " of " + root.stringValue(root.getScope());
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")";
-		this.name = name;
+		this.scopeName = name;
 		this.executionContext = context == null ? new ExecutionContext(this) : context.createCopyContext();
 		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
@@ -693,7 +693,7 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public String getName() {
-		return name;
+		return scopeName;
 	}
 
 	@Override

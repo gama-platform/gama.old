@@ -11,6 +11,7 @@ package ummisco.gama.modernOpenGL.shader;
 
 import java.io.InputStream;
 import java.nio.FloatBuffer;
+import java.util.Scanner;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
@@ -71,34 +72,36 @@ public abstract class AbstractShader {
 	private int loadShader(final InputStream is, final int type) {
 		String shaderString = null;
 
-		final java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-		shaderString = s.hasNext() ? s.next() : "";
+		try (Scanner s = new java.util.Scanner(is);) {
+			s.useDelimiter("\\A");
+			shaderString = s.hasNext() ? s.next() : "";
 
-		final int shaderID = gl.glCreateShader(type);
+			final int shaderID = gl.glCreateShader(type);
 
-		// Compile the vertexShader String into a program.
-		final String[] vlines = new String[] { shaderString };
-		final int[] vlengths = new int[] { vlines[0].length() };
-		gl.glShaderSource(shaderID, vlines.length, vlines, vlengths, 0);
-		gl.glCompileShader(shaderID);
-		gl.glEnable(GL2.GL_BLEND);
-		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+			// Compile the vertexShader String into a program.
+			final String[] vlines = new String[] { shaderString };
+			final int[] vlengths = new int[] { vlines[0].length() };
+			gl.glShaderSource(shaderID, vlines.length, vlines, vlengths, 0);
+			gl.glCompileShader(shaderID);
+			gl.glEnable(GL2.GL_BLEND);
+			gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-		// Check compile status.
-		final int[] compiled = new int[1];
-		gl.glGetShaderiv(shaderID, GL2.GL_COMPILE_STATUS, compiled, 0);
-		if (compiled[0] == 0) {
-			final int[] logLength = new int[1];
-			gl.glGetShaderiv(shaderID, GL2.GL_INFO_LOG_LENGTH, logLength, 0);
+			// Check compile status.
+			final int[] compiled = new int[1];
+			gl.glGetShaderiv(shaderID, GL2.GL_COMPILE_STATUS, compiled, 0);
+			if (compiled[0] == 0) {
+				final int[] logLength = new int[1];
+				gl.glGetShaderiv(shaderID, GL2.GL_INFO_LOG_LENGTH, logLength, 0);
 
-			final byte[] log = new byte[logLength[0]];
-			gl.glGetShaderInfoLog(shaderID, logLength[0], (int[]) null, 0, log, 0);
+				final byte[] log = new byte[logLength[0]];
+				gl.glGetShaderInfoLog(shaderID, logLength[0], (int[]) null, 0, log, 0);
 
-			System.err.println("Error compiling the vertex shader: " + new String(log));
-			System.exit(1);
+				System.err.println("Error compiling the vertex shader: " + new String(log));
+				System.exit(1);
+			}
+
+			return shaderID;
 		}
-
-		return shaderID;
 	}
 
 	public void start() {

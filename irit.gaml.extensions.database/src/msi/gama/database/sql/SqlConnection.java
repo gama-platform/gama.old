@@ -262,11 +262,8 @@ public abstract class SqlConnection {
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
 		IList<? super IList<? super IList>> result =
 				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
-		Connection conn = null;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB();) {
 			result = selectDB(scope, conn, selectComm);
-			conn.close();
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
@@ -362,24 +359,22 @@ public abstract class SqlConnection {
 	 */
 
 	public int executeUpdateDB(final IScope scope, final String updateComm) throws GamaRuntimeException {
-		Connection conn = null;
+
 		int n = 0;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB(); final Statement st = conn.createStatement();) {
+
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Update Command:" + updateComm);
 			// }
-			final Statement st = conn.createStatement();
+
 			n = st.executeUpdate(updateComm);
 			// if ( DEBUG ) {
 			// scope.getGui().debug("Updated records :" + n);
 			// }
 
-			st.close();
 			// st=null;
 			// System.gc();
 
-			conn.close();
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
@@ -569,12 +564,9 @@ public abstract class SqlConnection {
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
 			final GamaList<Object> values) throws GamaRuntimeException {
-		Connection conn;
 		int rec_no = -1;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB();) {
 			rec_no = insertDB(scope, conn, table_name, cols, values);
-			conn.close();
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
@@ -585,8 +577,8 @@ public abstract class SqlConnection {
 	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
-			final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
-		this.transformed = transformed;
+			final GamaList<Object> values, final Boolean transform) throws GamaRuntimeException {
+		this.transformed = transform;
 		int rec_no = -1;
 		rec_no = insertDB(scope, table_name, cols, values);
 		return rec_no;
@@ -598,12 +590,10 @@ public abstract class SqlConnection {
 	public int insertDB(final IScope scope, final Connection conn, final String table_name,
 			final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
-		try {
+		try (final Statement st = conn.createStatement();) {
 			// Get Insert command
-			final Statement st = conn.createStatement();
 
 			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, values));
-			st.close();
 			// st=null;
 			// System.gc();
 			if (DEBUG) {
@@ -618,8 +608,8 @@ public abstract class SqlConnection {
 	}
 
 	public int insertDB(final IScope scope, final Connection conn, final String table_name,
-			final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
-		this.transformed = transformed;
+			final GamaList<Object> values, final Boolean transform) throws GamaRuntimeException {
+		this.transformed = transform;
 		return insertDB(scope, conn, table_name, values);
 	}
 
@@ -628,12 +618,9 @@ public abstract class SqlConnection {
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values)
 			throws GamaRuntimeException {
-		Connection conn;
 		int rec_no = -1;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB();) {
 			rec_no = insertDB(scope, conn, table_name, values);
-			conn.close();
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
@@ -644,8 +631,8 @@ public abstract class SqlConnection {
 	 * Insert a reccord into table
 	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values,
-			final Boolean transformed) throws GamaRuntimeException {
-		this.transformed = transformed;
+			final Boolean transform) throws GamaRuntimeException {
+		this.transformed = transform;
 		return insertDB(scope, table_name, values);
 	}
 
@@ -666,30 +653,36 @@ public abstract class SqlConnection {
 	 */
 	public IList<Object> executeQueryDB(final IScope scope, final Connection conn, final String queryStr,
 			final IList<Object> condition_values) throws GamaRuntimeException {
-		PreparedStatement pstmt = null;
-		ResultSet rs;
+
 		IList<Object> result = GamaListFactory.create();
 		IList repRequest = GamaListFactory.create();
 		final int condition_count = condition_values.size();
-		try {
-
-			pstmt = conn.prepareStatement(queryStr);
+		try (PreparedStatement pstmt = conn.prepareStatement(queryStr);) {
 
 			// set value for each condition
 			for (int i = 0; i < condition_count; i++) {
 				pstmt.setObject(i + 1, condition_values.get(i));
 			}
-			rs = pstmt.executeQuery();
+			try (ResultSet rs = pstmt.executeQuery();) {
 
-			final ResultSetMetaData rsmd = rs.getMetaData();
-			if (DEBUG) {
-				scope.getGui().debug("MetaData:" + rsmd.toString());
+				final ResultSetMetaData rsmd = rs.getMetaData();
+				if (DEBUG) {
+					scope.getGui().debug("MetaData:" + rsmd.toString());
+				}
+				result.add(getColumnName(rsmd));
+				final IList columns = getColumnTypeName(rsmd);
+				result.add(columns);
+
+				repRequest = resultSet2GamaList(rs);
+				if (columns.contains(GEOMETRYTYPE) && transformed) {
+					gis = scope.getSimulation().getProjectionFactory().getWorld();
+					if (gis != null) {
+						final Envelope3D env = scope.getSimulation().getEnvelope();
+						gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
+						result = SqlUtils.transform(scope, gis, result, false);
+					}
+				}
 			}
-			result.add(getColumnName(rsmd));
-			final IList columns = getColumnTypeName(rsmd);
-			result.add(columns);
-
-			repRequest = resultSet2GamaList(rs);
 
 			result.add(repRequest);
 
@@ -712,14 +705,6 @@ public abstract class SqlConnection {
 			// // repRequest = SqlUtils.transform(gis, repRequest, false);
 			// result = SqlUtils.transform(gis, result, false);
 			// }
-			if (columns.contains(GEOMETRYTYPE) && transformed) {
-				gis = scope.getSimulation().getProjectionFactory().getWorld();
-				if (gis != null) {
-					final Envelope3D env = scope.getSimulation().getEnvelope();
-					gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
-					result = SqlUtils.transform(scope, gis, result, false);
-				}
-			}
 
 			/**
 			 * AD
@@ -733,11 +718,9 @@ public abstract class SqlConnection {
 				scope.getGui().debug("list of data:" + result.get(2));
 			}
 
-			pstmt.close();
 			// pstmt=null;
 			// System.gc();
 
-			rs.close();
 		} catch (final SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}

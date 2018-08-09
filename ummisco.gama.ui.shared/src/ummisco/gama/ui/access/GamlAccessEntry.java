@@ -10,11 +10,7 @@
 
 package ummisco.gama.ui.access;
 
-import org.eclipse.jface.resource.DeviceResourceException;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.graphics.TextStyle;
@@ -106,18 +102,18 @@ public class GamlAccessEntry {
 	// return image;
 	// }
 
-	private Image findOrCreateImage(final ImageDescriptor imageDescriptor, final ResourceManager resourceManager) {
-		if (imageDescriptor == null) { return null; }
-		Image image = (Image) resourceManager.find(imageDescriptor);
-		if (image == null) {
-			try {
-				image = resourceManager.createImage(imageDescriptor);
-			} catch (final DeviceResourceException e) {
-				// WorkbenchPlugin.log(e);
-			}
-		}
-		return image;
-	}
+	// private Image findOrCreateImage(final ImageDescriptor imageDescriptor, final ResourceManager resourceManager) {
+	// if (imageDescriptor == null) { return null; }
+	// Image image = (Image) resourceManager.find(imageDescriptor);
+	// if (image == null) {
+	// try {
+	// image = resourceManager.createImage(imageDescriptor);
+	// } catch (final DeviceResourceException e) {
+	// // WorkbenchPlugin.log(e);
+	// }
+	// }
+	// return image;
+	// }
 
 	public void measure(final Event event, final TextLayout textLayout) {
 		// final Table table = ((TableItem) event.item).getParent();

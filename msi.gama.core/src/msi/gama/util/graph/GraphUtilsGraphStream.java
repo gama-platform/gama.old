@@ -64,11 +64,11 @@ public class GraphUtilsGraphStream {
 		final Graph g = new MultiGraph("tmpGraph", true, false);
 
 		final Map<Object, Node> gamaNode2graphStreamNode =
-				new HashMap<Object, Node>(gamaGraph._internalNodesSet().size());
+				new HashMap<>(gamaGraph._internalNodesSet().size());
 
 		// add nodes
 		for (final Object v : gamaGraph._internalVertexMap().keySet()) {
-			final _Vertex vertex = (_Vertex) gamaGraph._internalVertexMap().get(v);
+			// final _Vertex vertex = (_Vertex) gamaGraph._internalVertexMap().get(v);
 
 			final Node n = g.addNode(v.toString());
 

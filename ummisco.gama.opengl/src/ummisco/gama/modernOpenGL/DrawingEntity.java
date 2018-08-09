@@ -28,7 +28,7 @@ public class DrawingEntity {
 	private float[] normals;
 	private float[] uvMapping;
 	private int textureID;
-	private String texturePath;
+	// private String texturePath;
 	private int[][][] bufferedImageTextureValue; // only for grid or special textures with no path attached
 	private Material material;
 

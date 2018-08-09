@@ -343,8 +343,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final IExpression from, number, species, header;
 	private final String returns;
 	private final RemoteSequence sequence;
-	private static List<ICreateDelegate> delegates = new ArrayList<>();
-	private static List<IType> delegateTypes = new ArrayList<>();
+	static List<ICreateDelegate> delegates = new ArrayList<>();
+	static List<IType> delegateTypes = new ArrayList<>();
 
 	/**
 	 * @param createExecutableExtension

@@ -46,15 +46,15 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	/**
 	 * The start instant (inclusive).
 	 */
-	private final GamaDate start;
+	final GamaDate start;
 	/**
 	 * The end instant (exclusive).
 	 */
-	private final GamaDate end;
+	final GamaDate end;
 
-	private final Duration step;
+	final Duration step;
 
-	private final Integer size;
+	final Integer size;
 
 	/**
 	 * @param startInclusive

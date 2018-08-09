@@ -126,7 +126,6 @@ public class LayeredDisplayData {
 	private String presetCamera = "";
 	private int cameraLens = 45;
 	private Double splitDistance;
-	private final boolean isDrawingPolygons = true;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;

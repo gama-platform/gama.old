@@ -1,6 +1,5 @@
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -38,7 +37,7 @@ public class ResourceChangeReporter implements IResourceChangeListener {
 					}
 					if ((flags & IResourceDelta.MARKERS) != 0) {
 						System.out.println("--> Marker Change");
-						final IMarkerDelta[] markers = delta.getMarkerDeltas();
+						// final IMarkerDelta[] markers = delta.getMarkerDeltas();
 						// if interested in markers, check these deltas
 					}
 					break;

@@ -18,7 +18,6 @@ import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -197,7 +196,7 @@ public class GeometryUtils {
 	}
 
 	public static int nbCommonPoints(final Geometry p1, final Geometry p2) {
-		final Set<Coordinate> cp = new HashSet<Coordinate>();
+		final Set<Coordinate> cp = new HashSet<>();
 		final List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
 		for (final Coordinate pt : p2.getCoordinates()) {
 			if (coords.contains(pt)) {
@@ -242,7 +241,7 @@ public class GeometryUtils {
 		}
 		return pts;
 	}
-	
+
 	public static Coordinate[] extractPoints(final IShape triangle1, final IShape triangle2) {
 		final Coordinate[] coords = triangle1.getInnerGeometry().getCoordinates();
 		final Coordinate[] c1 = { coords[0], coords[1] };
@@ -300,18 +299,18 @@ public class GeometryUtils {
 	public static IList<IShape> squareDiscretization(final Geometry geom, final int nb_squares, final boolean overlaps,
 			final double coeff_precision) {
 		double size = FastMath.sqrt(geom.getArea() / nb_squares);
-		List<IShape> rectToRemove = new ArrayList<IShape>();
+		List<IShape> rectToRemove = new ArrayList<>();
 		IList<IShape> squares = discretization(geom, size, size, overlaps, rectToRemove);
 		if (squares.size() < nb_squares) {
 			while (squares.size() < nb_squares) {
 				size *= coeff_precision;
-				rectToRemove = new ArrayList<IShape>();
+				rectToRemove = new ArrayList<>();
 				squares = discretization(geom, size, size, overlaps, rectToRemove);
 			}
 		} else if (squares.size() > nb_squares) {
 			while (squares.size() > nb_squares) {
 				size /= coeff_precision;
-				final List<IShape> rectToRemove2 = new ArrayList<IShape>();
+				final List<IShape> rectToRemove2 = new ArrayList<>();
 				final IList<IShape> squares2 = discretization(geom, size, size, overlaps, rectToRemove2);
 				if (squares2.size() < nb_squares) {
 					break;
@@ -420,7 +419,6 @@ public class GeometryUtils {
 		return geometryDecomposition(geom, x_size, y_size);
 	}
 
-	
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
@@ -465,17 +463,16 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-
-	
-	
-	public static IList<IShape> triangulation(final IScope scope, final Geometry geom, double toleranceTriangulation,double toleranceClip,  final boolean approxClipping) {
+	public static IList<IShape> triangulation(final IScope scope, final Geometry geom,
+			final double toleranceTriangulation, final double toleranceClip, final boolean approxClipping) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		if (geom instanceof GeometryCollection) {
 			final GeometryCollection gc = (GeometryCollection) geom;
 			for (int i = 0; i < gc.getNumGeometries(); i++) {
-				geoms.addAll(triangulation(scope, gc.getGeometryN(i),toleranceTriangulation, toleranceClip, approxClipping));
+				geoms.addAll(triangulation(scope, gc.getGeometryN(i), toleranceTriangulation, toleranceClip,
+						approxClipping));
 			}
-		} else  {
+		} else {
 			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			dtb.setTolerance(toleranceTriangulation);
 			GeometryCollection tri = null;
@@ -489,27 +486,32 @@ public class GeometryUtils {
 				dtb.setConstraints(geom);
 				tri = (GeometryCollection) dtb.getTriangles(GEOMETRY_FACTORY);
 			}
-			if (tri != null)
-				geoms.addAll(filterGeoms(tri, geom, toleranceClip,approxClipping));
-			
+			if (tri != null) {
+				geoms.addAll(filterGeoms(tri, geom, toleranceClip, approxClipping));
+			}
+
 		}
 		return geoms;
 	}
-	
-	private static IList<IShape> filterGeoms(final GeometryCollection geom, final Geometry clip, final double sizeTol, final boolean approxClipping) {
-		if (geom == null) return null;
+
+	private static IList<IShape> filterGeoms(final GeometryCollection geom, final Geometry clip, final double sizeTol,
+			final boolean approxClipping) {
+		if (geom == null) { return null; }
 		final double elevation = getContourCoordinates(clip).averageZ();
-		final boolean setZ = (elevation != 0.0);
+		final boolean setZ = elevation != 0.0;
 		final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
 		final Geometry bufferClip = clip.buffer(sizeTol, 5, 0);
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
 		for (int i = 0; i < geom.getNumGeometries(); i++) {
-			Geometry gg = geom.getGeometryN(i);
-			Coordinate[] coord = gg.getCoordinates();
+			final Geometry gg = geom.getGeometryN(i);
+			final Coordinate[] coord = gg.getCoordinates();
 			boolean cond = env.covers(gg.getCentroid().getCoordinate());
-			cond = cond && (approxClipping ? (buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
-					&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1])) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))): gg.covers(gg));
+			cond = cond && (approxClipping
+					? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
+							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
+							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
+					: gg.covers(gg));
 			if (cond) {
 				if (setZ) {
 					final ICoordinates cc = getContourCoordinates(gg);
@@ -519,12 +521,12 @@ public class GeometryUtils {
 				result.add(new GamaShape(gg));
 			}
 		}
-		/*applyToInnerGeometries(geom, (gg) -> {
-			final ICoordinates cc = getContourCoordinates(gg);
-			if (cc.isCoveredBy(env) && buffered.covers(gg)) {
-				
-			}
-		});*/
+		/*
+		 * applyToInnerGeometries(geom, (gg) -> { final ICoordinates cc = getContourCoordinates(gg); if
+		 * (cc.isCoveredBy(env) && buffered.covers(gg)) {
+		 * 
+		 * } });
+		 */
 		return result;
 	}
 
@@ -552,19 +554,19 @@ public class GeometryUtils {
 			return;
 		}
 	}
-	
 
-	
-	public static List<LineString> squeletisation(final IScope scope, final Geometry geom,  double toleranceTriangulation,double toleranceClip,  final boolean approxClipping) {
-		final List<LineString> network = new ArrayList<LineString>();
-		final IList polys = GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip,approxClipping);
+	public static List<LineString> squeletisation(final IScope scope, final Geometry geom,
+			final double toleranceTriangulation, final double toleranceClip, final boolean approxClipping) {
+		final List<LineString> network = new ArrayList<>();
+		final IList polys =
+				GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip, approxClipping);
 		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
-	//	final Collection<GamaShape> nodes = graph.vertexSet();
-		IList<IList> ccs =  Graphs.connectedComponentOf(scope, graph);
+		// final Collection<GamaShape> nodes = graph.vertexSet();
+		final IList<IList> ccs = Graphs.connectedComponentOf(scope, graph);
 		for (final IList cc : ccs) {
 			if (cc.size() > 2) {
 				for (final Object o : cc) {
-					GamaShape node = (GamaShape) o;
+					final GamaShape node = (GamaShape) o;
 					final Coordinate[] coordsArr =
 							GeometryUtils.extractPoints(node, new HashSet(Graphs.neighborsOf(scope, graph, node)));
 					if (coordsArr != null) {
@@ -573,7 +575,7 @@ public class GeometryUtils {
 				}
 			} else if (cc.size() == 2) {
 				final Coordinate[] coordsArr =
-						GeometryUtils.extractPoints((GamaShape)cc.get(0),(GamaShape) cc.get(1));
+						GeometryUtils.extractPoints((GamaShape) cc.get(0), (GamaShape) cc.get(1));
 				if (coordsArr != null) {
 					network.add(GEOMETRY_FACTORY.createLineString(coordsArr));
 				}
@@ -750,21 +752,22 @@ public class GeometryUtils {
 
 	public static IList<GamaPoint> locsAlongGeometry(final Geometry geom, final List<Double> rates) {
 		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
-		if (rates == null || rates.isEmpty())
-			return locs;
+		if (rates == null || rates.isEmpty()) { return locs; }
 		if (geom instanceof Point) {
-			for (int i = 0; i < rates.size(); i++)
+			for (int i = 0; i < rates.size(); i++) {
 				locs.add(new GamaPoint(geom.getCoordinate()));
+			}
 		} else if (geom instanceof LineString) {
 			for (Double rate : rates) {
 				final Coordinate[] coordsSimp = geom.getCoordinates();
 				final int nbSp = coordsSimp.length;
-				if (nbSp <= 0)
-					return locs;
-				if (rate > 1.0)
+				if (nbSp <= 0) { return locs; }
+				if (rate > 1.0) {
 					rate = 1.0;
-				if (rate < 0.0)
+				}
+				if (rate < 0.0) {
 					rate = 0.0;
+				}
 				if (rate == 0) {
 					locs.add(new GamaPoint(coordsSimp[0]));
 					continue;
@@ -840,8 +843,7 @@ public class GeometryUtils {
 		} else {
 			for (final IEnvelopeComputer ec : envelopeComputers) {
 				result = ec.computeEnvelopeFrom(scope, obj);
-				if (result != null)
-					return result;
+				if (result != null) { return result; }
 			}
 		}
 		return result;
@@ -882,7 +884,7 @@ public class GeometryUtils {
 				coords2[k] = coords[i];
 				k++;
 			}
-			final List<Geometry> geoms1 = new ArrayList<Geometry>();
+			final List<Geometry> geoms1 = new ArrayList<>();
 			geoms1.add(GEOMETRY_FACTORY.createLineString(coords1));
 			geoms1.add(GEOMETRY_FACTORY.createLineString(coords2));
 			geoms = geoms1;
@@ -898,7 +900,7 @@ public class GeometryUtils {
 					distMin = dist;
 				}
 			}
-			final Coordinate[] coords = ((LineString) geom2).getCoordinates();
+			@SuppressWarnings ("null") final Coordinate[] coords = ((LineString) geom2).getCoordinates();
 			final Point pt1 = GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation()));
 			final int nb = coords.length;
 			int indexTarget = -1;
@@ -929,7 +931,7 @@ public class GeometryUtils {
 				coords2[k] = coords[i];
 				k++;
 			}
-			final List<Geometry> geoms1 = new ArrayList<Geometry>();
+			final List<Geometry> geoms1 = new ArrayList<>();
 			geoms1.add(GEOMETRY_FACTORY.createLineString(coords1));
 			geoms1.add(GEOMETRY_FACTORY.createLineString(coords2));
 			geoms = geoms1;
@@ -952,7 +954,7 @@ public class GeometryUtils {
 	}
 
 	/**
-	 * @param scope
+	 * @param ownScope
 	 * @param innerGeometry
 	 * @param param
 	 * @return
@@ -962,23 +964,19 @@ public class GeometryUtils {
 	}
 
 	public static ICoordinates getContourCoordinates(final Polygon g) {
-		if (g.isEmpty())
-			return ICoordinates.EMPTY;
-		if(g.getExteriorRing().getCoordinateSequence() instanceof CoordinateArraySequence) {
-			return GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(g.getExteriorRing().getCoordinates());
-		}
+		if (g.isEmpty()) { return ICoordinates.EMPTY; }
+		if (g.getExteriorRing().getCoordinateSequence() instanceof CoordinateArraySequence) { return GEOMETRY_FACTORY
+				.getCoordinateSequenceFactory().create(g.getExteriorRing().getCoordinates()); }
 		return (ICoordinates) g.getExteriorRing().getCoordinateSequence();
 	}
 
 	public static ICoordinates getContourCoordinates(final LineString g) {
-		if (g.isEmpty())
-			return ICoordinates.EMPTY;
+		if (g.isEmpty()) { return ICoordinates.EMPTY; }
 		return (ICoordinates) g.getCoordinateSequence();
 	}
 
 	public static ICoordinates getContourCoordinates(final Point g) {
-		if (g.isEmpty())
-			return ICoordinates.EMPTY;
+		if (g.isEmpty()) { return ICoordinates.EMPTY; }
 		return (ICoordinates) g.getCoordinateSequence();
 	}
 
@@ -1000,17 +998,16 @@ public class GeometryUtils {
 	 *            the filter to apply
 	 */
 	public static void applyToInnerGeometries(final Geometry g, final GeometryFilter f) {
-		if (g instanceof Polygon)
+		if (g instanceof Polygon) {
 			applyToInnerGeometries((Polygon) g, f);
-		else if (g instanceof GeometryCollection) {
+		} else if (g instanceof GeometryCollection) {
 			applyToInnerGeometries((GeometryCollection) g, f);
 		}
 	}
 
 	public static void applyToInnerGeometries(final Polygon g, final GeometryFilter f) {
 		final int holes = g.getNumInteriorRing();
-		if (holes == 0)
-			return;
+		if (holes == 0) { return; }
 		for (int i = 0; i < holes; i++) {
 			g.getInteriorRingN(i).apply(f);
 		}
@@ -1018,8 +1015,7 @@ public class GeometryUtils {
 
 	public static void applyToInnerGeometries(final GeometryCollection g, final GeometryFilter f) {
 		final int geoms = g.getNumGeometries();
-		if (geoms == 0)
-			return;
+		if (geoms == 0) { return; }
 		for (int i = 0; i < geoms; i++) {
 			final Geometry sub = g.getGeometryN(i);
 			sub.apply(f);

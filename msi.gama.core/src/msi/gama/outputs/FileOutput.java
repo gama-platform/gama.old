@@ -186,8 +186,8 @@ public class FileOutput extends AbstractOutput {
 
 	@Override
 	public void open() {
-		try (PrintWriter writer = new PrintWriter(file)) {
-			setWriter(writer);
+		try (PrintWriter printWriter = new PrintWriter(file)) {
+			setWriter(printWriter);
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		}

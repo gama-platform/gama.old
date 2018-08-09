@@ -110,7 +110,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public static final String WORKSPACE_PATH = "workspace_path";
 	public static final String MACHINE_TIME = "machine_time";
 	private final Timer polling = new Timer();
-	final IScope scope;
+	final IScope basicScope;
 	private TimerTask currentTask;
 
 	public PlatformAgent() {
@@ -120,7 +120,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	public PlatformAgent(final IPopulation<PlatformAgent> pop, final int index) {
 		super(pop, index);
-		scope = new ExecutionScope(this, "Gama platform scope");
+		basicScope = new ExecutionScope(this, "Gama platform scope");
 		if (GamaPreferences.Runtime.CORE_MEMORY_POLLING.getValue()) {
 			startPollingMemory();
 		}
@@ -149,7 +149,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 							final GamaRuntimeException e = GamaRuntimeException.warning("Memory is low (" + mb
 									+ " megabytes). You should close the experiment, exit GAMA and give it more memory",
 									agent.getScope());
-							GAMA.reportError(scope, e, false);
+							GAMA.reportError(basicScope, e, false);
 						}
 					}
 				}
@@ -206,7 +206,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public IScope getScope() {
-		return scope;
+		return basicScope;
 	}
 
 	@Override

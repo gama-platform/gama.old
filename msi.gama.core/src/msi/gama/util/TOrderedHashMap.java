@@ -318,7 +318,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		return new KeyView();
 	}
 
-	private V doPut(final V value, int index) {
+	private V doPut(final V value, final int i) {
+		int index = i;
 		V previous = null;
 		// final Object oldKey;
 		boolean isNewMapping = true;
@@ -452,8 +453,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		@Override
 		public boolean containsAll(final Collection<?> collection) {
-			for (final Iterator<?> i = collection.iterator(); i.hasNext();) {
-				if (!contains(i.next())) { return false; }
+			for (final Object name : collection) {
+				if (!contains(name)) { return false; }
 			}
 			return true;
 		}
@@ -485,7 +486,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		@Override
 		@SuppressWarnings ("unchecked")
-		public <T> T[] toArray(T[] a) {
+		public <T> T[] toArray(final T[] array) {
+			T[] a = array;
 			final int size = size();
 			if (a.length < size) {
 				a = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), size);

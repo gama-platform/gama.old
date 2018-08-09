@@ -360,7 +360,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String CHARTDATASET = "chart_dataset_transfer";
 
-	private ChartDataSet chartdataset;
+	ChartDataSet chartdataset;
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {
 

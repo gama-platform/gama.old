@@ -37,7 +37,7 @@ public class Application implements IApplication {
 
 	public static class OpenDocumentEventProcessor extends DelayedEventsProcessor {
 
-		private OpenDocumentEventProcessor(final Display display) {
+		OpenDocumentEventProcessor(final Display display) {
 			super(display);
 		}
 

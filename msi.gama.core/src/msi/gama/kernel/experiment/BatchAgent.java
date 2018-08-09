@@ -50,7 +50,7 @@ public class BatchAgent extends ExperimentAgent {
 	private int runNumber;
 	ParametersSet currentSolution;
 	ParametersSet lastSolution;
-	private Double lastFitness;
+	Double lastFitness;
 	private Double[] seeds;
 	final List<Double> fitnessValues = new ArrayList<>();
 
@@ -123,14 +123,14 @@ public class BatchAgent extends ExperimentAgent {
 			GAMA.reportError(getScope(), e, true);
 		}
 		// We save the clock value first (to address Issue #1592)
-		final int cycle = clock.getCycle();
-		final long totalDuration = clock.getTotalDuration();
-		final long lastDuration = clock.getDuration();
+		final int cycle = ownClock.getCycle();
+		final long totalDuration = ownClock.getTotalDuration();
+		final long lastDuration = ownClock.getDuration();
 
 		super.reset();
-		clock.setCycle(cycle);
-		clock.setTotalDuration(totalDuration);
-		clock.setLastDuration(lastDuration);
+		ownClock.setCycle(cycle);
+		ownClock.setTotalDuration(totalDuration);
+		ownClock.setLastDuration(lastDuration);
 	}
 
 	public void memorizeFitnessAndCloseSimulation(final IAgent sim) {
@@ -328,9 +328,9 @@ public class BatchAgent extends ExperimentAgent {
 			public String getUnitLabel(final IScope scope) {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
 				if (algo == null) { return ""; }
-				final ParametersSet params = algo.getBestSolution();
-				if (params == null) { return ""; }
-				return "with " + params;
+				final ParametersSet solutions = algo.getBestSolution();
+				if (solutions == null) { return ""; }
+				return "with " + solutions;
 			}
 
 			@Override
@@ -364,11 +364,11 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String value() {
-				final Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
-				if (params.isEmpty()) { return "1"; }
+				final Map<String, IParameter.Batch> explorable = getSpecies().getExplorableParameters();
+				if (explorable.isEmpty()) { return "1"; }
 				String result = "";
 				int dim = 1;
-				for (final Map.Entry<String, IParameter.Batch> entry : params.entrySet()) {
+				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
 					result += entry.getKey() + " (";
 					final int entryDim = getExplorationDimension(entry.getValue());
 					dim = dim * entryDim;

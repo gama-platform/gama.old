@@ -70,7 +70,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	volatile boolean isBusy;
 	private final Shell popup;
 	private boolean visible = false;
-	private final LayeredDisplayView view;
+	final LayeredDisplayView view;
 	protected final Composite referenceComposite;
 	// private final Shell parentShell;
 	final boolean createExtraInfo;
@@ -317,8 +317,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	}
 
 	public void update() {
-		if (isBusy)
-			return;
+		if (isBusy) { return; }
 		isBusy = true;
 		try {
 			if (getPopup().isDisposed()) { return; }
@@ -555,12 +554,15 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final boolean paused = output.isPaused();
 		final boolean synced = output.getData().isSynchronized();
 		final IDisplaySurface surface = view.getDisplaySurface();
-		if (surface != null)
+		if (surface != null) {
 			surface.getModelCoordinatesInfo(sb);
-		if (paused)
+		}
+		if (paused) {
 			sb.append(" | Paused");
-		if (synced)
+		}
+		if (synced) {
 			sb.append(" | Synchronized");
+		}
 	}
 
 	public void getOverlayZoomInfo(final StringBuilder sb) {

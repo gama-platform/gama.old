@@ -15,7 +15,6 @@ import java.util.Map;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
@@ -33,7 +32,7 @@ public class GraphUtilsPrefuse {
 		g.addColumn(PREFUSE_ATTRIBUTE_GAMA_OBJECT, IShape.class);
 		// g.addColumn(VisualItem.VISIBLE, Boolean.class, Boolean.TRUE);
 
-		final Map<Object, Node> gamaVertex2prefuseNode = new HashMap<Object, Node>(graph._internalVertexMap().size());
+		final Map<Object, Node> gamaVertex2prefuseNode = new HashMap<>(graph._internalVertexMap().size());
 
 		// retrieve nodes
 		for (final Object content : graph._internalVertexMap().keySet()) {
@@ -57,16 +56,14 @@ public class GraphUtilsPrefuse {
 
 			final _Edge<?, ?> edge = (_Edge) o;
 
-			final Edge prefuseEdge = g.addEdge(gamaVertex2prefuseNode.get(edge.getSource()),
-					gamaVertex2prefuseNode.get(edge.getTarget()));
+			g.addEdge(gamaVertex2prefuseNode.get(edge.getSource()), gamaVertex2prefuseNode.get(edge.getTarget()));
 
 		}
 
 		// basic verification
-		if (graph._internalVertexMap()
-				.size() != g.getNodeCount()) { throw GamaRuntimeException.error(
-						"error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.",
-						scope); }
+		if (graph._internalVertexMap().size() != g.getNodeCount()) { throw GamaRuntimeException.error(
+				"error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.",
+				scope); }
 
 		return g;
 

@@ -17,7 +17,7 @@ public class ArbitraryQuadrilateralsProjection {
 	ShortBuffer indicesBuffer;
 	short[] indicesData;
 	float[] attributesData;
-	private final int[] textureIds = new int[1];
+	// private final int[] textureIds = new int[1];
 	int textureId;
 	int attributePosition;
 	int attributeRegion;

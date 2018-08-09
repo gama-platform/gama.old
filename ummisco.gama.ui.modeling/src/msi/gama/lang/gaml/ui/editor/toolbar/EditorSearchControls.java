@@ -49,9 +49,9 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
  */
 public class EditorSearchControls {
 
-	private static final String EMPTY = "Find... (" + GamaKeyBindings.format(SWT.MOD1, 'G') + ")"; //$NON-NLS-1$
-	private Text find;
-	private int incrementalOffset = -1;
+	static final String EMPTY = "Find... (" + GamaKeyBindings.format(SWT.MOD1, 'G') + ")"; //$NON-NLS-1$
+	Text find;
+	int incrementalOffset = -1;
 	final GamlEditor editor;
 
 	public EditorSearchControls(final GamlEditor editor) {
@@ -146,7 +146,7 @@ public class EditorSearchControls {
 		}
 	};
 
-	private void adjustEnablement(final boolean found, final Color color) {
+	void adjustEnablement(final boolean found, final Color color) {
 		if (color == null) {
 			find.setForeground(IGamaColors.VERY_LIGHT_GRAY.color());
 		} else {
@@ -170,7 +170,7 @@ public class EditorSearchControls {
 		find(forward, incremental, true, false);
 	}
 
-	private void find(final boolean forward, final boolean incremental, final boolean wrap) {
+	void find(final boolean forward, final boolean incremental, final boolean wrap) {
 		find(forward, incremental, wrap, false);
 	}
 

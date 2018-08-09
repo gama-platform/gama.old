@@ -50,10 +50,10 @@ public class EditorToolbar {
 		return widgetSelectedAdapter(event);
 	}
 
-	private final SelectionListener globalPrevious = selected(e -> executeCommand(NAVIGATE_BACKWARD_HISTORY));
-	private final SelectionListener globalNext = selected(e -> executeCommand(NAVIGATE_FORWARD_HISTORY));
-	private final SelectionListener searchPrevious = selected(e -> find.findPrevious());
-	private final SelectionListener searchNext = selected(e -> find.findNext());
+	final SelectionListener globalPrevious = selected(e -> executeCommand(NAVIGATE_BACKWARD_HISTORY));
+	final SelectionListener globalNext = selected(e -> executeCommand(NAVIGATE_FORWARD_HISTORY));
+	final SelectionListener searchPrevious = selected(e -> find.findPrevious());
+	final SelectionListener searchNext = selected(e -> find.findNext());
 
 	public EditorToolbar(final GamlEditor editor) {
 		this.editor = editor;

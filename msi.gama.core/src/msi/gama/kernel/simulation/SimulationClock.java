@@ -80,13 +80,13 @@ public class SimulationClock {
 
 	private final boolean outputCurrentDateAsDuration;
 
-	private final IScope scope;
+	private final IScope clockScope;
 
 	public SimulationClock(final IScope scope) {
 		final IModel model = scope.getModel();
 		outputCurrentDateAsDuration =
 				model == null ? true : !((ModelDescription) model.getDescription()).isStartingDateDefined();
-		this.scope = scope;
+		this.clockScope = scope;
 	}
 
 	/**
@@ -100,10 +100,10 @@ public class SimulationClock {
 	// well, so as to allow writing
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	public void setCycle(final int i) throws GamaRuntimeException {
-		if (i < 0) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", scope); }
+		if (i < 0) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope); }
 		// TODO check backward
-		if ((i < cycle) && (!scope.getExperiment().canStepBack())) { throw GamaRuntimeException
-				.error("The current cycle of a simulation cannot be set backwards", scope); }
+		if ((i < cycle) && (!clockScope.getExperiment().canStepBack())) { throw GamaRuntimeException
+				.error("The current cycle of a simulation cannot be set backwards", clockScope); }
 		final int previous = cycle;
 		cycle = i;
 		setCurrentDate(getCurrentDate().plus(getStepInMillis(), cycle - previous, ChronoUnit.MILLIS));
@@ -166,7 +166,7 @@ public class SimulationClock {
 
 	public void setStep(final double exp) throws GamaRuntimeException {
 		if (exp <= 0) { throw GamaRuntimeException
-				.error("The interval between two cycles of a simulation cannot be negative or null", scope); }
+				.error("The interval between two cycles of a simulation cannot be negative or null", clockScope); }
 		step = exp;
 
 		// step = i <= 0 ? 1 : i;
@@ -266,10 +266,10 @@ public class SimulationClock {
 	}
 
 	public String getInfo() {
-		final int cycle = getCycle();
-		final ITopLevelAgent agent = scope.getRoot();
+		final int currentCycle = getCycle();
+		final ITopLevelAgent agent = clockScope.getRoot();
 		infoStringBuilder.setLength(0);
-		infoStringBuilder.append(agent.getName()).append(": ").append(cycle).append(cycle == 1 ? " cycle " : " cycles ")
+		infoStringBuilder.append(agent.getName()).append(": ").append(currentCycle).append(currentCycle == 1 ? " cycle " : " cycles ")
 				.append("elapsed ");
 
 		try {
@@ -310,7 +310,7 @@ public class SimulationClock {
 	}
 
 	public double getDelayInMilliseconds() {
-		return scope.getExperiment().getMinimumDuration() * 1000;
+		return clockScope.getExperiment().getMinimumDuration() * 1000;
 	}
 
 	public GamaDate getCurrentDate() {

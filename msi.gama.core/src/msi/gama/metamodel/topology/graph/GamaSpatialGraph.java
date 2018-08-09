@@ -167,7 +167,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final boolean added = super.addVertex(v);
 		if (added && vertexRelation != null) {
 			for (final IShape o : vertexSet()) {
-				if (!vertexRelation.equivalent(scope, v, o) && vertexRelation.related(scope, v, o)) {
+				if (!vertexRelation.equivalent(graphScope, v, o) && vertexRelation.related(graphScope, v, o)) {
 					addEdge(v, o);
 				}
 			}
@@ -199,12 +199,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		boolean related, already;
 		for (final IShape s1 : vSet) {
 			for (final IShape s2 : vSet) {
-				if (scope.interrupted()) { return; }
-				if (vertexRelation.equivalent(scope, s1, s2)) {
+				if (graphScope.interrupted()) { return; }
+				if (vertexRelation.equivalent(graphScope, s1, s2)) {
 					continue;
 				}
 				already = this.containsEdge(s1, s2);
-				if ((related = vertexRelation.related(scope, s1, s2)) && !already) {
+				if ((related = vertexRelation.related(graphScope, s1, s2)) && !already) {
 					addEdge(s1, s2);
 				} else if (already && !related) {
 					removeEdge(s1, s2);
@@ -217,7 +217,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
 		if (v1 instanceof IShape
-				&& v2 instanceof IShape) { return GamaGeometryType.buildLink(scope, (IShape) v1, (IShape) v2); }
+				&& v2 instanceof IShape) { return GamaGeometryType.buildLink(graphScope, (IShape) v1, (IShape) v2); }
 		return super.generateEdgeObject(v1, v2);
 	}
 

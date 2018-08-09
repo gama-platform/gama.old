@@ -136,12 +136,7 @@ public class SQLSkill extends Skill {
 					doc = @doc ("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
 
-		SqlConnection sqlConn;
-		try {
-			sqlConn = SqlUtils.createConnectionObject(scope);
-			final Connection conn = sqlConn.connectDB();
-			conn.close();
-		} catch (final Exception e) {
+		try (final Connection conn = SqlUtils.createConnectionObject(scope).connectDB()) {} catch (final Exception e) {
 			// e.printStackTrace();
 			// throw new GamaRuntimeException("SQLSkill.connectDB: " +
 			// e.toString());

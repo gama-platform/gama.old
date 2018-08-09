@@ -91,14 +91,14 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
-	public Pref<T> in(final String category, final String group) {
+	public Pref<T> in(final String category, final String aGroup) {
 		this.tab = category;
-		this.group = group;
+		this.group = aGroup;
 		return this;
 	}
 
-	public Pref<T> withComment(final String comment) {
-		setUnitLabel(comment);
+	public Pref<T> withComment(final String aComment) {
+		setUnitLabel(aComment);
 		return this;
 	}
 

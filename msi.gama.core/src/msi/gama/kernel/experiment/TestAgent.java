@@ -96,11 +96,11 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 			@Override
 			public String value() {
-				final Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
-				if (params.isEmpty()) { return "1"; }
+				final Map<String, IParameter.Batch> explorable = getSpecies().getExplorableParameters();
+				if (explorable.isEmpty()) { return "1"; }
 				String result = "";
 				int dim = 1;
-				for (final Map.Entry<String, IParameter.Batch> entry : params.entrySet()) {
+				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
 					result += entry.getKey() + " (";
 					final int entryDim = getExplorationDimension(entry.getValue());
 					dim = dim * entryDim;

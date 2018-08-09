@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.ClassUtils;
-
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -174,10 +172,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public static final String PAUSED = "paused";
 	public static final String USAGE = "rng_usage";
 
-	final SimulationClock clock;
+	final SimulationClock ownClock;
 	GamaColor color;
 
-	final IScope scope = new ExecutionScope(this);
+	final IScope ownScope = new ExecutionScope(this);
 	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
@@ -192,7 +190,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public SimulationAgent(final SimulationPopulation pop, final int index) throws GamaRuntimeException {
 		super(pop, index);
-		clock = new SimulationClock(getScope());
+		ownClock = new SimulationClock(getScope());
 		executer = new ActionExecuter(getScope());
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
@@ -277,7 +275,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	protected boolean preStep(final IScope scope) {
-		clock.beginCycle();
+		ownClock.beginCycle();
 		executer.executeBeginActions();
 		return super.preStep(scope);
 	}
@@ -290,7 +288,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (outputs != null) {
 			outputs.step(this.getScope());
 		}
-		clock.step(this.getScope());
+		ownClock.step(this.getScope());
 	}
 
 	@Override
@@ -309,7 +307,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public IScope getScope() {
-		return scope;
+		return ownScope;
 	}
 
 	public ProjectionFactory getProjectionFactory() {
@@ -318,7 +316,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public SimulationClock getClock() {
-		return clock;
+		return ownClock;
 	}
 
 	@Override
@@ -455,7 +453,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@setter (IKeyword.STEP)
 	public void setTimeStep(final IScope scope, final double t) throws GamaRuntimeException {
-		// getClock().setStep(getSpecies().getVar(IKeyword.STEP).);
 		final SimulationClock clock = getClock();
 		if (clock != null) {
 			clock.setStep(t);
@@ -511,19 +508,19 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@getter (CURRENT_DATE)
 	public GamaDate getCurrentDate() {
-		return clock.getCurrentDate();
+		return ownClock.getCurrentDate();
 	}
 
 	@setter (STARTING_DATE)
 	public void setStartingDate(final GamaDate d) throws GamaRuntimeException {
-		clock.setStartingDate(d);
+		ownClock.setStartingDate(d);
 	}
 
 	@getter (
 			value = STARTING_DATE,
 			initializer = true)
 	public GamaDate getStartingDate() {
-		return clock.getStartingDate();
+		return ownClock.getStartingDate();
 	}
 
 	@action (
@@ -715,31 +712,31 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 
 		// This list is updated during all the updateWith of the simulation.
-		// When all the agents will be created (end of this updateWith), 
+		// When all the agents will be created (end of this updateWith),
 		// all the references will be replaced by the corresponding agent.
-		List<IReference> list_ref = new ArrayList<>();
-		
+		final List<IReference> list_ref = new ArrayList<>();
+
 		// Update Attribute
 		final Map<String, Object> attr = sa.getVariables();
-		for (final String name : attr.keySet()) {
-			Object attrValue = attr.get(name);
+		for (final String varName : attr.keySet()) {
+			final Object attrValue = attr.get(varName);
 
-			boolean isReference = IReference.isReference(attrValue);
-			
+			final boolean isReference = IReference.isReference(attrValue);
+
 			// if( attrValue instanceof ReferenceAgent) {
-			if( isReference ) {				
-				((IReference) attrValue).setAgentAndAttrName(this,name);
-				if(!list_ref.contains(attrValue)) {
+			if (isReference) {
+				((IReference) attrValue).setAgentAndAttrName(this, varName);
+				if (!list_ref.contains(attrValue)) {
 					list_ref.add((IReference) attrValue);
 				}
 			}
-			
-			this.setDirectVarValue(scope, name, attrValue);
+
+			this.setDirectVarValue(scope, varName, attrValue);
 		}
 
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
-		clock.setCycle((Integer) cycle);
+		ownClock.setCycle((Integer) cycle);
 
 		// TODO
 		// Update GUI of the Experiment
@@ -787,23 +784,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(),
 									true, true);
 						}
-						
-						// Find the agt and all the references 
-						final IAgent currentAgent = (agt == null) ? simuMicroPop.getAgent(e.getValue().getIndex()): agt;
-						
-						for (final String name : e.getValue().keySet()) {
-							Object attrValue = e.getValue().get(name);
-							boolean isReference2 = IReference.isReference(attrValue);
 
-							if( isReference2 ) {
-							// if( attrValue instanceof ReferenceAgent) {
-								((IReference) attrValue).setAgentAndAttrName(currentAgent,name);
-								if(!list_ref.contains(attrValue)) {
+						// Find the agt and all the references
+						final IAgent currentAgent = agt == null ? simuMicroPop.getAgent(e.getValue().getIndex()) : agt;
+
+						for (final String name : e.getValue().keySet()) {
+							final Object attrValue = e.getValue().get(name);
+							final boolean isReference2 = IReference.isReference(attrValue);
+
+							if (isReference2) {
+								// if( attrValue instanceof ReferenceAgent) {
+								((IReference) attrValue).setAgentAndAttrName(currentAgent, name);
+								if (!list_ref.contains(attrValue)) {
 									list_ref.add((IReference) attrValue);
-								}								
+								}
 							}
 						}
-					}	
+					}
 
 					// For all remaining agents in the mapSimuAgtName, kill them
 					for (final IAgent remainingAgent : mapSimuAgtName.values()) {
@@ -816,17 +813,17 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				}
 			}
 		}
-		
+
 		// Update all the references !
 		updateReferences(scope, list_ref, this);
 	}
-	
-	private void updateReferences(IScope scope, List<IReference> list_ref, SimulationAgent sim) {
-//		list_ref.stream().forEach(
-//			ref -> ref.resolveReferences(scope, sim)
-//		);
-		
-		for(IReference ref : list_ref) {	
+
+	private void updateReferences(final IScope scope, final List<IReference> list_ref, final SimulationAgent sim) {
+		// list_ref.stream().forEach(
+		// ref -> ref.resolveReferences(scope, sim)
+		// );
+
+		for (final IReference ref : list_ref) {
 			ref.resolveReferences(scope, sim);
 		}
 	}

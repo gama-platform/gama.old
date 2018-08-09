@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'EditboxPreferencePage.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EditboxPreferencePage.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
@@ -42,12 +40,12 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 public class EditboxPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private List categoryList;
-	private TabFolder folder;
-	private Map<String, LinkedHashSet<String>> categoryFiles;
-	private List namesList;
-	private Button bAddFile;
-	private boolean providersChanged;
+	List categoryList;
+	TabFolder folder;
+	Map<String, LinkedHashSet<String>> categoryFiles;
+	List namesList;
+	Button bAddFile;
+	boolean providersChanged;
 
 	@Override
 	protected Control createContents(final Composite parent) {
@@ -135,17 +133,12 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 
 	@Override
-	public void init(final IWorkbench workbench) {
-	}
+	public void init(final IWorkbench workbench) {}
 
 	protected boolean contains(final String[] items, final String newText) {
-		if (items == null || items.length == 0) {
-			return false;
-		}
+		if (items == null || items.length == 0) { return false; }
 		for (final String s : items) {
-			if (s.equalsIgnoreCase(newText)) {
-				return true;
-			}
+			if (s.equalsIgnoreCase(newText)) { return true; }
 		}
 		return false;
 	}
@@ -159,13 +152,13 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setControl(p.createContro(folder, provider));
 		item.setData(p);
 		if (categoryFiles == null) {
-			categoryFiles = new LinkedHashMap<String, LinkedHashSet<String>>();
+			categoryFiles = new LinkedHashMap<>();
 		}
 		Collection<String> fileNames = p.getSettings().getFileNames();
 		if (fileNames == null) {
 			fileNames = Collections.emptyList();
 		}
-		categoryFiles.put(value, new LinkedHashSet<String>(fileNames));
+		categoryFiles.put(value, new LinkedHashSet<>(fileNames));
 		categoryList.setSelection(new String[] { value });
 		namesList.setItems(fileNames.toArray(new String[0]));
 		bAddFile.setEnabled(true);
@@ -173,9 +166,7 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 
 	public String[] namesArray(final String name) {
 		final LinkedHashSet<String> set = categoryFiles.get(name);
-		if (set == null || set.isEmpty()) {
-			return new String[0];
-		}
+		if (set == null || set.isEmpty()) { return new String[0]; }
 		return set.toArray(new String[0]);
 	}
 
@@ -235,18 +226,11 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final InputDialog dialog = new InputDialog(getShell(), "New Category", "Name:", null,
-					new IInputValidator() {
-
-						@Override
-						public String isValid(final String newText) {
-							if (newText != null && newText.trim().length() > 0
-									&& !contains(categoryList.getItems(), newText)) {
-								return null;
-							}
-							return "Unique name required";
-						}
-					});
+			final InputDialog dialog = new InputDialog(getShell(), "New Category", "Name:", null, newText -> {
+				if (newText != null && newText.trim().length() > 0
+						&& !contains(categoryList.getItems(), newText)) { return null; }
+				return "Unique name required";
+			});
 
 			if (dialog.open() == Window.OK) {
 				newTab(dialog.getValue());
@@ -300,16 +284,10 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final InputDialog dialog = new InputDialog(getShell(), "New Name", "File name pattern like *.java, my.xml:",
-					null, new IInputValidator() {
-
-						@Override
-						public String isValid(final String newText) {
-							if (newText != null && newText.trim().length() > 0) {
-								return null;
-							}
-							return "";
-						}
+			final InputDialog dialog =
+					new InputDialog(getShell(), "New Name", "File name pattern like *.java, my.xml:", null, newText -> {
+						if (newText != null && newText.trim().length() > 0) { return null; }
+						return "";
 					});
 
 			if (dialog.open() == Window.OK) {
@@ -334,7 +312,7 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 					namesList.remove(i);
 					final Object o = folder.getItem(n + 1).getData();
 					if (o instanceof BoxSettingsTab) {
-						((BoxSettingsTab) o).getSettings().setFileNames(new ArrayList<String>(fNames));
+						((BoxSettingsTab) o).getSettings().setFileNames(new ArrayList<>(fNames));
 					}
 				}
 			}

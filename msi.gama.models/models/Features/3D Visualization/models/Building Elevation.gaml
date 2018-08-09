@@ -103,7 +103,8 @@ species people skills: [moving]
 
 	reflex move when: the_target != nil
 	{
-		do goto target: the_target on: the_graph;
+		path p <- self goto( target: the_target ,on: the_graph, return_path: true);
+		write p;
 		switch the_target
 		{
 			match location

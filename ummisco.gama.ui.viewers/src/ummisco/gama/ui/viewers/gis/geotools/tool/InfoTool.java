@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -66,7 +65,7 @@ public class InfoTool extends CursorTool {
 	 */
 	public static final double DEFAULT_DISTANCE_FRACTION = 0.01d;
 
-	private Cursor cursor;
+	// private Cursor cursor;
 
 	private JTextReporter reporter;
 
@@ -84,7 +83,7 @@ public class InfoTool extends CursorTool {
 
 		super(triggerButtonMask);
 
-		helperTable = new WeakHashMap<Layer, InfoToolHelper<?>>();
+		helperTable = new WeakHashMap<>();
 	}
 
 	/**

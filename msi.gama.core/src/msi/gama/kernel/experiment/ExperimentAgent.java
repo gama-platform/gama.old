@@ -142,13 +142,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public static final String PROJECT_PATH = "project_path";
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
-	private final IScope scope;
+	private final IScope ownScope;
 	final ActionExecuter executer;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap<>();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
-	final protected ExperimentClock clock;
+	final protected ExperimentClock ownClock;
 	protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
 	// protected SimulationPopulation populationOfSimulations;
@@ -158,19 +158,19 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
-		scope = new ExperimentAgentScope();
-		clock = new ExperimentClock(scope);
-		executer = new ActionExecuter(scope);
+		ownScope = new ExperimentAgentScope();
+		ownClock = new ExperimentClock(ownScope);
+		executer = new ActionExecuter(ownScope);
 		reset();
 	}
 
 	@Override
 	public SimulationClock getClock() {
-		return clock;
+		return ownClock;
 	}
 
 	public void reset() {
-		clock.reset();
+		ownClock.reset();
 		// We close any simulation that might be running
 		closeSimulations();
 		// We initialize the population that will host the simulation
@@ -186,14 +186,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public String getDefinedRng() {
 		if (GamaPreferences.External.CORE_RND_EDITABLE
 				.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG)
-						.value(scope); }
+						.value(ownScope); }
 		return GamaPreferences.External.CORE_RNG.getValue();
 	}
 
 	public Double getDefinedSeed() {
 		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
-			final Double result = p.isDefined() ? (Double) p.value(scope) : null;
+			final Double result = p.isDefined() ? (Double) p.value(ownScope) : null;
 			return result;
 		}
 		return GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
@@ -208,13 +208,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			getSimulationPopulation().dispose();
 		}
 		if (!getSpecies().isBatch()) {
-			scope.getGui().setSelectedAgent(null);
-			scope.getGui().setHighlightedAgent(null);
-			scope.getGui().getStatus(scope).resumeStatus();
+			ownScope.getGui().setSelectedAgent(null);
+			ownScope.getGui().setHighlightedAgent(null);
+			ownScope.getGui().getStatus(ownScope).resumeStatus();
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something
 			// else in the dynamics of closing/opening
-			scope.getGui().closeDialogs(scope);
+			ownScope.getGui().closeDialogs(ownScope);
 		}
 		// simulation = null;
 		// populationOfSimulations = null;
@@ -224,7 +224,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void dispose() {
 		if (dead) { return; }
 		closeSimulations();
-		GAMA.releaseScope(scope);
+		GAMA.releaseScope(ownScope);
 		super.dispose();
 	}
 
@@ -282,12 +282,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ps.putAll(parameters);
 		final IList<Map<String, Object>> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
-		pop.createAgents(scope, 1, list, false, scheduleIt);
+		pop.createAgents(ownScope, 1, list, false, scheduleIt);
 	}
 
 	public ParametersSet getParameterValues() {
 		final Map<String, IParameter> parameters = getSpecies().getParameters();
-		final ParametersSet ps = new ParametersSet(scope, parameters, false);
+		final ParametersSet ps = new ParametersSet(ownScope, parameters, false);
 		ps.putAll(extraParametersMap);
 		return ps;
 	}
@@ -302,7 +302,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
 		final ExperimentScheduler sche = getSpecies().getController().getScheduler();
-		sche.schedule(this, this.scope);
+		sche.schedule(this, this.ownScope);
 	}
 
 	/**
@@ -316,14 +316,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (pop == null) {
 			pop = new SimulationPopulation(this, model);
 			setAttribute(model.getName(), pop);
-			pop.initializeFor(scope);
+			pop.initializeFor(ownScope);
 		}
 		microPopulations = new IPopulation[] { pop };
 	}
 
 	@Override
 	public IScope getScope() {
-		return scope;
+		return ownScope;
 	}
 
 	@Override
@@ -395,7 +395,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (initialMinimumDuration == null) {
 			initialMinimumDuration = d;
 		}
-		scope.getGui().updateSpeedDisplay(scope, currentMinimumDuration * 1000, false);
+		ownScope.getGui().updateSpeedDisplay(ownScope, currentMinimumDuration * 1000, false);
 	}
 
 	/**
@@ -542,7 +542,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter (IKeyword.SIMULATIONS)
 	public IList<? extends IAgent> getSimulations() {
-		return getSimulationPopulation().copy(scope);
+		return getSimulationPopulation().copy(ownScope);
 	}
 
 	@setter (IKeyword.SIMULATIONS)
@@ -581,7 +581,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	protected boolean preStep(final IScope scope) {
-		clock.beginCycle();
+		ownClock.beginCycle();
 		executer.executeBeginActions();
 		return super.preStep(scope);
 	}
@@ -595,7 +595,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) {
 			outputs.step(scope);
 		}
-		clock.step(this.scope);
+		ownClock.step(this.ownScope);
 		informStatus();
 	}
 
@@ -672,30 +672,30 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
-		public Object getGlobalVarValue(final String name) {
+		public Object getGlobalVarValue(final String varName) {
 
 			// First case: we have the variable inside the experiment.
-			if (ExperimentAgent.this.hasAttribute(name)
-					|| getSpecies().hasVar(name)) { return super.getGlobalVarValue(name); }
+			if (ExperimentAgent.this.hasAttribute(varName)
+					|| getSpecies().hasVar(varName)) { return super.getGlobalVarValue(varName); }
 			// Second case: the simulation is not null, so it should handle it
 			final SimulationAgent sim = getSimulation();
-			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(name); }
+			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(varName); }
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible
 			if (this.getModel().getSpecies()
-					.hasVar(name)) { return getModel().getSpecies().getVar(name).getInitialValue(this); }
+					.hasVar(varName)) { return getModel().getSpecies().getVar(varName).getInitialValue(this); }
 			// Fourth case: this is a parameter, so we get it from the species
-			if (getSpecies().hasParameter(name)) { return getSpecies().getExperimentScope().getGlobalVarValue(name); }
+			if (getSpecies().hasParameter(varName)) { return getSpecies().getExperimentScope().getGlobalVarValue(varName); }
 			// Fifth case: it is an extra parameter
-			return extraParametersMap.get(name);
+			return extraParametersMap.get(varName);
 		}
 
 		@Override
-		public boolean hasAccessToGlobalVar(final String name) {
-			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name)) { return true; }
-			if (this.getModel().getSpecies().hasVar(name)) { return true; }
-			if (getSpecies().hasParameter(name)) { return true; }
-			if (extraParametersMap.containsKey(name)) { return true; }
+		public boolean hasAccessToGlobalVar(final String varName) {
+			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName)) { return true; }
+			if (this.getModel().getSpecies().hasVar(varName)) { return true; }
+			if (getSpecies().hasParameter(varName)) { return true; }
+			if (extraParametersMap.containsKey(varName)) { return true; }
 			return false;
 		}
 
@@ -723,9 +723,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
-		public Object getAgentVarValue(final IAgent a, final String name) {
-			if (a == ExperimentAgent.this) { return getGlobalVarValue(name); }
-			return super.getAgentVarValue(a, name);
+		public Object getAgentVarValue(final IAgent a, final String varName) {
+			if (a == ExperimentAgent.this) { return getGlobalVarValue(varName); }
+			return super.getAgentVarValue(a, varName);
 		}
 
 		@Override

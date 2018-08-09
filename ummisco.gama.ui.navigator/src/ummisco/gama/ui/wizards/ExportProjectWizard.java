@@ -16,14 +16,14 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 	private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectExportWizard";//$NON-NLS-1$
 	private ExportProjectWizardPage mainPage;
 	private IStructuredSelection currentSelection = null;
-	private String initialPath = null;
+	// private String initialPath = null;
 
 	public ExportProjectWizard() {
 		this(null);
 	}
 
 	public ExportProjectWizard(final String initialPath) {
-		this.initialPath = initialPath;
+		// this.initialPath = initialPath;
 		setNeedsProgressMonitor(true);
 		final IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 

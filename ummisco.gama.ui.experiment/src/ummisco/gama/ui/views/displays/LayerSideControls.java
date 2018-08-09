@@ -47,7 +47,6 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.parameters.BooleanEditor;
 import ummisco.gama.ui.parameters.ColorEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.FloatEditor;
@@ -161,7 +160,7 @@ public class LayerSideControls {
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
 
-		final BooleanEditor freeFly = EditorFactory.create(scope, contents, "FreeFly Camera", !data.isArcBallCamera(),
+		EditorFactory.create(scope, contents, "FreeFly Camera", !data.isArcBallCamera(),
 				(EditorListener<Boolean>) val -> {
 					ds.runAndUpdate(() -> {
 						data.setArcBallCamera(!val);
@@ -169,15 +168,14 @@ public class LayerSideControls {
 
 				});
 		final boolean cameraLocked = data.cameraInteractionDisabled();
-		final BooleanEditor lock = EditorFactory.create(scope, contents, "Lock camera:", cameraLocked,
-				(EditorListener<Boolean>) newValue -> {
-					preset.setActive(!newValue);
-					cameraPos.setActive(!newValue);
-					cameraTarget.setActive(!newValue);
-					cameraUp.setActive(!newValue);
-					zoom.setActive(!newValue);
-					data.disableCameraInteractions(newValue);
-				});
+		EditorFactory.create(scope, contents, "Lock camera:", cameraLocked, (EditorListener<Boolean>) newValue -> {
+			preset.setActive(!newValue);
+			cameraPos.setActive(!newValue);
+			cameraTarget.setActive(!newValue);
+			cameraUp.setActive(!newValue);
+			zoom.setActive(!newValue);
+			data.disableCameraInteractions(newValue);
+		});
 
 		preset = EditorFactory.choose(scope, contents, "Preset camera:", "Choose...", true, view.getCameraNames(),
 				(EditorListener<String>) newValue -> {
@@ -319,7 +317,7 @@ public class LayerSideControls {
 					data.setBackgroundColor(new GamaColor(newValue));
 					ds.updateDisplay(true);
 				});
-		final ColorEditor highlight = EditorFactory.create(scope, contents, "Highlight:", data.getHighlightColor(),
+		EditorFactory.create(scope, contents, "Highlight:", data.getHighlightColor(),
 				(EditorListener<Color>) newValue -> {
 					data.setHighlightColor(new GamaColor(newValue));
 					ds.updateDisplay(true);

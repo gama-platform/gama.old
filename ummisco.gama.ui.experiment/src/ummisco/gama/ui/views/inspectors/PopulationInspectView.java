@@ -471,7 +471,7 @@ public class PopulationInspectView extends GamaViewPart
 				final IAgent agent = (IAgent) element;
 				if (agent.dead() && !title.equals(ID_ATTRIBUTE)) { return "N/A"; }
 				if (title.equals(ID_ATTRIBUTE)) { return String.valueOf(agent.getIndex()); }
-				final Object value;
+				// final Object value;
 				if (agent.getSpecies().hasVar(title)) {
 					return Cast.toGaml(getScope().getAgentVarValue(agent, title));
 				} else {
@@ -598,7 +598,7 @@ public class PopulationInspectView extends GamaViewPart
 
 	}
 
-	private IScope getScope() {
+	IScope getScope() {
 		return scope;
 	}
 

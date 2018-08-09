@@ -77,7 +77,7 @@ public class LightHelper {
 	}
 
 	public void updateDiffuseLightValue(final OpenGL openGL) {
-		final GL2 gl = openGL.getGL();
+		// final GL2 gl = openGL.getGL();
 		final List<LightPropertiesStructure> lightPropertiesList = renderer.data.getDiffuseLights();
 		final double size = renderer.getMaxEnvDim() / 20;
 		final double worldWidth = renderer.data.getEnvWidth();

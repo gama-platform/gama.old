@@ -186,10 +186,10 @@ public class RefreshAction extends WorkspaceAction {
 	 *            the resource to check
 	 * @return <code>true</code> if <code>child</code> is a descendent of any of the elements of <code>resources</code>
 	 */
-	private boolean isDescendent2(final List<IResource> resources1, final IResource child) {
-		final IResource parent = child.getParent();
-		return parent != null && (resources1.contains(parent) || isDescendent2(resources1, parent));
-	}
+	// private boolean isDescendent2(final List<IResource> resources1, final IResource child) {
+	// final IResource parent = child.getParent();
+	// return parent != null && (resources1.contains(parent) || isDescendent2(resources1, parent));
+	// }
 
 	/**
 	 * Performs pruning on the given list of resources, as described in <code>shouldPerformResourcePruning</code>.
@@ -199,17 +199,17 @@ public class RefreshAction extends WorkspaceAction {
 	 * @return the list of resources (element type: <code>IResource</code>) after pruning.
 	 * @see #shouldPerformResourcePruning
 	 */
-	private List<IResource> pruneResources2(final List<? extends IResource> resourceCollection) {
-		final List<IResource> prunedList = new ArrayList<>(resourceCollection);
-		final Iterator<IResource> elementsEnum = prunedList.iterator();
-		while (elementsEnum.hasNext()) {
-			final IResource currentResource = elementsEnum.next();
-			if (isDescendent2(prunedList, currentResource)) {
-				elementsEnum.remove(); // Removes currentResource
-			}
-		}
-		return prunedList;
-	}
+	// private List<IResource> pruneResources2(final List<? extends IResource> resourceCollection) {
+	// final List<IResource> prunedList = new ArrayList<>(resourceCollection);
+	// final Iterator<IResource> elementsEnum = prunedList.iterator();
+	// while (elementsEnum.hasNext()) {
+	// final IResource currentResource = elementsEnum.next();
+	// if (isDescendent2(prunedList, currentResource)) {
+	// elementsEnum.remove(); // Removes currentResource
+	// }
+	// }
+	// return prunedList;
+	// }
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {

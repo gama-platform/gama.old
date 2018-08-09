@@ -63,8 +63,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		super(gridPopulation, index, geometry);
 	}
 
-	private Boolean isPopulation(final String name) {
-		final IVariable v = getSpecies().getVar(name);
+	private Boolean isPopulation(final String populationName) {
+		final IVariable v = getSpecies().getVar(populationName);
 		if (v == null) { return false; }
 		if (v.isMicroPopulation()) { return true; }
 		return false;

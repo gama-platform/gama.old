@@ -272,7 +272,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			final String path =
 					projectSystemFile == null ? structureProvider.getLabel(parent) : projectSystemFile.getParent();
 
-					return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
+			return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
 		}
 
 		/**
@@ -307,17 +307,17 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 	private Combo directoryPathField;
 
-	private CheckboxTreeViewer projectsList;
+	CheckboxTreeViewer projectsList;
 
-	private Button nestedProjectsCheckbox;
+	Button nestedProjectsCheckbox;
 
-	private boolean nestedProjects = false;
+	boolean nestedProjects = false;
 
-	private Button copyCheckbox;
+	Button copyCheckbox;
 
-	private boolean copyFiles = false;
+	boolean copyFiles = false;
 
-	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
+	ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
 	// Keep track of the directory that we browsed to last time
 	// the wizard was invoked.
@@ -346,7 +346,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	// The initial path to set
 	private final String initialPath;
 
-	private final IStructuredSelection currentSelection;
+	// private final IStructuredSelection currentSelection;
 
 	private Button hideConflictingProjects;
 
@@ -381,7 +381,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			final IStructuredSelection currentSelection) {
 		super(pageName);
 		this.initialPath = initialPath;
-		this.currentSelection = currentSelection;
+		// this.currentSelection = currentSelection;
 		setPageComplete(false);
 		setTitle("Import GAMA projects");
 		setMessage("Select a directory or an archive to search for existing GAMA projects.");
@@ -470,7 +470,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		listComposite.setLayout(layout);
 
 		listComposite
-		.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
+				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -946,7 +946,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 				directoriesVisited.add(directory.getCanonicalPath());
 			} catch (final IOException exception) {
 				StatusManager.getManager()
-				.handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
+						.handle(StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
 			}
 		}
 
@@ -1095,7 +1095,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			protected void execute(final IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
-					final SubMonitor m = SubMonitor.convert(monitor,selected.length);
+					final SubMonitor m = SubMonitor.convert(monitor, selected.length);
 					if (monitor.isCanceled()) { throw new OperationCanceledException(); }
 					// Import as many projects as we can; accumulate errors to
 					// report to the user
@@ -1205,7 +1205,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 				final IProjectDescription desc = workspace.newProjectDescription(projectName);
 				desc.setBuildSpec(record.description.getBuildSpec());
 				desc.setComment(record.description.getComment());
-				//				desc.setDynamicReferences(record.description.getDynamicReferences());
+				// desc.setDynamicReferences(record.description.getDynamicReferences());
 				desc.setNatureIds(record.description.getNatureIds());
 				desc.setReferencedProjects(record.description.getReferencedProjects());
 				record.description = desc;
@@ -1213,7 +1213,8 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		}
 
 		try {
-			final SubMonitor m = SubMonitor.convert(monitor,DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 100);
+			final SubMonitor m =
+					SubMonitor.convert(monitor, DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask, 100);
 			project.create(record.description, m.split(30));
 			project.open(IResource.BACKGROUND_REFRESH, m.split(70));
 		} catch (final CoreException e) {

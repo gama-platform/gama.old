@@ -81,13 +81,9 @@ public class MDXSkill extends Skill {
 					optional = false,
 					doc = @doc ("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
-		MdxConnection mdxConn;
 		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		try {
-			mdxConn = MdxUtils.createConnectionObject(scope, params);
-			final OlapConnection oConn = mdxConn.connectMDB(scope);
+		try (final OlapConnection oConn = MdxUtils.createConnectionObject(scope, params).connectMDB(scope)) {
 			oConn.getCatalog();
-			oConn.close();
 		} catch (final Exception e) {
 			// throw new GamaRuntimeException("SQLSkill.connectDB: " +
 			// e.toString());

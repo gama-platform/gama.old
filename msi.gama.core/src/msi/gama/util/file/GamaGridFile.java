@@ -60,8 +60,8 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGridFile extends GamaGisFile {
 
-	private GamaGridReader reader;
-	private GridCoverage2D coverage;
+	GamaGridReader reader;
+	GridCoverage2D coverage;
 	public int nbBands;
 
 	@Override

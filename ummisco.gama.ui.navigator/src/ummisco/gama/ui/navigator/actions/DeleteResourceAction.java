@@ -112,13 +112,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 *            the selected resources
 	 * @return <code>true</code> if the resources contain linked resources, and <code>false</code> otherwise
 	 */
-	private boolean containsLinkedResource(final List<? extends IResource> resources) {
-		for (int i = 0; i < resources.size(); i++) {
-			final IResource resource = resources.get(i);
-			if (resource.isLinked()) { return true; }
-		}
-		return false;
-	}
+	// private boolean containsLinkedResource(final List<? extends IResource> resources) {
+	// for (int i = 0; i < resources.size(); i++) {
+	// final IResource resource = resources.get(i);
+	// if (resource.isLinked()) { return true; }
+	// }
+	// return false;
+	// }
 
 	/**
 	 * Returns whether the selection contains only non-projects.

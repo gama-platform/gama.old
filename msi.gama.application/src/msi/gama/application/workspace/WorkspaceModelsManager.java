@@ -332,7 +332,7 @@ public class WorkspaceModelsManager {
 		return modelFolder;
 	}
 
-	private IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
+	IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
 		IFile iFile = null;
 		try {
 			final IFolder modelFolder = createUnclassifiedModelsProject(location);

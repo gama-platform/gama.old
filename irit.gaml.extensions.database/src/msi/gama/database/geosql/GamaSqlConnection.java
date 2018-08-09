@@ -358,16 +358,15 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	protected void readTable(final IScope scope, final String tableName, final String filterStr) {
 
-		SimpleFeatureIterator reader = null;
 		final IList list = getBuffer();
-		try {
-			final QueryInfo queryInfo = new QueryInfo(scope, this.dataStore, tableName, filterStr);
+		final QueryInfo queryInfo = new QueryInfo(scope, this.dataStore, tableName, filterStr);
+		try (SimpleFeatureIterator reader = queryInfo.getRecordSet().features()) {
+
 			final int size = queryInfo.getSize();
 			final Envelope3D env = queryInfo.getEnvelope();
 			int index = 0;
 			computeProjection(scope, env); // ??
 			// reader = store.getFeatureReader();
-			reader = queryInfo.getRecordSet().features();
 			// final int i = 0;
 			while (reader.hasNext()) {
 				scope.getGui().getStatus(scope).setSubStatusCompletion(index++ / size);
@@ -389,13 +388,6 @@ public class GamaSqlConnection extends GamaGisFile {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
-			}
 			scope.getGui().getStatus(scope).endSubStatus("Reading table " + tableName);
 		}
 	}

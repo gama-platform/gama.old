@@ -86,8 +86,8 @@ import msi.gaml.types.IType;
 public class HillClimbing extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
-	private StoppingCriterion stoppingCriterion = null;
-	private int maxIt;
+	StoppingCriterion stoppingCriterion = null;
+	int maxIt;
 
 	public HillClimbing(final IDescription species) {
 		super(species);
@@ -102,7 +102,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
 
-		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
+		final Map<String, Object> endingCritParams = new Hashtable<>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (stoppingCriterion == null || !stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, getBestSolution());

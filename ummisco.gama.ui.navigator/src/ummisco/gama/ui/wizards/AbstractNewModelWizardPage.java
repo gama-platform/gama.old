@@ -174,7 +174,7 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 	}
 
 	public void createAuthorSection(final Composite container) {
-		final GridData gd;
+		// final GridData gd;
 		/* Need to add empty label so the next two controls are pushed to the next line in the grid. */
 		createLabel(container, "&Author:");
 

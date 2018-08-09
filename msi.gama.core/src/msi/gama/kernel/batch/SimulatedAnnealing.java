@@ -100,10 +100,10 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
-	private double temperatureEnd = 1;
-	private double tempDimCoeff = 0.5;
-	private double temperatureInit = 100;
-	private int nbIterCstTemp = 5;
+	double temperatureEnd = 1;
+	double tempDimCoeff = 0.5;
+	double temperatureInit = 100;
+	int nbIterCstTemp = 5;
 
 	protected static final String TEMP_END = "temp_end";
 	protected static final String TEMP_DECREASE = "temp_decrease";
@@ -173,9 +173,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					testedSolutions.put(neighborSol, neighborFitness);
 				}
 
-				if (isMaximize()
-						&& (neighborFitness >= currentFitness || scope.getRandom().next() < FastMath
-								.exp((neighborFitness - currentFitness) / temperature))
+				if (isMaximize() && (neighborFitness >= currentFitness
+						|| scope.getRandom().next() < FastMath.exp((neighborFitness - currentFitness) / temperature))
 						|| !isMaximize() && (neighborFitness <= currentFitness || scope.getRandom().next() < FastMath
 								.exp((currentFitness - neighborFitness) / temperature))) {
 					bestSolutionAlgo = neighborSol;

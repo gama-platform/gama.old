@@ -64,7 +64,7 @@ public class DisplaySurfaceMenu {
 		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
 	}
 
-	private Menu menu;
+	Menu menu;
 	private final IDisplaySurface surface;
 	private final Control swtControl;
 	private final MenuManager presentationMenu;
@@ -94,8 +94,9 @@ public class DisplaySurfaceMenu {
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final MenuManager viewMenu) {
 		surface = s;
 		swtControl = c;
-		if (s != null)
+		if (s != null) {
 			s.setMenuManager(this);
+		}
 		this.presentationMenu = viewMenu;
 	}
 
@@ -141,7 +142,7 @@ public class DisplaySurfaceMenu {
 			// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
 			// http://www.eclipse.org/forums/index.php/t/208284/
 			retryVisible(menu, MAX_RETRIES);
-			if (cleanup != null)
+			if (cleanup != null) {
 				menu.addMenuListener(new MenuListener() {
 
 					@Override
@@ -158,6 +159,7 @@ public class DisplaySurfaceMenu {
 						menu.removeMenuListener(this);
 					}
 				});
+			}
 		});
 	}
 
@@ -171,8 +173,7 @@ public class DisplaySurfaceMenu {
 	static int MAX_RETRIES = 10;
 
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
-		if (!PlatformHelper.isLinux())
-			return;
+		if (!PlatformHelper.isLinux()) { return; }
 		WorkbenchHelper.asyncRun(() -> {
 			if (!menu.isVisible() && retriesRemaining > 0) {
 				menu.setVisible(false);
@@ -235,10 +236,11 @@ public class DisplaySurfaceMenu {
 					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
 					final MenuAction[] actions2;
-					if (layer instanceof GridLayer)
+					if (layer instanceof GridLayer) {
 						actions2 = new MenuAction[] { focus };
-					else
+					} else {
 						actions2 = new MenuAction[] { focus };
+					}
 
 					if (filteredList != null) {
 						pop.retainAll(filteredList);

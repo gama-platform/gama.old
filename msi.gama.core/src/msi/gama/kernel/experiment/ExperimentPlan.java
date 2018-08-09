@@ -219,7 +219,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
-	protected final Scope scope = new Scope("in ExperimentPlan");
+	protected final Scope myScope = new Scope("in ExperimentPlan");
 	protected IModel model;
 	protected IExploration exploration;
 	private FileOutput log;
@@ -314,13 +314,13 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if (expr != null && expr.isConst()) {
-			keepSeed = Cast.asBool(scope, expr.value(scope));
+			keepSeed = Cast.asBool(myScope, expr.value(myScope));
 		} else {
 			keepSeed = false;
 		}
 		final IExpression ksExpr = getFacet(IKeyword.KEEP_SIMULATIONS);
 		if (ksExpr != null && ksExpr.isConst()) {
-			keepSimulations = Cast.asBool(scope, ksExpr.value(scope));
+			keepSimulations = Cast.asBool(myScope, ksExpr.value(myScope));
 		} else {
 			keepSimulations = true;
 		}
@@ -328,10 +328,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (ar == null) {
 			autorun = GamaPreferences.Runtime.CORE_AUTO_RUN.getValue();
 		} else {
-			autorun = Cast.asBool(scope, ar.value(scope));
+			autorun = Cast.asBool(myScope, ar.value(myScope));
 		}
 		final IExpression bm = getFacet(IKeyword.BENCHMARK);
-		benchmarkable = bm != null && Cast.asBool(scope, bm.value(scope));
+		benchmarkable = bm != null && Cast.asBool(myScope, bm.value(myScope));
 	}
 
 	@Override
@@ -397,11 +397,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (!isBatch()) {
 			for (final IVariable v : model.getVars()) {
 				if (v.isParameter()) {
-					final IParameter p = new ExperimentParameter(scope, v);
-					final String name = p.getName();
-					final boolean already = parameters.containsKey(name);
+					final IParameter p = new ExperimentParameter(myScope, v);
+					final String parameterName = p.getName();
+					final boolean already = parameters.containsKey(parameterName);
 					if (!already) {
-						parameters.put(name, p);
+						parameters.put(parameterName, p);
 					}
 				}
 
@@ -449,10 +449,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					}
 				}
 				final IParameter p = (IParameter) s;
-				final String name = p.getName();
-				final boolean already = parameters.containsKey(name);
+				final String parameterName = p.getName();
+				final boolean already = parameters.containsKey(parameterName);
 				if (!already) {
-					parameters.put(name, p);
+					parameters.put(parameterName, p);
 				}
 			} else if (s instanceof ExperimentOutputManager) {
 				if (experimentOutputs != null) {
@@ -496,7 +496,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public synchronized void open() {
 
 		createAgent();
-		scope.getGui().prepareForExperiment(scope, this);
+		myScope.getGui().prepareForExperiment(myScope, this);
 		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
@@ -548,7 +548,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public IScope getExperimentScope() {
-		return scope;
+		return myScope;
 	}
 
 	// @Override
@@ -562,14 +562,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	// @Override
-	public Object getParameterValue(final String name) throws GamaRuntimeException {
-		return checkGetParameter(name).value(scope);
+	public Object getParameterValue(final String parameterName) throws GamaRuntimeException {
+		return checkGetParameter(parameterName).value(myScope);
 		// VERIFY THE USAGE OF SCOPE HERE
 	}
 
 	@Override
-	public boolean hasParameter(final String name) {
-		return getParameter(name) != null;
+	public boolean hasParameter(final String parameterName) {
+		return getParameter(parameterName) != null;
 	}
 
 	public IParameter.Batch getParameterByTitle(final String title) {
@@ -579,31 +579,31 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return null;
 	}
 
-	public IParameter.Batch getParameter(final String name) {
-		final IParameter p = parameters.get(name);
+	public IParameter.Batch getParameter(final String parameterName) {
+		final IParameter p = parameters.get(parameterName);
 		if (p != null && p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
 		return null;
 	}
 
 	public void addParameter(final IParameter p) {
-		final String name = p.getName();
-		final IParameter already = parameters.get(name);
+		final String parameterName = p.getName();
+		final IParameter already = parameters.get(parameterName);
 		if (already != null) {
-			p.setValue(scope, already.getInitialValue(scope));
+			p.setValue(myScope, already.getInitialValue(myScope));
 		}
-		parameters.put(name, p);
+		parameters.put(parameterName, p);
 	}
 
-	protected IParameter.Batch checkGetParameterByTitle(final String name) throws GamaRuntimeException {
-		final IParameter.Batch v = getParameterByTitle(name);
-		if (v == null) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
+	protected IParameter.Batch checkGetParameterByTitle(final String parameterName) throws GamaRuntimeException {
+		final IParameter.Batch v = getParameterByTitle(parameterName);
+		if (v == null) { throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
 				getExperimentScope()); }
 		return v;
 	}
 
-	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
-		final IParameter.Batch v = getParameter(name);
-		if (v == null) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
+	protected IParameter.Batch checkGetParameter(final String parameterName) throws GamaRuntimeException {
+		final IParameter.Batch v = getParameter(parameterName);
+		if (v == null) { throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
 				getExperimentScope()); }
 		return v;
 	}
@@ -647,10 +647,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-			if (hasParameter(name)) { return getParameterValue(name); }
+		public Object getGlobalVarValue(final String varName) throws GamaRuntimeException {
+			if (hasParameter(varName)) { return getParameterValue(varName); }
 			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) { return a.getDirectVarValue(this, name); }
+			if (a != null) { return a.getDirectVarValue(this, varName); }
 			return null;
 		}
 

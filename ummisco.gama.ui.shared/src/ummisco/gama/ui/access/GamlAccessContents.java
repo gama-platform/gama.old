@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -55,11 +54,11 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	 * A color for dulled out items created by mixing the table foreground. Will be disposed when the
 	 * {@link #resourceManager} is disposed.
 	 */
-	private TextLayout textLayout;
-	protected boolean resized = false;
-	private TriggerSequence keySequence;
+	TextLayout textLayout;
+	boolean resized = false;
+	// private TriggerSequence keySequence;
 
-	private Popup2 popup;
+	Popup2 popup;
 
 	public int maxProviderWidth = 145;
 
@@ -202,7 +201,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					indexPerProvider[i] = j;
 					// If there were low quality matches and there is still
 					// room, add them (Bug 398455)
-					for (GamlAccessEntry quickAccessEntry : poorFilterMatches) {
+					for (final GamlAccessEntry quickAccessEntry : poorFilterMatches) {
 						entries[i].add(quickAccessEntry);
 					}
 					if (j < sortedElements.length) {
@@ -401,13 +400,9 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			@Override
 			public void mouseUp(final MouseEvent e) {
 
-				if (table.getSelectionCount() < 1) {
-					return;
-				}
+				if (table.getSelectionCount() < 1) { return; }
 
-				if (e.button != 1) {
-					return;
-				}
+				if (e.button != 1) { return; }
 
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));

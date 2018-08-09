@@ -101,9 +101,9 @@ public class KeystoneDrawer implements IKeystoneState {
 
 	}
 
-	private void drawSquare(final double[] center, final double side, final Color fill) {
-		drawRectangle(center, side, side, fill);
-	}
+	// private void drawSquare(final double[] center, final double side, final Color fill) {
+	// drawRectangle(center, side, side, fill);
+	// }
 
 	private void drawRectangle(final double[] center, final double width, final double height, final Color fill) {
 		openGL.pushMatrix();
@@ -195,17 +195,17 @@ public class KeystoneDrawer implements IKeystoneState {
 			drawKeystoneMarks();
 		}
 		// gl.glDisable(GL2.GL_DEPTH_TEST); // disables depth testing
-		final AbstractPostprocessingShader shader = getShader();
+		final AbstractPostprocessingShader theShader = getShader();
 		// unbind the last fbo
 		fboScene.unbindCurrentFrameBuffer();
 		// prepare shader
-		shader.start();
-		prepareShader(shader);
+		theShader.start();
+		prepareShader(theShader);
 		// build the surface
 		createScreenSurface();
 		// draw
 		gl.glDrawElements(GL2.GL_TRIANGLES, 6, GL2.GL_UNSIGNED_INT, 0);
-		shader.stop();
+		theShader.stop();
 	}
 
 	public KeystoneShaderProgram getShader() {

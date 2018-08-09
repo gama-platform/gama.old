@@ -266,11 +266,11 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	}
 
 	public ISpecies getSpecies() {
-		final IExpression value = getValue();
-		if (value == null) { return null; }
-		final IType type = value.getGamlType().getContentType();
-		if (type == Types.get(IKeyword.MODEL)) { return getScope().getModel().getSpecies(); }
-		final SpeciesDescription sd = type.getSpecies();
+		final IExpression valueExpr = getValue();
+		if (valueExpr == null) { return null; }
+		final IType theType = valueExpr.getGamlType().getContentType();
+		if (theType == Types.get(IKeyword.MODEL)) { return getScope().getModel().getSpecies(); }
+		final SpeciesDescription sd = theType.getSpecies();
 		if (sd == null) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
 		if (sd.equals(getScope().getModel().getDescription())) { return getScope().getModel().getSpecies(); }
 		String speciesName = sd.getName();
@@ -297,10 +297,10 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		final IType type = value.getGamlType();
-		if (type.isAgentType()) {
+		final IType theType = value.getGamlType();
+		if (theType.isAgentType()) {
 			GAMA.getGui().setSelectedAgent((IAgent) value.value(scope));
-		} else if (type.isContainer()) {
+		} else if (theType.isContainer()) {
 			ValuedDisplayOutputFactory.browse(scope.getRoot(), value);
 		}
 		return value.value(scope);

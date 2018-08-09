@@ -166,7 +166,7 @@ public class PasteAction extends SelectionListenerAction {
 				// enablement should ensure that we always have access to a container
 				final IContainer container = getTarget();
 				final CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
-				final IResource[] copied = operation.copyResources(resourceData, container);
+				operation.copyResources(resourceData, container);
 			}
 			return;
 		}
@@ -204,6 +204,7 @@ public class PasteAction extends SelectionListenerAction {
 	 * may not be copied into itself -Files and folders may be pasted to a single selected folder in open project or
 	 * multiple selected files in the same folder
 	 */
+	@SuppressWarnings ("null")
 	@Override
 	protected boolean updateSelection(final IStructuredSelection selection) {
 		if (!super.updateSelection(selection)) { return false; }

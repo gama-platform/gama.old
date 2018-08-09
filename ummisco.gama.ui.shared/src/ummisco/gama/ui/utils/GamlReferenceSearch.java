@@ -28,7 +28,7 @@ import ummisco.gama.ui.access.GamlSearchField;
  */
 public class GamlReferenceSearch {
 
-	static private GamlReferenceSearch INSTANCE = new GamlReferenceSearch();
+	// static private GamlReferenceSearch INSTANCE = new GamlReferenceSearch();
 
 	public static void install() {
 		WorkbenchHelper.runInUI("Install GAML Search", 0, m -> {

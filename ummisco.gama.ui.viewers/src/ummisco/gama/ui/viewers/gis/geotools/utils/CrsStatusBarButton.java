@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CrsStatusBarButton.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CrsStatusBarButton.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -42,9 +41,9 @@ import ummisco.gama.ui.viewers.gis.geotools.event.MapPaneEvent;
 public class CrsStatusBarButton extends ControlContribution implements MapBoundsListener {
 
 	public final static String ID = "eu.hydrologis.toolbar.toponimicombo"; //$NON-NLS-1$
-	private final SwtMapPane mapPane;
-	private Button crsButton;
-	private MapPaneAdapter mapPaneListener;
+	final SwtMapPane mapPane;
+	Button crsButton;
+	MapPaneAdapter mapPaneListener;
 
 	public CrsStatusBarButton(final SwtMapPane mapPane) {
 		this(ID, mapPane);
@@ -91,7 +90,7 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 		return mainComposite;
 	}
 
-	private CoordinateReferenceSystem getCrs() {
+	CoordinateReferenceSystem getCrs() {
 		return mapPane.getMapContent().getCoordinateReferenceSystem();
 	}
 
@@ -126,16 +125,13 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 			}
 
 			@Override
-			public void onRenderingStarted(final MapPaneEvent ev) {
-			}
+			public void onRenderingStarted(final MapPaneEvent ev) {}
 
 			@Override
-			public void onRenderingStopped(final MapPaneEvent ev) {
-			}
+			public void onRenderingStopped(final MapPaneEvent ev) {}
 
 			@Override
-			public void onRenderingProgress(final MapPaneEvent ev) {
-			}
+			public void onRenderingProgress(final MapPaneEvent ev) {}
 
 		};
 	}

@@ -10,9 +10,6 @@
 package msi.gama.util.graph;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -44,7 +41,7 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 
 	// private boolean ignoreNextEvent = false;
 
-	private final List<Map> initialValues = Collections.EMPTY_LIST;
+	// private final List<Map> initialValues = Collections.EMPTY_LIST;
 
 	public GraphFromAgentContainerSynchronizer(final IScope scope, final IContainer setVertices,
 			final IContainer setEdges, final IGraph graph) {

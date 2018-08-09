@@ -574,7 +574,7 @@ public class StandardXYItemRenderer extends AbstractXYItemRenderer
 		public GeneralPath seriesPath;
 
 		/** The series index. */
-		private int seriesIndex;
+		int seriesIndex;
 
 		/**
 		 * A flag that indicates if the last (x, y) point was 'good' (non-null).

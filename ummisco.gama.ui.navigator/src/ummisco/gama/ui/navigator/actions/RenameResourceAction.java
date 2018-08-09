@@ -50,7 +50,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class RenameResourceAction extends WorkspaceAction {
 
-	private final boolean saving = false;
+	// private final boolean saving = false;
 
 	/**
 	 * The id of this action.

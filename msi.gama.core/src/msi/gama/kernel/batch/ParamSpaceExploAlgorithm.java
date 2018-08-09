@@ -132,13 +132,13 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 			@Override
 			public Object value() {
 				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
-				final String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
+				final String methodName = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
 				final String fit = fitnessExpression == null ? "" : "fitness = "
 						+ (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serialize(false);
 				final String sim = fitnessExpression == null ? ""
 						: (combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of "
 								+ agent.getSeeds().length + " simulations";
-				return "Method " + name + " | " + fit + " | " + "compute the" + sim + " for each solution";
+				return "Method " + methodName + " | " + fit + " | " + "compute the" + sim + " for each solution";
 			}
 
 		});

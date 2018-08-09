@@ -33,7 +33,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
-	private final IWorkbenchWindow window;
+	final IWorkbenchWindow window;
 
 	// generic actions
 
@@ -67,7 +67,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * Indicates if the action builder has been disposed
 	 */
 	private boolean isDisposed = false;
-	private final IIconProvider icons;
+	final IIconProvider icons;
 
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -309,50 +309,50 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * Creates actions (and contribution items) for the menu bar, toolbar and status line.
 	 */
 	@Override
-	protected void makeActions(final IWorkbenchWindow window) {
+	protected void makeActions(final IWorkbenchWindow aWindow) {
 		statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
-		createSaveAction(window);
-		createSaveAsAction(window);
-		createSaveAllAction(window);
-		createUndoAction(window);
-		createRedoAction(window);
-		createCloseAction(window);
-		createCloseAllAction(window);
-		createHelpContentsAction(window);
-		createAboutAction(window);
-		createOpenPreferencesAction(window);
-		makeFeatureDependentActions(window);
-		createForwardHistoryAction(window);
-		createBackwardHistoryAction(window);
-		createQuitAction(window);
-		createOpenWorkspaceAction(window);
-		createPropertyDialogAction(window);
-		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(window);
+		createSaveAction(aWindow);
+		createSaveAsAction(aWindow);
+		createSaveAllAction(aWindow);
+		createUndoAction(aWindow);
+		createRedoAction(aWindow);
+		createCloseAction(aWindow);
+		createCloseAllAction(aWindow);
+		createHelpContentsAction(aWindow);
+		createAboutAction(aWindow);
+		createOpenPreferencesAction(aWindow);
+		makeFeatureDependentActions(aWindow);
+		createForwardHistoryAction(aWindow);
+		createBackwardHistoryAction(aWindow);
+		createQuitAction(aWindow);
+		createOpenWorkspaceAction(aWindow);
+		createPropertyDialogAction(aWindow);
+		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(aWindow);
 		register(hideShowEditorAction);
 	}
 
-	public void createPropertyDialogAction(final IWorkbenchWindow window) {
-		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(window);
+	public void createPropertyDialogAction(final IWorkbenchWindow aWindow) {
+		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(aWindow);
 		register(projectPropertyDialogAction);
 	}
 
-	public void createOpenWorkspaceAction(final IWorkbenchWindow window) {
-		openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE.create(window);
+	public void createOpenWorkspaceAction(final IWorkbenchWindow aWindow) {
+		openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE.create(aWindow);
 		register(openWorkspaceAction);
 	}
 
-	public void createQuitAction(final IWorkbenchWindow window) {
-		quitAction = ActionFactory.QUIT.create(window);
+	public void createQuitAction(final IWorkbenchWindow aWindow) {
+		quitAction = ActionFactory.QUIT.create(aWindow);
 		register(quitAction);
 	}
 
-	public void createBackwardHistoryAction(final IWorkbenchWindow window) {
-		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(window);
+	public void createBackwardHistoryAction(final IWorkbenchWindow aWindow) {
+		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(aWindow);
 		register(backwardHistoryAction);
 	}
 
-	public void createForwardHistoryAction(final IWorkbenchWindow window) {
-		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(window);
+	public void createForwardHistoryAction(final IWorkbenchWindow aWindow) {
+		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(aWindow);
 		register(forwardHistoryAction);
 	}
 
@@ -377,13 +377,13 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 	}
 
-	public void createOpenPreferencesAction(final IWorkbenchWindow window) {
+	public void createOpenPreferencesAction(final IWorkbenchWindow aWindow) {
 		openPreferencesAction = new OpenPreferencesAction();
 		register(openPreferencesAction);
 	}
 
-	public void createAboutAction(final IWorkbenchWindow window) {
-		aboutAction = ActionFactory.ABOUT.create(window);
+	public void createAboutAction(final IWorkbenchWindow aWindow) {
+		aboutAction = ActionFactory.ABOUT.create(aWindow);
 		aboutAction.setImageDescriptor(icons.desc("menu.about2"));
 		register(aboutAction);
 	}
@@ -409,50 +409,50 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 	}
 
-	public void createHelpContentsAction(final IWorkbenchWindow window) {
+	public void createHelpContentsAction(final IWorkbenchWindow aWindow) {
 		helpContentsAction = new HelpContentsAction();
 		register(helpContentsAction);
 	}
 
-	public void createCloseAllAction(final IWorkbenchWindow window) {
-		closeAllAction = ActionFactory.CLOSE_ALL.create(window);
+	public void createCloseAllAction(final IWorkbenchWindow aWindow) {
+		closeAllAction = ActionFactory.CLOSE_ALL.create(aWindow);
 		register(closeAllAction);
 	}
 
-	public void createCloseAction(final IWorkbenchWindow window) {
-		closeAction = ActionFactory.CLOSE.create(window);
+	public void createCloseAction(final IWorkbenchWindow aWindow) {
+		closeAction = ActionFactory.CLOSE.create(aWindow);
 		register(closeAction);
 	}
 
-	public void createRedoAction(final IWorkbenchWindow window) {
-		redoAction = ActionFactory.REDO.create(window);
+	public void createRedoAction(final IWorkbenchWindow aWindow) {
+		redoAction = ActionFactory.REDO.create(aWindow);
 		register(redoAction);
 	}
 
-	public void createSaveAction(final IWorkbenchWindow window) {
-		saveAction = ActionFactory.SAVE.create(window);
+	public void createSaveAction(final IWorkbenchWindow aWindow) {
+		saveAction = ActionFactory.SAVE.create(aWindow);
 		register(saveAction);
 	}
 
-	public void createSaveAsAction(final IWorkbenchWindow window) {
-		saveAsAction = ActionFactory.SAVE_AS.create(window);
+	public void createSaveAsAction(final IWorkbenchWindow aWindow) {
+		saveAsAction = ActionFactory.SAVE_AS.create(aWindow);
 		register(saveAsAction);
 	}
 
-	public void createSaveAllAction(final IWorkbenchWindow window) {
-		saveAllAction = ActionFactory.SAVE_ALL.create(window);
+	public void createSaveAllAction(final IWorkbenchWindow aWindow) {
+		saveAllAction = ActionFactory.SAVE_ALL.create(aWindow);
 		register(saveAllAction);
 	}
 
-	public void createUndoAction(final IWorkbenchWindow window) {
-		undoAction = ActionFactory.UNDO.create(window);
+	public void createUndoAction(final IWorkbenchWindow aWindow) {
+		undoAction = ActionFactory.UNDO.create(aWindow);
 		register(undoAction);
 	}
 
 	/**
 	 * Creates the feature-dependent actions for the menu bar.
 	 */
-	private void makeFeatureDependentActions(final IWorkbenchWindow window) {
+	private void makeFeatureDependentActions(final IWorkbenchWindow aWindow) {
 		// final AboutInfo[] infos = null;
 
 		final IPreferenceStore prefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();

@@ -856,7 +856,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return neighs;
 	}
 
-	private double heuristic(final IAgent next, final IAgent goal) {
+	double heuristic(final IAgent next, final IAgent goal) {
 		return next.getLocation().euclidianDistanceTo(goal.getLocation());
 	}
 
@@ -957,6 +957,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	}
 
+	@SuppressWarnings ("null")
 	public GamaSpatialPath computeShortestPathBetweenAStar(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on, final Map<IAgent, Object> onWithWeight)
 			throws GamaRuntimeException {

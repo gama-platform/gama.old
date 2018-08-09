@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParallelAgentRunner.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParallelAgentRunner.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,35 +26,35 @@ public abstract class ParallelAgentRunner<T> extends RecursiveTask<T> implements
 	final IScope originalScope;
 
 	public static <T> T execute(final ForkJoinTask<T> task) throws GamaRuntimeException {
-		if (task == null)
-			return null;
+		if (task == null) { return null; }
 		return GamaExecutorService.AGENT_PARALLEL_EXECUTOR.invoke(task);
 	}
 
 	public static <A extends IShape> Boolean step(final IScope scope, final A[] array, final int threshold)
 			throws GamaRuntimeException {
 		final ParallelAgentRunner<Boolean> runner = from(scope, array, threshold);
-		if (array.length <= threshold)
-			return runner.executeOn(scope);
+		if (array.length <= threshold) { return runner.executeOn(scope); }
 		return execute(runner);
 	}
 
 	public static <A extends IShape> void execute(final IScope scope, final IExecutable executable, final A[] array,
 			final int threshold) throws GamaRuntimeException {
 		final ParallelAgentRunner<?> runner = from(scope, executable, array, threshold);
-		if (array.length <= threshold)
+		if (array.length <= threshold) {
 			runner.executeOn(scope);
-		else
+		} else {
 			execute(runner);
+		}
 	}
 
 	public static void execute(final IScope scope, final IExecutable executable, final List<? extends IAgent> list,
 			final int threshold) throws GamaRuntimeException {
 		final ParallelAgentRunner<?> runner = from(scope, executable, list, threshold);
-		if (list.size() <= threshold)
+		if (list.size() <= threshold) {
 			runner.executeOn(scope);
-		else
+		} else {
 			execute(runner);
+		}
 	}
 
 	private static <A extends IShape> ParallelAgentRunner<Boolean> from(final IScope scope, final A[] array,
@@ -63,10 +62,10 @@ public abstract class ParallelAgentRunner<T> extends RecursiveTask<T> implements
 		return new ParallelAgentStepper(scope, AgentSpliterator.of(array, threshold));
 	}
 
-	private static ParallelAgentRunner<Boolean> from(final IScope scope, final List<? extends IAgent> list,
-			final int threshold) {
-		return new ParallelAgentStepper(scope, AgentSpliterator.of(list, threshold));
-	}
+	// private static ParallelAgentRunner<Boolean> from(final IScope scope, final List<? extends IAgent> list,
+	// final int threshold) {
+	// return new ParallelAgentStepper(scope, AgentSpliterator.of(list, threshold));
+	// }
 
 	private static <A extends IShape> ParallelAgentExecuter from(final IScope scope, final IExecutable executable,
 			final A[] array, final int threshold) {

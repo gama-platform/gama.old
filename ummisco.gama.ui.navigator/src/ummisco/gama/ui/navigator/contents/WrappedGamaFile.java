@@ -38,8 +38,9 @@ public class WrappedGamaFile extends WrappedFile {
 			for (final IMarker marker : markers) {
 				final String s = marker.getAttribute("URI_KEY", "UNKNOWN");
 				final int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-				if (uriProblems == null)
-					uriProblems = new TObjectIntHashMap<String>();
+				if (uriProblems == null) {
+					uriProblems = new TObjectIntHashMap<>();
+				}
 				uriProblems.put(s, severity);
 			}
 		} catch (final CoreException ce) {}
@@ -74,7 +75,7 @@ public class WrappedGamaFile extends WrappedFile {
 
 	@Override
 	protected void computeFileImage() {
-		final IFile f = getResource();
+		// final IFile f = getResource();
 		if (isExperiment) {
 			image = GamaIcons.create("file.experiment2").image();
 		} else {
@@ -105,13 +106,15 @@ public class WrappedGamaFile extends WrappedFile {
 			}
 			if (!info.getImports().isEmpty()) {
 				final Category wf = new Category(this, info.getImports(), "Imports");
-				if (wf.getNavigatorChildren().length > 0)
+				if (wf.getNavigatorChildren().length > 0) {
 					l.add(wf);
+				}
 			}
 			if (!info.getUses().isEmpty()) {
 				final Category wf = new Category(this, info.getUses(), "Uses");
-				if (wf.getNavigatorChildren().length > 0)
+				if (wf.getNavigatorChildren().length > 0) {
 					l.add(wf);
+				}
 			}
 			return l.toArray();
 		}
@@ -120,10 +123,8 @@ public class WrappedGamaFile extends WrappedFile {
 
 	public int getURIProblem(final URI uri) {
 
-		if (uri == null)
-			return -1;
-		if (uriProblems == null)
-			return -1;
+		if (uri == null) { return -1; }
+		if (uriProblems == null) { return -1; }
 		final String fragment = uri.toString();
 		final int[] severity = new int[] { -1 };
 		uriProblems.forEachEntry((s, arg1) -> {

@@ -115,12 +115,12 @@ public class GridDiffuser {
 
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid, List<GridDiffusion>>();
 
-	public void addDiffusion(final IScope scope, final String var_diffu, final GridPopulation<? extends IAgent> pop,
-			final boolean method_diffu, final boolean is_gradient, final double[][] mat_diffu, final double[][] mask,
-			final double min_value, final boolean avoid_mask) {
-		final GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, is_gradient, mat_diffu, mask,
-				min_value, avoid_mask);
-		final PairVarGrid keyValue = new PairVarGrid(scope, var_diffu, pop);
+	public void addDiffusion(final IScope scope, final String varDiffu, final GridPopulation<? extends IAgent> pop,
+			final boolean method_diffu, final boolean isGradient, final double[][] matDiffu, final double[][] theMask,
+			final double minValue, final boolean avoidMask) {
+		final GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, isGradient, matDiffu, theMask,
+				minValue, avoidMask);
+		final PairVarGrid keyValue = new PairVarGrid(scope, varDiffu, pop);
 		if (m_diffusions.containsKey(keyValue)) {
 			List<GridDiffusion> listWithSameVar = new ArrayList<GridDiffusion>();
 			listWithSameVar = m_diffusions.get(keyValue);
@@ -203,12 +203,12 @@ public class GridDiffuser {
 	private boolean avoid_mask;
 	private float proportion; // in case of "avoid_mask", compute the
 								// proportion.
-	IScope scope;
+	IScope diffuserScope;
 
 	double[] input, output;
 	int nbRows, nbCols;
 	double min_value;
-	IPopulation<? extends IAgent> pop;
+	IPopulation<? extends IAgent> population;
 
 	public GridDiffuser() {
 	}
@@ -218,7 +218,7 @@ public class GridDiffuser {
 		nbCols = pairVarGrid.NbCols;
 		is_torus = pairVarGrid.Is_torus;
 		var_diffu = pairVarGrid.Var_name;
-		pop = pairVarGrid.Pop;
+		population = pairVarGrid.Pop;
 	}
 
 	public boolean loadDiffProperties(final GridDiffusion gridDiff) {
@@ -228,9 +228,9 @@ public class GridDiffuser {
 		use_convolution = gridDiff.Use_convolution;
 		is_gradient = gridDiff.Is_gradient;
 		min_value = gridDiff.Min_value;
-		scope = gridDiff.Scope;
+		diffuserScope = gridDiff.Scope;
 		avoid_mask = gridDiff.Avoid_mask;
-		if (scope == null || scope.interrupted()) {
+		if (diffuserScope == null || diffuserScope.interrupted()) {
 			return false;
 		}
 
@@ -245,7 +245,7 @@ public class GridDiffuser {
 		}
 
 		for (int i = 0; i < input.length; i++) {
-			input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
+			input[i] = Cast.asFloat(diffuserScope, population.get(diffuserScope, i).getDirectVarValue(diffuserScope, var_diffu));
 			if (input[i] < min_value) {
 				input[i] = 0;
 			}
@@ -487,7 +487,7 @@ public class GridDiffuser {
 						doDiffusion_with_convolution();
 					}
 				}
-				finishDiffusion(scope, pop);
+				finishDiffusion(diffuserScope, population);
 			}
 		}
 		m_diffusions.clear();

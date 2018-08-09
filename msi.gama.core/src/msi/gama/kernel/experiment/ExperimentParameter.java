@@ -379,15 +379,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	private Number drawRandomValue(final IScope scope) {
-		final double step = stepValue == null ? 1.0 : stepValue.doubleValue();
+		final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if (type.id() == IType.INT) {
-			final int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			return scope.getRandom().between(min, max, (int) step);
+			final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
+			final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+			return scope.getRandom().between(theMin, theMax, (int) theStep);
 		}
-		final double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-		final double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-		return scope.getRandom().between(min, max, step);
+		final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
+		final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+		return scope.getRandom().between(theMin, theMax, theStep);
 	}
 
 	@Override
@@ -403,28 +403,28 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			}
 			return neighborValues;
 		}
-		final double step = stepValue == null ? 1.0 : stepValue.doubleValue();
+		final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
 		if (type.id() == IType.INT) {
-			final int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+			final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
+			final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
 			final int val = Cast.asInt(scope, value(scope));
-			if (val >= min + (int) step) {
-				neighborValues.add(val - (int) step);
+			if (val >= theMin + (int) theStep) {
+				neighborValues.add(val - (int) theStep);
 			}
-			if (val <= max - (int) step) {
-				neighborValues.add(val + (int) step);
+			if (val <= theMax - (int) theStep) {
+				neighborValues.add(val + (int) theStep);
 			}
 		} else if (type.id() == IType.FLOAT) {
-			final double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-			final double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			final double removeZ = FastMath.max(100000.0, 1.0 / step);
+			final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
+			final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+			final double removeZ = FastMath.max(100000.0, 1.0 / theStep);
 			final double val = Cast.asFloat(null, value(scope));
-			if (val >= min + step) {
-				final double valLow = FastMath.round((val - step) * removeZ) / removeZ;
+			if (val >= theMin + theStep) {
+				final double valLow = FastMath.round((val - theStep) * removeZ) / removeZ;
 				neighborValues.add(valLow);
 			}
-			if (val <= max - step) {
-				final double valHigh = FastMath.round((val + step) * removeZ) / removeZ;
+			if (val <= theMax - theStep) {
+				final double valHigh = FastMath.round((val + theStep) * removeZ) / removeZ;
 				neighborValues.add(valHigh);
 			}
 		}
@@ -536,10 +536,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
 		if (l != null) { return "among " + l; }
-		final Number max = getMaxValue(scope);
-		final Number min = getMinValue(scope);
-		final Number step = getStepValue(scope);
-		return "between " + min + " and " + max + " every " + step;
+		final Number theMax = getMaxValue(scope);
+		final Number theMin = getMinValue(scope);
+		final Number theStep = getStepValue(scope);
+		return "between " + theMin + " and " + theMax + " every " + theStep;
 	}
 
 	@Override

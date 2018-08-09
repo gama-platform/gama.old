@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -52,9 +51,9 @@ import org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMes
 public class NewProjectWizardPage extends WizardPage {
 
 	// initial value stores
-	private String initialProjectFieldValue;
-	private boolean isTest;
-	private boolean createNewModel = true;
+	String initialProjectFieldValue;
+	boolean isTest;
+	boolean createNewModel = true;
 
 	// widgets
 	Text projectNameField;
@@ -104,22 +103,22 @@ public class NewProjectWizardPage extends WizardPage {
 	 * 
 	 * @return IErrorMessageReporter
 	 */
-	private IErrorMessageReporter getErrorReporter() {
-		return (errorMessage, infoOnly) -> {
-			if (infoOnly) {
-				setMessage(errorMessage, IStatus.INFO);
-				setErrorMessage(null);
-			} else {
-				setErrorMessage(errorMessage);
-			}
-			boolean valid = errorMessage == null;
-			if (valid) {
-				valid = validatePage();
-			}
-
-			setPageComplete(valid);
-		};
-	}
+	// private IErrorMessageReporter getErrorReporter() {
+	// return (errorMessage, infoOnly) -> {
+	// if (infoOnly) {
+	// setMessage(errorMessage, IStatus.INFO);
+	// setErrorMessage(null);
+	// } else {
+	// setErrorMessage(errorMessage);
+	// }
+	// boolean valid = errorMessage == null;
+	// if (valid) {
+	// valid = validatePage();
+	// }
+	//
+	// setPageComplete(valid);
+	// };
+	// }
 
 	/**
 	 * Creates the project name specification controls.

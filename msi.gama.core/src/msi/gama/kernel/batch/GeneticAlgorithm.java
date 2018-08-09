@@ -116,17 +116,17 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
-	private int populationDim = 3;
-	private double crossoverProb = 0.7;
-	private double mutationProb = 0.1;
-	private int nbPrelimGenerations = 1;
-	private int maxGenerations = 20;
+	int populationDim = 3;
+	double crossoverProb = 0.7;
+	double mutationProb = 0.1;
+	int nbPrelimGenerations = 1;
+	int maxGenerations = 20;
 
-	private Initialization initPop;
-	private CrossOver crossOverOp;
-	private Mutation mutationOp;
-	private Selection selectionOp;
-	private Boolean improveSolution;
+	Initialization initPop;
+	CrossOver crossOverOp;
+	Mutation mutationOp;
+	Selection selectionOp;
+	Boolean improveSolution;
 
 	protected static final String POP_DIM = "pop_dim";
 	protected static final String CROSSOVER_PROB = "crossover_prob";
@@ -164,10 +164,11 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		final IExpression sts = getFacet(STOCHASTIC_SEL);
 		if (sts != null) {
 			final Boolean useStoc = Cast.asBool(scope, sts.value(scope));
-			if (useStoc != null && useStoc)
+			if (useStoc != null && useStoc) {
 				selectionOp = new SelectionRoulette();
-			else
+			} else {
 				selectionOp = new SelectionBest();
+			}
 		} else {
 			selectionOp = new SelectionBest();
 		}
@@ -202,7 +203,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		List<Chromosome> population = initPop.initializePop(scope, variables, this);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
-			Set<Chromosome> children = new THashSet<Chromosome>();
+			Set<Chromosome> children = new THashSet<>();
 			for (final Chromosome chromosome : population) {
 				if (scope.getRandom().next() < crossoverProb && !variables.isEmpty()) {
 					children.addAll(crossOverOp.crossOver(scope, chromosome,
@@ -212,7 +213,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			population.addAll(children);
 			children = null;
 
-			Set<Chromosome> mutatePop = new THashSet<Chromosome>();
+			Set<Chromosome> mutatePop = new THashSet<>();
 			for (final Chromosome chromosome : population) {
 				if (scope.getRandom().next() < mutationProb && !variables.isEmpty()) {
 					mutatePop.add(mutationOp.mutate(scope, chromosome, variables));
@@ -302,7 +303,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				});
 	}
 
-	private ParametersSet improveSolution(final IScope scope, ParametersSet solution, final double currentFitness) {
+	private ParametersSet improveSolution(final IScope scope, final ParametersSet solution,
+			final double currentFitness) {
 		ParametersSet bestSol = solution;
 		Double bestFitness = currentFitness;
 		while (true) {
@@ -330,7 +332,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				}
 			}
 			if (bestNeighbor != null) {
-				solution = bestNeighbor;
+				bestSol = bestNeighbor;
 			} else {
 				break;
 			}

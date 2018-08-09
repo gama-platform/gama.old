@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'CsvReader.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'CsvReader.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -29,10 +28,9 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * A stream based parser for parsing delimited text data from a file or a
- * stream.
+ * A stream based parser for parsing delimited text data from a file or a stream.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class CsvReader {
 
 	private String fileName = null;
@@ -59,68 +57,58 @@ public class CsvReader {
 
 	// private String rawRecord = "";
 
-	private final HeadersHolder headersHolder = new HeadersHolder();
+	final HeadersHolder headersHolder = new HeadersHolder();
 
 	// these are all more or less global loop variables
 	// to keep from needing to pass them all into various
 	// methods during parsing
 
-	private boolean startedColumn = false;
+	boolean startedColumn = false;
 
-	private boolean startedWithQualifier = false;
+	boolean startedWithQualifier = false;
 
-	private boolean hasMoreData = true;
+	boolean hasMoreData = true;
 
-	private char lastLetter = '\0';
+	char lastLetter = '\0';
 
-	private boolean hasReadNextLine = false;
+	boolean hasReadNextLine = false;
 
-	private int columnsCount = 0;
+	int columnsCount = 0;
 
-	private long currentRecord = 0;
+	long currentRecord = 0;
 
-	private String[] values = new String[StaticSettings.INITIAL_COLUMN_COUNT];
+	String[] values = new String[StaticSettings.INITIAL_COLUMN_COUNT];
 
-	private boolean initialized = false;
+	boolean initialized = false;
 
-	private boolean closed = false;
+	boolean closed = false;
 
 	/**
-	 * Double up the text qualifier to represent an occurance of the text
-	 * qualifier.
+	 * Double up the text qualifier to represent an occurance of the text qualifier.
 	 */
 	public static final int ESCAPE_MODE_DOUBLED = 1;
 
 	/**
-	 * Use a backslash character before the text qualifier to represent an
-	 * occurance of the text qualifier.
+	 * Use a backslash character before the text qualifier to represent an occurance of the text qualifier.
 	 */
 	public static final int ESCAPE_MODE_BACKSLASH = 2;
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file
-	 * as the data source.
+	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.
 	 * 
 	 * @param fileName
 	 *            The path to the file to use as the data source.
 	 * @param delimiter
 	 *            The character to use as the column delimiter.
 	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while
-	 *            parsing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while parsing the data.
 	 */
 	public CsvReader(final String fileName, final char delimiter, final Charset charset) throws FileNotFoundException {
-		if (fileName == null) {
-			throw new IllegalArgumentException("Parameter fileName can not be null.");
-		}
+		if (fileName == null) { throw new IllegalArgumentException("Parameter fileName can not be null."); }
 
-		if (charset == null) {
-			throw new IllegalArgumentException("Parameter charset can not be null.");
-		}
+		if (charset == null) { throw new IllegalArgumentException("Parameter charset can not be null."); }
 
-		if (!new File(fileName).exists()) {
-			throw new FileNotFoundException("File " + fileName + " does not exist.");
-		}
+		if (!new File(fileName).exists()) { throw new FileNotFoundException("File " + fileName + " does not exist."); }
 
 		this.fileName = fileName;
 		this.userSettings.Delimiter = delimiter;
@@ -130,9 +118,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file
-	 * as the data source.&nbsp;Uses ISO-8859-1 as the
-	 * {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses ISO-8859-1
+	 * as the {@link java.nio.charset.Charset Charset}.
 	 * 
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -144,9 +131,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file
-	 * as the data source.&nbsp;Uses a comma as the column delimiter and
-	 * ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses a comma as
+	 * the column delimiter and ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 * 
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -156,8 +142,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a
-	 * {@link java.io.Reader Reader} object as the data source.
+	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
+	 * data source.
 	 * 
 	 * @param inputStream
 	 *            The stream to use as the data source.
@@ -165,9 +151,7 @@ public class CsvReader {
 	 *            The character to use as the column delimiter.
 	 */
 	public CsvReader(final Reader inputStream, final char delimiter) {
-		if (inputStream == null) {
-			throw new IllegalArgumentException("Parameter inputStream can not be null.");
-		}
+		if (inputStream == null) { throw new IllegalArgumentException("Parameter inputStream can not be null."); }
 
 		this.inputStream = inputStream;
 		this.userSettings.Delimiter = delimiter;
@@ -177,9 +161,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a
-	 * {@link java.io.Reader Reader} object as the data source.&nbsp;Uses a
-	 * comma as the column delimiter.
+	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
+	 * data source.&nbsp;Uses a comma as the column delimiter.
 	 * 
 	 * @param inputStream
 	 *            The stream to use as the data source.
@@ -189,31 +172,28 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an
-	 * {@link java.io.InputStream InputStream} object as the data source.
+	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
+	 * object as the data source.
 	 * 
 	 * @param inputStream
 	 *            The stream to use as the data source.
 	 * @param delimiter
 	 *            The character to use as the column delimiter.
 	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while
-	 *            parsing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while parsing the data.
 	 */
 	public CsvReader(final InputStream inputStream, final char delimiter, final Charset charset) {
 		this(new InputStreamReader(inputStream, charset), delimiter);
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an
-	 * {@link java.io.InputStream InputStream} object as the data
-	 * source.&nbsp;Uses a comma as the column delimiter.
+	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
+	 * object as the data source.&nbsp;Uses a comma as the column delimiter.
 	 * 
 	 * @param inputStream
 	 *            The stream to use as the data source.
 	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while
-	 *            parsing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while parsing the data.
 	 */
 	public CsvReader(final InputStream inputStream, final Charset charset) {
 		this(new InputStreamReader(inputStream, charset));
@@ -233,31 +213,29 @@ public class CsvReader {
 	// }
 
 	/**
-	 * Gets whether leading and trailing whitespace characters are being trimmed
-	 * from non-textqualified column data. Default is true.
+	 * Gets whether leading and trailing whitespace characters are being trimmed from non-textqualified column data.
+	 * Default is true.
 	 * 
-	 * @return Whether leading and trailing whitespace characters are being
-	 *         trimmed from non-textqualified column data.
+	 * @return Whether leading and trailing whitespace characters are being trimmed from non-textqualified column data.
 	 */
 	public boolean getTrimWhitespace() {
 		return userSettings.TrimWhitespace;
 	}
 
 	/**
-	 * Sets whether leading and trailing whitespace characters should be trimmed
-	 * from non-textqualified column data or not. Default is true.
+	 * Sets whether leading and trailing whitespace characters should be trimmed from non-textqualified column data or
+	 * not. Default is true.
 	 * 
 	 * @param trimWhitespace
-	 *            Whether leading and trailing whitespace characters should be
-	 *            trimmed from non-textqualified column data or not.
+	 *            Whether leading and trailing whitespace characters should be trimmed from non-textqualified column
+	 *            data or not.
 	 */
 	public void setTrimWhitespace(final boolean trimWhitespace) {
 		userSettings.TrimWhitespace = trimWhitespace;
 	}
 
 	/**
-	 * Gets the character being used as the column delimiter. Default is comma,
-	 * ','.
+	 * Gets the character being used as the column delimiter. Default is comma, ','.
 	 * 
 	 * @return The character being used as the column delimiter.
 	 */
@@ -283,9 +261,8 @@ public class CsvReader {
 	 * Sets the character to use as the record delimiter.
 	 * 
 	 * @param recordDelimiter
-	 *            The character to use as the record delimiter. Default is
-	 *            combination of standard end of line characters for Windows,
-	 *            Unix, or Mac.
+	 *            The character to use as the record delimiter. Default is combination of standard end of line
+	 *            characters for Windows, Unix, or Mac.
 	 */
 	public void setRecordDelimiter(final char recordDelimiter) {
 		useCustomRecordDelimiter = true;
@@ -369,30 +346,26 @@ public class CsvReader {
 	}
 
 	/**
-	 * Gets the current way to escape an occurance of the text qualifier inside
-	 * qualified data.
+	 * Gets the current way to escape an occurance of the text qualifier inside qualified data.
 	 * 
-	 * @return The current way to escape an occurance of the text qualifier
-	 *         inside qualified data.
+	 * @return The current way to escape an occurance of the text qualifier inside qualified data.
 	 */
 	public int getEscapeMode() {
 		return userSettings.EscapeMode;
 	}
 
 	/**
-	 * Sets the current way to escape an occurance of the text qualifier inside
-	 * qualified data.
+	 * Sets the current way to escape an occurance of the text qualifier inside qualified data.
 	 * 
 	 * @param escapeMode
-	 *            The way to escape an occurance of the text qualifier inside
-	 *            qualified data.
+	 *            The way to escape an occurance of the text qualifier inside qualified data.
 	 * @exception IllegalArgumentException
 	 *                When an illegal value is specified for escapeMode.
 	 */
 	public void setEscapeMode(final int escapeMode) throws IllegalArgumentException {
-		if (escapeMode != ESCAPE_MODE_DOUBLED && escapeMode != ESCAPE_MODE_BACKSLASH) {
-			throw new IllegalArgumentException("Parameter escapeMode must be a valid value.");
-		}
+		if (escapeMode != ESCAPE_MODE_DOUBLED
+				&& escapeMode != ESCAPE_MODE_BACKSLASH) { throw new IllegalArgumentException(
+						"Parameter escapeMode must be a valid value."); }
 
 		userSettings.EscapeMode = escapeMode;
 	}
@@ -406,12 +379,10 @@ public class CsvReader {
 	}
 
 	/**
-	 * Safety caution to prevent the parser from using large amounts of memory
-	 * in the case where parsing settings like file encodings don't end up
-	 * matching the actual format of a file. This switch can be turned off if
-	 * the file format is known and tested. With the switch off, the max column
-	 * lengths and max column count per record supported by the parser will
-	 * greatly increase. Default is true.
+	 * Safety caution to prevent the parser from using large amounts of memory in the case where parsing settings like
+	 * file encodings don't end up matching the actual format of a file. This switch can be turned off if the file
+	 * format is known and tested. With the switch off, the max column lengths and max column count per record supported
+	 * by the parser will greatly increase. Default is true.
 	 * 
 	 * @return The current setting of the safety switch.
 	 */
@@ -420,12 +391,10 @@ public class CsvReader {
 	}
 
 	/**
-	 * Safety caution to prevent the parser from using large amounts of memory
-	 * in the case where parsing settings like file encodings don't end up
-	 * matching the actual format of a file. This switch can be turned off if
-	 * the file format is known and tested. With the switch off, the max column
-	 * lengths and max column count per record supported by the parser will
-	 * greatly increase. Default is true.
+	 * Safety caution to prevent the parser from using large amounts of memory in the case where parsing settings like
+	 * file encodings don't end up matching the actual format of a file. This switch can be turned off if the file
+	 * format is known and tested. With the switch off, the max column lengths and max column count per record supported
+	 * by the parser will greatly increase. Default is true.
 	 * 
 	 * @param safetySwitch
 	 */
@@ -452,11 +421,11 @@ public class CsvReader {
 	}
 
 	/**
-	 * Gets the count of headers read in by a previous call to
-	 * {@link com.csvreader.CsvReader#readHeaders readHeaders()}.
+	 * Gets the count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
+	 * readHeaders()}.
 	 * 
-	 * @return The count of headers read in by a previous call to
-	 *         {@link com.csvreader.CsvReader#readHeaders readHeaders()}.
+	 * @return The count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
+	 *         readHeaders()}.
 	 */
 	public int getHeaderCount() {
 		return headersHolder.Length;
@@ -472,9 +441,7 @@ public class CsvReader {
 	public String[] getHeaders() throws IOException {
 		checkClosed();
 
-		if (headersHolder.Headers == null) {
-			return null;
-		}
+		if (headersHolder.Headers == null) { return null; }
 		// use clone here to prevent the outside code from
 		// setting values on the array directly, which would
 		// throw off the index lookup based on header name
@@ -521,9 +488,7 @@ public class CsvReader {
 	public String get(final int columnIndex) throws IOException {
 		checkClosed();
 
-		if (columnIndex > -1 && columnIndex < columnsCount) {
-			return values[columnIndex];
-		}
+		if (columnIndex > -1 && columnIndex < columnsCount) { return values[columnIndex]; }
 		return "";
 	}
 
@@ -543,19 +508,15 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a string
-	 * of data as the source.&nbsp;Uses ISO-8859-1 as the
-	 * {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a string of data as the source.&nbsp;Uses
+	 * ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 * 
 	 * @param data
 	 *            The String of data to use as the source.
-	 * @return A {@link com.csvreader.CsvReader CsvReader} object using the
-	 *         String of data as the source.
+	 * @return A {@link com.csvreader.CsvReader CsvReader} object using the String of data as the source.
 	 */
 	public static CsvReader parse(final String data) {
-		if (data == null) {
-			throw new IllegalArgumentException("Parameter data can not be null.");
-		}
+		if (data == null) { throw new IllegalArgumentException("Parameter data can not be null."); }
 
 		return new CsvReader(new StringReader(data));
 	}
@@ -598,8 +559,7 @@ public class CsvReader {
 						cols = reader.columnsCount;
 					}
 				}
-			} catch (final IOException e) {
-			}
+			} catch (final IOException e) {}
 			if (!type.equals(firstLineType)) {
 				header = true;
 			} else {
@@ -616,9 +576,9 @@ public class CsvReader {
 		}
 
 		private String[] processFirstLine(final String line, final String CSVsep) {
-			if (CSVsep != null && !CSVsep.isEmpty())
+			if (CSVsep != null && !CSVsep.isEmpty()) {
 				delimiter = CSVsep.charAt(0);
-			else {
+			} else {
 				String[] s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ",");
 				if (s.length == 1) {
 					if (s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1) {
@@ -634,8 +594,9 @@ public class CsvReader {
 								s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.SPACE);
 								if (s.length == 1) {
 									delimiter = Letters.PIPE;
-								} else
+								} else {
 									delimiter = Letters.SPACE;
+								}
 							} else {
 								delimiter = Letters.TAB;
 							}
@@ -754,9 +715,7 @@ public class CsvReader {
 	}
 
 	public static Stats getStats(final InputStream initial) {
-		if (initial == null) {
-			return null;
-		}
+		if (initial == null) { return null; }
 		final Stats stats = new Stats(new CsvReader(initial, Charset.forName("ISO-8859-1")), null);
 		return stats;
 	}
@@ -766,8 +725,7 @@ public class CsvReader {
 	 * 
 	 * @return Whether another record was successfully read or not.
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	public boolean readRecord() throws IOException {
 		checkClosed();
@@ -849,42 +807,42 @@ public class CsvReader {
 									escapeLength++;
 
 									switch (escape) {
-									case ComplexEscape.UNICODE:
-										escapeValue *= (char) 16;
-										escapeValue += hexToDec(currentLetter);
+										case ComplexEscape.UNICODE:
+											escapeValue *= (char) 16;
+											escapeValue += hexToDec(currentLetter);
 
-										if (escapeLength == 4) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 4) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.OCTAL:
-										escapeValue *= (char) 8;
-										escapeValue += (char) (currentLetter - '0');
+											break;
+										case ComplexEscape.OCTAL:
+											escapeValue *= (char) 8;
+											escapeValue += (char) (currentLetter - '0');
 
-										if (escapeLength == 3) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 3) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.DECIMAL:
-										escapeValue *= (char) 10;
-										escapeValue += (char) (currentLetter - '0');
+											break;
+										case ComplexEscape.DECIMAL:
+											escapeValue *= (char) 10;
+											escapeValue += (char) (currentLetter - '0');
 
-										if (escapeLength == 3) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 3) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.HEX:
-										escapeValue *= (char) 16;
-										escapeValue += hexToDec(currentLetter);
+											break;
+										case ComplexEscape.HEX:
+											escapeValue *= (char) 16;
+											escapeValue += hexToDec(currentLetter);
 
-										if (escapeLength == 2) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 2) {
+												readingComplexEscape = false;
+											}
 
-										break;
+											break;
 									}
 
 									if (!readingComplexEscape) {
@@ -907,79 +865,79 @@ public class CsvReader {
 									}
 								} else if (userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH && lastLetterWasEscape) {
 									switch (currentLetter) {
-									case 'n':
-										appendLetter(Letters.LF);
-										break;
-									case 'r':
-										appendLetter(Letters.CR);
-										break;
-									case 't':
-										appendLetter(Letters.TAB);
-										break;
-									case 'b':
-										appendLetter(Letters.BACKSPACE);
-										break;
-									case 'f':
-										appendLetter(Letters.FORM_FEED);
-										break;
-									case 'e':
-										appendLetter(Letters.ESCAPE);
-										break;
-									case 'v':
-										appendLetter(Letters.VERTICAL_TAB);
-										break;
-									case 'a':
-										appendLetter(Letters.ALERT);
-										break;
-									case '0':
-									case '1':
-									case '2':
-									case '3':
-									case '4':
-									case '5':
-									case '6':
-									case '7':
-										escape = ComplexEscape.OCTAL;
-										readingComplexEscape = true;
-										escapeLength = 1;
-										escapeValue = (char) (currentLetter - '0');
-										dataBuffer.ColumnStart = dataBuffer.Position + 1;
-										break;
-									case 'u':
-									case 'x':
-									case 'o':
-									case 'd':
-									case 'U':
-									case 'X':
-									case 'O':
-									case 'D':
-										switch (currentLetter) {
-										case 'u':
-										case 'U':
-											escape = ComplexEscape.UNICODE;
+										case 'n':
+											appendLetter(Letters.LF);
 											break;
-										case 'x':
-										case 'X':
-											escape = ComplexEscape.HEX;
+										case 'r':
+											appendLetter(Letters.CR);
 											break;
-										case 'o':
-										case 'O':
+										case 't':
+											appendLetter(Letters.TAB);
+											break;
+										case 'b':
+											appendLetter(Letters.BACKSPACE);
+											break;
+										case 'f':
+											appendLetter(Letters.FORM_FEED);
+											break;
+										case 'e':
+											appendLetter(Letters.ESCAPE);
+											break;
+										case 'v':
+											appendLetter(Letters.VERTICAL_TAB);
+											break;
+										case 'a':
+											appendLetter(Letters.ALERT);
+											break;
+										case '0':
+										case '1':
+										case '2':
+										case '3':
+										case '4':
+										case '5':
+										case '6':
+										case '7':
 											escape = ComplexEscape.OCTAL;
+											readingComplexEscape = true;
+											escapeLength = 1;
+											escapeValue = (char) (currentLetter - '0');
+											dataBuffer.ColumnStart = dataBuffer.Position + 1;
 											break;
+										case 'u':
+										case 'x':
+										case 'o':
 										case 'd':
+										case 'U':
+										case 'X':
+										case 'O':
 										case 'D':
-											escape = ComplexEscape.DECIMAL;
+											switch (currentLetter) {
+												case 'u':
+												case 'U':
+													escape = ComplexEscape.UNICODE;
+													break;
+												case 'x':
+												case 'X':
+													escape = ComplexEscape.HEX;
+													break;
+												case 'o':
+												case 'O':
+													escape = ComplexEscape.OCTAL;
+													break;
+												case 'd':
+												case 'D':
+													escape = ComplexEscape.DECIMAL;
+													break;
+											}
+
+											readingComplexEscape = true;
+											escapeLength = 0;
+											escapeValue = (char) 0;
+											dataBuffer.ColumnStart = dataBuffer.Position + 1;
+
 											break;
-										}
-
-										readingComplexEscape = true;
-										escapeLength = 0;
-										escapeValue = (char) 0;
-										dataBuffer.ColumnStart = dataBuffer.Position + 1;
-
-										break;
-									default:
-										break;
+										default:
+											break;
 									}
 
 									lastLetterWasEscape = false;
@@ -1115,42 +1073,42 @@ public class CsvReader {
 									escapeLength++;
 
 									switch (escape) {
-									case ComplexEscape.UNICODE:
-										escapeValue *= (char) 16;
-										escapeValue += hexToDec(currentLetter);
+										case ComplexEscape.UNICODE:
+											escapeValue *= (char) 16;
+											escapeValue += hexToDec(currentLetter);
 
-										if (escapeLength == 4) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 4) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.OCTAL:
-										escapeValue *= (char) 8;
-										escapeValue += (char) (currentLetter - '0');
+											break;
+										case ComplexEscape.OCTAL:
+											escapeValue *= (char) 8;
+											escapeValue += (char) (currentLetter - '0');
 
-										if (escapeLength == 3) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 3) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.DECIMAL:
-										escapeValue *= (char) 10;
-										escapeValue += (char) (currentLetter - '0');
+											break;
+										case ComplexEscape.DECIMAL:
+											escapeValue *= (char) 10;
+											escapeValue += (char) (currentLetter - '0');
 
-										if (escapeLength == 3) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 3) {
+												readingComplexEscape = false;
+											}
 
-										break;
-									case ComplexEscape.HEX:
-										escapeValue *= (char) 16;
-										escapeValue += hexToDec(currentLetter);
+											break;
+										case ComplexEscape.HEX:
+											escapeValue *= (char) 16;
+											escapeValue += hexToDec(currentLetter);
 
-										if (escapeLength == 2) {
-											readingComplexEscape = false;
-										}
+											if (escapeLength == 2) {
+												readingComplexEscape = false;
+											}
 
-										break;
+											break;
 									}
 
 									if (!readingComplexEscape) {
@@ -1160,79 +1118,79 @@ public class CsvReader {
 									}
 								} else if (userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH && lastLetterWasBackslash) {
 									switch (currentLetter) {
-									case 'n':
-										appendLetter(Letters.LF);
-										break;
-									case 'r':
-										appendLetter(Letters.CR);
-										break;
-									case 't':
-										appendLetter(Letters.TAB);
-										break;
-									case 'b':
-										appendLetter(Letters.BACKSPACE);
-										break;
-									case 'f':
-										appendLetter(Letters.FORM_FEED);
-										break;
-									case 'e':
-										appendLetter(Letters.ESCAPE);
-										break;
-									case 'v':
-										appendLetter(Letters.VERTICAL_TAB);
-										break;
-									case 'a':
-										appendLetter(Letters.ALERT);
-										break;
-									case '0':
-									case '1':
-									case '2':
-									case '3':
-									case '4':
-									case '5':
-									case '6':
-									case '7':
-										escape = ComplexEscape.OCTAL;
-										readingComplexEscape = true;
-										escapeLength = 1;
-										escapeValue = (char) (currentLetter - '0');
-										dataBuffer.ColumnStart = dataBuffer.Position + 1;
-										break;
-									case 'u':
-									case 'x':
-									case 'o':
-									case 'd':
-									case 'U':
-									case 'X':
-									case 'O':
-									case 'D':
-										switch (currentLetter) {
-										case 'u':
-										case 'U':
-											escape = ComplexEscape.UNICODE;
+										case 'n':
+											appendLetter(Letters.LF);
 											break;
-										case 'x':
-										case 'X':
-											escape = ComplexEscape.HEX;
+										case 'r':
+											appendLetter(Letters.CR);
 											break;
-										case 'o':
-										case 'O':
+										case 't':
+											appendLetter(Letters.TAB);
+											break;
+										case 'b':
+											appendLetter(Letters.BACKSPACE);
+											break;
+										case 'f':
+											appendLetter(Letters.FORM_FEED);
+											break;
+										case 'e':
+											appendLetter(Letters.ESCAPE);
+											break;
+										case 'v':
+											appendLetter(Letters.VERTICAL_TAB);
+											break;
+										case 'a':
+											appendLetter(Letters.ALERT);
+											break;
+										case '0':
+										case '1':
+										case '2':
+										case '3':
+										case '4':
+										case '5':
+										case '6':
+										case '7':
 											escape = ComplexEscape.OCTAL;
+											readingComplexEscape = true;
+											escapeLength = 1;
+											escapeValue = (char) (currentLetter - '0');
+											dataBuffer.ColumnStart = dataBuffer.Position + 1;
 											break;
+										case 'u':
+										case 'x':
+										case 'o':
 										case 'd':
+										case 'U':
+										case 'X':
+										case 'O':
 										case 'D':
-											escape = ComplexEscape.DECIMAL;
+											switch (currentLetter) {
+												case 'u':
+												case 'U':
+													escape = ComplexEscape.UNICODE;
+													break;
+												case 'x':
+												case 'X':
+													escape = ComplexEscape.HEX;
+													break;
+												case 'o':
+												case 'O':
+													escape = ComplexEscape.OCTAL;
+													break;
+												case 'd':
+												case 'D':
+													escape = ComplexEscape.DECIMAL;
+													break;
+											}
+
+											readingComplexEscape = true;
+											escapeLength = 0;
+											escapeValue = (char) 0;
+											dataBuffer.ColumnStart = dataBuffer.Position + 1;
+
 											break;
-										}
-
-										readingComplexEscape = true;
-										escapeLength = 0;
-										escapeValue = (char) 0;
-										dataBuffer.ColumnStart = dataBuffer.Position + 1;
-
-										break;
-									default:
-										break;
+										default:
+											break;
 									}
 
 									lastLetterWasBackslash = false;
@@ -1319,8 +1277,7 @@ public class CsvReader {
 
 	/**
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	private void checkDataLength() throws IOException {
 		if (!initialized) {
@@ -1382,8 +1339,7 @@ public class CsvReader {
 	 * 
 	 * @return Whether the header record was successfully read or not.
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	public boolean readHeaders() throws IOException {
 		final boolean result = readRecord();
@@ -1441,16 +1397,14 @@ public class CsvReader {
 	public boolean isQualified(final int columnIndex) throws IOException {
 		checkClosed();
 
-		if (columnIndex < columnsCount && columnIndex > -1) {
-			return isQualified[columnIndex];
-		}
+		if (columnIndex < columnsCount && columnIndex > -1) { return isQualified[columnIndex]; }
 		return false;
 	}
 
 	/**
 	 * @exception IOException
-	 *                Thrown if a very rare extreme exception occurs during
-	 *                parsing, normally resulting from improper data format.
+	 *                Thrown if a very rare extreme exception occurs during parsing, normally resulting from improper
+	 *                data format.
 	 */
 	private void endColumn() throws IOException {
 		String currentValue = "";
@@ -1568,8 +1522,7 @@ public class CsvReader {
 
 	/**
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	private void endRecord() throws IOException {
 		// this flag is used as a loop exit condition
@@ -1585,8 +1538,7 @@ public class CsvReader {
 	 * 
 	 * @param headerName
 	 *            The header name of the column.
-	 * @return The column index for the given column header name.&nbsp;Returns
-	 *         -1 if not found.
+	 * @return The column index for the given column header name.&nbsp;Returns -1 if not found.
 	 * @exception IOException
 	 *                Thrown if this object has already been closed.
 	 */
@@ -1595,21 +1547,17 @@ public class CsvReader {
 
 		final Object indexValue = headersHolder.IndexByName.get(headerName);
 
-		if (indexValue != null) {
-			return ((Integer) indexValue).intValue();
-		}
+		if (indexValue != null) { return ((Integer) indexValue).intValue(); }
 		return -1;
 	}
 
 	/**
-	 * Skips the next record of data by parsing each column.&nbsp;Does not
-	 * increment {@link com.csvreader.CsvReader#getCurrentRecord
-	 * getCurrentRecord()}.
+	 * Skips the next record of data by parsing each column.&nbsp;Does not increment
+	 * {@link com.csvreader.CsvReader#getCurrentRecord getCurrentRecord()}.
 	 * 
 	 * @return Whether another record was successfully skipped or not.
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	public boolean skipRecord() throws IOException {
 		checkClosed();
@@ -1628,13 +1576,12 @@ public class CsvReader {
 	}
 
 	/**
-	 * Skips the next line of data using the standard end of line characters and
-	 * does not do any column delimited parsing.
+	 * Skips the next line of data using the standard end of line characters and does not do any column delimited
+	 * parsing.
 	 * 
 	 * @return Whether a line was successfully skipped or not.
 	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the
-	 *                source stream.
+	 *                Thrown if an error occurs while reading data from the source stream.
 	 */
 	public String skipLine() throws IOException {
 		checkClosed();
@@ -1730,9 +1677,7 @@ public class CsvReader {
 	 *                Thrown if this object has already been closed.
 	 */
 	private void checkClosed() throws IOException {
-		if (closed) {
-			throw new IOException("This instance of the CsvReader class has already been closed.");
-		}
+		if (closed) { throw new IOException("This instance of the CsvReader class has already been closed."); }
 	}
 
 	/**

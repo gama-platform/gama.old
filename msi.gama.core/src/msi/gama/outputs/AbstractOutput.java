@@ -35,7 +35,7 @@ import msi.gaml.operators.Cast;
 		symbols = IKeyword.OUTPUT)
 public abstract class AbstractOutput extends Symbol implements IOutput {
 
-	private IScope scope;
+	private IScope outputScope;
 	boolean paused, open, permanent = false;
 	private boolean isUserCreated = true;
 	final IExpression refresh;
@@ -80,9 +80,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public boolean init(final IScope scope) {
 		setScope(scope.copy("of " + getDescription().getKeyword() + " " + getName()));
-		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
-		if (refresh != null) {
-			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
+		final IExpression refreshExpr = getFacet(IKeyword.REFRESH_EVERY);
+		if (refreshExpr != null) {
+			setRefreshRate(Cast.asInt(getScope(), refreshExpr.value(getScope())));
 		}
 		getScope().setCurrentSymbol(this);
 		return true;
@@ -163,8 +163,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	public void setScope(final IScope scope) {
-		if (this.scope != null) {
-			GAMA.releaseScope(this.scope);
+		if (this.outputScope != null) {
+			GAMA.releaseScope(this.outputScope);
 		}
 		final ModelDescription micro = this.getDescription().getModelDescription();
 		if (scope.getModel() != null) {
@@ -174,18 +174,18 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 				final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
 						.getExternMicroPopulationFor(micro.getAlias() + "." + this.getDescription().getOriginName())
 						.getAgent(0);
-				this.scope = exp.getSimulation().getScope();
+				this.outputScope = exp.getSimulation().getScope();
 			} else {
-				this.scope = scope;
+				this.outputScope = scope;
 			}
 		} else {
-			this.scope = scope;
+			this.outputScope = scope;
 		}
 	}
 
 	@Override
 	public IScope getScope() {
-		return scope;
+		return outputScope;
 	}
 
 	// @Override

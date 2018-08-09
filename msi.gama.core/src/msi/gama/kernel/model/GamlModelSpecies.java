@@ -242,8 +242,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 				// scope.getGui().debug("GamlModelSpecies: effectively adding "
 				// + currentSpecies.getName());
 				allSpecies.put(currentSpecies.getName(), currentSpecies);
-				final List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
-				for (final ISpecies microSpec : microSpecies) {
+				final List<ISpecies> theMicroSpecies = currentSpecies.getMicroSpecies();
+				for (final ISpecies microSpec : theMicroSpecies) {
 					if (microSpec.getMacroSpecies().equals(currentSpecies)) {
 						speciesStack.push(microSpec);
 					}
@@ -257,13 +257,13 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		final List forExperiment = new ArrayList<>();
 
-		final List<IExperimentPlan> experiments = new ArrayList<>();
+		final List<IExperimentPlan> theExperiments = new ArrayList<>();
 
 		for (final Iterator<? extends ISymbol> it = children.iterator(); it.hasNext();) {
 			final ISymbol s = it.next();
 
 			if (s instanceof IExperimentPlan) {
-				experiments.add((IExperimentPlan) s);
+				theExperiments.add((IExperimentPlan) s);
 				it.remove();
 			} else if (s instanceof AbstractOutputManager) {
 				forExperiment.add(s);
@@ -273,7 +273,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		// Add the variables, etc. to the model
 		super.setChildren(children);
 		// Add the experiments and the default outputs to all experiments
-		for (final IExperimentPlan exp : experiments) {
+		for (final IExperimentPlan exp : theExperiments) {
 			addExperiment(exp);
 			exp.setChildren(forExperiment);
 		}

@@ -94,8 +94,8 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	protected static final String ITER_MAX = "iter_max";
 	protected static final String LIST_SIZE = "tabu_list_size";
 
-	private int tabuListSize = 5;
-	private StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(50);
+	int tabuListSize = 5;
+	StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(50);
 
 	public TabuSearch(final IDescription species) {
 		super(species);
@@ -106,7 +106,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
-		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
+		final List<ParametersSet> tabuList = new ArrayList<>();
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
@@ -116,7 +116,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 		int nbIt = 0;
 		double bestFitnessAlgo = currentFitness;
-		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
+		final Map<String, Object> endingCritParams = new Hashtable<>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			// scope.getGui().debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);

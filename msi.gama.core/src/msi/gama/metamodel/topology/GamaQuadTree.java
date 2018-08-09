@@ -45,9 +45,9 @@ public class GamaQuadTree implements ISpatialIndex {
 	public static final int SW = 2;
 	public static final int SE = 3;
 
-	private final QuadNode root;
-	private final static int maxCapacity = 100;
-	private double minSize = 10;
+	final QuadNode root;
+	final static int maxCapacity = 100;
+	double minSize = 10;
 
 	public static ISpatialIndex create(final Envelope envelope) {
 		// if (GamaPreferences.GRID_OPTIMIZATION.getValue())
@@ -153,7 +153,7 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	private class QuadNode {
 
-		private final Envelope bounds;
+		final Envelope bounds;
 		private final double halfx, halfy;
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
