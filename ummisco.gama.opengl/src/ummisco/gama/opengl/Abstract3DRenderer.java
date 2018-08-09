@@ -126,7 +126,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	}
 
-	public final static boolean DRAW_NORM = false;
 	protected DrawingEntityGenerator drawingEntityGenerator;
 	protected final PickingState pickingState = new PickingState();
 	public SceneBuffer sceneBuffer;
@@ -136,7 +135,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected LightHelper lightHelper;
 	protected volatile boolean inited;
 	protected volatile boolean visible;
-	// protected volatile boolean shouldRecomputeLayerBounds;
 
 	public boolean colorPicking = false;
 	protected GL2 gl;
@@ -148,7 +146,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	// CACHES FOR TEXTURES, FONTS AND GEOMETRIES
 
-	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 
 	@Override
@@ -453,6 +450,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		int y = getLayerHeight();
 		x = (int) (Math.min(x, y) * 0.80);
 		y = x;
+		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
 		sceneBuffer.getSceneToUpdate().addImage(im, new FileDrawingAttributes(null, true));
 		return rect;

@@ -269,6 +269,10 @@ public class KeystoneDrawer implements IKeystoneState {
 
 		// gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+				renderer.data.isAntialias() ? GL.GL_LINEAR : GL.GL_NEAREST);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
+				renderer.data.isAntialias() ? GL.GL_LINEAR : GL.GL_NEAREST);
 
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);

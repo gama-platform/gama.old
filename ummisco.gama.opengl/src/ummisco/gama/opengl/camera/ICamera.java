@@ -37,7 +37,7 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 		void applyTo(AbstractCamera camera);
 	}
 
-	public final static double INIT_Z_FACTOR = 1.5;
+	public final static double INIT_Z_FACTOR = 1.3;
 	public final static GamaPoint UNDEFINED = new GamaPoint();
 
 	public static Map<String, CameraPreset> PRESETS = new LinkedHashMap<>();

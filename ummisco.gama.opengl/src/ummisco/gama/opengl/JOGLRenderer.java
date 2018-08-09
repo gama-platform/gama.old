@@ -90,7 +90,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		final Color bg = data.getBackgroundColor();
 		gl.glClearColor(bg.getRed() / 255.0f, bg.getGreen() / 255.0f, bg.getBlue() / 255.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
 		initializeCanvasListeners();
 		updateCameraPosition();

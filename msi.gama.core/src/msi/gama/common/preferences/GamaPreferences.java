@@ -513,9 +513,10 @@ public class GamaPreferences {
 		public static final Pref<Boolean> LIB_USE_DEFAULT =
 				create("pref_gis_save_crs", "When no CRS is provided, save the GIS data with the current CRS", true,
 						IType.BOOL, true).deactivates("pref_gis_output_crs").in(NAME, GEOTOOLS);
-		public static final Pref<Integer> LIB_TARGET_CRS =
-				create("pref_gis_default_crs", "...or use the following CRS (EPSG code)", 32648, IType.INT, true)
-						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
+		public static final Pref<Integer> LIB_TARGET_CRS = create("pref_gis_default_crs",
+				"...or use the following CRS (EPSG code), which will be used anyway if no .prj file is present", 32648,
+				IType.INT, true).in(NAME, GEOTOOLS)
+						.addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
 							return true;

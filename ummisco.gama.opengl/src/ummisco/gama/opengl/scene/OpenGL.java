@@ -46,9 +46,9 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellatorCallback;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.awt.TextureRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -87,12 +87,6 @@ public class OpenGL {
 
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;
 
-	static {
-		AWTTextureIO.addTextureProvider(new PGMTextureProvider());
-		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(newValue -> AWTTextureIO.setTexRectEnabled(newValue));
-		AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
-	}
-
 	// The real openGL context
 	private GL2 gl;
 	private final GLUT glut;
@@ -100,8 +94,8 @@ public class OpenGL {
 	private final PickingState pickingState;
 
 	// Textures
-	private final LoadingCache<BufferedImage, Texture> volatileTextures;
-	private final Cache<String, Texture> staticTextures =
+	private final LoadingCache<BufferedImage, TextureRenderer> volatileTextures;
+	private final Cache<String, TextureRenderer> staticTextures =
 			CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).build();
 	final List<String> texturesToProcess = new CopyOnWriteArrayList<>();
 	private final Envelope3D textureEnvelope = new Envelope3D();
@@ -115,6 +109,7 @@ public class OpenGL {
 	private Color currentColor;
 	private double currentObjectAlpha = 1d;
 	private boolean isAntiAlias;
+	private boolean antiAliasChanged;
 	private boolean lighted;
 
 	// Text
@@ -144,6 +139,9 @@ public class OpenGL {
 	private int originalViewHeight;
 	private int originalViewWidth;
 
+	// Will be changed when loading the renderer
+	private Boolean isNonPowerOf2TexturesAvailable;
+
 	public OpenGL(final Abstract3DRenderer renderer) {
 		glut = new GLUT();
 
@@ -155,11 +153,11 @@ public class OpenGL {
 		} else {
 			geometryCache = null;
 		}
-		volatileTextures = CacheBuilder.newBuilder().build(new CacheLoader<BufferedImage, Texture>() {
+		volatileTextures = CacheBuilder.newBuilder().build(new CacheLoader<BufferedImage, TextureRenderer>() {
 
 			@Override
-			public Texture load(final BufferedImage key) throws Exception {
-				return buildTexture(OpenGL.this, key);
+			public TextureRenderer load(final BufferedImage key) throws Exception {
+				return buildTextureRenderer(OpenGL.this, key);
 			}
 		});
 
@@ -201,7 +199,7 @@ public class OpenGL {
 		}
 		volatileTextures.invalidateAll();
 		staticTextures.asMap().forEach((s, t) -> {
-			t.destroy(gl);
+			t.dispose();
 		});
 		staticTextures.invalidateAll();
 		staticTextures.cleanUp();
@@ -215,6 +213,15 @@ public class OpenGL {
 
 	public void setGL2(final GL2 gl2) {
 		this.gl = gl2;
+		if (isNonPowerOf2TexturesAvailable == null) {
+			isNonPowerOf2TexturesAvailable =
+					!GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.isNPOTTextureAvailable();
+			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO
+					.onChange(newValue -> AWTTextureIO.setTexRectEnabled(newValue));
+			AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
+			System.out.println("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
+		}
+
 	}
 
 	public GLUT getGlut() {
@@ -620,6 +627,7 @@ public class OpenGL {
 	// ANTIALIAS
 
 	public void setAntiAlias(final boolean aa) {
+		antiAliasChanged = aa != isAntiAlias;
 		isAntiAlias = aa;
 	}
 
@@ -646,8 +654,12 @@ public class OpenGL {
 	public void bindTexture(final int texture) {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
 		// Apply antialas to the texture based on the current preferences
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, isAntiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, isAntiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+		if (antiAliasChanged) {
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
+					isAntiAlias ? GL.GL_LINEAR_MIPMAP_LINEAR : GL.GL_NEAREST);
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, isAntiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+			antiAliasChanged = false;
+		}
 	}
 
 	public void enablePrimaryTexture() {
@@ -668,9 +680,9 @@ public class OpenGL {
 	}
 
 	public void deleteVolatileTextures() {
-		final Collection<Texture> textures = volatileTextures.asMap().values();
-		for (final Texture t : textures) {
-			deleteTexture(t);
+		final Collection<TextureRenderer> textures = volatileTextures.asMap().values();
+		for (final TextureRenderer t : textures) {
+			t.dispose();
 		}
 		volatileTextures.invalidateAll();
 	}
@@ -692,28 +704,28 @@ public class OpenGL {
 
 	public void processUnloadedTextures() {
 		for (final String path : texturesToProcess) {
-			getTexture(new File(path), false, true);
+			getTextureRenderer(new File(path), false, true);
 		}
 	}
 
-	public Texture getTexture(final GamaImageFile file, final boolean useCache) {
-		return getTexture(file.getFile(null), file.isAnimated(), useCache);
+	public TextureRenderer getTextureRenderer(final GamaImageFile file, final boolean useCache) {
+		return getTextureRenderer(file.getFile(null), file.isAnimated(), useCache);
 	}
 
-	public Texture getTexture(final BufferedImage img) {
+	public TextureRenderer getTextureRenderer(final BufferedImage img) {
 		return volatileTextures.getUnchecked(img);
 	}
 
-	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
+	public TextureRenderer getTextureRenderer(final File file, final boolean isAnimated, final boolean useCache) {
 		if (file == null) { return null; }
-		Texture texture = null;
+		TextureRenderer texture = null;
 		if (isAnimated || !useCache) {
 			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true);
-			texture = getTexture(image);
+			texture = getTextureRenderer(image);
 
 		} else {
 			try {
-				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl, file));
+				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTextureRenderer(gl, file));
 			} catch (final ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -721,50 +733,66 @@ public class OpenGL {
 		return texture;
 	}
 
-	private static Texture buildTexture(final GL gl, final File file) {
+	private TextureRenderer buildTextureRenderer(final GL gl, final File file) {
 		try {
 			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file, true, true);
-			return buildTexture(gl, im);
+			return buildTextureRenderer(gl, im);
 		} catch (final GLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public static Texture buildTexture(final OpenGL gl, final BufferedImage image) {
-		return buildTexture(gl.getGL(), image);
+	public TextureRenderer buildTextureRenderer(final OpenGL gl, final BufferedImage image) {
+		return buildTextureRenderer(gl.getGL(), image);
 	}
 
-	public static Texture buildTexture(final GL gl, final BufferedImage image) {
+	public TextureRenderer buildTextureRenderer(final GL gl, final BufferedImage im) {
 		try {
-			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(),
-					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), true);
-			final Texture texture = new Texture(gl, data);
-			data.flush();
-			return texture;
+			final int width, height;
+			if (isNonPowerOf2TexturesAvailable) {
+				width = im.getWidth();
+				height = im.getHeight();
+			} else {
+				width = getClosestPow(im.getWidth());
+				height = getClosestPow(im.getHeight());
+			}
+			final TextureRenderer tr = new TextureRenderer(width, height, ImageUtils.checkTransparency(im), true);
+			tr.setSmoothing(true);
+			final Graphics2D g = tr.createGraphics();
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g.drawImage(im, 0, 0, width, height, null);
+			return tr;
+
+			// final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(),
+			// correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), true);
+			// final Texture texture = new Texture(gl, data);
+			// data.flush();
+			// return texture;
 		} catch (final GLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
-	public static BufferedImage correctImage(final BufferedImage image, final boolean force) {
-		if (image == null) { throw new NullPointerException(); }
-		BufferedImage corrected = image;
-		if (GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() || force) {
-			if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {
-				final int width = getClosestPow(image.getWidth());
-				final int height = getClosestPow(image.getHeight());
-				corrected = ImageUtils.createCompatibleImage(width, height, true);
-				final Graphics2D g2 = corrected.createGraphics();
-				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-				g2.drawImage(image, 0, 0, width, height, null);
-				g2.dispose();
-			}
-		}
-		return corrected;
-	}
+	//
+	// public static BufferedImage correctImage(final BufferedImage image, final boolean force) {
+	// if (image == null) { throw new NullPointerException(); }
+	// BufferedImage corrected = image;
+	// if (GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() || force) {
+	// if (!IsPowerOfTwo(image.getWidth()) || !IsPowerOfTwo(image.getHeight())) {
+	// final int width = getClosestPow(image.getWidth());
+	// final int height = getClosestPow(image.getHeight());
+	// corrected = ImageUtils.createCompatibleImage(width, height, true);
+	// final Graphics2D g2 = corrected.createGraphics();
+	// g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+	// g2.drawImage(image, 0, 0, width, height, null);
+	// g2.dispose();
+	// }
+	// }
+	// return corrected;
+	// }
 
 	static boolean IsPowerOfTwo(final int x) {
 		return (x & x - 1) == 0;

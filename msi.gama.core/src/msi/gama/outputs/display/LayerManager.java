@@ -33,7 +33,9 @@ import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 
 /**
@@ -206,7 +208,7 @@ public class LayerManager implements ILayerManager {
 				}
 			}
 		} catch (final Exception e) {
-			scope.getGui().debug(e.getMessage());
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), false);
 		} finally {
 			g.endDrawingLayers();
 		}

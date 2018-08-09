@@ -85,10 +85,11 @@ public abstract class AbstractObject {
 			} catch (final IndexOutOfBoundsException e) {// do nothing. Can arrive in the new shader architecture
 			}
 			if (obj instanceof BufferedImage) {
-				textures[order] = gl.getTexture((BufferedImage) obj).getTextureObject();
+				textures[order] = gl.getTextureRenderer((BufferedImage) obj).getTexture().getTextureObject();
 			} else if (obj instanceof GamaImageFile) {
 				final FileDrawingAttributes fd = (FileDrawingAttributes) attributes;
-				textures[order] = gl.getTexture((GamaImageFile) obj, fd.useCache()).getTextureObject();
+				textures[order] =
+						gl.getTextureRenderer((GamaImageFile) obj, fd.useCache()).getTexture().getTextureObject();
 			}
 		}
 		return textures[order];

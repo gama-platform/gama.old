@@ -355,12 +355,6 @@ public class ImageUtils {
 
 	}
 
-	/**
-	 * @param snapshot
-	 * @param width
-	 * @param height
-	 * @return
-	 */
 	public static BufferedImage resize(final BufferedImage snapshot, final int width, final int height) {
 		if (width == snapshot.getWidth() && height == snapshot.getHeight()) { return snapshot; }
 		return resize(snapshot, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
@@ -372,4 +366,25 @@ public class ImageUtils {
 
 	}
 
+	public static boolean checkTransparency(final BufferedImage image) {
+		if (containsAlphaChannel(image)) {
+			return containsTransparency(image);
+		} else {
+			return false;
+		}
+
+	}
+
+	private static boolean containsAlphaChannel(final BufferedImage image) {
+		return image.getColorModel().hasAlpha();
+	}
+
+	private static boolean containsTransparency(final BufferedImage image) {
+		for (int i = 0; i < image.getHeight(); i++) {
+			for (int j = 0; j < image.getWidth(); j++) {
+				if (image.getRGB(j, i) >> 24 == 0x00) { return true; }
+			}
+		}
+		return false;
+	}
 }

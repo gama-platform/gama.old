@@ -97,6 +97,7 @@ public class SpeciesLayer extends AgentLayer {
 			// then recursively draw the micro-populations
 			final List<SpeciesLayerStatement> microLayers =
 					((SpeciesLayerStatement) definition).getMicroSpeciesLayers();
+			// if (microLayers != null) {
 			for (final SpeciesLayerStatement ml : microLayers) {
 				// a.acquireLock();
 				if (a.dead()) {
@@ -111,6 +112,7 @@ public class SpeciesLayer extends AgentLayer {
 					drawPopulation(scope, g, microAspect, microPop);
 				}
 			}
+			// }
 		}
 
 	}
