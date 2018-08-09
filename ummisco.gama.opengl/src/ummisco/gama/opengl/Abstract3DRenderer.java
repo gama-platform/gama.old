@@ -17,6 +17,8 @@ import java.nio.IntBuffer;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -63,6 +65,7 @@ import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.utils.LightHelper;
 import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.opengl.vaoGenerator.ShapeCache;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -72,6 +75,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 27 avr. 2015
  *
  */
+@SuppressWarnings ("restriction")
 public abstract class Abstract3DRenderer extends AbstractDisplayGraphics implements GLEventListener {
 
 	public class PickingState {
@@ -176,7 +180,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		cap.setSampleBuffers(true);
 		cap.setAlphaBits(8);
 		cap.setNumSamples(8);
-		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
+		canvas = new GLCanvas(parent, SWT.NONE, cap, null) {
+			@SuppressWarnings ("restriction")
+			@Override
+			public Rectangle getClientArea() {
+				if (PlatformHelper.isWindows()) { return DPIUtil.autoScaleUp(super.getClientArea()); }
+				return super.getClientArea();
+			}
+		};
 		canvas.setAutoSwapBufferMode(true);
 		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		// animator.setIgnoreExceptions(!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue());
