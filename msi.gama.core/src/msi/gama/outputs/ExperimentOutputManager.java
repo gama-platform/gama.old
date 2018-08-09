@@ -14,6 +14,7 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -107,7 +108,12 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 		final boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
 		final boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", true);
-		final boolean editors = layoutDefinition.getFacetValue(scope, "editors", false);
+		boolean editors;
+		if (layoutDefinition.hasFacet("editors")) {
+			editors = layoutDefinition.getFacetValue(scope, "editors", false);
+		} else {
+			editors = GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
+		}
 		scope.getGui().hideScreen();
 		if (super.init(scope)) {
 			scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars, editors);

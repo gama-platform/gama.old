@@ -159,6 +159,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> EDITOR_PERSPECTIVE_SAVE =
 				create("pref_editor_perspective_save", "Save all editors when switching perspectives", true, IType.BOOL,
 						false).in(Modeling.NAME, Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static final Pref<Boolean> EDITOR_PERSPECTIVE_HIDE = create("pref_editor_perspective_hide",
+				"Hide editors when switching to simulation perspectives (can be overriden in the 'layout' statement)",
+				true, IType.BOOL, false).in(Modeling.NAME, Modeling.OPTIONS);
 		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
 				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
 				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
