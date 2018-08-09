@@ -97,22 +97,22 @@ public class SpeciesLayer extends AgentLayer {
 			// then recursively draw the micro-populations
 			final List<SpeciesLayerStatement> microLayers =
 					((SpeciesLayerStatement) definition).getMicroSpeciesLayers();
-			// if (microLayers != null) {
-			for (final SpeciesLayerStatement ml : microLayers) {
-				// a.acquireLock();
-				if (a.dead()) {
-					continue;
-				}
-				microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
-				if (microPop != null && microPop.size() > 0) {
-					IExecutable microAspect = ml.getAspect();
-					if (microAspect == null) {
-						microAspect = AspectStatement.DEFAULT_ASPECT;
+			if (microLayers != null) {
+				for (final SpeciesLayerStatement ml : microLayers) {
+					// a.acquireLock();
+					if (a.dead()) {
+						continue;
 					}
-					drawPopulation(scope, g, microAspect, microPop);
+					microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
+					if (microPop != null && microPop.size() > 0) {
+						IExecutable microAspect = ml.getAspect();
+						if (microAspect == null) {
+							microAspect = AspectStatement.DEFAULT_ASPECT;
+						}
+						drawPopulation(scope, g, microAspect, microPop);
+					}
 				}
 			}
-			// }
 		}
 
 	}
