@@ -195,7 +195,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String RECEPTIVITY = "receptivity";
 	public static final String OPENNESS = "openness";
 	public static final String CONSCIENTIOUSNESS = "conscientiousness";
-	public static final String EXTRAVERSION = "extraversion";
+	public static final String EXTRAVERSION = "extroversion";
 	public static final String AGREEABLENESS = "agreeableness";
 	public static final String NEUROTISM = "neurotism";
 
