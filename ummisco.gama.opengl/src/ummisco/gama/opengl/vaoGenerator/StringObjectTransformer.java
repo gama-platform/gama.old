@@ -29,9 +29,9 @@ class StringObjectTransformer extends AbstractTransformer {
 	protected float fontSize;
 	protected boolean isBillboarding = false;
 
-	private StringObjectTransformer(final StringObjectTransformer obj) {
-		loadManyFacedShape(obj);
-	}
+	// private StringObjectTransformer(final StringObjectTransformer obj) {
+	// loadManyFacedShape(obj);
+	// }
 
 	public StringObjectTransformer(final StringObject strObj, final int[] textureIds, final String[] texturePaths,
 			final TextMeshData textMeshData, final boolean isOverlay, final boolean isTriangulation,
@@ -64,8 +64,9 @@ class StringObjectTransformer extends AbstractTransformer {
 
 		computeNormals();
 		triangulate();
-		if (!this.isBillboarding)
+		if (!this.isBillboarding) {
 			applyTransformation(); // FIXME : need refactoring
+		}
 	}
 
 	@Override
@@ -75,7 +76,7 @@ class StringObjectTransformer extends AbstractTransformer {
 
 	protected ArrayList<DrawingEntity> getStringDrawingEntities() {
 		// the number of drawing entity is equal to 1
-		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		final ArrayList<DrawingEntity> result = new ArrayList<>();
 
 		if (color == null) {
 			color = new GamaColor(1.0, 1.0, 0, 1.0); // set the default color to yellow.

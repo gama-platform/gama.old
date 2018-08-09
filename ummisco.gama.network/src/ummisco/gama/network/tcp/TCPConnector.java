@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TCPConnector.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TCPConnector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -28,10 +27,10 @@ import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
 
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings ({ "unchecked" })
 public class TCPConnector extends Connector {
 	private boolean is_server = false;
-	private final IScope myScope;
+	// private final IScope myScope;
 	public static String _TCP_SERVER = "__tcp_server";
 	public static String _TCP_SOCKET = "__tcp_socket";
 	public static String _TCP_CLIENT = "__tcp_client";
@@ -42,7 +41,7 @@ public class TCPConnector extends Connector {
 
 	public TCPConnector(final IScope scope, final boolean as_server) {
 		is_server = as_server;
-		myScope = scope;
+		// myScope = scope;
 	}
 
 	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
@@ -106,9 +105,7 @@ public class TCPConnector extends Connector {
 			if (c != null) {
 				sock = c.getMyClientSocket();
 			}
-			if (sock == null) {
-				return;
-			}
+			if (sock == null) { return; }
 			final OutputStream ostream = sock.getOutputStream();
 			final PrintWriter pwrite = new PrintWriter(ostream, true);
 			pwrite.println(data);
@@ -125,9 +122,7 @@ public class TCPConnector extends Connector {
 		if (c != null) {
 			sock = c.getMyClientSocket();
 		}
-		if (sock == null || sock.isClosed() || sock.isInputShutdown()) {
-			return;
-		}
+		if (sock == null || sock.isClosed() || sock.isInputShutdown()) { return; }
 		try {
 			ostream = sock.getOutputStream();
 			final PrintWriter pwrite = new PrintWriter(ostream, true);
@@ -162,12 +157,12 @@ public class TCPConnector extends Connector {
 			GamaList<ConnectorMessage> m = null;
 
 			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
-			if(m!=null){				
+			if (m != null) {
 				// receivedMessage.get(agt).addAll(m);
 				for (final ConnectorMessage cm : m) {
 					receivedMessage.get(agt).add(cm);
 				}
-				m.clear();  
+				m.clear();
 				agt.setAttribute("message" + agt, m);
 				// scope.getAgentScope().setAttribute("messages" +
 				// scope.getAgentScope(), null);
@@ -190,7 +185,7 @@ public class TCPConnector extends Connector {
 
 	@Override
 	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
-		final String server = this.getConfigurationParameter(SERVER_URL);
+		// final String server = this.getConfigurationParameter(SERVER_URL);
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
 		final Thread sersock = (Thread) scope.getSimulation().getAttribute(_TCP_SERVER + port);
@@ -211,8 +206,10 @@ public class TCPConnector extends Connector {
 	}
 
 	@Override
-	protected void sendMessage(final IAgent sender, final String receiver, String content) throws GamaNetworkException {
-		content = content.replaceAll("\b\r", "@b@@r@");
+	protected void sendMessage(final IAgent sender, final String receiver, final String cont)
+			throws GamaNetworkException {
+
+		String content = cont.replaceAll("\b\r", "@b@@r@");
 		content = content.replaceAll("\n", "@n@");
 		if (is_server) {
 			sendToClient(sender, receiver, content);

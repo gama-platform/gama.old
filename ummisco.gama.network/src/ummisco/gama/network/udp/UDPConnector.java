@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UDPConnector.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UDPConnector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,11 +37,11 @@ public class UDPConnector extends Connector {
 	public static Integer _UDP_SO_TIMEOUT = 10000;
 
 	private boolean is_server = false;
-	private final IScope myScope;
+	// private final IScope myScope;
 
 	public UDPConnector(final IScope scope, final boolean as_server) {
 		is_server = as_server;
-		myScope = scope;
+		// myScope = scope;
 	}
 
 	@Override
@@ -52,12 +50,12 @@ public class UDPConnector extends Connector {
 		return super.fetchMessageBox(agent);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public GamaMap<String, Object> fetchMessageBox_old(final IAgent agt) {
 		GamaMap<String, Object> m = GamaMapFactory.create();
 		// if(is_server){
-		final String cli;
-		final String receiveMessage = "";
+		// final String cli;
+		// final String receiveMessage = "";
 		// System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
 
 		m = (GamaMap<String, Object>) agt.getAttribute("messages" + agt);
@@ -90,7 +88,7 @@ public class UDPConnector extends Connector {
 		return m;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
 		for (final IAgent agt : this.receivedMessage.keySet()) {
@@ -170,13 +168,11 @@ public class UDPConnector extends Connector {
 		// int port = (int) agent.getAttribute("port");
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulation()
-				.getAttribute(_UDP_SERVER + port);
+		final MultiThreadedUDPServer ssThread =
+				(MultiThreadedUDPServer) agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port);
 		final InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
 		final int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
-		if (ssThread == null || IPAddress == null) {
-			return;
-		}
+		if (ssThread == null || IPAddress == null) { return; }
 		final byte[] sendData = ((String) data).getBytes();
 		final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
 		try {
@@ -192,9 +188,7 @@ public class UDPConnector extends Connector {
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(agent.getScope(), sport);
 		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
-		if (ssThread == null) {
-			return;
-		}
+		if (ssThread == null) { return; }
 		try {
 			final DatagramSocket clientSocket = ssThread.getMyServerSocket();
 			final InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
@@ -210,8 +204,9 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
-	protected void sendMessage(final IAgent sender, final String receiver, String content) throws GamaNetworkException {
-		content = content.replaceAll("\b\r", "@b@@r@");
+	protected void sendMessage(final IAgent sender, final String receiver, final String cont)
+			throws GamaNetworkException {
+		String content = cont.replaceAll("\b\r", "@b@@r@");
 		content = content.replaceAll("\n", "@n@");
 		if (is_server) {
 			sendToClient(sender, receiver, content);
@@ -224,7 +219,7 @@ public class UDPConnector extends Connector {
 		// primSendToServer(sender, content);
 		// }
 	}
-	
+
 	@Override
 	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
@@ -239,7 +234,7 @@ public class UDPConnector extends Connector {
 
 	@Override
 	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
-		final String server = this.getConfigurationParameter(SERVER_URL);
+		// final String server = this.getConfigurationParameter(SERVER_URL);
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
 		final Thread UDPsersock = (Thread) scope.getSimulation().getAttribute(_UDP_SERVER + port);

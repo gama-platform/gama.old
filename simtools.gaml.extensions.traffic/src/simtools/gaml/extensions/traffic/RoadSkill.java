@@ -142,7 +142,9 @@ public class RoadSkill extends Skill {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 
-	public static void register(final IAgent road, final IAgent driver, int lane) throws GamaRuntimeException {
+	public static void register(final IAgent road, final IAgent driver, final int currentLane)
+			throws GamaRuntimeException {
+		int lane = currentLane;
 		final IAgent linkedRoad = (IAgent) road.getAttribute(LINKED_ROAD);
 		final boolean agentOnLinkedRoad =
 				driver == null ? false : (Boolean) driver.getAttribute(AdvancedDrivingSkill.ON_LINKED_ROAD);

@@ -35,10 +35,10 @@ public class ChartDataSet {
 	LinkedHashMap<String, ChartDataSeries> series = new LinkedHashMap<>();
 	LinkedHashMap<String, ChartDataSeries> deletedseries = new LinkedHashMap<>();
 	ArrayList<String> Xcategories = new ArrayList<>(); // for categories
-																// datasets
+														// datasets
 	ArrayList<Double> XSeriesValues = new ArrayList<>(); // for series
 	ArrayList<String> Ycategories = new ArrayList<>(); // for Y categories
-																// datasets
+														// datasets
 	ArrayList<Double> YSeriesValues = new ArrayList<>(); // for 3d series
 	LinkedHashMap<String, Integer> serieCreationDate = new LinkedHashMap<>();
 
@@ -330,7 +330,8 @@ public class ChartDataSet {
 		}
 	}
 
-	public void updateYValues(final IScope scope, final int chartCycle, int targetNb) {
+	public void updateYValues(final IScope scope, final int chartCycle, final int nb) {
+		int targetNb = nb;
 		Object xval, xlab;
 		if (this.useYSource || this.useYLabels) {
 
@@ -442,7 +443,8 @@ public class ChartDataSet {
 		return this.XSeriesValues.get(this.commonXindex);
 	}
 
-	public void updateXValues(final IScope scope, final int chartCycle, int targetNb) {
+	public void updateXValues(final IScope scope, final int chartCycle, final int nb) {
+		int targetNb = nb;
 		Object xval, xlab;
 		if (this.useXSource || this.useXLabels) {
 

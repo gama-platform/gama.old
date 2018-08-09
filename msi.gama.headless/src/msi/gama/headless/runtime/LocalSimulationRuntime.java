@@ -35,11 +35,11 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 
 	public LocalSimulationRuntime(final int numberOfCoresAsked) {
-		simulations = new HashMap<String, ExperimentJob>();
-		queue = new ArrayList<FakeApplication>();
-		started = new ArrayList<FakeApplication>();
-		loadedModels = new HashMap<String, ArrayList<IModel>>();
-		availableLoadedModels = new HashMap<String, ArrayList<IModel>>();
+		simulations = new HashMap<>();
+		queue = new ArrayList<>();
+		started = new ArrayList<>();
+		loadedModels = new HashMap<>();
+		availableLoadedModels = new HashMap<>();
 		this.allocatedProcessor = getAvailableCores(numberOfCoresAsked);
 	}
 
@@ -68,10 +68,11 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	public void pushSimulation(final ExperimentJob s) {
 		simulations.put(s.getExperimentID(), s);
 		final FakeApplication f = new FakeApplication(s, this);
-		if (started.size() < allocatedProcessor)
+		if (started.size() < allocatedProcessor) {
 			this.startSimulation(f);
-		else
+		} else {
 			queue.add(f);
+		}
 	}
 
 	private void startSimulation(final FakeApplication s) {
@@ -87,8 +88,9 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 			queue.remove(p);
 			this.startSimulation(p);
 		}
-		if (!this.isTraceKept)
+		if (!this.isTraceKept) {
 			simulations.remove(s.getExperimentJob().getExperimentID());
+		}
 		this.notifyListener();
 	}
 
@@ -100,12 +102,9 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	@Override
 	public SimulationState getSimulationState(final String id) {
 		final ExperimentJob tmp = simulations.get(id);
-		if (tmp == null)
-			return SimulationState.UNDEFINED;
-		if (started.contains(tmp))
-			return SimulationState.STARTED;
-		if (queue.contains(tmp))
-			return SimulationState.ENQUEUED;
+		if (tmp == null) { return SimulationState.UNDEFINED; }
+		if (started.contains(tmp)) { return SimulationState.STARTED; }
+		if (queue.contains(tmp)) { return SimulationState.ENQUEUED; }
 		return SimulationState.ACHIEVED;
 	}
 
@@ -123,18 +122,18 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		// System.out.println("model released ") ;
 	}
 
-	private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl)
-			throws IOException, GamaHeadlessException {
-		IModel mm = null;
-		if (mdl != null) {
-			availableLoadedModels.get(key).add(mdl);
-			mm = mdl;
-		}
-		if (fl != null) {
-			mm = lockModel(fl);
-		}
-		return mm;
-	}
+	// private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl)
+	// throws IOException, GamaHeadlessException {
+	// IModel mm = null;
+	// if (mdl != null) {
+	// availableLoadedModels.get(key).add(mdl);
+	// mm = mdl;
+	// }
+	// if (fl != null) {
+	// mm = lockModel(fl);
+	// }
+	// return mm;
+	// }
 
 	public synchronized IModel lockModel(final File fl) throws IOException, GamaHeadlessException {
 		IModel mdl;
@@ -142,7 +141,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
 		System.out.println(fl.getAbsolutePath());
 		if (arr == null) {
-			arr = new ArrayList<IModel>();
+			arr = new ArrayList<>();
 			availableLoadedModels.put(key, arr);
 			loadedModels.put(key, new ArrayList<IModel>());
 		}
@@ -219,7 +218,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	@Override
 	public HashMap<String, Double> getSimulationState() {
 
-		final HashMap<String, Double> res = new HashMap<String, Double>();
+		final HashMap<String, Double> res = new HashMap<>();
 		for (final ExperimentJob exp : simulations.values()) {
 			res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));
 		}

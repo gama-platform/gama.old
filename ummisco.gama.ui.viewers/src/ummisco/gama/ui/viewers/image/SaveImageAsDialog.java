@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SaveImageAsDialog.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SaveImageAsDialog.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,8 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 class SaveImageAsDialog extends SaveAsDialog2 {
 
 	// These 3 arrays need to stay in sync
-	private static int[] IMAGE_TYPES = { SWT.IMAGE_PNG, SWT.IMAGE_GIF, SWT.IMAGE_JPEG, SWT.IMAGE_BMP, SWT.IMAGE_ICO,
-			SWT.IMAGE_TIFF };
+	private static int[] IMAGE_TYPES =
+			{ SWT.IMAGE_PNG, SWT.IMAGE_GIF, SWT.IMAGE_JPEG, SWT.IMAGE_BMP, SWT.IMAGE_ICO, SWT.IMAGE_TIFF };
 
 	private static String[] IMAGE_LABELS = { "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
 			"JPEG (Joint Photographic Experts Group)", "BMP (Bitmap)", "ICO (Icon File)",
@@ -95,8 +94,8 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 
 		// initialize the imageType drop-down
 		// TODO: filter by what's actually going to work when saving
-		for (int i = 0; i < IMAGE_LABELS.length; i++) {
-			imageTypeCombo.add(IMAGE_LABELS[i]);
+		for (final String element : IMAGE_LABELS) {
+			imageTypeCombo.add(element);
 		}
 		if (initialImageTypeIndex >= 0 && initialImageTypeIndex < IMAGE_TYPES.length) {
 			imageTypeCombo.select(initialImageTypeIndex);
@@ -129,15 +128,15 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	}
 
 	/**
-	 * Set the initial filename and image type. This must be called before
-	 * {@code}create(){@code}.
+	 * Set the initial filename and image type. This must be called before {@code}create(){@code}.
 	 * 
 	 * @param basename
 	 *            the file basename, no extension.
 	 * @param type
 	 *            the SWT.IMAGE_ type.
 	 */
-	public void setOriginalName(String basename, final int type) {
+	public void setOriginalName(final String name, final int type) {
+		String basename = name;
 		for (int i = 0; i < IMAGE_TYPES.length; i++) {
 			if (type == IMAGE_TYPES[i]) {
 				initialImageTypeIndex = i;
@@ -149,20 +148,20 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	}
 
 	/**
-	 * Set the initial file and path and image type. This must be called before
-	 * {@code}create(){@code}.
+	 * Set the initial file and path and image type. This must be called before {@code}create(){@code}.
 	 * 
 	 * @param origfile
 	 *            the original file.
 	 * @param type
 	 *            the SWT.IMAGE_ type.
 	 */
-	public void setOriginalFile(IFile origfile, final int type) {
+	public void setOriginalFile(final IFile file, final int type) {
+		IFile origfile = file;
 		for (int i = 0; i < IMAGE_TYPES.length; i++) {
 			if (type == IMAGE_TYPES[i]) {
 				initialImageTypeIndex = i;
-				final String newname = origfile.getFullPath().removeFileExtension().addFileExtension(IMAGE_EXTS[i])
-						.lastSegment();
+				final String newname =
+						origfile.getFullPath().removeFileExtension().addFileExtension(IMAGE_EXTS[i]).lastSegment();
 				origfile = origfile.getParent().getFile(Path.fromPortableString(newname));
 				break;
 			}

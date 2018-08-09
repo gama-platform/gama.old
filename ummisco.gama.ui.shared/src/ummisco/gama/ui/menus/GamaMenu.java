@@ -69,7 +69,7 @@ public abstract class GamaMenu {
 		sep(mainMenu);
 	}
 
-	protected final void sep(final Menu m) {
+	public final void sep(final Menu m) {
 		createItem(m, SWT.SEPARATOR);
 	}
 
@@ -101,7 +101,7 @@ public abstract class GamaMenu {
 		return action(mainMenu, s, listener, image);
 	}
 
-	protected final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
+	public final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
 		return action(m, s, listener, null);
 	}
 
@@ -145,7 +145,7 @@ public abstract class GamaMenu {
 		return sub(mainMenu, s);
 	}
 
-	protected final Menu sub(final Menu parent, final String s) {
+	public final Menu sub(final Menu parent, final String s) {
 		return sub(parent, s, null);
 	}
 
@@ -162,8 +162,9 @@ public abstract class GamaMenu {
 
 	public void reset() {
 		if (mainMenu != null && !mainMenu.isDisposed()) {
-			for (final MenuItem item : mainMenu.getItems())
+			for (final MenuItem item : mainMenu.getItems()) {
 				item.dispose();
+			}
 		}
 	}
 

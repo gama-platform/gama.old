@@ -319,7 +319,10 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	// To avoid a dependency towards apache.commons.lang
-	private String overlay(final String str, String overlay, int start, int end) {
+	private String overlay(final String str, final String over, final int s, final int e) {
+		String overlay = over;
+		int start = s;
+		int end = e;
 		if (str == null) { return null; }
 		if (overlay == null) {
 			overlay = "";

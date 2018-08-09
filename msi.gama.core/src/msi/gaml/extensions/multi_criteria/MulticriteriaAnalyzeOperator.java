@@ -364,12 +364,10 @@ public class MulticriteriaAnalyzeOperator {
 					equals = "0") },
 			see = { "weighted_means_DM", "electre_DM", "electre_DM" })
 	public static Integer evidenceTheoryDecisionMaking(final IScope scope, final IList<List> cands,
-			final IList<Map<String, Object>> criteriaMap, Boolean simple) throws GamaRuntimeException {
+			final IList<Map<String, Object>> criteriaMap, final Boolean isSimple) throws GamaRuntimeException {
 		if (cands == null || cands.isEmpty()) { return -1; }
 		int cpt = 0;
-		if (simple == null) {
-			simple = false;
-		}
+		final boolean simple = isSimple == null ? false : isSimple;
 		final Map<String, Boolean> maximizeCrit = new HashMap<>();
 		final LinkedList<Candidate> candidates = new LinkedList<>();
 		final List<String> criteriaStr = new LinkedList<>();

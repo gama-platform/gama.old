@@ -135,6 +135,7 @@ public final class NBAStarPathfinder<V, E> {
 		}
 	}
 
+	@SuppressWarnings ("unchecked")
 	private void expandInBackwardDirection() {
 		final V currentNode = OPENB.remove().getNode();
 
@@ -260,7 +261,7 @@ public final class NBAStarPathfinder<V, E> {
 					return edgePath;
 				}
 			}
-			final List<E> edges = new ArrayList<>(vcn.edgesTo(tn));
+			final List<E> edges = new ArrayList<E>(vcn.edgesTo(tn));
 			if (!graph.isDirected()) {
 				edges.addAll(vertices.get(tn).edgesTo(cn));
 			}
@@ -290,7 +291,7 @@ public final class NBAStarPathfinder<V, E> {
 	 * @author Rodion "rodde" Efremov
 	 * @version 1.6 (Oct 13, 2016)
 	 */
-	final class HeapEntry<V> implements Comparable<HeapEntry> {
+	final class HeapEntry<V> implements Comparable<HeapEntry<V>> {
 
 		private final V nodeId;
 		private final double distance; // The priority key.
@@ -309,7 +310,7 @@ public final class NBAStarPathfinder<V, E> {
 		}
 
 		@Override
-		public int compareTo(final HeapEntry o) {
+		public int compareTo(final HeapEntry<V> o) {
 			return Double.compare(distance, o.distance);
 		}
 	}

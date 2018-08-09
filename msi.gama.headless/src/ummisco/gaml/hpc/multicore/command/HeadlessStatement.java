@@ -1,9 +1,8 @@
 /*********************************************************************************************
  * 
  *
- * 'HeadlessStatement.java', in plugin 'msi.gama.headless', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'HeadlessStatement.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
@@ -24,23 +23,49 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@symbol(name = IKeywords.RUNSIMULARTION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
-		IConcept.HEADLESS })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@facets(value = { @facet(name = IKeywords.MODEL, type = IType.STRING, optional = false),
-		@facet(name = IKeywords.EXPERIMENT, type = IType.STRING, optional = false),
-		@facet(name = IKeywords.END, type = IType.INT, optional = true),
-		@facet(name = IKeywords.CORE, type = IType.INT, optional = true),
-		@facet(name = IKeywords.WITHSEED, type = IType.INT, optional = true),
-		// @facet(name = IKeywords.OUT, type = IType.STRING, optional = true),
-		@facet(name = IKeywords.WITHOUTPUTS, type = IType.MAP, optional = true),
-		@facet(name = IKeywords.WITHPARAMS, type = IType.MAP, optional = true) }, omissible = IKeywords.EXPERIMENT)
+@symbol (
+		name = IKeywords.RUNSIMULARTION,
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		with_sequence = true,
+		concept = { IConcept.HEADLESS })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@facets (
+		value = { @facet (
+				name = IKeywords.MODEL,
+				type = IType.STRING,
+				optional = false),
+				@facet (
+						name = IKeywords.EXPERIMENT,
+						type = IType.STRING,
+						optional = false),
+				@facet (
+						name = IKeywords.END,
+						type = IType.INT,
+						optional = true),
+				@facet (
+						name = IKeywords.CORE,
+						type = IType.INT,
+						optional = true),
+				@facet (
+						name = IKeywords.WITHSEED,
+						type = IType.INT,
+						optional = true),
+				// @facet(name = IKeywords.OUT, type = IType.STRING, optional = true),
+				@facet (
+						name = IKeywords.WITHOUTPUTS,
+						type = IType.MAP,
+						optional = true),
+				@facet (
+						name = IKeywords.WITHPARAMS,
+						type = IType.MAP,
+						optional = true) },
+		omissible = IKeywords.EXPERIMENT)
 public class HeadlessStatement extends AbstractStatement {
 	private final int numberOfThread = 4;
 	private final SimulationRuntime processorQueue;
@@ -56,8 +81,7 @@ public class HeadlessStatement extends AbstractStatement {
 	}
 
 	private String retrieveModelFileAbsolutePath(final IScope scope, final String filename) {
-		if (filename.charAt(0) == '/')
-			return filename;
+		if (filename.charAt(0) == '/') { return filename; }
 		return new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath() + "/" + filename;
 	}
 
@@ -74,10 +98,11 @@ public class HeadlessStatement extends AbstractStatement {
 			modelPath = scope.getModel().getFilePath();
 		}
 
-		final GamaMap<String, ?> outputs = Cast.asMap(scope, getFacetValue(scope, IKeywords.WITHOUTPUTS), false);
+		// final GamaMap<String, ?> outputs = Cast.asMap(scope, getFacetValue(scope, IKeywords.WITHOUTPUTS), false);
 
-		if (this.hasFacet(IKeywords.WITHSEED))
+		if (this.hasFacet(IKeywords.WITHSEED)) {
 			seed = Cast.asInt(scope, getFacetValue(scope, IKeywords.WITHSEED));
+		}
 
 		final long lseed = seed;
 

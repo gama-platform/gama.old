@@ -932,8 +932,8 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 */
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	private boolean collectProjectFilesFromDirectory(final Collection files, final File directory,
-			Set<String> directoriesVisited, final IProgressMonitor monitor) {
-
+			final Set<String> visited, final IProgressMonitor monitor) {
+		Set<String> directoriesVisited = visited;
 		if (monitor.isCanceled()) { return false; }
 		monitor.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage, directory.getPath()));
 		final File[] contents = directory.listFiles();

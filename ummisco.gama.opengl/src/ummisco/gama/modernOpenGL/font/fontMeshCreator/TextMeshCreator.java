@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TextMeshCreator.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TextMeshCreator.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,7 +32,7 @@ public class TextMeshCreator {
 
 	private List<Line> createStructure(final GUIText text) {
 		final char[] chars = text.getTextString().toCharArray();
-		final List<Line> lines = new ArrayList<Line>();
+		final List<Line> lines = new ArrayList<>();
 		Line currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
 		Word currentWord = new Word(text.getFontSize());
 		for (final char c : chars) {
@@ -55,8 +54,9 @@ public class TextMeshCreator {
 		return lines;
 	}
 
-	private void completeStructure(final List<Line> lines, Line currentLine, final Word currentWord,
+	private void completeStructure(final List<Line> lines, final Line line, final Word currentWord,
 			final GUIText text) {
+		Line currentLine = line;
 		final boolean added = currentLine.attemptToAddWord(currentWord);
 		if (!added) {
 			lines.add(currentLine);
@@ -70,8 +70,8 @@ public class TextMeshCreator {
 		text.setNumberOfLines(lines.size());
 		double curserX = 0f;
 		double curserY = 0f;
-		final List<Float> vertices = new ArrayList<Float>();
-		final List<Float> textureCoords = new ArrayList<Float>();
+		final List<Float> vertices = new ArrayList<>();
+		final List<Float> textureCoords = new ArrayList<>();
 		for (final Line line : lines) {
 			// if (text.isCentered()) {
 			// curserX = (line.getMaxLength() - line.getLineLength()) / 2;

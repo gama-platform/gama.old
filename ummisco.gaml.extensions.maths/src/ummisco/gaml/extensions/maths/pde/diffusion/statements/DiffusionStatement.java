@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DiffusionStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DiffusionStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -46,39 +45,112 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
-@facets(value = {
-		@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the variable to be diffused")),
-		@facet(name = IKeyword.ON, type = { IType.CONTAINER,
-				IType.SPECIES }, of = IType.AGENT, optional = false, doc = @doc("the list of agents (in general cells of a grid), on which the diffusion will occur")),
-		@facet(name = "mat_diffu", type = IType.MATRIX, of = IType.FLOAT, optional = true, doc = @doc(value = "the diffusion matrix (can have any size)", deprecated = "Please use 'matrix' instead")),
-		@facet(name = IKeyword.MATRIX, type = IType.MATRIX, of = IType.FLOAT, optional = true, doc = @doc("the diffusion matrix (\"kernel\" or \"filter\" in image processing). Can have any size, as long as dimensions are odd values.")),
-		@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { IKeyword.CONVOLUTION,
-				"dot_product" }, doc = @doc("the diffusion method")),
-		@facet(name = IKeyword.MINVALUE, type = IType.FLOAT, optional = true, doc = @doc("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
-		@facet(name = IKeyword.MASK, type = IType.MATRIX, of = IType.FLOAT, optional = true, doc = @doc("a matrix masking the diffusion (matrix created from a image for example). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
-		@facet(name = IKeyword.PROPORTION, type = IType.FLOAT, optional = true, doc = @doc("a diffusion rate")),
-		@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION,
-				IKeyword.GRADIENT }, optional = true, doc = @doc("represents both the way the signal is propagated and the way to treat multiple propagation of the same signal occurring at once from different places. If propagation equals 'diffusion', the intensity of a signal is shared between its neighbors with respect to 'proportion', 'variation' and the number of neighbors of the environment places (4, 6 or 8). I.e., for a given signal S propagated from place P, the value transmitted to its N neighbors is : S' = (S / N / proportion) - variation. The intensity of S is then diminished by S `*` proportion on P. In a diffusion, the different signals of the same name see their intensities added to each other on each place. If propagation equals 'gradient', the original intensity is not modified, and each neighbors receives the intensity : S / proportion - variation. If multiple propagation occur at once, only the maximum intensity is kept on each place. If 'propagation' is not defined, it is assumed that it is equal to 'diffusion'.")),
-		@facet(name = IKeyword.RADIUS, type = IType.INT, optional = true, doc = @doc("a diffusion radius (in number of cells from the center)")),
-		@facet(name = IKeyword.VARIATION, type = IType.FLOAT, optional = true, doc = @doc("an absolute value to decrease at each neighbors")),
-		@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true, doc = @doc("the number of diffusion operation applied in one simulation step")),
-		@facet(name = IKeyword.AVOID_MASK, type = IType.BOOL, optional = true, doc = @doc("if true, the value will not be diffused in the masked cells, but will "
-				+ "be restitute to the neighboring cells, multiplied by the proportion value (no signal lost)."
-				+ " If false, the value will be diffused in the masked cells, but masked cells "
-				+ "won't diffuse the value afterward (lost of signal). (default value : false)")) }, omissible = IKeyword.VAR)
-@symbol(name = { IKeyword.DIFFUSE,
-		IKeyword.DIFFUSION }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.MATH,
-				IConcept.DIFFUSION })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@validator(DiffusionValidator.class)
-@doc(value = "This statements allows a value to diffuse among a species on agents (generally on a grid) depending on a given diffusion matrix.", usages = {
-		@usage(value = "A basic example of diffusion of the variable phero defined in the species cells, given a diffusion matrix math_diff is:", examples = {
-				@example(value = "matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);", isExecutable = false),
-				@example(value = "diffuse var: phero on: cells mat_diffu: math_diff;", isExecutable = false) }),
-		@usage(value = "The diffusion can be masked by obstacles, created from a bitmap image:", examples = {
-				@example(value = "diffuse var: phero on: cells mat_diffu: math_diff mask: mymask;", isExecutable = false) }),
-		@usage(value = "A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):", examples = {
-				@example(value = "diffuse var: phero on: cells proportion: 1/9 radius: 1;", isExecutable = false) }) })
+@facets (
+		value = { @facet (
+				name = IKeyword.VAR,
+				type = IType.ID,
+				optional = false,
+				doc = @doc ("the variable to be diffused")),
+				@facet (
+						name = IKeyword.ON,
+						type = { IType.CONTAINER, IType.SPECIES },
+						of = IType.AGENT,
+						optional = false,
+						doc = @doc ("the list of agents (in general cells of a grid), on which the diffusion will occur")),
+				@facet (
+						name = "mat_diffu",
+						type = IType.MATRIX,
+						of = IType.FLOAT,
+						optional = true,
+						doc = @doc (
+								value = "the diffusion matrix (can have any size)",
+								deprecated = "Please use 'matrix' instead")),
+				@facet (
+						name = IKeyword.MATRIX,
+						type = IType.MATRIX,
+						of = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the diffusion matrix (\"kernel\" or \"filter\" in image processing). Can have any size, as long as dimensions are odd values.")),
+				@facet (
+						name = IKeyword.METHOD,
+						type = IType.ID,
+						optional = true,
+						values = { IKeyword.CONVOLUTION, "dot_product" },
+						doc = @doc ("the diffusion method")),
+				@facet (
+						name = IKeyword.MINVALUE,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
+				@facet (
+						name = IKeyword.MASK,
+						type = IType.MATRIX,
+						of = IType.FLOAT,
+						optional = true,
+						doc = @doc ("a matrix masking the diffusion (matrix created from a image for example). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
+				@facet (
+						name = IKeyword.PROPORTION,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("a diffusion rate")),
+				@facet (
+						name = IKeyword.PROPAGATION,
+						type = IType.LABEL,
+						values = { IKeyword.DIFFUSION, IKeyword.GRADIENT },
+						optional = true,
+						doc = @doc ("represents both the way the signal is propagated and the way to treat multiple propagation of the same signal occurring at once from different places. If propagation equals 'diffusion', the intensity of a signal is shared between its neighbors with respect to 'proportion', 'variation' and the number of neighbors of the environment places (4, 6 or 8). I.e., for a given signal S propagated from place P, the value transmitted to its N neighbors is : S' = (S / N / proportion) - variation. The intensity of S is then diminished by S `*` proportion on P. In a diffusion, the different signals of the same name see their intensities added to each other on each place. If propagation equals 'gradient', the original intensity is not modified, and each neighbors receives the intensity : S / proportion - variation. If multiple propagation occur at once, only the maximum intensity is kept on each place. If 'propagation' is not defined, it is assumed that it is equal to 'diffusion'.")),
+				@facet (
+						name = IKeyword.RADIUS,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("a diffusion radius (in number of cells from the center)")),
+				@facet (
+						name = IKeyword.VARIATION,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("an absolute value to decrease at each neighbors")),
+				@facet (
+						name = IKeyword.CYCLE_LENGTH,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("the number of diffusion operation applied in one simulation step")),
+				@facet (
+						name = IKeyword.AVOID_MASK,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("if true, the value will not be diffused in the masked cells, but will "
+								+ "be restitute to the neighboring cells, multiplied by the proportion value (no signal lost)."
+								+ " If false, the value will be diffused in the masked cells, but masked cells "
+								+ "won't diffuse the value afterward (lost of signal). (default value : false)")) },
+		omissible = IKeyword.VAR)
+@symbol (
+		name = { IKeyword.DIFFUSE, IKeyword.DIFFUSION },
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.MATH, IConcept.DIFFUSION })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@validator (DiffusionValidator.class)
+@doc (
+		value = "This statements allows a value to diffuse among a species on agents (generally on a grid) depending on a given diffusion matrix.",
+		usages = { @usage (
+				value = "A basic example of diffusion of the variable phero defined in the species cells, given a diffusion matrix math_diff is:",
+				examples = { @example (
+						value = "matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);",
+						isExecutable = false),
+						@example (
+								value = "diffuse var: phero on: cells mat_diffu: math_diff;",
+								isExecutable = false) }),
+				@usage (
+						value = "The diffusion can be masked by obstacles, created from a bitmap image:",
+						examples = { @example (
+								value = "diffuse var: phero on: cells mat_diffu: math_diff mask: mymask;",
+								isExecutable = false) }),
+				@usage (
+						value = "A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):",
+						examples = { @example (
+								value = "diffuse var: phero on: cells proportion: 1/9 radius: 1;",
+								isExecutable = false) }) })
 public class DiffusionStatement extends AbstractStatement {
 
 	public static class DiffusionValidator implements IDescriptionValidator<StatementDescription> {
@@ -155,9 +227,7 @@ public class DiffusionStatement extends AbstractStatement {
 	}
 
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
-		if (mm == null) {
-			return null;
-		}
+		if (mm == null) { return null; }
 		final int rows = mm.getRows(scope);
 		final int cols = mm.getCols(scope);
 		final double[][] res = new double[cols][rows];
@@ -173,10 +243,10 @@ public class DiffusionStatement extends AbstractStatement {
 			final boolean is_gradient) {
 		double[][] input_mat_diffu = basicMatrix;
 		for (int nb = 2; nb <= numberOfIteration; nb++) {
-			final double[][] output_mat_diffu = new double[(basicMatrix.length - 1) * nb
-					+ 1][(basicMatrix[0].length - 1) * nb + 1];
-			for (int i = 0; i < output_mat_diffu.length; i++) {
-				Arrays.fill(output_mat_diffu[i], 0);
+			final double[][] output_mat_diffu =
+					new double[(basicMatrix.length - 1) * nb + 1][(basicMatrix[0].length - 1) * nb + 1];
+			for (final double[] element : output_mat_diffu) {
+				Arrays.fill(element, 0);
 			}
 			for (int i = 0; i < input_mat_diffu.length; i++) {
 				for (int j = 0; j < input_mat_diffu[0].length; j++) {
@@ -219,7 +289,9 @@ public class DiffusionStatement extends AbstractStatement {
 		return pop;
 	}
 
-	private double[][] computeMask(final IScope scope, final IMatrix<?> mm, GridPopulation<? extends IAgent> pop) {
+	private double[][] computeMask(final IScope scope, final IMatrix<?> mm,
+			final GridPopulation<? extends IAgent> population) {
+		GridPopulation<? extends IAgent> pop = population;
 		double[][] mask = null;
 
 		// if the mask is not null, translate the mask
@@ -242,9 +314,8 @@ public class DiffusionStatement extends AbstractStatement {
 		final Object obj = getFacetValue(scope, IKeyword.ON);
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
-			if (!((ISpecies) obj).isGrid()) {
-				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
-			}
+			if (!((ISpecies) obj).isGrid()) { throw GamaRuntimeException
+					.error("Diffusion statement works only on grid agents", scope); }
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
 			// Search the mask.
@@ -295,8 +366,8 @@ public class DiffusionStatement extends AbstractStatement {
 						distanceFromCenter = CmnFastMath.max(CmnFastMath.abs(i - mat_diff_size / 2),
 								CmnFastMath.abs(j - mat_diff_size / 2));
 					} else {
-						distanceFromCenter = CmnFastMath.abs(i - mat_diff_size / 2)
-								+ CmnFastMath.abs(j - mat_diff_size / 2);
+						distanceFromCenter =
+								CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
 					}
 					mat_diffu[i][j] = proportion / FastMath.pow(nb_neighbors, distanceFromCenter)
 							- distanceFromCenter * variation;
@@ -340,8 +411,8 @@ public class DiffusionStatement extends AbstractStatement {
 							distanceFromCenter = Math.max(CmnFastMath.abs(i - mat_diff_size / 2),
 									CmnFastMath.abs(j - mat_diff_size / 2));
 						} else {
-							distanceFromCenter = CmnFastMath.abs(i - mat_diff_size / 2)
-									+ CmnFastMath.abs(j - mat_diff_size / 2);
+							distanceFromCenter =
+									CmnFastMath.abs(i - mat_diff_size / 2) + CmnFastMath.abs(j - mat_diff_size / 2);
 						}
 						mat_diffu[i][j] = mat_diffu[i][j] - distanceFromCenter * variation;
 					}
@@ -391,9 +462,7 @@ public class DiffusionStatement extends AbstractStatement {
 			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
 		}
 
-		if (minValue < 0) {
-			throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
-		}
+		if (minValue < 0) { throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope); }
 
 		if (pop != null) {
 			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop,

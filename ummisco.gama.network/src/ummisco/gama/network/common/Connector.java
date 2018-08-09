@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Connector.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Connector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,103 +16,95 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
 
-public abstract class Connector implements IConnector{
-	
-	private final static int REGISTER_GROUP_THREAD_SAFE_ACTION = 0;
-	private final static int SUBSCRIBE_GROUP_THREAD_SAFE_ACTION = 1;
-	private final static int CONNECTION_THREAD_SAFE_ACTION = 2;
-	private final static int REGISTER_USER_THREAD_SAFE_ACTION = 3;
-	private final static int UNSUBSCRIBE_GROUP_THREAD_SAFE_ACTION = 4;
-	
+public abstract class Connector implements IConnector {
+
+	// private final static int REGISTER_GROUP_THREAD_SAFE_ACTION = 0;
+	// private final static int SUBSCRIBE_GROUP_THREAD_SAFE_ACTION = 1;
+	// private final static int CONNECTION_THREAD_SAFE_ACTION = 2;
+	// private final static int REGISTER_USER_THREAD_SAFE_ACTION = 3;
+	// private final static int UNSUBSCRIBE_GROUP_THREAD_SAFE_ACTION = 4;
+
 	private final static int FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION = 5;
 	private final static int PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION = 8;
-	
-	
-	
-	//connector Configuration data
+
+	// connector Configuration data
 	protected Map<String, String> connectionParameter;
-	
-	//Box ordered map
+
+	// Box ordered map
 	protected Map<String, ArrayList<IAgent>> boxFollower;
-	
-	//Received messages 
-	protected Map<IAgent,LinkedList<ConnectorMessage>> receivedMessage;
-	
+
+	// Received messages
+	protected Map<IAgent, LinkedList<ConnectorMessage>> receivedMessage;
+
 	protected List<String> LocalMemberNames;
-	   
-	protected List<String> topicSuscribingPending ;
+
+	protected List<String> topicSuscribingPending;
 	protected boolean isConnected = false;
 
 	Object lockGroupManagment = new Object();
-	
-	protected Connector()
-	{
+
+	protected Connector() {
 		super();
 		boxFollower = new HashMap<>();
 		topicSuscribingPending = Collections.synchronizedList(new ArrayList<String>());
-		connectionParameter = new HashMap<String,String>();
-		receivedMessage = new HashMap<IAgent,LinkedList<ConnectorMessage>>();
-		LocalMemberNames = new ArrayList<String>();
+		connectionParameter = new HashMap<>();
+		receivedMessage = new HashMap<>();
+		LocalMemberNames = new ArrayList<>();
 	}
-	
-	public void configure(String parameterName,String value)
-	{
+
+	@Override
+	public void configure(final String parameterName, final String value) {
 		this.connectionParameter.put(parameterName, value);
 	}
-	
-	protected String getConfigurationParameter(String name)
-	{
+
+	protected String getConfigurationParameter(final String name) {
 		return this.connectionParameter.get(name);
 	}
-		
+
 	protected void setConnected() {
 		this.isConnected = true;
 	}
-	
-	public List<ConnectorMessage> fetchMessageBox(IAgent agent)
-	{
-		List<ConnectorMessage> currentMessage = receivedMessage.get(agent);
-		this.receivedMessage.put(agent,new LinkedList<ConnectorMessage>());
+
+	@Override
+	public List<ConnectorMessage> fetchMessageBox(final IAgent agent) {
+		final List<ConnectorMessage> currentMessage = receivedMessage.get(agent);
+		this.receivedMessage.put(agent, new LinkedList<ConnectorMessage>());
 		return currentMessage;
 	}
-	
-	protected void storeMessage(String receiver, String content) throws GamaNetworkException
-	{
-		ArrayList<IAgent> bb = this.boxFollower.get(receiver);
-		ConnectorMessage msg = NetworkMessage.unPackMessage(receiver,content);
-		pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION,receiver,msg);
+
+	protected void storeMessage(final String receiver, final String content) throws GamaNetworkException {
+		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
+		final ConnectorMessage msg = NetworkMessage.unPackMessage(receiver, content);
+		pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
 	}
-	
-	private  Map<IAgent,LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(int action, String groupName,ConnectorMessage message)
-	{
-		synchronized(lockGroupManagment)
-		{
-			switch(action)
-			{
+
+	private Map<IAgent, LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(final int action, final String groupName,
+			final ConnectorMessage message) {
+		synchronized (lockGroupManagment) {
+			switch (action) {
 				case FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION: {
-					Map<IAgent,LinkedList<ConnectorMessage>> newBox = new HashMap<IAgent,LinkedList<ConnectorMessage>>();
-					for(IAgent agt:this.receivedMessage.keySet())
+					final Map<IAgent, LinkedList<ConnectorMessage>> newBox = new HashMap<>();
+					for (final IAgent agt : this.receivedMessage.keySet()) {
 						newBox.put(agt, new LinkedList<ConnectorMessage>());
-					Map<IAgent,LinkedList<ConnectorMessage>> allMessage = this.receivedMessage;
+					}
+					final Map<IAgent, LinkedList<ConnectorMessage>> allMessage = this.receivedMessage;
 					this.receivedMessage = newBox;
 					return allMessage;
 				}
 				case PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
-					ArrayList<IAgent> bb = this.boxFollower.get(groupName);
-					for(IAgent agt:bb)
-					{
-						LinkedList<ConnectorMessage> messages  = receivedMessage.get(agt);
-						if(messages != null)
+					final ArrayList<IAgent> bb = this.boxFollower.get(groupName);
+					for (final IAgent agt : bb) {
+						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
+						if (messages != null) {
 							messages.add(message);
 						}
+					}
 					break;
 				}
 			}
@@ -121,74 +112,83 @@ public abstract class Connector implements IConnector{
 		return null;
 	}
 
-	
-	public void send(final IAgent sender,final String receiver, final GamaMessage content)
-	{
-		if(this.LocalMemberNames.contains(receiver))
-			this.receivedMessage.get(receiver).push(new LocalMessage((String)sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content));
-		else {
-			CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(),content);
-			if(cmsg.getSender() instanceof IAgent)
+	@Override
+	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
+		if (this.LocalMemberNames.contains(receiver)) {
+			this.receivedMessage.get(receiver).push(
+					new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content));
+		} else {
+			final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
+			if (cmsg.getSender() instanceof IAgent) {
 				cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
-			String mss = StreamConverter.convertObjectToStream(sender.getScope(),cmsg);
-			NetworkMessage msg = new NetworkMessage((String)(sender.getAttribute(INetworkSkill.NET_AGENT_NAME)),receiver,StreamConverter.convertObjectToStream(sender.getScope(),cmsg));
-			this.sendMessage(sender,receiver,NetworkMessage.packMessage(msg));
+			}
+			// final String mss = StreamConverter.convertObjectToStream(sender.getScope(), cmsg);
+			final NetworkMessage msg = new NetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
+					receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
+			this.sendMessage(sender, receiver, NetworkMessage.packMessage(msg));
 		}
 	}
-	
-	public Map<IAgent,LinkedList<ConnectorMessage>>  fetchAllMessages()
-	{
-		return pushAndFetchthreadSafe(FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION, null,null);
+
+	@Override
+	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
+		return pushAndFetchthreadSafe(FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION, null, null);
 	}
-	
-	public void close(IScope scope) throws GamaNetworkException {
+
+	@Override
+	public void close(final IScope scope) throws GamaNetworkException {
 		releaseConnection(scope);
 		topicSuscribingPending.clear();
 		boxFollower.clear();
 		receivedMessage.clear();
 		isConnected = false;
 	}
-	
+
 	@Override
-	public void leaveTheGroup(IAgent agt, String groupName) {
+	public void leaveTheGroup(final IAgent agt, final String groupName) {
 		this.unsubscribeGroup(agt, groupName);
 		this.boxFollower.remove(groupName);
 	}
 
 	@Override
-	public void joinAGroup(IAgent agt, String groupName) {
-		if(!this.receivedMessage.keySet().contains(agt))
+	public void joinAGroup(final IAgent agt, final String groupName) {
+		if (!this.receivedMessage.keySet().contains(agt)) {
 			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
-		
+		}
+
 		ArrayList<IAgent> agentBroadcast = this.boxFollower.get(groupName);
-		
-		if(agentBroadcast ==null)
-		{
+
+		if (agentBroadcast == null) {
 			this.subscribeToGroup(agt, groupName);
-			agentBroadcast = new ArrayList<IAgent>();
+			agentBroadcast = new ArrayList<>();
 			this.boxFollower.put(groupName, agentBroadcast);
 		}
-		if(!agentBroadcast.contains(agt))
-		{
+		if (!agentBroadcast.contains(agt)) {
 			agentBroadcast.add(agt);
-			this.subscribeToGroup(agt,groupName);
-		}			
+			this.subscribeToGroup(agt, groupName);
+		}
 	}
-	
-	public void connect(IAgent agent) throws GamaNetworkException
-	{
-		String netAgent = (String)agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
-		if(!this.isConnected)
+
+	@Override
+	public void connect(final IAgent agent) throws GamaNetworkException {
+		final String netAgent = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
+		if (!this.isConnected) {
 			connectToServer(agent);
-		if(this.receivedMessage.get(netAgent) == null)
-			joinAGroup(agent,netAgent);
-		
+		}
+		if (this.receivedMessage.get(netAgent) == null) {
+			joinAGroup(agent, netAgent);
+		}
+
 	}
-	
+
 	protected abstract void connectToServer(IAgent agent) throws GamaNetworkException;
+
 	protected abstract void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException;
+
 	protected abstract void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException;
+
 	protected abstract void releaseConnection(final IScope scope) throws GamaNetworkException;
-	protected abstract void sendMessage(final IAgent sender,final String receiver, final String content) throws GamaNetworkException;
-	
+
+	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
+			throws GamaNetworkException;
+
 }

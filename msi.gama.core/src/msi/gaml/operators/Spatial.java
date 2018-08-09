@@ -1453,7 +1453,8 @@ public abstract class Spatial {
 			return result;
 		}
 
-		private static Geometry difference(Geometry g1, final Geometry g2) {
+		private static Geometry difference(final Geometry first, final Geometry g2) {
+			Geometry g1 = first;
 			if (g2 instanceof GeometryCollection) {
 				final GeometryCollection g2c = (GeometryCollection) g2;
 				final int nb = g2c.getNumGeometries();

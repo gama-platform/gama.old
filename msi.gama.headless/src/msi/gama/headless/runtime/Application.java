@@ -67,29 +67,29 @@ public class Application implements IApplication {
 	public SimulationRuntime processorQueue;
 
 	private static String showHelp() {
-		final String res =
-				" sh ./gama-headless.sh [Options] [XML Input] [output directory]\n" + "\nList of available options:"
-						+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
-						+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
-						+ "\n      -failed		   				-- only display the failed and aborted test results"
-						+ "\n      -help     				 	-- get the help of the command line"
-						+ "\n      -m mem    					-- allocate memory (ex 2048m)"
-						+ "\n      -c        					-- start the console to write xml parameter file"
-						+ "\n      -v 							-- verbose mode"
-						+ "\n      -hpc core 					-- set the number of core available for experimentation"
-						+ "\n      -p        					-- start pipeline to interact with another framework"
-						+ "\n" + "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
-						+ "\n      build an xml parameter file from a model" + "\n" + "\n";
+		final String res = " sh ./gama-headless.sh [Options] [XML Input] [output directory]\n"
+				+ "\nList of available options:"
+				+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
+				+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
+				+ "\n      -failed		   				-- only display the failed and aborted test results"
+				+ "\n      -help     				 	-- get the help of the command line"
+				+ "\n      -m mem    					-- allocate memory (ex 2048m)"
+				+ "\n      -c        					-- start the console to write xml parameter file"
+				+ "\n      -v 							-- verbose mode"
+				+ "\n      -hpc core 					-- set the number of core available for experimentation"
+				+ "\n      -p        					-- start pipeline to interact with another framework" + "\n"
+				+ "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
+				+ "\n      build an xml parameter file from a model" + "\n" + "\n";
 		return res;
 	}
 
-	private static boolean containParameter(final String[] args, final String param) {
-		for (final String p : args) {
-			if (p.equals(param))
-				return true;
-		}
-		return false;
-	}
+	// private static boolean containParameter(final String[] args, final String param) {
+	// for (final String p : args) {
+	// if (p.equals(param))
+	// return true;
+	// }
+	// return false;
+	// }
 
 	private boolean checkParameters(final List<String> args) {
 
@@ -124,15 +124,17 @@ public class Application implements IApplication {
 			Globals.OUTPUT_PATH = args.get(outIndex);
 			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
 			final File output = new File(Globals.OUTPUT_PATH);
-			if (!output.exists())
+			if (!output.exists()) {
 				output.mkdir();
+			}
 			final File images = new File(Globals.IMAGES_PATH);
-			if (!images.exists())
+			if (!images.exists()) {
 				images.mkdir();
+			}
 		}
 
 		if (mustContainInFile) {
-			final int inIndex = mustContainOutFile ?  args.size() - 2 :  args.size() - 1;
+			final int inIndex = mustContainOutFile ? args.size() - 2 : args.size() - 1;
 			final File input = new File(args.get(inIndex));
 			if (!input.exists()) {
 				showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args.get(inIndex));
@@ -172,11 +174,9 @@ public class Application implements IApplication {
 	}
 
 	public String after(final List<String> args, final String arg) {
-		if (args == null || args.size() < 2)
-			return null;
+		if (args == null || args.size() < 2) { return null; }
 		for (int i = 0; i < args.size() - 1; i++) {
-			if (args.get(i).equals(arg))
-				return args.get(i + 1);
+			if (args.get(i).equals(arg)) { return args.get(i + 1); }
 		}
 		return null;
 	}
@@ -196,7 +196,7 @@ public class Application implements IApplication {
 		}
 		HeadlessSimulationLoader.preloadGAMA();
 		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg.get(arg.size() - 2));
-		final ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
+		final ArrayList<IExperimentJob> selectedJob = new ArrayList<>();
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(arg.get(arg.size() - 3))) {
 				selectedJob.add(j);
@@ -219,7 +219,7 @@ public class Application implements IApplication {
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		// "arg[]" are the paths to the different models
 		HeadlessSimulationLoader.preloadGAMA();
-		final ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
+		final ArrayList<IExperimentJob> selectedJob = new ArrayList<>();
 		for (final File modelFile : modelPaths) {
 			final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(modelFile.getAbsolutePath());
 			for (final IExperimentJob j : jb) {
@@ -268,17 +268,18 @@ public class Application implements IApplication {
 		HeadlessSimulationLoader.preloadGAMA();
 		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
 		this.consoleMode = args.contains(CONSOLE_PARAMETER);
-		if (args.contains(THREAD_PARAMETER))
+		if (args.contains(THREAD_PARAMETER)) {
 			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
-		else
+		} else {
 			numberOfThread = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+		}
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
 		Reader in = null;
 		if (this.verbose && !this.tunnelingMode) {
 			SystemLogger.activeDisplay();
 		}
-	
+
 		if (this.consoleMode) {
 			in = new Reader(ConsoleReader.readOnConsole());
 		} else {

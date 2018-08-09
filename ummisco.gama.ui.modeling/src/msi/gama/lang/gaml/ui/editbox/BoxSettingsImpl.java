@@ -83,7 +83,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 		final BoxSettingsImpl o = (BoxSettingsImpl) other;
 		name = o.getName();
 		enabled = o.getEnabled();
-		fileNames = o.fileNames == null ? null : new ArrayList<String>(o.fileNames);
+		fileNames = o.fileNames == null ? null : new ArrayList<>(o.fileNames);
 		borderColor = setColorCopy(borderColor, o.borderColor);
 		highlightColor = setColorCopy(highlightColor, o.highlightColor);
 		fillColor = setColorCopy(fillColor, o.fillColor);
@@ -118,27 +118,32 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	private Color[] copyColors(final BoxSettingsImpl o) {
 		final Color[] newBoxColors = o.boxColors == null ? null : new Color[o.boxColors.length];
-		if (newBoxColors != null)
+		if (newBoxColors != null) {
 			for (int i = 0; i < newBoxColors.length; i++) {
 				final Color c = o.boxColors[i];
-				if (c != null)
+				if (c != null) {
 					newBoxColors[i] = new Color(null, c.getRGB());
+				}
 			}
+		}
 		return newBoxColors;
 	}
 
 	private Color[] disposeColors(final Color[] oldBoxColors) {
 		if (oldBoxColors != null) {
-			for (int i = 0; i < oldBoxColors.length; i++)
-				if (oldBoxColors[i] != null)
-					oldBoxColors[i].dispose();
+			for (final Color oldBoxColor : oldBoxColors) {
+				if (oldBoxColor != null) {
+					oldBoxColor.dispose();
+				}
+			}
 		}
 		return null;
 	}
 
 	protected Color setColorCopy(final Color old, final Color newColor) {
-		if (old != null)
+		if (old != null) {
 			old.dispose();
+		}
 		return newColor == null ? null : new Color(null, newColor.getRGB());
 	}
 
@@ -151,7 +156,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 	public void load(final String string) {
 		final StringExternalization ext = new StringExternalization();
 		boolean error = false;
-		if (string != null)
+		if (string != null) {
 			try {
 				ext.load(string, this);
 			} catch (final Exception e) {
@@ -159,6 +164,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 				// string: " + string, e);
 				error = true;
 			}
+		}
 		if (error || string == null) {
 			this.copyFrom(DEFAULT);
 		}
@@ -172,10 +178,11 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	@Override
 	public void load(final InputStream stream) throws Exception {
-		if (stream == null)
+		if (stream == null) {
 			load((String) null);
-		else
+		} else {
 			new StringExternalization().load(stream, this);
+		}
 		notifyChange(PropertiesKeys.ALL.name(), null, null);
 	}
 
@@ -228,14 +235,14 @@ public class BoxSettingsImpl implements IBoxSettings {
 	}
 
 	protected Color setColor0(final Color old, final RGB c) {
-		if (c == null)
-			return old;
+		if (c == null) { return old; }
 		return setColor0(old, new Color(null, c));
 	}
 
 	protected Color disposeColor(final Color c) {
-		if (c != null)
+		if (c != null) {
 			c.dispose();
+		}
 		return null;
 	}
 
@@ -246,8 +253,9 @@ public class BoxSettingsImpl implements IBoxSettings {
 		fillColor = disposeColor(fillColor);
 		disposeColors(boxColors);
 		boxColors = null;
-		if (listeners != null)
+		if (listeners != null) {
 			listeners.clear();
+		}
 	}
 
 	@Override
@@ -416,8 +424,9 @@ public class BoxSettingsImpl implements IBoxSettings {
 			boxColors = null;
 		} else {
 			final Color[] c = new Color[gradient.length];
-			for (int i = 0; i < gradient.length; i++)
+			for (int i = 0; i < gradient.length; i++) {
 				c[i] = new Color(null, gradient[i]);
+			}
 			disposeColors(boxColors);
 			boxColors = c;
 		}
@@ -425,22 +434,26 @@ public class BoxSettingsImpl implements IBoxSettings {
 	}
 
 	@Override
-	public void setColorsSize(int n) {
-		n++;
+	public void setColorsSize(final int nb) {
+
+		final int n = nb + 1;
 		Color[] newColors = null;
 		if (n == 0) {
 			disposeColors(boxColors);
 		} else if (boxColors != null) {
 			newColors = new Color[n];
 			for (int i = 0; i < n; i++) {
-				if (i >= boxColors.length)
+				if (i >= boxColors.length) {
 					break;
+				}
 				newColors[i] = boxColors[i];
 			}
-			for (int i = n; i < boxColors.length; i++)
+			for (int i = n; i < boxColors.length; i++) {
 				disposeColor(boxColors[i]);
-		} else
+			}
+		} else {
 			newColors = new Color[n];
+		}
 		boxColors = newColors;
 		notifyChange(PropertiesKeys.Colors.name(), null, null);
 	}
@@ -452,24 +465,22 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	@Override
 	public Color getBorderColor(final int level) {
-		if (borderColorType < 1)
-			return borderColor;
+		if (borderColorType < 1) { return borderColor; }
 
-		if (boxColors == null)
-			return null;
+		if (boxColors == null) { return null; }
 
-		if (borderColors != null && borderColors.length != boxColors.length)
+		if (borderColors != null && borderColors.length != boxColors.length) {
 			borderColors = disposeColors(borderColors);
+		}
 
-		if (borderColors == null)
+		if (borderColors == null) {
 			borderColors = new Color[boxColors.length];
+		}
 
 		final int idx = getColorIndex(level);
 		if (idx > -1) {
-			if (borderColors[idx] != null)
-				return borderColors[idx];
-			if (boxColors[idx] == null)
-				return null;
+			if (borderColors[idx] != null) { return borderColors[idx]; }
+			if (boxColors[idx] == null) { return null; }
 			return borderColors[idx] = calculateDarkerColor(boxColors[idx], borderColorType);
 		}
 
@@ -487,24 +498,22 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	@Override
 	public Color getHighlightColor(final int level) {
-		if (highlightColorType < 1)
-			return highlightColor;
+		if (highlightColorType < 1) { return highlightColor; }
 
-		if (boxColors == null)
-			return null;
+		if (boxColors == null) { return null; }
 
-		if (highlightColors != null && highlightColors.length != boxColors.length)
+		if (highlightColors != null && highlightColors.length != boxColors.length) {
 			highlightColors = disposeColors(highlightColors);
+		}
 
-		if (highlightColors == null)
+		if (highlightColors == null) {
 			highlightColors = new Color[boxColors.length];
+		}
 
 		final int idx = getColorIndex(level);
 		if (idx > -1) {
-			if (highlightColors[idx] != null)
-				return highlightColors[idx];
-			if (boxColors[idx] == null)
-				return null;
+			if (highlightColors[idx] != null) { return highlightColors[idx]; }
+			if (boxColors[idx] == null) { return null; }
 			return highlightColors[idx] = calculateDarkerColor(boxColors[idx], highlightColorType);
 		}
 
@@ -534,10 +543,9 @@ public class BoxSettingsImpl implements IBoxSettings {
 	}
 
 	public int getColorIndex(final int level) {
-		if (boxColors != null && boxColors.length == 1 && noBackground && level > 0)
-			return -1;
-		if (!circulateLevelColors && boxColors != null && boxColors.length <= level && boxColors.length > 0)
-			return boxColors.length - 1;
+		if (boxColors != null && boxColors.length == 1 && noBackground && level > 0) { return -1; }
+		if (!circulateLevelColors && boxColors != null && boxColors.length <= level
+				&& boxColors.length > 0) { return boxColors.length - 1; }
 		if (boxColors != null && boxColors.length > 0 && level > -1) { return getNColor0(level); }
 		return -1;
 	}
@@ -545,25 +553,23 @@ public class BoxSettingsImpl implements IBoxSettings {
 	@Override
 	public Color getColor(final int level) {
 		final int idx = getColorIndex(level);
-		if (idx > -1)
-			return boxColors[idx];
+		if (idx > -1) { return boxColors[idx]; }
 		return null;
 	}
 
 	int getNColor0(final int n) {
 		final int len = boxColors.length;
-		if (len < 2)
-			return 0;
+		if (len < 2) { return 0; }
 		final int x = n % (len + len - 2);
-		if (x < len)
-			return x;
+		if (x < len) { return x; }
 		return len - (x - len + 2);
 	}
 
 	@Override
 	public void setColor(final int level, final RGB rgb) {
-		if (boxColors != null && boxColors.length > 0 && level > -1)
+		if (boxColors != null && boxColors.length > 0 && level > -1) {
 			boxColors[level % boxColors.length] = setColor0(boxColors[level % boxColors.length], rgb);
+		}
 		notifyChange(PropertiesKeys.Color.name(), null, null);
 	}
 
@@ -591,14 +597,10 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	@Override
 	public int getFillKeyModifierSWTInt() {
-		if (fillKeyModifier == null || fillKeyModifier.length() == 0)
-			return 0;
-		if ("Alt".equals(fillKeyModifier))
-			return SWT.ALT;
-		if ("Ctrl".equals(fillKeyModifier))
-			return SWT.CTRL;
-		if ("Shift".equals(fillKeyModifier))
-			return SWT.SHIFT;
+		if (fillKeyModifier == null || fillKeyModifier.length() == 0) { return 0; }
+		if ("Alt".equals(fillKeyModifier)) { return SWT.ALT; }
+		if ("Ctrl".equals(fillKeyModifier)) { return SWT.CTRL; }
+		if ("Shift".equals(fillKeyModifier)) { return SWT.SHIFT; }
 		return 0;
 	}
 
@@ -705,33 +707,29 @@ public class BoxSettingsImpl implements IBoxSettings {
 		}
 
 		private Color[] parseColorsArray(final Object o) {
-			if (o == null || o.equals("null"))
-				return null;
+			if (o == null || o.equals("null")) { return null; }
 			final String[] s = o.toString().split("-");
 			final Color[] c = new Color[s.length];
-			for (int i = 0; i < c.length; i++)
+			for (int i = 0; i < c.length; i++) {
 				c[i] = parseColor(s[i]);
+			}
 			return c;
 		}
 
 		private boolean parseBool(final Object o) {
-			if (o == null)
-				return false;
+			if (o == null) { return false; }
 			return o.equals("true");
 		}
 
 		private int parseInt(final Object o) {
-			if (o == null || o.equals("null"))
-				return 0;
+			if (o == null || o.equals("null")) { return 0; }
 			return Integer.parseInt(o.toString());
 		}
 
 		private Color parseColor(final Object o) {
-			if (o == null || o.equals("null"))
-				return null;
+			if (o == null || o.equals("null")) { return null; }
 			final String c = o.toString();
-			if (c.length() != 6)
-				return null;
+			if (c.length() != 6) { return null; }
 			try {
 				final int r = Integer.parseInt(c.substring(0, 2), 16);
 				final int g = Integer.parseInt(c.substring(2, 4), 16);
@@ -743,8 +741,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 		}
 
 		private String parseString(final Object o) {
-			if (o == null || o.equals("null"))
-				return null;
+			if (o == null || o.equals("null")) { return null; }
 			return o.toString();
 		}
 
@@ -754,12 +751,13 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 		private String toS(final Color[] colors) {
 			final StringBuilder sb = new StringBuilder();
-			if (colors == null || colors.length == 0)
+			if (colors == null || colors.length == 0) {
 				sb.append("null");
-			else {
+			} else {
 				for (int i = 0; i < colors.length; i++) {
-					if (i > 0)
+					if (i > 0) {
 						sb.append("-");
+					}
 					sb.append(toS(colors[i]));
 				}
 			}
@@ -776,8 +774,9 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 		private String toHex(final int v) {
 			String s = Integer.toHexString(v);
-			if (s.length() == 1)
+			if (s.length() == 1) {
 				s = "0" + s;
+			}
 			return s;
 		}
 
@@ -788,22 +787,25 @@ public class BoxSettingsImpl implements IBoxSettings {
 
 	@Override
 	public void addPropertyChangeListener(final IPropertyChangeListener listener) {
-		if (listeners == null)
-			listeners = new ArrayList<IPropertyChangeListener>();
+		if (listeners == null) {
+			listeners = new ArrayList<>();
+		}
 		listeners.add(listener);
 	}
 
 	@Override
 	public void removePropertyChangeListener(final IPropertyChangeListener listener) {
-		if (listeners != null)
+		if (listeners != null) {
 			listeners.remove(listener);
+		}
 	}
 
 	protected void notifyChange(final String propertyName, final Object oldValue, final Object newValue) {
 		if (listeners != null) {
 			final PropertyChangeEvent e = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
-			for (final IPropertyChangeListener listener : listeners)
+			for (final IPropertyChangeListener listener : listeners) {
 				listener.propertyChange(e);
+			}
 		}
 	}
 

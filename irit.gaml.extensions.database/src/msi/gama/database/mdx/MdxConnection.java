@@ -535,8 +535,8 @@ public abstract class MdxConnection {
 	 * print all column names
 	 */
 
-	public String parseMdx(String queryStr, final IList<Object> condition_values) throws GamaRuntimeException {
-
+	public String parseMdx(final String str, final IList<Object> condition_values) throws GamaRuntimeException {
+		String queryStr = str;
 		final int condition_count = condition_values.size();
 		// set value for each condition
 		for (int i = 0; i < condition_count; i++) {
