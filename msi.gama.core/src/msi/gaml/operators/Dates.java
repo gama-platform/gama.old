@@ -74,7 +74,7 @@ public class Dates {
 	public static final String DEFAULT_KEY = "DEFAULT";
 	public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	public static final String ISO_SIMPLE_FORMAT = "yy-MM-dd HH:mm:ss";
-	private static final DurationFormatter DURATION_FORMATTER = new DurationFormatter();
+	static final DurationFormatter DURATION_FORMATTER = new DurationFormatter();
 
 	public static HashMap<String, DateTimeFormatter> FORMATTERS = new HashMap<String, DateTimeFormatter>() {
 		{
@@ -1002,7 +1002,7 @@ public class Dates {
 		return time.toString(pattern, locale);
 	}
 
-	private static class DurationFormatter implements TemporalAccessor {
+	static class DurationFormatter implements TemporalAccessor {
 		private static final DateTimeFormatter YMDHMS = DateTimeFormatter.ofPattern("y'y' M'm' d'd' HH:mm:ss");
 		private static final DateTimeFormatter MDHMS = DateTimeFormatter.ofPattern("M' months' d 'days' HH:mm:ss");
 		private static final DateTimeFormatter M1DHMS = DateTimeFormatter.ofPattern("M' month' d 'days' HH:mm:ss");

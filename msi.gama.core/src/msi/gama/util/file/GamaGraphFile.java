@@ -6,7 +6,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IContainerType;
 
-public class GamaGraphFile extends GamaFile<IGraph, Object> {
+public class GamaGraphFile extends GamaFile<IGraph<?, ?>, Object> {
 
 	public GamaGraphFile(final IScope scope, final String pn) throws GamaRuntimeException {
 		super(scope, pn);

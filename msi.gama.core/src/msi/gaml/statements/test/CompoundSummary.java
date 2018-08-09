@@ -147,7 +147,7 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 			if (matches(s.getURI(), fileURI)) {
 				collector.add(s);
 			} else if (s instanceof CompoundSummary) {
-				((CompoundSummary) s).getSubSummariesBelongingTo(fileURI, collector);
+				((CompoundSummary<?, ?>) s).getSubSummariesBelongingTo(fileURI, collector);
 			}
 		});
 	}

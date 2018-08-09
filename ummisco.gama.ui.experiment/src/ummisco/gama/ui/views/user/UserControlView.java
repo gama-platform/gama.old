@@ -49,7 +49,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 	public static String ID = IGui.USER_CONTROL_VIEW_ID;
 
-	private IScope scope;
+	IScope scope;
 	UserPanelStatement panel;
 	private Composite body;
 	ToolItem inspectItem, continueItem;

@@ -13,7 +13,7 @@ public class GamaGraphMLFile extends GamaGraphFile {
 		super(scope, pn);
 	}
 
-	public GamaGraphMLFile(final IScope scope, final String pathName, final IGraph container) {
+	public GamaGraphMLFile(final IScope scope, final String pathName, final IGraph<?, ?> container) {
 		super(scope, pathName, container);
 	}
 
@@ -24,7 +24,7 @@ public class GamaGraphMLFile extends GamaGraphFile {
 	}
 
 	@Override
-	public IContainerType getGamlType() {
+	public IContainerType<?> getGamlType() {
 		return Types.GRAPH;
 	}
 

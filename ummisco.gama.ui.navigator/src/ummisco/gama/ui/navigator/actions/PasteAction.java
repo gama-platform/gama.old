@@ -114,7 +114,7 @@ public class PasteAction extends SelectionListenerAction {
 	 */
 	@Override
 	protected List<?> getSelectedNonResources() {
-		final List<?> result = new ArrayList(super.getSelectedNonResources());
+		final List<?> result = new ArrayList<>(super.getSelectedNonResources());
 		result.removeIf((o) -> o instanceof UserProjectsFolder);
 		return result;
 	}
@@ -128,7 +128,7 @@ public class PasteAction extends SelectionListenerAction {
 	protected List<? extends IResource> getSelectedResources() {
 		final List<?> ss = getStructuredSelection().toList();
 		final boolean hasUser = hasUser(ss);
-		final List<IResource> result = new ArrayList(super.getSelectedResources());
+		final List<IResource> result = new ArrayList<>(super.getSelectedResources());
 		if (hasUser) {
 			result.add(ResourcesPlugin.getWorkspace().getRoot());
 		}

@@ -1668,14 +1668,12 @@ public abstract class Spatial {
 						equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 						isExecutable = false) })
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles,
-				Integer precision) {
+				final Integer prec) {
+			final Integer precision = prec == null ? 120 : prec;
 			final IAgent a = scope.getAgent();
 			final List<IShape> obst =
 					obstacles == null ? new ArrayList<>() : obstacles.listValue(scope, Types.GEOMETRY, false);
 			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if (precision == null) {
-				precision = 120;
-			}
 			final Geometry visiblePercept = GeometryUtils.GEOMETRY_FACTORY.createGeometry(source.getInnerGeometry());
 			final boolean isPoint = source.isPoint();
 			if (obstacles != null && !obstacles.isEmpty(scope)) {

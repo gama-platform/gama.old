@@ -832,7 +832,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final RootTopology rt = root.getTopology();
 		rt.mergeWith(topology);
 		setTopology(rt);
-		for (final IPopulation p : getMicroPopulations()) {
+		for (final IPopulation<?> p : getMicroPopulations()) {
 			p.getTopology().setRoot(root.getScope(), rt);
 		}
 	}

@@ -83,11 +83,11 @@ public class Request {
 			final Object currentValue = params.get(name);
 			if (currentValue != null) {
 				if (currentValue instanceof Collection) {
-					final Collection values = (Collection) currentValue;
+					@SuppressWarnings ("unchecked") final Collection<Object> values = (Collection<Object>) currentValue;
 					values.add(value);
 				} else {
 					// upgrade single value to set of values
-					final Collection values = new ArrayList<>();
+					final Collection<Object> values = new ArrayList<>();
 					values.add(currentValue);
 					values.add(value);
 					params.put(name, values);
@@ -358,6 +358,7 @@ public class Request {
 	 * 
 	 * @return the created <code>Response</code> object carrying the payload from the server as <code>byte[]</code>
 	 */
+	@SuppressWarnings ("unchecked")
 	public Response<byte[]> asBytes() {
 		return webb.execute(this, Const.BYTE_ARRAY_CLASS);
 	}

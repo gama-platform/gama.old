@@ -93,7 +93,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 
 	@Override
 	public void run() {
-		final Iterator itr = getSelectedResources().iterator();
+		final Iterator<?> itr = getSelectedResources().iterator();
 		while (itr.hasNext()) {
 			final IResource resource = (IResource) itr.next();
 			if (resource instanceof IFile) {
@@ -105,7 +105,8 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
 		final List<? extends IResource> resources = new ArrayList<>(super.getSelectedResources());
-		resources.removeIf((r) -> r instanceof IFile && !NavigatorRoot.getInstance().getManager().validateLocation((IFile) r));
+		resources.removeIf(
+				(r) -> r instanceof IFile && !NavigatorRoot.getInstance().getManager().validateLocation((IFile) r));
 		return resources;
 	}
 

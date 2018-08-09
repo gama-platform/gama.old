@@ -131,7 +131,7 @@ public class GamaColors {
 
 	static HashMap<RGB, GamaUIColor> colors = new HashMap<>();
 
-	private static Color computeInactive(final Color c) {
+	static Color computeInactive(final Color c) {
 		final RGB data = c.getRGB();
 		final float[] hsb = data.getHSB();
 		final float[] newHsb = new float[3];
@@ -142,7 +142,7 @@ public class GamaColors {
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
-	private static Color computeDarker(final Color c) {
+	static Color computeDarker(final Color c) {
 		final RGB data = c.getRGB();
 		final float[] hsb = data.getHSB();
 		final float[] newHsb = new float[3];
@@ -153,12 +153,12 @@ public class GamaColors {
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
-	private static Color computeReverse(final Color c) {
+	static Color computeReverse(final Color c) {
 		final RGB data = c.getRGB();
 		return getColor(255 - data.red, 255 - data.green, 255 - data.blue);
 	}
 
-	private static Color computeLighter(final Color c) {
+	static Color computeLighter(final Color c) {
 		final RGB data = c.getRGB();
 		final float[] hsb = data.getHSB();
 		final float[] newHsb = new float[3];
@@ -169,7 +169,7 @@ public class GamaColors {
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
-	private static Color computeGray(final Color c) {
+	static Color computeGray(final Color c) {
 		final RGB data = c.getRGB();
 		final float[] hsb = data.getHSB();
 		final float[] newHsb = new float[3];
@@ -267,8 +267,7 @@ public class GamaColors {
 	}
 
 	public static GamaColor toGamaColor(final RGB color) {
-		if (color == null)
-			return GamaColor.getInt(0);
+		if (color == null) { return GamaColor.getInt(0); }
 		return new GamaColor(color.red, color.green, color.blue);
 	}
 

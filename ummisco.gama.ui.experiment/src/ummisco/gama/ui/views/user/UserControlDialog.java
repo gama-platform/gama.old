@@ -56,10 +56,10 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	public static class PreviousDialog {
 
-		private final Point location;
-		private final Point extent;
-		private final boolean toggled;
-		private final String name;
+		final Point location;
+		final Point extent;
+		final boolean toggled;
+		final String name;
 
 		PreviousDialog(final UserControlDialog d) {
 			location = d.getShell().getLocation();

@@ -572,7 +572,8 @@ public final class FastMath extends CmnFastMath {
 	 * @return true if angRad is in the clockwise angular domain going from startAngRad, over angSpanRad, extremities
 	 *         included, false otherwise.
 	 */
-	public static boolean isInClockwiseDomain(double startAngRad, final double angSpanRad, final double angRad) {
+	public static boolean isInClockwiseDomain(final double start, final double angSpanRad, final double angRad) {
+		double startAngRad = start;
 		if (Math.abs(angRad) < -TWO_MATH_PI_IN_MINUS_PI_PI) {
 			// special case for angular values of small magnitude
 			if (angSpanRad <= 2 * Math.PI) {
@@ -691,7 +692,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value hyperbolic cosine, minus 1.
 	 */
-	public static double coshm1(double value) {
+	public static double coshm1(final double val) {
+		double value = val;
 		// cosh(x)-1 = (exp(x)+exp(-x))/2 - 1
 		if (value < 0.0) {
 			value = -value;
@@ -740,7 +742,8 @@ public final class FastMath extends CmnFastMath {
 	 *            (out) Value hyperbolic cosine.
 	 * @return Value hyperbolic sine.
 	 */
-	public static double sinhAndCosh(double value, final DoubleWrapper hcosine) {
+	public static double sinhAndCosh(final double val, final DoubleWrapper hcosine) {
+		double value = val;
 		if (USE_JDK_MATH) {
 			hcosine.value = Math.cosh(value);
 			return Math.sinh(value);
@@ -833,7 +836,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value hyperbolic arcsine.
 	 */
-	public static double asinh(double value) {
+	public static double asinh(final double val) {
+		double value = val;
 		// asinh(x) = log(x + sqrt(x^2 + 1))
 		boolean negateResult = false;
 		if (value < 0.0) {
@@ -951,7 +955,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value hyperbolic arctangent.
 	 */
-	public static double atanh(double value) {
+	public static double atanh(final double val) {
+		double value = val;
 		boolean negateResult = false;
 		if (value < 0.0) {
 			value = -value;
@@ -1092,7 +1097,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value logarithm (base e).
 	 */
-	public static double log(double value) {
+	public static double log(final double val) {
+		double value = val;
 		if (USE_JDK_MATH || !USE_REDEFINED_LOG) { return Math.log(value); }
 		if (value > 0.0) {
 			if (value == Double.POSITIVE_INFINITY) { return Double.POSITIVE_INFINITY; }
@@ -1164,7 +1170,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value, in ]0,+Infinity[ (strictly positive and finite).
 	 * @return Value logarithm (base e).
 	 */
-	public static double logQuick(double value) {
+	public static double logQuick(final double val) {
+		double value = val;
 		if (USE_JDK_MATH) { return Math.log(value); }
 		/*
 		 * Inverse of Schraudolph's method for exp, is very inaccurate near 1, and not that fast (even using floats),
@@ -1361,7 +1368,9 @@ public final class FastMath extends CmnFastMath {
 	 *            A power.
 	 * @return value^power.
 	 */
-	public static double powFast(double value, int power) {
+	public static double powFast(final double val, final int pow) {
+		double value = val;
+		int power = pow;
 		if (USE_JDK_MATH) { return Math.pow(value, power); }
 		if (power < 3) {
 			if (power < 0) {
@@ -1452,7 +1461,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value square root.
 	 */
-	public static double sqrt(double value) {
+	public static double sqrt(final double val) {
+		double value = val;
 		if (USE_JDK_MATH || !USE_REDEFINED_SQRT) { return Math.sqrt(value); }
 		// See cbrt for comments, sqrt uses the same ideas.
 
@@ -1942,7 +1952,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A float value.
 	 * @return Value rounded to nearest int, choosing even int in case two are equally close.
 	 */
-	public static int roundEven(float value) {
+	public static int roundEven(final float val) {
+		float value = val;
 		final int sign = signFromBit(value);
 		value = Math.abs(value);
 		if (ANTI_SLOW_CASTS) {
@@ -1969,7 +1980,8 @@ public final class FastMath extends CmnFastMath {
 	 *            A double value.
 	 * @return Value rounded to nearest long, choosing even long in case two are equally close.
 	 */
-	public static long roundEven(double value) {
+	public static long roundEven(final double val) {
+		double value = val;
 		final int sign = (int) signFromBit(value);
 		value = Math.abs(value);
 		if (value < TWO_POW_52) {
@@ -1991,7 +2003,8 @@ public final class FastMath extends CmnFastMath {
 	 * @return The float mathematical integer closest to the specified value, choosing even one if two are equally
 	 *         close, or respectively NaN, +-Infinity or +-0.0f if the value is any of these.
 	 */
-	public static float rint(float value) {
+	public static float rint(final float val) {
+		float value = val;
 		final int sign = signFromBit(value);
 		value = Math.abs(value);
 		if (value < TWO_POW_23_F) {
@@ -2008,7 +2021,8 @@ public final class FastMath extends CmnFastMath {
 	 * @return The double mathematical integer closest to the specified value, choosing even one if two are equally
 	 *         close, or respectively NaN, +-Infinity or +-0.0 if the value is any of these.
 	 */
-	public static double rint(double value) {
+	public static double rint(final double val) {
+		double value = val;
 		if (USE_JDK_MATH) { return Math.rint(value); }
 		final int sign = (int) signFromBit(value);
 		value = Math.abs(value);
@@ -2145,7 +2159,8 @@ public final class FastMath extends CmnFastMath {
 	 *            Angle in radians.
 	 * @return The same angle, in radians, but in [0,2*PI].
 	 */
-	public static double normalizeZeroTwoPiFast(double angle) {
+	public static double normalizeZeroTwoPiFast(final double a) {
+		double angle = a;
 		// Not modifying values in output range.
 		if (angle >= 0.0 && angle <= 2 * Math.PI) { return angle; }
 		angle = remainderTwoPiFast(angle);
@@ -2503,7 +2518,8 @@ public final class FastMath extends CmnFastMath {
 	 *            An int value.
 	 * @return value * 2^scaleFactor, or a value equivalent to the specified one if it is NaN, +-Infinity or +-0.0f.
 	 */
-	public static float scalb(final float value, int scaleFactor) {
+	public static float scalb(final float value, final int factor) {
+		int scaleFactor = factor;
 		// Large enough to imply overflow or underflow for
 		// a finite non-zero value.
 		final int MAX_SCALE = 2 * MAX_FLOAT_EXPONENT + 23 + 1;

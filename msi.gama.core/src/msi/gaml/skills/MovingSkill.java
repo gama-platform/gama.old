@@ -767,7 +767,8 @@ public class MovingSkill extends Skill {
 	}
 
 	protected IList initMoveAlongPath(final IScope scope, final IAgent agent, final GamaSpatialGraph graph,
-			GamaPoint currentLocation) {
+			final GamaPoint currentLoc) {
+		GamaPoint currentLocation = currentLoc;
 		final IList initVals = GamaListFactory.create();
 		Integer index = 0;
 		Integer indexSegment = 1;

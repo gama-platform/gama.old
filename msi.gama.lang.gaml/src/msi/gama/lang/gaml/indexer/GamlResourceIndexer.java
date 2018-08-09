@@ -48,13 +48,14 @@ import msi.gama.util.TOrderedHashMap;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceIndexer {
 
-	private static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
+	static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
 
 	static {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.addResourceChangeListener(event -> {
-			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD)
+			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) {
 				eraseIndex();
+			}
 		}, IResourceChangeEvent.PRE_BUILD);
 	}
 
@@ -96,7 +97,7 @@ public class GamlResourceIndexer {
 		return r.getCache().get(IMPORTED_URIS, r, () -> allLabeledImportsOf(r.getURI()));
 	}
 
-	private static class Edge {
+	static class Edge {
 		String label;
 		final URI target;
 
@@ -118,7 +119,7 @@ public class GamlResourceIndexer {
 		}
 	}
 
-	private static void addImport(final URI from, final URI to, final String label) {
+	static void addImport(final URI from, final URI to, final String label) {
 		index.addVertex(to);
 		index.addVertex(from);
 		index.addEdge(from, to, new Edge(label, to));
@@ -142,27 +143,25 @@ public class GamlResourceIndexer {
 		final Set<Edge> nativeEdges = index.containsVertex(baseURI) ? index.outgoingEdgesOf(baseURI) : null;
 		final Set<Edge> edges =
 				nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET : new HashSet(nativeEdges);
-		if (r.getContents().isEmpty())
-			return null;
+		if (r.getContents().isEmpty()) { return null; }
 		final EObject contents = r.getContents().get(0);
-		if (contents == null)
-			return null;
+		if (contents == null) { return null; }
 		final boolean isModel = contents instanceof Model;
 		final boolean isExpe = contents instanceof ExperimentFileStructure;
 		final TOrderedHashMap<URI, String> added;
-		if (isModel)
+		if (isModel) {
 			added = getImportsAsAbsoluteURIS(baseURI, (Model) contents);
-		else if (isExpe)
+		} else if (isExpe) {
 			added = getImportsAsAbsoluteURIS(baseURI, (ExperimentFileStructure) contents);
-		else
+		} else {
 			return null;
+		}
 		final EObject[] faulty = new EObject[1];
 		if (added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
 
 			@Override
 			public boolean execute(final URI uri, final String b) {
-				if (baseURI.equals(uri))
-					return true;
+				if (baseURI.equals(uri)) { return true; }
 				final Iterator<Edge> iterator = edges.iterator();
 				boolean found = false;
 				while (iterator.hasNext()) {
@@ -176,7 +175,7 @@ public class GamlResourceIndexer {
 						break;
 					}
 				}
-				if (!found)
+				if (!found) {
 					if (EcoreUtil2.isValidUri(r, uri)) {
 						final boolean alreadyThere = index.containsVertex(uri);
 						addImport(baseURI, uri, b);
@@ -186,29 +185,27 @@ public class GamlResourceIndexer {
 							r.getResourceSet().getResource(uri, true);
 						}
 					} else {
-						if (isModel)
+						if (isModel) {
 							faulty[0] = findImport((Model) contents, uri);
-						else
+						} else {
 							faulty[0] = findImport((ExperimentFileStructure) contents, uri);
+						}
 						return false;
 					}
+				}
 				return true;
 			}
 
 			private EObject findImport(final ExperimentFileStructure model, final URI uri) {
-				if (model.getExp().getImportURI().contains(URI.decode(uri.lastSegment())))
-					return model;
-				if (uri.equals(baseURI) && model.getExp().getImportURI().isEmpty())
-					return model;
+				if (model.getExp().getImportURI().contains(URI.decode(uri.lastSegment()))) { return model; }
+				if (uri.equals(baseURI) && model.getExp().getImportURI().isEmpty()) { return model; }
 				return null;
 			}
 
 			private EObject findImport(final Model model, final URI uri) {
 				for (final Import e : model.getImports()) {
-					if (e.getImportURI().contains(URI.decode(uri.lastSegment())))
-						return e;
-					if (uri.equals(baseURI) && e.getImportURI().isEmpty())
-						return e;
+					if (e.getImportURI().contains(URI.decode(uri.lastSegment()))) { return e; }
+					if (uri.equals(baseURI) && e.getImportURI().isEmpty()) { return e; }
 				}
 				return null;
 			}
@@ -233,8 +230,7 @@ public class GamlResourceIndexer {
 				}
 				imports.put(b, r);
 				return true;
-			}))
-				return imports;
+			})) { return imports; }
 
 		}
 		return null;
@@ -245,8 +241,7 @@ public class GamlResourceIndexer {
 	 */
 	public static Set<URI> directImportersOf(final URI uri) {
 		final URI newURI = GamlResourceServices.properlyEncodedURI(uri);
-		if (index.containsVertex(newURI))
-			return new HashSet(Graphs.predecessorListOf(index, newURI));
+		if (index.containsVertex(newURI)) { return new HashSet(Graphs.predecessorListOf(index, newURI)); }
 		return Collections.EMPTY_SET;
 	}
 
@@ -255,8 +250,7 @@ public class GamlResourceIndexer {
 	 */
 	public static Set<URI> directImportsOf(final URI uri) {
 		final URI newURI = GamlResourceServices.properlyEncodedURI(uri);
-		if (index.containsVertex(newURI))
-			return new HashSet(Graphs.successorListOf(index, newURI));
+		if (index.containsVertex(newURI)) { return new HashSet(Graphs.successorListOf(index, newURI)); }
 		return Collections.EMPTY_SET;
 	}
 
@@ -285,8 +279,8 @@ public class GamlResourceIndexer {
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#allImportsOf(org.eclipse.emf.common.util.URI)
 	 */
 	public static Iterator<URI> allImportsOf(final URI uri) {
-		if (!indexes(uri))
-			return Iterators.singletonIterator(uri);//.emptyIterator();
+		if (!indexes(uri)) { return Iterators.singletonIterator(uri);// .emptyIterator();
+		}
 		final Iterator<URI> result = new BreadthFirstIterator(index, GamlResourceServices.properlyEncodedURI(uri));
 		result.next(); // to eliminate the uri
 		return result;
@@ -297,10 +291,8 @@ public class GamlResourceIndexer {
 	}
 
 	public static boolean equals(final URI uri1, final URI uri2) {
-		if (uri1 == null)
-			return uri2 == null;
-		if (uri2 == null)
-			return false;
+		if (uri1 == null) { return uri2 == null; }
+		if (uri2 == null) { return false; }
 		return GamlResourceServices.properlyEncodedURI(uri1).equals(GamlResourceServices.properlyEncodedURI(uri2));
 	}
 

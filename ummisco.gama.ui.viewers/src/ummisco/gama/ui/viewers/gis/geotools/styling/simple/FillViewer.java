@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FillViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FillViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,6 +11,7 @@ package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 
 import java.awt.Color;
 import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -54,6 +54,7 @@ import org.geotools.styling.StyleBuilder;
  * <li>getFill( StyleBuilder ) - construct a Fill based on fields
  * </ul>
  * </p>
+ * 
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -71,7 +72,7 @@ public class FillViewer {
 	StolenColorEditor chooser;
 	Combo percent;
 
-	private class Listener implements SelectionListener, ModifyListener {
+	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -94,12 +95,12 @@ public class FillViewer {
 				FillViewer.this.color = FillViewer.this.chooser.getColor();
 				try {
 					String ptext = FillViewer.this.percent.getText();
-					if ( ptext.endsWith("%") ) { //$NON-NLS-1$
+					if (ptext.endsWith("%")) { //$NON-NLS-1$
 						ptext = ptext.substring(0, ptext.length() - 1);
 						FillViewer.this.opacity = Double.parseDouble(ptext) / 100.0;
 					} else {
 						FillViewer.this.opacity = Double.parseDouble(ptext);
-						if ( FillViewer.this.opacity > 1 ) {
+						if (FillViewer.this.opacity > 1) {
 							FillViewer.this.opacity /= 100.0;
 						}
 					}
@@ -123,6 +124,7 @@ public class FillViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
+	 * 
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -131,11 +133,13 @@ public class FillViewer {
 
 	/**
 	 * Remove listener.
+	 * 
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
-		if ( this.listener == listener1 )
+		if (this.listener == listener1) {
 			this.listener = null;
+		}
 	}
 
 	/**
@@ -144,8 +148,7 @@ public class FillViewer {
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
-		if ( this.listener == null )
-			return;
+		if (this.listener == null) { return; }
 		this.listener.widgetSelected(event);
 	}
 
@@ -174,19 +177,19 @@ public class FillViewer {
 
 	/**
 	 * TODO summary sentence for getFill ...
+	 * 
 	 * @param build
 	 * 
 	 * @return Fill defined by this model
 	 */
 	public Fill getFill(final StyleBuilder build) {
-		if ( !this.enabled )
-			return null;
-		if ( !Double.isNaN(this.opacity) ) { return build.createFill(this.color, this.opacity); }
+		if (!this.enabled) { return null; }
+		if (!Double.isNaN(this.opacity)) { return build.createFill(this.color, this.opacity); }
 		return build.createFill(this.color);
 	}
 
 	void listen(final boolean listen) {
-		if ( listen ) {
+		if (listen) {
 			this.on.addSelectionListener(this.sync);
 			this.chooser.setListener(this.sync);
 			this.percent.addSelectionListener(this.sync);
@@ -212,7 +215,7 @@ public class FillViewer {
 
 			boolean enabled = true;
 			Fill fill = fill2;
-			if ( fill == null ) {
+			if (fill == null) {
 				final StyleBuilder builder = new StyleBuilder();
 				fill = builder.createFill(defaultColor, 0.5);
 				enabled = false;

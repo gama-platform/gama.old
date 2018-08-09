@@ -52,7 +52,7 @@ public class GamaColorMenu extends GamaMenu {
 		void run(int r, int g, int b);
 	}
 
-	private IColorRunnable currentRunnable;
+	IColorRunnable currentRunnable;
 
 	// IColorRunnable defaultRunnable = (r, g, b) -> currentRunnable.run(r, g, b);
 
@@ -74,7 +74,7 @@ public class GamaColorMenu extends GamaMenu {
 		mainMenu = main;
 	}
 
-	private SelectionListener currentListener;
+	SelectionListener currentListener;
 
 	private static Integer reverse = null;
 

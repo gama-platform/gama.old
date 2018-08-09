@@ -47,7 +47,7 @@ import msi.gaml.types.Types;
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 4;
-	private static Set<Collector.Characteristics> CH =
+	static Set<Collector.Characteristics> CH =
 			ImmutableSet.<Collector.Characteristics> of(Collector.Characteristics.IDENTITY_FINISH);
 
 	public static <T> Collector<T, IList<T>, IList<T>> toGamaList() {

@@ -26,6 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
@@ -144,10 +145,10 @@ import msi.gaml.types.IType;
 @validator (ImageLayerValidator.class)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
-	public static class ImageLayerValidator implements IDescriptionValidator {
+	public static class ImageLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
-		public void validate(final IDescription description) {
+		public void validate(final StatementDescription description) {
 			if (!description.hasFacet(GIS)) {
 				if (!description.hasFacet(NAME) && !description.hasFacet(FILE)) {
 					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE,

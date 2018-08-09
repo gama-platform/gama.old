@@ -68,21 +68,21 @@ public abstract class SwingControl extends Composite {
 
 	public static final String SWT_PARENT_PROPERTY_KEY = "org.eclipse.albireo.swtParent";
 
-	private final Listener settingsListener = event -> handleSettingsChange();
+	final Listener settingsListener = event -> handleSettingsChange();
 	final /* private */ Display display;
-	private Composite layoutDeferredAncestor;
+	Composite layoutDeferredAncestor;
 
 	// The width of the border to keep around the embedded AWT frame.
-	private int borderWidth;
+	int borderWidth;
 
 	// The immediate holder of the embedded AWT frame. It is == this if
 	// borderWidth == 0, or a different Composite if borderWidth != 0.
-	private Composite borderlessChild;
+	Composite borderlessChild;
 
-	private Frame frame;
-	private RootPaneContainer rootPaneContainer;
-	private JComponent swingComponent;
-	private boolean populated = false;
+	Frame frame;
+	RootPaneContainer rootPaneContainer;
+	JComponent swingComponent;
+	boolean populated = false;
 
 	// ========================================================================
 	// Constructors
@@ -201,11 +201,11 @@ public abstract class SwingControl extends Composite {
 					});
 				}
 
-				private boolean superSetFocus() {
+				boolean superSetFocus() {
 					return super.setFocus();
 				}
 
-				private boolean superForceFocus() {
+				boolean superForceFocus() {
 					return super.forceFocus();
 				}
 
@@ -423,7 +423,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * The top-level java.awt.Panel, added as child of the frame.
 	 */
-	private class ToplevelPanel extends JApplet {
+	class ToplevelPanel extends JApplet {
 
 		// Overridden from JApplet.
 		@Override
@@ -441,7 +441,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * The top-level javax.swing.JRootPane, added as child of the toplevel Panel.
 	 */
-	private class ToplevelRootPane extends JRootPane {
+	class ToplevelRootPane extends JRootPane {
 
 		// Keep the sizes cache up to date.
 		// The JRootPane, not the JApplet, is the "validation root",
@@ -782,7 +782,8 @@ public abstract class SwingControl extends Composite {
 		 *            The size to which the frame shall be resized.
 		 * @return true if this queue needs to be started as a Runnable
 		 */
-		synchronized boolean enqueue(Integer onBehalfAWTTime, final int width, final int height) {
+		synchronized boolean enqueue(final Integer time, final int width, final int height) {
+			Integer onBehalfAWTTime = time;
 			assert Display.getCurrent() != null; // On SWT event thread
 			if (verboseSizeLayout) {
 				System.err.println(
@@ -1405,7 +1406,8 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Postprocess the super.forceFocus() result.
 	 */
-	protected boolean postProcessForceFocus(boolean result) {
+	protected boolean postProcessForceFocus(final boolean b) {
+		boolean result = b;
 		if (focusHandler != null) {
 			result = focusHandler.handleForceFocus(result);
 		}
@@ -1436,11 +1438,11 @@ public abstract class SwingControl extends Composite {
 		}
 	}
 
-	private boolean superSetFocus() {
+	boolean superSetFocus() {
 		return super.setFocus();
 	}
 
-	private boolean superForceFocus() {
+	boolean superForceFocus() {
 		return super.forceFocus();
 	}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Facets.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Facets.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,8 +30,7 @@ import msi.gaml.types.Types;
 /**
  * Written by drogoul Modified on 27 ao�t 2010
  * 
- * Represents a Map of Facet objects. From there, text, tokens and values of
- * facets can be retrieved.
+ * Represents a Map of Facet objects. From there, text, tokens and values of facets can be retrieved.
  * 
  */
 public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable {
@@ -59,7 +57,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	/*
 	 * Same as putAll(), but without replacing the existing values
 	 */
-	private class Complement implements TObjectObjectProcedure<String, IExpressionDescription> {
+	class Complement implements TObjectObjectProcedure<String, IExpressionDescription> {
 
 		@Override
 		public boolean execute(final String s, final IExpressionDescription e) {
@@ -74,9 +72,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 
 	public String getLabel(final String key) {
 		final IExpressionDescription f = get(key);
-		if (f == null) {
-			return null;
-		}
+		if (f == null) { return null; }
 		return StringUtils.toJavaString(f.toString());
 	}
 
@@ -88,18 +84,14 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	public IExpressionDescription getDescr(final String... keys) {
 		for (final String s : keys) {
 			final IExpressionDescription f = get(s);
-			if (f != null) {
-				return f;
-			}
+			if (f != null) { return f; }
 		}
 		return null;
 	}
 
 	public String getFirstExistingAmong(final String... keys) {
 		for (final String s : keys) {
-			if (containsKey(s)) {
-				return s;
-			}
+			if (containsKey(s)) { return s; }
 		}
 		return null;
 	}
@@ -123,9 +115,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 
 	public IType<?> getTypeDenotedBy(final String key, final IDescription context, final IType<?> noType) {
 		final IExpressionDescription f = get(key);
-		if (f == null) {
-			return noType;
-		}
+		if (f == null) { return noType; }
 		return f.getDenotedType(context);
 	}
 
@@ -143,8 +133,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	/**
-	 * Adds the facet without performing any check, assuming it is not present
-	 * in the map
+	 * Adds the facet without performing any check, assuming it is not present in the map
 	 * 
 	 * @param key
 	 * @param expr

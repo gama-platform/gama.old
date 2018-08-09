@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SwtPopupHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SwtPopupHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ummisco.gama.ui.utils.PlatformHelper;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SwtPopupHandler {
 
 	// Gtk will not display popup menus that are parented to the
@@ -35,7 +34,7 @@ public class SwtPopupHandler {
 	// shell to own the popup. Note that this means the SWT menu
 	// needs to be created by the client with the parent returned by
 	// AwtEnvironment#getSwtPopupParent.
-	private static final boolean CREATE_POPUP_PARENT_SHELL = PlatformHelper.isLinux();
+	static final boolean CREATE_POPUP_PARENT_SHELL = PlatformHelper.isLinux();
 
 	// Gtk will not display popup menus that are made visible by an
 	// AWT mouse click (mouse pressed event), unless we wait until
@@ -44,7 +43,7 @@ public class SwtPopupHandler {
 	// This flag enables the delay
 	// TODO: this flag effectively changes the popup trigger from mouse down to
 	// mouse up (can it be avoided?)
-	private static final boolean DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS = PlatformHelper.isLinux();
+	static final boolean DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS = PlatformHelper.isLinux();
 
 	// TODO: in some relatively rare cases, on GTK, SWT popups are not dismissed
 	// It can happen if you try to dismiss it with a left click while
@@ -59,61 +58,61 @@ public class SwtPopupHandler {
 	// also
 	// need general cursor support which might also solve this problem.
 
-	private boolean pendingSwtPopup = false;
+	boolean pendingSwtPopup = false;
 
 	// Listen to AWT mouse events and show SWT popups as necessary
-	private final java.awt.event.AWTEventListener popupEventListener = event -> {
+	final java.awt.event.AWTEventListener popupEventListener = event -> {
 		if (event instanceof MouseEvent) {
 			final MouseEvent me = (MouseEvent) event;
 			switch (me.getID()) {
-			case java.awt.event.MouseEvent.MOUSE_PRESSED:
-				boolean isTrigger = me.isPopupTrigger();
+				case java.awt.event.MouseEvent.MOUSE_PRESSED:
+					boolean isTrigger = me.isPopupTrigger();
 
-				if (DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS && CREATE_POPUP_PARENT_SHELL && isTrigger) {
-					// We must delay the Swt popup here. Otherwise the parent
-					// shell will not be
-					// properly opened if the user clicks, then drags, then
-					// releases the mouse.
+					if (DELAY_MOUSE_DOWN_SWT_POPUP_TRIGGERS && CREATE_POPUP_PARENT_SHELL && isTrigger) {
+						// We must delay the Swt popup here. Otherwise the parent
+						// shell will not be
+						// properly opened if the user clicks, then drags, then
+						// releases the mouse.
 
-					// System.err.println("delaying any SWT popup display");
-					pendingSwtPopup = true;
-					isTrigger = false;
-				}
-				if (isTrigger) {
-					handlePopupTrigger(me);
-				}
-				break;
+						// System.err.println("delaying any SWT popup display");
+						pendingSwtPopup = true;
+						isTrigger = false;
+					}
+					if (isTrigger) {
+						handlePopupTrigger(me);
+					}
+					break;
 
-			case java.awt.event.MouseEvent.MOUSE_RELEASED:
-				// TODO: can both conditions below ever be true on the same
-				// event?
-				if (pendingSwtPopup) {
-					// Now handle any previously delayed popups
-					// if (pendingSwtPopup) {
-					// System.err.println("handling any delayed SWT popup
-					// display");
-					// }
-					handlePopupTrigger(me);
-					pendingSwtPopup = false;
-				}
-				if (me.isPopupTrigger()) {
-					handlePopupTrigger(me);
-				}
-				break;
+				case java.awt.event.MouseEvent.MOUSE_RELEASED:
+					// TODO: can both conditions below ever be true on the same
+					// event?
+					if (pendingSwtPopup) {
+						// Now handle any previously delayed popups
+						// if (pendingSwtPopup) {
+						// System.err.println("handling any delayed SWT popup
+						// display");
+						// }
+						handlePopupTrigger(me);
+						pendingSwtPopup = false;
+					}
+					if (me.isPopupTrigger()) {
+						handlePopupTrigger(me);
+					}
+					break;
 
-			case java.awt.event.MouseEvent.MOUSE_CLICKED:
-				// TODO: is MOUSE_CLICKED a valid trigger point?
-				if (me.isPopupTrigger()) {
-					handlePopupTrigger(me);
-				}
-				break;
+				case java.awt.event.MouseEvent.MOUSE_CLICKED:
+					// TODO: is MOUSE_CLICKED a valid trigger point?
+					if (me.isPopupTrigger()) {
+						handlePopupTrigger(me);
+					}
+					break;
 			}
 		}
 	};
 
 	// The set of toolkits to which the popupEventListener has already been
 	// added.
-	private final WeakHashMap /* java.awt.Toolkit -> Boolean */ popupSupportedToolkits = new WeakHashMap();
+	final WeakHashMap /* java.awt.Toolkit -> Boolean */ popupSupportedToolkits = new WeakHashMap();
 
 	public void monitorAwtComponent(final Component component) {
 		assert EventQueue.isDispatchThread();

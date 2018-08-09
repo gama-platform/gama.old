@@ -77,6 +77,7 @@ public final class NBAStarPathfinder<V, E> {
 		return tracebackPath();
 	}
 
+	@SuppressWarnings ("unchecked")
 	private void expandInForwardDirection() {
 		final V currentNode = OPENA.remove().getNode();
 		if (CLOSED.contains(currentNode)) { return; }
@@ -113,7 +114,7 @@ public final class NBAStarPathfinder<V, E> {
 
 					DISTANCEA.put(childNode, tentativeDistance);
 					PARENTSA.put(childNode, currentNode);
-					final HeapEntry e = new HeapEntry(childNode,
+					final HeapEntry<V> e = new HeapEntry<>(childNode,
 							tentativeDistance + estimateDistanceBetween(childNode, targetNode));
 					OPENA.add(e);
 
@@ -171,7 +172,7 @@ public final class NBAStarPathfinder<V, E> {
 				if (!DISTANCEB.containsKey(parentNode) || DISTANCEB.get(parentNode) > tentativeDistance) {
 					DISTANCEB.put(parentNode, tentativeDistance);
 					PARENTSB.put(parentNode, currentNode);
-					final HeapEntry e = new HeapEntry(parentNode,
+					final HeapEntry<V> e = new HeapEntry<>(parentNode,
 							tentativeDistance + estimateDistanceBetween(parentNode, sourceNode));
 					OPENB.add(e);
 

@@ -80,8 +80,9 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	}
 
 	@Override
-	public <Support> IType<Support> initType(final String keyword, IType<Support> typeInstance, final int id,
+	public <Support> IType<Support> initType(final String keyword, final IType<Support> originalType, final int id,
 			final int varKind, final Class<Support> support) {
+		IType<Support> typeInstance = originalType;
 		if (keyword.equals(IKeyword.UNKNOWN)) {
 			typeInstance = Types.NO_TYPE;
 		}

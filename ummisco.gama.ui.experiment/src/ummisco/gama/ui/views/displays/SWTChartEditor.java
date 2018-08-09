@@ -65,19 +65,19 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class SWTChartEditor implements ChartEditor {
 
 	/** The shell */
-	private final Shell shell;
+	final Shell shell;
 
 	/** The chart which the properties have to be edited */
-	private final JFreeChart chart;
+	final JFreeChart chart;
 
 	/** A composite for displaying/editing the properties of the title. */
-	private final SWTTitleEditor titleEditor;
+	final SWTTitleEditor titleEditor;
 
 	/** A composite for displaying/editing the properties of the plot. */
-	private final SWTPlotEditor plotEditor;
+	final SWTPlotEditor plotEditor;
 
 	/** A composite for displaying/editing the other properties of the chart. */
-	private final SWTOtherEditor otherEditor;
+	final SWTOtherEditor otherEditor;
 
 	/** The resourceBundle for the localization. */
 	// protected static ResourceBundle localizationResources =
@@ -180,30 +180,30 @@ public class SWTChartEditor implements ChartEditor {
 	class SWTTitleEditor extends Composite {
 
 		/** Whether or not to display the title on the chart. */
-		private boolean showTitle;
+		boolean showTitle;
 
 		/** The checkbox to indicate whether or not to display the title. */
-		private final Button showTitleCheckBox;
+		final Button showTitleCheckBox;
 
 		/** A field for displaying/editing the title text. */
-		private final Text titleField;
+		final Text titleField;
 
 		/** The font used to draw the title. */
-		private FontData titleFont;
+		FontData titleFont;
 
 		/** A field for displaying a description of the title font. */
-		private final Text fontField;
+		final Text fontField;
 
 		/** The button to use to select a new title font. */
-		private final Button selectFontButton;
+		final Button selectFontButton;
 
 		/** The paint (color) used to draw the title. */
-		private Color titleColor;
+		Color titleColor;
 
 		/**
 		 * The button to use to select a new paint (color) to draw the title.
 		 */
-		private final Button selectColorButton;
+		final Button selectColorButton;
 
 		/** The resourceBundle for the localization. */
 		// protected static ResourceBundle localizationResources =
@@ -211,7 +211,7 @@ public class SWTChartEditor implements ChartEditor {
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/** Font object used to handle a change of font. */
-		private Font font;
+		Font font;
 
 		/**
 		 * Standard constructor: builds a panel for displaying/editing the properties of the specified title.
@@ -524,10 +524,10 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * A checkbox indicating whether or not the chart is drawn with anti-aliasing.
 		 */
-		private final Button antialias;
+		final Button antialias;
 
 		/** The chart background color. */
-		private final SWTPaintCanvas backgroundPaintCanvas;
+		final SWTPaintCanvas backgroundPaintCanvas;
 
 		/** The resourceBundle for the localization. */
 		// protected static ResourceBundle localizationResources =
@@ -601,27 +601,27 @@ public class SWTChartEditor implements ChartEditor {
 	public static class SWTAxisEditor extends Composite {
 
 		/** The axis label. */
-		private final Text label;
+		final Text label;
 
 		/** The font used to draw the axis labels. */
-		private FontData labelFont;
+		FontData labelFont;
 
 		/** The paint (color) used to draw the axis labels. */
-		private Color labelPaintColor;
+		Color labelPaintColor;
 
 		/** The font used to draw the axis tick labels. */
-		private FontData tickLabelFont;
+		FontData tickLabelFont;
 
 		/** The paint (color) used to draw the axis tick labels. */
-		private final Color tickLabelPaintColor;
+		final Color tickLabelPaintColor;
 
 		/** A field showing a description of the label font. */
-		private final Text labelFontField;
+		final Text labelFontField;
 
 		/**
 		 * A field containing a description of the font for displaying tick labels on the axis.
 		 */
-		private final Text tickLabelFontField;
+		final Text tickLabelFontField;
 
 		/** The resourceBundle for the localization. */
 		// protected static ResourceBundle localizationResources =
@@ -629,16 +629,16 @@ public class SWTChartEditor implements ChartEditor {
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/** Font object used to handle a change of font. */
-		private Font font;
+		Font font;
 
 		/** A flag that indicates whether or not the tick labels are visible. */
-		private final Button showTickLabelsCheckBox;
+		final Button showTickLabelsCheckBox;
 
 		/** A flag that indicates whether or not the tick marks are visible. */
-		private final Button showTickMarksCheckBox;
+		final Button showTickMarksCheckBox;
 
 		/** A tabbed pane for... */
-		private final TabFolder otherTabs;
+		final TabFolder otherTabs;
 
 		/**
 		 * Standard constructor: builds a composite for displaying/editing the properties of the specified axis.
@@ -969,26 +969,26 @@ public class SWTChartEditor implements ChartEditor {
 
 	static class SWTPlotAppearanceEditor extends Composite {
 
-		private final Spinner selectStroke;
+		final Spinner selectStroke;
 
 		/** The stroke (pen) used to draw the outline of the plot. */
-		private final SWTStrokeCanvas strokeCanvas;
+		final SWTStrokeCanvas strokeCanvas;
 
 		/** The paint (color) used to fill the background of the plot. */
-		private final SWTPaintCanvas backgroundPaintCanvas;
+		final SWTPaintCanvas backgroundPaintCanvas;
 
 		/** The paint (color) used to draw the outline of the plot. */
-		private final SWTPaintCanvas outlinePaintCanvas;
+		final SWTPaintCanvas outlinePaintCanvas;
 
 		/** The orientation for the plot. */
-		private PlotOrientation plotOrientation;
+		PlotOrientation plotOrientation;
 
-		private Combo orientation;
+		Combo orientation;
 
 		/** Orientation constants. */
-		private final static String[] orientationNames = { "Vertical", "Horizontal" };
-		private final static int ORIENTATION_VERTICAL = 0;
-		private final static int ORIENTATION_HORIZONTAL = 1;
+		final static String[] orientationNames = { "Vertical", "Horizontal" };
+		final static int ORIENTATION_VERTICAL = 0;
+		final static int ORIENTATION_HORIZONTAL = 1;
 
 		/** The resourceBundle for the localization. */
 		// protected static ResourceBundle localizationResources =

@@ -23,7 +23,7 @@ public class RetryManager {
 	 *            the outcome of the request
 	 * @return <tt>true</tt> only in case of temporary (server-side) errors where retrying the request could succeed.
 	 */
-	public boolean isRetryUseful(final Response response) {
+	public boolean isRetryUseful(final Response<?> response) {
 		final int statusCode = response.getStatusCode();
 		return statusCode == 503 || statusCode == 504 || statusCode >= 520;
 	}

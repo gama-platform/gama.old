@@ -20,6 +20,7 @@ public class Response<T> {
 		this.request = request;
 	}
 
+	@SuppressWarnings ("unchecked")
 	void setBody(final Object body) {
 		this.body = (T) body;
 	}
@@ -99,9 +100,8 @@ public class Response<T> {
 
 	/**
 	 * Returns the MIME-type of the response body. <br>
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getContentType()"> URLConnection.
-	 * getContentType()</a>
+	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getContentType()">
+	 * URLConnection. getContentType()</a>
 	 *
 	 * @return e.g. "application/json", "text/plain", ...
 	 */
@@ -111,9 +111,8 @@ public class Response<T> {
 
 	/**
 	 * Returns the date when the request was created (server-time). <br>
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getDate()"> URLConnection.getDate()
-	 * </a>
+	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getDate()">
+	 * URLConnection.getDate() </a>
 	 *
 	 * @return the parsed "Date" header as millis or <code>0</code> if this header was not set.
 	 */
@@ -123,9 +122,8 @@ public class Response<T> {
 
 	/**
 	 * Returns the value of the expires header field. <br>
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getExpiration()"> URLConnection.
-	 * getExpiration()</a>
+	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getExpiration()">
+	 * URLConnection. getExpiration()</a>
 	 *
 	 * @return the expiration date of the resource, or 0 if not known.
 	 */
@@ -135,9 +133,8 @@ public class Response<T> {
 
 	/**
 	 * Returns the value of the last-modified header field. <br>
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getLastModified()"> URLConnection.
-	 * getLastModified()</a>
+	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getLastModified()">
+	 * URLConnection. getLastModified()</a>
 	 *
 	 * @return the date the resource was last modified, or 0 if not known.
 	 */

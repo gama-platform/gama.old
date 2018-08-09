@@ -60,7 +60,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	public static final String VALUES = "values";
 	public static final String PAIRS = "pairs";
 
-	private IContainerType type;
+	IContainerType type;
 
 	// public GamaMap(final IType key, final IType content) {
 	// this(10, key, content);

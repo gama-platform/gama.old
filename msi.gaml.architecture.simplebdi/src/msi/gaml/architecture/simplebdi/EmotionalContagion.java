@@ -51,7 +51,7 @@ public class EmotionalContagion extends AbstractStatement {
 	public static final String DECAY = "decay";
 	public static final String INTENSITY = "intensity";
 
-	final IExpression name;
+	final IExpression nameExpr;
 	final IExpression emotionDetected;
 	final IExpression emotionCreated;
 	final IExpression charisma;
@@ -63,7 +63,7 @@ public class EmotionalContagion extends AbstractStatement {
 	
 	public EmotionalContagion(IDescription desc) {
 		super(desc);
-		name = getFacet(IKeyword.NAME);
+		nameExpr = getFacet(IKeyword.NAME);
 		emotionDetected = getFacet(EmotionalContagion.EMOTIONDETECTED);
 		emotionCreated = getFacet(EmotionalContagion.EMOTIONCREATED);
 		charisma = getFacet(EmotionalContagion.CHARISMA);

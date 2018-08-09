@@ -53,11 +53,10 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// ImageDescriptor.createFromFile(GamlProposalProvider.class,
 	// "/icons/_facet.png")
 	// .createImage();
-	private static Image typeImage =
+	static Image typeImage =
 			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png").createImage();
-	private static Image varImage =
-			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png").createImage();
-	private static Image actionImage =
+	static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png").createImage();
+	static Image actionImage =
 			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png").createImage();
 
 	// private static Image skillImage =
@@ -170,7 +169,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		String name;
 		StyledString title;
 		Image image;
-		private String documentation;
+		String documentation;
 
 		public BuiltInProposal(final String name, final StyledString title, final Image image) {
 			super();

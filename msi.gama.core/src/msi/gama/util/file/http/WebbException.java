@@ -7,13 +7,13 @@ package msi.gama.util.file.http;
  */
 public class WebbException extends RuntimeException {
 
-	private Response response;
+	private Response<?> response;
 
 	public WebbException(final String message) {
 		super(message);
 	}
 
-	public WebbException(final String message, final Response response) {
+	public WebbException(final String message, final Response<?> response) {
 		super(message);
 		this.response = response;
 	}
@@ -32,7 +32,7 @@ public class WebbException extends RuntimeException {
 	 *
 	 * @return the <code>Response</code> object filled with error information like statusCode and errorBody.
 	 */
-	public Response getResponse() {
+	public Response<?> getResponse() {
 		return response;
 	}
 }

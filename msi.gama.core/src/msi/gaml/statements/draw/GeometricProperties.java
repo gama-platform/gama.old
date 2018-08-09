@@ -45,19 +45,17 @@ public class GeometricProperties {
 	}
 
 	GeometricProperties withRotation(final AxisAngle rotation) {
-		if (rotation == null)
-			return this;
+		if (rotation == null) { return this; }
 		return new WithRotation(location, size, rotation);
 	}
 
 	GeometricProperties withHeight(final Double depth) {
-		if (depth == null)
-			return this;
+		if (depth == null) { return this; }
 		return new WithDepth(location, size, depth);
 	}
 
 	static class WithRotation extends GeometricProperties {
-		private WithRotation(final GamaPoint location, final Scaling3D size, final AxisAngle rotation) {
+		WithRotation(final GamaPoint location, final Scaling3D size, final AxisAngle rotation) {
 			super(location, size);
 			this.rotation = rotation;
 		}
@@ -66,16 +64,14 @@ public class GeometricProperties {
 
 		@Override
 		GeometricProperties withRotation(final AxisAngle rotation) {
-			if (rotation == null)
-				return new GeometricProperties(location, size);
+			if (rotation == null) { return new GeometricProperties(location, size); }
 			this.rotation = rotation;
 			return this;
 		}
 
 		@Override
 		GeometricProperties withHeight(final Double depth) {
-			if (depth == null)
-				return this;
+			if (depth == null) { return this; }
 			return new WithRotationAndDepth(location, size, rotation, depth);
 		}
 
@@ -90,22 +86,20 @@ public class GeometricProperties {
 
 		Double depth;
 
-		private WithDepth(final GamaPoint location, final Scaling3D size, final Double depth) {
+		WithDepth(final GamaPoint location, final Scaling3D size, final Double depth) {
 			super(location, size);
 			this.depth = depth;
 		}
 
 		@Override
 		GeometricProperties withRotation(final AxisAngle rotation) {
-			if (rotation == null)
-				return this;
+			if (rotation == null) { return this; }
 			return new WithRotationAndDepth(location, size, rotation, depth);
 		}
 
 		@Override
 		GeometricProperties withHeight(final Double depth) {
-			if (depth == null)
-				return new GeometricProperties(location, size);
+			if (depth == null) { return new GeometricProperties(location, size); }
 			this.depth = depth;
 			return this;
 		}
@@ -117,7 +111,7 @@ public class GeometricProperties {
 	}
 
 	static class WithRotationAndDepth extends WithRotation {
-		private WithRotationAndDepth(final GamaPoint location, final Scaling3D size, final AxisAngle rotation,
+		WithRotationAndDepth(final GamaPoint location, final Scaling3D size, final AxisAngle rotation,
 				final Double depth) {
 			super(location, size, rotation);
 			this.depth = depth;
@@ -127,15 +121,13 @@ public class GeometricProperties {
 
 		@Override
 		GeometricProperties withRotation(final AxisAngle rotation) {
-			if (rotation == null)
-				return new WithDepth(location, size, depth);
+			if (rotation == null) { return new WithDepth(location, size, depth); }
 			return super.withRotation(rotation);
 		}
 
 		@Override
 		GeometricProperties withHeight(final Double depth) {
-			if (depth == null)
-				return new WithRotation(location, size, rotation);
+			if (depth == null) { return new WithRotation(location, size, rotation); }
 			this.depth = depth;
 			return this;
 		}

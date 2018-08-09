@@ -108,8 +108,8 @@ public class PopulationInspectView extends GamaViewPart
 	ToolItem populationMenu;
 	TableViewer viewer;
 	Composite attributesMenu;
-	private AgentComparator comparator;
-	private ExpressionControl editor;
+	AgentComparator comparator;
+	ExpressionControl editor;
 	// private String speciesName;
 
 	IAgent[] elements = new IAgent[0];
@@ -313,7 +313,7 @@ public class PopulationInspectView extends GamaViewPart
 		toolbar.refresh(true);
 	}
 
-	private List<String> getAttributesSelection() {
+	List<String> getAttributesSelection() {
 		final ArrayList<String> result = new ArrayList<>();
 		for (final Control c : attributesMenu.getChildren()) {
 			if (c instanceof SwitchButton) {
@@ -337,7 +337,7 @@ public class PopulationInspectView extends GamaViewPart
 
 	};
 
-	private String getSpeciesName() {
+	String getSpeciesName() {
 		if (getOutput() == null) { return ""; }
 		final ISpecies species = getOutput().getSpecies();
 		if (species == null) { return IKeyword.AGENT; }

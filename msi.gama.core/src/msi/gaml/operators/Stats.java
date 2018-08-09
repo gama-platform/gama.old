@@ -94,8 +94,8 @@ public class Stats {
 		private static final int DEFAULT_CAPACITY = 50;
 		private static final double GROWTH_RATE = 1.5d;
 
-		private double[] dataSet;
-		private int dataSetSize = 0;
+		double[] dataSet;
+		int dataSetSize = 0;
 
 		private double total = 0;
 		private double product = 1;

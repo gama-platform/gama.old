@@ -60,7 +60,7 @@ public class ImageLayer extends AbstractLayer {
 	}
 
 	private GamaImageFile createFileFromFileExpression(final IScope scope) {
-		final GamaFile result = (GamaFile) file.value(scope);
+		final GamaFile<?, ?> result = (GamaFile<?, ?>) file.value(scope);
 		return verifyFile(scope, result);
 	}
 
@@ -69,7 +69,7 @@ public class ImageLayer extends AbstractLayer {
 		return verifyFile(scope, result);
 	}
 
-	private GamaImageFile verifyFile(final IScope scope, final GamaFile input) {
+	private GamaImageFile verifyFile(final IScope scope, final GamaFile<?, ?> input) {
 		if (input == cachedFile) { return cachedFile; }
 		if (input == null) { throw error("Not a file: " + file.serialize(false), scope); }
 		if (!(input instanceof GamaImageFile)) { throw error("Not an image:" + input.getPath(scope), scope); }

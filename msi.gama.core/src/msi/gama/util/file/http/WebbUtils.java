@@ -49,7 +49,7 @@ public class WebbUtils {
 					separator = "&";
 				}
 			} else if (entryValue instanceof Iterable) {
-				for (final Object multiValue : (Iterable) entryValue) {
+				for (final Object multiValue : (Iterable<?>) entryValue) {
 					appendParam(sbuf, separator, entry.getKey(), multiValue);
 					separator = "&";
 				}

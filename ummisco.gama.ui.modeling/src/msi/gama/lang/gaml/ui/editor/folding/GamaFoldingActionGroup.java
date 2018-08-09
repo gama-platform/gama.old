@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaFoldingActionGroup.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaFoldingActionGroup.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -38,38 +37,37 @@ class GamaFoldingActionGroup extends FoldingActionGroup {
 
 		@Override
 		public void update() {
-			setEnabled(GamaFoldingActionGroup.this.isEnabled() && viewwer.isProjectionMode());
+			setEnabled(GamaFoldingActionGroup.this.isEnabled() && pViewer.isProjectionMode());
 		}
 	}
 
-	private ProjectionViewer viewwer;
+	ProjectionViewer pViewer;
 	private FoldingAction collapseStrings;
 
 	GamaFoldingActionGroup(final ITextEditor editor, final ITextViewer viewer) {
 		super(editor, viewer);
-		if (!(viewer instanceof ProjectionViewer)) {
-			return;
-		}
-		this.viewwer = (ProjectionViewer) viewer;
+		if (!(viewer instanceof ProjectionViewer)) { return; }
+		this.pViewer = (ProjectionViewer) viewer;
 
 		collapseStrings = new FoldingAction() { // $NON-NLS-1$
 			// private final EClass type = GamlPackage.
 
 			@Override
 			public void run() {
-				final ProjectionAnnotationModel model = viewwer.getProjectionAnnotationModel();
+				final ProjectionAnnotationModel model = pViewer.getProjectionAnnotationModel();
 				final Iterator<?> iterator = model.getAnnotationIterator();
-				final List<Annotation> toCollapse = new ArrayList<Annotation>();
+				final List<Annotation> toCollapse = new ArrayList<>();
 				while (iterator.hasNext()) {
 					final Object next = iterator.next();
 					if (next instanceof ProjectionAnnotation) {
 						final ProjectionAnnotation pa = (ProjectionAnnotation) next;
 						final Position position = model.getPosition(pa);
-						if (position instanceof TypedFoldedPosition)
+						if (position instanceof TypedFoldedPosition) {
 							if (((TypedFoldedPosition) position).getType().equals("__comment")) {
 								pa.markCollapsed();
 								toCollapse.add(pa);
 							}
+						}
 					}
 				}
 				model.modifyAnnotations(null, null, toCollapse.toArray(new Annotation[0]));

@@ -42,6 +42,7 @@ public class AgentLayer extends AbstractLayer {
 	protected final THashMap<IAgent, Rectangle2D> shapes = new THashMap<>();
 	protected static final Rectangle2D DUMMY_RECT = new Rectangle2D.Double();
 
+	@SuppressWarnings ("unchecked")
 	protected void fillShapes(final IScope scope) {
 		shapes.clear();
 		for (final IAgent a : (Iterable<IAgent>) ((AgentLayerStatement) definition).getAgentsExpr().value(scope)) {

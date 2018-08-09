@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FontEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FontEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,8 +10,6 @@
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -40,13 +37,13 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class FontEditor {
 
-	private Image fImage = null;
-	private RGB fColorValue;
-	private Color fColor[] = null;
-	private Font fFont[] = null;
-	private FontData[] fFontList = null;
-	private Button fButton;
-	private SelectionListener parentListener;
+	Image fImage = null;
+	RGB fColorValue;
+	Color fColor[] = null;
+	Font fFont[] = null;
+	FontData[] fFontList = null;
+	Button fButton;
+	SelectionListener parentListener;
 	final FontDialog labelFontDialog;
 
 	public FontEditor(final Composite parent) {
@@ -80,20 +77,21 @@ public class FontEditor {
 				labelFontDialog.setRGB(fColorValue);
 				labelFontDialog.setFontList(fFontList);
 
-				if ( labelFontDialog.open() == null )
-					return;
-				if ( fFont[0] != null )
+				if (labelFontDialog.open() == null) { return; }
+				if (fFont[0] != null) {
 					fFont[0].dispose();
+				}
 				final FontData[] list = labelFontDialog.getFontList();
-				if ( list != null ) {
+				if (list != null) {
 					fFont[0] = new Font(fButton.getDisplay(), list);
 					// set the text font here...
 					fFontList = list;
 				}
 				final RGB rgb = labelFontDialog.getRGB();
-				if ( rgb != null ) {
-					if ( fColor[0] != null )
+				if (rgb != null) {
+					if (fColor[0] != null) {
 						fColor[0].dispose();
+					}
 					fColor[0] = new Color(fButton.getDisplay(), rgb);
 					// set the text foreground color here...
 					fColorValue = rgb;
@@ -103,24 +101,22 @@ public class FontEditor {
 			}
 		});
 
-		fButton.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent event) {
-				if ( fImage != null ) {
-					fImage.dispose();
-					fImage = null;
+		fButton.addDisposeListener(event -> {
+			if (fImage != null) {
+				fImage.dispose();
+				fImage = null;
+			}
+			if (fColor != null) {
+				if (fColor[0] != null) {
+					fColor[0].dispose();
 				}
-				if ( fColor != null ) {
-					if ( fColor[0] != null )
-						fColor[0].dispose();
-					fColor = null;
+				fColor = null;
+			}
+			if (fFont != null) {
+				if (fFont[0] != null) {
+					fFont[0].dispose();
 				}
-				if ( fFont != null ) {
-					if ( fFont[0] != null )
-						fFont[0].dispose();
-					fFont = null;
-				}
+				fFont = null;
 			}
 		});
 	}
@@ -133,9 +129,10 @@ public class FontEditor {
 		this.parentListener = null;
 	}
 
-	private void notifyParent(final SelectionEvent event) {
-		if ( parentListener != null )
+	void notifyParent(final SelectionEvent event) {
+		if (parentListener != null) {
 			parentListener.widgetSelected(event);
+		}
 	}
 
 	public Color getColor() {
@@ -144,8 +141,7 @@ public class FontEditor {
 
 	public java.awt.Color getAWTColor() {
 		final Color tmpColor = getColor();
-		if ( tmpColor == null )
-			return null;
+		if (tmpColor == null) { return null; }
 		return new java.awt.Color(tmpColor.getRed(), tmpColor.getGreen(), tmpColor.getBlue());
 	}
 
@@ -163,7 +159,7 @@ public class FontEditor {
 	}
 
 	public void setFontList(final FontData[] list) {
-		if ( list != null ) {
+		if (list != null) {
 			fFontList = list;
 			fFont[0] = new Font(fButton.getDisplay(), list);
 			labelFontDialog.setFontList(list);
@@ -182,7 +178,7 @@ public class FontEditor {
 	}
 
 	public void setColorValue(final java.awt.Color colour) {
-		if ( colour != null ) {
+		if (colour != null) {
 			setColorValue(new RGB(colour.getRed(), colour.getGreen(), colour.getBlue()));
 		}
 	}
@@ -191,13 +187,12 @@ public class FontEditor {
 		return fButton;
 	}
 
-	private void updateColorImage() {
+	void updateColorImage() {
 		/*
 		 * Display display= fButton.getDisplay(); GC gc= new GC(fImage);
-		 * gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK)); gc.drawRectangle(0, 2,
-		 * fExtent.x - 1, fExtent.y - 4); if (fColor != null) fColor.dispose(); fColor= new
-		 * Color(display, fColorValue); gc.setBackground(fColor); gc.fillRectangle(1, 3, fExtent.x -
-		 * 2, fExtent.y - 5); gc.dispose(); fButton.setImage(fImage);
+		 * gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK)); gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y -
+		 * 4); if (fColor != null) fColor.dispose(); fColor= new Color(display, fColorValue); gc.setBackground(fColor);
+		 * gc.fillRectangle(1, 3, fExtent.x - 2, fExtent.y - 5); gc.dispose(); fButton.setImage(fImage);
 		 */
 	}
 

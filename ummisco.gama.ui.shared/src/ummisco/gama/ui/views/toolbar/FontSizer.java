@@ -31,7 +31,7 @@ public class FontSizer {
 	IToolbarDecoratedView.Sizable view;
 	Font currentFont;
 
-	private final GestureListener gl = ge -> {
+	final GestureListener gl = ge -> {
 		if (ge.detail == SWT.GESTURE_MAGNIFY) {
 			changeFontSize((int) (2 * Math.signum(ge.magnification - 1.0)));
 		}

@@ -52,8 +52,8 @@ public class MulticriteriaAnalyzeOperator {
 	public static Integer WeightedMeansDecisionMaking(final IScope scope, final IList<List> cands,
 			final IList<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
 		if (cands == null || cands.isEmpty()) { return -1; }
-		final List<String> criteriaStr = new LinkedList<String>();
-		final Map<String, Double> weight = new HashMap<String, Double>();
+		final List<String> criteriaStr = new LinkedList<>();
+		final Map<String, Double> weight = new HashMap<>();
 		for (final Map<String, Object> critMap : criteriaMap) {
 			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -116,7 +116,7 @@ public class MulticriteriaAnalyzeOperator {
 			final IList<String> criteria, final GamaMap criteriaWeights) throws GamaRuntimeException {
 		if (cands == null || cands.isEmpty()) { return -1; }
 		final Map<String, Double> critWeight = new HashMap<>();
-		final Map<Set<String>, Double> weight = new HashMap<Set<String>, Double>();
+		final Map<Set<String>, Double> weight = new HashMap<>();
 		for (final Object o : criteriaWeights.keySet()) {
 			final Set<String> key = new HashSet<>((List) o);
 			final Double val = Cast.asFloat(scope, criteriaWeights.get(o));
@@ -126,16 +126,18 @@ public class MulticriteriaAnalyzeOperator {
 			weight.put(key, val);
 		}
 		for (final String crit : criteria) {
-			if (!critWeight.containsKey(crit))
+			if (!critWeight.containsKey(crit)) {
 				critWeight.put(crit, 1.0);
+			}
 		}
 		final Set<Set<String>> combinations = new HashSet<>();
 		buildCombination(criteria, new HashSet<>(), combinations, 0, criteria.size() - 1, 0);
 		for (final Set<String> comb : combinations) {
 			if (!weight.containsKey(comb)) {
 				Double tot = 0.0;
-				for (final String c : comb)
+				for (final String c : comb) {
 					tot += Cast.asFloat(scope, critWeight.get(c));
+				}
 				weight.put(comb, tot);
 			}
 		}
@@ -149,8 +151,9 @@ public class MulticriteriaAnalyzeOperator {
 			Collections.sort(orderedList);
 			for (final Object val : cand) {
 				int index = orderedList.indexOf(val);
-				while (listOfOrder.contains(index))
+				while (listOfOrder.contains(index)) {
 					index++;
+				}
 				// if (listOfOrder.contains(index))
 				// index ++;
 				listOfOrder.add(index);
@@ -193,10 +196,10 @@ public class MulticriteriaAnalyzeOperator {
 			final IList<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
 		if (cands == null || cands.isEmpty()) { return -1; }
 		int cpt = 0;
-		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
-		final List<String> criteriaStr = new LinkedList<String>();
-		final Map<String, FonctionPreference> fctPrefCrit = new HashMap<String, FonctionPreference>();
-		final Map<String, Double> weight = new Hashtable<String, Double>();
+		final LinkedList<Candidate> candidates = new LinkedList<>();
+		final List<String> criteriaStr = new LinkedList<>();
+		final Map<String, FonctionPreference> fctPrefCrit = new HashMap<>();
+		final Map<String, Double> weight = new Hashtable<>();
 		for (final Map<String, Object> critMap : criteriaMap) {
 			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -237,7 +240,7 @@ public class MulticriteriaAnalyzeOperator {
 		promethee.setPoidsCrit(weight);
 
 		for (final List cand : cands) {
-			final Map<String, Double> valCriteria = new HashMap<String, Double>();
+			final Map<String, Double> valCriteria = new HashMap<>();
 			int i = 0;
 			for (final String crit : criteriaStr) {
 				valCriteria.put(crit, Cast.asFloat(scope, cand.get(i)));
@@ -268,18 +271,19 @@ public class MulticriteriaAnalyzeOperator {
 					equals = "0") },
 			see = { "weighted_means_DM", "promethee_DM", "evidence_theory_DM" })
 	public static Integer electreDecisionMaking(final IScope scope, final IList<List> cands,
-			final IList<Map<String, Object>> criteriaMap, Double fuzzyCut) throws GamaRuntimeException {
+			final IList<Map<String, Object>> criteriaMap, final Double cut) throws GamaRuntimeException {
+		Double fuzzyCut = cut;
 		if (fuzzyCut == null) {
 			fuzzyCut = Double.valueOf(0.7);
 		}
 		if (cands == null || cands.isEmpty()) { return -1; }
 		int cpt = 0;
-		final List<Candidate> candidates = new ArrayList<Candidate>();
+		final List<Candidate> candidates = new ArrayList<>();
 		final List<String> criteriaStr = GamaListFactory.create(Types.STRING);
-		final Map<String, Double> weight = new HashMap<String, Double>();
-		final Map<String, Double> preference = new HashMap<String, Double>();
-		final Map<String, Double> indifference = new HashMap<String, Double>();
-		final Map<String, Double> veto = new HashMap<String, Double>();
+		final Map<String, Double> weight = new HashMap<>();
+		final Map<String, Double> preference = new HashMap<>();
+		final Map<String, Double> indifference = new HashMap<>();
+		final Map<String, Double> veto = new HashMap<>();
 		for (final Map<String, Object> critMap : criteriaMap) {
 			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -318,7 +322,7 @@ public class MulticriteriaAnalyzeOperator {
 		electre.setSeuilCoupe(fuzzyCut);
 
 		for (final List cand : cands) {
-			final Map<String, Double> valCriteria = new HashMap<String, Double>();
+			final Map<String, Double> valCriteria = new HashMap<>();
 			int i = 0;
 			for (final String crit : criteriaStr) {
 				valCriteria.put(crit, Cast.asFloat(scope, cand.get(i)));
@@ -366,10 +370,10 @@ public class MulticriteriaAnalyzeOperator {
 		if (simple == null) {
 			simple = false;
 		}
-		final Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
-		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
-		final List<String> criteriaStr = new LinkedList<String>();
-		final LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<CritereFonctionsCroyances>();
+		final Map<String, Boolean> maximizeCrit = new HashMap<>();
+		final LinkedList<Candidate> candidates = new LinkedList<>();
+		final List<String> criteriaStr = new LinkedList<>();
+		final LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<>();
 		for (final Map<String, Object> critMap : criteriaMap) {
 			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
@@ -408,7 +412,7 @@ public class MulticriteriaAnalyzeOperator {
 		}
 		final EvidenceTheory evt = new EvidenceTheory();
 		for (final List cand : cands) {
-			final Map<String, Double> valCriteria = new HashMap<String, Double>();
+			final Map<String, Double> valCriteria = new HashMap<>();
 			int i = 0;
 			for (final String crit : criteriaStr) {
 				final Double val = Cast.asFloat(scope, cand.get(i));
@@ -434,8 +438,8 @@ public class MulticriteriaAnalyzeOperator {
 
 	private static LinkedList<Candidate> filtering(final Collection<Candidate> candidates,
 			final Map<String, Boolean> maximizeCrit) {
-		final LinkedList<Candidate> cands = new LinkedList<Candidate>();
-		final LinkedList<Map<String, Double>> paretoVals = new LinkedList<Map<String, Double>>();
+		final LinkedList<Candidate> cands = new LinkedList<>();
+		final LinkedList<Map<String, Double>> paretoVals = new LinkedList<>();
 		for (final Candidate c1 : candidates) {
 			boolean paretoFront = true;
 			for (final Candidate c2 : candidates) {

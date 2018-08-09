@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SwtInputBlocker.java, in plugin ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SwtInputBlocker.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,41 +23,40 @@ import org.eclipse.swt.widgets.Shell;
 import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
- * This class, together with {@link AwtDialogListener}, ensures the proper modal
- * behavior of Swing dialogs when running within a SWT environment. It allows to
- * block SWT input while the AWT/Swing modal dialog is visible.
+ * This class, together with {@link AwtDialogListener}, ensures the proper modal behavior of Swing dialogs when running
+ * within a SWT environment. It allows to block SWT input while the AWT/Swing modal dialog is visible.
  *
  * @see AwtDialogListener
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SwtInputBlocker {
 
 	static private volatile SwtInputBlocker instance = null;
 	static private int blockCount = 0;
-	private Shell shell;
-	private AwtDialogListener dialogListener = null;
-	private final Shell parentShell;
-	private Stack /* of Shell */ shellsWithActivateListener;
+	Shell shell;
+	AwtDialogListener dialogListener = null;
+	final Shell parentShell;
+	Stack /* of Shell */ shellsWithActivateListener;
 
-	private SwtInputBlocker(final Shell parent, final AwtDialogListener dialogListener) {
+	SwtInputBlocker(final Shell parent, final AwtDialogListener dialogListener) {
 		this.parentShell = parent;
 		this.dialogListener = dialogListener;
 	}
 
-	private final Listener activateListener = event -> ThreadingHandler.getInstance().asyncExec(shell.getDisplay(),
-			() -> {
-				// On some platforms (e.g. Linux/GTK), the 0x0 shell still
-				// appears as a dot
-				// on the screen, so make it invisible by moving it below
-				// other windows. This
-				// is unnecessary under Windows and causes a flash, so only
-				// make the call when necessary.
-				// note: would like to do this too:
-				// parentShell.moveBelow(null);, but see bug 170774
-				shell.moveBelow(null);
-				if (dialogListener != null)
-					dialogListener.requestFocus();
-			});
+	final Listener activateListener = event -> ThreadingHandler.getInstance().asyncExec(shell.getDisplay(), () -> {
+		// On some platforms (e.g. Linux/GTK), the 0x0 shell still
+		// appears as a dot
+		// on the screen, so make it invisible by moving it below
+		// other windows. This
+		// is unnecessary under Windows and causes a flash, so only
+		// make the call when necessary.
+		// note: would like to do this too:
+		// parentShell.moveBelow(null);, but see bug 170774
+		shell.moveBelow(null);
+		if (dialogListener != null) {
+			dialogListener.requestFocus();
+		}
+	});
 
 	private final FocusListener focusListener = new FocusAdapter() {
 
@@ -139,9 +137,7 @@ public class SwtInputBlocker {
 		assert Display.getCurrent() != null; // On SWT event thread
 
 		// System.out.println("Deleting SWT blocker");
-		if (blockCount == 0) {
-			return;
-		}
+		if (blockCount == 0) { return; }
 		if (blockCount == 1 && instance != null) {
 			instance.close();
 			instance = null;

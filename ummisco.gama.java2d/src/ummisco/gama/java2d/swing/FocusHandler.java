@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FocusHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FocusHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -51,29 +50,29 @@ public class FocusHandler {
 	// JRE >= 1.5 only).
 	// See <https://bugs.eclipse.org/bugs/show_bug.cgi?id=216431>
 	// and <http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4922092>.
-	private static boolean synthesizeMethodInitialized = false;
-	private static Method synthesizeMethod = null;
+	static boolean synthesizeMethodInitialized = false;
+	static Method synthesizeMethod = null;
 
 	// ========================================================================
 
-	private final Frame frame;
-	private final Composite borderless; // the Control corresponding to the
-										// frame
-	private final SwingControl swingControl; // either borderless or its parent
-	private final Display display;
-	private final GlobalFocusHandler globalHandler;
-	private boolean pendingTraverseOut = false;
-	private int pendingTraverseOutSeqNum = 0;
-	private int currentTraverseOutSeqNum = 0;
-	private int extraTabCount = 0;
-	private boolean isFocusedSwt;
-	private boolean pendingDeactivate = false;
+	final Frame frame;
+	final Composite borderless; // the Control corresponding to the
+								// frame
+	final SwingControl swingControl; // either borderless or its parent
+	final Display display;
+	final GlobalFocusHandler globalHandler;
+	boolean pendingTraverseOut = false;
+	int pendingTraverseOutSeqNum = 0;
+	int currentTraverseOutSeqNum = 0;
+	int extraTabCount = 0;
+	boolean isFocusedSwt;
+	boolean pendingDeactivate = false;
 
 	// Listeners
-	private final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
-	private final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
-	private final FocusListener swtFocusListener = new SwtFocusListener();
-	private final Listener swtEventFilter = new SwtEventFilter();
+	final KeyEventDispatcher keyEventDispatcher = new AwtKeyDispatcher();
+	final WindowFocusListener awtWindowFocusListener = new AwtWindowFocusListener();
+	final FocusListener swtFocusListener = new SwtFocusListener();
+	final Listener swtEventFilter = new SwtEventFilter();
 
 	public FocusHandler(final SwingControl swingControl, final GlobalFocusHandler globalHandler,
 			final Composite borderless, final Frame frame) {
@@ -136,8 +135,8 @@ public class FocusHandler {
 		// Ignore events outside this frame
 		if (frame.isFocused()) {
 			final Set<?> traverseForwardKeys = frame.getFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
-			final Set<?> traverseBackwardKeys = frame
-					.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
+			final Set<?> traverseBackwardKeys =
+					frame.getFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
 			final AWTKeyStroke key = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
 
 			if (!pendingTraverseOut) {
@@ -277,7 +276,8 @@ public class FocusHandler {
 		}
 	}
 
-	public boolean handleForceFocus(boolean result) {
+	public boolean handleForceFocus(final boolean b) {
+		boolean result = b;
 		if (PlatformHelper.isWindows()) {
 			// On Windows, focus queries are unreliable while traversing
 			// SwingControls
@@ -305,15 +305,13 @@ public class FocusHandler {
 	// win32, so we do the same in the methods below
 
 	/**
-	 * This method duplicates the behavior of recent versions of Windows SWT_AWT
-	 * when the embedded Composite is activated or deactivated. It is used here
-	 * to workaround bugs in earlier (pre-3.4) versions of SWT, and to handle
-	 * cases where the Composite is not properly activated/deactivated, even
-	 * today. See the callers of this method for more information.
+	 * This method duplicates the behavior of recent versions of Windows SWT_AWT when the embedded Composite is
+	 * activated or deactivated. It is used here to workaround bugs in earlier (pre-3.4) versions of SWT, and to handle
+	 * cases where the Composite is not properly activated/deactivated, even today. See the callers of this method for
+	 * more information.
 	 * 
 	 * @param activate
-	 *            <code>true</code> if the embedded frame whould be activated;
-	 *            <code>false</code> otherwise
+	 *            <code>true</code> if the embedded frame whould be activated; <code>false</code> otherwise
 	 * @return
 	 */
 	protected void synthesizeWindowActivation(final boolean activate) {
@@ -379,22 +377,20 @@ public class FocusHandler {
 	protected void adjustFocusForSwtTraversal(final int currentSwtTraversal) {
 		assert Display.getCurrent() != null;
 
-		if (!swingControl.isSwtTabOrderExtended()) {
-			return;
-		}
+		if (!swingControl.isSwtTabOrderExtended()) { return; }
 		switch (currentSwtTraversal) {
 
-		case SWT.TRAVERSE_TAB_NEXT:
-		case SWT.TRAVERSE_ARROW_NEXT:
-		case SWT.TRAVERSE_PAGE_NEXT:
-			setInitialTraversalFocus(true);
-			break;
+			case SWT.TRAVERSE_TAB_NEXT:
+			case SWT.TRAVERSE_ARROW_NEXT:
+			case SWT.TRAVERSE_PAGE_NEXT:
+				setInitialTraversalFocus(true);
+				break;
 
-		case SWT.TRAVERSE_TAB_PREVIOUS:
-		case SWT.TRAVERSE_ARROW_PREVIOUS:
-		case SWT.TRAVERSE_PAGE_PREVIOUS:
-			setInitialTraversalFocus(false);
-			break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+			case SWT.TRAVERSE_ARROW_PREVIOUS:
+			case SWT.TRAVERSE_PAGE_PREVIOUS:
+				setInitialTraversalFocus(false);
+				break;
 		}
 	}
 
@@ -420,8 +416,8 @@ public class FocusHandler {
 	// ====
 
 	/**
-	 * Activates the embedded AWT frame, as long as the parent SWT composite has
-	 * focus and is part of the active SWT shell.
+	 * Activates the embedded AWT frame, as long as the parent SWT composite has focus and is part of the active SWT
+	 * shell.
 	 */
 	public void activateEmbeddedFrame() {
 		assert Display.getCurrent() != null;
@@ -471,9 +467,7 @@ public class FocusHandler {
 	}
 
 	protected void doActivation(final int swtTraversal) {
-		if (swingControl.isDisposed()) {
-			return;
-		}
+		if (swingControl.isDisposed()) { return; }
 		if (!swingControl.isFocusControl()) {
 			// We've lost focus, don't activate the underlying AWT window
 			if (verboseFocusEvents) {
@@ -517,67 +511,67 @@ public class FocusHandler {
 			// currently active one.
 			if (event.widget == borderless) {
 				switch (event.type) {
-				case SWT.Activate:
-					// The lastSwtTraversal may change before it is used. Save
-					// its value for the asyncExecs
-					final int swtTraversal = globalHandler.getCurrentSwtTraversal();
+					case SWT.Activate:
+						// The lastSwtTraversal may change before it is used. Save
+						// its value for the asyncExecs
+						final int swtTraversal = globalHandler.getCurrentSwtTraversal();
 
-					// We use asyncExec to defer the activation and focus
-					// setting in the underlying AWT frame.
-					// This allows proper handling of the case where focus is
-					// briefly
-					// set to the Swing control and immediately moved to a SWT
-					// component. (The deferred
-					// handling will abort if focus has been lost on the Swing
-					// control)
-					//
-					// This case is common when navigating among tabs in an RCP
-					// view stack with the
-					// left and right arrow keys. Focus is briefly given to the
-					// main view component and
-					// then it is returned to the view tab for further
-					// navigation. If we did not defer
-					// the activation, then focus cannot be restored to the view
-					// tab.
-					display.asyncExec(() -> doActivation(swtTraversal));
+						// We use asyncExec to defer the activation and focus
+						// setting in the underlying AWT frame.
+						// This allows proper handling of the case where focus is
+						// briefly
+						// set to the Swing control and immediately moved to a SWT
+						// component. (The deferred
+						// handling will abort if focus has been lost on the Swing
+						// control)
+						//
+						// This case is common when navigating among tabs in an RCP
+						// view stack with the
+						// left and right arrow keys. Focus is briefly given to the
+						// main view component and
+						// then it is returned to the view tab for further
+						// navigation. If we did not defer
+						// the activation, then focus cannot be restored to the view
+						// tab.
+						display.asyncExec(() -> doActivation(swtTraversal));
 
-					// On windows, the actual activation needs to be deferred
-					// until doActivation() to
-					// prevent the problem described above, so veto the
-					// activation normally done by SWT_AWT.
-					if (PlatformHelper.isWindows() && synthesizeMethod != null) {
-						if (verboseFocusEvents) {
-							trace("Consuming SWT.Activate event: " + event);
+						// On windows, the actual activation needs to be deferred
+						// until doActivation() to
+						// prevent the problem described above, so veto the
+						// activation normally done by SWT_AWT.
+						if (PlatformHelper.isWindows() && synthesizeMethod != null) {
+							if (verboseFocusEvents) {
+								trace("Consuming SWT.Activate event: " + event);
+							}
+							event.type = SWT.None;
 						}
-						event.type = SWT.None;
-					}
 
-					break;
-
-				case SWT.Deactivate:
-					// On Windows, when the SwingControl temporarily loses focus
-					// to an ancestor, and
-					// that ancestor then assigns focus right back to it, the
-					// SwingControl receives only a
-					// Deactivate event and not a subsequent Activate event.
-					// This causes the embedded
-					// Swing component to lose focus when, for example, clicking
-					// on its parent RCP view tab.
-					//
-					// To work around this problem, we defer the deactivation
-					// of the embedded frame here. See the SWT.Activate case
-					// above for processing of the
-					// deferred event.
-					if (PlatformHelper.isWindows() && synthesizeMethod != null) {
-						pendingDeactivate = true;
-						// Prevent the SWT_AWT-installed listener from running
-						// (and deactivating the frame).
-						if (verboseFocusEvents) {
-							trace("Consuming SWT.Activate event: " + event);
-						}
-						event.type = SWT.None;
 						break;
-					}
+
+					case SWT.Deactivate:
+						// On Windows, when the SwingControl temporarily loses focus
+						// to an ancestor, and
+						// that ancestor then assigns focus right back to it, the
+						// SwingControl receives only a
+						// Deactivate event and not a subsequent Activate event.
+						// This causes the embedded
+						// Swing component to lose focus when, for example, clicking
+						// on its parent RCP view tab.
+						//
+						// To work around this problem, we defer the deactivation
+						// of the embedded frame here. See the SWT.Activate case
+						// above for processing of the
+						// deferred event.
+						if (PlatformHelper.isWindows() && synthesizeMethod != null) {
+							pendingDeactivate = true;
+							// Prevent the SWT_AWT-installed listener from running
+							// (and deactivating the frame).
+							if (verboseFocusEvents) {
+								trace("Consuming SWT.Activate event: " + event);
+							}
+							event.type = SWT.None;
+							break;
+						}
 
 				}
 			}
@@ -630,11 +624,11 @@ public class FocusHandler {
 
 	}
 
-	private void trace(final String msg) {
+	void trace(final String msg) {
 		System.err.println(header() + ' ' + msg);
 	}
 
-	private String header() {
+	String header() {
 		return "@" + System.currentTimeMillis() + " " + System.identityHashCode(this);
 	}
 

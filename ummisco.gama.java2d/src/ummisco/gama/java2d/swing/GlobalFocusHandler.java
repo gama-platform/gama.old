@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GlobalFocusHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GlobalFocusHandler.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,7 +14,6 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.KeyboardFocusManager;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -32,11 +30,11 @@ import org.eclipse.swt.widgets.Widget;
 // on a single SwingControl.
 public class GlobalFocusHandler {
 
-	private static final String SAVED_FOCUS_OWNER_KEY = "org.eclipse.albireo.savedFocusOwner";
-	private final Display display;
-	private final SwtEventFilter swtEventFilter;
-	private final List<Listener> listeners = new ArrayList<>();
-	private static final boolean verboseFocusEvents = FocusHandler.verboseFocusEvents;
+	static final String SAVED_FOCUS_OWNER_KEY = "org.eclipse.albireo.savedFocusOwner";
+	final Display display;
+	final SwtEventFilter swtEventFilter;
+	final List<Listener> listeners = new ArrayList<>();
+	static final boolean verboseFocusEvents = FocusHandler.verboseFocusEvents;
 
 	public GlobalFocusHandler(final Display display) {
 		this.display = display;
@@ -96,8 +94,7 @@ public class GlobalFocusHandler {
 	}
 
 	protected void fireEvent(final Event event) {
-		for (final Iterator<Listener> iterator = listeners.iterator(); iterator.hasNext();) {
-			final Listener listener = iterator.next();
+		for (Listener listener : listeners) {
 			listener.handleEvent(event);
 		}
 	}
@@ -115,9 +112,7 @@ public class GlobalFocusHandler {
 	protected void clearFocusOwner(final SwingControl swingControl) {
 		assert Display.getCurrent() != null; // On SWT event thread
 
-		if (!swingControl.isAWTPermanentFocusLossForced()) {
-			return;
-		}
+		if (!swingControl.isAWTPermanentFocusLossForced()) { return; }
 
 		// It appears safe to call getFocusOwner on SWT thread
 		final Component owner = ((Frame) swingControl.getAWTHierarchyRoot()).getFocusOwner();
@@ -204,65 +199,65 @@ public class GlobalFocusHandler {
 		public void handleEvent(final Event event) {
 			final Widget widget = event.widget;
 			switch (event.type) {
-			case SWT.Activate:
-				activeWidget = widget;
+				case SWT.Activate:
+					activeWidget = widget;
 
-				// Track the currently active shell. This is more reliable than
-				// depending on Display.getActiveShell() which sometimes returns
-				// an
-				// inactive shell.
-				if (widget instanceof Shell) {
-					activeShell = (Shell) widget;
-				}
-
-				// If we have moved from a SwingControl to another control in
-				// the same
-				// shell, clear its current focus owner so that a permanent
-				// focus
-				// lost event is generated.
-				if (lastActiveEmbedded != null && !lastActiveEmbedded.isDisposed() && lastActiveEmbedded != widget
-						&& !lastActiveFocusCleared && widget instanceof Control && // (need
-																					// a
-																					// getShell()
-																					// method)
-						lastActiveEmbedded.getShell() == ((Control) widget).getShell()) {
-					clearFocusOwner(lastActiveEmbedded);
-					lastActiveFocusCleared = true;
-				}
-
-				// If we have moved to a SwingControl, restore the current focus
-				// owner
-				// that was cleared above during a previous Activate event.
-				if (isBorderlessSwingControl(widget)) {
-					activeEmbedded = (SwingControl) widget;
-					restoreFocusOwner(activeEmbedded);
-				}
-				break;
-
-			case SWT.Deactivate:
-				if (activeWidget != null) {
-					lastActiveWidget = activeWidget;
-					activeWidget = null;
-				}
-
-				if (event.widget instanceof Shell) {
-					activeShell = null;
-				}
-
-				if (isBorderlessSwingControl(widget)) {
-					if (activeEmbedded != null) {
-						lastActiveEmbedded = activeEmbedded;
-						lastActiveFocusCleared = false;
-						activeEmbedded = null;
+					// Track the currently active shell. This is more reliable than
+					// depending on Display.getActiveShell() which sometimes returns
+					// an
+					// inactive shell.
+					if (widget instanceof Shell) {
+						activeShell = (Shell) widget;
 					}
-				}
 
-				break;
+					// If we have moved from a SwingControl to another control in
+					// the same
+					// shell, clear its current focus owner so that a permanent
+					// focus
+					// lost event is generated.
+					if (lastActiveEmbedded != null && !lastActiveEmbedded.isDisposed() && lastActiveEmbedded != widget
+							&& !lastActiveFocusCleared && widget instanceof Control && // (need
+																						// a
+																						// getShell()
+																						// method)
+							lastActiveEmbedded.getShell() == ((Control) widget).getShell()) {
+						clearFocusOwner(lastActiveEmbedded);
+						lastActiveFocusCleared = true;
+					}
 
-			case SWT.Traverse:
-				currentSwtTraversal = event.detail;
+					// If we have moved to a SwingControl, restore the current focus
+					// owner
+					// that was cleared above during a previous Activate event.
+					if (isBorderlessSwingControl(widget)) {
+						activeEmbedded = (SwingControl) widget;
+						restoreFocusOwner(activeEmbedded);
+					}
+					break;
 
-				break;
+				case SWT.Deactivate:
+					if (activeWidget != null) {
+						lastActiveWidget = activeWidget;
+						activeWidget = null;
+					}
+
+					if (event.widget instanceof Shell) {
+						activeShell = null;
+					}
+
+					if (isBorderlessSwingControl(widget)) {
+						if (activeEmbedded != null) {
+							lastActiveEmbedded = activeEmbedded;
+							lastActiveFocusCleared = false;
+							activeEmbedded = null;
+						}
+					}
+
+					break;
+
+				case SWT.Traverse:
+					currentSwtTraversal = event.detail;
+
+					break;
 			}
 
 			// Propagate to any listeners

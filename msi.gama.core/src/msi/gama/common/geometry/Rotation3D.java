@@ -79,8 +79,12 @@ public class Rotation3D implements Serializable, Transformation3D {
 	 * Build a rotation from the quaternion coordinates.
 	 * <p>
 	 */
-	private Rotation3D(double q0, double q1, double q2, double q3, final boolean needsNormalization) {
-
+	private Rotation3D(final double quat0, final double quat1, final double quat2, final double quat3,
+			final boolean needsNormalization) {
+		q0 = quat0;
+		q1 = quat1;
+		q2 = quat2;
+		q3 = quat3;
 		if (needsNormalization) {
 			// normalization preprocessing
 			final double inv = 1.0 / Math.sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
@@ -89,10 +93,6 @@ public class Rotation3D implements Serializable, Transformation3D {
 			q2 *= inv;
 			q3 *= inv;
 		}
-		this.q0 = q0;
-		this.q1 = q1;
-		this.q2 = q2;
-		this.q3 = q3;
 	}
 
 	public void setToIdentity() {
@@ -161,9 +161,11 @@ public class Rotation3D implements Serializable, Transformation3D {
 	 * @param angle
 	 *            rotation angle in radians
 	 */
-	public Rotation3D(GamaPoint axis, final double angle) {
-		if (axis == null)
+	public Rotation3D(final GamaPoint rotationAxis, final double angle) {
+		GamaPoint axis = rotationAxis;
+		if (axis == null) {
 			axis = PLUS_K;
+		}
 		final double norm = axis.norm();
 
 		final double halfAngle = -0.5 * angle;
@@ -221,7 +223,12 @@ public class Rotation3D implements Serializable, Transformation3D {
 	 * @param v2
 	 *            desired image of u2 by the rotation
 	 */
-	public Rotation3D(GamaPoint u1, GamaPoint u2, GamaPoint v1, GamaPoint v2) {
+	public Rotation3D(final GamaPoint originVector1, final GamaPoint originVector2, final GamaPoint desiredVector1,
+			final GamaPoint desiredVector2) {
+		GamaPoint u1 = originVector1;
+		GamaPoint u2 = originVector2;
+		GamaPoint v1 = desiredVector1;
+		GamaPoint v2 = desiredVector2;
 
 		// build orthonormalized base from u1, u2
 		// this fails when vectors are null or collinear, which is forbidden to define a rotation

@@ -49,7 +49,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
-	protected final List<IDisplayOutput> outputs = new ArrayList<>();
+	public final List<IDisplayOutput> outputs = new ArrayList<>();
 	private Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;

@@ -77,7 +77,7 @@ public class EnforcementStatement extends AbstractStatement {
 	public static final String OBLIGATION = "obligation";
 	public static final String LAW = "law";
 
-	final IExpression name;
+	final IExpression nameExpr;
 	final IExpression when;
 	final IExpression norm;
 	final IExpression sanction;
@@ -87,7 +87,7 @@ public class EnforcementStatement extends AbstractStatement {
 
 	public EnforcementStatement(final IDescription desc) {
 		super(desc);
-		name = getFacet(IKeyword.NAME);
+		nameExpr = getFacet(IKeyword.NAME);
 		when = getFacet(IKeyword.WHEN);
 		norm = getFacet(EnforcementStatement.NORM);
 		sanction = getFacet(EnforcementStatement.SANCTION);

@@ -122,7 +122,8 @@ public final class NumbersUtils {
 	 * @return True if the specified value is a mathematical integer, false otherwise (which includes NaN and
 	 *         +-Infinity).
 	 */
-	public static boolean isMathematicalInteger(float value) {
+	public static boolean isMathematicalInteger(final float val) {
+		float value = val;
 		// Doing magnitude test first, for cast
 		// might be very slow for huge values.
 		// It also helps be faster for huge values,
@@ -135,7 +136,8 @@ public final class NumbersUtils {
 	 * @return True if the specified value is a mathematical integer, false otherwise (which includes NaN and
 	 *         +-Infinity).
 	 */
-	public static boolean isMathematicalInteger(double value) {
+	public static boolean isMathematicalInteger(final double val) {
+		double value = val;
 		// Doing magnitude test first, for cast
 		// might be very slow for huge values.
 		// It also helps be faster for huge values,
