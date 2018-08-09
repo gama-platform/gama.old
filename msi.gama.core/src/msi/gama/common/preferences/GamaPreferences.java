@@ -504,9 +504,8 @@ public class GamaPreferences {
 		 */
 		public static final String GEOTOOLS =
 				"GIS Coordinate Reference Systems (http://spatialreference.org/ref/epsg/ for EPSG codes)";
-		public static final Pref<Boolean> LIB_TARGETED =
-				create("pref_gis_auto_crs", "Let GAMA decide which CRS to use to project GIS data", true, IType.BOOL,
-						true).deactivates("pref_gis_default_crs").in(NAME, GEOTOOLS);
+		public static final Pref<Boolean> LIB_TARGETED = create("pref_gis_auto_crs",
+				"Let GAMA find which CRS to use to project GIS data", true, IType.BOOL, true).in(NAME, GEOTOOLS);
 		public static final Pref<Boolean> LIB_PROJECTED = create("pref_gis_same_crs",
 				"When no .prj file or CRS is supplied, consider GIS data to be already projected in this CRS", true,
 				IType.BOOL, true).deactivates("pref_gis_initial_crs").in(NAME, GEOTOOLS);
@@ -514,8 +513,8 @@ public class GamaPreferences {
 				create("pref_gis_save_crs", "When no CRS is provided, save the GIS data with the current CRS", true,
 						IType.BOOL, true).deactivates("pref_gis_output_crs").in(NAME, GEOTOOLS);
 		public static final Pref<Integer> LIB_TARGET_CRS = create("pref_gis_default_crs",
-				"...or use the following CRS (EPSG code), which will be used anyway if no .prj file is present", 32648,
-				IType.INT, true).in(NAME, GEOTOOLS)
+				"...or use the following EPSG code (the one that will also be used if no projection information is found)",
+				32648, IType.INT, true).in(NAME, GEOTOOLS)
 						.addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
