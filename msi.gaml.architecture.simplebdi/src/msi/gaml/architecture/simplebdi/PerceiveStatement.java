@@ -182,28 +182,28 @@ public class PerceiveStatement extends AbstractStatementSequence {
 				if (threshold == null || emotion != null && threshold != null && SimpleBdiArchitecture.getEmotion(scope,
 						(Emotion) emotion.value(scope)).intensity >= (Double) threshold.value(scope)) {
 					if (inArg instanceof Float || inArg instanceof Integer || inArg instanceof Double) {
-						IList<IAgent> temp = GamaListFactory.create();
+						IList temp = GamaListFactory.create();
 						final double dist = Cast.asFloat(scope, inArg);
 						if (obj instanceof IContainer) {
 							temp = msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer) obj,
 									Cast.asFloat(scope, inArg));
 						} else if (obj instanceof IAgent) {
 							if (ag.euclidianDistanceTo((IAgent) obj) <= dist) {
-								temp.add((IAgent) obj);
+								temp.add(obj);
 							}
 						}
 						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
 						return this;
 
 					} else if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
-						IList<IAgent> temp = GamaListFactory.create();
+						IList temp = GamaListFactory.create();
 						final IShape geom = Cast.asGeometry(scope, inArg);
 						if (obj instanceof IContainer) {
 							temp = msi.gaml.operators.Spatial.Queries.overlapping(scope, (IContainer) obj,
 									Cast.asGeometry(scope, inArg));
 						} else if (obj instanceof IAgent) {
 							if (geom.intersects((IShape) obj)) {
-								temp.add((IAgent) obj);
+								temp.add(obj);
 							}
 						}
 						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
