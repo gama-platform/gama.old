@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import com.thoughtworks.xstream.XStream;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -82,7 +83,7 @@ public class ReverseOperators {
 		final SimulationAgent simAgt = expAgt.getSimulation();
 		int savedCycle = simAgt.getClock().getCycle();
 		String savedModel = expAgt.getModel().getFilePath();
-		String savedExperiment = expAgt.getExperiment().getName();		
+		String savedExperiment = (String) expAgt.getSpecies().getFacet(IKeyword.NAME).value(scope);
 		
 		FileWriter fw = null;
 		try {
