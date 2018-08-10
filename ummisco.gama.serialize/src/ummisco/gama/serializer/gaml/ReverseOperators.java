@@ -24,6 +24,7 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.GamaSavedSimulationFile;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
@@ -71,12 +72,18 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "saveAgent")
-	@doc(value = "", deprecated = "Still in alpha version, do not use it.")
+	@doc(value = "")
 	public static int saveAgent(final IScope scope, final IAgent agent, final String pathname) {
 		final String path = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
 
-		final String simulation = serializeAgent(scope, agent);
+		final String serializedAgent = serializeAgent(scope, agent);
 
+		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		final SimulationAgent simAgt = expAgt.getSimulation();
+		int savedCycle = simAgt.getClock().getCycle();
+		String savedModel = expAgt.getModel().getFilePath();
+		String savedExperiment = expAgt.getExperiment().getName();		
+		
 		FileWriter fw = null;
 		try {
 			final File f = new File(path);
@@ -84,7 +91,14 @@ public class ReverseOperators {
 				f.createNewFile();
 			}
 			fw = new FileWriter(f);
-			fw.write(simulation);
+			
+			// Write the Metadata
+			fw.write(savedModel + System.lineSeparator());
+			fw.write(savedExperiment + System.lineSeparator());
+			fw.write(savedCycle + System.lineSeparator());
+		
+			// Write the serializedAgent
+			fw.write(serializedAgent);
 			fw.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -98,7 +112,7 @@ public class ReverseOperators {
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgt = expAgt.getSimulation();
-
+		
 		return saveAgent(scope, simAgt, pathname);
 	}
 

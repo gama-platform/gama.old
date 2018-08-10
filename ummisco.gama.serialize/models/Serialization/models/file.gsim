@@ -1,33 +1,31 @@
+/Users/ben/Dev/GitRepository/gama/ummisco.gama.serialize/models/Serialization/models/Serialize Operators - Save simulation in file.gaml
+Model30
+3
 <msi.gama.metamodel.agent.SavedAgent>
   <index>0</index>
   <variables>
     <keys>
-      <string>location</string>
       <string>name</string>
       <string>shape</string>
-      <string>step</string>
-      <string>time</string>
-      <string>rng_usage</string>
-      <string>starting_date</string>
-      <string>average_duration</string>
-      <string>seed</string>
-      <string>total_duration</string>
-      <string>color</string>
-      <string>duration</string>
+      <string>location</string>
       <string>machine_time</string>
-      <string>rng</string>
       <string>paused</string>
-      <string>cycle</string>
+      <string>average_duration</string>
+      <string>time</string>
       <string>current_date</string>
+      <string>starting_date</string>
+      <string>color</string>
+      <string>rng</string>
+      <string>rng_usage</string>
+      <string>cycle</string>
+      <string>seed</string>
+      <string>step</string>
+      <string>total_duration</string>
+      <string>duration</string>
       <string>toot</string>
       <string>s</string>
     </keys>
     <data>
-      <msi.gama.metamodel.shape.GamaPoint>
-        <x>50.0</x>
-        <y>50.0</y>
-        <z>0.0</z>
-      </msi.gama.metamodel.shape.GamaPoint>
       <string>Simulation 0</string>
       <msi.gama.metamodel.shape.GamaShape>
         <geometry class="com.vividsolutions.jts.geom.Polygon">
@@ -108,9 +106,27 @@
           </valuesMapReducer>
         </attributes>
       </msi.gama.metamodel.shape.GamaShape>
-      <double>1.0</double>
-      <double>0.0</double>
-      <int>4</int>
+      <msi.gama.metamodel.shape.GamaPoint>
+        <x>50.0</x>
+        <y>50.0</y>
+        <z>0.0</z>
+      </msi.gama.metamodel.shape.GamaPoint>
+      <double>1.533876623761E12</double>
+      <boolean>true</boolean>
+      <string>0.0</string>
+      <double>3.0</double>
+      <msi.gama.util.GamaDate>
+        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
+          <byte>10</byte>
+          <int>1970</int>
+          <byte>1</byte>
+          <byte>1</byte>
+          <byte>7</byte>
+          <byte>0</byte>
+          <byte>-4</byte>
+          <byte>4</byte>
+        </internal>
+      </msi.gama.util.GamaDate>
       <msi.gama.util.GamaDate>
         <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
           <byte>10</byte>
@@ -121,19 +137,17 @@
           <byte>4</byte>
         </internal>
       </msi.gama.util.GamaDate>
-      <string>0.0</string>
-      <double>0.9536464208979937</double>
-      <string>0</string>
       <msi.gama.util.GamaColor>
         <value>-11902576</value>
         <falpha>0.0</falpha>
       </msi.gama.util.GamaColor>
-      <string>0</string>
-      <double>1.533719350514E12</double>
       <string>mersenne</string>
-      <boolean>true</boolean>
-      <int>0</int>
-      <msi.gama.util.GamaDate reference="../msi.gama.util.GamaDate"/>
+      <int>4</int>
+      <int>3</int>
+      <double>0.962756715555834</double>
+      <double>1.0</double>
+      <string>0</string>
+      <string>0</string>
       <int>0</int>
       <string>test</string>
     </data>
@@ -151,28 +165,28 @@
         <index>0</index>
         <variables>
           <keys>
-            <string>location</string>
             <string>name</string>
             <string>shape</string>
+            <string>location</string>
             <string>t</string>
             <string>lo</string>
           </keys>
           <data>
-            <msi.gama.metamodel.shape.GamaPoint>
-              <x>43.72773356735211</x>
-              <y>82.88962554041237</y>
-              <z>0.0</z>
-            </msi.gama.metamodel.shape.GamaPoint>
             <string>people0</string>
             <msi.gama.metamodel.shape.GamaShape>
               <geometry class="com.vividsolutions.jts.geom.Point">
                 <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                 <SRID>0</SRID>
                 <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
-                  <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+                  <point>
+                    <x>59.52584659608119</x>
+                    <y>83.88462220140812</y>
+                    <z>0.0</z>
+                  </point>
                 </coordinates>
               </geometry>
             </msi.gama.metamodel.shape.GamaShape>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
             <int>0</int>
             <msi.gama.util.GamaList>
               <valuesListReducer>

@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +20,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,6 +46,8 @@ import msi.gama.util.file.GamaFileMetaData;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
 import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
+import msi.gama.util.file.GamaSavedSimulationFile;
+import msi.gama.util.file.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.GamlFileInfo;
@@ -133,6 +132,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public static final String SHAPEFILE_CT_ID = "msi.gama.gui.shapefile.type";
 	public static final String OSM_CT_ID = "msi.gama.gui.osm.type";
 	public static final String SHAPEFILE_SUPPORT_CT_ID = "msi.gama.gui.shapefile.support.type";
+	public static final String GSIM_CT_ID = "msi.gama.gui.gsim.type";
+	
 
 	private final static FileMetaDataProvider instance = new FileMetaDataProvider();
 
@@ -241,7 +242,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static final Map<String, Class<? extends GamaFileMetaData>> CLASSES =
-			new HashMap<String, Class<? extends GamaFileMetaData>>() {
+			new HashMap<String, Class<? extends GamaFileMetaData>>() { 
 
 				{
 					put(CSV_CT_ID, CSVInfo.class);
@@ -251,6 +252,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					put(OSM_CT_ID, OSMInfo.class);
 					put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
 					put("project", ProjectInfo.class);
+					put(GSIM_CT_ID, SavedSimulationInfo.class);
 				}
 			};
 
@@ -339,6 +341,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							case SHAPEFILE_SUPPORT_CT_ID:
 								data[0] = createShapeFileSupportMetaData(theFile);
 								break;
+							case GSIM_CT_ID:
+								data[0] = createSacedSimulationFileMetaData(theFile);
+								break;								
 						}
 						// Last chance: we generate a generic info
 						if (data[0] == null) {
@@ -506,6 +511,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
 
+	private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
+		return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
+	}	
+	
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
 		if (ct != null) { return ct.getId(); }
@@ -514,6 +523,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ("shp".equals(ext)) { return SHAPEFILE_CT_ID; }
 		if (OSMExt.contains(ext)) { return OSM_CT_ID; }
 		if (longNames.containsKey(ext)) { return SHAPEFILE_SUPPORT_CT_ID; }
+		if("gsim".equals(ext)) { return GSIM_CT_ID; }
 		return "";
 	}
 

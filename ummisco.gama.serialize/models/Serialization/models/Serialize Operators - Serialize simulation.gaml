@@ -13,6 +13,8 @@ global {
 	
 	init {
 		create people number: 1;
+		
+		write "Run 1 step to see in the console the serialization of a simulation.";
 	}
 }
 

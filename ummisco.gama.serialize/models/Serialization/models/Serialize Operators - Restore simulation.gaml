@@ -14,7 +14,9 @@ global {
 	init {
 		create people number: 1;
 		create toto number: 2;
-		write "init model";
+		write "Run the model.";
+		write "Every 4 steps, the simulation is restored to its initial step.";
+		write "You will thus observe the red agent going to the right side of the display and, every 4 steps, moving back to its initial location.";
 	}
 	
 	reflex t {

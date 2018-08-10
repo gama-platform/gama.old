@@ -51,6 +51,10 @@
                            name="contentTypeId"
                            value="msi.gama.gui.osm.type">
                      </objectState>
+                     <objectState
+                           name="contentTypeId"
+                           value="msi.gama.gui.gsim.type">
+                     </objectState>                     
                   </or>
                </and>
                <objectClass
