@@ -46,7 +46,7 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 			final GamaSavedSimulationFile simulationFile = new GamaSavedSimulationFile(null, f.getAbsolutePath(), false);
 
 			
-			savedModel = simulationFile.getModel();
+			savedModel = simulationFile.getModelName();
 			savedExperiment = simulationFile.getExperiment();
 			savedCycle = simulationFile.getCycle();
 		}
@@ -72,14 +72,14 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 
 		@Override
 		public String getSuffix() {
-			return "" + savedModel + " | " + savedExperiment + " | " + "cycle: " + savedCycle;
+			return "" + savedModel + " | " + "Experiment: " + savedExperiment + " | " + "Cycle: " + savedCycle;
 		}
 
 		@Override
 		public void appendSuffix(final StringBuilder sb) {
 			sb.append(savedModel).append(SUFFIX_DEL);
-			sb.append(savedExperiment).append(SUFFIX_DEL);
-			sb.append("cycle: ").append(savedCycle);
+			sb.append("Experiment: ").append(savedExperiment).append(SUFFIX_DEL);
+			sb.append("Cycle: ").append(savedCycle);
 		}
 
 		/**
@@ -94,7 +94,8 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 
 	private int savedCycle;
 	private String savedExperiment;
-	private String savedModel;	
+	private String savedModelPath;	
+	private String savedModelName;
 
 	public GamaSavedSimulationFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, true);
@@ -124,9 +125,11 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 	}
 
 	private void readMetada(BufferedReader in) throws IOException {
-		savedModel = in.readLine();
+		savedModelPath = in.readLine();
 		savedExperiment = in.readLine() ;
 		savedCycle = Integer.parseInt(in.readLine());		
+		
+		savedModelName = (new File(savedModelPath)).getName();
 	}
 	
 	@Override
@@ -134,7 +137,8 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 
-	public String getModel() { return savedModel; }
+	public String getModelPath() { return savedModelPath; }
+	public String getModelName() {return savedModelName; }
 	public String getExperiment() { return savedExperiment; }
 	public int getCycle() { return savedCycle; }
 	
