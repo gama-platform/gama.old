@@ -67,7 +67,7 @@ public class GridLayerData extends LayerData {
 				}
 			}
 			return null;
-		}, Types.NO_TYPE, (Object) null);
+		}, Types.NO_TYPE, (double[]) null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
 		text = create(IKeyword.TEXT, Types.BOOL, false);
