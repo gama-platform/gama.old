@@ -150,7 +150,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 </xsl:template>
 
 <xsl:template name="buildStatementsByEmbeded">
-	<xsl:for-each select="/doc/insideStatementKinds/insideStatementKind">
+	<xsl:for-each select="//doc/insideStatementKinds/insideStatementKind[not(@symbol = (preceding-sibling::*/@symbol))]">
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="kindGlobal" select="@symbol"/> 
 		<xsl:text>
@@ -168,7 +168,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 			</xsl:for-each>
 		</xsl:for-each>    	
 	</xsl:for-each>
-	<xsl:for-each select="/doc/insideStatementSymbols/insideStatementSymbol">
+	<xsl:for-each select="//doc/insideStatementSymbols/insideStatementSymbol[not(@symbol = (preceding-sibling::*/@symbol))]">
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="symbolGlobal" select="@symbol"/> 
 		<xsl:text>
