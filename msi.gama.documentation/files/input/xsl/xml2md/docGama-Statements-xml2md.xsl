@@ -12,7 +12,6 @@
 <xsl:call-template name="msgIntro"/>
 
 <xsl:text>## Table of Contents
-&lt;wiki:toc max_depth="2" /&gt;
 </xsl:text> <xsl:call-template name="buildStatementsByName"/> <xsl:text>
 
 
@@ -104,7 +103,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 <xsl:if test="examples[node()]">
 
 ```
-<xsl:call-template name="generateExamples"/>```
+<xsl:call-template name="generateExamples"/>
+```
 
 </xsl:if>
 </xsl:for-each>
@@ -116,7 +116,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 * Other examples of use: 
 ```
 <xsl:for-each select="documentation/usagesExamples/usage">
-<xsl:call-template name="generateExamples"/> </xsl:for-each>``` 
+<xsl:call-template name="generateExamples"/> </xsl:for-each>
+``` 
   </xsl:if>
 
   <xsl:if test="documentation/seeAlso[node()]">    
