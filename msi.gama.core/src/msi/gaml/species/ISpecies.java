@@ -28,12 +28,15 @@ import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Containers;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 25 avr. 2010
@@ -58,7 +61,12 @@ import msi.gaml.variables.IVariable;
 				name = ISpecies.SUBSPECIES,
 				type = IType.LIST,
 				of = IType.SPECIES,
-				doc = @doc ("A list of the species declared inside this species")),
+				doc = @doc ("A list of the names of subspecies of this species")),
+		@variable (
+				name = ISpecies.MICROSPECIES,
+				type = IType.LIST,
+				of = IType.STRING,
+				doc = @doc ("A list of the names of the micro-species declared inside this species")),
 		@variable (
 				name = ISpecies.POPULATION,
 				type = IType.LIST,
@@ -71,6 +79,7 @@ public interface ISpecies
 	public static final String initActionName = "_init_";
 	public static final String POPULATION = "population";
 	public static final String SUBSPECIES = "subspecies";
+	public static final String MICROSPECIES = "microspecies";
 
 	public abstract IExpression getFrequency();
 
@@ -89,9 +98,16 @@ public interface ISpecies
 	 * 
 	 * @return
 	 */
-	@getter (SUBSPECIES)
-	@doc ("Returns all the direct subspecies of this species")
+
 	public abstract IList<ISpecies> getSubSpecies(IScope scope);
+
+	@SuppressWarnings ("unchecked")
+	@getter (SUBSPECIES)
+	@doc ("Returns all the direct subspecies names of this species")
+	default IList<String> getSubSpeciesNames(final IScope scope) {
+		return StreamEx.of(getSubSpecies(scope)).map((each) -> each.getName())
+				.toCollection(Containers.listOf(Types.STRING));
+	}
 
 	@Override
 	@getter (IKeyword.NAME)
@@ -196,9 +212,8 @@ public interface ISpecies
 
 	public abstract Boolean implementsSkill(String skill);
 
-	/**
-	 * @return
-	 */
+	@getter (MICROSPECIES)
+	@doc ("Returns all the direct microspecies names of this species")
 	public abstract Collection<String> getMicroSpeciesNames();
 
 	public abstract boolean isInitOverriden();
@@ -212,6 +227,7 @@ public interface ISpecies
 	 * @return
 	 *
 	 */
+	@Override
 	@getter (POPULATION)
 	@doc ("Returns the population of agents that belong to this species")
 	public abstract IPopulation<? extends IAgent> getPopulation(IScope scope);
