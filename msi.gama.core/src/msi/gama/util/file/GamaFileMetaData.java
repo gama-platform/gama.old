@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.StringUtils;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class GamaFileMetaInformation.

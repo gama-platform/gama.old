@@ -7,7 +7,7 @@ import org.eclipse.emf.common.util.URI;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
 import one.util.streamex.StreamEx;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	private static int COUNT = 0;

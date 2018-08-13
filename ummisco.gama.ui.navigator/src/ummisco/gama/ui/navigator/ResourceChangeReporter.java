@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ResourceChangeReporter implements IResourceChangeListener {
 

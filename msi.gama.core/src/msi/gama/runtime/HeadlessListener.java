@@ -49,7 +49,7 @@ import msi.gaml.operators.Strings;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class HeadlessListener implements IGui {
 

@@ -29,10 +29,10 @@ import javax.swing.JComponent;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import utils.DEBUG;
 
 public class AWTLayeredDisplayMultiListener
 		implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener, FocusListener {

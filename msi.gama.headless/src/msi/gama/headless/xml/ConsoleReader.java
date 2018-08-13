@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class ConsoleReader {
 

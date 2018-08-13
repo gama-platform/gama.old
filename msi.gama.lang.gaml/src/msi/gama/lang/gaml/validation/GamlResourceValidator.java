@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamlResourceValidator implements IResourceValidator {
 

@@ -14,7 +14,7 @@ import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class LabelProviderFactory extends AbstractServiceFactory {
 

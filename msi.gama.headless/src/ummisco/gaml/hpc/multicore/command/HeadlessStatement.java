@@ -27,7 +27,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 @symbol (
 		name = IKeywords.RUNSIMULARTION,

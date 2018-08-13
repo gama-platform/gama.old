@@ -35,12 +35,12 @@ import msi.gama.runtime.MemoryUtils;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.menus.GamaColorMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.GamaPreferencesView;
-import utils.DEBUG;
 
 public class PreferencesHelper {
 

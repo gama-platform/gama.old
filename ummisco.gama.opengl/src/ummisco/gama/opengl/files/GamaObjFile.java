@@ -36,8 +36,8 @@ import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
-import utils.DEBUG;
 
 /**
  * Class GamaObjFile.

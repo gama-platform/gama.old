@@ -20,7 +20,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.HeadlessListener;
 import msi.gaml.descriptions.IDescription;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {
 

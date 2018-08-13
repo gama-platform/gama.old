@@ -23,7 +23,7 @@ import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {

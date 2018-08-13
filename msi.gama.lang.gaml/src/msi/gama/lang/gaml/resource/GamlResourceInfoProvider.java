@@ -33,7 +33,7 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })

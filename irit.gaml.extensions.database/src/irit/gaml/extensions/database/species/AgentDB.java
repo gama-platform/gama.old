@@ -27,7 +27,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai

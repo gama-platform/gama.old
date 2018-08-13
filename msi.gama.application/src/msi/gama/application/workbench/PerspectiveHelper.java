@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class PerspectiveHelper {
 

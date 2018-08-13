@@ -59,7 +59,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 @vars ({ @variable (
 		name = IKeyword.SPEED,

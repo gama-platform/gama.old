@@ -16,8 +16,8 @@ import java.net.SocketTimeoutException;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.skills.INetworkSkill;
-import utils.DEBUG;
 
 public class MultiThreadedSocketServer extends Thread {
 

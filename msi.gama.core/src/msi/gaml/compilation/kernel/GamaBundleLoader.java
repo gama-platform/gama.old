@@ -34,7 +34,7 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class GamaBundleLoader.

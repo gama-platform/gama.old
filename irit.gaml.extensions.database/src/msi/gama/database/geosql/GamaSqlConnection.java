@@ -37,7 +37,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGisFile;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 // DataStore.dispose(); //close connection;
 @SuppressWarnings ({ "rawtypes", "unchecked" })

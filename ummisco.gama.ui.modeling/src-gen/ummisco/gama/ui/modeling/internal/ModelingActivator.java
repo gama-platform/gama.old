@@ -17,7 +17,7 @@ import com.google.inject.Injector;
 
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.GamlUiModule;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * This class was generated. Customizations should only happen in a newly introduced subclass.

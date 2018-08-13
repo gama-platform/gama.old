@@ -13,7 +13,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Receives warnings as Strings (hopefully, many times the same). Stores them. Then, when asked for, reports all these

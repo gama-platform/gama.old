@@ -15,7 +15,7 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.preferences.GamaPreferences;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Simple Animator (with target FPS)

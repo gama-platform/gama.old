@@ -53,7 +53,7 @@ import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class GamaPreferencesView.

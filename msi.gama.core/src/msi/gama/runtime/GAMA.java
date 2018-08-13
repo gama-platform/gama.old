@@ -32,7 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009

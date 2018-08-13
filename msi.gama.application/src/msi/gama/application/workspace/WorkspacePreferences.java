@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkspacePreferences {
 

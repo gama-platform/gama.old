@@ -1,4 +1,4 @@
-package utils;
+package ummisco.gama.dev.utils;
 
 import java.util.HashSet;
 import java.util.Objects;

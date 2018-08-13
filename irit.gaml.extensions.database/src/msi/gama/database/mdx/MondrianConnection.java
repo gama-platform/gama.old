@@ -19,7 +19,7 @@ import org.olap4j.OlapWrapper;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MondrianConnection extends MdxConnection {
 

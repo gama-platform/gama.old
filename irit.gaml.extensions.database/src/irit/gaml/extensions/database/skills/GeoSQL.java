@@ -11,7 +11,7 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
 import org.geotools.data.sqlserver.SQLServerDataStoreFactory;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GeoSQL {
 

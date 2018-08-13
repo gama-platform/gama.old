@@ -20,7 +20,7 @@ import org.eclipse.xtext.parser.antlr.SyntaxErrorMessageProvider;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class GamlSyntaxErrorMessageProvider.

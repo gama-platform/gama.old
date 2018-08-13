@@ -34,12 +34,12 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnector;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
-import utils.DEBUG;
 
 @vars ({ @variable (
 		name = INetworkSkill.NET_AGENT_NAME,

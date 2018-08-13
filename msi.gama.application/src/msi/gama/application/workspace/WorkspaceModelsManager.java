@@ -56,7 +56,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class InitialModelOpener.

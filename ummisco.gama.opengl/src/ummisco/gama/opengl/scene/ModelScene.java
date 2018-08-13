@@ -24,12 +24,12 @@ import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.opengl.scene.layers.AxesLayerObject;
 import ummisco.gama.opengl.scene.layers.FrameLayerObject;
 import ummisco.gama.opengl.scene.layers.LayerObject;
-import utils.DEBUG;
 
 /**
  *

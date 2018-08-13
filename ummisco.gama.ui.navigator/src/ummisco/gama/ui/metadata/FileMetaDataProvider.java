@@ -50,10 +50,10 @@ import msi.gama.util.file.GamaSavedSimulationFile;
 import msi.gama.util.file.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import ummisco.gama.dev.utils.DEBUG;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
-import utils.DEBUG;
 
 /**
  * Class FileMetaDataProvider.

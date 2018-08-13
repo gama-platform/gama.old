@@ -46,7 +46,7 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
 

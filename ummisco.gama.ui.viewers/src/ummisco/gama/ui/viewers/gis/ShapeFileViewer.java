@@ -49,6 +49,7 @@ import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
@@ -59,7 +60,6 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
-import utils.DEBUG;
 
 public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedView.Colorizable {
 

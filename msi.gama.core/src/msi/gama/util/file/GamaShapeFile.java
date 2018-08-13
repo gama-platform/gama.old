@@ -51,7 +51,7 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 13 nov. 2011

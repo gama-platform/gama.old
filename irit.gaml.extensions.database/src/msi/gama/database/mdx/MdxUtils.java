@@ -15,7 +15,7 @@ import java.util.Map;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MdxUtils {
 

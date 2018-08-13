@@ -2,7 +2,7 @@ package msi.gama.runtime.benchmark;
 
 import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Strings;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class BenchmarkConsolePrinter {
 	static final String S = "\n------------------------------------------------\n";

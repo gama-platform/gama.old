@@ -194,7 +194,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		super.init(site, input);
-		utils.DEBUG.OUT("init of Editor for " + input.getName());
+		ummisco.gama.dev.utils.DEBUG.OUT("init of Editor for " + input.getName());
 		assignBoxPartListener();
 	}
 
@@ -317,7 +317,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void createPartControl(final Composite compo) {
-		utils.DEBUG.OUT("Creating part control of " + this.getPartName());
+		ummisco.gama.dev.utils.DEBUG.OUT("Creating part control of " + this.getPartName());
 		configureTabFolder(compo);
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
 		final GridLayout layout = new GridLayout(1, false);

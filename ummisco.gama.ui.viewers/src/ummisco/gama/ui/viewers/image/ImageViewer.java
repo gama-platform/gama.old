@@ -68,6 +68,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.metadata.ImageDataLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -77,7 +78,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
-import utils.DEBUG;
 
 /**
  * A simple image viewer editor.

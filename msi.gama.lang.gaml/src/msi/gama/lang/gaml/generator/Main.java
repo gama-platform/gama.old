@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class Main {
 

@@ -47,10 +47,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import utils.DEBUG;
 
 public class ResourceManager implements IResourceChangeListener, IResourceDeltaVisitor, ISelectionChangedListener {
 

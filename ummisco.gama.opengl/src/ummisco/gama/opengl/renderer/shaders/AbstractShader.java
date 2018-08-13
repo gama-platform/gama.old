@@ -18,7 +18,7 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractShader {
 

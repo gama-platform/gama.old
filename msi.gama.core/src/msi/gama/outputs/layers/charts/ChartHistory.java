@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * A simple history for charts, that tries to maintain a low memory footprint by encoding and zipping the contents

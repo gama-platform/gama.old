@@ -35,7 +35,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC

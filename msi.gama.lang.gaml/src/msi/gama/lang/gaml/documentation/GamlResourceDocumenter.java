@@ -25,8 +25,8 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
+import ummisco.gama.dev.utils.DEBUG;
 import msi.gaml.descriptions.ModelDescription;
-import utils.DEBUG;
 
 /**
  * Class GamlResourceDocManager.

@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 class DocumentationTask {
 	final EObject object;

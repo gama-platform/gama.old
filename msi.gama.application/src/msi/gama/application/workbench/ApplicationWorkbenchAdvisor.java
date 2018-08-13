@@ -40,7 +40,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 

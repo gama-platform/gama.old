@@ -13,8 +13,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import utils.DEBUG;
 
 public class GamaIcon {
 

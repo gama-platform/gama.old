@@ -14,10 +14,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import utils.DEBUG;
 
 /**
  * Class WorkaroundForIssue1353. Only for MacOS X, Eclipse Mars and Java 1.7

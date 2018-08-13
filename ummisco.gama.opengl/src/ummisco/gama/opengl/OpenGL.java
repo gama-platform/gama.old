@@ -69,6 +69,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
@@ -80,7 +81,6 @@ import ummisco.gama.opengl.scene.GeometryDrawer;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringDrawer;
-import utils.DEBUG;
 
 /**
  * A class that represents an intermediate state between the rendering and the opengl state. It captures all the

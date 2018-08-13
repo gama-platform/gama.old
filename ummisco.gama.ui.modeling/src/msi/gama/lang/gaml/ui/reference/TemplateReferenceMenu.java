@@ -27,9 +27,9 @@ import org.eclipse.ui.PartInitException;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.operators.Strings;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import utils.DEBUG;
 
 /**
  * The class EditToolbarTemplateMenu.

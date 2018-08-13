@@ -54,8 +54,8 @@ import com.google.common.cache.LoadingCache;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGamaView;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.views.IGamlEditor;
-import utils.DEBUG;
 
 public class WorkbenchHelper {
 

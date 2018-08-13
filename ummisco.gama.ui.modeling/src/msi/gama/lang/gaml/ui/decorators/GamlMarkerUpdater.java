@@ -30,7 +30,7 @@ import org.eclipse.xtext.validation.CheckMode;
 
 import com.google.inject.Inject;
 
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class GamlMarkerUpdater.

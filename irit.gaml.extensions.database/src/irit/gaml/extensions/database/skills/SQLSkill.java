@@ -33,7 +33,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import utils.DEBUG;
+import ummisco.gama.dev.utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai
