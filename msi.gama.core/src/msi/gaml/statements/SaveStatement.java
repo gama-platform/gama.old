@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -113,8 +115,8 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz" },
-				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz", "gsim" },
+				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"gsim\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
 						type = IType.NONE,
@@ -251,6 +253,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private final IExpression attributesFacet;
 	private final IExpression crsCode, item, file, rewriteExpr, header;
 
+	static Map<String,ISaveDelegate> delegates = new HashMap<>();
+
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final ISaveDelegate delegate) {
+		delegates.put(delegate.getExtension(), delegate);
+	}
+
+	public static void removeDelegate(final ISaveDelegate sd) {
+		delegates.remove(sd.getExtension());
+	}	
+	
+	
 	public SaveStatement(final IDescription desc) {
 		super(desc);
 		crsCode = desc.getFacetExpr("crs");
@@ -385,6 +401,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			AvailableGraphWriters.getGraphWriter(type.trim().toLowerCase()).writeGraph(scope, g, null, path);
 
+		} else if (delegates.keySet().contains(type.trim().toLowerCase())) {
+			delegates.get(type.trim().toLowerCase()).save(scope, item.value(scope), path);
 		} else {
 
 			throw GamaRuntimeException.error("Unable to save, because this format is not recognized ('" + type + "')",

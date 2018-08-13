@@ -25,6 +25,12 @@
             description="Create simulation from saved simulation">
       </implementation>
    </extension>   
-
+   <extension
+         point="gama.save">
+      <implementation
+            class="ummisco.gama.serializer.gaml.SaveSimulationDelegate"
+            description="Save simulation to saved simulation file">
+      </implementation>
+   </extension>  
 </plugin>
 
