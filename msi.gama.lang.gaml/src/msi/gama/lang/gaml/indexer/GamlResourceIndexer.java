@@ -43,6 +43,7 @@ import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.TOrderedHashMap;
+import utils.DEBUG;
 
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -297,7 +298,7 @@ public class GamlResourceIndexer {
 	}
 
 	public static void eraseIndex() {
-		System.out.println("Erasing GAML indexer index");
+		DEBUG.OUT("Erasing GAML indexer index");
 		index = new SimpleDirectedGraph(Edge.class);
 	}
 

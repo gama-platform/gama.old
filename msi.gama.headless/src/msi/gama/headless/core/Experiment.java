@@ -22,8 +22,13 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
+import utils.DEBUG;
 
 public class Experiment implements IExperiment {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static final double DEFAULT_SEED_VALUE = 0;
 
@@ -111,11 +116,10 @@ public class Experiment implements IExperiment {
 		final IOutput output =
 				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
 		// System.out.
-		if (output == null)
-			throw GamaRuntimeException.error("Output does not exist: " + parameterName, currentSimulation.getScope());
-		if (!(output instanceof MonitorOutput))
-			throw GamaRuntimeException.error("Output " + parameterName + " is not an alphanumeric data.",
-					currentSimulation.getScope());
+		if (output == null) { throw GamaRuntimeException.error("Output does not exist: " + parameterName,
+				currentSimulation.getScope()); }
+		if (!(output instanceof MonitorOutput)) { throw GamaRuntimeException
+				.error("Output " + parameterName + " is not an alphanumeric data.", currentSimulation.getScope()); }
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
 	}
@@ -138,8 +142,7 @@ public class Experiment implements IExperiment {
 	@Override
 	public boolean isInterrupted() {
 		final SimulationAgent sim = currentExperiment.getCurrentSimulation();
-		if (currentExperiment.isBatch() && sim == null)
-			return false;
+		if (currentExperiment.isBatch() && sim == null) { return false; }
 		return sim == null || sim.dead() || sim.getScope().interrupted();
 	}
 
@@ -156,7 +159,7 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public IExpression compileExpression(final String expression) {
-		System.out.println("expression " + expression);
+		DEBUG.OUT("expression " + expression);
 		return GAML.compileExpression(expression, this.getSimulation(), false);
 	}
 

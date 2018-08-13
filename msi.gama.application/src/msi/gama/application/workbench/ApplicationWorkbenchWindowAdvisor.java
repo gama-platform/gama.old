@@ -62,7 +62,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( PerspectiveHelper.isSimulationPerspective() ) {
-					// System.out.println("Running the perspective listener to automatically launch modeling");
+					// DEBUG.OUT("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
 					PerspectiveHelper.openModelingPerspective(true);

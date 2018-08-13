@@ -182,10 +182,10 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		// double optimal_distance, double initial_step, double step_ratio,
 		// double convergence_threshold, double barnes_hut_theta) {
 		initializing();
-		// System.out.println("ForceAtlas2 algorithm (by step), starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("ForceAtlas2 algorithm (by step), starting.");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
-		// System.out.println("initializing ...");
+		// DEBUG.LOG("initializing ...");
 		final ForceAtlas2 fa2Layout = new ForceAtlas2(new ForceAtlas2Builder());
 		initializing_GraphModel(g);
 		fa2Layout.resetPropertiesValues();
@@ -200,9 +200,9 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		fa2Layout.setJitterTolerance(tolerance);
 		fa2Layout.setBarnesHutOptimize(approximate_repulsion);
 		fa2Layout.setBarnesHutTheta(approximation);
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		fa2Layout.initAlgo();
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		// int nbsteps=1;
 		// for (int i = 0; i < nbsteps && fa2Layout.canAlgo(); i++){
 		for (int i = 0; i < nb_steps; i++) {
@@ -220,7 +220,7 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 			Update_locations(g);
 		}
 
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 
 		return g;
 

@@ -13,6 +13,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import utils.DEBUG;
 
 /**
  * Receives warnings as Strings (hopefully, many times the same). Stores them. Then, when asked for, reports all these
@@ -25,6 +26,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * 
  */
 public class PostponedWarningList {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	private final TObjectIntHashMap<String> warning2count = new TObjectIntHashMap<>();
 
@@ -61,8 +66,8 @@ public class PostponedWarningList {
 			} else {
 				sb.append(" times)");
 			}
-			if (writeSystemOut) {
-				System.err.println(sb.toString());
+			if (DEBUG.IS_ON()) {
+				DEBUG.ERR(sb.toString());
 			}
 			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.error(sb.toString(), scope), true);
 			return true;

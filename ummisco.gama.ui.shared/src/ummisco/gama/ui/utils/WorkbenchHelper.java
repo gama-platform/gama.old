@@ -28,7 +28,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -55,6 +55,7 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGamaView;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.views.IGamlEditor;
+import utils.DEBUG;
 
 public class WorkbenchHelper {
 
@@ -143,7 +144,7 @@ public class WorkbenchHelper {
 		try {
 			w = getWorkbench().getActiveWorkbenchWindow();
 		} catch (final Exception e) {
-			System.out.println("SWT bug: Window not found ");
+			DEBUG.ERR("SWT bug: Window not found ");
 		}
 		if (w == null) {
 			final IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
@@ -259,17 +260,16 @@ public class WorkbenchHelper {
 		final IWorkbenchPage page = getPage();
 		if (page == null) { return null; }
 		final Point p = getDisplay().getCursorLocation();
-		for (final IViewReference ref : page.getViewReferences()) {
-			final IViewPart part = ref.getView(false);
-			if (part instanceof IGamaView.Display) {
-				final IGamaView.Display display = (IGamaView.Display) ref.getView(true);
-				if (display.isFullScreen()) { return (IViewPart) display; }
-				if (page.isPartVisible(part) && display.containsPoint(p.x, p.y)) { return part; }
-
-			}
+		final List<IGamaView.Display> displays = StreamEx.of(page.getViewReferences()).map((r) -> r.getView(false))
+				.filter((part) -> page.isPartVisible(part)).select(IGamaView.Display.class)
+				.filter((display) -> display.containsPoint(p.x, p.y)).toList();
+		if (displays.isEmpty()) { return null; }
+		if (displays.size() == 1) { return (IViewPart) displays.get(0); }
+		for (final IGamaView.Display display : displays) {
+			if (display.isFullScreen()) { return (IViewPart) display; }
 		}
-
-		return null;
+		// Strange: n views, none of them fullscreen, claiming to contain the mouse pointer...
+		return (IViewPart) displays.get(0);
 	}
 
 	public static Shell obtainFullScreenShell(final int id) {
@@ -285,23 +285,16 @@ public class WorkbenchHelper {
 
 		final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
 		fullScreenShell.setBounds(bounds);
-
-		// Shell fullScreenShell =
-		// new Shell(WorkbenchHelper.getDisplay(), (GamaPreferences.Displays.DISPLAY_MODAL_FULLSCREEN.getValue()
-		// ? SWT.ON_TOP | SWT.SYSTEM_MODAL : SWT.APPLICATION_MODAL) | SWT.NO_TRIM);
-		// fullScreenShell.setBounds(bounds);
-		// if (GamaPreferences.Displays.DISPLAY_NATIVE_FULLSCREEN.getValue()) {
-		// fullScreenShell = new Shell(SWT.NO_TRIM | SWT.ON_TOP);
-		// fullScreenShell.setMaximized(true);
-		// fullScreenShell.setBounds(bounds);
-		// fullScreenShell.setFullScreen(true);
-		// }
-		final GridLayout gl = new GridLayout(1, true);
-		gl.horizontalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.verticalSpacing = 0;
-		fullScreenShell.setLayout(gl);
+		final FillLayout fl = new FillLayout();
+		fl.marginHeight = 0;
+		fl.marginWidth = 0;
+		fl.spacing = 0;
+		// final GridLayout gl = new GridLayout(1, true);
+		// gl.horizontalSpacing = 0;
+		// gl.marginHeight = 0;
+		// gl.marginWidth = 0;
+		// gl.verticalSpacing = 0;
+		fullScreenShell.setLayout(fl);
 		return fullScreenShell;
 	}
 

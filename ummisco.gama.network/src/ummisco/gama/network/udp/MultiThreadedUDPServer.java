@@ -82,7 +82,7 @@ public class MultiThreadedUDPServer extends Thread {
 					this.interrupt();
 				}
 				// if(!OnServer){
-				// System.out.println("client ");
+				// DEBUG.LOG("client ");
 				// }
 				final byte[] receiveData = new byte[1024];
 				// byte[] sendData = new byte[1024];
@@ -101,7 +101,7 @@ public class MultiThreadedUDPServer extends Thread {
 					list_net_agents.addValue(myAgent.getScope(), IPAddress.toString() + "_" + port);
 					myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
 				}
-				// System.out.println("RECEIVED: "+IPAddress+" "
+				// DEBUG.LOG("RECEIVED: "+IPAddress+" "
 				// +port+"\n"+myUDPServerSocket.getLocalPort());
 				GamaList<ConnectorMessage> msgs = (GamaList<ConnectorMessage>) myAgent
 						.getAttribute("messages" + myAgent);
@@ -119,7 +119,7 @@ public class MultiThreadedUDPServer extends Thread {
 
 			} catch (final SocketTimeoutException ste) {
 				closed = true;
-				// System.out.println("closed ");
+				// DEBUG.LOG("closed ");
 
 			} catch (final Exception ioe) {
 

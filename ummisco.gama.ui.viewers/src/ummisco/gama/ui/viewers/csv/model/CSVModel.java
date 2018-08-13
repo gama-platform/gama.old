@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CSVModel.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CSVModel.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,6 +26,7 @@ import msi.gama.util.file.CsvReader;
 import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.IGamaFileMetaData;
+import utils.DEBUG;
 
 /**
  *
@@ -80,9 +80,7 @@ public class CSVModel implements IRowChangesListener {
 
 	public void setCustomDelimiter(final char c) {
 		final CSVInfo info = getInfo();
-		if (c == info.delimiter) {
-			return;
-		}
+		if (c == info.delimiter) { return; }
 		info.delimiter = c;
 		saveMetaData();
 	}
@@ -90,9 +88,8 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 * Get the character that defines comment lines
 	 * 
-	 * @return the comment line starting character. If no comments are allowed
-	 *         in this file, then Character.UNASSIGNED constant must be
-	 *         returned;
+	 * @return the comment line starting character. If no comments are allowed in this file, then Character.UNASSIGNED
+	 *         constant must be returned;
 	 *
 	 */
 	public char getCommentChar() {
@@ -103,8 +100,7 @@ public class CSVModel implements IRowChangesListener {
 	/**
 	 * Get custom text qualifier to use as a text qualifier in the data
 	 * 
-	 * @return the text qualifier character to use as a text qualifier in the
-	 *         data
+	 * @return the text qualifier character to use as a text qualifier in the data
 	 */
 	public char getTextQualifier() {
 		final char result = Character.UNASSIGNED;
@@ -206,7 +202,7 @@ public class CSVModel implements IRowChangesListener {
 
 			csvReader.close();
 		} catch (final Exception e) {
-			System.out.println("exception in readLines " + e);
+			DEBUG.ERR("exception in readLines " + e);
 			e.printStackTrace();
 		}
 		saveMetaData();
@@ -289,9 +285,7 @@ public class CSVModel implements IRowChangesListener {
 	public int findRow(final CSVRow findRow) {
 		for (int i = 0; i <= getArrayRows(true).length; i++) {
 			final CSVRow row = getRowAt(i);
-			if (row.equals(findRow)) {
-				return i;
-			}
+			if (row.equals(findRow)) { return i; }
 		}
 		return -1;
 	}
@@ -354,9 +348,8 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void removeRow(final CSVRow row) {
-		if (!rows.remove(row)) {
-			return;
-			// TODO return error message
+		if (!rows.remove(row)) { return;
+		// TODO return error message
 		}
 		final CSVInfo info = getInfo();
 		info.rows--;
@@ -404,7 +397,7 @@ public class CSVModel implements IRowChangesListener {
 		info.cols--;
 		for (final CSVRow row : rows) {
 			if (!row.isCommentLine()) {
-				// System.out.println("remove elmt:[" + colIndex + "] in row ["
+				// DEBUG.LOG("remove elmt:[" + colIndex + "] in row ["
 				// + row + "]");
 				row.removeElementAt(colIndex);
 			}
@@ -418,9 +411,7 @@ public class CSVModel implements IRowChangesListener {
 	 * @param colIndex
 	 */
 	public void removeColumn(final String columnName) {
-		if (columnName == null) {
-			return;
-		}
+		if (columnName == null) { return; }
 		final List<String> cols = Arrays.asList(getInfo().headers);
 		final int colIndex = cols.indexOf(columnName);
 		removeColumn(colIndex);
@@ -476,10 +467,9 @@ public class CSVModel implements IRowChangesListener {
 			clw.close();
 			sw.close();
 		} catch (final Exception e) {
-			System.out.println("cannot write csv file");
+			DEBUG.ERR("cannot write csv file");
 			e.printStackTrace();
-		} finally {
-		}
+		} finally {}
 
 		return sw.toString();
 
@@ -489,7 +479,7 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void saveMetaData() {
-		// System.out.println("Saving the following metadata: " +
+		// DEBUG.LOG("Saving the following metadata: " +
 		// getInfo().getSuffix());
 		GAMA.getGui().getMetaDataProvider().storeMetaData(file, getInfo(), true);
 	}

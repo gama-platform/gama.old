@@ -779,7 +779,7 @@ public class DeprecatedOperators {
 			deprecated = "use 'path_between(graph, geometry, geometry)' instead")
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 			throws GamaRuntimeException {
-		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " +
+		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
 		return Graphs.path_between(scope, graph, (IShape) sourTarg.key, (IShape) sourTarg.value);
 

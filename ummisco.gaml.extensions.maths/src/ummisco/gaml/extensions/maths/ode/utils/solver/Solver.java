@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Solver.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Solver.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -26,6 +25,7 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
+import utils.DEBUG;
 
 public abstract class Solver {
 
@@ -37,12 +37,11 @@ public abstract class Solver {
 			final GamaMap<String, IList<Double>> integrated_val) {
 		this.step = step;
 		this.integrator = integrator;
-		if (integrated_val != null)
+		if (integrated_val != null) {
 			integrator.addStepHandler(new StepHandler() {
 
 				@Override
-				public void init(final double t0, final double[] y0, final double t) {
-				}
+				public void init(final double t0, final double[] y0, final double t) {}
 
 				@Override
 				public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
@@ -52,6 +51,7 @@ public abstract class Solver {
 					storeValues(time, y, integrated_val);
 				}
 			});
+		}
 	}
 
 	// Call the integrator, which should call computeDerivatives on the system
@@ -62,10 +62,9 @@ public abstract class Solver {
 		eq.executeInScope(scope, () -> {
 			final Map<Integer, IAgent> equationAgents = eq.getEquationAgents(scope);
 			/*
-			 * prepare initial value of variables 1. loop through variables
-			 * expression 2. if its equaAgents != null, it mean variable of
-			 * external equation, set current scope to this agent scope 3. get
-			 * value 4. return to previous scope
+			 * prepare initial value of variables 1. loop through variables expression 2. if its equaAgents != null, it
+			 * mean variable of external equation, set current scope to this agent scope 3. get value 4. return to
+			 * previous scope
 			 */
 
 			final double[] y = new double[eq.variables_diff.size()];
@@ -109,7 +108,7 @@ public abstract class Solver {
 				try {
 					integrator.integrate(eq, initialTime, y, finalTime, y);
 				} catch (final Exception ex) {
-					System.out.println(ex);
+					DEBUG.ERR(ex.toString());
 				}
 			}
 			eq.assignValue(scope, finalTime * step, y);

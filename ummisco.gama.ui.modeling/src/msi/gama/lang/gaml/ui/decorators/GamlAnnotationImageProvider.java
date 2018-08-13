@@ -97,7 +97,7 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 		if (result != null) {
 			return result.image();
 		}
-		// System.out.println("Image not found for type: " +
+		// DEBUG.LOG("Image not found for type: " +
 		// annotation.getType());
 		return super.getManagedImage(annotation);
 	}

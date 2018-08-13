@@ -60,7 +60,7 @@ public abstract class Symbol implements ISymbol {
 			order = desc.getOrder();
 		else
 			order = SymbolDescription.ORDER++;
-		// System.out.println("Order of " + desc.getName() + " = " + order);
+		// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
 	}
 
 	@Override

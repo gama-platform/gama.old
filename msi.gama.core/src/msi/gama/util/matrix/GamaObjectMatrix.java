@@ -193,13 +193,13 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	public GamaObjectMatrix _opAppendHorizontally(final IScope scope, final IMatrix<?> b) {
 		// GamaObjectMatrix a = this;
 		final GamaObjectMatrix aprime = _reverse(scope);
-		// System.out.println("aprime = " + aprime);
+		// DEBUG.LOG("aprime = " + aprime);
 		final GamaObjectMatrix bprime = GamaObjectMatrix.from(b.getCols(scope), b.getRows(scope), b)._reverse(scope);
-		// System.out.println("bprime = " + bprime);
+		// DEBUG.LOG("bprime = " + bprime);
 		final GamaObjectMatrix c = (GamaObjectMatrix) aprime.opAppendVertically(scope, bprime);
-		// System.out.println("c = " + c);
+		// DEBUG.LOG("c = " + c);
 		final GamaObjectMatrix cprime = c._reverse(scope);
-		// System.out.println("cprime = " + cprime);
+		// DEBUG.LOG("cprime = " + cprime);
 		return cprime;
 	}
 

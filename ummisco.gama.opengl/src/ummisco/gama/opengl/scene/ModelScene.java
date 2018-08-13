@@ -24,7 +24,12 @@ import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
-import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.scene.layers.AxesLayerObject;
+import ummisco.gama.opengl.scene.layers.FrameLayerObject;
+import ummisco.gama.opengl.scene.layers.LayerObject;
+import utils.DEBUG;
 
 /**
  *
@@ -45,7 +50,7 @@ public class ModelScene {
 	public static final String FPS_KEY = "z__fps__0";
 	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
 	protected LayerObject currentLayer;
-	protected final Abstract3DRenderer renderer;
+	protected final JOGLRenderer renderer;
 	private volatile boolean rendered = false;
 	private volatile int objectNumber;
 	private double zIncrement;
@@ -55,7 +60,7 @@ public class ModelScene {
 		public abstract void process(AbstractObject object);
 	}
 
-	public ModelScene(final Abstract3DRenderer renderer, final boolean withWorld) {
+	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
 		if (withWorld) {
 			initWorld();
@@ -66,14 +71,6 @@ public class ModelScene {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
-		}
-		if (renderer.useShader()) {
-			layers.put(ROTATION_HELPER_KEY, new RotationHelperLayerObject(renderer));
-			layers.put(KEYSTONE_HELPER_KEY, new KeystoneHelperLayerObject(renderer));
-			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
-			if (renderer.data.isShowfps()) {
-				layers.put(FPS_KEY, new FPSLayerObject(renderer));
-			}
 		}
 	}
 
@@ -95,16 +92,7 @@ public class ModelScene {
 
 	public void draw(final OpenGL gl) {
 
-		if (renderer.useShader()) {
-			// if the rotation helper layer exists, put it at the end of the map
-			// (otherwise, transparency issues)
-			final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
-			if (rotLayer != null) {
-				layers.remove(ROTATION_HELPER_KEY);
-				layers.put(ROTATION_HELPER_KEY, rotLayer);
-			}
-		}
-		gl.pushIdentity(GL2.GL_MODELVIEW);
+		gl.push(GL2.GL_MODELVIEW);
 		gl.setZIncrement(zIncrement);
 
 		for (final LayerObject layer : layers.values()) {
@@ -113,7 +101,7 @@ public class ModelScene {
 					layer.draw(gl);
 					layer.lock();
 				} catch (final RuntimeException r) {
-					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
+					DEBUG.ERR("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();
 				}
 			}
@@ -215,10 +203,6 @@ public class ModelScene {
 		currentLayerTrace = currentLayer.numberOfTraces();
 	}
 
-	public void beginOverlay() {
-		// currentLayer.setOverlay(true);
-	}
-
 	/**
 	 * @return
 	 */
@@ -247,7 +231,7 @@ public class ModelScene {
 		if (worldLayer != null) {
 			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
 			worldLayer.setOffset(pivotPoint.yNegated());
-			final double size = renderer.sizeOfRotationElements();
+			final double size = renderer.getRotationHelper().sizeOfRotationElements();
 			final double ratio = size / renderer.getMaxEnvDim();
 			// see if it is necessary ?
 			worldLayer.setScale(new GamaPoint(ratio, ratio, ratio));

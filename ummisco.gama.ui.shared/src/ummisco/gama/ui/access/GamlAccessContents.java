@@ -372,7 +372,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		// }
 		// }
 		// }
-		// System.out.println("Provider: " + maxProviderWidth + " Definition:" + maxDefinitionWidth);
+		// DEBUG.LOG("Provider: " + maxProviderWidth + " Definition:" + maxDefinitionWidth);
 		//
 		// }
 

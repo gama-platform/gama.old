@@ -135,50 +135,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * to {@code System.out}.
  * 
  * <pre>
- * class PrimeNumbersTask extends 
- *         SwingWorker&lt;List&lt;Integer&gt;, Integer&gt; {
- *     PrimeNumbersTask(JTextArea textArea, int numbersToFind) { 
- *         //initialize 
- *     }
+ * class PrimeNumbersTask extends SwingWorker&lt;List&lt;Integer&gt;, Integer&gt; { PrimeNumbersTask(JTextArea textArea,
+ * int numbersToFind) { //initialize }
  *
- *     {@code @Override}
- *     public List&lt;Integer&gt; doInBackground() {
- *         while (! enough &amp;&amp; ! isCancelled()) {
- *                 number = nextPrimeNumber();
- *                 publish(number);
- *                 setProgress(100 * numbers.size() / numbersToFind);
- *             }
- *         }
- *         return numbers;
- *     }
+ * {@code @Override} public List&lt;Integer&gt; doInBackground() { while (! enough &amp;&amp; ! isCancelled()) { number
+ * = nextPrimeNumber(); publish(number); setProgress(100 * numbers.size() / numbersToFind); } } return numbers; }
  *
- *     {@code @Override}
- *     protected void process(List&lt;Integer&gt; chunks) { 
- *         for (int number : chunks) {
- *             textArea.append(number + &quot;\n&quot;);
- *         }
- *     }
- * }
- *
- * JTextArea textArea = new JTextArea();
- * final JProgressBar progressBar = new JProgressBar(0, 100);
- * PrimeNumbersTask task = new PrimeNumbersTask(textArea, N);
- * task.addPropertyChangeListener(
- *     new PropertyChangeListener() {
- *         public  void propertyChange(PropertyChangeEvent evt) {
- *             if (&quot;progress&quot;.equals(evt.getPropertyName())) {
- *                 progressBar.setValue((Integer)evt.getNewValue());
- *             }
- *         }
- *     });
- *
- * task.execute();
- * System.out.println(task.get()); //prints all prime numbers we have got
- * </pre>
+ * {@code @Override} protected void process(List&lt;Integer&gt; chunks) { for (int number : chunks) {
+ * textArea.append(number + &quot;\n&quot;); } } }
  * 
- * <p>
- * Because {@code SwingWorker} implements {@code Runnable}, a {@code SwingWorker} can be submitted to an
- * {@link java.util.concurrent.Executor} for execution.
  * 
  * @author Igor Kushnirskiy
  *
@@ -705,10 +670,12 @@ public abstract class SwtWorker<T, V> implements Future<T>, Runnable {
 
 					final Thread t = new Thread(r, name.toString());
 					;
-					if (t.isDaemon())
+					if (t.isDaemon()) {
 						t.setDaemon(false);
-					if (t.getPriority() != Thread.NORM_PRIORITY)
+					}
+					if (t.getPriority() != Thread.NORM_PRIORITY) {
 						t.setPriority(Thread.NORM_PRIORITY);
+					}
 					return t;
 				}
 			};

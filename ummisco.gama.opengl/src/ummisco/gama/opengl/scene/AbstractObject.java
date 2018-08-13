@@ -23,6 +23,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
+import ummisco.gama.opengl.OpenGL;
 
 public abstract class AbstractObject {
 
@@ -103,12 +104,14 @@ public abstract class AbstractObject {
 		return textures != null && textures.length > 0;
 	}
 
-	public final void draw(final OpenGL gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
+	@SuppressWarnings ("unchecked")
+	public final <T extends AbstractObject> void draw(final OpenGL gl, final ObjectDrawer<T> drawer,
+			final boolean isPicking) {
 		if (isPicking) {
 			gl.registerForSelection(attributes.getIndex());
 		}
 		final boolean previous = gl.setLighting(isLighting());
-		drawer.draw(this);
+		drawer.draw((T) this);
 		gl.setLighting(previous);
 		if (isPicking) {
 			gl.markIfSelected(attributes);

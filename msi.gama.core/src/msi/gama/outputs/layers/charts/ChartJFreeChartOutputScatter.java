@@ -333,7 +333,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			}
 			plot.setRenderer(jfreedataset.size() - 1, (XYItemRenderer) getOrCreateRenderer(scope, serieid));
 			IdPosition.put(serieid, jfreedataset.size() - 1);
-			// System.out.println("new serie"+serieid+" at
+			// DEBUG.LOG("new serie"+serieid+" at
 			// "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds
 			// "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
 			// TODO Auto-generated method stub

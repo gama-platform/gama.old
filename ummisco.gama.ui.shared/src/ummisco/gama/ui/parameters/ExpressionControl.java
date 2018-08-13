@@ -186,7 +186,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	@Override
 	public void focusGained(final FocusEvent e) {
 		// if ( editor != null ) {
-		// System.out.println("Focus gained:" + editor.getParam().getName());
+		// DEBUG.LOG("Focus gained:" + editor.getParam().getName());
 		// }
 		// // if ( e.widget == null || !e.widget.equals(text) ) { return; }
 		// computeValue();

@@ -32,6 +32,7 @@ import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import msi.gama.common.util.ImageUtils;
+import utils.DEBUG;
 
 /**
  * Class ImageDataLoader.
@@ -62,7 +63,7 @@ public class ImageDataLoader {
 			imageData = new ImageData(stream);
 
 		} catch (final Exception e) {
-			System.out.println(e);
+			DEBUG.ERR(e.toString());
 			return null;
 		} finally {
 			// scanner.close();
@@ -113,7 +114,7 @@ public class ImageDataLoader {
 			}
 		}
 		if (imageData == null) {
-			System.out.println("null image data");
+			DEBUG.ERR("null image data");
 		}
 		return imageData;
 
@@ -126,7 +127,7 @@ public class ImageDataLoader {
 			// process the top 4 header lines
 			final String filetype = infile.nextLine();
 			if (!filetype.equalsIgnoreCase("p2")) {
-				System.out.println("Not a PGM");
+				DEBUG.ERR("Not a PGM");
 				infile.close();
 				return null;
 			}
@@ -153,7 +154,7 @@ public class ImageDataLoader {
 				}
 			}
 		} catch (final Exception e) {
-			System.out.println(e);
+			DEBUG.ERR(e.toString());
 			return null;
 		}
 		int g;
@@ -175,7 +176,7 @@ public class ImageDataLoader {
 		try (Scanner infile = new Scanner(filename);) {
 			// Not a ASC file
 			if (!infile.hasNext("ncols")) {
-				System.out.println("Not an ASC");
+				DEBUG.ERR("Not an ASC");
 				infile.close();
 				return null;
 			}
@@ -235,7 +236,7 @@ public class ImageDataLoader {
 				}
 			}
 		} catch (final Exception e) {
-			System.out.println(e);
+			DEBUG.ERR(e.toString());
 			return null;
 		}
 		int g;

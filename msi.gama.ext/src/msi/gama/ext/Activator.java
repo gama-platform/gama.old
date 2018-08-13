@@ -37,7 +37,7 @@ public class Activator implements BundleActivator {
 		// if (!os.startsWith("Mac")) {
 		javax.media.jai.JAI.getDefaultInstance().getOperationRegistry().getRegistryModes();
 		// }
-		System.out.println("JAI activated");
+		// DEBUG.OUT("JAI activated");
 	}
 
 	/*

@@ -10,7 +10,6 @@
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -32,14 +31,22 @@ import msi.gaml.statements.IExecutable;
 
 public class SpeciesLayer extends AgentLayer {
 
+	final boolean hasMicroSpeciesLayers;
+
 	public SpeciesLayer(final ILayerStatement layer) {
 		super(layer);
+		hasMicroSpeciesLayers = getDefinition().getMicroSpeciesLayers() != null;
+	}
+
+	@Override
+	public SpeciesLayerStatement getDefinition() {
+		return (SpeciesLayerStatement) super.getDefinition();
 	}
 
 	@Override
 	public Set<IAgent> getAgentsForMenu(final IScope scope) {
-		final Set<IAgent> result = ImmutableSet.copyOf(
-				scope.getSimulation().getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
+		final Set<IAgent> result =
+				ImmutableSet.copyOf(scope.getSimulation().getMicroPopulation(getDefinition().getSpecies()).iterator());
 		return result;
 	}
 
@@ -51,12 +58,12 @@ public class SpeciesLayer extends AgentLayer {
 	@Override
 	public void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
-		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
+		final ISpecies species = getDefinition().getSpecies();
 		final IMacroAgent world = scope.getSimulation();
 		if (world != null && !world.dead()) {
 			final IPopulation<? extends IAgent> microPop = world.getMicroPopulation(species);
 			if (microPop != null) {
-				IExecutable aspect = ((SpeciesLayerStatement) definition).getAspect();
+				IExecutable aspect = getDefinition().getAspect();
 				if (aspect == null) {
 					aspect = AspectStatement.DEFAULT_ASPECT;
 				}
@@ -95,11 +102,9 @@ public class SpeciesLayer extends AgentLayer {
 			}
 			IPopulation<? extends IAgent> microPop;
 			// then recursively draw the micro-populations
-			final List<SpeciesLayerStatement> microLayers =
-					((SpeciesLayerStatement) definition).getMicroSpeciesLayers();
-			if (microLayers != null) {
-				for (final SpeciesLayerStatement ml : microLayers) {
-					// a.acquireLock();
+
+			if (hasMicroSpeciesLayers) {
+				for (final SpeciesLayerStatement ml : getDefinition().getMicroSpeciesLayers()) {
 					if (a.dead()) {
 						continue;
 					}

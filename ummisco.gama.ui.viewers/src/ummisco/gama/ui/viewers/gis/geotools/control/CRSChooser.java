@@ -410,7 +410,7 @@ public class CRSChooser {
 			codesList.setSelection(new StructuredSelection(list.get(0)));
 		} else {
 			codesList.setSelection(new StructuredSelection());
-			// System.out.println( "skipped");
+			// DEBUG.LOG( "skipped");
 		}
 	}
 
@@ -560,7 +560,7 @@ public class CRSChooser {
 		if (selectedCRS == null) {
 			final String crsCode = (String) ((IStructuredSelection) codesList.getSelection()).getFirstElement();
 			if (sourceCRS != null && crsCode.equals(sourceCRS.getName().toString())) {
-				// System.out.println("source crs: " +
+				// DEBUG.LOG("source crs: " +
 				// sourceCRS.getName().toString());
 				return sourceCRS;
 			}

@@ -23,7 +23,7 @@ public class Displays {
 	// public static GamaTree<String> layout(final IScope scope, final GamaNode<String> root) {
 	// final GamaTree<String> tree = GamaTree.withRoot(IKeyword.LAYOUT);
 	// root.attachTo(tree.getRoot());
-	// java.lang.System.out.println("Tree: " + tree);
+	// DEBUG.OUT("Tree: " + tree);
 	// return tree;
 	// }
 	//

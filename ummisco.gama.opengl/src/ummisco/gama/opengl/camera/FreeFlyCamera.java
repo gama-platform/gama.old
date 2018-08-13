@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
-import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class FreeFlyCamera extends AbstractCamera {
@@ -33,12 +33,13 @@ public class FreeFlyCamera extends AbstractCamera {
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = getRenderer().getMaxEnvDim() * 0.0001;
 
-	public FreeFlyCamera(final Abstract3DRenderer renderer) {
+	public FreeFlyCamera(final JOGLRenderer renderer) {
 		super(renderer);
 		initialize();
 	}
 
-	protected void updateCartesianCoordinatesFromAngles() {
+	@Override
+	public void updateCartesianCoordinatesFromAngles() {
 		if (phi > 89) {
 			this.phi = 89;
 		} else if (phi < -89) {
@@ -131,12 +132,12 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public Double zoomLevel() {
-		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / position.getZ();
+		return getRenderer().getMaxEnvDim() * getInitialZFactor() / position.getZ();
 	}
 
 	@Override
 	public void zoom(final double level) {
-		setPosition(position.x, position.y, getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level);
+		setPosition(position.x, position.y, getRenderer().getMaxEnvDim() * getInitialZFactor() / level);
 		updateCartesianCoordinatesFromAngles();
 	}
 
@@ -146,7 +147,12 @@ public class FreeFlyCamera extends AbstractCamera {
 		final GamaPoint vector = forward.times(speed * 800 + step);
 		setPosition(getPosition().plus(in ? vector : vector.negated()));
 		setTarget(forward.plus(getPosition()));
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
+	}
+
+	@Override
+	public void setDistance(final double distance) {
+		// ??
 	}
 
 	@Override
@@ -155,7 +161,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		final int height = (int) env.getHeight();
 		final double maxDim = width > height ? width : height;
 		setPosition(env.centre().x, env.centre().y, maxDim * 1.5);
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -166,7 +172,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		final double extent = shape.getEnvelope().maxExtent();
 		setPosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
 		setTarget(centerX, -centerY, -(extent * 2));
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -177,7 +183,7 @@ public class FreeFlyCamera extends AbstractCamera {
 				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
+			getRenderer().getROIHelper().defineROI(firstMousePressedPosition, getMousePosition());
 		} else {
 			final int horizMovement = e.x - getLastMousePressedPosition().x;
 			final int vertMovement = e.y - getLastMousePressedPosition().y;

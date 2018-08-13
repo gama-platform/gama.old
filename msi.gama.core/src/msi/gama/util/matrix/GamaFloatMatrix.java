@@ -209,15 +209,15 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		// GamaFloatMatrix aprime = new GamaFloatMatrix(a.getRows(scope),
 		// a.getCols(scope));
 		final GamaFloatMatrix aprime = (GamaFloatMatrix) a._reverse(scope);
-		// System.out.println("aprime = " + aprime);
+		// DEBUG.LOG("aprime = " + aprime);
 		// GamaFloatMatrix bprime = new GamaFloatMatrix(b.getRows(scope),
 		// b.getCols(scope));
 		final GamaFloatMatrix bprime = (GamaFloatMatrix) ((GamaFloatMatrix) b)._reverse(scope);
-		// System.out.println("bprime = " + bprime);
+		// DEBUG.LOG("bprime = " + bprime);
 		final GamaFloatMatrix c = (GamaFloatMatrix) aprime.opAppendVertically(scope, bprime);
-		// System.out.println("c = " + c);
+		// DEBUG.LOG("c = " + c);
 		final GamaFloatMatrix cprime = (GamaFloatMatrix) c._reverse(scope);
-		// System.out.println("cprime = " + cprime);
+		// DEBUG.LOG("cprime = " + cprime);
 		return cprime;
 	}
 

@@ -432,9 +432,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	public void setCrs(final CoordinateReferenceSystem crs) {
 		try {
-			// System.out.println(content.layers().size());
+			// DEBUG.LOG(content.layers().size());
 			final ReferencedEnvelope rEnv = getDisplayArea();
-			// System.out.println(rEnv);
+			// DEBUG.LOG(rEnv);
 
 			final CoordinateReferenceSystem sourceCRS = rEnv.getCoordinateReferenceSystem();
 			final CoordinateReferenceSystem targetCRS = crs;
@@ -449,7 +449,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 			// ReferencedEnvelope displayArea =
 			getDisplayArea();
-			// System.out.println(displayArea);
+			// DEBUG.LOG(displayArea);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -1119,7 +1119,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 		curPaintArea = getVisibleRect();
 
-		// System.out.println("event: " + event.type);
+		// DEBUG.LOG("event: " + event.type);
 		if (event.type == SWT.MouseDown) {
 			startX = event.x;
 			startY = event.y;
@@ -1138,12 +1138,12 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			mouseDown = false;
 			isDragging = false;
 		} else if (event.type == SWT.Paint) {
-			// System.out.println("PAINT CALLED (DOESN'T MEAN I'M DRAWING)");
+			// DEBUG.LOG("PAINT CALLED (DOESN'T MEAN I'M DRAWING)");
 
 			if (acceptRepaintRequests) {
 				gc = event.gc;
 
-				// System.out.println(toolCanDraw + "/" + toolCanMove + "/" +
+				// DEBUG.LOG(toolCanDraw + "/" + toolCanMove + "/" +
 				// isDragging + "/" +
 				// redrawBaseImage);
 
@@ -1154,7 +1154,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				 * pieces.
 				 */
 				if (toolCanMove && isDragging) {
-					// System.out.println("toolCanMove && isDragging");
+					// DEBUG.LOG("toolCanMove && isDragging");
 					if (gc != null && !gc.isDisposed() && swtImage != null) {
 						/*
 						 * double buffer necessary, since the SWT.NO_BACKGROUND
@@ -1179,7 +1179,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				 * current drawn image
 				 */
 				if (toolCanDraw && toolManager.getCursorTool().isDrawing() && isDragging) {
-					// System.out.println("draw box: " + startX + "/" + startY +
+					// DEBUG.LOG("draw box: " + startX + "/" + startY +
 					// "/" + endX +
 					// "/" + endY);
 					if (swtImage != null) {
@@ -1240,7 +1240,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 						swtImage.dispose();
 						swtImage = null;
 					}
-					// System.out.println("READRAWBASEIMAGE");
+					// DEBUG.LOG("READRAWBASEIMAGE");
 					swtImage = new Image(getDisplay(),
 							awtToSwt(baseImage, curPaintArea.width + 1, curPaintArea.height + 1));
 				}

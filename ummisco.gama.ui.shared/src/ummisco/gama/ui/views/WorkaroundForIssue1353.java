@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import utils.DEBUG;
 
 /**
  * Class WorkaroundForIssue1353. Only for MacOS X, Eclipse Mars and Java 1.7
@@ -26,6 +27,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class WorkaroundForIssue1353 {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static class PartListener implements IPartListener2 {
 
@@ -62,7 +67,7 @@ public class WorkaroundForIssue1353 {
 	public static void showShell() {
 		if (shell != null) {
 			WorkbenchHelper.asyncRun(() -> {
-				// System.out.println("Showing shell");
+				DEBUG.OUT("Showing shell");
 				getShell().open();
 				getShell().setVisible(false);
 
@@ -79,7 +84,7 @@ public class WorkaroundForIssue1353 {
 	}
 
 	private static void createShell() {
-		// System.out.println("Shell created");
+		DEBUG.OUT("Shell created");
 		shell = new Shell(WorkbenchHelper.getShell(), SWT.APPLICATION_MODAL);
 		shell.setSize(5, 5);
 		shell.setAlpha(0);
@@ -89,7 +94,7 @@ public class WorkaroundForIssue1353 {
 	public static void install() {
 		if (!PlatformHelper.isMac()) { return; }
 		if (shell != null) { return; }
-		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " installed");
+		DEBUG.OUT(WorkaroundForIssue1353.class.getSimpleName() + " installed");
 		WorkbenchHelper.run(() -> {
 			createShell();
 			WorkbenchHelper.getPage().addPartListener(listener);
@@ -109,7 +114,7 @@ public class WorkaroundForIssue1353 {
 			shell = null;
 			WorkbenchHelper.getPage().removePartListener(listener);
 		});
-		System.out.print(WorkaroundForIssue1353.class.getSimpleName() + " removed");
+		DEBUG.OUT(WorkaroundForIssue1353.class.getSimpleName() + " removed");
 	}
 
 }

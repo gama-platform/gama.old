@@ -631,13 +631,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			initializer = true)
 	public Double getSeed() {
 		final Double seed = random.getSeed();
-		// System.out.println("simulation agent get seed: " + seed);
+		// DEBUG.LOG("simulation agent get seed: " + seed);
 		return seed == null ? Double.valueOf(0d) : seed;
 	}
 
 	@setter (IKeyword.SEED)
 	public void setSeed(final Double s) {
-		// System.out.println("simulation agent set seed: " + s);
+		// DEBUG.LOG("simulation agent set seed: " + s);
 		Double seed;
 		if (s == null) {
 			seed = null;

@@ -22,7 +22,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.OpenGL;
 
 /**
  *
@@ -39,8 +39,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	final ICoordinates fivePoints = GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(5, 3);
 	final ICoordinates fourPoints = GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(4, 3);
 
-	public FieldDrawer(final JOGLRenderer r) {
-		super(r);
+	public FieldDrawer(final OpenGL gl) {
+		super(gl);
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	protected void drawFromImage(final FieldObject demObj) {
 		int rows, cols;
-		//		final double vx, vy;
+		// final double vx, vy;
 		double ts, tt, tw, th;
 		// Not y-flipped
 		final BufferedImage dem = demObj.getDirectImage(1);

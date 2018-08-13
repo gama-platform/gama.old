@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import utils.DEBUG;
+
 public abstract class AbstractModelLibraryRunner {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	public static void log(final String s) {
-		System.out.println(s); // Use a logger ?
+		DEBUG.OUT(s); // Use a logger ?
 	}
 
 	protected boolean isModel(final URL url) {

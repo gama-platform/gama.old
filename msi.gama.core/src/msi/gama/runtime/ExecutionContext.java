@@ -64,7 +64,7 @@ public class ExecutionContext implements IExecutionContext {
 		if (local == null || !local.containsKey(name))
 			return outer == null ? null : outer.getTempVar(name);
 		// if (name == ExecutionScope.EACH)
-		// System.out.println("EACH value found in context " + this);
+		// DEBUG.LOG("EACH value found in context " + this);
 		return local.get(name);
 	}
 

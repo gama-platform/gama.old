@@ -147,13 +147,13 @@ public class DisplaySurfaceMenu {
 
 					@Override
 					public void menuShown(final MenuEvent e) {
-						// System.out.println("Selection menu has been
+						// DEBUG.LOG("Selection menu has been
 						// shown");
 					}
 
 					@Override
 					public void menuHidden(final MenuEvent e) {
-						// System.out.println("Selection menu has been
+						// DEBUG.LOG("Selection menu has been
 						// hiden");
 						cleanup.run();
 						menu.removeMenuListener(this);

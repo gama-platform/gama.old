@@ -141,7 +141,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void menuDetected(final MenuDetectEvent e) {
 		if (!ok.get()) { return; }
-		// System.out.println("Menu detected on " + view.getPartName());
+		// DEBUG.LOG("Menu detected on " + view.getPartName());
 		final Point p = control.toControl(e.x, e.y);
 		delegate.menuDetected(p.x, p.y);
 	}

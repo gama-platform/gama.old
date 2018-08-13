@@ -58,6 +58,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 /**
  * Global GAML scope provider supporting built-in definitions.
@@ -265,10 +266,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			}
 		}
 		final long start = System.currentTimeMillis();
-		System.out.print(">GAMA building GAML artefacts");
 		IUnits.initialize();
 		createDescriptions();
-		System.out.println(" in " + (System.currentTimeMillis() - start) + " ms");
+		DEBUG.OUT(">GAMA building GAML artefacts in " + (System.currentTimeMillis() - start) + " ms");
 
 	}
 

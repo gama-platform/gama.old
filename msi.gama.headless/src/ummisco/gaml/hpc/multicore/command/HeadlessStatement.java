@@ -27,6 +27,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import utils.DEBUG;
 
 @symbol (
 		name = IKeywords.RUNSIMULARTION,
@@ -106,8 +107,7 @@ public class HeadlessStatement extends AbstractStatement {
 
 		final long lseed = seed;
 
-		System.out.println(
-				"chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
+		DEBUG.OUT("chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
 
 		final ExperimentJob sim = new ExperimentJob(this.getSimulationId(), modelPath, expName, 1000, "", lseed);
 

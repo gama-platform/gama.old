@@ -32,6 +32,7 @@ import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import utils.DEBUG;
 
 public class AWTLayeredDisplayMultiListener
 		implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener, FocusListener {
@@ -76,17 +77,17 @@ public class AWTLayeredDisplayMultiListener
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.keyPressed()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.keyPressed()" + e);
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.keyReleased()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.keyReleased()" + e);
 	}
 
 	@Override
 	public void keyTyped(final KeyEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.keyTyped()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.keyTyped()" + e);
 		if (!ok.get()) { return; }
 		switch (e.getKeyCode()) {
 
@@ -124,41 +125,41 @@ public class AWTLayeredDisplayMultiListener
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseWheelMoved()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseWheelMoved()" + e);
 		if (!ok.get()) { return; }
 	}
 
 	@Override
 	public void mouseEntered(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseEntered()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseEntered()" + e);
 		if (!ok.get()) { return; }
 		delegate.mouseEnter(e.getX(), e.getY(), e.getModifiers() == 0, e.getButton());
 	}
 
 	@Override
 	public void mouseExited(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseExited()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseExited()" + e);
 		if (!ok.get()) { return; }
 		delegate.mouseExit(e.getX(), e.getY(), e.getModifiers() == 0, e.getButton());
 	}
 
 	// @Override
 	public void mouseHover(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseHover()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseHover()" + e);
 		if (!ok.get()) { return; }
 		delegate.mouseHover(e.getButton());
 	}
 
 	@Override
 	public void mouseMoved(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseMoved()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseMoved()" + e);
 		if (!ok.get()) { return; }
 		delegate.mouseMove(e.getX(), e.getY(), e.getModifiers() == 0);
 	}
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mousePressed()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mousePressed()" + e);
 		if (!ok.get()) { return; }
 		if ((e.getModifiers() & MouseEvent.META_DOWN_MASK) != 0) {
 			menuDetected(e);
@@ -169,41 +170,41 @@ public class AWTLayeredDisplayMultiListener
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseReleased()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseReleased()" + e);
 		if (!ok.get()) { return; }
 		delegate.mouseUp(e.getX(), e.getY(), e.getModifiers() == 0);
 	}
 
 	@Override
 	public void mouseClicked(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseClicked()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseClicked()" + e);
 		mouseReleased(e);
 	}
 
 	public void menuDetected(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.menuDetected()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.menuDetected()" + e);
 		if (!ok.get()) { return; }
-		// System.out.println("Menu detected on " + view.getPartName());
+		// DEBUG.LOG("Menu detected on " + view.getPartName());
 		final Point p = component.getMousePosition();
 		delegate.menuDetected(p.x, p.y);
 	}
 
 	@Override
 	public void mouseDragged(final MouseEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.mouseDragged()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.mouseDragged()" + e);
 		if (!ok.get()) { return; }
 		delegate.dragDetected();
 	}
 
 	@Override
 	public void focusGained(final FocusEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.focusGained()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.focusGained()" + e);
 		delegate.focusGained();
 	}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
-		System.out.println("AWTLayeredDisplayMultiListener.focusLost()" + e);
+		DEBUG.OUT("AWTLayeredDisplayMultiListener.focusLost()" + e);
 		delegate.focusLost();
 	}
 

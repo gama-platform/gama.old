@@ -33,6 +33,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai
@@ -56,9 +57,6 @@ import msi.gaml.types.Types;
 		concept = { IConcept.DATABASE, IConcept.SKILL })
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SQLSkill extends Skill {
-
-	private static final boolean DEBUG = false; // Change DEBUG = false for
-												// release version
 
 	// Get current time of system
 	// added from MaeliaSkill
@@ -191,9 +189,7 @@ public class SQLSkill extends Skill {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString(), scope);
 		}
-		if (DEBUG) {
-			scope.getGui().debug(updateComm + " was run");
-		}
+		DEBUG.OUT(updateComm + " was run");
 
 		return row_count;
 		// ------------------------------------------------------------------------------------------
@@ -256,9 +252,7 @@ public class SQLSkill extends Skill {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString(), scope);
 		}
-		if (DEBUG) {
-			scope.getGui().debug("Insert into " + " was run");
-		}
+		DEBUG.OUT("Insert into " + " was run");
 
 		return rec_no;
 		// ------------------------------------------------------------------------------------------

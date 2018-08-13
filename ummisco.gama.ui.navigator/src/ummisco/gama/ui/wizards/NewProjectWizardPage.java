@@ -210,9 +210,9 @@ public class NewProjectWizardPage extends WizardPage {
 	public URI getLocationURI() {
 		final URI u = Platform.getLocation().addTrailingSeparator().append(getProjectName()).toFile().toURI();
 		return u;
-		// System.out.println("PATH: " + s);
+		// DEBUG.LOG("PATH: " + s);
 		// final URI uri = URI.create(s);
-		// System.out.println("URI: " + uri);
+		// DEBUG.LOG("URI: " + uri);
 		// return uri;
 
 		// return URI.create(Platform.getLocation().append(getProjectName()).toOSString());

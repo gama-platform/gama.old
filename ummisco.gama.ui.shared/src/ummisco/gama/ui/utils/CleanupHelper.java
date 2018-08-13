@@ -141,7 +141,7 @@ public class CleanupHelper {
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
 				// RearrangeMenus.run();
 				final IContributionItem[] items = w.getCoolBarManager2().getItems();
-				// System.out.println(Arrays.toString(items));
+				// DEBUG.LOG(Arrays.toString(items));
 				// We remove all contributions to the toolbar that do not
 				// relate
 				// to gama
@@ -202,7 +202,7 @@ public class CleanupHelper {
 			for (final IWizardDescriptor wizard : getAllWizards(cats.toArray(new IWizardCategory[0]))) {
 				final String id = wizard.getCategory().getId();
 				if (CATEGORIES_TO_REMOVE.contains(id) || IDS_TO_REMOVE.contains(wizard.getId())) {
-					// System.out.println("Removing wizard " + wizard.getId() +
+					// DEBUG.LOG("Removing wizard " + wizard.getId() +
 					// " in category " + id);
 					final WorkbenchWizardElement element = (WorkbenchWizardElement) wizard;
 					r.removeExtension(element.getConfigurationElement().getDeclaringExtension(),
@@ -285,7 +285,7 @@ public class CleanupHelper {
 			// sb.append("Menu ").append(menu.getId()).append(" :: ");
 			for (final IContributionItem item : menu.getItems()) {
 				final String name = item.getId();
-				// System.out.println(name);
+				// DEBUG.LOG(name);
 				if (MENU_ITEMS_TO_REMOVE.contains(name)) {
 					item.setVisible(false);
 					continue;
@@ -299,7 +299,7 @@ public class CleanupHelper {
 				// sb.append(Strings.LN).append(Strings.TAB);
 				// sb.append(name).append('[').append(item.getClass().getSimpleName()).append("]:: ");
 			}
-			// System.out.println(sb.toString());
+			// DEBUG.LOG(sb.toString());
 		}
 
 		private static void changeIcon(final IMenuManager menu, final IContributionItem item,

@@ -17,6 +17,7 @@ import com.google.inject.Injector;
 
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.GamlUiModule;
+import utils.DEBUG;
 
 /**
  * This class was generated. Customizations should only happen in a newly introduced subclass.
@@ -66,8 +67,8 @@ public class ModelingActivator extends AbstractUIPlugin {
 			final com.google.inject.Module mergedModule = Modules2.mixin(runtimeModule, sharedStateModule, uiModule);
 			return Guice.createInjector(mergedModule);
 		} catch (final Exception e) {
-			System.out.println("Failed to create injector for " + language);
-			System.err.println(e.getMessage());
+			DEBUG.ERR("Failed to create injector for " + language);
+			DEBUG.ERR(e.getMessage());
 			throw new RuntimeException("Failed to create injector for " + language, e);
 		}
 	}

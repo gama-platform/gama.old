@@ -71,7 +71,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 		if (plugin != null && isBuiltIn()) {
 			this.originName = plugin;
-			// System.out.println("Origin name " + getOriginName() + " and plugin "
+			// DEBUG.LOG("Origin name " + getOriginName() + " and plugin "
 			// + plugin + " of " + this);
 		}
 

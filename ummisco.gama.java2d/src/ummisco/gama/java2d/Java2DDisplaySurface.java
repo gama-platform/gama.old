@@ -380,7 +380,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (!force && x == getDisplayWidth() && y == getDisplayHeight()) { return true; }
 		if (x < 10 || y < 10) { return false; }
 		if (getWidth() <= 0 && getHeight() <= 0) { return false; }
-		// java.lang.System.out.println("Resize display : " + x + " " + y);
+		// DEBUG.OUT("Resize display : " + x + " " + y);
 		final int[] point = computeBoundsFrom(x, y);
 		final int imageWidth = Math.max(1, point[0]);
 		final int imageHeight = Math.max(1, point[1]);
@@ -490,13 +490,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	public void newZoomLevel(final double newZoomLevel) {
-		getData().setZoomLevel(newZoomLevel, true);
+		getData().setZoomLevel(newZoomLevel, true, false);
 	}
 
 	@Override
 	public double getZoomLevel() {
 		if (getData().getZoomLevel() == null) {
-			getData().setZoomLevel(1.0, true);
+			getData().setZoomLevel(1.0, true, false);
 		}
 		return getData().getZoomLevel();
 	}

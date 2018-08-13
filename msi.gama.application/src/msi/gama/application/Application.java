@@ -47,7 +47,7 @@ public class Application implements IApplication {
 		public void handleEvent(final Event event) {
 			if ( event.text != null ) {
 				filesToOpen.add(event.text);
-				// System.out.println("RECEIVED FILE TO OPEN: " + event.text);
+				// DEBUG.OUT("RECEIVED FILE TO OPEN: " + event.text);
 			}
 		}
 

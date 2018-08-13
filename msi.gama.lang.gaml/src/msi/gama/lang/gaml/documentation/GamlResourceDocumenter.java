@@ -26,6 +26,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
+import utils.DEBUG;
 
 /**
  * Class GamlResourceDocManager.
@@ -61,14 +62,10 @@ public class GamlResourceDocumenter implements IDocManager {
 		}
 	};
 
-	final DescriptionVisitor documentingVisitor = new DescriptionVisitor() {
+	final DescriptionVisitor documentingVisitor = desc -> {
+		document(desc);
+		return true;
 
-		@Override
-		public boolean visit(final IDescription desc) {
-			document(desc);
-			return true;
-
-		}
 	};
 
 	@Override
@@ -105,8 +102,7 @@ public class GamlResourceDocumenter implements IDocManager {
 		try {
 			return new DocumentationNode(o);
 		} catch (final IOException e) {
-			System.out.println(
-					"GamlResourceDocumenter.getGamlDocumentation(): " + e.getMessage() + " for " + o.getTitle());
+			DEBUG.ERR("GamlResourceDocumenter.getGamlDocumentation(): " + e.getMessage() + " for " + o.getTitle());
 			return null;
 		}
 	}

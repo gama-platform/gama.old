@@ -39,6 +39,7 @@ import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnector;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
+import utils.DEBUG;
 
 @vars ({ @variable (
 		name = INetworkSkill.NET_AGENT_NAME,
@@ -56,6 +57,11 @@ import ummisco.gama.network.udp.UDPConnector;
 		name = INetworkSkill.NETWORK_SKILL,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
 public class NetworkSkill extends MessagingSkill {
+
+	static {
+		DEBUG.OFF();
+	}
+
 	final static String REGISTERED_AGENTS = "registred_agents";
 	final static String REGISTRED_SERVER = "registred_servers";
 
@@ -145,24 +151,24 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.UDP_CLIENT)) {
-				System.out.println("create udp client");
+				DEBUG.OUT("create udp client");
 				connector = new UDPConnector(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_SERVER)) {
-				System.out.println("create tcp serveur");
+				DEBUG.OUT("create tcp serveur");
 				connector = new TCPConnector(scope, true);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_CLIENT)) {
-				System.out.println("create tcp client");
+				DEBUG.OUT("create tcp client");
 				connector = new TCPConnector(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
-				System.out.println("create mqtt serveur " + login + " " + password);
+				DEBUG.OUT("create mqtt serveur " + login + " " + password);
 				connector = new MQTTConnector(scope);
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);

@@ -10,8 +10,6 @@
 package ummisco.gama.opengl.camera;
 
 import java.awt.Point;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -21,7 +19,6 @@ import org.eclipse.swt.events.MouseWheelListener;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import ummisco.gama.opengl.Abstract3DRenderer;
 
 /**
  * Class ICamera.
@@ -37,11 +34,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 		void applyTo(AbstractCamera camera);
 	}
 
-	public final static double INIT_Z_FACTOR = 1.3;
-	public final static GamaPoint UNDEFINED = new GamaPoint();
-
-	public static Map<String, CameraPreset> PRESETS = new LinkedHashMap<>();
-
 	// Positions
 
 	public abstract GamaPoint getPosition();
@@ -56,6 +48,8 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	// Commands
 
+	public void setDistance(final double distance);
+
 	public abstract void initialize();
 
 	public abstract void update();
@@ -65,8 +59,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	public abstract void updateTarget();
 
 	public abstract void updateOrientation();
-
-	// public abstract void reset();
 
 	public abstract void animate();
 
@@ -88,14 +80,16 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract boolean isROISticky();
 
-	public abstract boolean inKeystoneMode();
-
-	public abstract Abstract3DRenderer getRenderer();
-
 	public abstract void setPosition(double x, double d, double e);
 
 	public abstract void setUpVector(double i, double j, double k);
 
 	public abstract double getDistance();
+
+	public void updateCartesianCoordinatesFromAngles();
+
+	default void updateSphericalCoordinatesFromLocations() {}
+
+	public abstract void setInitialZFactorCorrector(double factor);
 
 }

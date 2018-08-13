@@ -35,6 +35,7 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 16 mars 2010
@@ -248,7 +249,7 @@ public abstract class SymbolDescription implements IDescription {
 								: GamaRuntimeException.error(s, msi.gama.runtime.GAMA.getRuntimeScope()); }
 		final ValidationContext c = getValidationContext();
 		if (c == null) {
-			System.out.println((warning ? "Warning" : "Error") + ": " + s);
+			DEBUG.ERR((warning ? "Warning" : "Error") + ": " + s);
 			return;
 		}
 		c.add(new GamlCompilationError(s, code, e, warning, info, data));
@@ -335,7 +336,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
-		// System.out.println("Disposing " + getKeyword() + " " + getName());
+		// DEBUG.LOG("Disposing " + getKeyword() + " " + getName());
 		if (isBuiltIn()) { return; }
 		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets()) {

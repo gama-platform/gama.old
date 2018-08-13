@@ -33,16 +33,9 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
+import utils.DEBUG;
 
 public class PerspectiveHelper {
-
-	public final static boolean DEBUG = false;
-
-	public static void DEBUG(final String s) {
-		if ( DEBUG ) {
-			System.out.println(s);
-		}
-	}
 
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -63,19 +56,19 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> matches(element.getElementId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			DEBUG("Dirty perspective implementation found and removed: " + p.getElementId());
+			DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
 			if ( matches(desc.getId()) ) {
-				DEBUG("Dirty perspective descriptor found and removed: " + desc.getId());
+				DEBUG.OUT("Dirty perspective descriptor found and removed: " + desc.getId());
 				reg.deletePerspective(desc);
 			}
 		}
 
-		DEBUG("Current perspectives: " + listCurrentPerspectives());
+		DEBUG.OUT("Current perspectives: " + listCurrentPerspectives());
 	}
 
 	public static void deletePerspectiveFromApplication(final IPerspectiveDescriptor d) {
@@ -84,7 +77,7 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> element.getElementId().contains(d.getId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			DEBUG("Dirty perspective implementation found and removed: " + p.getElementId());
+			DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 	}
@@ -178,14 +171,14 @@ public class PerspectiveHelper {
 			try {
 				page.setPerspective(descriptor);
 			} catch (final NullPointerException e) {
-				// System.err.println(
+				// DEBUG.ERR(
 				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
 				// Working around the bug in e4...");
 				page.setPerspective(descriptor);
 			}
 			activateAutoSave(withAutoSave);
 			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
-				DEBUG("Destroying perspective " + oldDescriptor.getId());
+				DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
@@ -196,7 +189,7 @@ public class PerspectiveHelper {
 				currentSimulationPerspective = descriptor;
 			}
 			applyActiveEditor(page);
-			DEBUG("Perspective " + perspectiveId + " opened ");
+			DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
 			Display.getDefault().syncExec(r);
@@ -224,7 +217,7 @@ public class PerspectiveHelper {
 	}
 
 	public static void activateAutoSave(final boolean activate) {
-		// System.out.println("auto-save activated: " + activate);
+		// DEBUG.OUT("auto-save activated: " + activate);
 		Workbench.getInstance().setEnableAutoSave(activate);
 		// ApplicationWorkbenchAdvisor.CONFIGURER.setSaveAndRestore(activate);
 	}
@@ -356,7 +349,7 @@ public class PerspectiveHelper {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
 				deletePerspectiveFromApplication(currentSimulationPerspective);
-				DEBUG("Perspective destroyed: " + currentSimulationPerspective.getId());
+				DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
 		}

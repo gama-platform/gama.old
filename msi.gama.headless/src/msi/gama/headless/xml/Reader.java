@@ -34,8 +34,13 @@ import msi.gama.headless.common.DataTypeFactory;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.Output;
 import msi.gama.headless.job.Parameter;
+import utils.DEBUG;
 
 public class Reader {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public String fileName;
 	public InputStream myStream;
@@ -87,13 +92,13 @@ public class Reader {
 
 	private List<Node> findElementByNameWithoutCase(final Node e, final String name) {
 		final String lname = name.toLowerCase();
-		final ArrayList<Node> res = new ArrayList<Node>();
+		final ArrayList<Node> res = new ArrayList<>();
 		if (e.getNodeName().toLowerCase().equals(lname)) {
 			res.add(e);
 			return res;
 		}
 		final NodeList nl = e.getChildNodes();
-		// System.out.println("get child "+ nl.getLength()+" "+name+ " "+e.getNodeName());
+		// DEBUG.LOG("get child "+ nl.getLength()+" "+name+ " "+e.getNodeName());
 		for (int i = 0; i < nl.getLength(); i++) {
 			final Node ee = nl.item(i);
 			res.addAll(findElementByNameWithoutCase(ee, name));
@@ -157,7 +162,7 @@ public class Reader {
 			max = Integer.valueOf(finalStep);
 		}
 		if (max < 0) {
-			System.out.println("WARNING: the headless simulation has no final step!");
+			DEBUG.ERR("WARNING: the headless simulation has no final step!");
 		}
 		// int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
 
@@ -189,7 +194,7 @@ public class Reader {
 	}
 
 	private ArrayList<ExperimentJob> readSimulation(final Document dom) {
-		final ArrayList<ExperimentJob> res = new ArrayList<ExperimentJob>();
+		final ArrayList<ExperimentJob> res = new ArrayList<>();
 		// Element docEle = dom.getDocumentElement();
 		final NodeList ee = dom.getChildNodes();
 

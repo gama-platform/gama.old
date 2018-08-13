@@ -7,6 +7,7 @@ import org.eclipse.emf.common.util.URI;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
 import one.util.streamex.StreamEx;
+import utils.DEBUG;
 
 public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	private static int COUNT = 0;
@@ -68,18 +69,20 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	@Override
 	public final String toString() {
 		final TestState state = getState();
-		if (GamaPreferences.Runtime.FAILED_TESTS.getValue() && state != TestState.FAILED && state != TestState.ABORTED)
-			return "";
+		if (GamaPreferences.Runtime.FAILED_TESTS.getValue() && state != TestState.FAILED
+				&& state != TestState.ABORTED) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		printHeader(sb);
 		sb.append(state).append(": ").append(getTitle()).append(" ");
-		if (error != null)
+		if (error != null) {
 			sb.append('[').append(error).append(']');
+		}
 		printFooter(sb);
 		for (final AbstractSummary<?> summary : getSummaries().values()) {
 			final String child = summary.toString();
-			if (child.isEmpty())
+			if (child.isEmpty()) {
 				continue;
+			}
 			sb.append(child);
 		}
 		return sb.toString();
@@ -90,10 +93,10 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	protected void printHeader(final StringBuilder sb) {}
 
 	public AbstractSummary<?> getSummaryOf(final URI uri) {
-		if (this.uri != null)
-			System.out.println("Comparing " + this.uri + " to " + uri);
-		if (uri.equals(this.uri))
-			return this;
+		if (this.uri != null) {
+			DEBUG.OUT("Comparing " + this.uri + " to " + uri);
+		}
+		if (uri.equals(this.uri)) { return this; }
 		return StreamEx.ofValues(getSummaries()).findFirst(s -> s.getSummaryOf(uri) != null).orElse(null);
 	}
 

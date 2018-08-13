@@ -170,14 +170,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	boolean decorationEnabled = GamaPreferences.Modeling.EDITBOX_ENABLED.getValue();
 	// boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
-	public final static boolean DEBUG = false;
-
-	public static void DEBUG(final String s) {
-		if (DEBUG) {
-			System.out.println(s);
-		}
-	}
-
 	@Inject public IResourceSetProvider resourceSetProvider;
 	@Inject Injector injector;
 	@Inject IModelRunner runner;
@@ -202,7 +194,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		super.init(site, input);
-		DEBUG("init of Editor for " + input.getName());
+		utils.DEBUG.OUT("init of Editor for " + input.getName());
 		assignBoxPartListener();
 	}
 
@@ -325,7 +317,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void createPartControl(final Composite compo) {
-		DEBUG("Creating part control of " + this.getPartName());
+		utils.DEBUG.OUT("Creating part control of " + this.getPartName());
 		configureTabFolder(compo);
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
 		final GridLayout layout = new GridLayout(1, false);

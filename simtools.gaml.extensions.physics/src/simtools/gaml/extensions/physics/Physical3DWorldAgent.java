@@ -202,7 +202,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
 		final Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;
-		// System.out.println("Time step : "+ timeStep);
+		// DEBUG.LOG("Time step : "+ timeStep);
 		world.update(timeStep.floatValue());
 
 		for (final IAgent ia : registeredMap.keySet()) {

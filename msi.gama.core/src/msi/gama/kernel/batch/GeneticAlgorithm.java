@@ -226,7 +226,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
 		}
-		// System.out.println("Best solution : " + bestSolution + " fitness : "
+		// DEBUG.LOG("Best solution : " + bestSolution + " fitness : "
 		// + bestFitness);
 		return getBestSolution();
 	}

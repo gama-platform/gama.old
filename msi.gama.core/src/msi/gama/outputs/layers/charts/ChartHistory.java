@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import utils.DEBUG;
+
 /**
  * A simple history for charts, that tries to maintain a low memory footprint by encoding and zipping the contents
  * whenever it reaches a certain limit.
@@ -38,7 +40,7 @@ public class ChartHistory {
 				zos.write(current.toString().getBytes(StandardCharsets.US_ASCII));
 			} catch (final IOException e) {}
 			older.add(stream.toByteArray());
-			System.out.println("Chart history limit reached (compressing " + current.toString().getBytes().length
+			DEBUG.ERR("Chart history limit reached (compressing " + current.toString().getBytes().length
 					+ " bytes into " + older.get(older.size() - 1).length + " bytes)");
 			current.setLength(0);
 		}

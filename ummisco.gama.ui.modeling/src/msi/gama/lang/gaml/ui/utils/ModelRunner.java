@@ -127,7 +127,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			try {
 				if (file.findMaxProblemSeverity(IMarker.PROBLEM, true,
 						IResource.DEPTH_ZERO) == IMarker.SEVERITY_ERROR) {
-					System.err.println("Model " + file.getFullPath() + " has errors and cannot be launched");
+					GAMA.getGui().error("Model " + file.getFullPath() + " has errors and cannot be launched");
 					return null;
 				}
 			} catch (final CoreException e) {

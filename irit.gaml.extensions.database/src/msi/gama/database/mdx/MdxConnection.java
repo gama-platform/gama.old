@@ -35,6 +35,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC
@@ -51,8 +52,6 @@ import msi.gaml.operators.Strings;
 @SuppressWarnings ({ "unchecked" })
 public abstract class MdxConnection {
 
-	// private static final boolean DEBUG = false; // Change DEBUG = false for
-	// release version
 	protected static final String MONDRIAN = "mondrian";
 	protected static final String MONDRIANXMLA = "mondrian/xmla";
 	protected static final String MSAS = "ssas/xmla"; // Micrsoft SQL Server
@@ -501,30 +500,30 @@ public abstract class MdxConnection {
 			// properties = cellSetMD.getCellProperties();
 			// cube = cellSetMD.getCube();
 			// print
-			// System.out.println("CellSetAxis Meta Data");
+			// DEBUG.LOG("CellSetAxis Meta Data");
 			final int m = cellSetAxisMD.size();
 			for (int i = 0; i < m; i++) {
 				final CellSetAxisMetaData cellMD = cellSetAxisMD.get(i);
 				final List<Hierarchy> hierarchy = cellMD.getHierarchies();
 				final List<Property> property = cellMD.getProperties();
-				// System.out.println("Hierarchy");
+				// DEBUG.LOG("Hierarchy");
 				int n = hierarchy.size();
 				for (int j = 0; j < n; ++j) {
-					System.out.print(hierarchy.get(j).getName() + Strings.TAB);
+					DEBUG.OUT(hierarchy.get(j).getName() + Strings.TAB, false);
 				}
-				// System.out.println("\n Properties");
+				// DEBUG.LOG("\n Properties");
 				n = property.size();
 				for (int j = 0; j < n; ++j) {
-					System.out.print(property.get(j).getName() + Strings.TAB);
+					DEBUG.OUT(property.get(j).getName() + Strings.TAB, false);
 				}
 
 			}
-			// System.out.println("\n End Cell Set Meta Data ------------");
-			// System.out.println("Cell Set Axis Meta Data:" +
+			// DEBUG.OUT("\n End Cell Set Meta Data ------------");
+			// DEBUG.OUT("Cell Set Axis Meta Data:" +
 			// cellSetAxisMD.iterator().toString());
-			// System.out.println("propertis Meta Data:" +
+			// DEBUG.OUT("propertis Meta Data:" +
 			// properties.iterator().toString());
-			// System.out.println("cubes Meta Data:" + cube.toString());
+			// DEBUG.OUT("cubes Meta Data:" + cube.toString());
 		} catch (final OlapException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -544,9 +543,6 @@ public abstract class MdxConnection {
 			queryStr = queryStr.replaceFirst("\\?", condition_values.get(i).toString());
 		}
 
-		// if ( DEBUG ) {
-		// scope.getGui().debug("Parsed Mdx:" + queryStr);
-		// }
 		return queryStr;
 
 	}

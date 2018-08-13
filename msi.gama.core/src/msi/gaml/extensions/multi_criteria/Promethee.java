@@ -75,7 +75,7 @@ public class Promethee {
 				outRankingMax = outRanking;
 				meilleureLoc = loc1;
 			}
-			// System.out.println("Location : " + loc1.getNom() + " : " + outRanking);
+			// DEBUG.LOG("Location : " + loc1.getNom() + " : " + outRanking);
 
 		}
 		return meilleureLoc;

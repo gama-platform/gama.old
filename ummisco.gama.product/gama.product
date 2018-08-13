@@ -37,6 +37,8 @@ openFile
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
+-Declipse.log.level=ERROR
+-Dosgi.checkConfiguration=false
       </vmArgs>
       <vmArgsLin>
          <argsX86>-Xms256m -Xmx1024m</argsX86>

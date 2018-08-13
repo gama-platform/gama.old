@@ -22,7 +22,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MondrianXmlaConnection extends MdxConnection {
 
-	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
 
 	public MondrianXmlaConnection() {
@@ -74,8 +73,8 @@ public class MondrianXmlaConnection extends MdxConnection {
 				// ,userName, password
 				// );
 
-				// if (DEBUG){
-				// scope.getGui().debug("MondrianXmlaConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
+				// if (DEBUG.IS_ON()){
+				// DEBUG.OUT("MondrianXmlaConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
 				// + port+" - "+dbName+" - "+catalog+" - "+userName+" - "+password);
 				//
 				// }
@@ -101,7 +100,7 @@ public class MondrianXmlaConnection extends MdxConnection {
 			throw GamaRuntimeException.error(e.toString(), scope);
 		}
 		// if ( DEBUG ) {
-		// scope.getGui().debug("MondrianXmlaConnection.connected");
+		// DEBUG.OUT("MondrianXmlaConnection.connected");
 		//
 		// }
 		return olapConnection;

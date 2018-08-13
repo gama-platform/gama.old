@@ -136,7 +136,7 @@ public class SwtInputBlocker {
 		assert blockCount >= 0;
 		assert Display.getCurrent() != null; // On SWT event thread
 
-		// System.out.println("Deleting SWT blocker");
+		// DEBUG.LOG("Deleting SWT blocker");
 		if (blockCount == 0) { return; }
 		if (blockCount == 1 && instance != null) {
 			instance.close();
@@ -148,7 +148,7 @@ public class SwtInputBlocker {
 	public static void block(final AwtDialogListener dialogListener) {
 		assert blockCount >= 0;
 
-		// System.out.println("Creating SWT blocker");
+		// DEBUG.LOG("Creating SWT blocker");
 		final Display display = Display.getCurrent();
 		assert display != null; // On SWT event thread
 

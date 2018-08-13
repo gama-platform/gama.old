@@ -23,6 +23,7 @@ import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
+import utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {
@@ -204,10 +205,11 @@ public class RandomUtils {
 			realSeed *= Long.MAX_VALUE;
 		}
 		long l;
-		if (!USE_BITWISE)
+		if (!USE_BITWISE) {
 			l = realSeed.longValue();
-		else
+		} else {
 			l = Double.doubleToRawLongBits(realSeed);
+		}
 		final byte[] result = new byte[length];
 		switch (length) {
 			case 4:
@@ -400,29 +402,26 @@ public class RandomUtils {
 	}
 
 	public static void testDrawRandomValues(final double min, final double max, final double step) {
-		System.out.println("Drawing 100 double between " + min + " and " + max + " step " + step);
+		DEBUG.LOG("Drawing 100 double between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
 		for (int i = 0; i < 100; i++) {
 			final double val = r.between(min, max);
 			final int nbStep = (int) ((val - min) / step);
 			final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 			final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
-			System.out.print(val - low < high - val ? low : high);
-			System.out.print(" | ");
+			DEBUG.LOG(val - low < high - val ? low : high, false);
+			DEBUG.LOG(" | ", false);
 		}
-		System.out.println();
 	}
 
 	public static void testDrawRandomValues(final int min, final int max, final int step) {
-		System.out.println("Drawing 100 int between " + min + " and " + max + " step " + step);
+		DEBUG.LOG("Drawing 100 int between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
 		final int nbSteps = (max - min) / step;
 		for (int i = 0; i < 100; i++) {
 			final int val = min + r.between(0, nbSteps) * step;
-			System.out.print(val);
-			System.out.print(" | ");
+			DEBUG.LOG(val + " | ", false);
 		}
-		System.out.println();
 	}
 
 	private class BitString {
@@ -580,14 +579,14 @@ public class RandomUtils {
 		RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
 		RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
 		for (int i = 0; i < 3; i++) {
-			System.out.println("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+			DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
 		}
 		USE_BITWISE = true;
 		r1 = new RandomUtils(1.0, "mersenne1");
 		r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
 		r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
 		for (int i = 0; i < 3; i++) {
-			System.out.println("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+			DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
 		}
 	}
 

@@ -40,6 +40,7 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.GamaPreferencesView;
+import utils.DEBUG;
 
 public class PreferencesHelper {
 
@@ -112,7 +113,7 @@ public class PreferencesHelper {
 
 	public static File findIniFile() {
 		final String path = Platform.getConfigurationLocation().getURL().getPath();
-		System.out.println("Install location of GAMA is " + path);
+		DEBUG.OUT("Install location of GAMA is " + path);
 		File dir = new File(path);
 		File result = findIn(dir);
 		if (result == null) {
@@ -132,7 +133,7 @@ public class PreferencesHelper {
 	}
 
 	private static File findIn(final File path) {
-		System.out.println("Looking for ini file in " + path);
+		DEBUG.OUT("Looking for ini file in " + path);
 		final File ini = new File(path.getAbsolutePath() + "/Gama.ini");
 		return ini.exists() ? ini : null;
 	}

@@ -253,7 +253,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		if (IKeyword.TABLE.equals(type)) {
 			if (rootAgent == null || rootAgent.dead()) { return EMPTY; }
 		}
-		// System.out.println("Last value :" + lastValue);
+		// DEBUG.LOG("Last value :" + lastValue);
 		if (lastValue instanceof IAgent) { return new IAgent[] { (IAgent) lastValue }; }
 		if (lastValue instanceof ISpecies && rootAgent != null) {
 			final IPopulation pop = rootAgent.getMicroPopulation((ISpecies) lastValue);

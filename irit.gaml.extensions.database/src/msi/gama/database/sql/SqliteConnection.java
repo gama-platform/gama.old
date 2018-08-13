@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'SqliteConnection.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SqliteConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -33,33 +32,20 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import utils.DEBUG;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * Created date: 19-Apr-2013
- * Modified:
- * 18-July-2013:
- * Add load extension library for SQLITE case.
- * Correct error getColumnTypeName when return null value
- * 23-July-2013
- * Modify connectDB() method:
- * - Add load Extention.
- * - Clean memory(garbage collection) after load.
- * 15-Jan-2014
- * Fix null error of getInsertString method
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
+ * 18-July-2013: Add load extension library for SQLITE case. Correct error getColumnTypeName when return null value
+ * 23-July-2013 Modify connectDB() method: - Add load Extention. - Clean memory(garbage collection) after load.
+ * 15-Jan-2014 Fix null error of getInsertString method
  *
  *
  * Last Modified: 15-Jan-2014
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SqliteConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for
-												// release version
 	private static final String WKT2GEO = "GeomFromText";
 
 	// protected String extension=null;
@@ -101,7 +87,7 @@ public class SqliteConnection extends SqlConnection {
 				config.enableLoadExtension(true);
 				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName, config.toProperties());
 				// load Spatialite extension library
-				if ( (extension != null) && (new File(extension)).exists() ) {
+				if (extension != null && new File(extension).exists()) {
 					// Statement stmt = conn.createStatement();
 					// stmt.setQueryTimeout(30); // set timeout to 30 sec.
 					// stmt.execute("SELECT load_extension('"+extension+"')");
@@ -136,46 +122,46 @@ public class SqliteConnection extends SqlConnection {
 	protected IList<IList<Object>> resultSet2GamaList(final ResultSetMetaData rsmd, final ResultSet rs) {
 		// convert Geometry in SQL to Geometry type in GeoTool
 
-		final IList<IList<Object>> repRequest = GamaListFactory
-				.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
+		final IList<IList<Object>> repRequest =
+				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		try {
 			final List<Integer> geoColumn = getGeometryColumns(rsmd);
 			final int nbCol = rsmd.getColumnCount();
-//			int i = 1;
+			// int i = 1;
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of col:" + nbCol);
+			// DEBUG.OUT("Number of col:" + nbCol);
 			// }
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of row:" + rs.getFetchSize());
+			// DEBUG.OUT("Number of row:" + rs.getFetchSize());
 			// }
 			while (rs.next()) {
 				// InputStream inputStream = rs.getBinaryStream(i);
 				// if ( DEBUG ) {
-				// scope.getGui().debug("processing at row:" + i);
+				// DEBUG.OUT("processing at row:" + i);
 				// }
 
 				final IList<Object> rowList = GamaListFactory.create();
 				for (int j = 1; j <= nbCol; j++) {
 					// check column is geometry column?
 					// if ( DEBUG ) {
-					// scope.getGui().debug("col " + j + ": " +
+					// DEBUG.OUT("col " + j + ": " +
 					// rs.getObject(j));
 					// }
 					if (geoColumn.contains(j)) {
 						// if ( DEBUG ) {
-						// scope.getGui().debug("convert at [" + i + "," + j +
+						// DEBUG.OUT("convert at [" + i + "," + j +
 						// "]: ");
 						// }
-						 rowList.add(SqlUtils.read(rs.getBytes(j)));
+						rowList.add(SqlUtils.read(rs.getBytes(j)));
 					} else {
 						rowList.add(rs.getObject(j));
 					}
 				}
 				repRequest.add(rowList);
-//				i++;
+				// i++;
 			}
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of row:" + i);
+			// DEBUG.OUT("Number of row:" + i);
 			// }
 		} catch (final Exception e) {
 
@@ -187,24 +173,22 @@ public class SqliteConnection extends SqlConnection {
 	@Override
 	protected List<Integer> getGeometryColumns(final ResultSetMetaData rsmd) throws SQLException {
 		final int numberOfColumns = rsmd.getColumnCount();
-		final List<Integer> geoColumn = new ArrayList<Integer>();
+		final List<Integer> geoColumn = new ArrayList<>();
 		for (int i = 1; i <= numberOfColumns; i++) {
 
 			// if ( DEBUG ) {
-			// scope.getGui().debug("col " + i + ": " + rsmd.getColumnName(i));
-			// scope.getGui().debug(" - Type: " + rsmd.getColumnType(i));
-			// scope.getGui().debug(" - TypeName: " +
+			// DEBUG.OUT("col " + i + ": " + rsmd.getColumnName(i));
+			// DEBUG.OUT(" - Type: " + rsmd.getColumnType(i));
+			// DEBUG.OUT(" - TypeName: " +
 			// rsmd.getColumnTypeName(i));
-			// scope.getGui().debug(" - size: " + rsmd.getColumnDisplaySize(i));
+			// DEBUG.OUT(" - size: " + rsmd.getColumnDisplaySize(i));
 			//
 			// }
 
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL Type: -3 - TypeName: geometry - size:
-			 * 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size:
-			 * 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName:
-			 * geometry - size: 2147483647 st_asbinary(geom): - Type: -2 -
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL Type: -3 -
+			 * TypeName: geometry - size: 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
+			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647 st_asbinary(geom): - Type: -2 -
 			 * TypeName: bytea - size: 2147483647
 			 */
 			// Search column with Geometry type
@@ -222,17 +206,15 @@ public class SqliteConnection extends SqlConnection {
 		final IList<Object> columnType = GamaListFactory.create();
 		for (int i = 1; i <= numberOfColumns; i++) {
 			// if ( DEBUG ) {
-			// scope.getGui().debug(
+			// DEBUG.OUT(
 			// "SqliteConnection.getColumnTypeName at " + i + ":" +
 			// rsmd.getColumnTypeName(i).toUpperCase());
 			// }
 
 			/*
-			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size:
-			 * 2147483647 - In MSSQL Type: -3 - TypeName: geometry - size:
-			 * 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size:
-			 * 2147483647 - In PostGIS/PostGresSQL Type: 1111 - TypeName:
-			 * geometry - size: 2147483647
+			 * for Geometry - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647 - In MSSQL Type: -3 -
+			 * TypeName: geometry - size: 2147483647 - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647 - In
+			 * PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 */
 			// Search column with Geometry type
 			if (vender.equalsIgnoreCase(SQLITE) && rsmd.getColumnType(i) == 2004) {
@@ -254,9 +236,8 @@ public class SqliteConnection extends SqlConnection {
 		String colStr = "";
 		String valueStr = "";
 		// Check size of parameters
-		if (values.size() != col_no) {
-			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-		}
+		if (values.size() != col_no) { throw new IndexOutOfBoundsException(
+				"Size of columns list and values list are not equal"); }
 		// Get column name
 		for (int i = 0; i < col_no; i++) {
 			if (i == col_no - 1) {
@@ -268,8 +249,8 @@ public class SqliteConnection extends SqlConnection {
 		// create SELECT statement string
 		selectStr = selectStr + colStr + " FROM " + table_name + " LIMIT 1 ;";
 
-		if (DEBUG) {
-			scope.getGui().debug("SqliteConnection.getInsertString.select command:" + selectStr);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("SqliteConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -281,9 +262,9 @@ public class SqliteConnection extends SqlConnection {
 			// GamaList<Object> col_Types = getColumnTypeName(rsmd);
 			final IList<Object> col_Types = getColumnTypeName(scope, conn, table_name, cols);
 
-			if (DEBUG) {
-				// scope.getGui().debug("list of column Name:" + col_Names);
-				scope.getGui().debug("list of column type:" + col_Types);
+			if (DEBUG.IS_ON()) {
+				// DEBUG.OUT("list of column Name:" + col_Names);
+				DEBUG.OUT("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -312,11 +293,11 @@ public class SqliteConnection extends SqlConnection {
 					// Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					if (transformed) {
 						geo = saveGis.inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)
 						|| ((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR)
@@ -341,8 +322,8 @@ public class SqliteConnection extends SqlConnection {
 			}
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("SqliteConnection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SqliteConnection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {
@@ -368,8 +349,8 @@ public class SqliteConnection extends SqlConnection {
 		// create SELECT statement string
 		selectStr = selectStr + " * " + " FROM " + table_name + " LIMIT 1 ;";
 
-		if (DEBUG) {
-			scope.getGui().debug("SqliteConnection.getInsertString.select command:" + selectStr);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("SqliteConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -383,13 +364,12 @@ public class SqliteConnection extends SqlConnection {
 
 			final int col_no = col_Names.size();
 			// Check size of parameters
-			if (values.size() != col_Names.size()) {
-				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-			}
+			if (values.size() != col_Names.size()) { throw new IndexOutOfBoundsException(
+					"Size of columns list and values list are not equal"); }
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column Name:" + col_Names);
-				scope.getGui().debug("list of column type:" + col_Types);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column Name:" + col_Names);
+				DEBUG.OUT("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -417,11 +397,11 @@ public class SqliteConnection extends SqlConnection {
 					// Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					if (transformed) {
 						geo = getSavingGisProjection(scope).inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)
@@ -453,8 +433,8 @@ public class SqliteConnection extends SqlConnection {
 
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("SqliteConnection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SqliteConnection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {

@@ -35,6 +35,7 @@ openFile
 -XX:+OptimizeStringConcat
 -Dosgi.locking=none
 -Dosgi.checkConfiguration=false
+-Declipse.log.level=ERROR
       </vmArgs>
       <vmArgsLin>
          <argsX86>-Xms256m -Xmx1024m</argsX86>

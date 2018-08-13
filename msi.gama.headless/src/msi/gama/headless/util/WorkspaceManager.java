@@ -12,11 +12,17 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import utils.DEBUG;
+
 /**
  * @author bgaudou
  *
  */
 public class WorkspaceManager {
+
+	static {
+		DEBUG.ON();
+	}
 	private final File wsFile;
 
 	public WorkspaceManager(final String location) throws IOException {
@@ -42,9 +48,7 @@ public class WorkspaceManager {
 	public File getProductFile() throws IOException {
 		final File productFile = new File(wsFile.getAbsolutePath() + File.separator + Constants.RELEASE_APPLICATION
 				+ File.separator + Constants.RELEASE_PRODUCT);
-		if (!productFile.exists()) {
-			throw new IOException("Product file do not exist");
-		}
+		if (!productFile.exists()) { throw new IOException("Product file do not exist"); }
 		return productFile;
 	}
 
@@ -58,8 +62,7 @@ public class WorkspaceManager {
 	}
 
 	public boolean isFeature(final String pluginName) {
-		if (!isGAMAPlugin(pluginName))
-			return false;
+		if (!isGAMAPlugin(pluginName)) { return false; }
 		final File feature = getFeatureFile(pluginName);
 		return feature.exists();
 	}
@@ -70,15 +73,13 @@ public class WorkspaceManager {
 	}
 
 	/**
-	 * This method will parse the Eclipse workspace to find project that have a
-	 * file "docGama.xml".
+	 * This method will parse the Eclipse workspace to find project that have a file "docGama.xml".
 	 * 
-	 * @return It will then return the HashMap containing all their project name
-	 *         with their associated files associated
+	 * @return It will then return the HashMap containing all their project name with their associated files associated
 	 * @throws IOException
 	 */
 	public HashMap<String, File> getAllDocFiles() throws IOException {
-		final HashMap<String, File> hmFilesPackages = new HashMap<String, File>();
+		final HashMap<String, File> hmFilesPackages = new HashMap<>();
 
 		for (final File f : wsFile.listFiles()) {
 			final File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE);
@@ -92,7 +93,7 @@ public class WorkspaceManager {
 	public HashMap<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException {
 		final HashMap<String, File> hmFilesPackages = getAllDocFiles();
 		final List<String> pluginsProduct = getAllGAMAPluginsInProduct();
-		final HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+		final HashMap<String, File> hmFilesRes = new HashMap<>();
 
 		for (final Entry<String, File> eSF : hmFilesPackages.entrySet()) {
 			if (pluginsProduct.contains(eSF.getKey())) {
@@ -107,7 +108,7 @@ public class WorkspaceManager {
 			throws IOException, ParserConfigurationException, SAXException {
 		final HashMap<String, File> hmFilesPackages = getAllDocFiles();
 		final List<String> pluginsProduct = getAllGAMAPluginsInProduct();
-		final HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+		final HashMap<String, File> hmFilesRes = new HashMap<>();
 
 		for (final Entry<String, File> eSF : hmFilesPackages.entrySet()) {
 			if (!pluginsProduct.contains(eSF.getKey())) {
@@ -129,7 +130,7 @@ public class WorkspaceManager {
 	 */
 	private List<String> getPluginsFromProduct(final File product)
 			throws ParserConfigurationException, SAXException, IOException {
-		final ArrayList<String> listPlugins = new ArrayList<String>();
+		final ArrayList<String> listPlugins = new ArrayList<>();
 
 		// Creation of the DOM source
 		final org.w3c.dom.Document document = XMLUtils.createDoc(product);
@@ -138,8 +139,8 @@ public class WorkspaceManager {
 		// plugin-based product)
 		final NodeList nLProduct = document.getElementsByTagName("product");
 		final org.w3c.dom.Element eltProduct = (org.w3c.dom.Element) nLProduct.item(0);
-		if (!eltProduct.getAttribute("useFeatures").equals("true"))
-			throw new IOException("Plugin-based products are not managed");
+		if (!eltProduct.getAttribute("useFeatures")
+				.equals("true")) { throw new IOException("Plugin-based products are not managed"); }
 
 		// We get the features from the product
 		final NodeList nLFeatures = document.getElementsByTagName("feature");
@@ -162,7 +163,7 @@ public class WorkspaceManager {
 	 */
 	private List<String> getPluginsFromFeature(final File feature)
 			throws ParserConfigurationException, SAXException, IOException {
-		final ArrayList<String> listPlugins = new ArrayList<String>();
+		final ArrayList<String> listPlugins = new ArrayList<>();
 
 		// Creation of the DOM source
 		final org.w3c.dom.Document document = XMLUtils.createDoc(feature);
@@ -185,7 +186,7 @@ public class WorkspaceManager {
 	}
 
 	public List<String> getAllGAMAPluginsInProduct() throws ParserConfigurationException, SAXException, IOException {
-		final ArrayList<String> listPlugins = new ArrayList<String>();
+		final ArrayList<String> listPlugins = new ArrayList<>();
 		final List<String> initPluginList = getPluginsFromProduct(getProductFile());
 		for (final String plugin : initPluginList) {
 			listPlugins.addAll(getList(plugin));
@@ -195,7 +196,7 @@ public class WorkspaceManager {
 	}
 
 	private List<String> getList(final String plugin) throws ParserConfigurationException, SAXException, IOException {
-		final ArrayList<String> listPlugins = new ArrayList<String>();
+		final ArrayList<String> listPlugins = new ArrayList<>();
 		if (isFeature(plugin)) {
 			final List<String> pluginsFromFeature = getPluginsFromFeature(getFeatureFile(plugin));
 			for (final String name : pluginsFromFeature) {
@@ -203,8 +204,9 @@ public class WorkspaceManager {
 			}
 
 		} else {
-			if (isGAMAPlugin(plugin))
+			if (isGAMAPlugin(plugin)) {
 				listPlugins.add(plugin);
+			}
 		}
 		return listPlugins;
 	}
@@ -220,7 +222,7 @@ public class WorkspaceManager {
 	}
 
 	public static ArrayList<String> readDirectory(final String dir) {
-		final ArrayList<String> listFiles = new ArrayList<String>();
+		final ArrayList<String> listFiles = new ArrayList<>();
 		final File rep = new File(dir);
 
 		if (rep.isDirectory()) {
@@ -254,35 +256,37 @@ public class WorkspaceManager {
 	public static void main(final String[] arg) throws IOException, ParserConfigurationException, SAXException {
 		final WorkspaceManager ws = new WorkspaceManager(".");
 		List<String> l = ws.getAllGAMAPluginsInProduct();
-		for (final String name : l) {
-			System.out.println(name);
-		}
-		System.out.println("----------");
+		if (DEBUG.IS_ON()) {
+			for (final String name : l) {
+				DEBUG.OUT(name);
+			}
 
-		HashMap<String, File> hm = ws.getAllDocFiles();
-		for (final Entry<String, File> e : hm.entrySet()) {
-			System.out.println(e.getKey());
-		}
-		System.out.println("----------");
-		hm = ws.getProductDocFiles();
-		for (final Entry<String, File> e : hm.entrySet()) {
-			System.out.println(e.getKey());
-		}
-		System.out.println("----------");
-		hm = ws.getExtensionsDocFiles();
-		for (final Entry<String, File> e : hm.entrySet()) {
-			System.out.println(e.getKey());
-		}
-		System.out.println("----------");
+			DEBUG.LINE();
 
-		System.out.println("----------");
+			HashMap<String, File> hm = ws.getAllDocFiles();
+			for (final Entry<String, File> e : hm.entrySet()) {
+				DEBUG.OUT(e.getKey());
+			}
+			DEBUG.LINE();
+			hm = ws.getProductDocFiles();
+			for (final Entry<String, File> e : hm.entrySet()) {
+				DEBUG.OUT(e.getKey());
+			}
+			DEBUG.LINE();
+			hm = ws.getExtensionsDocFiles();
+			for (final Entry<String, File> e : hm.entrySet()) {
+				DEBUG.OUT(e.getKey());
+			}
+			DEBUG.LINE();
 
-		l = ws.getModelLibrary();
-		for (final String name : l) {
-			System.out.println(name);
+			DEBUG.LINE();
+
+			l = ws.getModelLibrary();
+			for (final String name : l) {
+				DEBUG.OUT(name);
+			}
+			DEBUG.OUT(String.valueOf(l.size()));
+			DEBUG.OUT("----------");
 		}
-		System.out.println(l.size());
-		System.out.println("----------");
-
 	}
 }

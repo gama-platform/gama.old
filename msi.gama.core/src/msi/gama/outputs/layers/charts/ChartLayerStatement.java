@@ -384,7 +384,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		@Override
 		public void leaveScope(final IScope scope) {
 			chartdataset = (ChartDataSet) scope.getVarValue(ChartLayerStatement.CHARTDATASET);
-			// System.out.println("DELETE ME, I am in chartlayerstatement top");
 
 			super.leaveScope(scope);
 		}
@@ -439,10 +438,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		setName(getChartName(scope));
 		lastValues.clear();
 
-		// chartParameters.clear();
-
 		IExpression string1 = getFacet(IKeyword.TYPE);
-		// chartParameters.put(IKeyword.TYPE, string1);
 
 		chartoutput = ChartJFreeChartOutput.createChartOutput(scope, getName(), string1);
 

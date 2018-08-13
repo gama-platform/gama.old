@@ -17,8 +17,7 @@ Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.lang;version="2.6.0",
  org.jfree.chart
 Export-Package: 
- ummisco.gama.opengl,
- ummisco.gama.opengl.utils
+ ummisco.gama.opengl.view
 Bundle-ClassPath: .,
  jogamp-fat.jar
 Bundle-Vendor: UMMISCO

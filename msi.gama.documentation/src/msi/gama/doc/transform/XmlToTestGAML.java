@@ -113,7 +113,7 @@ public class XmlToTestGAML {
 		for (int i = 0; i < nLCategories.getLength(); i++) {
 			final org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
 			final String nameFileSpecies = "Op" + eltCategory.getAttribute("id") + "Test";
-			// System.out.println(nameFileSpecies);
+			// DEBUG.LOG(nameFileSpecies);
 
 			final Document docTemp = builder.newDocument();
 			final org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);

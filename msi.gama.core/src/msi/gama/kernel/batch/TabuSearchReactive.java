@@ -293,7 +293,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
-		// System.out.println("Best solution : " + currentSol + " fitness : "
+		// DEBUG.LOG("Best solution : " + currentSol + " fitness : "
 		// + currentFitness);
 
 		return getBestSolution();

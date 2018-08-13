@@ -93,10 +93,10 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		// double optimal_distance, double initial_step, double step_ratio,
 		// double convergence_threshold, double barnes_hut_theta) {
 		initializing();
-		// System.out.println("Yifan Hu algorithm (by step), starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("Yifan Hu algorithm (by step), starting.");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
-		// System.out.println("initialising ...");
+		// DEBUG.LOG("initialising ...");
 		initializing_GraphModel(g);
 		final YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, STEP_RATIO_DEFAULT,
@@ -105,7 +105,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		// for ( int i = 0; i < nb_steps && layout.canAlgo(); i++ ) {
 		for (int i = 0; i < nb_steps; i++) {
 			layout.goAlgo();
-			// System.out.println("..." + i + "/" + nb_steps + "/" +
+			// DEBUG.LOG("..." + i + "/" + nb_steps + "/" +
 			// layout.canAlgo());
 		}
 		if (bp1 != null && bp2 != null) {
@@ -116,7 +116,7 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		} else {
 			Update_locations(g);
 		}
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		// return g;
 		// }
 
@@ -160,30 +160,30 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double barnes_hut_theta, final int max_step, final boolean initialise, final double max_x,
 			final double max_y) {
 		initializing();
-		// System.out.println("Yifan Hu algorithm (bounds limited), starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("Yifan Hu algorithm (bounds limited), starting.");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		// System.out.println("graphmodel constructed : " +
+		// DEBUG.LOG("graphmodel constructed : " +
 		// graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+
 		// graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
 		final YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-		// System.out.println("initialising layout ...");
+		// DEBUG.LOG("initialising layout ...");
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
 				barnes_hut_theta);
-		// System.out.println("initialising algorithm ...");
+		// DEBUG.LOG("initialising algorithm ...");
 		if (initialise) {
 			layout.initAlgo();
 		} else {
 			// initializing_GraphModel(g);
 		}
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		for (int i = 0; i < max_step && layout.canAlgo(); i++) {
 			layout.goAlgo();
 		}
 		layout.endAlgo();
 		Update_locations(g, max_x, max_y);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -196,33 +196,33 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double initial_step, final double step_ratio, final double convergence_threshold,
 			final double barnes_hut_theta, final int max_step, final boolean initialise) {
 		initializing();
-		// System.out.println("Yifan Hu algorithm starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("Yifan Hu algorithm starting.");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		// System.out.println("graphmodel constructed : " +
+		// DEBUG.LOG("graphmodel constructed : " +
 		// graph_model.getUndirectedGraph().getNodeCount() + " nodes & "+
 		// graph_model.getUndirectedGraph().getEdgeCount() + " edges.");
 		final YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
-		// System.out.println("initialising layout ...");
+		// DEBUG.LOG("initialising layout ...");
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
 				barnes_hut_theta);
-		// System.out.println("initialising algorithm ...");
+		// DEBUG.LOG("initialising algorithm ...");
 		if (initialise) {
 			layout.initAlgo();
 		} else {
 			// initializing_GraphModel(g);
 		}
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		for (int i = 0; i < max_step && layout.canAlgo(); i++) {
 			layout.goAlgo();
-			// System.out.println("..." + i + "/" + max_step + "/" +
+			// DEBUG.LOG("..." + i + "/" + max_step + "/" +
 			// layout.canAlgo());
 		}
-		// System.out.println("... " + layout.canAlgo());
+		// DEBUG.LOG("... " + layout.canAlgo());
 		layout.endAlgo();
 		Update_locations(g);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -231,18 +231,18 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double initial_step, final double step_ratio, final double convergence_threshold,
 			final double barnes_hut_theta, final double max_x, final double max_y) {
 		initializing();
-		// System.out.println("Yifan Hu algorithm (by step and bounds limited),
+		// DEBUG.LOG("Yifan Hu algorithm (by step and bounds limited),
 		// starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
-		// System.out.println("initialising ...");
+		// DEBUG.LOG("initialising ...");
 		initializing_GraphModel(g);
 		final YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
 				barnes_hut_theta);
 		layout.goAlgo();
 		Update_locations(g, max_x, max_y);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -251,17 +251,17 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double initial_step, final double step_ratio, final double convergence_threshold,
 			final double barnes_hut_theta) {
 		initializing();
-		// System.out.println("Yifan Hu algorithm (by step), starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("Yifan Hu algorithm (by step), starting.");
+		// DEBUG.LOG("converting ...");
 		IGraph_to_GraphModel(g);
-		// System.out.println("initialising ...");
+		// DEBUG.LOG("initialising ...");
 		initializing_GraphModel(g);
 		final YifanHuLayout layout = new YifanHuLayout(null, new StepDisplacement(1f));
 		InitializingYifanHuLayout(layout, optimal_distance, initial_step, step_ratio, convergence_threshold,
 				barnes_hut_theta);
 		layout.goAlgo();
 		Update_locations(g);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -270,9 +270,9 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double min_coarsening_rate, final int min_size, final double step_ratio,
 			final double barnes_hut_theta, final int max_step, final double max_x, final double max_y) {
 		initializing();
-		// System.out.println("Yifan Hu Multilevel (bounds limited) algorithm,
+		// DEBUG.LOG("Yifan Hu Multilevel (bounds limited) algorithm,
 		// starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("converting ...");
 		initializing();
 		final MultiLevelLayout MlL = new MultiLevelLayout(new YifanHuMultiLevel(), new MaximalMatchingCoarsening());
 		MlL.resetPropertiesValues();
@@ -282,16 +282,16 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.setMinSize(min_size);
 		MlL.setStepRatio((float) step_ratio);
 		MlL.setBarnesHutTheta((float) barnes_hut_theta);
-		// System.out.println("initializing ...");
+		// DEBUG.LOG("initializing ...");
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		for (int i = 0; i < max_step && MlL.canAlgo(); i++) {
 			MlL.goAlgo();
 		}
 		MlL.endAlgo();
 		Update_locations(g, max_x, max_y);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -300,8 +300,8 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double min_coarsening_rate, final int min_size, final double step_ratio,
 			final double barnes_hut_theta, final int max_step) {
 		initializing();
-		// System.out.println("Yifan Hu Multilevel algorithm, starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("Yifan Hu Multilevel algorithm, starting.");
+		// DEBUG.LOG("converting ...");
 		initializing();
 		final MultiLevelLayout MlL = new MultiLevelLayout(new YifanHuMultiLevel(), new MaximalMatchingCoarsening());
 		MlL.resetPropertiesValues();
@@ -311,16 +311,16 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.setMinSize(min_size);
 		MlL.setStepRatio((float) step_ratio);
 		MlL.setBarnesHutTheta((float) barnes_hut_theta);
-		// System.out.println("initializing ...");
+		// DEBUG.LOG("initializing ...");
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		for (int i = 0; i < max_step && MlL.canAlgo(); i++) {
 			MlL.goAlgo();
 		}
 		MlL.endAlgo();
 		Update_locations(g);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -329,9 +329,9 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double min_coarsening_rate, final int min_size, final double step_ratio,
 			final double barnes_hut_theta, final double max_x, final double max_y) {
 		initializing();
-		// System.out.println("Yifan Hu Multilevel algorithm (by step and bounds
+		// DEBUG.LOG("Yifan Hu Multilevel algorithm (by step and bounds
 		// limited), starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("converting ...");
 		final MultiLevelLayout MlL = new MultiLevelLayout(new YifanHuMultiLevel(), new MaximalMatchingCoarsening());
 		MlL.resetPropertiesValues();
 		MlL.setGraphModel(graph_model);
@@ -340,15 +340,15 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.setMinSize(min_size);
 		MlL.setStepRatio((float) step_ratio);
 		MlL.setBarnesHutTheta((float) barnes_hut_theta);
-		// System.out.println("initializing ...");
+		// DEBUG.LOG("initializing ...");
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		MlL.goAlgo();
 		MlL.endAlgo();
 		Update_locations(g, max_x, max_y);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 
@@ -357,9 +357,9 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			final double min_coarsening_rate, final int min_size, final double step_ratio,
 			final double barnes_hut_theta) {
 		initializing();
-		// System.out.println("Yifan Hu Multilevel algorithm (by step),
+		// DEBUG.LOG("Yifan Hu Multilevel algorithm (by step),
 		// starting.");
-		// System.out.println("converting ...");
+		// DEBUG.LOG("converting ...");
 		final MultiLevelLayout MlL = new MultiLevelLayout(new YifanHuMultiLevel(), new MaximalMatchingCoarsening());
 		MlL.resetPropertiesValues();
 		MlL.setGraphModel(graph_model);
@@ -368,15 +368,15 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 		MlL.setMinSize(min_size);
 		MlL.setStepRatio((float) step_ratio);
 		MlL.setBarnesHutTheta((float) barnes_hut_theta);
-		// System.out.println("initializing ...");
+		// DEBUG.LOG("initializing ...");
 		MlL.initAlgo();
 		IGraph_to_GraphModel(g);
 		initializing_GraphModel(g);
-		// System.out.println("working ...");
+		// DEBUG.LOG("working ...");
 		MlL.goAlgo();
 		MlL.endAlgo();
 		Update_locations(g);
-		// System.out.println("ended.");
+		// DEBUG.LOG("ended.");
 		return g;
 	}
 

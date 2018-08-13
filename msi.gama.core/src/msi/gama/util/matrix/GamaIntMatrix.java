@@ -223,14 +223,14 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		final GamaIntMatrix a = this;
 		GamaIntMatrix aprime = new GamaIntMatrix(a.getRows(scope), a.getCols(scope));
 		aprime = (GamaIntMatrix) a._reverse(scope);
-		// System.out.println("aprime = " + aprime);
+		// DEBUG.LOG("aprime = " + aprime);
 		GamaIntMatrix bprime = new GamaIntMatrix(b.getRows(scope), b.getCols(scope));
 		bprime = (GamaIntMatrix) ((GamaIntMatrix) b)._reverse(scope);
-		// System.out.println("bprime = " + bprime);
+		// DEBUG.LOG("bprime = " + bprime);
 		final GamaIntMatrix c = (GamaIntMatrix) aprime.opAppendVertically(scope, bprime);
-		// System.out.println("c = " + c);
+		// DEBUG.LOG("c = " + c);
 		final GamaIntMatrix cprime = (GamaIntMatrix) c._reverse(scope);
-		// System.out.println("cprime = " + cprime);
+		// DEBUG.LOG("cprime = " + cprime);
 		return cprime;
 	}
 

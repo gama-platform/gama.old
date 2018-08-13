@@ -28,6 +28,7 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
@@ -39,6 +40,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
+import utils.DEBUG;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
@@ -73,7 +75,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		} catch (final CoreException e) {
 			// e.printStackTrace();
 		}
-
+		PluginActionBuilder.setAllowIdeLogging(false);
 	}
 
 	@Override
@@ -81,7 +83,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
-		System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+		DEBUG.OUT("Arguments received by GAMA : " + Arrays.toString(args));
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return;
 
 		}
@@ -104,10 +106,10 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// try {
 		// // Assumption here : a non-accessible / linked project means a built-in model that is not accessible
 		// // anymore. Maybe false sometimes... But how to check ?
-		// System.out.println("Project = " + p.getName());
-		// System.out.println(" ==== > Accessible : " + p.isAccessible());
-		// System.out.println(" ==== > Open : " + p.isOpen());
-		// System.out.println(" ==== > Linked : " + p.isLinked());
+		// DEBUG.OUT("Project = " + p.getName());
+		// DEBUG.OUT(" ==== > Accessible : " + p.isAccessible());
+		// DEBUG.OUT(" ==== > Open : " + p.isOpen());
+		// DEBUG.OUT(" ==== > Linked : " + p.isLinked());
 		// if ( !p.isAccessible() && p.isLinked() ) {
 		// builtInProjects.add(p);
 		// } else if ( p.isOpen() && p.getPersistentProperty(BUILTIN_PROPERTY) != null ) {
@@ -124,7 +126,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// String workspaceStamp = null;
 		// try {
 		// workspaceStamp = workspace.getRoot().getPersistentProperty(BUILTIN_PROPERTY);
-		// System.out.println("Version of the models in workspace = " + workspaceStamp);
+		// DEBUG.OUT("Version of the models in workspace = " + workspaceStamp);
 		// } catch (CoreException e) {
 		// e.printStackTrace();
 		// }
@@ -133,7 +135,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// to
 		// // solve it
 		// if ( gamaStamp == null ) {
-		// System.err.println("Problem when trying to gather the date of creation of built-in models");
+		// DEBUG.ERR("Problem when trying to gather the date of creation of built-in models");
 		// return false;
 		// }
 		// if ( gamaStamp.equals(workspaceStamp) ) {
@@ -238,7 +240,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				// Stupid Eclipse
 				if ( !message.contains("File toolbar contribution item") &&
 					!message.contains("Duplicate template id") ) {
-					System.out.println("GAMA Caught a workbench message : " + message);
+					DEBUG.OUT("GAMA Caught a workbench message : " + message);
 				}
 				if ( e != null ) {
 					e.printStackTrace();

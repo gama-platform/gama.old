@@ -22,6 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
@@ -45,10 +46,20 @@ import one.util.streamex.StreamEx;
  *
  */
 @vars ({ @variable (
-		name = IKeyword.ATTRIBUTES,
+		name = ISpecies.ACTIONS,
 		type = IType.LIST,
 		of = IType.STRING,
-		doc = @doc ("A list of the names of the attributes of this species")),
+		doc = @doc ("A list of the names of the actions defined in this species")),
+		@variable (
+				name = ISpecies.ASPECTS,
+				type = IType.LIST,
+				of = IType.STRING,
+				doc = @doc ("A list of the names of the aspects defined in this species")),
+		@variable (
+				name = IKeyword.ATTRIBUTES,
+				type = IType.LIST,
+				of = IType.STRING,
+				doc = @doc ("A list of the names of the attributes of this species")),
 		@variable (
 				name = IKeyword.PARENT,
 				type = IType.SPECIES,
@@ -80,6 +91,8 @@ public interface ISpecies
 	public static final String POPULATION = "population";
 	public static final String SUBSPECIES = "subspecies";
 	public static final String MICROSPECIES = "microspecies";
+	public static final String ACTIONS = "actions";
+	public static final String ASPECTS = "aspects";
 
 	public abstract IExpression getFrequency();
 
@@ -170,13 +183,22 @@ public interface ISpecies
 
 	public abstract IStatement.WithArgs getAction(final String name);
 
+	@getter (ACTIONS)
+	@doc ("retuns the list of actions defined in this species (incl. the ones inherited from its parent)")
+	default IList<String> getActionNames(final IScope scope) {
+		return GamaListFactory.create(scope, Types.STRING,
+				StreamEx.of(getActions()).map((each) -> each.getName()).toList());
+	}
+
 	public Collection<ActionStatement> getActions();
 
 	public abstract IExecutable getAspect(final String n);
 
 	public Collection<? extends IExecutable> getAspects();
 
-	public abstract List<String> getAspectNames();
+	@getter (ASPECTS)
+	@doc ("retuns the list of aspects defined in this species")
+	public abstract IList<String> getAspectNames();
 
 	public abstract IArchitecture getArchitecture();
 
@@ -197,8 +219,10 @@ public interface ISpecies
 	 * @return the list of all the attributes defined in this species
 	 */
 	@getter (IKeyword.ATTRIBUTES)
-	@doc ("retuns the list of attributes defined in this species (incl. the ones inherited from its parent")
-	public IList<String> getAttributeNames(final IScope scope);
+	@doc ("retuns the list of attributes defined in this species (incl. the ones inherited from its parent)")
+	default IList<String> getAttributeNames(final IScope scope) {
+		return GamaListFactory.create(scope, Types.STRING, getVarNames());
+	}
 
 	public abstract Collection<IVariable> getVars();
 

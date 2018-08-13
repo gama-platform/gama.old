@@ -69,6 +69,7 @@ import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
 import ummisco.gama.ui.parameters.EditorsDialog;
+import utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -77,6 +78,10 @@ import ummisco.gama.ui.parameters.EditorsDialog;
  *
  */
 public class SwtGui implements IGui {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public volatile static boolean ALL_TESTS_RUNNING;
 
@@ -94,7 +99,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void debug(final String msg) {
-		System.err.println(msg);
+		DEBUG.OUT(msg);
 	}
 
 	@Override
@@ -183,7 +188,7 @@ public class SwtGui implements IGui {
 					final String second = secondaryId == null ? null
 							: secondaryId + "@@@" + String.valueOf(System.currentTimeMillis());
 					// The goal here is to address #2441 by randomizing the ids of views.
-					// System.out.println("Opening view " + viewId + " " + second);
+					// DEBUG.LOG("Opening view " + viewId + " " + second);
 					result[0] = page.showView(viewId, second, code);
 				}
 			} catch (final Exception e) {
@@ -529,7 +534,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		// System.out.println("STATE: " + forcedState);
+		// DEBUG.LOG("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");

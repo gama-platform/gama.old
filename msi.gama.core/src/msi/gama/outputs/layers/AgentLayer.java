@@ -12,6 +12,7 @@ package msi.gama.outputs.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
 
@@ -45,7 +48,14 @@ public class AgentLayer extends AbstractLayer {
 	@SuppressWarnings ("unchecked")
 	protected void fillShapes(final IScope scope) {
 		shapes.clear();
-		for (final IAgent a : (Iterable<IAgent>) ((AgentLayerStatement) definition).getAgentsExpr().value(scope)) {
+		final Object o = ((AgentLayerStatement) definition).getAgentsExpr().value(scope);
+		Iterable<? extends IAgent> agents = Collections.EMPTY_LIST;
+		if (o instanceof ISpecies) {
+			agents = ((ISpecies) o).iterable(scope);
+		} else if (o instanceof IList) {
+			agents = (IList) o;
+		}
+		for (final IAgent a : agents) {
 			shapes.put(a, DUMMY_RECT);
 		}
 	}

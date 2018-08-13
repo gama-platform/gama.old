@@ -36,7 +36,8 @@ import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.opengl.scene.OpenGL;
+import ummisco.gama.opengl.OpenGL;
+import utils.DEBUG;
 
 /**
  * Class GamaObjFile.
@@ -120,9 +121,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		try (BufferedReader br = new BufferedReader(new FileReader(getFile(scope)))) {
 			loadObject(br);
 		} catch (final IOException e) {
-			System.out.println("Failed to read file: " /* + br.toString() */);
+			DEBUG.ERR("Failed to read file: " /* + br.toString() */);
 		} catch (final NumberFormatException e) {
-			System.out.println("Malformed OBJ file: "/* + br.toString() */ + "\r \r" + e.getMessage());
+			DEBUG.ERR("Malformed OBJ file: "/* + br.toString() */ + "\r \r" + e.getMessage());
 		}
 
 	}
@@ -304,7 +305,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		try (FileReader frm = new FileReader(refm); final BufferedReader brm = new BufferedReader(frm);) {
 			materials = new MtlLoader(brm, mtlPath);
 		} catch (final IOException e) {
-			System.out.println("Could not open file: " + refm);
+			DEBUG.ERR("Could not open file: " + refm);
 			materials = null;
 		}
 	}

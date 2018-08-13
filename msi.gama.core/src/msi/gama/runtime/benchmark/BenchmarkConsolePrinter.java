@@ -2,6 +2,7 @@ package msi.gama.runtime.benchmark;
 
 import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Strings;
+import utils.DEBUG;
 
 public class BenchmarkConsolePrinter {
 	static final String S = "\n------------------------------------------------\n";
@@ -26,7 +27,7 @@ public class BenchmarkConsolePrinter {
 			});
 			sb.append(Strings.LN);
 		});
-		System.out.println(sb.toString());
+		DEBUG.LOG(sb.toString());
 	}
 
 }

@@ -169,7 +169,7 @@ public class GamaToolbarFactory {
 		// while (view_parent != null) {
 		// final Layout layout = view_parent.getLayout();
 		// if (layout != null) {
-		// System.out.println("View: " + ((IWorkbenchPart) view).getTitle() + " | Class of composite : "
+		// DEBUG.LOG("View: " + ((IWorkbenchPart) view).getTitle() + " | Class of composite : "
 		// + view_parent.getClass().toString() + " | Class of layout : " + layout.getClass().toString());
 		//
 		// if (layout instanceof FillLayout) {

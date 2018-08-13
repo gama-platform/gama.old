@@ -50,15 +50,19 @@ import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import utils.DEBUG;
 
 public class ResourceManager implements IResourceChangeListener, IResourceDeltaVisitor, ISelectionChangedListener {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static ResourceManager INSTANCE;
 	public final static Cache<IResource, WrappedResource<?, ?>> cache =
 			CacheBuilder.newBuilder().initialCapacity(1000).concurrencyLevel(4).build();
 	final CommonViewer viewer;
 	final IResourceChangeListener delegate;
-	public final static boolean DEBUG = false;
 	volatile static boolean BLOCKED = false;
 	private static volatile boolean IN_INITIALIZATION_PHASE = false;
 	private final List<Runnable> postEventActions = new ArrayList<>();
@@ -174,12 +178,6 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 
 	}
 
-	public static void DEBUG(final String s) {
-		if (DEBUG) {
-			System.out.println(s);
-		}
-	}
-
 	public static IResource getResource(final Object target) {
 		if (target instanceof IResource) { return (IResource) target; }
 		if (target instanceof IAdaptable) {
@@ -216,8 +214,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 			BLOCKED_EVENTS.add(event);
 			return;
 		}
-		if (DEBUG) {
-			DEBUG("========= New Event =========");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("========= New Event =========");
 		}
 		try {
 			if (event == null) { return; }
@@ -237,14 +235,14 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 					}
 					break;
 				case IResourceChangeEvent.PRE_REFRESH:
-					if (DEBUG) {
-						DEBUG("Project " + event.getResource().getName() + " about to be refreshed");
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Project " + event.getResource().getName() + " about to be refreshed");
 					}
 					break;
 				case PRE_CLOSE:
 				case PRE_DELETE:
-					if (DEBUG) {
-						DEBUG("Project " + event.getResource().getName() + " about to be closed or deleted");
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Project " + event.getResource().getName() + " about to be closed or deleted");
 					}
 					break;
 				default:
@@ -282,8 +280,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileAdded(final IFile file) {
-		if (DEBUG) {
-			DEBUG("File " + file.getName() + " has been added");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("File " + file.getName() + " has been added");
 		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
 		wrap(parent, file);
@@ -308,8 +306,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void projectAdded(final IProject project) {
-		if (DEBUG) {
-			DEBUG("Project " + project.getName() + " has been added");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Project " + project.getName() + " has been added");
 		}
 		if (!IN_INITIALIZATION_PHASE) {
 			final TopLevelFolder root = chooseFolderForPasting(project);
@@ -326,8 +324,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectOpened(final IProject res) {
-		if (DEBUG) {
-			DEBUG("Project " + res.getName() + " has been opened");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Project " + res.getName() + " has been opened");
 		}
 		final WrappedProject p = findWrappedInstanceOf(res);
 		if (p == null) {
@@ -341,8 +339,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean projectClosed(final IProject res) {
-		if (DEBUG) {
-			DEBUG("Project " + res.getName() + " has been closed");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Project " + res.getName() + " has been closed");
 		}
 		final WrappedProject p = findWrappedInstanceOf(res);
 		p.initializeChildren();
@@ -354,8 +352,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderAdded(final IFolder folder) {
-		if (DEBUG) {
-			DEBUG("Folder " + folder.getName() + " has been added");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Folder " + folder.getName() + " has been added");
 		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(folder.getParent());
 		// final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
@@ -387,8 +385,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void fileRemoved(final IFile file) {
-		if (DEBUG) {
-			DEBUG("File " + file.getName() + " has been removed");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("File " + file.getName() + " has been removed");
 		}
 		cache.invalidate(file);
 		final WrappedContainer<?> parent = findWrappedInstanceOf(file.getParent());
@@ -399,8 +397,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void folderRemoved(final IFolder folder) {
-		if (DEBUG) {
-			DEBUG("Folder " + folder.getName() + " has been removed");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Folder " + folder.getName() + " has been removed");
 		}
 		final WrappedFolder wc = (WrappedFolder) findWrappedInstanceOf(folder);
 		cache.invalidate(folder);
@@ -411,8 +409,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	public void projectRemoved(final IProject project) {
-		if (DEBUG) {
-			DEBUG("Project " + project.getName() + " has been removed");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Project " + project.getName() + " has been removed");
 		}
 		final WrappedProject wp = findWrappedInstanceOf(project);
 		cache.invalidate(project);
@@ -445,23 +443,23 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 					update = processMarkersChanged(res);
 				}
 				if ((flags & IResourceDelta.TYPE) != 0) {
-					if (DEBUG) {
-						DEBUG("Resource type changed: " + res);
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Resource type changed: " + res);
 					}
 				}
 				if ((flags & IResourceDelta.CONTENT) != 0) {
-					if (DEBUG) {
-						DEBUG("Resource contents changed: " + res);
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Resource contents changed: " + res);
 					}
 				}
 				if ((flags & IResourceDelta.SYNC) != 0) {
-					if (DEBUG) {
-						DEBUG("Resource sync info changed: " + res);
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Resource sync info changed: " + res);
 					}
 				}
 				if ((flags & IResourceDelta.LOCAL_CHANGED) != 0) {
-					if (DEBUG) {
-						DEBUG("Linked resource target info changed: " + res);
+					if (DEBUG.IS_ON()) {
+						DEBUG.OUT("Linked resource target info changed: " + res);
 					}
 					update = processLinkedTargerChanged(res);
 				}
@@ -483,8 +481,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private boolean processMarkersChanged(final IResource res) {
-		if (DEBUG) {
-			DEBUG("File " + res.getName() + " markers have changed");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("File " + res.getName() + " markers have changed");
 		}
 		invalidateSeverityCache(res);
 		if (res.getType() == IResource.FILE) {
@@ -563,8 +561,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	}
 
 	private static WrappedResource<?, ?> privateCreateWrapping(final VirtualContent<?> parent, final IResource child) {
-		if (DEBUG) {
-			DEBUG("Creation of the wrapped instance of " + child.getName());
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Creation of the wrapped instance of " + child.getName());
 		}
 		switch (child.getType()) {
 			case IResource.FILE:
@@ -582,8 +580,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 
 	public boolean validateLocation(final IFile resource) {
 		if (!resource.isLinked()) { return true; }
-		if (DEBUG) {
-			DEBUG("Validating link location of " + resource);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Validating link location of " + resource);
 		}
 		final boolean internal =
 				ResourcesPlugin.getWorkspace().validateLinkLocation(resource, resource.getLocation()).isOK();

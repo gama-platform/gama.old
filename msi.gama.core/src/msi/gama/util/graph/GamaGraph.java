@@ -887,7 +887,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			if (edges2.isEmpty()) {
 				break;
 			}
-			// System.out.println("s : " + s + " j : " + j + " i: " + i);
+			// DEBUG.LOG("s : " + s + " j : " + j + " i: " + i);
 			V nwS = (V) this.getEdgeTarget(edge);
 			if (!directed && nwS.equals(s)) {
 				nwS = (V) this.getEdgeSource(edge);
@@ -1450,14 +1450,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 						}
 						final V v2 = vertices.get(j);
 						final List edges = computeBestRouteBetween(scope, v1, v2);
-						// System.out.println("edges : " + edges);
+						// DEBUG.LOG("edges : " + edges);
 						if (edges == null) {
 							continue;
 						}
 						V source = v1;
 						int s = i;
 						for (final Object edge : edges) {
-							// System.out.println("s : " + s + " j : " + j + "
+							// DEBUG.LOG("s : " + s + " j : " + j + "
 							// i: " + i);
 							if (s != i && matrix.get(scope, j, s) != s) {
 								break;
@@ -1468,7 +1468,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 								target = (V) this.getEdgeSource(edge);
 							}
 							final Integer k = indexVertices.get(scope, target);
-							// System.out.println("k : " +k);
+							// DEBUG.LOG("k : " +k);
 							matrix.set(scope, j, s, k);
 							s = k;
 							source = target;

@@ -42,7 +42,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 		// final IExpression e =
 		// GAML.getExpressionFactory().createConst(u.getConstValue(), u.getType(),
 		// u.serialize(false));
-		// // System.out.println(" ==== Simplification of " + u.toGaml() + "
+		// // DEBUG.LOG(" ==== Simplification of " + u.toGaml() + "
 		// // into " + e.toGaml());
 		// return e;
 		// }

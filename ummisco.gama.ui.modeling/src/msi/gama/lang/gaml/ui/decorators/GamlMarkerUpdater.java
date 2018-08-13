@@ -30,6 +30,8 @@ import org.eclipse.xtext.validation.CheckMode;
 
 import com.google.inject.Inject;
 
+import utils.DEBUG;
+
 /**
  * The class GamlMarkerUpdater.
  *
@@ -97,7 +99,7 @@ public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 		try {
 			file.deleteMarkers(IMarkerContributor.MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		} catch (final CoreException e) {
-			System.err.println(e.getMessage());
+			DEBUG.ERR(e.getMessage());
 		}
 	}
 

@@ -13,14 +13,14 @@ import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.OpenGL;
 
 public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	final OpenGL gl;
 
-	public ObjectDrawer(final JOGLRenderer r) {
-		gl = r.getOpenGLHelper();
+	public ObjectDrawer(final OpenGL gl) {
+		this.gl = gl;
 	}
 
 	void draw(final T object) {

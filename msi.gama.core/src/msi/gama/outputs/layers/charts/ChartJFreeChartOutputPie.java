@@ -180,7 +180,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			plot.setExplodePercent(serieid, 0.20);
 		}
 
-		// System.out.println("new serie"+serieid+" at
+		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+"
 		// nbse "+nbseries);
 	}

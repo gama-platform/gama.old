@@ -33,6 +33,7 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import utils.DEBUG;
 
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -75,7 +76,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 			} else if (e instanceof S_Experiment) {
 				String s = ((S_Experiment) e).getName();
 				if (s == null) {
-					System.out.println("EXPERIMENT NULL");
+					DEBUG.ERR("EXPERIMENT NULL");
 				}
 				if (EGaml.isBatch((Statement) e)) {
 					s = GamlFileInfo.BATCH_PREFIX + s;

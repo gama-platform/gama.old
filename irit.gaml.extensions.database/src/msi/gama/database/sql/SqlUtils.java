@@ -28,6 +28,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
@@ -35,8 +36,6 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SqlUtils {
-
-	private static boolean DEBUG = false;
 
 	public static SqlConnection createConnectionObject(final IScope scope, final Map<String, Object> params)
 			throws GamaRuntimeException {
@@ -53,9 +52,8 @@ public class SqlUtils {
 		// scope.getArg("transform", IType.BOOL) : true;
 		final boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
-		if (DEBUG) {
-			scope.getGui().debug(
-					"SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database + " - ");
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database + " - ");
 		}
 		SqlConnection sqlConn;
 		// create connection
@@ -77,8 +75,8 @@ public class SqlUtils {
 		} else {
 			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype, scope);
 		}
-		if (DEBUG) {
-			scope.getGui().debug("SqlUtils.createConnection:" + sqlConn.toString());
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("SqlUtils.createConnection:" + sqlConn.toString());
 		}
 		// AD: Added to be sure to remember the parameters
 		sqlConn.setParams(params);

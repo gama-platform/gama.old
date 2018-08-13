@@ -33,7 +33,7 @@ public class OutputPartsManager {
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
-			// System.out.println("Closed:" + partRef.getPartName());
+			// DEBUG.LOG("Closed:" + partRef.getPartName());
 			final IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof IGamaView) {
 				final IDisplayOutput output = ((IGamaView) part).getOutput();
@@ -49,7 +49,7 @@ public class OutputPartsManager {
 
 		@Override
 		public void partOpened(final IWorkbenchPartReference partRef) {
-			// System.out.println("Opened:" + partRef.getPartName());
+			// DEBUG.LOG("Opened:" + partRef.getPartName());
 			final IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof IGamaView) {
 				final IDisplayOutput output = ((IGamaView) part).getOutput();

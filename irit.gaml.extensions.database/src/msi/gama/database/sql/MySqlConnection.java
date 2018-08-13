@@ -277,11 +277,11 @@ public class MySqlConnection extends SqlConnection {
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					if (transformed) {
 						geo = saveGis.inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)
@@ -396,11 +396,11 @@ public class MySqlConnection extends SqlConnection {
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					if (transformed) {
 						geo = getSavingGisProjection(scope).inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)

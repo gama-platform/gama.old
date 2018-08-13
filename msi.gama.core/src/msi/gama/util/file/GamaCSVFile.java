@@ -277,7 +277,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 			}
 			// long t = System.currentTimeMillis();
 			setBuffer(createMatrixFrom(scope, reader));
-			// System.out.println("CSV stats: " + userSize.x * userSize.y + "
+			// DEBUG.LOG("CSV stats: " + userSize.x * userSize.y + "
 			// cells read in " +
 			// (System.currentTimeMillis() - t) + " ms");
 		} catch (final FileNotFoundException e) {

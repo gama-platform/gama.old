@@ -351,7 +351,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void dispose() {
-		// System.out.println("ExperimentPlan.dipose BEGIN");
+		// DEBUG.LOG("ExperimentPlan.dipose BEGIN");
 		// Dec 2015 Addition
 		if (controller != null) {
 			controller.dispose();
@@ -375,7 +375,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// ProjectionFactory.reset();
 
 		super.dispose();
-		// System.out.println("ExperimentPlan.dipose END");
+		// DEBUG.LOG("ExperimentPlan.dipose END");
 	}
 
 	public void createAgent() {

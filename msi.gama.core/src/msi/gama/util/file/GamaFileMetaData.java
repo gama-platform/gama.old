@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.StringUtils;
 
+import utils.DEBUG;
+
 /**
  * Class GamaFileMetaInformation.
  *
@@ -42,7 +44,7 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 			final boolean hasFailed = result.hasFailed();
 			if (!hasFailed && !includeOutdated && result.getModificationStamp() != stamp) { return null; }
 		} catch (final Exception ignore) {
-			System.err.println("Error loading metadata " + s + " : " + ignore.getClass().getSimpleName() + ":"
+			DEBUG.ERR("Error loading metadata " + s + " : " + ignore.getClass().getSimpleName() + ":"
 					+ ignore.getMessage());
 			if (ignore instanceof InvocationTargetException && ignore.getCause() != null) {
 				ignore.getCause().printStackTrace();
@@ -97,8 +99,7 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 
 	@Override
 	public String toPropertyString() {
-		if (hasFailed)
-			return FAILED;
+		if (hasFailed) { return FAILED; }
 		return String.valueOf(fileModificationStamp);
 	}
 

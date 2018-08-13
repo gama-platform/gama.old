@@ -79,7 +79,7 @@ public class ClientServiceThread extends Thread {
 				in = new BufferedReader(new InputStreamReader(myClientSocket.getInputStream()));
 				String clientCommand = in.readLine();
 
-				// System.out.println("Client Says :" + clientCommand);
+				// DEBUG.LOG("Client Says :" + clientCommand);
 
 				// GamaMap<String, Object> m = (GamaMap<String, Object>)
 				// myAgent.getAttribute("messages" + myAgent);
@@ -91,7 +91,7 @@ public class ClientServiceThread extends Thread {
 				if (myAgent.dead()) {
 					this.interrupt();
 				}
-				// System.out.println("\n\n ClientServiceThread
+				// DEBUG.LOG("\n\n ClientServiceThread
 				// "+"messages"+myAgent+"\n\n");
 				// GamaList<String> msgs = (GamaList<String>)
 				// m.get(myAgent.getScope(), myClientSocket.toString());
@@ -121,7 +121,7 @@ public class ClientServiceThread extends Thread {
 				// myAgent.setAttribute("__clientCommand" +
 				// myClientSocket.toString(), msgs);
 			} catch (final SocketTimeoutException ste) {
-				// System.out.println("SocketTimeoutException");
+				// DEBUG.LOG("SocketTimeoutException");
 				// try {
 				// Thread.sleep(1000);
 				// } catch(InterruptedException ie){

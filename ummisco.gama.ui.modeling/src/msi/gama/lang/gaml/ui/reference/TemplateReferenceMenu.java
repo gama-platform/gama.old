@@ -29,6 +29,7 @@ import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.operators.Strings;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import utils.DEBUG;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -96,8 +97,8 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					System.out.println("PATH: " + getPath());
-					System.out.println("NAME: " + getName());
+					DEBUG.OUT("PATH: " + getPath());
+					DEBUG.OUT("NAME: " + getName());
 					applyTemplate(store.getTemplateData(getPath()).getTemplate());
 				}
 

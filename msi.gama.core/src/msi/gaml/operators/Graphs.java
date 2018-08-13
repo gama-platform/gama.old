@@ -143,7 +143,7 @@ public class Graphs {
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
-			final Set<ILocation> cp = new HashSet<ILocation>();
+			final Set<ILocation> cp = new HashSet<>();
 			for (final ILocation pt : p2.getPoints()) {
 				if (p1.getPoints().contains(pt)) {
 					cp.add(pt);
@@ -556,8 +556,9 @@ public class Graphs {
 
 				results.add(Containers.remove_duplicates(scope, edges));
 
-			} else
+			} else {
 				results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+			}
 		}
 		return results;
 	}
@@ -570,7 +571,8 @@ public class Graphs {
 	@doc (
 			value = "returns the sub-graph corresponding to the main connected components of the graph",
 			examples = { @example (
-					value = "main_connected_component(my_graph)", isExecutable = false,
+					value = "main_connected_component(my_graph)",
+					isExecutable = false,
 					equals = "the sub-graph corresponding to the main connected components of the graph",
 					test = false) },
 			see = { "connected_components_of" })
@@ -773,7 +775,7 @@ public class Graphs {
 	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException
 				.error("In the betweenness_centrality operator, the graph should not be null!", scope); }
-		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
+		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
@@ -795,8 +797,9 @@ public class Graphs {
 				Object vc = v1;
 				for (final Object edge : edges) {
 					Object node = graph.getEdgeTarget(edge);
-					if (node == vc)
+					if (node == vc) {
 						node = graph.getEdgeSource(edge);
+					}
 					if (node != v2 && node != v1) {
 						mapResult.put(node, (Integer) mapResult.get(node) + 1);
 					}
@@ -825,7 +828,7 @@ public class Graphs {
 	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException
 				.error("In the edge_betweenness operator, the graph should not be null!", scope); }
-		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
+		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		for (final Object v : graph.edgeSet()) {
@@ -1266,11 +1269,14 @@ public class Graphs {
 					isExecutable = false),
 			see = "set_verbose")
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
-		List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream().map(a -> a.toString()).collect(Collectors.toList());
-		if (existingOptimizer.contains(optimizerType))
+		final List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
+				.map(a -> a.toString()).collect(Collectors.toList());
+		if (existingOptimizer.contains(optimizerType)) {
 			graph.setOptimizerType(optimizerType);
-		else 
-			throw GamaRuntimeException.error("The Optimizer type "+ optimizerType + " does not exist. Possible optimizer types: " + existingOptimizer, scope);
+		} else {
+			throw GamaRuntimeException.error("The Optimizer type " + optimizerType
+					+ " does not exist. Possible optimizer types: " + existingOptimizer, scope);
+		}
 		return graph;
 	}
 
@@ -1368,7 +1374,7 @@ public class Graphs {
 					isExecutable = false) })
 	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source, final IShape target)
 			throws GamaRuntimeException {
-		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " +
+		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
 		if (graph instanceof GamaSpatialGraph) { return Cast.asTopology(scope, graph).pathBetween(scope, source,
 				target); }
@@ -1391,7 +1397,7 @@ public class Graphs {
 					isExecutable = false) })
 	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
-		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " +
+		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
 
@@ -1411,11 +1417,11 @@ public class Graphs {
 			examples = { @example (
 					value = "max_flow_between(my_graph, vertice1, vertice2)",
 					isExecutable = false) })
-	public static GamaMap<Object,Double> maxFlowBetween(final IScope scope, final GamaGraph graph,
-			final Object source, final Object sink) throws GamaRuntimeException {
-		EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
-		MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
-		GamaMap<Object, Double> result = GamaMapFactory.create();
+	public static GamaMap<Object, Double> maxFlowBetween(final IScope scope, final GamaGraph graph, final Object source,
+			final Object sink) throws GamaRuntimeException {
+		final EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
+		final MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
+		final GamaMap<Object, Double> result = GamaMapFactory.create();
 		result.putAll(mf.getFlow());
 		return result;
 	}
@@ -1434,7 +1440,7 @@ public class Graphs {
 					isExecutable = false) })
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 			throws GamaRuntimeException {
-		// java.lang.System.out.println("Cast.asTopology(scope, graph) : " +
+		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
 		final IPath path = GamaPathType.staticCast(scope, edgesNodes, null, false);
 		path.setGraph(graph);
@@ -1745,7 +1751,7 @@ public class Graphs {
 		if (options.isEmpty()) {
 			jOptions = Collections.EMPTY_MAP;
 		} else {
-			jOptions = new HashMap<String, Object>(options.size());
+			jOptions = new HashMap<>(options.size());
 			for (final String key : options.keySet()) {
 				jOptions.put(key, options.get(scope, key));
 			}
@@ -1802,8 +1808,7 @@ public class Graphs {
 			value = "retur for each edge, its strahler number")
 	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
 		final GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
-		if (graph == null || graph.isEmpty(scope))
-			return results;
+		if (graph == null || graph.isEmpty(scope)) { return results; }
 		if (!graph.getConnected() || graph.hasCycle()) { throw GamaRuntimeException
 				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope); }
 
@@ -1826,10 +1831,11 @@ public class Graphs {
 								.collect(Collectors.toList());
 						final Integer maxVal = Collections.max(vals);
 						final int nbIt = Collections.frequency(vals, maxVal);
-						if (nbIt > 1)
+						if (nbIt > 1) {
 							results.put(e, maxVal + 1);
-						else
+						} else {
 							results.put(e, maxVal);
+						}
 						newList.addAll(previousEdges);
 					}
 				}

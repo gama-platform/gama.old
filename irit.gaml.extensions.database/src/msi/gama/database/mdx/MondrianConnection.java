@@ -19,10 +19,10 @@ import org.olap4j.OlapWrapper;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import utils.DEBUG;
 
 public class MondrianConnection extends MdxConnection {
 
-	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	static final String DRIVER = new String("mondrian.olap4j.MondrianOlap4jDriver");
 	private static java.util.HashMap<String, String> driverMap = new java.util.HashMap<>();
 	private static java.util.HashMap<String, String> jdbcMap = new java.util.HashMap<>();
@@ -78,11 +78,11 @@ public class MondrianConnection extends MdxConnection {
 	public OlapConnection connectMDB(final IScope scope) throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
-		// if (DEBUG){
-		// scope.getGui().debug("dbtype:"+ dbtype);
-		// scope.getGui().debug("driver:"+ driverMap.toString());
-		// scope.getGui().debug("jdbc:"+ jdbcMap.toString());
-		// scope.getGui().debug("MondrianConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
+		// if (DEBUG.IS_ON()){
+		// DEBUG.OUT("dbtype:"+ dbtype);
+		// DEBUG.OUT("driver:"+ driverMap.toString());
+		// DEBUG.OUT("jdbc:"+ jdbcMap.toString());
+		// DEBUG.OUT("MondrianConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
 		// + port+" - "+dbName+" - "+catalog+" - "+userName+" - "+password);
 		//
 		// }
@@ -116,9 +116,9 @@ public class MondrianConnection extends MdxConnection {
 	public OlapConnection connectMDB(final IScope scope, final String dbName) throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
-		System.out.println("dbtype:" + dbtype);
-		System.out.println("driver:" + driverMap.toString());
-		System.out.println("jdbc:" + jdbcMap.toString());
+		DEBUG.OUT("dbtype:" + dbtype);
+		DEBUG.OUT("driver:" + driverMap.toString());
+		DEBUG.OUT("jdbc:" + jdbcMap.toString());
 		try {
 			if (vender.equalsIgnoreCase(MONDRIAN)) {
 				Class.forName(DRIVER);
@@ -148,9 +148,9 @@ public class MondrianConnection extends MdxConnection {
 			throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
-		System.out.println("dbtype:" + dbtype);
-		System.out.println("driver:" + driverMap.toString());
-		System.out.println("jdbc:" + jdbcMap.toString());
+		DEBUG.OUT("dbtype:" + dbtype);
+		DEBUG.OUT("driver:" + driverMap.toString());
+		DEBUG.OUT("jdbc:" + jdbcMap.toString());
 		try {
 			if (vender.equalsIgnoreCase(MONDRIAN)) {
 				Class.forName(DRIVER);

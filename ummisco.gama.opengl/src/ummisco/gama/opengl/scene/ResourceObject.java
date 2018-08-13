@@ -13,6 +13,7 @@ import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.OpenGL;
 
 public class ResourceObject extends GeometryObject {
 

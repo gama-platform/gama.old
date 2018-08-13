@@ -77,12 +77,13 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import utils.DEBUG;
 
 /**
  * A simple image viewer editor.
  */
 public class ImageViewer extends EditorPart
-implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
+		implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	GamaToolbar2 toolbar;
 	private Image image;
@@ -251,7 +252,7 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 			// zoomed size
 			e.gc.setBackground(getColor(0).color());
 			e.gc.fillRectangle(bounds);
-			// System.out.println("Painting image at size " + bounds.width +
+			// DEBUG.LOG("Painting image at size " + bounds.width +
 			// "x" + bounds.height);
 			if (image != null) {
 				final Rectangle imBounds = image.getBounds();
@@ -272,7 +273,7 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 		data.widthHint = p.x;
 		data.heightHint = p.y;
 
-		// System.out.println("Resizing intermediate to " +
+		// DEBUG.LOG("Resizing intermediate to " +
 		// intermediate.getSize().x + "x" + intermediate.getSize().y);
 		intermediate.layout();
 		int x = 0, y = 0;
@@ -507,7 +508,8 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 			final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
 		// the generation of the image data doesn't report progress
-		final SubMonitor m = SubMonitor.convert(monitor, dest.getFullPath().toPortableString(), IProgressMonitor.UNKNOWN/* taskSize */);
+		final SubMonitor m = SubMonitor.convert(monitor, dest.getFullPath().toPortableString(),
+				IProgressMonitor.UNKNOWN/* taskSize */);
 		try {
 			if (!dest.getParent().exists()) {
 				final ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
@@ -538,15 +540,15 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 						try {
 							pout.close();
 						} catch (final IOException e) {
-							System.out.println("Exception ignored in ImageViewer saveTo: " + e.getMessage());
+							DEBUG.ERR("Exception ignored in ImageViewer saveTo: " + e.getMessage());
 						}
 					}
 					// always do our own error dialog
 					if (!status.isOK()) {
 						final IStatus fstatus = status;
 						getSite().getShell().getDisplay()
-						.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), "Error Saving",
-								MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus));
+								.asyncExec(() -> ErrorDialog.openError(getSite().getShell(), "Error Saving",
+										MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus));
 					}
 					return Status.OK_STATUS;
 				}
@@ -554,7 +556,6 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 			writeJob.setSystem(true);
 			writeJob.setUser(false);
 			writeJob.schedule();
-
 
 			try (final BufferedInputStream in = new BufferedInputStream(pin)) {
 				// try reading one byte to make sure that loader.save() actually
@@ -571,7 +572,7 @@ implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedVie
 						dest.create(in, true, m.split(500));
 					}
 				}
-			} 
+			}
 		} finally {
 			monitor.done();
 		}

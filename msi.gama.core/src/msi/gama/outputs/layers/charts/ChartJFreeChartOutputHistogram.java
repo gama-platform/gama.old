@@ -224,7 +224,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 		if (!IdPosition.containsKey(serieid)) {
-			// System.out.println("pb!!!");
+			// DEBUG.LOG("pb!!!");
 		} else {
 			final int myrow = IdPosition.get(serieid);
 			if (myserie.getMycolor() != null) {
@@ -298,7 +298,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
 		IdPosition.put(serieid, nbseries - 1);
 
-		// System.out.println("new serie"+serieid+" at
+		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"
 		// jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse
 		// "+nbseries);

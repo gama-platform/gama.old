@@ -33,7 +33,7 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.OpenGL;
 
 /**
  *
@@ -60,8 +60,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	final ICoordinates _quadvertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
 	final UnboundedCoordinateSequence _vertices = new UnboundedCoordinateSequence();
 
-	public GeometryDrawer(final JOGLRenderer r) {
-		super(r);
+	public GeometryDrawer(final OpenGL gl) {
+		super(gl);
 	}
 
 	/**

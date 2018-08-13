@@ -62,6 +62,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.TimeUnitConstantExpression;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
+import utils.DEBUG;
 
 public class Dates {
 
@@ -97,7 +98,7 @@ public class Dates {
 						FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(CUSTOM_KEY));
 					}
 				} catch (final Exception ex) {
-					java.lang.System.out.println("Formatter not valid: " + e);
+					DEBUG.ERR("Formatter not valid: " + e);
 				}
 			});
 

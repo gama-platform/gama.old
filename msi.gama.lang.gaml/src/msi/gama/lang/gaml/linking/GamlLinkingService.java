@@ -61,9 +61,9 @@ public class GamlLinkingService extends DefaultLinkingService {
 	public List<EObject> addSymbol(final String name, final EClass clazz) {
 		List<EObject> list = stubbedRefs.get(name);
 		if (list == null) {
-			// System.out.println("Adding stub reference to " + name + " as a "
+			// DEBUG.LOG("Adding stub reference to " + name + " as a "
 			// + clazz.getName());
-			// System.out.println("****************************************************");
+			// DEBUG.LOG("****************************************************");
 			final EObject stub = create(name, clazz);
 			getResource().getContents().add(stub);
 			list = Collections.singletonList(stub);

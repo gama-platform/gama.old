@@ -143,7 +143,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	public void relocateOverlay(final Shell newShell) {
 		if (popup.setParent(newShell)) {
-			// System.out.println("Relocating overlay");
+			// DEBUG.LOG("Relocating overlay");
 			popup.moveAbove(referenceComposite);
 		}
 	}
@@ -235,7 +235,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	private String getScaleRight() {
 		final double real = getValueOfOnePixelInModelUnits() * 100;
-		// System.out.println("GetScaleRight " + real);
+		// DEBUG.LOG("GetScaleRight " + real);
 		if (real > 1000) {
 			return String.format("%.1fkm", real / 1000d);
 		} else if (real < 0.001) {

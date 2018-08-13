@@ -408,7 +408,7 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
 		super.validate();
-		// System.out.println(this.serialize(true));
+		// DEBUG.LOG(this.serialize(true));
 		return this;
 	}
 

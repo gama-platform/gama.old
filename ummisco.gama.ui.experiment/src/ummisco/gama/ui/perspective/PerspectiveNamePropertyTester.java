@@ -15,7 +15,7 @@ public class PerspectiveNamePropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(final Object receiver, final String property, final Object[] args, final Object expectedValue) {
-		// System.out.println("Perspective name :" + receiver + " contains " + expectedValue + " ?");
+		// DEBUG.LOG("Perspective name :" + receiver + " contains " + expectedValue + " ?");
 		final String s = receiver instanceof String ? (String) receiver : "";
 		final String in = expectedValue instanceof String ? (String) expectedValue : "";
 		return s.contains(in);

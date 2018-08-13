@@ -196,7 +196,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	@Override
 	public void dispose() {
 		if (experiment != null) {
-			// System.out.println("Contoller.dipose BEGIN");
+			// DEBUG.LOG("Contoller.dipose BEGIN");
 			final IScope scope = experiment.getExperimentScope();
 			try {
 				scheduler.pause();
@@ -213,7 +213,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				if (commandThread != null && commandThread.isAlive()) {
 					commands.offer(-1);
 				}
-				// System.out.println("Contoller.dipose END");
+				// DEBUG.LOG("Contoller.dipose END");
 			}
 		}
 	}
@@ -236,7 +236,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		// System.out.println("CloseExperiment : disposing = true");
+		// DEBUG.LOG("CloseExperiment : disposing = true");
 		if (e != null) {
 			GAMA.getGui().getStatus(getExperiment().getExperimentScope()).errorStatus(e.getMessage());
 		}

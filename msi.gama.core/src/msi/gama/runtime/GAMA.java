@@ -32,6 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
+import utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -71,11 +72,11 @@ public class GAMA {
 	 * @param model
 	 */
 	public static void runGuiExperiment(final String id, final IModel model) {
-		// System.out.println("Launching experiment " + id + " of model " +
+		// DEBUG.LOG("Launching experiment " + id + " of model " +
 		// model.getFilePath());
 		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if (newExperiment == null) {
-			// System.out.println("No experiment " + id + " in model " +
+			// DEBUG.LOG("No experiment " + id + " in model " +
 			// model.getFilePath());
 			return;
 		}
@@ -98,7 +99,7 @@ public class GAMA {
 			controller.userOpen();
 		} else {
 			// we are unable to launch the perspective.
-			System.out.println("Unable to launch simulation perspective for experiment " + id + " of model "
+			DEBUG.ERR("Unable to launch simulation perspective for experiment " + id + " of model "
 					+ model.getFilePath());
 		}
 	}
@@ -247,7 +248,7 @@ public class GAMA {
 				return;
 			}
 		}
-		// System.out.println("reportAndThrowIfNeeded : " + g.getMessage());
+		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
 		if (scope != null && scope.getAgent() != null) {
 			final String name = scope.getAgent().getName();
 			if (!g.getAgentsNames().contains(name)) {

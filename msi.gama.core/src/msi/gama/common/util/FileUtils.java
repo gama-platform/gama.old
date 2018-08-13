@@ -44,6 +44,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.http.Webb;
 import msi.gama.util.file.http.WebbException;
+import utils.DEBUG;
 
 /**
  * The class FileUtils.
@@ -107,7 +108,7 @@ public class FileUtils {
 			}
 			final String file = findOutsideWorkspace(fp, modelBase, mustExist);
 			if (file != null) {
-				// System.out.println("Hit with EFS-based search: " + file);
+				// DEBUG.OUT("Hit with EFS-based search: " + file);
 				return file;
 			}
 		}
@@ -121,13 +122,13 @@ public class FileUtils {
 			for (final IContainer folder : paths) {
 				final String file = findInWorkspace(fp, folder, mustExist);
 				if (file != null) {
-					// System.out.println("Hit with workspace-based search: " + file);
+					// DEBUG.OUT("Hit with workspace-based search: " + file);
 					return file;
 				}
 			}
 		}
 
-		System.out.println("Falling back to the old JavaIO based search");
+		DEBUG.OUT("Falling back to the old JavaIO based search");
 		return OldFileUtils.constructAbsoluteFilePathAlternate(scope, fp, mustExist);
 	}
 

@@ -20,20 +20,19 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class CameraArcBall extends AbstractCamera {
 
 	private double distance;
 
-	private final boolean isDrawingRotateHelper = GamaPreferences.Displays.DRAW_ROTATE_HELPER.getValue();
-
-	public CameraArcBall(final Abstract3DRenderer renderer) {
+	public CameraArcBall(final JOGLRenderer renderer) {
 		super(renderer);
 	}
 
-	private void updateCartesianCoordinatesFromAngles() {
+	@Override
+	public void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
 
@@ -202,7 +201,7 @@ public class CameraArcBall extends AbstractCamera {
 				} else {
 					final double envWidth = data.getEnvWidth();
 					final double envHeight = data.getEnvHeight();
-					setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR);
+					setDistance(getRenderer().getMaxEnvDim() * getInitialZFactor());
 					setTarget(envWidth / 2d, -envHeight / 2d, 0);
 					phi = 0;
 					theta = -90.00;
@@ -214,7 +213,7 @@ public class CameraArcBall extends AbstractCamera {
 			} else {
 				final double envWidth = data.getEnvWidth();
 				final double envHeight = data.getEnvHeight();
-				setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR);
+				setDistance(getRenderer().getMaxEnvDim() * getInitialZFactor());
 				setTarget(envWidth / 2d, -envHeight / 2d, 0);
 				phi = 0;
 				theta = -90.00;
@@ -228,26 +227,8 @@ public class CameraArcBall extends AbstractCamera {
 			data.setCameraPos(initialPosition);
 			data.setCameraLookPos(initialTarget);
 			data.setCameraUpVector(initialUpVector, true);
-			// update();
 		}
 	}
-
-	// @Override
-	// public void reset() {
-	// final LayeredDisplayData data = getRenderer().data;
-	// final double envWidth = data.getEnvWidth();
-	// final double envHeight = data.getEnvHeight();
-	// // final boolean threeD = data.isOutput3D();
-	// radius = getRenderer().getMaxEnvDim() * INIT_Z_FACTOR;
-	// setTarget(envWidth / 2, -envHeight / 2, 0);
-	// phi = true ? 135.0 : 0.0;
-	// theta = -90.00;
-	// flipped = false;
-	// updateCartesianCoordinatesFromAngles();
-	// // initialized = false;
-	// update();
-	//
-	// }
 
 	@Override
 	public void animate() {
@@ -358,12 +339,12 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public Double zoomLevel() {
-		return getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / getDistance();
+		return getRenderer().getMaxEnvDim() * getInitialZFactor() / getDistance();
 	}
 
 	@Override
 	public void zoom(final double level) {
-		setDistance(getRenderer().getMaxEnvDim() * INIT_Z_FACTOR / level);
+		setDistance(getRenderer().getMaxEnvDim() * getInitialZFactor() / level);
 		updateCartesianCoordinatesFromAngles();
 	}
 
@@ -373,7 +354,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double step =
 				getDistance() != 0d ? getDistance() / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
 		setDistance(getDistance() + (in ? -step : step));
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -383,7 +364,7 @@ public class CameraArcBall extends AbstractCamera {
 		setDistance(1.5 * (width > height ? width : height));
 		// y is already negated
 		setTarget(env.centre());
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -397,7 +378,7 @@ public class CameraArcBall extends AbstractCamera {
 		}
 		// y is NOT negated in IShapes
 		setTarget(p.getCentroid().yNegated());
-		getRenderer().data.setZoomLevel(zoomLevel(), true);
+		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -405,17 +386,17 @@ public class CameraArcBall extends AbstractCamera {
 
 		// Do it before the mouse position is newly set (in super.internalMouseMove)
 		if (keystoneMode) {
-			final int selectedCorner = getRenderer().getKeystone().getCornerSelected();
+			final int selectedCorner = getRenderer().getKeystoneHelper().getCornerSelected();
 			if (selectedCorner != -1) {
 				final GamaPoint origin = getNormalizedCoordinates(getMousePosition().x, getMousePosition().y);
 				GamaPoint p = getNormalizedCoordinates(e.x, e.y);
 				final GamaPoint translation = origin.minus(p).yNegated();
-				p = getRenderer().getKeystone().getKeystoneCoordinates(selectedCorner).plus(-translation.x,
+				p = getRenderer().getKeystoneHelper().getKeystoneCoordinates(selectedCorner).plus(-translation.x,
 						translation.y, 0);
-				getRenderer().getKeystone().setKeystoneCoordinates(selectedCorner, p);
+				getRenderer().getKeystoneHelper().setKeystoneCoordinates(selectedCorner, p);
 			} else {
 				final int cornerSelected = hoverOnKeystone(e);
-				getRenderer().getKeystone().setCornerHovered(cornerSelected);
+				getRenderer().getKeystoneHelper().setCornerHovered(cornerSelected);
 			}
 			super.internalMouseMove(e);
 			return;
@@ -485,11 +466,11 @@ public class CameraArcBall extends AbstractCamera {
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().defineROI(firstMousePressedPosition, getMousePosition());
-		} else if (getRenderer().mouseInROI(getMousePosition())) {
+			getRenderer().getROIHelper().defineROI(firstMousePressedPosition, getMousePosition());
+		} else if (getRenderer().getROIHelper().mouseInROI(getMousePosition())) {
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
-			p = p.minus(getRenderer().getROIEnvelope().centre());
-			getRenderer().getROIEnvelope().translate(p.x, p.y);
+			p = p.minus(getRenderer().getROIHelper().getROIEnvelope().centre());
+			getRenderer().getROIHelper().getROIEnvelope().translate(p.x, p.y);
 
 		} else {
 
@@ -517,12 +498,10 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	protected void drawRotationHelper() {
-		if (isDrawingRotateHelper) {
-			if (ctrlPressed) {
-				getRenderer().startDrawRotationHelper();
-			} else {
-				getRenderer().stopDrawRotationHelper();
-			}
+		if (ctrlPressed) {
+			renderer.getRotationHelper().startDrawRotationHelper();
+		} else {
+			renderer.getRotationHelper().stopDrawRotationHelper();
 		}
 	}
 
@@ -531,7 +510,8 @@ public class CameraArcBall extends AbstractCamera {
 		return distance;
 	}
 
-	private void setDistance(final double distance) {
+	@Override
+	public void setDistance(final double distance) {
 		this.distance = distance;
 	}
 

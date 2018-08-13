@@ -77,7 +77,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	private void process() {
 		final ArrayList<GamaRuntimeException> array = new ArrayList<>(incomingExceptions);
-		// System.out.println("Processing " + array.size() + " exceptions");
+		// DEBUG.LOG("Processing " + array.size() + " exceptions");
 		incomingExceptions.clear();
 
 		if (GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue()) {

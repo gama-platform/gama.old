@@ -83,7 +83,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			throw e1;
 
 		} catch (final Throwable e) {
-			// System.out.println(e + " when applying the " + literalValue() + "
+			// DEBUG.LOG(e + " when applying the " + literalValue() + "
 			// operator on " + childValue);
 			final GamaRuntimeException ee = GamaRuntimeException.create(e, scope);
 			ee.addContext("when applying the " + literalValue() + " operator on " + childValue);

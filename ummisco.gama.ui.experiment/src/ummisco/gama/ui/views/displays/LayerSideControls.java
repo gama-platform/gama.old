@@ -324,7 +324,7 @@ public class LayerSideControls {
 				});
 		zoom = EditorFactory.create(scope, contents, "Zoom (%):", "",
 				Integer.valueOf((int) (data.getZoomLevel() * 100)), 0, null, 1, (EditorListener<Integer>) newValue -> {
-					data.setZoomLevel(newValue.doubleValue() / 100d, true);
+					data.setZoomLevel(newValue.doubleValue() / 100d, true, false);
 					ds.updateDisplay(true);
 				});
 
@@ -335,10 +335,10 @@ public class LayerSideControls {
 						data.setZRotationAngle(newValue);
 						ds.updateDisplay(true);
 					});
-			EditorFactory.create(scope, contents, "Continuous rotation", data.isRotationOn(),
+			EditorFactory.create(scope, contents, "Continuous rotation", data.isContinuousRotationOn(),
 					(EditorListener<Boolean>) val -> {
 						ds.runAndUpdate(() -> {
-							data.setRotation(val);
+							data.setContinuousRotation(val);
 							;
 						});
 

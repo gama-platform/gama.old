@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -64,6 +66,14 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	public SashForm getSash() {
 		return form;
+	}
+
+	@Override
+	public boolean containsPoint(final int x, final int y) {
+		if (super.containsPoint(x, y)) { return true; }
+		final Point o = getSurfaceComposite().toDisplay(0, 0);
+		final Point s = getSurfaceComposite().getSize();
+		return new Rectangle(o.x, o.y, s.x, s.y).contains(x, y);
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MtlLoader.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MtlLoader.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,7 +13,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+import utils.DEBUG;
+
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MtlLoader {
 
 	public ArrayList Materials = new ArrayList<>();
@@ -38,8 +39,7 @@ public class MtlLoader {
 		cleanup();
 	}
 
-	private void cleanup() {
-	}
+	private void cleanup() {}
 
 	public int getSize() {
 		return Materials.size();
@@ -96,9 +96,7 @@ public class MtlLoader {
 	public Integer getMtlnum(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				return tempmtl.mtlnum;
-			}
+			if (tempmtl.name.matches(namepass)) { return tempmtl.mtlnum; }
 		}
 		return null;
 	}
@@ -106,9 +104,7 @@ public class MtlLoader {
 	public String getMapKa(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				return tempmtl.map_Ka;
-			}
+			if (tempmtl.name.matches(namepass)) { return tempmtl.map_Ka; }
 		}
 		return null;
 	}
@@ -116,9 +112,7 @@ public class MtlLoader {
 	public String getMapKd(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				return tempmtl.map_Kd;
-			}
+			if (tempmtl.name.matches(namepass)) { return tempmtl.map_Kd; }
 		}
 		return null;
 	}
@@ -126,9 +120,7 @@ public class MtlLoader {
 	public String getMapd(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				return tempmtl.map_d;
-			}
+			if (tempmtl.name.matches(namepass)) { return tempmtl.map_d; }
 		}
 		return null;
 	}
@@ -187,18 +179,21 @@ public class MtlLoader {
 						matset.d = Float.valueOf(coordstext[1]).floatValue();
 					} else if (newline.contains("map_Ka")) {
 						String texture = newline.replace("map_Ka ", "");
-						while (texture.startsWith(" "))
+						while (texture.startsWith(" ")) {
 							texture = texture.replaceFirst(" ", "");
+						}
 						matset.map_Ka = texture;
 					} else if (newline.contains("map_Kd")) {
 						String texture = newline.replace("map_Kd ", "");
-						while (texture.startsWith(" "))
+						while (texture.startsWith(" ")) {
 							texture = texture.replaceFirst(" ", "");
+						}
 						matset.map_Kd = texture;
 					} else if (newline.contains("map_d")) {
 						String texture = newline.replace("map_d ", "");
-						while (texture.startsWith(" "))
+						while (texture.startsWith(" ")) {
 							texture = texture.replaceFirst(" ", "");
+						}
 						matset.map_d = texture;
 					}
 				}
@@ -206,14 +201,12 @@ public class MtlLoader {
 			Materials.add(matset);
 
 		} catch (final IOException e) {
-			System.out.println("Failed to read file: " + br.toString());
+			DEBUG.ERR("Failed to read file: " + br.toString());
 			e.printStackTrace();
 		} catch (final NumberFormatException e) {
-			System.out.println(
-					"Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
+			DEBUG.ERR("Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
 		} catch (final StringIndexOutOfBoundsException e) {
-			System.out.println(
-					"Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
+			DEBUG.ERR("Malformed MTL (on line " + linecounter + "): " + br.toString() + "\r \r" + e.getMessage());
 		}
 	}
 }

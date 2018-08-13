@@ -56,6 +56,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import utils.DEBUG;
 
 /**
  * Class InitialModelOpener.
@@ -86,7 +87,7 @@ public class WorkspaceModelsManager {
 		if ( filePath.contains("#") ) {
 			final String[] segments = filePath.split("#");
 			if ( segments.length != 2 ) {
-				System.out.println("Wrong definition of model and experiment in argument '" + filePath + "'");
+				DEBUG.OUT("Wrong definition of model and experiment in argument '" + filePath + "'");
 				return;
 			}
 			filePath = segments[0];
@@ -102,13 +103,12 @@ public class WorkspaceModelsManager {
 			final String en = expName;
 			final Runnable run = () -> {
 				try {
-					// System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
+					// DEBUG.OUT(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
 					// Force the project to rebuild itself in order to load the various XText plugins.
 					file.touch(null);
 					file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 				} catch (final CoreException e1) {
-					System.out.println(
-						Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
+					DEBUG.OUT(Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
 					return;
 				}
 				while (GAMA.getRegularGui() == null) {
@@ -126,7 +126,7 @@ public class WorkspaceModelsManager {
 					// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
 					GAMA.getGui().editModel(null, file);
 				} else {
-					// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
+					// DEBUG.OUT(Thread.currentThread().getName() + ": Trying to run experiment " + en);
 					GAMA.getGui().runModel(file, en);
 				}
 
@@ -152,7 +152,7 @@ public class WorkspaceModelsManager {
 		// 2nd case: the path is outside the workspace
 		result = findOutsideWorkspace(path);
 		if ( result != null ) { return result; }
-		System.out.println(
+		DEBUG.OUT(
 			"File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
 				Arrays.toString(CommandLineArgs.getApplicationArgs()));
 		return null;
@@ -395,7 +395,7 @@ public class WorkspaceModelsManager {
 
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) {
-				System.out.println("Asynchronous link of models library...");
+				DEBUG.OUT("Asynchronous link of models library...");
 				GAMA.getGui().refreshNavigator();
 				return GamaBundleLoader.ERRORED ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
@@ -410,14 +410,14 @@ public class WorkspaceModelsManager {
 		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
 			try {
 				Thread.sleep(100);
-				System.out.println("Waiting for GAML subsystem to load...");
+				DEBUG.OUT("Waiting for GAML subsystem to load...");
 			} catch (final InterruptedException e) {}
 		}
 		if ( GamaBundleLoader.ERRORED ) {
 			GAMA.getGui().tell("Error in loading GAML language subsystem. Please consult the logs");
 			return;
 		}
-		System.out.println("Synchronous link of models library...");
+		DEBUG.OUT("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
 		for ( final Bundle plugin : pluginsWithModels.keySet() ) {
 			for ( final String entry : pluginsWithModels.get(plugin) ) {
@@ -437,7 +437,7 @@ public class WorkspaceModelsManager {
 	 */
 
 	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
-		System.out.println("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
+		DEBUG.OUT("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
 		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
 		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;

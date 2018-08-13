@@ -34,6 +34,7 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 /**
  * The class GamaBundleLoader.
@@ -43,14 +44,6 @@ import msi.gaml.types.Types;
  *
  */
 public class GamaBundleLoader {
-
-	private static final boolean DEBUG = true;
-
-	public static void LOG(final String s) {
-		if (DEBUG) {
-			System.out.println(s);
-		}
-	}
 
 	public static void ERROR(final Exception e) {
 		ERRORED = true;
@@ -215,7 +208,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		LOG(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		DEBUG.LOG(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -239,29 +232,29 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
 		} catch (final ClassNotFoundException e1) {
-			LOG(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
+			DEBUG.ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 			throw e1;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (final InstantiationException e) {
-			LOG(">> Impossible to instantiate additions from " + bundle);
+			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
 			throw e;
 		} catch (final IllegalAccessException e) {
-			LOG(">> Impossible to access additions from " + bundle);
+			DEBUG.ERR(">> Impossible to access additions from " + bundle);
 			throw e;
 		}
 		try {
 			add.initialize();
 		} catch (final SecurityException e) {
-			LOG(">> Impossible to instantiate additions from " + bundle);
+			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
 			throw e;
 		} catch (final NoSuchMethodException e) {
-			LOG(">> Impossible to instantiate additions from " + bundle);
+			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
 			throw e;
 		}
-		LOG(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
+		DEBUG.LOG(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
 
 	}
 

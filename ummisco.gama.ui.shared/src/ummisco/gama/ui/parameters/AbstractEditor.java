@@ -374,7 +374,7 @@ public abstract class AbstractEditor<T>
 		//
 		// @Override
 		// public void widgetDisposed(final DisposeEvent e) {
-		// System.out.println("Toolbar disposed !");
+		// DEBUG.LOG("Toolbar disposed !");
 		// }
 		// });
 		for (final Control c : controlsThatShowHideToolbars) {

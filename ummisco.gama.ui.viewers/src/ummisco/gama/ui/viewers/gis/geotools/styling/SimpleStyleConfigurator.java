@@ -309,7 +309,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		if (buttonId == OK) {
 			try {
 				final String styleToString = styleToString(style);
-				// System.out.println(styleToString);
+				// DEBUG.LOG(styleToString);
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}

@@ -33,6 +33,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
@@ -43,8 +44,6 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class SqlConnection {
 
-	protected static final boolean DEBUG = false; // Change DEBUG = false for
-													// release version
 	public static final String MYSQL = "mysql";
 	public static final String POSTGRES = "postgres";
 	public static final String POSTGIS = "postgis";
@@ -294,8 +293,8 @@ public abstract class SqlConnection {
 			rs = st.executeQuery(selectComm);
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
-			if (DEBUG) {
-				scope.getGui().debug("MetaData:" + rsmd.toString());
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("MetaData:" + rsmd.toString());
 			}
 			result.add(getColumnName(rsmd));
 			final IList<Object> columns = getColumnTypeName(rsmd);
@@ -338,10 +337,10 @@ public abstract class SqlConnection {
 
 			// result.add(repRequest);
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column name:" + result.get(0));
-				scope.getGui().debug("list of column type:" + result.get(1));
-				scope.getGui().debug("list of data:" + result.get(2));
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column name:" + result.get(0));
+				DEBUG.OUT("list of column type:" + result.get(1));
+				DEBUG.OUT("list of data:" + result.get(2));
 			}
 
 			st.close();
@@ -364,12 +363,12 @@ public abstract class SqlConnection {
 		try (Connection conn = connectDB(); final Statement st = conn.createStatement();) {
 
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Update Command:" + updateComm);
+			// DEBUG.OUT("Update Command:" + updateComm);
 			// }
 
 			n = st.executeUpdate(updateComm);
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Updated records :" + n);
+			// DEBUG.OUT("Updated records :" + n);
 			// }
 
 			// st=null;
@@ -395,14 +394,14 @@ public abstract class SqlConnection {
 		int n = 0;
 		try {
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Update Command:" + updateComm);
+			// DEBUG.OUT("Update Command:" + updateComm);
 			// }
 			final Statement st = conn.createStatement();
 			n = st.executeUpdate(updateComm);
 			st.close();
 
 			// if ( DEBUG ) {
-			// scope.getGui().debug("Updated records :" + n);
+			// DEBUG.OUT("Updated records :" + n);
 			// }
 		} catch (final SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
@@ -523,8 +522,8 @@ public abstract class SqlConnection {
 			// String sqlStr = getInsertString(gis, conn, table_name, cols,
 			// values);
 			final String sqlStr = getInsertString(scope, conn, table_name, cols, values);
-			if (DEBUG) {
-				scope.getGui().debug("SQLConnection.insertBD.STR:" + sqlStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SQLConnection.insertBD.STR:" + sqlStr);
 			}
 			// rec_no = st.executeUpdate(getInsertString(scope, conn,
 			// table_name, cols, values));
@@ -533,8 +532,8 @@ public abstract class SqlConnection {
 			// st=null;
 			// System.gc();
 
-			if (DEBUG) {
-				scope.getGui().debug("SQLConnection.insertBD.rec_no:" + rec_no);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
 
 		} catch (final SQLException e) {
@@ -596,8 +595,8 @@ public abstract class SqlConnection {
 			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, values));
 			// st=null;
 			// System.gc();
-			if (DEBUG) {
-				scope.getGui().debug("SQLConnection.insertBD.rec_no:" + rec_no);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
 
 		} catch (final SQLException e) {
@@ -666,8 +665,8 @@ public abstract class SqlConnection {
 			try (ResultSet rs = pstmt.executeQuery();) {
 
 				final ResultSetMetaData rsmd = rs.getMetaData();
-				if (DEBUG) {
-					scope.getGui().debug("MetaData:" + rsmd.toString());
+				if (DEBUG.IS_ON()) {
+					DEBUG.OUT("MetaData:" + rsmd.toString());
 				}
 				result.add(getColumnName(rsmd));
 				final IList columns = getColumnTypeName(rsmd);
@@ -712,10 +711,10 @@ public abstract class SqlConnection {
 
 			// result.add(repRequest);
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column name:" + result.get(0));
-				scope.getGui().debug("list of column type:" + result.get(1));
-				scope.getGui().debug("list of data:" + result.get(2));
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column name:" + result.get(0));
+				DEBUG.OUT("list of column type:" + result.get(1));
+				DEBUG.OUT("list of data:" + result.get(2));
 			}
 
 			// pstmt=null;
@@ -788,9 +787,9 @@ public abstract class SqlConnection {
 			pstmt = conn.prepareStatement(queryStr);
 			// set value for each condition
 			// if ( DEBUG ) {
-			// scope.getGui().debug("SqlConnection.ExecuteUpdateDB.values.size:"
+			// DEBUG.OUT("SqlConnection.ExecuteUpdateDB.values.size:"
 			// + condition_count);
-			// scope.getGui().debug("SqlConnection.ExecuteUpdateDB.values.size:"
+			// DEBUG.OUT("SqlConnection.ExecuteUpdateDB.values.size:"
 			// + condition_values.serialize(false));
 			// }
 

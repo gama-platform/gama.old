@@ -81,7 +81,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 		final Set<GamlAgent> ga = ig._internalVertexMap().keySet();
 		final Iterator<GamlAgent> gi = ga.iterator();
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
-			// System.out.println("i = "+i+" ; total = "+(node_index_diff+i)+
+			// DEBUG.LOG("i = "+i+" ; total = "+(node_index_diff+i)+
 			// "<= ? "+ ig.getVertices().size());
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() < 0) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) 0.0);
@@ -109,7 +109,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 		final Set<GamlAgent> ga = ig._internalVertexMap().keySet();
 		final Iterator<GamlAgent> gi = ga.iterator();
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
-			// System.out.println("i = "+i+" ; total = "+(node_index_diff+i)+
+			// DEBUG.LOG("i = "+i+" ; total = "+(node_index_diff+i)+
 			// "<= ? "+ ig.getVertices().size());
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() < min_x) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) min_x);

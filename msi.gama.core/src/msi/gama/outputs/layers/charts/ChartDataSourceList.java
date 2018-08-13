@@ -214,7 +214,7 @@ public class ChartDataSourceList extends ChartDataSource {
 		if (this.getDataset().getDataSeriesIds(scope).contains(myname)) {
 			// TODO
 			// DO SOMETHING? create id and store correspondance
-			// System.out.println("Serie "+myname+"s already exists... Will
+			// DEBUG.LOG("Serie "+myname+"s already exists... Will
 			// replace old one!!");
 		}
 		final ChartDataSeries myserie = myDataset.createOrGetSerie(scope, myname, this);

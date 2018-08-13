@@ -37,13 +37,12 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGisFile;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 // DataStore.dispose(); //close connection;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSqlConnection extends GamaGisFile {
 
-	protected static final boolean DEBUG = false; // Change DEBUG = false for
-													// release version
 	public static final String MYSQL = "mysql";
 	public static final String POSTGRES = "postgres";
 	public static final String POSTGIS = "postgis";
@@ -270,7 +269,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		DataStore dStore;
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
-		// System.out.println("data store postgress:" + dStore);
+		// DEBUG.LOG("data store postgress:" + dStore);
 		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
@@ -372,7 +371,7 @@ public class GamaSqlConnection extends GamaGisFile {
 				scope.getGui().getStatus(scope).setSubStatusCompletion(index++ / size);
 				final Feature feature = reader.next();
 
-				// System.out.println("Record " + i++ + ": " +
+				// DEBUG.LOG("Record " + i++ + ": " +
 				// feature.getValue().toString());
 
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
@@ -440,7 +439,7 @@ public class GamaSqlConnection extends GamaGisFile {
 				try {
 					crs = source.getInfo().getCRS();
 				} catch (final Exception e) {
-					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
+					DEBUG.ERR("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
 				}
 				env = source.getBounds();
 				if (crs != null) {
@@ -461,7 +460,7 @@ public class GamaSqlConnection extends GamaGisFile {
 					attributes.put(desc.getName().getLocalPart(), type);
 				}
 			} catch (final Exception e) {
-				System.out.println("Error in reading metadata of " + tableName);
+				DEBUG.ERR("Error in reading metadata of " + tableName);
 
 			} finally {
 				this.width = env.getWidth();

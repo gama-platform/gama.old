@@ -56,7 +56,7 @@ public class UDPConnector extends Connector {
 		// if(is_server){
 		// final String cli;
 		// final String receiveMessage = "";
-		// System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
+		// DEBUG.LOG("\n\n primGetFromClient "+"messages"+agt+"\n\n");
 
 		m = (GamaMap<String, Object>) agt.getAttribute("messages" + agt);
 		agt.setAttribute("messages", null);
@@ -177,7 +177,7 @@ public class UDPConnector extends Connector {
 		final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
 		try {
 			ssThread.setSendPacket(sendPacket);
-			// System.out.println("SENT: "+replyport);
+			// DEBUG.LOG("SENT: "+replyport);
 		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

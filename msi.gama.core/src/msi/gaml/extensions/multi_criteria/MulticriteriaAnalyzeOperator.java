@@ -421,14 +421,14 @@ public class MulticriteriaAnalyzeOperator {
 			candidates.add(c);
 			cpt++;
 		}
-		// System.out.println("candidates : " + candidates.size());
+		// DEBUG.LOG("candidates : " + candidates.size());
 		final LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
 		if (candsFilter.isEmpty()) { return scope.getRandom().between(0, candidates.size() - 1);
 
 		}
-		// System.out.println("candfilter : " + candsFilter);
+		// DEBUG.LOG("candfilter : " + candsFilter);
 		final Candidate decision = evt.decision(criteresFC, candsFilter, simple);
-		// System.out.println("decision : " + decision.getIndex());
+		// DEBUG.LOG("decision : " + decision.getIndex());
 
 		return decision.getIndex();
 

@@ -97,7 +97,7 @@ public class CSVTokenScanner implements ITokenScanner {
                                       m_currentColumn++);
                 m_tokenOffset = startOffset;
                 m_tokenLength = length;
-                //System.out.println("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
+                // DEBUG.LOG("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
             } else {
                 // Look for the next delimiter or the next line
                 boolean scan = true;
@@ -110,7 +110,7 @@ public class CSVTokenScanner implements ITokenScanner {
                         m_tokenOffset = startOffset;
                         m_tokenLength = length;
                         m_currentColumn= 0;
-                        //System.out.println("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
+                        // DEBUG.LOG("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
                         scan = false;
                     }
                     else
@@ -123,7 +123,7 @@ public class CSVTokenScanner implements ITokenScanner {
 
                             m_tokenOffset = startOffset;
                             m_tokenLength = length;
-                            //System.out.println("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
+                            // DEBUG.LOG("Token found [" + m_document.get(m_tokenOffset, m_tokenLength) + "]");
                             scan = false;
                         }
                         else

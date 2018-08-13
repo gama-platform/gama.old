@@ -46,8 +46,13 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
+import utils.DEBUG;
 
 public class Application implements IApplication {
+
+	static {
+		DEBUG.ON();
+	}
 
 	final public static String CONSOLE_PARAMETER = "-c";
 	final public static String TUNNELING_PARAMETER = "-p";
@@ -146,7 +151,7 @@ public class Application implements IApplication {
 
 	private static boolean showError(final int errorCode, final String path) {
 		SystemLogger.activeDisplay();
-		System.out.println(HeadLessErrors.getError(errorCode, path));
+		DEBUG.ERR(HeadLessErrors.getError(errorCode, path));
 		SystemLogger.removeDisplay();
 
 		return false;
@@ -158,7 +163,7 @@ public class Application implements IApplication {
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 		if (args.contains(HELP_PARAMETER)) {
-			System.out.println(showHelp());
+			DEBUG.LOG(showHelp());
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
 			return ModelLibraryValidator.getInstance().start(args);
 		} else if (args.contains(TEST_LIBRARY_PARAMETER)) {
@@ -190,8 +195,8 @@ public class Application implements IApplication {
 
 		if (arg.size() < 3) {
 			SystemLogger.activeDisplay();
-			System.out.println("Check your parameters!");
-			System.out.println(showHelp());
+			DEBUG.ERR("Check your parameters!");
+			DEBUG.ERR(showHelp());
 			return;
 		}
 		HeadlessSimulationLoader.preloadGAMA();
@@ -212,7 +217,7 @@ public class Application implements IApplication {
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay();
-		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
 	public void buildXMLForModelLibrary(final ArrayList<File> modelPaths, final String outputPath)
@@ -236,7 +241,7 @@ public class Application implements IApplication {
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay();
-		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
 	public void runXMLForModelLibrary(final String xmlPath) throws FileNotFoundException {

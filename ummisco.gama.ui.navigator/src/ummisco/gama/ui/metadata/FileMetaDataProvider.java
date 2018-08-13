@@ -53,6 +53,7 @@ import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
+import utils.DEBUG;
 
 /**
  * Class FileMetaDataProvider.
@@ -133,7 +134,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public static final String OSM_CT_ID = "msi.gama.gui.osm.type";
 	public static final String SHAPEFILE_SUPPORT_CT_ID = "msi.gama.gui.shapefile.support.type";
 	public static final String GSIM_CT_ID = "msi.gama.gui.gsim.type";
-	
 
 	private final static FileMetaDataProvider instance = new FileMetaDataProvider();
 
@@ -242,7 +242,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static final Map<String, Class<? extends GamaFileMetaData>> CLASSES =
-			new HashMap<String, Class<? extends GamaFileMetaData>>() { 
+			new HashMap<String, Class<? extends GamaFileMetaData>>() {
 
 				{
 					put(CSV_CT_ID, CSVInfo.class);
@@ -343,7 +343,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 								break;
 							case GSIM_CT_ID:
 								data[0] = createSacedSimulationFileMetaData(theFile);
-								break;								
+								break;
 						}
 						// Last chance: we generate a generic info
 						if (data[0] == null) {
@@ -393,7 +393,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			}
 			if (!clazz.isInstance(result)) { return null; }
 		} catch (final Exception ignore) {
-			System.err.println("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
+			DEBUG.ERR("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
 		return result;
 	}
@@ -403,9 +403,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		startup();
 		if (!file.isAccessible()) { return; }
 		try {
-			// System.out.println("Writing back metadata to " + file);
+			// DEBUG.LOG("Writing back metadata to " + file);
 			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
-				// System.out.println("Canceled: Resources are locked");
+				// DEBUG.LOG("Canceled: Resources are locked");
 				return;
 			}
 
@@ -415,12 +415,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			final Runnable runnable = () -> {
 				try {
-					file.setSessionProperty(CACHE_KEY, data == null ? null : (data.toPropertyString()));
+					file.setSessionProperty(CACHE_KEY, data == null ? null : data.toPropertyString());
 					file.setSessionProperty(CHANGE_KEY, true);
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
-				// System.out.println("Success: sync info written");
+				// DEBUG.LOG("Success: sync info written");
 			};
 			// WorkspaceModifyOperation
 			if (!immediately) {
@@ -430,8 +430,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			}
 
 		} catch (final Exception ignore) {
+			DEBUG.ERR("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
 			ignore.printStackTrace();
-			System.err.println("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
+
 		}
 	}
 
@@ -513,8 +514,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
 		return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
-	}	
-	
+	}
+
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
 		if (ct != null) { return ct.getId(); }
@@ -523,7 +524,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ("shp".equals(ext)) { return SHAPEFILE_CT_ID; }
 		if (OSMExt.contains(ext)) { return OSM_CT_ID; }
 		if (longNames.containsKey(ext)) { return SHAPEFILE_SUPPORT_CT_ID; }
-		if("gsim".equals(ext)) { return GSIM_CT_ID; }
+		if ("gsim".equals(ext)) { return GSIM_CT_ID; }
 		return "";
 	}
 
@@ -552,7 +553,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private void startup() {
 		if (started) { return; }
 		started = true;
-		System.out.print("Reading workspace metadata ");
 		final long ms = System.currentTimeMillis();
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
@@ -564,7 +564,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		} catch (final CoreException e) {
 			// Nothing
 		} finally {
-			System.out.println("in " + (System.currentTimeMillis() - ms) + "ms");
+			DEBUG.OUT("Reading workspace metadata " + "in " + (System.currentTimeMillis() - ms) + "ms");
 		}
 		try {
 			ResourcesPlugin.getWorkspace().addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
@@ -579,7 +579,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			@Override
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) { return; }
-				System.out.print("Saving workspace metadata ");
 				final long ms = System.currentTimeMillis();
 				final String[] toSave = new String[1];
 				try {
@@ -588,19 +587,20 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 						try {
 							if (resource.isAccessible()) {
 								toSave[0] = (String) resource.getSessionProperty(CACHE_KEY);
-								resource.setPersistentProperty(CACHE_KEY, (toSave[0]));
+								resource.setPersistentProperty(CACHE_KEY, toSave[0]);
 							}
 							return true;
 						} catch (final Exception e) {
-							System.out.println("Error for resource " + resource.getName());
-							if (toSave[0] != null)
-							System.out.println("Trying to save " + toSave[0].length() + " bytes ");
+							DEBUG.OUT("Error for resource " + resource.getName());
+							if (toSave[0] != null) {
+								DEBUG.OUT("Trying to save " + toSave[0].length() + " bytes ");
+							}
 							return true;
 						}
 
 					});
 				} finally {
-					System.out.println("in " + (System.currentTimeMillis() - ms) + "ms");
+					DEBUG.OUT("Saving workspace metadata " + "in " + (System.currentTimeMillis() - ms) + "ms");
 				}
 
 			}

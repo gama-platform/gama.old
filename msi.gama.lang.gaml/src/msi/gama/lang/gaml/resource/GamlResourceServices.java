@@ -86,13 +86,13 @@ public class GamlResourceServices {
 
 	public static void updateState(final URI uri, final ModelDescription model, final boolean newState,
 			final ValidationContext status) {
-		// System.out.println("Beginning updating the state of editor in
+		// DEBUG.LOG("Beginning updating the state of editor in
 		// ResourceServices for " + uri.lastSegment());
 		final URI newURI = properlyEncodedURI(uri);
 
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
 		if (listener == null) { return; }
-		// System.out.println("Finishing updating the state of editor for " +
+		// DEBUG.LOG("Finishing updating the state of editor for " +
 		// uri.lastSegment());
 		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
 				: Iterables.filter(model.getExperiments(), each -> !each.isAbstract());

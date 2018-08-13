@@ -27,6 +27,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai
@@ -58,8 +59,6 @@ public class AgentDB extends GamlAgent {
 	private SqlConnection sqlConn = null;
 	private boolean isConnection = false;
 	private java.util.Map<String, String> params = null;
-	static final boolean DEBUG = false; // Change DEBUG = false for release
-										// version
 
 	public AgentDB(final IPopulation s, final int index) throws GamaRuntimeException {
 		super(s, index);
@@ -264,8 +263,8 @@ public class AgentDB extends GamlAgent {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
-		if (DEBUG) {
-			scope.getGui().getConsole(scope).informConsole(updateComm + " was run", scope.getRoot());
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT(updateComm + " was run");
 		}
 
 		return row_count;
@@ -360,8 +359,8 @@ public class AgentDB extends GamlAgent {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString(), scope);
 		}
-		if (DEBUG) {
-			scope.getGui().getConsole(scope).informConsole("Insert into " + " was run", scope.getRoot());
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Insert into " + " was run");
 		}
 
 		return rec_no;

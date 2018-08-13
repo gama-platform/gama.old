@@ -11,10 +11,10 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.mysql.MySQLDataStoreFactory;
 import org.geotools.data.sqlserver.SQLServerDataStoreFactory;
 
+import utils.DEBUG;
+
 public class GeoSQL {
 
-	static final boolean DEBUG = false; // Change DEBUG = false for release
-										// version
 	static final String MYSQL = "MySQL";
 	static final String MSSQL = "MsSQL";
 	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
@@ -32,20 +32,20 @@ public class GeoSQL {
 
 		final DataStore dataStore = DataStoreFinder.getDataStore(params);
 		if (dataStore != null) {
-			// System.out.println("1.1PostGres- data store: " +
+			// DEBUG.LOG("1.1PostGres- data store: " +
 			// dataStore.toString());
 		} else {
-			// System.out.println("1.2Could not connect - check parameters");
+			// DEBUG.LOG("1.2Could not connect - check parameters");
 		}
 		try {
 			final MySQLDataStoreFactory sqlDSF = new MySQLDataStoreFactory();
 			// final JDBCDataStore jdbcDataSore =
 			sqlDSF.createDataStore(params);
-			// System.out.println("1.3:JDBC Data Store: " +
+			// DEBUG.LOG("1.3:JDBC Data Store: " +
 			// jdbcDataSore.toString());
-			// System.out.println("parameter: " + sqlDSF.getParametersInfo());
+			// DEBUG.LOG("parameter: " + sqlDSF.getParametersInfo());
 		} catch (final Exception e) {
-			System.out.println("1.4Loi :" + e.toString());
+			DEBUG.ERR("1.4Loi :" + e.toString());
 		}
 		final java.util.Map<String, String> params2 = new java.util.HashMap<>();
 		params2.put("dbtype", "sqlserver");
@@ -56,18 +56,18 @@ public class GeoSQL {
 		params2.put("database", "bph");
 		final DataStore dataStore2 = DataStoreFinder.getDataStore(params2);
 		if (dataStore2 != null) {
-			System.out.println("2.1MySQL- data store: " + dataStore2.toString());
+			DEBUG.OUT("2.1MySQL- data store: " + dataStore2.toString());
 		} else {
-			System.out.println("2.2Could not connect - check parameters");
+			DEBUG.OUT("2.2Could not connect - check parameters");
 		}
 		try {
 			final SQLServerDataStoreFactory sqlDSF2 = new SQLServerDataStoreFactory();
 			// JDBCDataStore jdbcDataSore2= sqlDSF2.createDataStore(params2);
 			// final BasicDataSource jdbcDataSore2 =
 			sqlDSF2.createDataSource(params2);
-			// System.out.println("2.3:" + jdbcDataSore2.toString());
+			// DEBUG.LOG("2.3:" + jdbcDataSore2.toString());
 		} catch (final Exception e) {
-			System.out.println("2.4Loi :" + e.toString());
+			DEBUG.ERR("2.4Loi :" + e.toString());
 		}
 
 		final BasicDataSource bds = new BasicDataSource();
@@ -77,7 +77,7 @@ public class GeoSQL {
 		bds.setPassword("tmt");
 		final Connection connection = bds.getConnection();
 
-		// System.err.println("3.1Connection: " + connection);
+		// DEBUG.ERR("3.1Connection: " + connection);
 		connection.close();
 
 	}

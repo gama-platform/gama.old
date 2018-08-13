@@ -59,6 +59,7 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import utils.DEBUG;
 
 public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedView.Colorizable {
 
@@ -93,7 +94,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 			}
 			content.addLayer(layer);
 		} catch (final IOException e) {
-			System.out.println("Unable to view file " + path);
+			DEBUG.ERR("Unable to view file " + path);
 		}
 		this.setPartName(path.lastSegment());
 		setInput(input);
@@ -309,7 +310,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 
 	@Override
 	public void saveAsCSV() {
-		final List<String> attributes = new ArrayList<String>();
+		final List<String> attributes = new ArrayList<>();
 		for (final PropertyDescriptor v : layer.getFeatureSource().getSchema().getDescriptors()) {
 			attributes.add(v.getName().toString());
 		}

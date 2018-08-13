@@ -47,6 +47,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 public class ExperimentJob implements IExperimentJob {
 
@@ -204,7 +205,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void loadAndBuild(final RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
-	ClassNotFoundException, IOException, GamaHeadlessException {
+			ClassNotFoundException, IOException, GamaHeadlessException {
 
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
@@ -237,7 +238,7 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	public void load(final RuntimeContext ctx) throws InstantiationException, IllegalAccessException,
-	ClassNotFoundException, IOException, GamaHeadlessException {
+			ClassNotFoundException, IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final IModel mdl = ctx.loadModel(new File(this.sourcePath));
 		this.modelName = mdl.getName();
@@ -255,7 +256,7 @@ public class ExperimentJob implements IExperimentJob {
 		play();
 		dispose();
 		final long endDate = Calendar.getInstance().getTimeInMillis();
-		System.out.println("\nSimulation duration: " + (endDate - startDate) + "ms");
+		DEBUG.LOG("\nSimulation duration: " + (endDate - startDate) + "ms");
 	}
 
 	@Override
@@ -263,8 +264,8 @@ public class ExperimentJob implements IExperimentJob {
 		if (this.outputFile != null) {
 			this.outputFile.writeSimulationHeader(this);
 		}
-		System.out.println("Simulation is running...");
-		//		final long startdate = Calendar.getInstance().getTimeInMillis();
+		DEBUG.LOG("Simulation is running...", false);
+		// final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
 		try {
@@ -273,7 +274,7 @@ public class ExperimentJob implements IExperimentJob {
 			IScope scope = GAMA.getRuntimeScope();
 			while (!Cast.asBool(scope, endCondition.value(scope)) && (finalStep >= 0 ? step < finalStep : true)) {
 				if (step % affDelay == 0) {
-					System.out.print(".");
+					DEBUG.LOG(".", false);
 				}
 				if (simulator.isInterrupted()) {
 					break;
@@ -283,7 +284,7 @@ public class ExperimentJob implements IExperimentJob {
 				step++;
 			}
 		} catch (final GamaRuntimeException e) {
-			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
+			DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ");
 			e.printStackTrace();
 		}
 	}
@@ -494,9 +495,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Parameter getParameter(final String name) {
 		for (final Parameter p : parameters) {
-			if (p.getName().equals(name)) {
-				return p;
-			}
+			if (p.getName().equals(name)) { return p; }
 		}
 		return null;
 	}
@@ -508,9 +507,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Output getOutput(final String name) {
 		for (final Output p : outputs) {
-			if (p.getName().equals(name)) {
-				return p;
-			}
+			if (p.getName().equals(name)) { return p; }
 		}
 		return null;
 	}

@@ -177,7 +177,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IList<? extends IShape> nodes) {
 		// FIXME call super super(param...);
-		// java.lang.System.out.println("GamaSpatialPath nodes: " + nodes);
+		// DEBUG.OUT("GamaSpatialPath nodes: " + nodes);
 		if (nodes.isEmpty()) {
 			source = new GamaPoint(0, 0);
 			target = source;

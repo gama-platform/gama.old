@@ -46,6 +46,7 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDraw(final IScope scope, final IGraphics dg) {
+
 		try {
 			dg.drawChart(getChart());
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {

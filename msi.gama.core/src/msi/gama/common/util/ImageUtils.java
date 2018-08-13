@@ -113,7 +113,7 @@ public class ImageUtils {
 	}
 
 	private BufferedImage privateReadFromFile(final File file, final boolean forOpenGL) throws IOException {
-		// System.out.println("READING " + file.getName());
+		// DEBUG.OUT("READING " + file.getName());
 		BufferedImage result = getNoImage();
 		if (file == null) { return result; }
 		final String name = file.getName();

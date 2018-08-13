@@ -49,6 +49,7 @@ import msi.gaml.operators.Strings;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
+import utils.DEBUG;
 
 public class HeadlessListener implements IGui {
 
@@ -69,7 +70,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	private static void log(final String s) {
-		System.out.println(s);
+		DEBUG.LOG(s);
 	}
 
 	@Override
@@ -170,7 +171,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void cleanAfterExperiment(final IScope scope) {
-		// System.out.println("[Headless] Clean after experiment.");
+		// DEBUG.LOG("[Headless] Clean after experiment.");
 		try {
 			outputWriter.get().flush();
 			outputWriter.get().close();
@@ -364,7 +365,7 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
-			System.out.println(s);
+			DEBUG.LOG(s);
 			if (outputWriter.get() != null) {
 				try {
 					outputWriter.get().write(s + Strings.LN);

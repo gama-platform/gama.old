@@ -89,7 +89,7 @@ public class StringUtils {
 		final StringBuilder writer = new StringBuilder(str.length());
 		unescapeJava(writer, str);
 		final String result = writer.toString();
-		// System.out.println("String en entrée:" + str + " ; en sortie:" +
+		// DEBUG.LOG("String en entrée:" + str + " ; en sortie:" +
 		// result);
 		// writer.setLength(0);
 		return result;

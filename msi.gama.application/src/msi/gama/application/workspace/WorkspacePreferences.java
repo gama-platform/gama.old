@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import utils.DEBUG;
 
 public class WorkspacePreferences {
 
@@ -59,9 +60,9 @@ public class WorkspacePreferences {
 
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			System.out.println(
+			DEBUG.OUT(
 				">GAMA version " + Platform.getProduct().getDefiningBundle().getVersion().toString() + " loading...");
-			System.out.println(">GAMA models library version: " + gamaStamp);
+			DEBUG.OUT(">GAMA models library version: " + gamaStamp);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -222,7 +223,7 @@ public class WorkspacePreferences {
 	}
 
 	public static void testWorkspaceSanity(final File workspace) {
-		System.out.println("[GAMA] Checking for workspace sanity");
+		DEBUG.OUT("[GAMA] Checking for workspace sanity");
 		File[] files = workspace.listFiles((FileFilter) file -> file.getName().equals(".metadata"));
 		if ( files.length == 0 ) { return; }
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
@@ -244,7 +245,7 @@ public class WorkspacePreferences {
 			}
 			return;
 		}
-		System.out.println("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
+		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
 	}
 
 	public static String getModelIdentifier() {

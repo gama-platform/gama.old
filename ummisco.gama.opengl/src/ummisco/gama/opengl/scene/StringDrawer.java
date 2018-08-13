@@ -15,7 +15,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.OpenGL;
 
 /**
  *
@@ -28,8 +28,8 @@ import ummisco.gama.opengl.JOGLRenderer;
 
 public class StringDrawer extends ObjectDrawer<StringObject> {
 
-	public StringDrawer(final JOGLRenderer r) {
-		super(r);
+	public StringDrawer(final OpenGL gl) {
+		super(gl);
 	}
 
 	@Override

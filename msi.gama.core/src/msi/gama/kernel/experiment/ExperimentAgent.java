@@ -390,7 +390,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@setter (ExperimentAgent.MINIMUM_CYCLE_DURATION)
 	public void setMinimumDuration(final Double d) {
 		// d is in seconds, but the slider expects milleseconds
-		// System.out.println("Minimum duration set to " + d);
+		// DEBUG.LOG("Minimum duration set to " + d);
 		setMinimumDurationExternal(d);
 		if (initialMinimumDuration == null) {
 			initialMinimumDuration = d;
@@ -486,13 +486,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			initializer = true)
 	public Double getSeed() {
 		final Double seed = random.getSeed();
-		// System.out.println("experiment agent get seed: " + seed);
+		// DEBUG.LOG("experiment agent get seed: " + seed);
 		return seed == null ? Double.valueOf(0d) : seed;
 	}
 
 	@setter (IKeyword.SEED)
 	public void setSeed(final Double s) {
-		// System.out.println("experiment agent set seed: " + s);
+		// DEBUG.LOG("experiment agent set seed: " + s);
 		Double seed;
 		if (s == null) {
 			seed = null;

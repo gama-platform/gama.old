@@ -231,7 +231,7 @@ public class Types {
 			type.setFieldGetters(vars);
 			type.setParent(node.getParent() == null ? null : node.getParent().getData());
 		}
-		// System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
+		// DEBUG.LOG("Hierarchy" + hierarchy.toStringWithDepth());
 	}
 
 	private static GamaTree<IType> buildHierarchy() {
@@ -255,11 +255,11 @@ public class Types {
 		}
 		final Set<IType> list = Sets.newLinkedHashSet(builtInTypes.getAllTypes());
 		for (final IType t : list) {
-			// System.out.println("Type computing depth: " + t);
+			// DEBUG.LOG("Type computing depth: " + t);
 
 			int depth = 0;
 			for (final IType other : list) {
-				// System.out.println("\tComparing with: " + other);
+				// DEBUG.LOG("\tComparing with: " + other);
 				if (other != t && other.isAssignableFrom(t)) {
 
 					depth++;

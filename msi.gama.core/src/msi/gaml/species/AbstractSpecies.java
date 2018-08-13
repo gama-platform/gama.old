@@ -294,11 +294,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList<String> getAttributeNames(final IScope scope) {
-		return GamaListFactory.create(scope, Types.STRING, getVarNames());
-	}
-
-	@Override
 	public Collection<IVariable> getVars() {
 		return variables.values();
 	}
@@ -334,8 +329,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public List<String> getAspectNames() {
-		return new ArrayList<>(aspects.keySet());
+	public IList<String> getAspectNames() {
+		return GamaListFactory.createWithoutCasting(Types.STRING, (Iterable<String>) aspects.keySet());
 	}
 
 	@Override

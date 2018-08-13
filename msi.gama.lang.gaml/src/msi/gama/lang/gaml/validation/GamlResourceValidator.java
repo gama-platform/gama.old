@@ -28,15 +28,9 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import utils.DEBUG;
 
 public class GamlResourceValidator implements IResourceValidator {
-	public final static boolean DEBUG = false;
-
-	public static void DEBUG(final String s) {
-		if (DEBUG) {
-			System.out.println(s);
-		}
-	}
 
 	@Inject IDiagnosticConverter converter;
 	private static ErrorToDiagnoticTranslator errorTranslator = new ErrorToDiagnoticTranslator();
@@ -56,12 +50,12 @@ public class GamlResourceValidator implements IResourceValidator {
 
 	@Override
 	public List<Issue> validate(final Resource resource, final CheckMode mode, final CancelIndicator indicator) {
-		DEBUG("GamlResourceValidato begginning validation job of " + resource.getURI().lastSegment());
+		DEBUG.OUT("GamlResourceValidato begginning validation job of " + resource.getURI().lastSegment());
 
 		final LazyAcceptor acceptor = new LazyAcceptor();
 		// We resolve the cross references
 		EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
-		DEBUG("Cross references resolved for " + resource.getURI().lastSegment());
+		DEBUG.OUT("Cross references resolved for " + resource.getURI().lastSegment());
 		// And collect the syntax / linking issues
 		for (int i = 0; i < resource.getErrors().size(); i++) {
 			converter.convertResourceDiagnostic(resource.getErrors().get(i), Severity.ERROR, acceptor);
@@ -70,13 +64,13 @@ public class GamlResourceValidator implements IResourceValidator {
 		// We then ask the resource to validate itself
 		final GamlResource r = (GamlResource) resource;
 		r.validate();
-		DEBUG("Resource has been validated: " + resource.getURI().lastSegment());
+		DEBUG.OUT("Resource has been validated: " + resource.getURI().lastSegment());
 		// And collect the semantic errors from its error collector
 		for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren()) {
 			converter.convertValidatorDiagnostic(d, acceptor);
 		}
 		GamlResourceServices.discardValidationContext(r);
-		DEBUG("Validation context has been discarded: " + resource.getURI().lastSegment());
+		DEBUG.OUT("Validation context has been discarded: " + resource.getURI().lastSegment());
 		return acceptor.result == null ? Collections.EMPTY_LIST : acceptor.result;
 	}
 

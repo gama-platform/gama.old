@@ -57,9 +57,9 @@ public class GridLayerData extends LayerData {
 						return GamaFloatMatrix.from(scope, Cast.asMatrix(scope, exp.value(scope))).getMatrix();
 					case IType.FLOAT:
 					case IType.INT:
-						return grid.getGridValueOf(scope, elevation);
+						return grid.getGridValueOf(scope, exp);
 					case IType.BOOL:
-						if ((Boolean) elevation.value(scope)) {
+						if ((Boolean) exp.value(scope)) {
 							return grid.getGridValue();
 						} else {
 							return null;

@@ -42,12 +42,17 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import utils.DEBUG;
 
 /**
  * @author drogoul
  */
 public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public final List<IDisplayOutput> outputs = new ArrayList<>();
 	private Composite parent;
@@ -158,7 +163,6 @@ public abstract class GamaViewPart extends ViewPart
 			}
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
-				// System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
 				WorkbenchHelper.asyncRun(() -> {
 					if (shouldBeClosedWhenNoExperiments()) {
 						close(GAMA.getRuntimeScope());
@@ -256,8 +260,7 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void dispose() {
-		// System.err.println("+++ Part " + this.getPartName() + " is being
-		// disposed");
+		DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
 		toolbarUpdater = null;
 		super.dispose();
 	}

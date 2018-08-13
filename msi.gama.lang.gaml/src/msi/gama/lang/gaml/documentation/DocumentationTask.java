@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
+import utils.DEBUG;
 
 class DocumentationTask {
 	final EObject object;
@@ -29,7 +30,7 @@ class DocumentationTask {
 	}
 
 	public void process() {
-		// System.out.println("Documenting " + description.getName());
+		// DEBUG.LOG("Documenting " + description.getName());
 		if (description == null) { return; }
 		if (object == null) { return; }
 		final Resource key = object.eResource();
@@ -39,7 +40,7 @@ class DocumentationTask {
 		try {
 			node = new DocumentationNode(description);
 		} catch (final Exception e) {
-			System.out.println("DocumentationTask.process()" + e.getMessage() + " for " + description.getTitle());
+			DEBUG.ERR("DocumentationTask.process()" + e.getMessage() + " for " + description.getTitle());
 		}
 		if (node != null) {
 			try {

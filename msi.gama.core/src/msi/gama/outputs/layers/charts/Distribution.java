@@ -121,10 +121,10 @@ public class Distribution {
 		final IList[] mytlist = new IList[nbBarresx];
 		for (int i = 0; i < nbBarresx; i++) {
 			final IList vallists = GamaListFactory.create(scope, Types.INT, distribInts[i]);
-			// System.out.println("add "+distribInts[i]);
+			// DEBUG.LOG("add "+distribInts[i]);
 			mytlist[i] = vallists;
 		}
-		// System.out.println("fin " + mytlist);
+		// DEBUG.LOG("fin " + mytlist);
 		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
 
 		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
@@ -190,7 +190,7 @@ public class Distribution {
 			final float minInt = (float) intermin;
 			final float maxInt = (float) intermax;
 			double N = Math.log10((maxInt - minInt) / (double) (nbBarresx - 1)) / Math.log10(2);
-			// System.out.println("Ncalc: maxmin: "+maxInt+"/"+minInt+" N "+N);
+			// DEBUG.LOG("Ncalc: maxmin: "+maxInt+"/"+minInt+" N "+N);
 			twoExponent = (int) N;
 			deuxpuissancekx = (float) Math.pow(2, twoExponent);
 			newminIntx = deuxpuissancekx * (int) (minInt / deuxpuissancekx);
@@ -244,7 +244,7 @@ public class Distribution {
 			final float minInt = (float) intermin;
 			final float maxInt = (float) intermax;
 			double N = Math.log10((maxInt - minInt) / (double) (nbBarresy - 1)) / Math.log10(2);
-			// System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + "
+			// DEBUG.LOG("Ncalc: maxmin: " + maxInt + "/" + minInt + "
 			// N " + N);
 			twoExponent = (int) N;
 			deuxpuissanceky = (float) Math.pow(2, twoExponent);
@@ -313,10 +313,10 @@ public class Distribution {
 		final IList[] mytlist = new IList[nbBarresx];
 		for (int i = 0; i < nbBarresx; i++) {
 			final IList vallists = GamaListFactory.create(scope, Types.INT, distribInts[i]);
-			// System.out.println("add "+distribInts[i]);
+			// DEBUG.LOG("add "+distribInts[i]);
 			mytlist[i] = vallists;
 		}
-		// System.out.println("fin "+mytlist);
+		// DEBUG.LOG("fin "+mytlist);
 		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
 
 		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
@@ -498,12 +498,12 @@ public class Distribution {
 			final float minInt = (float) intermin;
 			final float maxInt = (float) intermax;
 			double N = Math.log10((maxInt - minInt) / (double) (nbBarres - 1)) / Math.log10(2);
-			// System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + " N " + N);
+			// DEBUG.LOG("Ncalc: maxmin: " + maxInt + "/" + minInt + " N " + N);
 			twoExponent = (int) N;
 			deuxpuissancek = (float) Math.pow(2, twoExponent);
 			newminInt = deuxpuissancek * (int) (minInt / deuxpuissancek);
 			startMultiplier = (int) (minInt / deuxpuissancek);
-			// System.out.println("Min "+min+" newmin "+newminInt+" startmult
+			// DEBUG.LOG("Min "+min+" newmin "+newminInt+" startmult
 			// "+startMultiplier);
 			if (newminInt > min) {
 				newminInt = deuxpuissancek * (int) (minInt / deuxpuissancek - 1);
@@ -520,7 +520,7 @@ public class Distribution {
 					startMultiplier = (int) (minInt / deuxpuissancek - 1);
 				}
 			}
-			// System.out.println(" "+maxInt+"/"+minInt+" N "+N+ " twoexp
+			// DEBUG.LOG(" "+maxInt+"/"+minInt+" N "+N+ " twoexp
 			// "+twoExponent+" maxv "+(newminInt+nbBarres*deuxpuissancek));
 
 		}

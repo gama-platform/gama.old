@@ -295,7 +295,7 @@ public class RoadSkill extends Skill {
 				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 				getAgents(road).add(driver);
 			}
-			// System.out.println("register " + driver + " lane : " + lane);
+			// DEBUG.LOG("register " + driver + " lane : " + lane);
 			final Coordinate[] coords = road.getInnerGeometry().getCoordinates();
 			final Coordinate pt = (Coordinate) driver.getLocation();
 			if (coords[0].equals(pt)) {

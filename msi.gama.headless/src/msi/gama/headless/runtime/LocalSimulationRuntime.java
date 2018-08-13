@@ -20,8 +20,13 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.HeadlessListener;
 import msi.gaml.descriptions.IDescription;
+import utils.DEBUG;
 
 public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {
+
+	static {
+		DEBUG.ON();
+	}
 	private final Map<String, ExperimentJob> simulations;
 	private final ArrayList<FakeApplication> queue;
 	private final ArrayList<FakeApplication> started;
@@ -46,7 +51,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	private static int getAvailableCores(final int asked) {
 		final int max = Runtime.getRuntime().availableProcessors();
 		final int cpus = Math.max(1, Math.min(max, asked));
-		System.out.println("Number of cpus used:" + cpus + " (available: " + max + ")");
+		DEBUG.LOG("Number of cpus used:" + cpus + " (available: " + max + ")");
 		return cpus;
 	}
 
@@ -114,12 +119,12 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 
 	public synchronized void releaseModel(final String key, final IModel mdl) {
-		// System.out.println("release simulation");
+		// DEBUG.LOG("release simulation");
 		// String key = mdl.getFilePath();
 		// availableLoadedModels.get(key).add(mdl);
-		// System.out.println("remove " + mdl.getFilePath());
+		// DEBUG.LOG("remove " + mdl.getFilePath());
 		// lockUnLock(null,key, mdl);
-		// System.out.println("model released ") ;
+		// DEBUG.LOG("model released ") ;
 	}
 
 	// private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl)
@@ -139,7 +144,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		IModel mdl;
 		final String key = fl.getAbsolutePath();
 		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
-		System.out.println(fl.getAbsolutePath());
+		DEBUG.OUT(fl.getAbsolutePath());
 		if (arr == null) {
 			arr = new ArrayList<>();
 			availableLoadedModels.put(key, arr);

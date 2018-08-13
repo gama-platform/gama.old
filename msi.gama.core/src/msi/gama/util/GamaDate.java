@@ -604,14 +604,14 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	// // Fail fast 5: if we have exactly reached an interval, we return
 	// // true
 	// if (remainder == 0) {
-	// System.out.println("We return true for " + current + " because the remainder is 0 between the elapsed_time "
+	// DEBUG.LOG("We return true for " + current + " because the remainder is 0 between the elapsed_time "
 	// + elapsedTime + " and the frequency " + frequencyInMillis);
 	// return true;
 	// }
 	// // Finally, we return if the step is greater than the remainder
 	// final boolean result = stepInMillis > remainder;
 	// if (result) {
-	// System.out.println("We return true for " + current + " because the step " + stepInMillis
+	// DEBUG.LOG("We return true for " + current + " because the step " + stepInMillis
 	// + " is greater than the remainder " + remainder);
 	// }
 	// return result;
@@ -623,7 +623,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		final boolean month = name.startsWith("m");
 		final GamaDate next = this.plus(number, month ? ChronoUnit.MONTHS : ChronoUnit.YEARS);
 		final double result = this.until(next, ChronoUnit.MILLIS) / 1000d;
-		// System.out.println("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
+		// DEBUG.LOG("Computation of " + number + " " + exp.getName() + " = " + result + "s or "
 		// + this.until(next, ChronoUnit.DAYS) + " days");
 
 		return result;

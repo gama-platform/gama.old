@@ -13,12 +13,13 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.OpenGL;
 
 public class GeometryObject extends AbstractObject {
 
@@ -42,9 +43,8 @@ public class GeometryObject extends AbstractObject {
 		this.geometry = geometry;
 	}
 
-	// Package protected as it is only used by the static layers
-	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final boolean empty) {
-		this(geometry, color, type, JOGLRenderer.getLineWidth());
+	public GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final boolean empty) {
+		this(geometry, color, type, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue().floatValue());
 		attributes.setEmpty(empty);
 		attributes.setHeight(geometry.getDepth());
 		attributes.withLighting(false);

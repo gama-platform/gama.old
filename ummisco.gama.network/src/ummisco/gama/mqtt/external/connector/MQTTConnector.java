@@ -40,7 +40,7 @@ public class MQTTConnector {
 	}
 
 	public void sendPlainData(final String data) {
-		// System.out.println("topic :"+topic+": ");
+		// DEBUG.LOG("topic :"+topic+": ");
 		try {
 			connection.publish(boxName, data.getBytes(), 1, false);
 		} catch (final MqttException e) {

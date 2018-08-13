@@ -106,7 +106,7 @@ public class LayeredDisplayData {
 			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
-	private double zRotationAngle = 0;
+	private double zRotationAngleDelta = 0;
 	private double currentRotationAboutZ = 0;
 	private boolean isOpenGL;
 
@@ -549,17 +549,17 @@ public class LayeredDisplayData {
 	/**
 	 * @return
 	 */
-	public boolean isRotationOn() {
+	public boolean isContinuousRotationOn() {
 		return isRotating;
 	}
 
-	public void setRotation(final boolean r) {
+	public void setContinuousRotation(final boolean r) {
 		isRotating = r;
-		if (r && zRotationAngle == 0) {
-			zRotationAngle = 0.2;
+		if (r && zRotationAngleDelta == 0) {
+			zRotationAngleDelta = 0.2;
 		}
 		if (!r) {
-			zRotationAngle = 0;
+			zRotationAngleDelta = 0;
 		}
 	}
 
@@ -568,17 +568,17 @@ public class LayeredDisplayData {
 	}
 
 	public void setZRotationAngle(final double val) {
-		zRotationAngle = val;
+		zRotationAngleDelta = val;
 		currentRotationAboutZ = val;
 		notifyListeners(Changes.ROTATION, val);
 	}
 
 	public void incrementZRotation() {
-		currentRotationAboutZ += zRotationAngle;
+		currentRotationAboutZ += zRotationAngleDelta;
 	}
 
 	public void resetZRotation() {
-		currentRotationAboutZ = zRotationAngle;
+		currentRotationAboutZ = zRotationAngleDelta;
 	}
 
 	/**
@@ -642,7 +642,7 @@ public class LayeredDisplayData {
 	 * @param zoomLevel
 	 *            the zoomLevel to set
 	 */
-	public void setZoomLevel(final Double zoomLevel, final boolean notify) {
+	public void setZoomLevel(final Double zoomLevel, final boolean notify, final boolean force) {
 		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) { return; }
 		this.zoomLevel = zoomLevel;
 		if (notify) {

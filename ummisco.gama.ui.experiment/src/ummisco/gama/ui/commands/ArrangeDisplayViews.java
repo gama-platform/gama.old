@@ -92,7 +92,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			WorkaroundForIssue1353.install();
 		}
 		if (tree == null) { return; }
-		// System.out.println("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
+		// DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
 		// + tree.getRoot().getChildren().get(0).getWeight());
 		if (tree.getRoot().getChildren().get(0).getWeight() == null) {
 			tree.getRoot().getChildren().get(0).setWeight(5000);
@@ -114,13 +114,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static MPartStack getDisplaysPlaceholder() {
 		final Object displayStack = getModelService().find("displays", getApplication());
-//		System.out.println("Element displays found : " + displayStack);
+		// DEBUG.OUT("Element displays found : " + displayStack);
 		return displayStack instanceof MPartStack ? (MPartStack) displayStack : null;
 	}
 
 	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
-//		root.setToBeRendered(true);
+		// root.setToBeRendered(true);
 		WorkbenchHelper.getDisplayViews().forEach(v -> {
 			if (PerspectiveHelper.keepToolbars()) {
 				v.showToolbar();
@@ -130,7 +130,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		});
 		holders.forEach((ph) -> {
 			ph.setVisible(true);
-//			ph.setToBeRendered(true);
+			// ph.setToBeRendered(true);
 		});
 		activateDisplays(holders, true);
 	}

@@ -86,7 +86,7 @@ public class GamaFonts {
 	}
 
 	static void initFonts() {
-		// System.out.println("System font = " + Arrays.toString(systemFont.getFontData()));
+		// DEBUG.LOG("System font = " + Arrays.toString(systemFont.getFontData()));
 		final Display d = WorkbenchHelper.getDisplay();
 		FontData fd = new FontData(getAwtBaseFont().getName(), getAwtBaseFont().getSize(), getAwtBaseFont().getStyle());
 		final FontData original = fd;

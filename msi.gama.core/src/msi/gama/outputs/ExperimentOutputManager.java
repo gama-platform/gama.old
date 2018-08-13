@@ -112,7 +112,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		if (layoutDefinition.hasFacet("editors")) {
 			editors = layoutDefinition.getFacetValue(scope, "editors", false);
 		} else {
-			editors = GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
+			editors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 		}
 		scope.getGui().hideScreen();
 		if (super.init(scope)) {

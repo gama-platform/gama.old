@@ -65,7 +65,7 @@ public class LayeredDisplayMultiListener {
 
 	public void mouseEnter(final int x, final int y, final boolean modifier, final int button) {
 		if (suppressNextEnter) {
-			// System.out.println("One mouse enter suppressed");
+			// DEBUG.LOG("One mouse enter suppressed");
 			suppressNextEnter = false;
 			return;
 		}
@@ -77,7 +77,7 @@ public class LayeredDisplayMultiListener {
 		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) { return; }
 		lastEnterTime = System.currentTimeMillis();
 		lastEnterPosition = new Point(x, y);
-		// System.out.println("Mouse entering " + e);
+		// DEBUG.LOG("Mouse entering " + e);
 		surface.dispatchMouseEvent(SWT.MouseEnter);
 	}
 
@@ -86,11 +86,11 @@ public class LayeredDisplayMultiListener {
 		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) { return; }
 		setMousePosition(-1, -1);
 		if (button > 0) { return; }
-		// System.out.println("Mouse exiting " + e);
+		// DEBUG.LOG("Mouse exiting " + e);
 		surface.dispatchMouseEvent(SWT.MouseExit);
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
 			// suppressNextEnter = true;
-			// System.out.println("Invoking WorkaroundForIssue1353");
+			// DEBUG.LOG("Invoking WorkaroundForIssue1353");
 			WorkaroundForIssue1353.showShell();
 		}
 
@@ -98,14 +98,14 @@ public class LayeredDisplayMultiListener {
 
 	public void mouseHover(final int button) {
 		if (button > 0) { return; }
-		// System.out.println("Mouse hovering on " + view.getPartName());
+		// DEBUG.LOG("Mouse hovering on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseHover);
 	}
 
 	public void mouseMove(final int x, final int y, final boolean modifier) {
 		WorkbenchHelper.asyncRun(view.displayOverlay);
 		if (modifier) { return;
-		// System.out.println("Mouse moving on " + view.getPartName());
+		// DEBUG.LOG("Mouse moving on " + view.getPartName());
 		}
 
 		if (mouseIsDown) {
@@ -126,7 +126,7 @@ public class LayeredDisplayMultiListener {
 		}
 		if (modifier) { return; }
 		mouseIsDown = true;
-		// System.out.println("Mouse down on " + view.getPartName());
+		// DEBUG.LOG("Mouse down on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseDown);
 	}
 
@@ -136,7 +136,7 @@ public class LayeredDisplayMultiListener {
 		setMousePosition(x, y);
 		if (modifier) { return; }
 		mouseIsDown = false;
-		// System.out.println("Mouse up on " + view.getPartName());
+		// DEBUG.LOG("Mouse up on " + view.getPartName());
 		if (!view.isFullScreen()) {
 			WorkaroundForIssue1353.showShell();
 		}
@@ -145,14 +145,14 @@ public class LayeredDisplayMultiListener {
 
 	public void menuDetected(final int x, final int y) {
 		if (inMenu) { return; }
-		// System.out.println("Menu detected on " + view.getPartName());
+		// DEBUG.LOG("Menu detected on " + view.getPartName());
 		inMenu = true;
 		setMousePosition(x, y);
 		surface.selectAgentsAroundMouse();
 	}
 
 	public void dragDetected() {
-		// System.out.println("Mouse drag detected on " + view.getPartName());
+		// DEBUG.LOG("Mouse drag detected on " + view.getPartName());
 		// surface.draggedTo(e.x, e.y);
 		surface.dispatchMouseEvent(SWT.DragDetect);
 	}
@@ -160,11 +160,11 @@ public class LayeredDisplayMultiListener {
 	public void focusGained() {
 		// if (!ok()) { return; }
 		// if (suppressNextEnter) {
-		// System.out.println("One mouse enter suppressed");
+		// DEBUG.LOG("One mouse enter suppressed");
 		// suppressNextEnter = false;
 		// return;
 		// }
-		// System.out.println("Control has gained focus");
+		// DEBUG.LOG("Control has gained focus");
 		// surface.dispatchMouseEvent(SWT.MouseEnter);
 		// Thread.dumpStack();
 	}
@@ -173,7 +173,7 @@ public class LayeredDisplayMultiListener {
 		// if (!ok()) { return; }
 		// surface.dispatchMouseEvent(SWT.MouseExit);
 
-		// System.out.println("Control has lost focus");
+		// DEBUG.LOG("Control has lost focus");
 		// Thread.dumpStack();
 	}
 

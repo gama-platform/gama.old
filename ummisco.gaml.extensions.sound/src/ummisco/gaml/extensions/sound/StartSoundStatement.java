@@ -109,7 +109,7 @@ public class StartSoundStatement extends AbstractStatementSequence {
 					mode != null ? (String) mode.value(scope) : GamaSoundPlayer.OVERWRITE_MODE,
 					repeat != null ? (Boolean) repeat.value(scope) : false);
 		} else {
-			// System.out.println("No more player in pool!");
+			// DEBUG.LOG("No more player in pool!");
 		}
 
 		if (sequence != null) {

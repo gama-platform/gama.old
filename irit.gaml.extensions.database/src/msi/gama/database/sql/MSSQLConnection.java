@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
@@ -40,8 +41,6 @@ import msi.gama.util.IList;
  */
 public class MSSQLConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for
-												// release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
 	private static final String SRID = "0"; // must solve later
 	private static final String PREFIX_TIMESTAMP = "cast('";
@@ -105,28 +104,28 @@ public class MSSQLConnection extends SqlConnection {
 			final List<Integer> geoColumn = getGeometryColumns(rsmd);
 			final int nbCol = rsmd.getColumnCount();
 			// int i = 1;
-			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of col:" + nbCol);
+			// if (DEBUG.IS_ON()) {
+			// DEBUG.OUT("Number of col:" + nbCol);
 			// }
-			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of row:" + rs.getFetchSize());
+			// if (DEBUG.IS_ON()) {
+			// DEBUG.OUT("Number of row:" + rs.getFetchSize());
 			// }
 			while (rs.next()) {
 				// InputStream inputStream = rs.getBinaryStream(i);
-				// if ( DEBUG ) {
-				// scope.getGui().debug("processing at row:" + i);
+				// if (DEBUG.IS_ON()) {
+				// DEBUG.OUT("processing at row:" + i);
 				// }
 
 				final IList<Object> rowList = GamaListFactory.create();
 				for (int j = 1; j <= nbCol; j++) {
 					// check column is geometry column?
-					// if ( DEBUG ) {
-					// scope.getGui().debug("col " + j + ": " +
+					// if (DEBUG.IS_ON()) {
+					// DEBUG.OUT("col " + j + ": " +
 					// rs.getObject(j));
 					// }
 					if (geoColumn.contains(j)) {
-						// if ( DEBUG ) {
-						// scope.getGui().debug("convert at [" + i + "," + j +
+						// if (DEBUG.IS_ON()) {
+						// DEBUG.OUT("convert at [" + i + "," + j +
 						// "]: ");
 						// }
 						rowList.add(SqlUtils.read(rs.getBytes(j)));
@@ -137,8 +136,8 @@ public class MSSQLConnection extends SqlConnection {
 				repRequest.add(rowList);
 				// i++;
 			}
-			// if ( DEBUG ) {
-			// scope.getGui().debug("Number of row:" + i);
+			// if (DEBUG.IS_ON()) {
+			// DEBUG.OUT("Number of row:" + i);
 			// }
 		} catch (final Exception e) {
 
@@ -154,12 +153,12 @@ public class MSSQLConnection extends SqlConnection {
 		final List<Integer> geoColumn = new ArrayList<>();
 		for (int i = 1; i <= numberOfColumns; i++) {
 
-			// if ( DEBUG ) {
-			// scope.getGui().debug("col " + i + ": " + rsmd.getColumnName(i));
-			// scope.getGui().debug(" - Type: " + rsmd.getColumnType(i));
-			// scope.getGui().debug(" - TypeName: " +
+			// if (DEBUG.IS_ON()) {
+			// DEBUG.OUT("col " + i + ": " + rsmd.getColumnName(i));
+			// DEBUG.OUT(" - Type: " + rsmd.getColumnType(i));
+			// DEBUG.OUT(" - TypeName: " +
 			// rsmd.getColumnTypeName(i));
-			// scope.getGui().debug(" - size: " + rsmd.getColumnDisplaySize(i));
+			// DEBUG.OUT(" - size: " + rsmd.getColumnDisplaySize(i));
 			//
 			// }
 
@@ -228,8 +227,8 @@ public class MSSQLConnection extends SqlConnection {
 		// create SELECT statement string
 		selectStr = selectStr + " TOP 1 " + colStr + " FROM " + table_name + " ;";
 
-		if (DEBUG) {
-			scope.getGui().debug("MSSQLConnection.getInsertString.select command:" + selectStr);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("MSSQLConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -240,9 +239,9 @@ public class MSSQLConnection extends SqlConnection {
 			final IList<Object> col_Names = getColumnName(rsmd);
 			final IList<Object> col_Types = getColumnTypeName(rsmd);
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column Name:" + col_Names);
-				scope.getGui().debug("list of column type:" + col_Types);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column Name:" + col_Names);
+				DEBUG.OUT("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -271,11 +270,11 @@ public class MSSQLConnection extends SqlConnection {
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					if (transformed) {
 						geo = saveGis.inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', " + SRID + ")";
 
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)
@@ -313,8 +312,8 @@ public class MSSQLConnection extends SqlConnection {
 			}
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("MSSQLConnection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("MSSQLConnection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {
@@ -381,12 +380,12 @@ public class MSSQLConnection extends SqlConnection {
 					// 23/Jul/2013 - Transform GAMA GIS TO NORMAL
 					final WKTReader wkt = new WKTReader();
 					Geometry geo = wkt.read(values.get(i).toString());
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 
 					if (transformed) {
 						geo = getSavingGisProjection(scope).inverseTransform(geo);
 					}
-					// System.out.println(geo.toString());
+					// DEBUG.LOG(geo.toString());
 					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', " + SRID + ")";
 
 				} else if (((String) col_Types.get(i)).equalsIgnoreCase(CHAR)
@@ -430,8 +429,8 @@ public class MSSQLConnection extends SqlConnection {
 
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("SqlConection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("SqlConection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {

@@ -81,6 +81,7 @@ import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 @file (
 		name = "osm",
@@ -124,7 +125,7 @@ public class GamaOsmFile extends GamaGisFile {
 				number = osmfile.nbObjects;
 				crs = osmfile.getOwnCRS(null);
 			} catch (final Exception e) {
-				System.out.println("Error in reading metadata of " + url);
+				DEBUG.ERR("Error in reading metadata of " + url);
 				hasFailed = true;
 
 			} finally {

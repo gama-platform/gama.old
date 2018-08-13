@@ -22,10 +22,9 @@ import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import utils.DEBUG;
 
 public class GamaDBConnection {
-	protected static final boolean DEBUG = false; // Change DEBUG = false for
-													// release version
 	public static final String MYSQL = "mysql";
 	public static final String POSTGRES = "postgres";
 	public static final String POSTGIS = "postgis";
@@ -106,7 +105,7 @@ public class GamaDBConnection {
 	}
 
 	public DataStore Connect() throws Exception {
-		final Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		final Map<String, Object> connectionParameters = new HashMap<>();
 		connectionParameters.put("host", host);
 		connectionParameters.put("dbtype", dbtype);
 		connectionParameters.put("port", port);
@@ -116,7 +115,7 @@ public class GamaDBConnection {
 		DataStore dStore;
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
-		// System.out.println("data store postgress:" + dStore);
+		// DEBUG.LOG("data store postgress:" + dStore);
 		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
@@ -125,7 +124,7 @@ public class GamaDBConnection {
 		DataStore dStore;
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
-		// System.out.println("data store postgress:" + dStore);
+		// DEBUG.LOG("data store postgress:" + dStore);
 		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
@@ -163,7 +162,7 @@ public class GamaDBConnection {
 				try {
 					crs = source.getInfo().getCRS();
 				} catch (final Exception e) {
-					System.out.println("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
+					DEBUG.ERR("Ignored exception in ShapeInfo getCRS:" + e.getMessage());
 				}
 				env = source.getBounds();
 				if (crs != null) {
@@ -184,7 +183,7 @@ public class GamaDBConnection {
 					attributes.put(desc.getName().getLocalPart(), type);
 				}
 			} catch (final Exception e) {
-				System.out.println("Error in reading metadata of " + tableName);
+				DEBUG.ERR("Error in reading metadata of " + tableName);
 
 			} finally {
 				this.width = env.getWidth();

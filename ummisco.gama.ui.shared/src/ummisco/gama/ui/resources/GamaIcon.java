@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import utils.DEBUG;
 
 public class GamaIcon {
 
@@ -70,8 +71,7 @@ public class GamaIcon {
 			}
 
 			if (descriptor == null) {
-				System.out.println(
-						"ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png in plugin: " + plugin);
+				DEBUG.ERR("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png in plugin: " + plugin);
 				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
 		}
