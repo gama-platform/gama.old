@@ -28,13 +28,11 @@ import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
-import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
-import msi.gaml.statements.SaveStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -69,7 +67,6 @@ public class GamaBundleLoader {
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
 	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
-	public static String SAVE_EXTENSION = "gama.save";	
 	public static String EVENT_LAYER_EXTENSION = "gama.event_layer";
 	public static String MODELS_EXTENSION = "gama.models";
 	public static String REGULAR_MODELS_LAYOUT = "models";
@@ -165,25 +162,6 @@ public class GamaBundleLoader {
 
 			}
 		}
-
-		// We gather all the extensions to the `file` and add them
-		// as delegates to SaveStatement and Decoration. If an exception occurs, we discard it
-		for (final IConfigurationElement e : registry.getConfigurationElementsFor(SAVE_EXTENSION)) {
-			ISaveDelegate sd = null;
-			try {
-				// TODO Add the defining plug-in
-				sd = (ISaveDelegate) e.createExecutableExtension("class");
-				if (sd != null) {
-					SaveStatement.addDelegate(sd);
-				}
-			} catch (final Exception e1) {
-				System.err.println(ERROR_MESSAGE);
-				System.err.println("Error in loading SaveStatement delegate : " + e1.getMessage());
-				System.exit(0);
-				return;
-
-			}
-		}	
 		
 		// We gather all the extensions to the `create` statement and add them
 		// as delegates to EventLayerStatement
