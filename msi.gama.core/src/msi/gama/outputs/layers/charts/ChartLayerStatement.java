@@ -38,6 +38,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -371,23 +372,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		// shouldn't have to do that but I don't know how to get the "chart
 		// statement" inside the "data statement" declaration otherwise...
 
-		// We create the variable in which the datas will be accumulated
-		@Override
-		public void enterScope(final IScope scope) {
-			super.enterScope(scope);
-
-			scope.addVarWithValue(ChartLayerStatement.CHARTDATASET, chartdataset);
-
-		}
-
-		// We save the datas once the computation is finished
-		@Override
-		public void leaveScope(final IScope scope) {
-			chartdataset = (ChartDataSet) scope.getVarValue(ChartLayerStatement.CHARTDATASET);
-
-			super.leaveScope(scope);
-		}
-
 	}
 
 	static final int SERIES_CHART = 0;
@@ -405,8 +389,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	static String xAxisName = "'time'";
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
-	ChartDataStatement timeSeriesXData = null;
-	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(null);
+	// ChartDataStatement timeSeriesXData = null;
+	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(getDescription());
 
 	public ChartOutput getOutput() {
 		return chartoutput;
@@ -510,9 +494,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			chartdataset.setYLabels(scope, expval);
 			chartoutput.setUseYLabels(scope, expval);
 		}
-
-		scope.execute(dataDeclaration);
-
+		scope.addVarWithValue(ChartLayerStatement.CHARTDATASET, chartdataset);
+		for (final IStatement s : dataDeclaration.getCommands()) {
+			scope.execute(s);
+		}
+		chartdataset = (ChartDataSet) scope.getVarValue(ChartLayerStatement.CHARTDATASET);
 		chartoutput.initChart_post_data_init(scope);
 		chartoutput.updateOutput(scope);
 
