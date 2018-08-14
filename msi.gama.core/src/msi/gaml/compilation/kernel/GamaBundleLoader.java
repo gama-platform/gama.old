@@ -162,7 +162,7 @@ public class GamaBundleLoader {
 
 			}
 		}
-
+		
 		// We gather all the extensions to the `create` statement and add them
 		// as delegates to EventLayerStatement
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {

@@ -25,6 +25,5 @@
             description="Create simulation from saved simulation">
       </implementation>
    </extension>   
-
 </plugin>
 
