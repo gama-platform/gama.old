@@ -22,20 +22,20 @@ import msi.gama.util.GamaFont;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.scene.StringObject;
 
 public class AxesLayerObject extends StaticLayerObject.World {
 
-	private final static String[] LABELS = new String[] { "X", "Y", "Z" };
-	private final static GamaColor[] COLORS = new GamaColor[] { GamaColor.getNamed("gamared"),
+	protected final static String[] LABELS = new String[] { "X", "Y", "Z" };
+	protected final static GamaColor[] COLORS = new GamaColor[] { GamaColor.getNamed("gamared"),
 			GamaColor.getNamed("gamaorange"), GamaColor.getNamed("gamablue") };
-	private final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
-	private final static GamaPoint origin = new GamaPoint(0, 0, 0);
+	protected final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
+	protected final static GamaPoint origin = new GamaPoint(0, 0, 0);
 
-	public AxesLayerObject(final JOGLRenderer renderer) {
+	public AxesLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 		// Addition to fix #2227
 		scale.setLocation(DEFAULT_SCALE);
@@ -57,7 +57,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	}
 
 	@Override
-	void fillWithObjects(final List<AbstractObject> list) {
+	public void fillWithObjects(final List<AbstractObject> list) {
 		final double max = renderer.getMaxEnvDim();
 		// if (renderer.useShader()) {
 		// for (int i = 0; i < 3; i++) {

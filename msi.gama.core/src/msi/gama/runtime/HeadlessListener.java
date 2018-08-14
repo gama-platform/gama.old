@@ -147,7 +147,7 @@ public class HeadlessListener implements IGui {
 	@SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
+	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... objects) {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get("image");

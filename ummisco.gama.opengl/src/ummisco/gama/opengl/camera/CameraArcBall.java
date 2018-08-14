@@ -20,14 +20,14 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class CameraArcBall extends AbstractCamera {
 
 	private double distance;
 
-	public CameraArcBall(final JOGLRenderer renderer) {
+	public CameraArcBall(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
@@ -105,7 +105,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	protected void resetPivot() {
-		final LayeredDisplayData data = getRenderer().data;
+		final LayeredDisplayData data = getRenderer().getData();
 		final double envWidth = data.getEnvWidth();
 		final double envHeight = data.getEnvHeight();
 		final double translate_x = target.x - envWidth / 2d;
@@ -190,7 +190,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void initialize() {
-		final LayeredDisplayData data = getRenderer().data;
+		final LayeredDisplayData data = getRenderer().getData();
 		flipped = false;
 		initialized = false;
 		if (initialPosition == null) {
@@ -354,7 +354,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double step =
 				getDistance() != 0d ? getDistance() / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
 		setDistance(getDistance() + (in ? -step : step));
-		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
+		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -364,7 +364,7 @@ public class CameraArcBall extends AbstractCamera {
 		setDistance(1.5 * (width > height ? width : height));
 		// y is already negated
 		setTarget(env.centre());
-		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
+		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override
@@ -378,7 +378,7 @@ public class CameraArcBall extends AbstractCamera {
 		}
 		// y is NOT negated in IShapes
 		setTarget(p.getCentroid().yNegated());
-		getRenderer().data.setZoomLevel(zoomLevel(), true, false);
+		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 
 	@Override

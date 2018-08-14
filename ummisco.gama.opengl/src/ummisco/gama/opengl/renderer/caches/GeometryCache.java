@@ -31,7 +31,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.files.GamaObjFile;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.ResourceObject;
 
 public class GeometryCache {
@@ -86,7 +86,7 @@ public class GeometryCache {
 	private final IScope scope;
 	private final Consumer<Geometry> drawer;
 
-	public GeometryCache(final JOGLRenderer renderer) {
+	public GeometryCache(final IOpenGLRenderer renderer) {
 		this.scope = renderer.getSurface().getScope().copy("in opengl geometry cache");
 		this.drawer = g -> renderer.getOpenGLHelper().getGeometryDrawer().drawGeometry(g, true, null, 0, getTypeOf(g));
 		envelopes = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();

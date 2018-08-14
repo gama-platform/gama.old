@@ -65,6 +65,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -83,7 +84,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	GLAnimatorControl animator;
-	JOGLRenderer renderer;
+	IOpenGLRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	Set<IEventLayerListener> listeners = new HashSet<>();
@@ -96,31 +97,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	volatile boolean disposed;
 	private volatile boolean alreadyUpdating;
 
-	// NEVER USED
 	public SWTOpenGLDisplaySurface(final Object... objects) {
-		parent = null;
-		layerManager = null;
-		output = null;
-		animator = null;
-		renderer = null;
-	}
-
-	/**
-	 * @param parent
-	 * @param style
-	 */
-	public SWTOpenGLDisplaySurface(final Composite parent, final LayeredDisplayOutput output) {
-		this.output = output;
-		this.parent = parent;
+		output = (LayeredDisplayOutput) objects[0];
+		parent = (Composite) objects[1];
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in opengl display"));
-		// if (getOutput().getData().useShader()) {
-		// renderer = new ModernRenderer();
-		//
-		// } else {
-		renderer = new JOGLRenderer();
-		// }
+		renderer = createRenderer();
 		renderer.setDisplaySurface(this);
 		animator = createAnimator();
 
@@ -128,6 +111,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		temp_focus = output.getFacet(IKeyword.FOCUS);
 
 		animator.start();
+	}
+
+	protected IOpenGLRenderer createRenderer() {
+		final IOpenGLRenderer r = new JOGLRenderer();
+		return r;
 	}
 
 	private GLAnimatorControl createAnimator() {
@@ -259,7 +247,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
-		if (renderer.data.cameraInteractionDisabled()) { return; }
+		if (renderer.getData().cameraInteractionDisabled()) { return; }
 		renderer.getCameraHelper().zoom(true);
 	}
 
@@ -270,7 +258,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
-		if (renderer.data.cameraInteractionDisabled()) { return; }
+		if (renderer.getData().cameraInteractionDisabled()) { return; }
 		renderer.getCameraHelper().zoom(false);
 	}
 
@@ -281,7 +269,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomFit() {
-		// if (renderer.data.cameraInteractionDisabled())
+		// if (renderer.getData().cameraInteractionDisabled())
 		// return;
 		renderer.getCameraHelper().initialize();
 		output.getData().resetZRotation();

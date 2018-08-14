@@ -45,7 +45,7 @@ public interface IGui {
 	public static final int NEUTRAL = 3;
 	public static final int USER = 4;
 
-	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap<>();
+	public static final Map<String, DisplayDescription> DISPLAYS = new THashMap<>();
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
@@ -97,7 +97,7 @@ public interface IGui {
 
 	boolean openSimulationPerspective(IModel model, String experimentId, boolean immediately);
 
-	IDisplaySurface getDisplaySurfaceFor(LayeredDisplayOutput layerDisplayOutput);
+	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, Map<String, Object> initialValues,
 			Map<String, IType<?>> types);

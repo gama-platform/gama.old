@@ -4,13 +4,13 @@ import java.awt.Point;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
 public class ROIHelper extends AbstractRendererHelper {
 
 	protected Envelope3D ROIEnvelope = null;
 
-	public ROIHelper(final JOGLRenderer renderer) {
+	public ROIHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 

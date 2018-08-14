@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
+import msi.gama.runtime.GAMA;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.views.displays.SWTDisplayView;
 
@@ -35,7 +36,8 @@ public class OpenGLDisplayView extends SWTDisplayView {
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-		final SWTOpenGLDisplaySurface surface = new SWTOpenGLDisplaySurface(parent, getOutput());
+		final SWTOpenGLDisplaySurface surface =
+				(SWTOpenGLDisplaySurface) GAMA.getGui().getDisplaySurfaceFor(getOutput(), parent);
 		surfaceComposite = surface.renderer.getCanvas();
 		surface.outputReloaded();
 		return surfaceComposite;

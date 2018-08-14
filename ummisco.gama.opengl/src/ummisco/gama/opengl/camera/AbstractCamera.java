@@ -21,13 +21,13 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public abstract class AbstractCamera implements ICamera {
 
-	protected final JOGLRenderer renderer;
+	protected final IOpenGLRenderer renderer;
 	private final GLU glu;
 	protected static final GamaPoint UNDEFINED = new GamaPoint();
 	protected boolean initialized;
@@ -67,7 +67,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean keystoneMode = false;
 	protected double zCorrector = 1d;
 
-	public AbstractCamera(final JOGLRenderer renderer2) {
+	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
 		setMousePosition(new Point(0, 0));
 		setUpVector(0.0, 1.0, 0.0);
@@ -93,28 +93,28 @@ public abstract class AbstractCamera implements ICamera {
 			flipped = false;
 			initialized = false;
 			update();
-			getRenderer().data.setZoomLevel(1d, true, true);
+			getRenderer().getData().setZoomLevel(1d, true, true);
 		}
 	}
 
 	@Override
 	public void updatePosition() {
-		position.setLocation(renderer.data.getCameraPos());
+		position.setLocation(renderer.getData().getCameraPos());
 	}
 
 	@Override
 	public void updateTarget() {
-		target.setLocation(renderer.data.getCameraLookPos());
+		target.setLocation(renderer.getData().getCameraLookPos());
 	}
 
 	@Override
 	public void updateOrientation() {
-		upVector.setLocation(renderer.data.getCameraUpVector());
+		upVector.setLocation(renderer.getData().getCameraUpVector());
 	}
 
 	@Override
 	public void update() {
-		final LayeredDisplayData data = renderer.data;
+		final LayeredDisplayData data = renderer.getData();
 		cameraInteraction = !data.cameraInteractionDisabled();
 		updateSphericalCoordinatesFromLocations();
 		if (initialized) {
@@ -136,18 +136,18 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public void setPosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
-		getRenderer().data.setCameraPos((GamaPoint) position.clone());
+		getRenderer().getData().setCameraPos((GamaPoint) position.clone());
 	}
 
 	public void setTarget(final double xLPos, final double yLPos, final double zLPos) {
 		target.setLocation(xLPos, yLPos, zLPos);
-		getRenderer().data.setCameraLookPos((GamaPoint) target.clone());
+		getRenderer().getData().setCameraLookPos((GamaPoint) target.clone());
 	}
 
 	@Override
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
-		getRenderer().data.setCameraUpVector((GamaPoint) upVector.clone(), true);
+		getRenderer().getData().setCameraUpVector((GamaPoint) upVector.clone(), true);
 	}
 
 	/* -------Get commands--------- */
@@ -296,10 +296,10 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected GamaPoint getNormalizedCoordinates(final int x, final int y) {
 		final double xCoordNormalized = x / getRenderer().getWidth();
-		final double yCoordNormalized = 1 - y / getRenderer().getHeight();
-		// if (!renderer.useShader()) {
-		// yCoordNormalized = 1 - yCoordNormalized;
-		// }
+		double yCoordNormalized = y / getRenderer().getHeight();
+		if (!renderer.useShader()) {
+			yCoordNormalized = 1 - yCoordNormalized;
+		}
 		return new GamaPoint(xCoordNormalized, yCoordNormalized);
 	}
 
@@ -462,7 +462,7 @@ public abstract class AbstractCamera implements ICamera {
 		return strafeRight;
 	}
 
-	public JOGLRenderer getRenderer() {
+	public IOpenGLRenderer getRenderer() {
 		return renderer;
 	}
 
@@ -621,7 +621,7 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	public double getInitialZFactor() {
-		if (renderer.data.isDrawEnv()) { return 1.46 / zCorrector; }
+		if (renderer.getData().isDrawEnv()) { return 1.46 / zCorrector; }
 		return 1.2 / zCorrector;
 	}
 

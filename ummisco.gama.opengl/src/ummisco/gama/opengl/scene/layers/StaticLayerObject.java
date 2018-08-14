@@ -12,14 +12,14 @@ package ummisco.gama.opengl.scene.layers;
 import java.util.List;
 
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 
 public class StaticLayerObject extends LayerObject {
 
-	static abstract class World extends StaticLayerObject {
+	public static abstract class World extends StaticLayerObject {
 
-		public World(final JOGLRenderer renderer) {
+		public World(final IOpenGLRenderer renderer) {
 			super(renderer);
 		}
 
@@ -49,10 +49,10 @@ public class StaticLayerObject extends LayerObject {
 			return false;
 		}
 
-		abstract void fillWithObjects(List<AbstractObject> currentList);
+		public abstract void fillWithObjects(List<AbstractObject> currentList);
 	}
 
-	public StaticLayerObject(final JOGLRenderer renderer) {
+	public StaticLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer, null);
 	}
 

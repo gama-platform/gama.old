@@ -50,7 +50,8 @@ public class GeometryObject extends AbstractObject {
 		attributes.withLighting(false);
 	}
 
-	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final double lineWidth) {
+	public GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type,
+			final double lineWidth) {
 		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, (IAgent) null, color, color, lineWidth));
 	}
 

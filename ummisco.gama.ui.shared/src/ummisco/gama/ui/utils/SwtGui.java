@@ -29,7 +29,6 @@ import org.eclipse.ui.services.ISourceProviderService;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IConsoleDisplayer;
-import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
@@ -267,16 +266,16 @@ public class SwtGui implements IGui {
 
 	@Override
 	public DisplayDescription getDisplayDescriptionFor(final String name) {
-		return (DisplayDescription) DISPLAYS.get(name);
+		return DISPLAYS.get(name);
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
+	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args) {
 		IDisplaySurface surface = null;
 		final String keyword = output.getData().getDisplayType();
-		final IDisplayCreator creator = DISPLAYS.get(keyword);
+		final DisplayDescription creator = DISPLAYS.get(keyword);
 		if (creator != null) {
-			surface = creator.create(output);
+			surface = creator.create(output, args);
 			surface.outputReloaded();
 		} else {
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());

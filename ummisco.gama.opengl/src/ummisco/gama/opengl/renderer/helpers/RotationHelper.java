@@ -1,7 +1,7 @@
 package ummisco.gama.opengl.renderer.helpers;
 
 import msi.gama.common.preferences.GamaPreferences;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
 public class RotationHelper extends AbstractRendererHelper {
 
@@ -13,7 +13,7 @@ public class RotationHelper extends AbstractRendererHelper {
 
 	protected boolean drawRotationHelper = false;
 
-	public RotationHelper(final JOGLRenderer renderer) {
+	public RotationHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 

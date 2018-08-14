@@ -31,7 +31,7 @@ import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldObject;
 import ummisco.gama.opengl.scene.GeometryObject;
@@ -56,24 +56,24 @@ public class LayerObject {
 
 	GamaPoint offset = new GamaPoint(NULL_OFFSET);
 	GamaPoint scale = new GamaPoint(NULL_SCALE);
-	Double alpha = 1d;
+	protected Double alpha = 1d;
 	public final ILayer layer;
 	volatile boolean isInvalid;
-	final boolean overlay;
+	protected final boolean overlay;
 	volatile boolean locked;
 	boolean isAnimated;
-	protected final JOGLRenderer renderer;
+	protected final IOpenGLRenderer renderer;
 	protected final LinkedList<List<AbstractObject>> traces;
-	List<AbstractObject> currentList;
-	Integer openGLListIndex;
-	boolean isFading;
+	protected List<AbstractObject> currentList;
+	protected Integer openGLListIndex;
+	protected boolean isFading;
 
-	public LayerObject(final JOGLRenderer renderer2, final ILayer layer) {
+	public LayerObject(final IOpenGLRenderer renderer2, final ILayer layer) {
 		this.renderer = renderer2;
 		this.layer = layer;
 		this.overlay = computeOverlay();
 		currentList = newCurrentList();
-		if (layer != null && layer.getTrace() != null /* || renderer2 instanceof ModernRenderer */) {
+		if (layer != null && layer.getTrace() != null || renderer.useShader()) {
 			traces = new LinkedList();
 			traces.add(currentList);
 		} else {
@@ -89,7 +89,7 @@ public class LayerObject {
 		return true;
 	}
 
-	private List newCurrentList() {
+	protected List newCurrentList() {
 		return /* Collections.synchronizedList( */new ArrayList()/* ) */;
 	}
 
@@ -293,13 +293,13 @@ public class LayerObject {
 		return geom;
 	}
 
-	private int getTrace() {
+	protected int getTrace() {
 		if (layer == null) { return 0; }
 		final Integer trace = layer.getTrace();
 		return trace == null ? 0 : trace;
 	}
 
-	private boolean getFading() {
+	protected boolean getFading() {
 		if (layer == null) { return false; }
 		final Boolean fading = layer.getFading();
 		return fading == null ? false : fading;

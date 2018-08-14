@@ -20,7 +20,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.ModelScene;
 
 /**
@@ -41,7 +41,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	volatile ModelScene frontScene;
 	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<>();
 
-	public SceneHelper(final JOGLRenderer renderer) {
+	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
@@ -158,7 +158,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * 
 	 * @return a new scene
 	 */
-	private ModelScene createSceneFrom(final ModelScene existing) {
+	protected ModelScene createSceneFrom(final ModelScene existing) {
 		ModelScene newScene;
 		if (existing == null) {
 			newScene = new ModelScene(getRenderer(), true);

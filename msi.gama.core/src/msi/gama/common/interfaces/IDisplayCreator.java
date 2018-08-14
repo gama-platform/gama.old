@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.precompiler.GamlProperties;
 
@@ -35,6 +36,15 @@ public interface IDisplayCreator {
 		public IDisplaySurface create(final Object... args) {
 			if (original != null) { return original.create(args); }
 			return new NullDisplaySurface();
+		}
+
+		public IDisplaySurface create(final IDisplayOutput output, final Object... args) {
+			final Object[] params = new Object[args.length + 1];
+			params[0] = output;
+			for (int i = 0; i < args.length; i++) {
+				params[i + 1] = args[i];
+			}
+			return create(params);
 		}
 
 		/**
@@ -72,7 +82,7 @@ public interface IDisplayCreator {
 		 */
 		@Override
 		public String getTitle() {
-			return "Display supported by " + getName() + " technology";
+			return "Display supported by " + getName() + "";
 		}
 
 		/**

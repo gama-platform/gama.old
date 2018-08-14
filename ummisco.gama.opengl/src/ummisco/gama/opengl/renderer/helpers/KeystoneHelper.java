@@ -16,7 +16,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.util.GamaColor.NamedGamaColor;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.shaders.AbstractPostprocessingShader;
 import ummisco.gama.opengl.renderer.shaders.AbstractShader;
 import ummisco.gama.opengl.renderer.shaders.FrameBufferObject;
@@ -37,7 +37,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(new int[] { 0, 1, 2, 0, 2, 3 });
 
-	public KeystoneHelper(final JOGLRenderer r) {
+	public KeystoneHelper(final IOpenGLRenderer r) {
 		super(r);
 	}
 

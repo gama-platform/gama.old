@@ -16,13 +16,13 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
 
 public class LightsLayerObject extends LayerObject {
 
-	public LightsLayerObject(final JOGLRenderer renderer) {
+	public LightsLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
 	}
@@ -43,7 +43,7 @@ public class LightsLayerObject extends LayerObject {
 
 	public void updateObjectList() {
 		traces.clear();
-		for (final LightPropertiesStructure light : renderer.data.getDiffuseLights()) {
+		for (final LightPropertiesStructure light : renderer.getData().getDiffuseLights()) {
 			if (light.drawLight && light.id != 0) {
 
 				final double size = renderer.getMaxEnvDim() / 20;

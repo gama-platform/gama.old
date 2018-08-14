@@ -70,7 +70,7 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
 import ummisco.gama.opengl.renderer.caches.TextRenderersCache;
@@ -92,6 +92,10 @@ import ummisco.gama.opengl.scene.StringDrawer;
  *
  */
 public class OpenGL {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;
 
@@ -161,7 +165,7 @@ public class OpenGL {
 	// Will be changed when loading the renderer
 	private Boolean isNonPowerOf2TexturesAvailable;
 
-	public OpenGL(final JOGLRenderer renderer) {
+	public OpenGL(final IOpenGLRenderer renderer) {
 		glut = new GLUT();
 		glu = new GLU();
 		worldX = renderer.getEnvWidth();
@@ -201,7 +205,7 @@ public class OpenGL {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, adapter);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, adapter);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-		data = renderer.data;
+		data = renderer.getData();
 		cameraLook = () -> renderer.getCameraHelper().animate();
 		geometryDrawer = new GeometryDrawer(this);
 		fieldDrawer = new FieldDrawer(this);

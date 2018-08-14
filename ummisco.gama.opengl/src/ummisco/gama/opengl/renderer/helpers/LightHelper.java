@@ -24,11 +24,11 @@ import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
 public class LightHelper extends AbstractRendererHelper {
 
-	public LightHelper(final JOGLRenderer renderer) {
+	public LightHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
@@ -61,11 +61,11 @@ public class LightHelper extends AbstractRendererHelper {
 			// directional light
 			data.setLightType(1, "direction");
 			data.setLightDirection(1, new GamaPoint(0.5, 0.5, -1, 0));
-			// if (renderer.useShader()) {
-			// data.setDiffuseLightColor(1, new GamaColor(255, 255, 255, 255));
-			// } else {
-			data.setDiffuseLightColor(1, new GamaColor(127, 127, 127, 255));
-			// }
+			if (getRenderer().useShader()) {
+				data.setDiffuseLightColor(1, new GamaColor(255, 255, 255, 255));
+			} else {
+				data.setDiffuseLightColor(1, new GamaColor(127, 127, 127, 255));
+			}
 		}
 
 		// set material properties which will be assigned by glColor

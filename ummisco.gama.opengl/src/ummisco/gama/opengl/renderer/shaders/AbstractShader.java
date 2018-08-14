@@ -44,9 +44,21 @@ public abstract class AbstractShader {
 
 	protected AbstractShader(final GL2 gl, final String vertexFile, final String fragmentFile) {
 		this.gl = gl;
+		InputStream vertexInputStream, fragmentInputStream;
 
-		final InputStream vertexInputStream = this.getClass().getResourceAsStream(vertexFile);
-		final InputStream fragmentInputStream = this.getClass().getResourceAsStream(fragmentFile);
+		try {
+			vertexInputStream = getClass().getResourceAsStream(vertexFile);
+			if (vertexInputStream == null) { throw new RuntimeException(
+					"Cannot locate vertex shader program " + vertexFile); }
+			fragmentInputStream = getClass().getResourceAsStream(fragmentFile);
+			if (fragmentInputStream == null) { throw new RuntimeException(
+					"Cannot locate vertex shader program " + vertexFile); }
+		} catch (final Exception e) {
+			DEBUG.ERR(e.getMessage());
+			vertexShaderID = -1;
+			fragmentShaderID = -1;
+			return;
+		}
 
 		vertexShaderID = loadShader(vertexInputStream, GL2.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(fragmentInputStream, GL2.GL_FRAGMENT_SHADER);

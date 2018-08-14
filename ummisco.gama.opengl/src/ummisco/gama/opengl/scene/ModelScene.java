@@ -26,7 +26,7 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.layers.AxesLayerObject;
 import ummisco.gama.opengl.scene.layers.FrameLayerObject;
 import ummisco.gama.opengl.scene.layers.LayerObject;
@@ -50,7 +50,7 @@ public class ModelScene {
 	public static final String FPS_KEY = "z__fps__0";
 	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
 	protected LayerObject currentLayer;
-	protected final JOGLRenderer renderer;
+	protected final IOpenGLRenderer renderer;
 	private volatile boolean rendered = false;
 	private volatile int objectNumber;
 	private double zIncrement;
@@ -60,7 +60,7 @@ public class ModelScene {
 		public abstract void process(AbstractObject object);
 	}
 
-	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {
+	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
 		if (withWorld) {
 			initWorld();
@@ -68,7 +68,7 @@ public class ModelScene {
 	}
 
 	protected void initWorld() {
-		if (renderer.data.isDrawEnv()) {
+		if (renderer.getData().isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
 		}
@@ -194,13 +194,17 @@ public class ModelScene {
 		final String key = layer.getName() + id;
 		currentLayer = layers.get(key);
 		if (currentLayer == null) {
-			currentLayer = new LayerObject(renderer, layer);
+			currentLayer = createRegularLayer(renderer, layer);
 			layers.put(key, currentLayer);
 		}
 		currentLayer.setOffset(offset);
 		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
 		currentLayerTrace = currentLayer.numberOfTraces();
+	}
+
+	protected LayerObject createRegularLayer(final IOpenGLRenderer renderer, final ILayer layer) {
+		return new LayerObject(renderer, layer);
 	}
 
 	/**

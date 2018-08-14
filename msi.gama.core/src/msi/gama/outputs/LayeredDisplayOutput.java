@@ -469,10 +469,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			return;
 		}
 		if (scope.getExperiment().isHeadless()) {
-			// if (GAMA.isInHeadLessMode())
+			// If in headless mode, we need to get the 'image' surface
 			data.setDisplayType(IKeyword.IMAGE);
 		} else if (data.isOpenGL()) {
-			// If in headless mode, we need to get the 'image' surface
+			// The surface will be crezated later
 			return;
 		}
 		surface = scope.getGui().getDisplaySurfaceFor(this);

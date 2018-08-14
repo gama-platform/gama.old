@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -58,16 +57,16 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventListener {
+public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRenderer {
 
 	// Helpers
-	private final KeystoneHelper keystoneHelper = new KeystoneHelper(this);
+	private final KeystoneHelper keystoneHelper = createKeystoneHelper();
 	private final PickingHelper pickingHelper = new PickingHelper(this);
 	private final LightHelper lightHelper = new LightHelper(this);
 	private final CameraHelper cameraHelper = new CameraHelper(this);
 	private final ROIHelper roiHelper = new ROIHelper(this);
 	private final RotationHelper rotationHelper = new RotationHelper(this);
-	private final SceneHelper sceneHelper = new SceneHelper(this);
+	private final SceneHelper sceneHelper = createSceneHelper();
 
 	// OpenGL back-end
 	protected OpenGL openGL;
@@ -85,6 +84,20 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventList
 		openGL = new OpenGL(this);
 	}
 
+	protected SceneHelper createSceneHelper() {
+		return new SceneHelper(this);
+	}
+
+	protected KeystoneHelper createKeystoneHelper() {
+		return new KeystoneHelper(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#setCanvas(com.jogamp.opengl.swt.GLCanvas)
+	 */
+	@Override
 	public void setCanvas(final GLCanvas canvas) {
 		this.canvas = canvas;
 		canvas.addGLEventListener(this);
@@ -118,10 +131,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventList
 	}
 
 	@Override
-	public final SWTOpenGLDisplaySurface getSurface() {
+	public SWTOpenGLDisplaySurface getSurface() {
 		return (SWTOpenGLDisplaySurface) surface;
 	}
 
+	@Override
 	public final GLCanvas getCanvas() {
 		return canvas;
 	}
@@ -129,6 +143,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventList
 	// This method is normally called either when the graphics is created or
 	// when the output is changed
 	// @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#initScene()
+	 */
+	@Override
 	public void initScene() {
 		final ModelScene scene = sceneHelper.getSceneToRender();
 		if (scene != null) {
@@ -404,28 +424,64 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventList
 		return openGL.getRatios().y;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getWidth()
+	 */
+	@Override
 	public final double getWidth() {
 		return canvas.getSurfaceWidth() * surface.getZoomLevel();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getHeight()
+	 */
+	@Override
 	public final double getHeight() {
 		return canvas.getSurfaceHeight() * surface.getZoomLevel();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getMaxEnvDim()
+	 */
+	@Override
 	public double getMaxEnvDim() {
 		final double env_width = data.getEnvWidth();
 		final double env_height = data.getEnvHeight();
 		return env_width > env_height ? env_width : env_height;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getEnvWidth()
+	 */
+	@Override
 	public double getEnvWidth() {
 		return data.getEnvWidth();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getEnvHeight()
+	 */
+	@Override
 	public double getEnvHeight() {
 		return data.getEnvHeight();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getRealWorldPointFromWindowPoint(java.awt.Point)
+	 */
+	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point mouse) {
 		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y), cameraHelper.getPosition());
 	}
@@ -440,40 +496,83 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements GLEventList
 		return (int) Math.round(getHeight());
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * HELPERS ACCESS
-	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getCameraHelper()
 	 */
 
+	@Override
 	public CameraHelper getCameraHelper() {
 		return cameraHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getKeystoneHelper()
+	 */
+	@Override
 	public KeystoneHelper getKeystoneHelper() {
 		return keystoneHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getPickingHelper()
+	 */
+	@Override
 	public PickingHelper getPickingHelper() {
 		return pickingHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getOpenGLHelper()
+	 */
+	@Override
 	public OpenGL getOpenGLHelper() {
 		return openGL;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getLightHelper()
+	 */
+	@Override
 	public LightHelper getLightHelper() {
 		return lightHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getROIHelper()
+	 */
+	@Override
 	public ROIHelper getROIHelper() {
 		return roiHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getRotationHelper()
+	 */
+	@Override
 	public RotationHelper getRotationHelper() {
 		return rotationHelper;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getSceneHelper()
+	 */
+	@Override
 	public SceneHelper getSceneHelper() {
 		return sceneHelper;
 	}

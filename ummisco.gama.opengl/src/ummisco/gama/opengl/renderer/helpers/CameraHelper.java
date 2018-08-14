@@ -15,7 +15,7 @@ import msi.gama.metamodel.shape.IShape;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class CameraHelper extends AbstractRendererHelper implements ICamera {
@@ -60,7 +60,7 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 
 	}
 
-	public CameraHelper(final JOGLRenderer renderer) {
+	public CameraHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 

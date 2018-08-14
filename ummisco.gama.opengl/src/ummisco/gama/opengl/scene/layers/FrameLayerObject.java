@@ -17,20 +17,20 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
 
 public class FrameLayerObject extends StaticLayerObject.World {
 
-	public FrameLayerObject(final JOGLRenderer renderer) {
+	public FrameLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
 	@Override
-	void fillWithObjects(final List<AbstractObject> list) {
-		final double w = renderer.data.getEnvWidth();
-		final double h = renderer.data.getEnvHeight();
+	public void fillWithObjects(final List<AbstractObject> list) {
+		final double w = renderer.getData().getEnvWidth();
+		final double h = renderer.getData().getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
 		final ShapeDrawingAttributes drawingAttr = (ShapeDrawingAttributes) new ShapeDrawingAttributes(g, (IAgent) null,
 				null, new GamaColor(150, 150, 150, 255)).withLighting(false);

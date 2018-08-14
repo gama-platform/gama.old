@@ -9,13 +9,13 @@ import com.jogamp.opengl.glu.GLU;
 
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
-import ummisco.gama.opengl.renderer.JOGLRenderer;
+import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
 public class PickingHelper extends AbstractRendererHelper {
 
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 
-	public PickingHelper(final JOGLRenderer r) {
+	public PickingHelper(final IOpenGLRenderer r) {
 		super(r);
 	}
 
