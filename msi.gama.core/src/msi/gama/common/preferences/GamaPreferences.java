@@ -303,6 +303,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_WARNINGS =
 				create("pref_errors_warnings_errors", "Treat warnings as errors", false, IType.BOOL, true).in(NAME,
 						ERRORS);
+		public static final Pref<Boolean> CORE_ERRORS_EDITOR_LINK = create("pref_errors_in_editor",
+				"Automatically open an editor and point at the faulty part of the model if an error or a warning is thrown",
+				true, IType.BOOL, true).in(NAME, ERRORS);
 
 	}
 
