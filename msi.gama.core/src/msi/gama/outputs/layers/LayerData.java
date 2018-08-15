@@ -127,8 +127,11 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public ILocation getPosition() {
-		if (addedElevation > 0) { return position.get().toGamaPoint().plus(0, 0, addedElevation); }
 		return position.get();
+		// if (addedElevation > 0) {
+		// return position.get().toGamaPoint().plus(0, 0, addedElevation);
+		// }
+		// return position.get();
 	}
 
 	@Override
@@ -257,6 +260,11 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	@Override
 	public Envelope getVisibleRegion() {
 		return visibleRegion;
+	}
+
+	@Override
+	public double getAddedElevation() {
+		return addedElevation;
 	}
 
 }

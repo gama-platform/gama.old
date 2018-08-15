@@ -34,6 +34,20 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
  */
 public interface IGraphics {
 
+	public static interface ThreeD extends IGraphics {
+
+		@Override
+		default boolean is2D() {
+			return false;
+		}
+
+		public abstract ILocation getCameraPos();
+
+		public abstract ILocation getCameraTarget();
+
+		public abstract ILocation getCameraOrientation();
+	}
+
 	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
@@ -91,19 +105,27 @@ public interface IGraphics {
 
 	public abstract Double getZoomLevel();
 
-	public abstract ILocation getCameraPos();
-
-	public abstract ILocation getCameraTarget();
-
-	public abstract ILocation getCameraOrientation();
-
-	public abstract boolean is2D();
+	default boolean is2D() {
+		return true;
+	}
 
 	public abstract int getViewWidth();
 
 	public abstract int getViewHeight();
 
 	public IDisplaySurface getSurface();
+
+	default double getMaxEnvDim() {
+		return getSurface().getData().getMaxEnvDim();
+	}
+
+	default double getEnvWidth() {
+		return getSurface().getData().getEnvWidth();
+	}
+
+	default double getEnvHeight() {
+		return getSurface().getData().getEnvHeight();
+	}
 
 	public void dispose();
 

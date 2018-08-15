@@ -24,8 +24,8 @@ public class CameraOrientationUnitExpression extends UnitConstantExpression {
 	@Override
 	public ILocation _value(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
-		if (g == null) { return GamaPoint.NULL_POINT; }
-		return g.getCameraOrientation();
+		if (g == null || g.is2D()) { return GamaPoint.NULL_POINT; }
+		return ((IGraphics.ThreeD) g).getCameraOrientation();
 		// return (double) g.getEnvironmentWidth();
 	}
 

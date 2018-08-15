@@ -73,4 +73,6 @@ public interface ILayerData {
 
 	Envelope getVisibleRegion();
 
+	public abstract double getAddedElevation();
+
 }

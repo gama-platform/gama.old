@@ -18,7 +18,7 @@ import ummisco.gama.opengl.renderer.helpers.RotationHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 
-public interface IOpenGLRenderer extends GLEventListener, IGraphics {
+public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 
 	void setCanvas(GLCanvas canvas);
 
@@ -29,12 +29,6 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics {
 	double getWidth();
 
 	double getHeight();
-
-	double getMaxEnvDim();
-
-	double getEnvWidth();
-
-	double getEnvHeight();
 
 	GamaPoint getRealWorldPointFromWindowPoint(final Point mouse);
 

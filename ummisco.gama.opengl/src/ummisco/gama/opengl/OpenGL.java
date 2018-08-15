@@ -94,7 +94,7 @@ import ummisco.gama.opengl.scene.StringDrawer;
 public class OpenGL {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;

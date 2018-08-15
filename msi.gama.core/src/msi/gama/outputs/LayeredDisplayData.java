@@ -527,6 +527,10 @@ public class LayeredDisplayData {
 		this.envHeight = envHeight;
 	}
 
+	public double getMaxEnvDim() {
+		return envWidth > envHeight ? envWidth : envHeight;
+	}
+
 	/**
 	 * @return
 	 */
@@ -612,7 +616,7 @@ public class LayeredDisplayData {
 
 	public Double getSplitDistance() {
 		if (splitDistance == null) {
-			splitDistance = getEnvHeight() / 20d;
+			splitDistance = 0.05;
 		}
 		return splitDistance;
 	}

@@ -141,9 +141,9 @@ public class LayerSideControls {
 		});
 		EditorFactory.create(scope, contents, "Split distance", data.getSplitDistance(), 0d, 1d, .001d, false, true,
 				(EditorListener<Double>) val -> {
-					ds.runAndUpdate(() -> {
-						data.setSplitDistance(val / 3);
-					});
+					// ds.run(() -> {
+					data.setSplitDistance(val / 3);
+					// });
 
 				});
 		createItem(viewer, "OpenGL", null, contents);
@@ -333,7 +333,7 @@ public class LayerSideControls {
 					Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
 					(EditorListener<Double>) newValue -> {
 						data.setZRotationAngle(newValue);
-						ds.updateDisplay(true);
+						// ds.updateDisplay(true);
 					});
 			EditorFactory.create(scope, contents, "Continuous rotation", data.isContinuousRotationOn(),
 					(EditorListener<Boolean>) val -> {

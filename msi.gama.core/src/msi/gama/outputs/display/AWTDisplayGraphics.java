@@ -52,7 +52,6 @@ import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
@@ -419,21 +418,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public boolean cannotDraw() {
 		return false;
-	}
-
-	@Override
-	public ILocation getCameraPos() {
-		return GamaPoint.NULL_POINT;
-	}
-
-	@Override
-	public ILocation getCameraTarget() {
-		return GamaPoint.NULL_POINT;
-	}
-
-	@Override
-	public ILocation getCameraOrientation() {
-		return GamaPoint.NULL_POINT;
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.scene.layers.LayerObject;
 
 /**
  * Class SceneHelper. Manages the interactions between the updating and the rendering tasks by keeping hold of three
@@ -48,9 +49,15 @@ public class SceneHelper extends AbstractRendererHelper {
 	@Override
 	public void initialize() {}
 
-	public void beginDrawingLayer(final ILayer layer, final Double currentLayerAlpha) {
-		GamaPoint currentOffset, currentScale;
-		currentOffset = new GamaPoint(0, 0);
+	public void layerOffsetChanged() {
+		if (getSceneToRender() == null) { return; }
+		for (final LayerObject layer : getSceneToRender().getLayers()) {
+			layer.setOffset(computeOffsetOf(layer.layer));
+		}
+	}
+
+	GamaPoint computeOffsetOf(final ILayer layer) {
+		GamaPoint currentOffset = new GamaPoint(0, 0);
 		final IScope scope = getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.POSITION);
 
@@ -72,12 +79,25 @@ public class SceneHelper extends AbstractRendererHelper {
 
 		}
 		if (!layer.isOverlay()) {
-			final double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+			double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+			currentZLayer += layer.getData().getAddedElevation() * getMaxEnvDim();
 			double zScale = layer.getExtent().getZ();
 			if (zScale <= 0) {
 				zScale = 1;
 			}
 			currentOffset = new GamaPoint(currentOffset.x, currentOffset.y, currentZLayer);
+		}
+		return currentOffset;
+	}
+
+	public void beginDrawingLayer(final ILayer layer, final Double currentLayerAlpha) {
+		GamaPoint currentScale;
+		final GamaPoint currentOffset = computeOffsetOf(layer);
+		if (!layer.isOverlay()) {
+			double zScale = layer.getExtent().getZ();
+			if (zScale <= 0) {
+				zScale = 1;
+			}
 			currentScale = new GamaPoint(getRenderer().getLayerWidth() / getRenderer().getWidth(),
 					getRenderer().getLayerHeight() / getRenderer().getHeight(), zScale);
 		} else {

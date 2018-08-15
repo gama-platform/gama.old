@@ -25,8 +25,8 @@ public class CameraTargetUnitExpression extends UnitConstantExpression {
 	public ILocation _value(final IScope scope) {
 		if (scope == null) { return GamaPoint.NULL_POINT; }
 		final IGraphics g = scope.getGraphics();
-		if (g == null) { return GamaPoint.NULL_POINT; }
-		return g.getCameraTarget();
+		if (g == null || g.is2D()) { return GamaPoint.NULL_POINT; }
+		return ((IGraphics.ThreeD) g).getCameraTarget();
 	}
 
 	@Override

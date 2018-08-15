@@ -120,16 +120,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL.setCurrentObjectAlpha(opacity);
 	}
 
-	/**
-	 * Method is2D()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#is2D()
-	 */
-	@Override
-	public final boolean is2D() {
-		return false;
-	}
-
 	@Override
 	public SWTOpenGLDisplaySurface getSurface() {
 		return (SWTOpenGLDisplaySurface) surface;
@@ -442,38 +432,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public final double getHeight() {
 		return canvas.getSurfaceHeight() * surface.getZoomLevel();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getMaxEnvDim()
-	 */
-	@Override
-	public double getMaxEnvDim() {
-		final double env_width = data.getEnvWidth();
-		final double env_height = data.getEnvHeight();
-		return env_width > env_height ? env_width : env_height;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getEnvWidth()
-	 */
-	@Override
-	public double getEnvWidth() {
-		return data.getEnvWidth();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getEnvHeight()
-	 */
-	@Override
-	public double getEnvHeight() {
-		return data.getEnvHeight();
 	}
 
 	/*

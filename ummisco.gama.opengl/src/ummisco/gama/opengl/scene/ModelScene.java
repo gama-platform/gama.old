@@ -10,6 +10,7 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.Map;
 
 import com.jogamp.opengl.GL2;
@@ -250,6 +251,10 @@ public class ModelScene {
 			worldLayer.setScale(null);
 		}
 
+	}
+
+	public Collection<LayerObject> getLayers() {
+		return layers.values();
 	}
 
 }

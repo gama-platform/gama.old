@@ -91,11 +91,11 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	default ILocation getExtent() {
 		return getData().getSize();
 	}
-
-	default void setElevation(final Double elevation) {
-		final ILocation original = getData().getPosition();
-		getData().setPosition(original.getX(), original.getY(), elevation);
-	}
+	//
+	// default void setElevation(final Double elevation) {
+	// final ILocation original = getData().getPosition();
+	// getData().setPosition(original.getX(), original.getY(), elevation);
+	// }
 
 	default Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final Envelope3D envelope = geometry.getEnvelope();

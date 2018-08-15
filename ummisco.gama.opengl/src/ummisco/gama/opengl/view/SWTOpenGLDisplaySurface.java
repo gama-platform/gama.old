@@ -65,6 +65,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
@@ -82,6 +83,10 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
  */
 @display ("opengl")
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	GLAnimatorControl animator;
 	IOpenGLRenderer renderer;
@@ -669,12 +674,17 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				break;
 			case SPLIT_LAYER:
 				final double gap = (Double) value;
+				if (DEBUG.IS_ON()) {
+					DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
+				}
 				double currentElevation = 0;
+
 				for (final ILayer layer : this.getManager().getItems()) {
 					layer.getData().addElevation(currentElevation);
 					currentElevation += gap;
 				}
-				updateDisplay(true);
+				renderer.getSceneHelper().layerOffsetChanged();
+
 				break;
 			case CAMERA_POS:
 				renderer.getCameraHelper().updatePosition();
