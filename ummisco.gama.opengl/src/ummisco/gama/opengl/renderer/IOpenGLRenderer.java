@@ -13,8 +13,6 @@ import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
 import ummisco.gama.opengl.renderer.helpers.LightHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
-import ummisco.gama.opengl.renderer.helpers.ROIHelper;
-import ummisco.gama.opengl.renderer.helpers.RotationHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 
@@ -44,10 +42,6 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 	OpenGL getOpenGLHelper();
 
 	LightHelper getLightHelper();
-
-	ROIHelper getROIHelper();
-
-	RotationHelper getRotationHelper();
 
 	SceneHelper getSceneHelper();
 

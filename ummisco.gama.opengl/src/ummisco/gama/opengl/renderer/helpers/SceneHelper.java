@@ -52,7 +52,9 @@ public class SceneHelper extends AbstractRendererHelper {
 	public void layerOffsetChanged() {
 		if (getSceneToRender() == null) { return; }
 		for (final LayerObject layer : getSceneToRender().getLayers()) {
-			layer.setOffset(computeOffsetOf(layer.layer));
+			if (layer.canSplit()) {
+				layer.setOffset(computeOffsetOf(layer.layer));
+			}
 		}
 	}
 

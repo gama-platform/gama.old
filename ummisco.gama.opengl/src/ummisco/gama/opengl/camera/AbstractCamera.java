@@ -59,7 +59,6 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean strafeRight;
 
 	private volatile boolean ROICurrentlyDrawn = false;
-	private volatile boolean isROISticky = false;
 
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
@@ -72,16 +71,6 @@ public abstract class AbstractCamera implements ICamera {
 		setMousePosition(new Point(0, 0));
 		setUpVector(0.0, 1.0, 0.0);
 		glu = new GLU();
-	}
-
-	@Override
-	public void toggleStickyROI() {
-		isROISticky = !isROISticky;
-	}
-
-	@Override
-	public boolean isROISticky() {
-		return isROISticky;
 	}
 
 	@Override
@@ -337,8 +326,8 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
-			if (renderer.getROIHelper().mouseInROI(lastMousePressedPosition)) {
-				renderer.getSurface().selectionIn(renderer.getROIHelper().getROIEnvelope());
+			if (renderer.getOpenGLHelper().mouseInROI(new GamaPoint(lastMousePressedPosition))) {
+				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
 				renderer.getPickingHelper().setPicking(true);
 			}
@@ -394,13 +383,14 @@ public abstract class AbstractCamera implements ICamera {
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
-		renderer.getROIHelper().defineROI(firstMousePressedPosition, getMousePosition());
+		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
+				new GamaPoint(getMousePosition()));
 		ROICurrentlyDrawn = true;
 	}
 
 	void finishROISelection() {
 		if (ROICurrentlyDrawn) {
-			final Envelope3D env = renderer.getROIHelper().getROIEnvelope();
+			final Envelope3D env = renderer.getOpenGLHelper().getROIEnvelope();
 			if (env != null) {
 				renderer.getSurface().selectionIn(env);
 			}

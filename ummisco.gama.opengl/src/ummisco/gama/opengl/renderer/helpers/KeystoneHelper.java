@@ -24,6 +24,14 @@ import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
 
 public class KeystoneHelper extends AbstractRendererHelper {
 
+	public static interface Pass extends AutoCloseable {
+
+		@Override
+		public void close();
+
+	}
+
+	private final Pass finishingHelper = () -> finishRenderToTexture();
 	private FrameBufferObject fboScene;
 	protected boolean drawKeystoneHelper = false;
 	protected int cornerSelected = -1, cornerHovered = -1;
@@ -182,16 +190,20 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		// gl.glDisable(GL2.GL_DEPTH_TEST); // disables depth testing
 		final AbstractPostprocessingShader theShader = getShader();
 		// unbind the last fbo
-		fboScene.unbindCurrentFrameBuffer();
-		// prepare shader
-		theShader.start();
-		prepareShader(theShader);
-		// build the surface
-		createScreenSurface();
-		// draw
-		final GL2 gl = getGL();
-		gl.glDrawElements(GL2.GL_TRIANGLES, 6, GL2.GL_UNSIGNED_INT, 0);
-		theShader.stop();
+		if (fboScene != null) {
+			// We verify if it is not null
+			fboScene.unbindCurrentFrameBuffer();
+			// prepare shader
+			theShader.start();
+			prepareShader(theShader);
+			// build the surface
+			createScreenSurface();
+			// draw
+			final GL2 gl = getGL();
+			gl.glDrawElements(GL2.GL_TRIANGLES, 6, GL2.GL_UNSIGNED_INT, 0);
+			theShader.stop();
+		}
+
 	}
 
 	public KeystoneShaderProgram getShader() {
@@ -337,9 +349,15 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public boolean isActive() {
-		if (drawKeystoneHelper) { return true; }
-		if (!getData().isKeystoneDefined()) { return false; }
-		return true;
+		return drawKeystoneHelper;
+	}
+
+	public Pass render() {
+		if (drawKeystoneHelper || getData().isKeystoneDefined()) {
+			beginRenderToTexture();
+			return finishingHelper;
+		}
+		return null;
 	}
 
 	public void reshape(final int width, final int height) {

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -95,7 +96,10 @@ public class OpenGL {
 
 	static {
 		DEBUG.OFF();
+		GamaPreferences.Displays.DRAW_ROTATE_HELPER.onChange((v) -> SHOULD_DRAW_ROTATION_SPHERE = v);
 	}
+
+	private static boolean SHOULD_DRAW_ROTATION_SPHERE = GamaPreferences.Displays.DRAW_ROTATE_HELPER.getValue();
 
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;
 
@@ -126,7 +130,6 @@ public class OpenGL {
 	private boolean textured;
 	private int primaryTexture = NO_TEXTURE;
 	private int alternateTexture = NO_TEXTURE;
-	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
 
 	// Colors
 	private Color currentColor;
@@ -151,6 +154,10 @@ public class OpenGL {
 	final GamaPoint ratios = new GamaPoint();
 	final Runnable cameraLook;
 	final LayeredDisplayData data;
+	Envelope3D roiEnvelope;
+	private final Supplier<Integer> fps;
+	private boolean rotationMode;
+	private boolean isROISticky;
 
 	// Working objects
 
@@ -158,6 +165,8 @@ public class OpenGL {
 	final GamaPoint currentNormal = new GamaPoint();
 	final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
+	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
+
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
 	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
@@ -207,6 +216,7 @@ public class OpenGL {
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
 		data = renderer.getData();
 		cameraLook = () -> renderer.getCameraHelper().animate();
+		fps = () -> (int) renderer.getCanvas().getAnimator().getLastFPS();
 		geometryDrawer = new GeometryDrawer(this);
 		fieldDrawer = new FieldDrawer(this);
 		stringDrawer = new StringDrawer(this);
@@ -359,7 +369,8 @@ public class OpenGL {
 		return coord;
 	}
 
-	public GamaPoint getWorldPositionFrom(final GamaPoint mouse, final GamaPoint camera) {
+	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
+		final GamaPoint camera = data.getCameraPos();
 		if (gl == null) { return GamaPoint.NULL_POINT; }
 		final double[] wcoord = new double[4];
 		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
@@ -982,12 +993,6 @@ public class OpenGL {
 		inRasterTextMode = true;
 	}
 
-	public void drawFPS(final int fps) {
-		setCurrentColor(Color.black);
-		final String s = fps == 0 ? "(computing FPS...)" : fps + " FPS";
-		rasterText(s, GLUT.BITMAP_HELVETICA_12, -5, 5, 0);
-	}
-
 	/**
 	 * Draws a string in perspective in the current color, with the given font, at the given position
 	 * 
@@ -1385,6 +1390,11 @@ public class OpenGL {
 	}
 
 	public void endScene() {
+		disableTextures();
+		setLighting(false);
+		drawFPS();
+		drawROI();
+		drawRotation();
 		gl.glFlush();
 	}
 
@@ -1436,6 +1446,76 @@ public class OpenGL {
 
 	public GamaPoint getRatios() {
 		return ratios;
+	}
+
+	/**
+	 * 
+	 * DECORATIONS: ROI, Rotation, FPS
+	 * 
+	 */
+
+	public void isInRotationMode(final boolean b) {
+		rotationMode = b;
+	}
+
+	public boolean isInRotationMode() {
+		return rotationMode;
+	}
+
+	public void drawFPS() {
+		if (!data.isShowfps()) { return; }
+		setCurrentColor(Color.black);
+		final int nb = fps.get();
+		final String s = nb == 0 ? "(computing FPS...)" : nb + " FPS";
+		rasterText(s, GLUT.BITMAP_HELVETICA_12, -5, 5, 0);
+	}
+
+	public void drawROI() {
+		final Envelope3D env = roiEnvelope;
+		if (env == null) { return; }
+		geometryDrawer.drawROIHelper(env);
+	}
+
+	public double sizeOfRotationElements() {
+		return Math.min(getMaxWorldDim() / 4d, data.getCameraPos().minus(data.getCameraLookPos()).norm() / 6d);
+	}
+
+	public void drawRotation() {
+		if (rotationMode && SHOULD_DRAW_ROTATION_SPHERE) {
+			final GamaPoint target = data.getCameraLookPos();
+			final double distance = data.getCameraPos().minus(target).norm();
+			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxWorldDim() / 4d, distance / 6d));
+		}
+	}
+
+	public void toogleROI() {
+		isROISticky = !isROISticky;
+	}
+
+	public boolean isStickyROI() {
+		return isROISticky;
+	}
+
+	public Envelope3D getROIEnvelope() {
+		return roiEnvelope;
+	}
+
+	public void cancelROI() {
+		if (isROISticky) { return; }
+		roiEnvelope = null;
+	}
+
+	public void defineROI(final GamaPoint mouseStart, final GamaPoint mouseEnd) {
+		final GamaPoint start = getWorldPositionFrom(mouseStart);
+		final GamaPoint end = getWorldPositionFrom(mouseEnd);
+		roiEnvelope = new Envelope3D(start.x, end.x, start.y, end.y, 0, getMaxWorldDim() / 20d);
+	}
+
+	public boolean mouseInROI(final GamaPoint mousePosition) {
+		final Envelope3D env = getROIEnvelope();
+		if (env == null) { return false; }
+		final GamaPoint p = getWorldPositionFrom(mousePosition);
+		return env.contains(p);
 	}
 
 }

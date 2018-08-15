@@ -18,7 +18,6 @@ import org.eclipse.swt.events.MouseWheelListener;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
 
 /**
  * Class ICamera.
@@ -68,17 +67,11 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract Double zoomLevel();
 
-	public abstract void zoomFocus(IShape shape);
-
 	public abstract void zoom(boolean in);
 
 	public abstract void zoom(double level);
 
-	public abstract void zoomRoi(Envelope3D env);
-
-	public abstract void toggleStickyROI();
-
-	public abstract boolean isROISticky();
+	public abstract void zoomFocus(Envelope3D env);
 
 	public abstract void setPosition(double x, double d, double e);
 

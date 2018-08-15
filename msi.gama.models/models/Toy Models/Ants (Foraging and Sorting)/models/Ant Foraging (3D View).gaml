@@ -139,7 +139,7 @@ species ant skills: [moving] control: fsm {
 
 
 	aspect icon {
-		draw (ant_shape_empty )  size: {7,5} at: (location  + {0,0,1}) color: #darkgray rotate: heading 
+		draw ant_shape_empty  size: {7,5} at: (location  + {0,0,1})  rotate: heading 
 	;
 	}
 }	

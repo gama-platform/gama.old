@@ -24,6 +24,11 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
+		public boolean canSplit() {
+			return false;
+		}
+
+		@Override
 		public boolean isLightInteraction() {
 			return false;
 		}

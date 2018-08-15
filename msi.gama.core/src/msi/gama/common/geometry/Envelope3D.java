@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gaml.operators.Comparison;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 
 // import org.opengis.geometry.MismatchedDimensionException;
@@ -39,16 +38,14 @@ import msi.gaml.types.GamaGeometryType;
 public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
-		if (g instanceof GeometryCollection)
-			return of((GeometryCollection) g);
+		if (g instanceof GeometryCollection) { return of((GeometryCollection) g); }
 		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
 		return sq.getEnvelope();
 	}
 
 	public static Envelope3D of(final GeometryCollection g) {
 		final int i = g.getNumGeometries();
-		if (i == 0)
-			return new Envelope3D();
+		if (i == 0) { return new Envelope3D(); }
 		final Envelope3D result = of(g.getGeometryN(0));
 		for (int j = 1; j < i; j++) {
 			result.expandToInclude(of(g.getGeometryN(j)));
@@ -232,7 +229,7 @@ public class Envelope3D extends Envelope {
 	@Override
 	public double minExtent() {
 		if (isNull()) { return 0.0; }
-		return FastMath.min(getWidth(), FastMath.min(getHeight(), getDepth()));
+		return Math.min(getWidth(), Math.min(getHeight(), getDepth()));
 	}
 
 	/**
@@ -243,7 +240,7 @@ public class Envelope3D extends Envelope {
 	@Override
 	public double maxExtent() {
 		if (isNull()) { return 0.0; }
-		return FastMath.max(getWidth(), FastMath.max(getHeight(), getDepth()));
+		return Math.max(getWidth(), Math.max(getHeight(), getDepth()));
 	}
 
 	/**
@@ -468,7 +465,7 @@ public class Envelope3D extends Envelope {
 		if (dx == 0.0 && dz == 0.0) { return dy; }
 		if (dy == 0.0 && dz == 0.0) { return dx; }
 		if (dx == 0.0 && dy == 0.0) { return dz; }
-		return FastMath.sqrt(dx * dx + dy * dy + dz * dz);
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	// ---------------------------------------------------------------------------------------------------------------

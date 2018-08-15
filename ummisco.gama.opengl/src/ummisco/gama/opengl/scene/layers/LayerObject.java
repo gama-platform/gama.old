@@ -359,4 +359,8 @@ public class LayerObject {
 		return traces == null ? 1 : traces.size();
 	}
 
+	public boolean canSplit() {
+		return true;
+	}
+
 }

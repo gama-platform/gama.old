@@ -231,28 +231,6 @@ public class ModelScene {
 		}
 	}
 
-	public void startDrawRotationHelper() {
-		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
-		if (worldLayer != null) {
-			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
-			worldLayer.setOffset(pivotPoint.yNegated());
-			final double size = renderer.getRotationHelper().sizeOfRotationElements();
-			final double ratio = size / renderer.getMaxEnvDim();
-			// see if it is necessary ?
-			worldLayer.setScale(new GamaPoint(ratio, ratio, ratio));
-
-		}
-	}
-
-	public void stopDrawRotationHelper() {
-		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
-		if (worldLayer != null) {
-			worldLayer.setOffset(null);
-			worldLayer.setScale(null);
-		}
-
-	}
-
 	public Collection<LayerObject> getLayers() {
 		return layers.values();
 	}

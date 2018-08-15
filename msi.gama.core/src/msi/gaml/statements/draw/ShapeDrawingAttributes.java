@@ -42,6 +42,11 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 		colorProperties.withTextures(textures);
 	}
 
+	@Override
+	public ShapeDrawingAttributes withLighting(final Boolean lighting) {
+		return (ShapeDrawingAttributes) super.withLighting(lighting);
+	}
+
 	public ShapeDrawingAttributes(final GamaPoint location) {
 		this(location, null, null);
 	}

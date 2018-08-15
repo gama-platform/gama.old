@@ -23,6 +23,8 @@ import ummisco.gama.opengl.scene.GeometryObject;
 
 public class FrameLayerObject extends StaticLayerObject.World {
 
+	private static final GamaColor FRAME = new GamaColor(150, 150, 150, 255);
+
 	public FrameLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
@@ -32,8 +34,8 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		final double w = renderer.getData().getEnvWidth();
 		final double h = renderer.getData().getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
-		final ShapeDrawingAttributes drawingAttr = (ShapeDrawingAttributes) new ShapeDrawingAttributes(g, (IAgent) null,
-				null, new GamaColor(150, 150, 150, 255)).withLighting(false);
+		final ShapeDrawingAttributes drawingAttr =
+				new ShapeDrawingAttributes(g, (IAgent) null, null, FRAME).withLighting(false);
 		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		list.add(geomObj);
 	}

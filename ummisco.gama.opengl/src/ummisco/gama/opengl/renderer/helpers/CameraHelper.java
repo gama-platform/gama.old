@@ -11,7 +11,6 @@ import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
@@ -259,14 +258,6 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	}
 
 	@Override
-	public void zoomFocus(final IShape shape) {
-		if (camera != null) {
-			camera.zoomFocus(shape);
-		}
-
-	}
-
-	@Override
 	public void zoom(final boolean in) {
 		if (camera != null) {
 			camera.zoom(in);
@@ -275,23 +266,10 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	}
 
 	@Override
-	public void zoomRoi(final Envelope3D env) {
+	public void zoomFocus(final Envelope3D env) {
 		if (camera != null) {
-			camera.zoomRoi(env);
+			camera.zoomFocus(env);
 		}
-	}
-
-	@Override
-	public void toggleStickyROI() {
-		if (camera != null) {
-			camera.toggleStickyROI();
-		}
-	}
-
-	@Override
-	public boolean isROISticky() {
-		if (camera != null) { return camera.isROISticky(); }
-		return false;
 	}
 
 	@Override

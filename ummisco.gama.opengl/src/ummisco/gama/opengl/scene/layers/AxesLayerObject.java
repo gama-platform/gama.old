@@ -9,19 +9,26 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
+import static msi.gama.common.geometry.Rotation3D.MINUS_I;
+import static msi.gama.common.geometry.Rotation3D.PLUS_J;
+import static msi.gama.common.geometry.Scaling3D.of;
+import static msi.gama.util.GamaColor.getNamed;
+import static msi.gaml.operators.IUnits.bottom_center;
+import static msi.gaml.operators.IUnits.left_center;
+import static msi.gaml.operators.IUnits.top_center;
+import static msi.gaml.types.GamaGeometryType.buildCone3D;
+import static msi.gaml.types.GamaGeometryType.buildLineCylinder;
+
 import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
-import msi.gama.common.geometry.Rotation3D;
-import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.draw.TextDrawingAttributes;
-import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
@@ -29,23 +36,30 @@ import ummisco.gama.opengl.scene.StringObject;
 
 public class AxesLayerObject extends StaticLayerObject.World {
 
-	protected final static String[] LABELS = new String[] { "X", "Y", "Z" };
-	protected final static GamaColor[] COLORS = new GamaColor[] { GamaColor.getNamed("gamared"),
-			GamaColor.getNamed("gamaorange"), GamaColor.getNamed("gamablue") };
+	public final static String[] LABELS = new String[] { "X", "Y", "Z" };
+	public final static GamaPoint[] ANCHORS = new GamaPoint[] { left_center, top_center, bottom_center };
+	public final static AxisAngle[] ROTATIONS =
+			new AxisAngle[] { new AxisAngle(PLUS_J, 90), new AxisAngle(MINUS_I, 90), null };
+	public final static GamaColor[] COLORS =
+			new GamaColor[] { getNamed("gamared"), getNamed("gamaorange"), getNamed("gamablue") };
 	protected final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
-	protected final static GamaPoint origin = new GamaPoint(0, 0, 0);
+	protected final static GamaPoint ORIGIN = new GamaPoint(0, 0, 0);
+	protected final static GamaFont AXES_FONT = new GamaFont("Helvetica", 0, 18);
+	final GamaShape arrow;
+	final GamaPoint[] dirs;
+	final GamaShape[] axes = new GamaShape[3];
 
 	public AxesLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 		// Addition to fix #2227
 		scale.setLocation(DEFAULT_SCALE);
+		final double max = renderer.getMaxEnvDim();
+		arrow = (GamaShape) buildCone3D(max / 15, max / 6, ORIGIN);
+		dirs = new GamaPoint[] { new GamaPoint(max, 0, 0), new GamaPoint(0, max, 0), new GamaPoint(0, 0, max) };
+		for (int i = 0; i < 3; i++) {
+			axes[i] = (GamaShape) buildLineCylinder(ORIGIN, dirs[i], max / 40);
+		}
 	}
-
-	// Removal of the override to fix #2227
-	// @Override
-	// public GamaPoint getScale() {
-	// return scale == null ? DEFAULT_SCALE : super.getScale();
-	// }
 
 	@Override
 	public void setScale(final GamaPoint s) {
@@ -57,52 +71,33 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	}
 
 	@Override
-	public void fillWithObjects(final List<AbstractObject> list) {
-		final double max = renderer.getMaxEnvDim();
-		// if (renderer.useShader()) {
-		// for (int i = 0; i < 3; i++) {
-		// final GamaPoint p = new GamaPoint(i == 0 ? max : 0, i == 1 ? max : 0, i == 2 ? max : 0);
-		//
-		// // build axis
-		// list.add(new GeometryObject(GamaGeometryType.buildLine(origin, p), COLORS[i], IShape.Type.LINESTRING,
-		// 2 * JOGLRenderer.getLineWidth()));
-		//
-		// // build labels
-		// final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.
-		// final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(Scaling3D.of(1, 1, 1), null,
-		// p.times(1.2).yNegated(), IUnits.bottom_left, COLORS[i], font, false);
-		// final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr);
-		// list.add(strObj);
-		//
-		// // build arrows
-		// final GeometryObject arrow = new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), max / 6),
-		// COLORS[i], IShape.Type.POLYGON, false);
-		// list.add(arrow);
-		// }
-		// } else {
-		for (int i = 0; i < 3; i++) {
-			final GamaPoint p = new GamaPoint(i == 0 ? max : 0, i == 1 ? max : 0, i == 2 ? max : 0);
-			final GamaShape axis2 = (GamaShape) GamaGeometryType.buildLineCylinder(origin, p, max / 40);
-			final AxisAngle rotation = i == 0 ? new AxisAngle(Rotation3D.PLUS_J, 90)
-					: i == 1 ? new AxisAngle(Rotation3D.MINUS_I, 90) : null;
-			// build axis
-			list.add(new GeometryObject(axis2, COLORS[i], IShape.Type.LINECYLINDER, false));
-
-			// build labels
-			final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.
-			final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(Scaling3D.of(1), null,
-					p.times(1.3).yNegated(), IUnits.bottom_left, COLORS[i], font, false);
-			final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr);
-			list.add(strObj);
-
-			// build arrows
-
-			GamaShape s = (GamaShape) GamaGeometryType.buildCone3D(max / 15, max / 6, origin);
-			s = new GamaShape(s, null, rotation, p.times(0.98));
-			final GeometryObject arrow = new GeometryObject(s, COLORS[i], IShape.Type.CONE, false);
-
-			list.add(arrow);
+	public void draw(final OpenGL gl) {
+		if (renderer.getOpenGLHelper().isInRotationMode()) {
+			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
+			setOffset(pivotPoint.yNegated());
+			final double size = renderer.getOpenGLHelper().sizeOfRotationElements();
+			final double ratio = size / renderer.getMaxEnvDim();
+			setScale(new GamaPoint(ratio, ratio, ratio));
+		} else {
+			setOffset(null);
+			setScale(null);
 		}
-		// }
+		super.draw(gl);
+	}
+
+	@Override
+	public void fillWithObjects(final List<AbstractObject> list) {
+		for (int i = 0; i < 3; i++) {
+			final GamaPoint p = dirs[i];
+			// build axis
+			list.add(new GeometryObject(axes[i], COLORS[i], IShape.Type.LINECYLINDER, false));
+			// build labels
+			final TextDrawingAttributes text = new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(),
+					ANCHORS[i], COLORS[i], AXES_FONT, false);
+			list.add(new StringObject(LABELS[i], text));
+			// build arrows
+			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
+			list.add(new GeometryObject(s, COLORS[i], IShape.Type.CONE, false));
+		}
 	}
 }

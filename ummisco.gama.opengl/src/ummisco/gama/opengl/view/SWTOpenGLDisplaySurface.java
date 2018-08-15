@@ -305,7 +305,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// maxExtent of the shape?
 		// FIXME: Problem when an agent is placed on a layer with a z_value how
 		// to get this z_layer value to offset it?
-		renderer.getCameraHelper().zoomFocus(geometry);
+		renderer.getCameraHelper().zoomFocus(geometry.getEnvelope().yNegated());
 	}
 
 	/**
@@ -497,7 +497,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {
-		new Thread(() -> WorkbenchHelper.asyncRun(() -> renderer.getCameraHelper().zoomFocus(a))).start();
+		new Thread(
+				() -> WorkbenchHelper.asyncRun(() -> renderer.getCameraHelper().zoomFocus(a.getEnvelope().yNegated())))
+						.start();
 
 	}
 
@@ -600,12 +602,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				envInWorld.centre(), envInWorld, new Different(), false);
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
-		images.put(renderer.getCameraHelper().isROISticky() ? "Hide region" : "Keep region visible",
+		images.put(renderer.getOpenGLHelper().isStickyROI() ? "Hide region" : "Keep region visible",
 				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
 		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
-		actions.put(renderer.getCameraHelper().isROISticky() ? "Hide region" : "Keep region visible",
-				() -> renderer.getCameraHelper().toggleStickyROI());
-		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomRoi(env));
+		actions.put(renderer.getOpenGLHelper().isStickyROI() ? "Hide region" : "Keep region visible",
+				() -> renderer.getOpenGLHelper().toogleROI());
+		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomFocus(env));
 		WorkbenchHelper.run(() -> {
 			final Menu menu = menuManager.buildROIMenu(renderer.getCameraHelper().getMousePosition().x,
 					renderer.getCameraHelper().getMousePosition().y, agents, actions, images);
@@ -615,7 +617,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				public void menuHidden(final MenuEvent e) {
 					animator.resume();
 					// Will be run after the selection
-					WorkbenchHelper.asyncRun(() -> renderer.getROIHelper().cancelROI());
+					WorkbenchHelper.asyncRun(() -> renderer.getOpenGLHelper().cancelROI());
 
 				}
 
@@ -759,7 +761,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public Envelope3D getROIDimensions() {
-		return renderer.getROIHelper().getROIEnvelope();
+		return renderer.getOpenGLHelper().getROIEnvelope();
 	}
 
 	@Override

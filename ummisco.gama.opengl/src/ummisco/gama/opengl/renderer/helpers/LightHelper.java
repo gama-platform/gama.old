@@ -273,11 +273,13 @@ public class LightHelper extends AbstractRendererHelper {
 	}
 
 	public void draw() {
-		final OpenGL openGL = getOpenGL();
-		openGL.pushMatrix();
-		setAmbiantLight(openGL, getData().getAmbientLightColor());
-		updateDiffuseLightValue(openGL);
-		openGL.popMatrix();
+		if (isActive()) {
+			final OpenGL openGL = getOpenGL();
+			openGL.pushMatrix();
+			setAmbiantLight(openGL, getData().getAmbientLightColor());
+			updateDiffuseLightValue(openGL);
+			openGL.popMatrix();
+		}
 	}
 
 	public boolean isActive() {

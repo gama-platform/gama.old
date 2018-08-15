@@ -36,13 +36,13 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
+import ummisco.gama.opengl.renderer.helpers.KeystoneHelper.Pass;
 import ummisco.gama.opengl.renderer.helpers.LightHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
-import ummisco.gama.opengl.renderer.helpers.ROIHelper;
-import ummisco.gama.opengl.renderer.helpers.RotationHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ResourceObject;
@@ -59,13 +59,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRenderer {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	// Helpers
 	private final KeystoneHelper keystoneHelper = createKeystoneHelper();
 	private final PickingHelper pickingHelper = new PickingHelper(this);
 	private final LightHelper lightHelper = new LightHelper(this);
 	private final CameraHelper cameraHelper = new CameraHelper(this);
-	private final ROIHelper roiHelper = new ROIHelper(this);
-	private final RotationHelper rotationHelper = new RotationHelper(this);
 	private final SceneHelper sceneHelper = createSceneHelper();
 
 	// OpenGL back-end
@@ -92,11 +94,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		return new KeystoneHelper(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#setCanvas(com.jogamp.opengl.swt.GLCanvas)
-	 */
 	@Override
 	public void setCanvas(final GLCanvas canvas) {
 		this.canvas = canvas;
@@ -130,14 +127,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		return canvas;
 	}
 
-	// This method is normally called either when the graphics is created or
-	// when the output is changed
-	// @Override
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#initScene()
-	 */
 	@Override
 	public void initScene() {
 		final ModelScene scene = sceneHelper.getSceneToRender();
@@ -192,44 +181,18 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void display(final GLAutoDrawable canvas) {
 		if (!sceneHelper.isReady()) { return; }
 
-		if (keystoneHelper.isActive()) {
-			keystoneHelper.beginRenderToTexture();
-		}
-
-		cameraHelper.update();
-
-		openGL.beginScene();
-
-		if (lightHelper.isActive()) {
+		try (Pass c = keystoneHelper.render()) {
+			openGL.beginScene();
+			cameraHelper.update();
 			lightHelper.draw();
+			sceneHelper.draw();
+			openGL.endScene();
 		}
-
-		sceneHelper.draw();
-
-		openGL.disableTextures();
-		openGL.setLighting(false);
-
-		if (data.isShowfps()) {
-			openGL.drawFPS((int) canvas.getAnimator().getLastFPS());
-		}
-
-		if (roiHelper.isActive()) {
-			openGL.getGeometryDrawer().drawROIHelper(roiHelper.getROIEnvelope());
-		}
-		if (rotationHelper.isActive()) {
-			rotationHelper.draw();
-		}
-
-		if (keystoneHelper.isActive()) {
-			keystoneHelper.finishRenderToTexture();
-		}
-		openGL.endScene();
 
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
-			visible = true;
 			WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
-
+			visible = true;
 		}
 
 	}
@@ -238,10 +201,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		if (width <= 0 || height <= 0) { return; }
+		DEBUG.OUT("Reshaped to " + width + " x " + height);
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
-		// cameraHelper.animate();
 		surface.updateDisplay(true);
 	}
 
@@ -441,7 +404,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point mouse) {
-		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y), cameraHelper.getPosition());
+		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
 	}
 
 	@Override
@@ -503,26 +466,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public LightHelper getLightHelper() {
 		return lightHelper;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getROIHelper()
-	 */
-	@Override
-	public ROIHelper getROIHelper() {
-		return roiHelper;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getRotationHelper()
-	 */
-	@Override
-	public RotationHelper getRotationHelper() {
-		return rotationHelper;
 	}
 
 	/*

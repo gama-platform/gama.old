@@ -23,6 +23,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -34,6 +35,10 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
 public class LayeredDisplayDecorator implements DisplayDataListener {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	protected SWTLayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
@@ -98,9 +103,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			view.controlToSetFullScreen().setParent(fullScreenShell);
 			createOverlay();
 			adaptToolbar();
+			DEBUG.OUT("Fullscreen set");
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
-			view.getZoomableControls()[0].forceFocus();
+			fullScreenShell.getChildren()[0].forceFocus();
+			// view.getZoomableControls()[0].forceFocus();
 		}
 	}
 

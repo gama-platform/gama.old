@@ -19,7 +19,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -156,22 +155,15 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomRoi(final Envelope3D env) {
-		final int width = (int) env.getWidth();
-		final int height = (int) env.getHeight();
-		final double maxDim = width > height ? width : height;
-		setPosition(env.centre().x, env.centre().y, maxDim * 1.5);
-		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
-	}
-
-	@Override
-	public void zoomFocus(final IShape shape) {
-		final double centerX = shape.getLocation().getX();
-		final double centerY = shape.getLocation().getY();
-		final double centerZ = shape.getLocation().getZ();
-		final double extent = shape.getEnvelope().maxExtent();
-		setPosition(centerX, -centerY, extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100);
-		setTarget(centerX, -centerY, -(extent * 2));
+	public void zoomFocus(final Envelope3D env) {
+		final double extent = env.maxExtent();
+		final double z;
+		if (extent == 0) {
+			z = env.getMaxZ() + getRenderer().getMaxEnvDim() / 100d;
+		} else {
+			z = extent * 1.5;
+		}
+		setPosition(env.centre().x, env.centre().y, z);
 		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 
@@ -183,7 +175,8 @@ public class FreeFlyCamera extends AbstractCamera {
 				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().getROIHelper().defineROI(firstMousePressedPosition, getMousePosition());
+			getRenderer().getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
+					new GamaPoint(getMousePosition()));
 		} else {
 			final int horizMovement = e.x - getLastMousePressedPosition().x;
 			final int vertMovement = e.y - getLastMousePressedPosition().y;

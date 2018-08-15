@@ -343,8 +343,8 @@ public class GamaPreferences {
 				create("pref_display_show_toolbar", "Show the display top toolbar", true, IType.BOOL, true).in(NAME,
 						PRESENTATION);
 		public static final Pref<Boolean> CORE_OVERLAY =
-				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL, true)
-						.in(NAME, PRESENTATION).activates("pref_display_show_scale", "pref_display_show_fps");
+				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL, true).in(NAME,
+						PRESENTATION);
 		public static final Pref<Boolean> CORE_SCALE =
 				create("pref_display_show_scale", "Show scale bar", false, IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_SHOW_FPS =

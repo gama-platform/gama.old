@@ -16,8 +16,6 @@ import org.eclipse.swt.SWT;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -358,26 +356,15 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomRoi(final Envelope3D env) {
-		final int width = (int) env.getWidth();
-		final int height = (int) env.getHeight();
-		setDistance(1.5 * (width > height ? width : height));
-		// y is already negated
-		setTarget(env.centre());
-		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
-	}
-
-	@Override
-	public void zoomFocus(final IShape shape) {
-		final ILocation p = shape.getLocation();
-		final double extent = shape.getEnvelope().maxExtent();
+	public void zoomFocus(final Envelope3D env) {
+		final double extent = env.maxExtent();
 		if (extent == 0) {
-			setDistance(p.getZ() + getRenderer().getMaxEnvDim() / 10);
+			setDistance(env.getMaxZ() + getRenderer().getMaxEnvDim() / 10);
 		} else {
 			setDistance(extent * 1.5);
 		}
-		// y is NOT negated in IShapes
-		setTarget(p.getCentroid().yNegated());
+		// we suppose y is already negated
+		setTarget(env.centre());
 		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 
@@ -466,11 +453,12 @@ public class CameraArcBall extends AbstractCamera {
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().getROIHelper().defineROI(firstMousePressedPosition, getMousePosition());
-		} else if (getRenderer().getROIHelper().mouseInROI(getMousePosition())) {
+			getRenderer().getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
+					new GamaPoint(getMousePosition()));
+		} else if (getRenderer().getOpenGLHelper().mouseInROI(new GamaPoint(getMousePosition()))) {
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
-			p = p.minus(getRenderer().getROIHelper().getROIEnvelope().centre());
-			getRenderer().getROIHelper().getROIEnvelope().translate(p.x, p.y);
+			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
+			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);
 
 		} else {
 
@@ -498,11 +486,12 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	protected void drawRotationHelper() {
-		if (ctrlPressed) {
-			renderer.getRotationHelper().startDrawRotationHelper();
-		} else {
-			renderer.getRotationHelper().stopDrawRotationHelper();
-		}
+		renderer.getOpenGLHelper().isInRotationMode(ctrlPressed);
+		// if (ctrlPressed) {
+		// renderer.getSceneHelper().beginRotationMode();
+		// } else {
+		// renderer.getSceneHelper().stopRotationMode();
+		// }
 	}
 
 	@Override

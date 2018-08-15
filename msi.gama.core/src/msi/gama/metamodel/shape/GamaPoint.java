@@ -12,6 +12,8 @@ package msi.gama.metamodel.shape;
 import static java.lang.Math.sqrt;
 import static msi.gaml.operators.Maths.round;
 
+import java.awt.Point;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.util.NumberUtil;
@@ -68,6 +70,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	public GamaPoint(final ILocation point) {
 		this(point == null ? EMPTY : new double[] { point.getX(), point.getY(), point.getZ() });
+	}
+
+	public GamaPoint(final Point point) {
+		this(point == null ? EMPTY : new double[] { point.getX(), point.getY() });
 	}
 
 	@Override
