@@ -100,8 +100,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 			sb.append("Contents type: ").append(type).append(Strings.LN);
 			if (header && headers != null) {
 				sb.append("Headers: ");
-				for (int i = 0; i < headers.length; i++) {
-					sb.append(headers[i]).append(" | ");
+				for (final String header2 : headers) {
+					sb.append(header2).append(" | ");
 				}
 				sb.setLength(sb.length() - 3);
 			}
@@ -153,6 +153,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
+	@doc ("This file constructor allows to read a CSV file with the default separator, no header, and no assumption on the type of data")
 	public GamaCSVFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (String) null);
 	}

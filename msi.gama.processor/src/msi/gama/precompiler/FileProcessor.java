@@ -34,6 +34,12 @@ public class FileProcessor extends ElementProcessor<file> {
 				if (n <= 1) {
 					continue;
 				}
+				// If the first parameter is not IScope, we consider it is not a constructor usable in GAML
+				final String scope = rawNameOf(context, argParams.get(0).asType());
+				if (!scope.contains("IScope")) {
+					continue;
+				}
+				verifyDoc(context, m, f.name());
 				final String[] args = new String[n - 1];
 				for (int i = 1; i < n; i++) {
 					args[i - 1] = rawNameOf(context, argParams.get(i).asType());
@@ -53,6 +59,13 @@ public class FileProcessor extends ElementProcessor<file> {
 		}
 		if (d == null) {
 			context.emitWarning("GAML: file declaration '" + f.name() + "' is not documented", e);
+		}
+	}
+
+	private void verifyDoc(final ProcessorContext context, final Element e, final String fileName) {
+		final doc d = e.getAnnotation(doc.class);
+		if (d == null) {
+			context.emitWarning("GAML: this constructor of " + fileName + "_files is not documented", e);
 		}
 	}
 
