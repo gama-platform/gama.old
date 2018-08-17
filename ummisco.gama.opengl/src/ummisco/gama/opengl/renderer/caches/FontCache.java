@@ -31,7 +31,7 @@ import com.jogamp.opengl.util.awt.TextRenderer.RenderDelegate;
  * @author drogoul
  *
  */
-public class TextRenderersCache {
+public class FontCache {
 
 	static final RenderDelegate DELEGATE = new RenderDelegate() {
 
@@ -70,14 +70,14 @@ public class TextRenderersCache {
 
 	final Set<Font> fontsToProcess = new HashSet<>();
 
-	LoadingCache<Font, TextRenderer> cache =
-			newBuilder().expireAfterAccess(10, SECONDS).build(new CacheLoader<Font, TextRenderer>() {
+	LoadingCache<Font, TextRenderer> cache = newBuilder().initialCapacity(10).expireAfterAccess(10, SECONDS)
+			.build(new CacheLoader<Font, TextRenderer>() {
 
 				@Override
 				public TextRenderer load(final Font f) throws Exception {
 					final TextRenderer r = new TextRenderer(f, true, true, DELEGATE, true);
 					r.setSmoothing(true);
-					r.setUseVertexArrays(false);
+					r.setUseVertexArrays(true);
 					return r;
 				}
 			});
@@ -87,16 +87,22 @@ public class TextRenderersCache {
 		return cache.getUnchecked(f);
 	}
 
-	public void saveFontToProcess(final Font font, final float withSize) {
+	public void process(final Font font, final float withSize) {
 		final Font f = new Font(font.getFontName(), font.getStyle(), (int) withSize);
 		fontsToProcess.add(f);
 	}
 
-	public void processUnloadedFonts() {
+	public void processUnloaded() {
 		for (final Font f : fontsToProcess) {
 			cache.getUnchecked(f);
 		}
 		fontsToProcess.clear();
+	}
+
+	public void dispose() {
+		for (final TextRenderer r : cache.asMap().values()) {
+			r.dispose();
+		}
 	}
 
 }

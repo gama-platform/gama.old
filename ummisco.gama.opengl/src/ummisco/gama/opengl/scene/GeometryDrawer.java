@@ -185,7 +185,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				drawPlan(geom, solid, height, border);
 				break;
 			case POINT:
-				drawPoint(geom, solid, gl.getMaxWorldDim() / 800d, border);
+				drawPoint(geom, solid, gl.getMaxEnvDim() / 800d, border);
 				break;
 			default:
 				applyToInnerGeometries(geom, (g) -> {
@@ -409,16 +409,5 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Geometry point = GamaGeometryType.buildCircle(height, position).getInnerGeometry();
 		drawSphere(point, true, height, DEFAULT_BORDER);
 	}
-	//
-	// public void drawRotationHelper(final GamaPoint target, final double distance, final double height) {
-	// gl.pushMatrix();
-	// gl.getGL().glLoadIdentity();
-	// gl.setZIncrement(0);
-	// gl.setCurrentColor(Color.gray, 0.3);
-	// final GamaPoint position = target.yNegated().add(0, 0, -height);
-	// final Geometry point = buildCircle(height, position).getInnerGeometry();
-	// drawSphere(point, true, height, DEFAULT_BORDER);
-	// gl.popMatrix();
-	// }
 
 }

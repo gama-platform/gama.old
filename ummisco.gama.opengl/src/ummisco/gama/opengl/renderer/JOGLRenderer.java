@@ -74,7 +74,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	protected OpenGL openGL;
 
 	// State
-	protected volatile boolean inited, visible;
+	protected volatile boolean inited, visible, disposed;
 
 	// Canvas
 	protected GLCanvas canvas;
@@ -216,6 +216,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		keystoneHelper.dispose();
 		cameraHelper.dispose();
 		drawable.removeGLEventListener(this);
+		disposed = true;
 	}
 
 	/**
@@ -476,6 +477,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public SceneHelper getSceneHelper() {
 		return sceneHelper;
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return disposed;
 	}
 
 }

@@ -216,7 +216,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @param gl
 	 */
 	public void garbageCollect(final OpenGL gl) {
-		final ModelScene[] scenes = garbage.toArray(new ModelScene[0]);
+		final ModelScene[] scenes = garbage.toArray(new ModelScene[garbage.size()]);
 		garbage.clear();
 		for (final ModelScene scene : scenes) {
 			scene.wipe(gl);

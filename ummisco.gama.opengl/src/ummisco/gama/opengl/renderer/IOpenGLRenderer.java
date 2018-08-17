@@ -57,4 +57,6 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 		return false;
 	}
 
+	boolean isDisposed();
+
 }

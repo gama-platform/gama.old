@@ -338,7 +338,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		for (int i = 0; i < faces.size(); i++) {
 			if (i == nextmat) {
 				if (texture != null) {
-					gl.deleteTexture(texture);
+					texture.destroy(gl.getGL());
 					texture = null;
 				}
 				// gl.getGL().glEnable(GL2.GL_COLOR_MATERIAL);
@@ -362,7 +362,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					if (f.exists()) {
 						// Solves Issue #1951. Asynchronous loading of textures
 						// was not possible when displaying the file
-						texture = gl.getTextureRenderer(f, false, true).getTexture();
+						texture = gl.getTexture(f, false, true);
 						gl.setCurrentTextures(texture.getTextureObject(), texture.getTextureObject());
 						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
@@ -436,7 +436,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 		if (texture != null) {
 			gl.disableTextures();
-			;
 			texture = null;
 		}
 		// gl.glEndList();

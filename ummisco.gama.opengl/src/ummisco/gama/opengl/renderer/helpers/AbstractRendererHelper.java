@@ -40,7 +40,7 @@ public abstract class AbstractRendererHelper {
 		return renderer.getSurface();
 	}
 
-	protected double getMaxEnvDim() {
+	public double getMaxEnvDim() {
 		return renderer.getMaxEnvDim();
 	}
 

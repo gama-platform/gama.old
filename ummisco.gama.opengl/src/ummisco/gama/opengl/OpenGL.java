@@ -8,50 +8,23 @@ import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
 import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.iterateOverTriangles;
-import static msi.gama.metamodel.shape.IShape.Type.CIRCLE;
-import static msi.gama.metamodel.shape.IShape.Type.CONE;
-import static msi.gama.metamodel.shape.IShape.Type.CUBE;
-import static msi.gama.metamodel.shape.IShape.Type.CYLINDER;
-import static msi.gama.metamodel.shape.IShape.Type.POINT;
-import static msi.gama.metamodel.shape.IShape.Type.PYRAMID;
-import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
-import static msi.gama.metamodel.shape.IShape.Type.SQUARE;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.BufferOverflowException;
-import java.nio.DoubleBuffer;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUtessellatorCallback;
-import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.awt.TextureRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.vividsolutions.jts.geom.Polygon;
 
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
@@ -62,19 +35,19 @@ import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.geometry.UnboundedCoordinateSequence;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
+import ummisco.gama.opengl.renderer.caches.FontCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
-import ummisco.gama.opengl.renderer.caches.TextRenderersCache;
+import ummisco.gama.opengl.renderer.caches.TextureCache;
+import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
@@ -92,7 +65,7 @@ import ummisco.gama.opengl.scene.StringDrawer;
  * @author drogoul
  *
  */
-public class OpenGL {
+public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	static {
 		DEBUG.OFF();
@@ -121,10 +94,7 @@ public class OpenGL {
 	private final PickingHelper pickingState;
 
 	// Textures
-	private final LoadingCache<BufferedImage, TextureRenderer> volatileTextures;
-	private final Cache<String, TextureRenderer> staticTextures =
-			CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).build();
-	final List<String> texturesToProcess = new CopyOnWriteArrayList<>();
+	private final TextureCache textureCache = new TextureCache(this);
 	private final Envelope3D textureEnvelope = new Envelope3D();
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
 	private boolean textured;
@@ -140,7 +110,7 @@ public class OpenGL {
 
 	// Text
 	private boolean inRasterTextMode;
-	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
+	protected final FontCache fontCache = new FontCache();
 	protected final float textSizeMultiplier = 2f;
 
 	// Geometries
@@ -150,73 +120,34 @@ public class OpenGL {
 	final VertexVisitor glTesselatorDrawer;
 
 	// World
-	final double worldX, worldY;
 	final GamaPoint ratios = new GamaPoint();
-	final Runnable cameraLook;
-	final LayeredDisplayData data;
 	Envelope3D roiEnvelope;
-	private final Supplier<Integer> fps;
 	private boolean rotationMode;
 	private boolean isROISticky;
 
 	// Working objects
-
 	final GamaPoint workingPoint = new GamaPoint();
 	final GamaPoint currentNormal = new GamaPoint();
 	final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
-
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
 	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
 
-	// Will be changed when loading the renderer
-	private Boolean isNonPowerOf2TexturesAvailable;
-
 	public OpenGL(final IOpenGLRenderer renderer) {
+		super(renderer);
 		glut = new GLUT();
 		glu = new GLU();
-		worldX = renderer.getEnvWidth();
-		worldY = renderer.getEnvHeight();
 		pickingState = renderer.getPickingHelper();
 		geometryCache = new GeometryCache(renderer);
-		volatileTextures = CacheBuilder.newBuilder().build(new CacheLoader<BufferedImage, TextureRenderer>() {
-
-			@Override
-			public TextureRenderer load(final BufferedImage key) throws Exception {
-				return buildTextureRenderer(OpenGL.this, key);
-			}
-		});
-
 		glTesselatorDrawer = (final double[] ordinates) -> {
 			tobj.gluTessVertex(ordinates, 0, ordinates);
 		};
-		final GLUtessellatorCallback adapter = new GLUtessellatorCallbackAdapter() {
-			@Override
-			public void begin(final int type) {
-				beginDrawing(type);
-			}
-
-			@Override
-			public void end() {
-				endDrawing();
-			}
-
-			@Override
-			public void vertex(final Object vertexData) {
-				final double[] v = (double[]) vertexData;
-				drawVertex(0, v[0], v[1], v[2]);
-			}
-
-		};
-		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, adapter);
-		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, adapter);
-		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, adapter);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-		data = renderer.getData();
-		cameraLook = () -> renderer.getCameraHelper().animate();
-		fps = () -> (int) renderer.getCanvas().getAnimator().getLastFPS();
 		geometryDrawer = new GeometryDrawer(this);
 		fieldDrawer = new FieldDrawer(this);
 		stringDrawer = new StringDrawer(this);
@@ -239,35 +170,21 @@ public class OpenGL {
 	}
 
 	public void dispose() {
-		// textRendererCache.dispose();
-		if (geometryCache != null) {
-			geometryCache.dispose(gl);
-		}
-		volatileTextures.invalidateAll();
-		staticTextures.asMap().forEach((s, t) -> {
-			t.dispose();
-		});
-		staticTextures.invalidateAll();
-		staticTextures.cleanUp();
+		fontCache.dispose();
+		geometryCache.dispose();
+		textureCache.dispose();
 		gl = null;
 
 	}
 
+	@Override
 	public GL2 getGL() {
 		return gl;
 	}
 
 	public void setGL2(final GL2 gl2) {
 		this.gl = gl2;
-		if (isNonPowerOf2TexturesAvailable == null) {
-			isNonPowerOf2TexturesAvailable =
-					!GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.isNPOTTextureAvailable();
-			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO
-					.onChange(newValue -> AWTTextureIO.setTexRectEnabled(newValue));
-			AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
-			DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
-		}
-
+		textureCache.initialize();
 	}
 
 	public GLUT getGlut() {
@@ -306,11 +223,11 @@ public class OpenGL {
 		final double envHeightInPixels = 2 * pixelSize[1] - height;
 		final double windowWidthInModelUnits = getWorldWidth() * width / envWidthInPixels;
 		final double windowHeightInModelUnits = getWorldHeight() * height / envHeightInPixels;
-		final double xRatio = width / windowWidthInModelUnits / data.getZoomLevel();
-		final double yRatio = height / windowHeightInModelUnits / data.getZoomLevel();
+		final double xRatio = width / windowWidthInModelUnits / getData().getZoomLevel();
+		final double yRatio = height / windowHeightInModelUnits / getData().getZoomLevel();
 		if (DEBUG.IS_ON()) {
 			debugSizes(width, height, initialEnvWidth, initialEnvHeight, envWidthInPixels, envHeightInPixels,
-					data.getZoomLevel(), xRatio, yRatio);
+					getData().getZoomLevel(), xRatio, yRatio);
 		}
 		ratios.setLocation(xRatio, yRatio);
 	}
@@ -334,12 +251,12 @@ public class OpenGL {
 	public void updatePerspective() {
 		final double height = getViewHeight();
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
-		final double maxDim = getMaxWorldDim();
-		if (!data.isOrtho()) {
+		final double maxDim = getMaxEnvDim();
+		if (!getData().isOrtho()) {
 			try {
 				final double zNear = maxDim / 100d;
 				double fW, fH;
-				final double fovY = data.getCameralens();
+				final double fovY = getData().getCameralens();
 				if (aspect > 1.0) {
 					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
 					fW = fH * aspect;
@@ -360,7 +277,7 @@ public class OpenGL {
 			}
 			gl.glTranslated(0d, 0d, maxDim * 0.05);
 		}
-		cameraLook.run();
+		getRenderer().getCameraHelper().animate();
 	}
 
 	public double[] getPixelWidthAndHeightOfWorld() {
@@ -370,7 +287,7 @@ public class OpenGL {
 	}
 
 	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
-		final GamaPoint camera = data.getCameraPos();
+		final GamaPoint camera = getData().getCameraPos();
 		if (gl == null) { return GamaPoint.NULL_POINT; }
 		final double[] wcoord = new double[4];
 		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
@@ -472,10 +389,12 @@ public class OpenGL {
 		pushMatrix();
 	}
 
+	@Override
 	public void beginDrawing(final int style) {
 		gl.glBegin(style);
 	}
 
+	@Override
 	public void endDrawing() {
 		gl.glEnd();
 	}
@@ -603,11 +522,11 @@ public class OpenGL {
 	 * @param y
 	 * @param z
 	 */
-	private void outputVertex(final double x, final double y, final double z) {
+	public void outputVertex(final double x, final double y, final double z) {
 		gl.glVertex3d(x, y, z + currentZTranslation);
 	}
 
-	private void outputTexCoord(final double u, final double v) {
+	public void outputTexCoord(final double u, final double v) {
 		gl.glTexCoord2d(u, v);
 	}
 
@@ -626,6 +545,7 @@ public class OpenGL {
 		outputVertex(coords.x, coords.y, coords.z);
 	}
 
+	@Override
 	public void drawVertex(final int i, final double x, final double y, final double z) {
 		if (isTextured()) {
 			textureCoords.setLocation(x, y, z);
@@ -768,7 +688,7 @@ public class OpenGL {
 	 * second is equal to NO_TEXTURE, then the first one is also bound to the second unit.
 	 * 
 	 * @param t
-	 *            the id of the texture to enable. Integer.MAX_VALUE means disabling textures
+	 *            the id of the texture to enable. NO_TEXTURE means disabling textures
 	 */
 	public void setCurrentTextures(final int t0, final int t1) {
 		primaryTexture = t0;
@@ -806,95 +726,28 @@ public class OpenGL {
 	}
 
 	public void deleteVolatileTextures() {
-		final Collection<TextureRenderer> textures = volatileTextures.asMap().values();
-		for (final TextureRenderer t : textures) {
-			t.dispose();
-		}
-		volatileTextures.invalidateAll();
-	}
-
-	public void deleteTexture(final Texture texture) {
-		texture.destroy(gl);
+		textureCache.deleteVolatileTextures();
 	}
 
 	public void cacheTexture(final File file) {
 		if (file == null) { return; }
-		initializeStaticTexture(file);
+		textureCache.processs(file);
 	}
 
-	private void initializeStaticTexture(final File file) {
-		if (!texturesToProcess.contains(file.getAbsolutePath())) {
-			texturesToProcess.add(file.getAbsolutePath());
-		}
+	public int getTextureId(final GamaImageFile file, final boolean useCache) {
+		final Texture r = textureCache.getTexture(file.getFile(null), file.isAnimated(), useCache);
+		if (r == null) { return NO_TEXTURE; }
+		return r.getTextureObject();
 	}
 
-	public void processUnloadedTextures() {
-		for (final String path : texturesToProcess) {
-			getTextureRenderer(new File(path), false, true);
-		}
+	public int getTextureId(final BufferedImage img) {
+		final Texture r = textureCache.getTexture(img);
+		if (r == null) { return NO_TEXTURE; }
+		return r.getTextureObject();
 	}
 
-	public TextureRenderer getTextureRenderer(final GamaImageFile file, final boolean useCache) {
-		return getTextureRenderer(file.getFile(null), file.isAnimated(), useCache);
-	}
-
-	public TextureRenderer getTextureRenderer(final BufferedImage img) {
-		return volatileTextures.getUnchecked(img);
-	}
-
-	public TextureRenderer getTextureRenderer(final File file, final boolean isAnimated, final boolean useCache) {
-		if (file == null) { return null; }
-		TextureRenderer texture = null;
-		if (isAnimated || !useCache) {
-			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true);
-			texture = getTextureRenderer(image);
-
-		} else {
-			try {
-				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTextureRenderer(gl, file));
-			} catch (final ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
-		return texture;
-	}
-
-	private TextureRenderer buildTextureRenderer(final GL gl, final File file) {
-		try {
-			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file, true, true);
-			return buildTextureRenderer(gl, im);
-		} catch (final GLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public TextureRenderer buildTextureRenderer(final OpenGL gl, final BufferedImage image) {
-		return buildTextureRenderer(gl.getGL(), image);
-	}
-
-	public TextureRenderer buildTextureRenderer(final GL gl, final BufferedImage im) {
-		try {
-			final int width, height;
-			if (isNonPowerOf2TexturesAvailable) {
-				width = im.getWidth();
-				height = im.getHeight();
-			} else {
-				width = getClosestPow(im.getWidth());
-				height = getClosestPow(im.getHeight());
-			}
-			final TextureRenderer tr = new TextureRenderer(width, height, ImageUtils.checkTransparency(im), true);
-			tr.setSmoothing(true);
-			final Graphics2D g = tr.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-			g.drawImage(im, 0, 0, width, height, null);
-			return tr;
-		} catch (final GLException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
+		return textureCache.getTexture(file, isAnimated, useCache);
 	}
 
 	static boolean IsPowerOfTwo(final int x) {
@@ -912,27 +765,17 @@ public class OpenGL {
 	// GEOMETRIES
 
 	public void cacheGeometry(final ResourceObject object) {
-		if (geometryCache != null) {
-			geometryCache.saveGeometryToProcess(object);
-		}
-	}
-
-	public void processUnloadedGeometries() {
-		if (geometryCache != null) {
-			geometryCache.processUnloadedGeometries(this);
-		}
-		textRendererCache.processUnloadedFonts();
+		geometryCache.process(object);
 	}
 
 	public Envelope3D getEnvelopeFor(final GamaGeometryFile file) {
-		if (geometryCache != null) { return geometryCache.getEnvelope(file); }
-		return null;
+		return geometryCache.getEnvelope(file);
 	}
 
 	// TEXT
 
 	public void cacheFont(final Font f) {
-		textRendererCache.saveFontToProcess(f, f.getSize() * textSizeMultiplier);
+		fontCache.process(f, f.getSize() * textSizeMultiplier);
 	}
 
 	/**
@@ -1008,7 +851,7 @@ public class OpenGL {
 	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z,
 			final GamaPoint anchor) {
 		final int fontSize = (int) (font.getSize() * textSizeMultiplier);
-		final TextRenderer r = textRendererCache.get(font, fontSize);
+		final TextRenderer r = fontCache.get(font, fontSize);
 		if (r == null) { return; }
 
 		if (getCurrentColor() != null) {
@@ -1028,16 +871,12 @@ public class OpenGL {
 		r.end3DRendering();
 	}
 
-	public double getMaxWorldDim() {
-		return worldX > worldY ? worldX : worldY;
-	}
-
 	public double getWorldWidth() {
-		return worldX;
+		return getData().getEnvWidth();
 	}
 
 	public double getWorldHeight() {
-		return worldY;
+		return getData().getEnvHeight();
 	}
 
 	public void setWireframe(final boolean wireframe) {
@@ -1085,9 +924,8 @@ public class OpenGL {
 	}
 
 	public void drawCachedGeometry(final GamaGeometryFile file, final Color border) {
-		if (geometryCache == null) { return; }
 		if (file == null) { return; }
-		final Integer index = geometryCache.get(this, file);
+		final Integer index = geometryCache.get(file);
 		if (index != null) {
 			drawList(index);
 		}
@@ -1103,7 +941,7 @@ public class OpenGL {
 	public void drawCachedGeometry(final IShape.Type id, final boolean solid, final Color border) {
 		if (geometryCache == null) { return; }
 		if (id == null) { return; }
-		final BuiltInGeometry object = geometryCache.get(this, id);
+		final BuiltInGeometry object = geometryCache.get(id);
 		if (object != null) {
 			if (solid && !isWireframe()) {
 				object.draw(this);
@@ -1120,73 +958,9 @@ public class OpenGL {
 	}
 
 	public void initializeShapeCache() {
-		final int slices = GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue();
-		final int stacks = slices;
 		textured = true;
-		geometryCache.put(SPHERE, BuiltInGeometry.assemble().faces(compileAsList(() -> {
-			translateBy(0d, 0d, 1d);
-			drawSphere(1.0, slices, stacks);
-			translateBy(0, 0, -1d);
-		})));
-		geometryCache.put(CYLINDER, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawDisk(0d, 1d, slices, slices / 3);
-		})).top(compileAsList(() -> {
-			translateBy(0d, 0d, 1d);
-			drawDisk(0d, 1d, slices, slices / 3);
-			translateBy(0d, 0d, -1d);
-		})).faces(compileAsList(() -> {
-			drawCylinder(1.0d, 1.0d, 1.0d, slices, stacks);
-		})));
-		geometryCache.put(CONE, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawDisk(0d, 1d, slices, slices / 3);
-		})).faces(compileAsList(() -> {
-			drawCylinder(1.0, 0.0, 1.0, slices, stacks);
-		})));
-		final ICoordinates baseVertices = ICoordinates.ofLength(5);
-		final ICoordinates faceVertices = ICoordinates.ofLength(5);
-		baseVertices.setTo(-0.5, 0.5, 0, 0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0);
-
-		geometryCache.put(CUBE, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawSimpleShape(baseVertices, 4, true, false, true, null);
-		})).top(compileAsList(() -> {
-			baseVertices.translateBy(0, 0, 1);
-			drawSimpleShape(baseVertices, 4, true, true, true, null);
-			baseVertices.translateBy(0, 0, -1);
-		})).faces(compileAsList(() -> {
-			baseVertices.visit((pj, pk) -> {
-				faceVertices.setTo(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + 1, pj.x, pj.y, pj.z + 1, pj.x, pj.y, pj.z, pk.x,
-						pk.y, pk.z);
-				drawSimpleShape(faceVertices, 4, true, true, true, null);
-			});
-		})));
-		geometryCache.put(POINT, BuiltInGeometry.assemble().faces(compileAsList(() -> {
-			drawSphere(1.0, 5, 5);
-		})));
-
-		geometryCache.put(IShape.Type.ROUNDED, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawRoundedRectangle();
-		})));
-		geometryCache.put(SQUARE, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawSimpleShape(baseVertices, 4, true, true, true, null);
-		})));
-		geometryCache.put(CIRCLE, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawDisk(0.0, 1.0, slices, 1);
-		})));
-		final ICoordinates triangleVertices = ICoordinates.ofLength(4);
-		final ICoordinates vertices = ICoordinates.ofLength(5);
-		vertices.setTo(-0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, -0.5, 0);
-		geometryCache.put(PYRAMID, BuiltInGeometry.assemble().bottom(compileAsList(() -> {
-			drawSimpleShape(vertices, 4, true, false, true, null);
-		})).faces(compileAsList(() -> {
-			final GamaPoint top = new GamaPoint(0, 0, 1);
-			vertices.visit((pj, pk) -> {
-				triangleVertices.setTo(pj.x, pj.y, pj.z, top.x, top.y, top.z, pk.x, pk.y, pk.z, pj.x, pj.y, pj.z);
-				drawSimpleShape(triangleVertices, 3, true, true, true, null);
-
-			});
-		})));
+		geometryCache.initialize(this);
 		textured = false;
-
 	}
 
 	public boolean isTextured() {
@@ -1194,146 +968,6 @@ public class OpenGL {
 	}
 
 	// COMPLEX SHAPES
-
-	private static final double PI_2 = 2f * Math.PI;
-
-	static double roundRect[] = { .92, 0, .933892, .001215, .947362, .004825, .96, .010718, .971423, .018716, .981284,
-			.028577, .989282, .04, .995175, .052638, .998785, .066108, 1, .08, 1, .92, .998785, .933892, .995175,
-			.947362, .989282, .96, .981284, .971423, .971423, .981284, .96, .989282, .947362, .995175, .933892, .998785,
-			.92, 1, .08, 1, .066108, .998785, .052638, .995175, .04, .989282, .028577, .981284, .018716, .971423,
-			.010718, .96, .004825, .947362, .001215, .933892, 0, .92, 0, .08, .001215, .066108, .004825, .052638,
-			.010718, .04, .018716, .028577, .028577, .018716, .04, .010718, .052638, .004825, .066108, .001215, .08,
-			0 };
-
-	static DoubleBuffer db = (DoubleBuffer) Buffers.newDirectDoubleBuffer(roundRect.length).put(roundRect).rewind();
-
-	public void drawRoundedRectangle() {
-		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(2, GL2.GL_DOUBLE, 0, db);
-		gl.glDrawArrays(GL2.GL_TRIANGLE_FAN, 0, 40);
-		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-	}
-
-	public void drawDisk(final double inner, final double outer, final int slices, final int loops) {
-		double da, dr;
-		/* Normal vectors */
-		outputNormal(0.0, 0.0, +1.0);
-		da = PI_2 / slices;
-		dr = (outer - inner) / loops;
-
-		final double dtc = 2.0f * outer;
-		double sa, ca;
-		double r1 = inner;
-		int l;
-		gl.glFrontFace(GL.GL_CCW);
-		for (l = 0; l < loops; l++) {
-			final double r2 = r1 + dr;
-			int s;
-			beginDrawing(GL2.GL_QUAD_STRIP);
-			for (s = 0; s <= slices; s++) {
-				double a;
-				if (s == slices) {
-					a = 0.0f;
-				} else {
-					a = s * da;
-				}
-				sa = Math.sin(a);
-				ca = Math.cos(a);
-				outputTexCoord(0.5f + sa * r2 / dtc, 0.5f + ca * r2 / dtc);
-				outputVertex(r2 * sa, r2 * ca, 0);
-				outputTexCoord(0.5f + sa * r1 / dtc, 0.5f + ca * r1 / dtc);
-				outputVertex(r1 * sa, r1 * ca, 0);
-			}
-			endDrawing();
-			r1 = r2;
-		}
-		gl.glFrontFace(GL.GL_CW);
-	}
-
-	public void drawSphere(final double radius, final int slices, final int stacks) {
-		double rho, drho, theta, dtheta;
-		double x, y, z;
-		double s, t, ds, dt;
-		int i, j, imin, imax;
-		drho = Math.PI / stacks;
-		dtheta = PI_2 / slices;
-		ds = 1.0f / slices;
-		dt = 1.0f / stacks;
-		t = 1.0f; // because loop now runs from 0
-		imin = 0;
-		imax = stacks;
-		gl.glFrontFace(GL.GL_CCW);
-		// draw intermediate stacks as quad strips
-		for (i = imin; i < imax; i++) {
-			rho = i * drho;
-			beginDrawing(GL2.GL_QUAD_STRIP);
-			s = 0.0f;
-			for (j = 0; j <= slices; j++) {
-				theta = j == slices ? 0.0f : j * dtheta;
-				x = -Math.sin(theta) * Math.sin(rho);
-				y = Math.cos(theta) * Math.sin(rho);
-				z = Math.cos(rho);
-				outputNormal(x, y, z);
-				outputTexCoord(s, t);
-				outputVertex(x * radius, y * radius, z * radius);
-				x = -Math.sin(theta) * Math.sin(rho + drho);
-				y = Math.cos(theta) * Math.sin(rho + drho);
-				z = Math.cos(rho + drho);
-				outputNormal(x, y, z);
-				outputTexCoord(s, t - dt);
-				s += ds;
-				outputVertex(x * radius, y * radius, z * radius);
-			}
-			endDrawing();
-			t -= dt;
-		}
-		gl.glFrontFace(GL.GL_CW);
-	}
-
-	public void drawCylinder(final double base, final double top, final double height, final int slices,
-			final int stacks) {
-
-		double da, r, dr, dz;
-		double x, y, z, nz;
-		int i, j;
-		da = PI_2 / slices;
-		dr = (top - base) / stacks;
-		dz = height / stacks;
-		nz = (base - top) / height;
-
-		final double ds = 1.0f / slices;
-		final double dt = 1.0f / stacks;
-		float t = 0.0f;
-		z = 0.0f;
-		r = base;
-		gl.glFrontFace(GL.GL_CCW);
-		for (j = 0; j < stacks; j++) {
-			float s = 0.0f;
-			beginDrawing(GL2.GL_QUAD_STRIP);
-			for (i = 0; i <= slices; i++) {
-				if (i == slices) {
-					x = Math.sin(0.0f);
-					y = Math.cos(0.0f);
-				} else {
-					x = Math.sin(i * da);
-					y = Math.cos(i * da);
-				}
-				outputNormal(x, y, nz);
-				outputTexCoord(s, t);
-				outputVertex(x * r, y * r, z);
-				outputNormal(x, y, nz);
-				outputTexCoord(s, t + dt);
-				outputVertex(x * (r + dr), y * (r + dr), z + dz);
-
-				s += ds;
-			} // for slices
-			endDrawing();
-			r += dr;
-			t += dt;
-			z += dz;
-		} // for stacks
-		gl.glFrontFace(GL.GL_CW);
-	}
 
 	public void beginObject(final AbstractObject object) {
 		setWireframe(isWireframe);
@@ -1357,34 +991,39 @@ public class OpenGL {
 
 	public void beginScene() {
 		setAntiAlias(isAntiAlias);
-		setWireframe(data.isWireframe());
-		processUnloadedTextures();
-		processUnloadedGeometries();
-		final Color backgroundColor = data.getBackgroundColor();
+		setWireframe(getData().isWireframe());
+		processUnloadedCacheObjects();
+		final Color backgroundColor = getData().getBackgroundColor();
 		gl.glClearColor(backgroundColor.getRed() / 255.0f, backgroundColor.getGreen() / 255.0f,
 				backgroundColor.getBlue() / 255.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		gl.glClearDepth(1.0f);
-		setLighting(data.isLightOn());
+		setLighting(getData().isLightOn());
 		resetMatrix(GL2.GL_PROJECTION);
 		updatePerspective();
 		resetMatrix(GL2.GL_MODELVIEW);
 		rotateModel();
 	}
 
+	public void processUnloadedCacheObjects() {
+		textureCache.processUnloaded();
+		geometryCache.processUnloaded();
+		fontCache.processUnloaded();
+	}
+
 	private boolean isContinuousRotationActive() {
-		return data.isContinuousRotationOn() && !data.cameraInteractionDisabled();
+		return getData().isContinuousRotationOn() && !getData().cameraInteractionDisabled();
 	}
 
 	public void rotateModel() {
 		if (isContinuousRotationActive()) {
-			data.incrementZRotation();
+			getData().incrementZRotation();
 		}
-		if (data.getCurrentRotationAboutZ() != 0d) {
+		if (getData().getCurrentRotationAboutZ() != 0d) {
 			final double env_width = getWorldWidth();
 			final double env_height = getWorldHeight();
 			translateBy(env_width / 2, -env_height / 2, 0d);
-			rotateBy(data.getCurrentRotationAboutZ(), 0, 0, 1);
+			rotateBy(getData().getCurrentRotationAboutZ(), 0, 0, 1);
 			translateBy(-env_width / 2, +env_height / 2, 0d);
 		}
 	}
@@ -1463,9 +1102,9 @@ public class OpenGL {
 	}
 
 	public void drawFPS() {
-		if (!data.isShowfps()) { return; }
+		if (!getData().isShowfps()) { return; }
 		setCurrentColor(Color.black);
-		final int nb = fps.get();
+		final int nb = (int) getCanvas().getAnimator().getLastFPS();
 		final String s = nb == 0 ? "(computing FPS...)" : nb + " FPS";
 		rasterText(s, GLUT.BITMAP_HELVETICA_12, -5, 5, 0);
 	}
@@ -1477,14 +1116,14 @@ public class OpenGL {
 	}
 
 	public double sizeOfRotationElements() {
-		return Math.min(getMaxWorldDim() / 4d, data.getCameraPos().minus(data.getCameraLookPos()).norm() / 6d);
+		return Math.min(getMaxEnvDim() / 4d, getData().getCameraPos().minus(getData().getCameraLookPos()).norm() / 6d);
 	}
 
 	public void drawRotation() {
 		if (rotationMode && SHOULD_DRAW_ROTATION_SPHERE) {
-			final GamaPoint target = data.getCameraLookPos();
-			final double distance = data.getCameraPos().minus(target).norm();
-			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxWorldDim() / 4d, distance / 6d));
+			final GamaPoint target = getData().getCameraLookPos();
+			final double distance = getData().getCameraPos().minus(target).norm();
+			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 6d));
 		}
 	}
 
@@ -1508,7 +1147,7 @@ public class OpenGL {
 	public void defineROI(final GamaPoint mouseStart, final GamaPoint mouseEnd) {
 		final GamaPoint start = getWorldPositionFrom(mouseStart);
 		final GamaPoint end = getWorldPositionFrom(mouseEnd);
-		roiEnvelope = new Envelope3D(start.x, end.x, start.y, end.y, 0, getMaxWorldDim() / 20d);
+		roiEnvelope = new Envelope3D(start.x, end.x, start.y, end.y, 0, getMaxEnvDim() / 20d);
 	}
 
 	public boolean mouseInROI(final GamaPoint mousePosition) {
@@ -1516,6 +1155,12 @@ public class OpenGL {
 		if (env == null) { return false; }
 		final GamaPoint p = getWorldPositionFrom(mousePosition);
 		return env.contains(p);
+	}
+
+	@Override
+	public void initialize() {
+		// TODO Auto-generated method stub
+
 	}
 
 }
