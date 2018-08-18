@@ -1,8 +1,9 @@
 package ummisco.gama.dev.utils;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * A simple and generic debugging/logging class that can be turned on / off on a class basis.
@@ -12,7 +13,9 @@ import java.util.Set;
  */
 public class DEBUG {
 
-	static Set<String> REGISTERED = new HashSet<>();
+	// AD 08/18: Changes to ConcurrentHashMap for multi-threaded DEBUG operations
+	static Map<String, String> REGISTERED = new ConcurrentHashMap<>();
+	static Map<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	static boolean GLOBAL_OFF = false;
 	static boolean GLOBAL_ON = false;
 
@@ -27,11 +30,97 @@ public class DEBUG {
 	}
 
 	/**
+	 * Returns an automatically incremented integer count if the calling class is registered. -1 otherwise. Useful for
+	 * counting a number of invocations, etc. without having to define a static number on the class
+	 * 
+	 * @return -1 if the class is not registered, 0 if it is the first call, otherwise an incremented integer
+	 */
+	public static Integer COUNT() {
+		final String s = findCallingClassName();
+		Integer result = -1;
+		if (REGISTERED.containsKey(s)) {
+			if (COUNTERS.containsKey(s)) {
+				result = COUNTERS.get(s) + 1;
+				COUNTERS.put(s, result);
+			} else {
+				result = 0;
+				COUNTERS.put(s, result);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Resets the number previously used by COUNT() so that the next call to COUNT() returns 0;
+	 * 
+	 */
+	public static void RESET() {
+		final String s = findCallingClassName();
+		if (REGISTERED.containsKey(s)) {
+			if (COUNTERS.containsKey(s)) {
+				COUNTERS.put(s, -1);
+			}
+		}
+	}
+
+	/**
+	 * Simple timing utility to measure the number of ms taken by a runnable. If the class is registered, outputs the
+	 * title provided and the time taken once the runnable is finished, otherwise simply runs the runnable (the overhead
+	 * is minimal compared to simply executing the contents of the runnable).
+	 * 
+	 * Usage: DEBUG.TIMER("Important task", ()-> importantTask(...)); Output: Important Taks: 100ms
+	 * 
+	 * @param title
+	 *            a string that will prefix the number of ms in the output
+	 * @param supplier
+	 *            an object that encapsulates the computation to measure
+	 */
+
+	public static void TIMER(final String title, final Runnable runnable) {
+		final String s = findCallingClassName();
+		if (!REGISTERED.containsKey(s)) {
+			runnable.run();
+		}
+		final long start = System.currentTimeMillis();
+		runnable.run();
+		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+	}
+
+	/**
+	 * Simple timing utility to measure the number of ms taken by the execution of a Supplier. Contrary to the timer
+	 * accepting a runnable, this one returns a result. If the class is registered, outputs the title provided and the
+	 * time taken once the supplier is finished and returns its result, otherwise simply returns the result of the
+	 * supplier (the overhead is minimal compared to simply executing the contents of the provider)
+	 * 
+	 * Usage: Integer i = DEBUG.TIMER("My important integer computation", ()->myIntegerComputation()); // provided
+	 * myIntegerComputation() returns an Integer.
+	 * 
+	 * Output: My important integer computation: 100ms
+	 * 
+	 * @param title
+	 *            a string that will prefix the number of ms
+	 * @param supplier
+	 *            an object that encapsulates the computation to measure
+	 * 
+	 * @return The result of the supplier passed in argument
+	 */
+
+	public static <T> T TIMER(final String title, final Supplier<T> supplier) {
+		final String s = findCallingClassName();
+		if (!REGISTERED.containsKey(s)) { return supplier.get(); }
+		final long start = System.currentTimeMillis();
+		final T result = supplier.get();
+		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+		return result;
+	}
+
+	/**
 	 * Turns DEBUG on for the calling class
 	 */
 	public static final void ON() {
 		if (GLOBAL_OFF) { return; }
-		REGISTERED.add(findCallingClassName());
+		final String calling = findCallingClassName();
+		REGISTERED.put(calling, calling);
 	}
 
 	/**
@@ -99,7 +188,7 @@ public class DEBUG {
 	private static boolean IS_ON(final String className) {
 		// Necessary to loop on the names as the call can emanate from an inner class or an anonymous class of the
 		// "allowed" class
-		for (final String name : REGISTERED) {
+		for (final String name : REGISTERED.keySet()) {
 			if (className.startsWith(name)) { return true; }
 		}
 		return false;
