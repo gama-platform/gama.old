@@ -689,4 +689,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}
 
+	public boolean isNull() {
+		return this.equals(NULL_POINT);
+	}
+
 }
