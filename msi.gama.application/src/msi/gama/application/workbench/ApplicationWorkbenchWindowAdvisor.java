@@ -13,6 +13,7 @@ package msi.gama.application.workbench;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -27,6 +28,7 @@ import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import org.osgi.framework.Bundle;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
@@ -62,7 +64,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( PerspectiveHelper.isSimulationPerspective() ) {
-					// DEBUG.OUT("Running the perspective listener to automatically launch modeling");
+					DEBUG.OUT("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
 					PerspectiveHelper.openModelingPerspective(true);

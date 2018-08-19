@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import msi.gama.application.Application;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkspacePreferences {
@@ -222,30 +223,32 @@ public class WorkspacePreferences {
 		return null;
 	}
 
-	public static void testWorkspaceSanity(final File workspace) {
+	public static boolean testWorkspaceSanity(final File workspace) {
 		DEBUG.OUT("[GAMA] Checking for workspace sanity");
 		File[] files = workspace.listFiles((FileFilter) file -> file.getName().equals(".metadata"));
-		if ( files.length == 0 ) { return; }
+		if ( files.length == 0 ) { return true; }
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
 		for ( final File log : logs ) {
 			log.delete();
 		}
 		files = files[0].listFiles((FileFilter) file -> file.getName().equals(".plugins"));
-		if ( files.length == 0 ) { return; }
+		if ( files.length == 0 ) { return true; }
 		files = files[0].listFiles((FileFilter) file -> file.getName().equals("org.eclipse.core.resources"));
-		if ( files.length == 0 ) { return; }
+		if ( files.length == 0 ) { return true; }
 		files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
-		if ( files.length == 0 ) { return; }
+		if ( files.length == 0 ) { return true; }
+		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
 		if ( MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
-			"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ? Once it is done, you should exit the platform and restart it again to complete the cleaning process.") ) {
+			"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ? Once it is done, the platform will restart to complete the cleaning process.") ) {
 			for ( final File file : files ) {
 				if ( file.exists() ) {
 					file.delete();
 				}
 			}
-			return;
+			Application.ClearWorkspace(true);
+			return false;
 		}
-		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
+		return true;
 	}
 
 	public static String getModelIdentifier() {

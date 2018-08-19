@@ -357,8 +357,11 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		}
 		final WrappedContainer<?> parent = findWrappedInstanceOf(folder.getParent());
 		// final WrappedFolder wrapped = (WrappedFolder) wrap(parent, folder);
-		parent.initializeChildren();
-		refreshResource(parent);
+		if (parent != null) {
+			parent.initializeChildren();
+			refreshResource(parent);
+		}
+
 	}
 
 	// Returns whether to update or not

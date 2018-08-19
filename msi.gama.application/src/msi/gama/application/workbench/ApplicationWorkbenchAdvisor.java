@@ -44,6 +44,10 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
+	{
+		DEBUG.OFF();
+	}
+
 	public ApplicationWorkbenchAdvisor() {
 		super(Application.processor);
 	}
@@ -84,9 +88,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
 		DEBUG.OUT("Arguments received by GAMA : " + Arrays.toString(args));
-		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return;
-
-		}
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return; }
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 		}

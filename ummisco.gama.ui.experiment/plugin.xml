@@ -416,10 +416,16 @@
                   </command>
                </menu>
                <command
-                     commandId="org.eclipse.ui.window.resetPerspective"
+                     commandId="ummisco.gama.ui.resetPerspective"
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reset.perspective2.png"
-                     label="Reset Perspective..."
+                     label="Reset Perspective (restart required)..."
                      style="push">
+                  <visibleWhen
+                        checkEnabled="false">
+                     <reference
+                           definitionId="isInModelingPerspective">
+                     </reference>
+                  </visibleWhen>
                </command>
                <separator
                      name="msi.gama.application.window.perspectives"
@@ -707,15 +713,6 @@
             commandId="msi.gama.application.ShowErrors">
       </handler>
       <handler
-            class="ummisco.gama.ui.commands.ResetSimulationPerspective"
-            commandId="org.eclipse.ui.window.resetPerspective">
-         <activeWhen>
-            <reference
-                  definitionId="isInSimulationPerspective">
-            </reference>
-         </activeWhen>
-      </handler>
-      <handler
             class="ummisco.gama.ui.commands.SwitchToModeling"
             commandId="msi.gama.application.goto.modeling">
          <activeWhen>
@@ -789,6 +786,20 @@
                </reference>
             </and>
          </activeWhen>
+      </handler>
+      <handler
+            class="ummisco.gama.ui.commands.ResetModelingPerspective"
+            commandId="ummisco.gama.ui.resetPerspective">
+         <activeWhen>
+            <reference
+                  definitionId="isInModelingPerspective">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <reference
+                  definitionId="isInModelingPerspective">
+            </reference>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
@@ -1049,6 +1060,11 @@
       <command
             id="ummisco.gama.ui.experiment.copyLayout"
             name="Copy Layout">
+      </command>
+      <command
+            categoryId="msi.gama.category"
+            id="ummisco.gama.ui.resetPerspective"
+            name="Reset Perspective...">
       </command>
    </extension>
    <extension

@@ -99,7 +99,8 @@ public class PerspectiveHelper {
 	}
 
 	public static final boolean openModelingPerspective(final boolean immediately) {
-		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, true);
+		// AD 08/18: turn off autosave to prevent workspace corruption
+		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, false);
 	}
 
 	static PerspectiveDescriptor getSimulationDescriptor() {
