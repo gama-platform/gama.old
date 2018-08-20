@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Stats2.java, in plugin ummisco.gaml.extensions.stats, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Stats2.java, in plugin ummisco.gaml.extensions.stats, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,7 +26,7 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class Stats2 extends Stats {
 
 	static DoubleArrayList from(final IScope scope, final IContainer values) {
@@ -57,9 +56,16 @@ public class Stats2 extends Stats {
 		 * @param variance
 		 * @return
 		 */
-		@operator(value = "auto_correlation", can_be_const = true, type = IType.FLOAT, expected_content_type = {
-				IType.INT, IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the auto-correlation of a data sequence", comment = "", examples = {})
+		@operator (
+				value = "auto_correlation",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the auto-correlation of a data sequence",
+				comment = "",
+				examples = {})
 		public static Double opAutoCorrelation(final IScope scope, final IContainer data, final Integer lag) {
 
 			// TODO input parameters validation
@@ -73,8 +79,7 @@ public class Stats2 extends Stats {
 		/**
 		 * Returns the correlation of two data sequences.
 		 * 
-		 * @see <a href="http://www.mathsisfun.com/data/correlation.html">
-		 *      Correlation</a>
+		 * @see <a href="http://www.mathsisfun.com/data/correlation.html"> Correlation</a>
 		 *
 		 * @param scope
 		 * @param data1
@@ -83,9 +88,16 @@ public class Stats2 extends Stats {
 		 * @param stanardDev2
 		 * @return
 		 */
-		@operator(value = "correlation", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the correlation of two data sequences", comment = "", examples = {})
+		@operator (
+				value = "correlation",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the correlation of two data sequences",
+				comment = "",
+				examples = {})
 		public static Double opCorrelation(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -104,9 +116,16 @@ public class Stats2 extends Stats {
 		 * @param data2
 		 * @return
 		 */
-		@operator(value = "covariance", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the covariance of two data sequences", comment = "", examples = {})
+		@operator (
+				value = "covariance",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the covariance of two data sequences",
+				comment = "",
+				examples = {})
 		public static Double opCovariance(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -121,9 +140,16 @@ public class Stats2 extends Stats {
 		 * @param data
 		 * @return
 		 */
-		@operator(value = "durbin_watson", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Durbin-Watson computation", comment = "", examples = {})
+		@operator (
+				value = "durbin_watson",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Durbin-Watson computation",
+				comment = "",
+				examples = {})
 		public static Double opDurbinWatson(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -138,9 +164,16 @@ public class Stats2 extends Stats {
 		 * @param data
 		 * @return
 		 */
-		@operator(value = "kurtosis", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the kurtosis (aka excess) of a data sequence", comment = "", examples = {})
+		@operator (
+				value = "kurtosis",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the kurtosis (aka excess) of a data sequence",
+				comment = "",
+				examples = {})
 		public static Double opKurtosis(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -159,9 +192,16 @@ public class Stats2 extends Stats {
 		 * @param standardDeviation
 		 * @return
 		 */
-		@operator(value = "kurtosis", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the kurtosis (aka excess) of a data sequence", comment = "", examples = {})
+		@operator (
+				value = "kurtosis",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the kurtosis (aka excess) of a data sequence",
+				comment = "",
+				examples = {})
 		public static Double opKurtosis(final IScope scope, final Double moment4, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -170,8 +210,8 @@ public class Stats2 extends Stats {
 		}
 
 		/**
-		 * Returns the moment of k-th order with constant c of a data sequence,
-		 * which is Sum( (data[i]-c)k ) / data.size().
+		 * Returns the moment of k-th order with constant c of a data sequence, which is Sum( (data[i]-c)k ) /
+		 * data.size().
 		 *
 		 * @param scope
 		 * @param data
@@ -179,9 +219,16 @@ public class Stats2 extends Stats {
 		 * @param c
 		 * @return
 		 */
-		@operator(value = "moment", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the moment of k-th order with constant c of a data sequence", comment = "", examples = {})
+		@operator (
+				value = "moment",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the moment of k-th order with constant c of a data sequence",
+				comment = "",
+				examples = {})
 		public static Double opMoment(final IScope scope, final IContainer data, final Integer k, final Double c) {
 
 			// TODO input parameters validation
@@ -197,9 +244,16 @@ public class Stats2 extends Stats {
 		 * @param phi
 		 * @return
 		 */
-		@operator(value = "quantile", can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-				IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation.", comment = "", examples = {})
+		@operator (
+				value = "quantile",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
+				comment = "",
+				examples = {})
 		public static Double opQuantile(final IScope scope, final IContainer data, final Double phi) {
 
 			// TODO input parameters validation
@@ -215,10 +269,16 @@ public class Stats2 extends Stats {
 		 * @param element
 		 * @return
 		 */
-		@operator(value = { "quantile_inverse",
-				"percentile" }, can_be_const = true, type = IType.FLOAT, expected_content_type = { IType.INT,
-						IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns how many percent of the elements contained in the receiver are <= element. Does linear interpolation if the element is not contained but lies in between two contained elements.", comment = "", examples = {})
+		@operator (
+				value = { "quantile_inverse", "percentile" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns how many percent of the elements contained in the receiver are <= element. Does linear interpolation if the element is not contained but lies in between two contained elements. Note that the container holding the values must be sorted first",
+				comment = "",
+				examples = {})
 		public static Double opQuantileInverse(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -234,9 +294,16 @@ public class Stats2 extends Stats {
 		 * @param element
 		 * @return
 		 */
-		@operator(value = "rank_interpolated", can_be_const = true, type = IType.FLOAT, expected_content_type = {
-				IType.INT, IType.FLOAT }, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the linearly interpolated number of elements in a list less or equal to a given element. The rank is the number of elements <= element. Ranks are of the form {0, 1, 2,..., sortedList.size()}. If no element is <= element, then the rank is zero. If the element lies in between two contained elements, then linear interpolation is used and a non integer value is returned.", comment = "", examples = {})
+		@operator (
+				value = "rank_interpolated",
+				can_be_const = true,
+				type = IType.FLOAT,
+				expected_content_type = { IType.INT, IType.FLOAT },
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the linearly interpolated number of elements in a list less or equal to a given element. The rank is the number of elements <= element. Ranks are of the form {0, 1, 2,..., sortedList.size()}. If no element is <= element, then the rank is zero. If the element lies in between two contained elements, then linear interpolation is used and a non integer value is returned. Note that the container holding the values must be sorted first",
+				comment = "",
+				examples = {})
 		public static Double opRankInterpolated(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -252,8 +319,15 @@ public class Stats2 extends Stats {
 		 * @param sumOfSquares
 		 * @return
 		 */
-		@operator(value = "rms", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the RMS (Root-Mean-Square) of a data sequence. The RMS of data sequence is the square-root of the mean of the squares of the elements in the data sequence. It is a measure of the average size of the elements of a data sequence.", comment = "", examples = {})
+		@operator (
+				value = "rms",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the RMS (Root-Mean-Square) of a data sequence. The RMS of data sequence is the square-root of the mean of the squares of the elements in the data sequence. It is a measure of the average size of the elements of a data sequence.",
+				comment = "",
+				examples = {})
 		public static Double opRms(final IScope scope, final Integer size, final Double sumOfSquares) {
 
 			// TODO input parameters validation
@@ -270,8 +344,15 @@ public class Stats2 extends Stats {
 		 * @param standardDeviation
 		 * @return
 		 */
-		@operator(value = "skew", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3", comment = "", examples = {})
+		@operator (
+				value = "skew",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
+				comment = "",
+				examples = {})
 		public static Double opSkew(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -290,8 +371,15 @@ public class Stats2 extends Stats {
 		 * @param standardDeviation
 		 * @return
 		 */
-		@operator(value = "skew", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the skew of a data sequence.", comment = "", examples = {})
+		@operator (
+				value = "skew",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the skew of a data sequence.",
+				comment = "",
+				examples = {})
 		public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -317,8 +405,15 @@ public class Stats2 extends Stats {
 		 * @param standardDeviation
 		 * @return
 		 */
-		@operator(value = "variance", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the variance from a standard deviation.", comment = "", examples = {})
+		@operator (
+				value = "variance",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the variance from a standard deviation.",
+				comment = "",
+				examples = {})
 		public static Double opVariance(final IScope scope, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -335,8 +430,15 @@ public class Stats2 extends Stats {
 		 * @param numOfSquares
 		 * @return
 		 */
-		@operator(value = "variance", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.", comment = "", examples = {})
+		@operator (
+				value = "variance",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.",
+				comment = "",
+				examples = {})
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
@@ -349,12 +451,10 @@ public class Stats2 extends Stats {
 	}
 
 	/**
-	 * Source code of this class is inspired by
-	 * org.nlogo.extensions.stats.Distributions.java of the NetLogo Stats
+	 * Source code of this class is inspired by org.nlogo.extensions.stats.Distributions.java of the NetLogo Stats
 	 * extension of Charles Staelin.
 	 *
-	 * @see <a href="https://github.com/cstaelin/Stats-Extension/releases">
-	 *      NetLogo Stats extension</a>
+	 * @see <a href="https://github.com/cstaelin/Stats-Extension/releases"> NetLogo Stats extension</a>
 	 */
 	public static abstract class Distributions {
 
@@ -367,8 +467,15 @@ public class Stats2 extends Stats {
 		 * @param dfd
 		 * @return
 		 */
-		@operator(value = "pValue_for_fStat", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the P value of F statistic fstat with numerator degrees of freedom dfn and denominator degress of freedom dfd. Uses the incomplete Beta function.", comment = "", examples = {})
+		@operator (
+				value = "pValue_for_fStat",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the P value of F statistic fstat with numerator degrees of freedom dfn and denominator degress of freedom dfd. Uses the incomplete Beta function.",
+				comment = "",
+				examples = {})
 		public static Double opPvalueForFstat(final IScope scope, final Double fstat, final Integer dfn,
 				final Integer dfd) { // see Spatial.Punctual.angle_between
 
@@ -394,8 +501,15 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = "pValue_for_tStat", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the P value of the T statistic tstat with df degrees of freedom. This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.", comment = "", examples = {})
+		@operator (
+				value = "pValue_for_tStat",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the P value of the T statistic tstat with df degrees of freedom. This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.",
+				comment = "",
+				examples = {})
 		public static Double opPvalueForTstat(final IScope scope, final Double tstat, final Integer df) {
 
 			// Returns the P value of the T statistic tstat with df degrees of
@@ -421,8 +535,15 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = "student_area", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the area to the left of x in the Student T distribution with the given degrees of freedom.", comment = "", examples = {})
+		@operator (
+				value = "student_area",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the area to the left of x in the Student T distribution with the given degrees of freedom.",
+				comment = "",
+				examples = {})
 		public static Double opStudentArea(final IScope scope, final Double x, final Integer df) {
 
 			// Returns the area to the left of x in the Student T distribution
@@ -445,9 +566,15 @@ public class Stats2 extends Stats {
 		 * @param sd
 		 * @return
 		 */
-		@operator(value = { "normal_area", "pnorm" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.", comment = "", examples = {})
+		@operator (
+				value = { "normal_area", "pnorm" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.",
+				comment = "",
+				examples = {})
 		public static Double opNormalArea(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the area to the left of x in the normal distribution
@@ -469,9 +596,15 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = "student_t_inverse", can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the value, t, for which the area under the Student-t probability density function (integrated from minus infinity to t) is equal to x.", comment = "", examples = {})
+		@operator (
+				value = "student_t_inverse",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the value, t, for which the area under the Student-t probability density function (integrated from minus infinity to t) is equal to x.",
+				comment = "",
+				examples = {})
 		public static Double opStudentTInverse(final IScope scope, final Double x, final Integer df) {
 
 			// Returns the value, t, for which the area under the Student-t
@@ -497,8 +630,15 @@ public class Stats2 extends Stats {
 		 * @param sd
 		 * @return
 		 */
-		@operator(value = "normal_inverse", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.", comment = "", examples = {})
+		@operator (
+				value = "normal_inverse",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.",
+				comment = "",
+				examples = {})
 		public static Double opNormalInverse(final IScope scope, final Double area, final Double mean,
 				final Double sd) {
 
@@ -526,9 +666,15 @@ public class Stats2 extends Stats {
 		 * @param sd
 		 * @return
 		 */
-		@operator(value = { "normal_density", "dnorm" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.", comment = "", examples = {})
+		@operator (
+				value = { "normal_density", "dnorm" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
+				comment = "",
+				examples = {})
 		public static Double opNormalDensity(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the probability of x in the normal distribution with the
@@ -547,8 +693,15 @@ public class Stats2 extends Stats {
 		 * @param k
 		 * @return
 		 */
-		@operator(value = "binomial_coeff", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns n choose k as a double. Note the integerization of the double return value.", comment = "", examples = {})
+		@operator (
+				value = "binomial_coeff",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns n choose k as a double. Note the integerization of the double return value.",
+				comment = "",
+				examples = {})
 		public static Double opBinomialCoeff(final IScope scope, final Integer n, final Integer k) {
 
 			// Returns "n choose k" as a double. Note the "integerization" of
@@ -571,9 +724,15 @@ public class Stats2 extends Stats {
 		 * @param p
 		 * @return
 		 */
-		@operator(value = { "binomial_sum", "pbinom" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the sum of the terms 0 through k of the Binomial probability density, where n is the number of trials and p is the probability of success in the range 0 to 1.", comment = "", examples = {})
+		@operator (
+				value = { "binomial_sum", "pbinom" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the sum of the terms 0 through k of the Binomial probability density, where n is the number of trials and p is the probability of success in the range 0 to 1.",
+				comment = "",
+				examples = {})
 		public static Double opBinomialSum(final IScope scope, final Integer k, final Integer n, final Double p) {
 
 			// Returns the sum of the terms 0 through k of the Binomial
@@ -593,18 +752,23 @@ public class Stats2 extends Stats {
 		 *
 		 * @param scope
 		 * @param a
-		 *            the paramater a (alpha) of the gamma distribution (shape
-		 *            parameter).
+		 *            the paramater a (alpha) of the gamma distribution (shape parameter).
 		 * @param b
-		 *            the paramater b (beta, lambda) of the gamma distribution
-		 *            (rate parameter, inverse scale parameter theta).
+		 *            the paramater b (beta, lambda) of the gamma distribution (rate parameter, inverse scale parameter
+		 *            theta).
 		 * @param x
 		 *            integration end point.
 		 * @return
 		 */
-		@operator(value = { "gamma_distribution", "pgamma" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the integral from zero to x of the gamma probability density function.", comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).", examples = {})
+		@operator (
+				value = { "gamma_distribution", "pgamma" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the integral from zero to x of the gamma probability density function.",
+				comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).",
+				examples = {})
 		public static Double opGamma(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from zero to x of the gamma probability
@@ -630,9 +794,15 @@ public class Stats2 extends Stats {
 		 *            integration end point.
 		 * @return
 		 */
-		@operator(value = "gamma_distribution_complemented", can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the integral from x to infinity of the gamma probability density function.", comment = "", examples = {})
+		@operator (
+				value = "gamma_distribution_complemented",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the integral from x to infinity of the gamma probability density function.",
+				comment = "",
+				examples = {})
 		public static Double opGammaComplemented(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from x to infinity of the gamma probability
@@ -655,9 +825,15 @@ public class Stats2 extends Stats {
 		 * @param p
 		 * @return
 		 */
-		@operator(value = "binomial_complemented", can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the sum of the terms k+1 through n of the Binomial probability density, where n is the number of trials and P is the probability of success in the range 0 to 1.", comment = "", examples = {})
+		@operator (
+				value = "binomial_complemented",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the sum of the terms k+1 through n of the Binomial probability density, where n is the number of trials and P is the probability of success in the range 0 to 1.",
+				comment = "",
+				examples = {})
 		public static Double opBinomialComplemented(final IScope scope, final Integer n, final Integer k,
 				final Double p) {
 
@@ -681,9 +857,15 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = { "chi_square", "pchisq" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.", comment = "", examples = {})
+		@operator (
+				value = { "chi_square", "pchisq" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.",
+				comment = "",
+				examples = {})
 		public static Double opChiSquare(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the left hand tail (from 0 to x) of the
@@ -706,9 +888,15 @@ public class Stats2 extends Stats {
 		 * @param df
 		 * @return
 		 */
-		@operator(value = "chi_square_complemented", can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the area under the right hand tail (from x to infinity) of the Chi square probability density function with df degrees of freedom.", comment = "", examples = {})
+		@operator (
+				value = "chi_square_complemented",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the area under the right hand tail (from x to infinity) of the Chi square probability density function with df degrees of freedom.",
+				comment = "",
+				examples = {})
 		public static Double opChiSquareComplemented(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the right hand tail (from x to infinity)
@@ -733,8 +921,15 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = "gamma", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the value of the Gamma function at x.", comment = "", examples = {})
+		@operator (
+				value = "gamma",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the value of the Gamma function at x.",
+				comment = "",
+				examples = {})
 		public static Double opGamma(final IScope scope, final Double x) {
 
 			// Returns the value of the Gamma function at x.
@@ -754,9 +949,15 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = { "log_gamma", "lgamma" }, can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the log of the value of the Gamma function at x.", comment = "", examples = {})
+		@operator (
+				value = { "log_gamma", "lgamma" },
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the log of the value of the Gamma function at x.",
+				comment = "",
+				examples = {})
 		public static Double opLogGamma(final IScope scope, final Double x) {
 
 			// Returns the log of the value of the Gamma function at x.
@@ -777,8 +978,15 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = "incomplete_gamma", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = " Returns the regularized integral of the Gamma function with argument a to the integration end point x.", comment = "", examples = {})
+		@operator (
+				value = "incomplete_gamma",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = " Returns the regularized integral of the Gamma function with argument a to the integration end point x.",
+				comment = "",
+				examples = {})
 		public static Double opIncompleteGamma(final IScope scope, final Double a, final Double x) {
 
 			// Returns the regularized integral of the Gamma function with
@@ -801,9 +1009,15 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = "incomplete_gamma_complement", can_be_const = true, type = IType.FLOAT, concept = {
-				IConcept.STATISTIC })
-		@doc(value = "Returns the complemented regularized incomplete Gamma function of the argument a and integration start point x.", comment = "", examples = {})
+		@operator (
+				value = "incomplete_gamma_complement",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the complemented regularized incomplete Gamma function of the argument a and integration start point x.",
+				comment = "",
+				examples = {})
 		public static Double opIncompleteGammaComplement(final IScope scope, final Double a, final Double x) {
 			// Returns the complemented regularized incomplete Gamma function of
 			// the
@@ -825,8 +1039,15 @@ public class Stats2 extends Stats {
 		 * @param b
 		 * @return
 		 */
-		@operator(value = "beta", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the beta function with arguments a, b.", comment = "", examples = {})
+		@operator (
+				value = "beta",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the beta function with arguments a, b.",
+				comment = "",
+				examples = {})
 		public static Double opBeta(final IScope scope, final Double a, final Double b) {
 
 			// Returns the beta function with arguments a, b.
@@ -848,8 +1069,15 @@ public class Stats2 extends Stats {
 		 * @param x
 		 * @return
 		 */
-		@operator(value = "incomplete_beta", can_be_const = true, type = IType.FLOAT, concept = { IConcept.STATISTIC })
-		@doc(value = "Returns the regularized integral of the beta function with arguments a and b, from zero to x.", comment = "", examples = {})
+		@operator (
+				value = "incomplete_beta",
+				can_be_const = true,
+				type = IType.FLOAT,
+				concept = { IConcept.STATISTIC })
+		@doc (
+				value = "Returns the regularized integral of the beta function with arguments a and b, from zero to x.",
+				comment = "",
+				examples = {})
 		public static Double opIncompleteBeta(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the regularized integral of the beta function with
