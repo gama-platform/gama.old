@@ -1,8 +1,6 @@
 package ummisco.gama.dev.utils;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,21 +14,21 @@ import java.util.function.Supplier;
 public class DEBUG {
 
 	// AD 08/18: Changes to ConcurrentHashMap for multi-threaded DEBUG operations
-	static Map<String, String> REGISTERED = new ConcurrentHashMap<>();
-	static Map<String, Integer> COUNTERS = new ConcurrentHashMap<>();
-	static boolean GLOBAL_OFF = false;
-	static boolean GLOBAL_ON = false;
-	static Map<Class<?>, Function<Object, String>> ARRAY_TO_STRING = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
+	private static final boolean GLOBAL_OFF = false;
+	private static final boolean GLOBAL_ON = false;
 
 	static {
-		ARRAY_TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
-		ARRAY_TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
-		ARRAY_TO_STRING.put(float.class, (o) -> Arrays.toString((float[]) o));
-		ARRAY_TO_STRING.put(byte.class, (o) -> Arrays.toString((byte[]) o));
-		ARRAY_TO_STRING.put(boolean.class, (o) -> Arrays.toString((boolean[]) o));
-		ARRAY_TO_STRING.put(long.class, (o) -> Arrays.toString((long[]) o));
-		ARRAY_TO_STRING.put(short.class, (o) -> Arrays.toString((short[]) o));
-		ARRAY_TO_STRING.put(char.class, (o) -> Arrays.toString((char[]) o));
+		TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
+		TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
+		TO_STRING.put(float.class, (o) -> Arrays.toString((float[]) o));
+		TO_STRING.put(byte.class, (o) -> Arrays.toString((byte[]) o));
+		TO_STRING.put(boolean.class, (o) -> Arrays.toString((boolean[]) o));
+		TO_STRING.put(long.class, (o) -> Arrays.toString((long[]) o));
+		TO_STRING.put(short.class, (o) -> Arrays.toString((short[]) o));
+		TO_STRING.put(char.class, (o) -> Arrays.toString((char[]) o));
 	}
 
 	/**
@@ -213,7 +211,7 @@ public class DEBUG {
 		if (object.getClass().isArray()) {
 			final Class<?> clazz = object.getClass().getComponentType();
 			if (clazz.isPrimitive()) {
-				return ARRAY_TO_STRING.get(clazz).apply(object);
+				return TO_STRING.get(clazz).apply(object);
 			} else {
 				return Arrays.deepToString((Object[]) object);
 			}
@@ -269,13 +267,13 @@ public class DEBUG {
 	 * @param pad
 	 *            the minimum length of the first string (padded with spaces if shorter)
 	 * @param other
-	 *            another object on which toString() is applied
+	 *            another object on which TO_STRING() is applied
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
 		if (GLOBAL_OFF) { return; }
 		if (title == null) { return; }
 		if (GLOBAL_ON || IS_ON(findCallingClassName())) {
-			LOG(PAD(title, pad) + Objects.toString(other));
+			LOG(PAD(title, pad) + TO_STRING(other));
 		}
 	}
 
