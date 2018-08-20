@@ -999,6 +999,7 @@ public class Containers {
 							equals = "96",
 							isExecutable = false) },
 			see = { "min_of" })
+	@validator (ComparableValidator.class)
 	public static Object max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).maxBy(Function.identity()).orElse(null);
 	}
@@ -1217,6 +1218,7 @@ public class Containers {
 							equals = "4",
 							isExecutable = false) },
 			see = { "max_of" })
+	@validator (ComparableValidator.class)
 	public static Object min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).minBy(Function.identity()).orElse(null);
 	}
@@ -1274,14 +1276,14 @@ public class Containers {
 		return result;
 	}
 
-	public static class SortValidator implements IOperatorValidator {
+	public static class ComparableValidator implements IOperatorValidator {
 
 		@Override
 		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
 			final IExpression filter = arguments[1];
 			if (!filter.getGamlType().isComparable()) {
 				context.error(
-						"The sorting function should return values that are comparable with each other (e.g. int, float, string, point, color, etc.)",
+						"The comparison function should return values that are comparable with each other (e.g. int, float, string, point, color, etc.)",
 						IGamlIssue.UNMATCHED_TYPES, emfContext);
 				return false;
 			}
@@ -1319,7 +1321,7 @@ public class Containers {
 							value = "[1::2, 5::6, 3::4] sort_by (each)",
 							equals = "[2, 4, 6]") },
 			see = { "group_by" })
-	@validator (SortValidator.class)
+	@validator (ComparableValidator.class)
 	public static IList sort(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).sortedBy(with(scope, filter)).toCollection(listLike(c));
 	}
@@ -1389,6 +1391,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_max_of (each)",
 							equals = "6") },
 			see = { "where", "with_min_of" })
+	@validator (ComparableValidator.class)
 	public static Object with_max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).maxBy(with(scope, filter)).orElse(null);
 	}
@@ -1422,6 +1425,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_min_of (each)",
 							equals = "2") },
 			see = { "where", "with_max_of" })
+	@validator (ComparableValidator.class)
 	public static Object with_min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).minBy(with(scope, filter)).orElse(null);
 	}
