@@ -74,5 +74,12 @@
             class="msi.gama.outputs.layers.MouseEventLayerDelegate">
       </implementation>
    </extension>
+   <extension
+         point="org.eclipse.core.resources.variableResolvers">
+      <variableResolver
+            class="msi.gama.util.file.CacheLocationProvider"
+            variable="CACHE_LOC">
+      </variableResolver>
+   </extension>
 
 </plugin>

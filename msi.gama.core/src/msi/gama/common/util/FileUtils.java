@@ -24,6 +24,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -42,6 +43,7 @@ import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.CacheLocationProvider;
 import msi.gama.util.file.http.Webb;
 import msi.gama.util.file.http.WebbException;
 import ummisco.gama.dev.utils.DEBUG;
@@ -60,19 +62,25 @@ public class FileUtils {
 	public static final String COPY_OF = "copy of ";
 	public static final String HOME = "~";
 	public static final String SEPARATOR = "/";
-	public static final String CACHE_FOLDER_NAME = SEPARATOR + ".cache";
+	public static final IPath CACHE_FOLDER_PATH = new Path(".cache");
 	public static final IPath EXTERNAL_FOLDER_PATH = new Path("external");
 	static IWorkspaceRoot ROOT = ResourcesPlugin.getWorkspace().getRoot();
 	static IFileSystem FILE_SYSTEM = EFS.getLocalFileSystem();
 	static String USER_HOME = System.getProperty("user.home");
-	static final URI WORKSPACE_URI =
-			URI.createURI(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().toString(), false);
+	static final URI WORKSPACE_URI = URI.createURI(ROOT.getLocationURI().toString(), false);
 	static final File CACHE;
 
 	static {
-		CACHE = new File(ROOT.getLocation().toFile().getAbsolutePath() + CACHE_FOLDER_NAME);
+		DEBUG.OFF();
+		CACHE = new File(ROOT.getLocation().toFile().getAbsolutePath() + SEPARATOR + CACHE_FOLDER_PATH.toString());
 		if (!CACHE.exists()) {
 			CACHE.mkdirs();
+		}
+		try {
+			ROOT.getPathVariableManager().setValue("CACHE_LOC", ROOT.getLocation().append(CACHE_FOLDER_PATH));
+		} catch (final CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -93,7 +101,7 @@ public class FileUtils {
 	// Should be able to catch most of the calls to relative resources as well
 	static public String constructAbsoluteFilePath(final IScope scope, final String filePath, final boolean mustExist) {
 		String fp;
-		if (filePath.startsWith("~")) {
+		if (filePath.startsWith(HOME)) {
 			fp = filePath.replaceFirst(HOME, USER_HOME);
 		} else {
 			fp = filePath;
@@ -108,7 +116,7 @@ public class FileUtils {
 			}
 			final String file = findOutsideWorkspace(fp, modelBase, mustExist);
 			if (file != null) {
-				// DEBUG.OUT("Hit with EFS-based search: " + file);
+				DEBUG.OUT("Hit with EFS-based search: " + file);
 				return file;
 			}
 		}
@@ -122,7 +130,7 @@ public class FileUtils {
 			for (final IContainer folder : paths) {
 				final String file = findInWorkspace(fp, folder, mustExist);
 				if (file != null) {
-					// DEBUG.OUT("Hit with workspace-based search: " + file);
+					DEBUG.OUT("Hit with workspace-based search: " + file);
 					return file;
 				}
 			}
@@ -249,9 +257,15 @@ public class FileUtils {
 	// }
 
 	private static IFile createLinkedFile(final String path, final IFile file) {
+		java.net.URI resolvedURI = null;
 		final java.net.URI javaURI = new java.io.File(path).toURI();
 		try {
-			file.createLink(javaURI, IResource.NONE, null);
+			resolvedURI = ROOT.getPathVariableManager().convertToRelative(javaURI, true, null);
+		} catch (final CoreException e1) {
+			resolvedURI = javaURI;
+		}
+		try {
+			file.createLink(resolvedURI, IResource.NONE, null);
 		} catch (final CoreException e) {
 			return null;
 		}
@@ -307,11 +321,10 @@ public class FileUtils {
 	}
 
 	public static IFile getWorkspaceFile(final URI uri) {
-		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IPath uriAsPath = new Path(URI.decode(uri.toString()));
 		IFile file;
 		try {
-			file = root.getFile(uriAsPath);
+			file = ROOT.getFile(uriAsPath);
 		} catch (final Exception e1) {
 			return null;
 		}
@@ -320,7 +333,7 @@ public class FileUtils {
 		final IPath path = uriAsText != null ? new Path(uriAsText) : null;
 		if (path == null) { return null; }
 		try {
-			file = root.getFile(path);
+			file = ROOT.getFile(path);
 		} catch (final Exception e) {
 			return null;
 		}
@@ -329,7 +342,7 @@ public class FileUtils {
 	}
 
 	public static String constructAbsoluteTempFilePath(final IScope scope, final URL url) {
-		return CACHE.getAbsolutePath() + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
+		return "" + CacheLocationProvider.NAME + "" + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
 				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT);
 
 	}
@@ -356,7 +369,7 @@ public class FileUtils {
 	}
 
 	public static String fetchToTempFile(final IScope scope, final URL url) {
-		final String pathName = constructAbsoluteTempFilePath(scope, url);
+		String pathName = constructAbsoluteTempFilePath(scope, url);
 		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf(SEPARATOR));
 		scope.getGui().getStatus(scope).beginSubStatus(status);
@@ -366,6 +379,8 @@ public class FileUtils {
 					.connectTimeout(GamaPreferences.External.CORE_HTTP_CONNECT_TIMEOUT.getValue())
 					.readTimeout(GamaPreferences.External.CORE_HTTP_READ_TIMEOUT.getValue())
 					.retry(GamaPreferences.External.CORE_HTTP_RETRY_NUMBER.getValue(), false).asStream().getBody();) {
+				final java.net.URI uri = URIUtil.toURI(pathName);
+				pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
 				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (final IOException | WebbException e) {
