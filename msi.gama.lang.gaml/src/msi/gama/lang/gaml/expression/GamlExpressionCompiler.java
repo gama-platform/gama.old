@@ -257,7 +257,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (isSuperType && typeInfo == null) {
 			getContext().info("Unneeded casting: '" + toCast.serialize(true) + "' is already of type " + type,
 					IGamlIssue.UNUSED, typeObject);
-			return toCast;
+			// Issue #2521: indicate but don't skip the casting
+			// return toCast;
 		}
 		IType keyType = castingType.getKeyType();
 		IType contentsType = castingType.getContentType();
@@ -280,7 +281,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (result.isAssignableFrom(toCast.getGamlType())) {
 			getContext().info("Unneeded casting: '" + toCast.serialize(true) + "' is already of type " + type,
 					IGamlIssue.UNUSED, typeObject);
-			return toCast;
+			// Issue #2521: indicate but don't skip the casting
+			// return toCast;
 		}
 
 		return getFactory().createAs(getContext().getSpeciesContext(), toCast,
@@ -823,7 +825,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	public IExpression caseDot(final Access object) {
-		final Expression right = (object.getRight());
+		final Expression right = object.getRight();
 		if (right instanceof StringLiteral) {
 			return compileNamedExperimentFieldExpr(object.getLeft(), EGaml.getKeyOf(right));
 		} else if (right != null) { return compileFieldExpr(object.getLeft(), object.getRight()); }
@@ -953,7 +955,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (size == 1) {
 			toCast = compile(args.get(0));
 		} else {
-			toCast = getFactory().createList((transform(args, a -> compile(a))));
+			toCast = getFactory().createList(transform(args, a -> compile(a)));
 		}
 		return binaryAs(toCast, object);
 	}

@@ -24,12 +24,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.eclipse.emf.ecore.EObject;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
@@ -61,6 +64,9 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.compilation.IOperatorValidator;
+import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
@@ -113,7 +119,9 @@ public class Containers {
 
 	public static <T> Function<Object, T> with(final IScope scope, final IExpression filter) {
 		return (t) -> {
-			scope.setEach(t);
+			// Issue #2517. Extra step to coerce the type of 'each' to what's expected by the filter (problem with ints
+			// and floats)
+			scope.setEach(filter.getGamlType().cast(scope, t, null, false));
 			return (T) filter.value(scope);
 		};
 	}
@@ -1266,6 +1274,22 @@ public class Containers {
 		return result;
 	}
 
+	public static class SortValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			final IExpression filter = arguments[1];
+			if (!filter.getGamlType().isComparable()) {
+				context.error(
+						"The sorting function should return values that are comparable with each other (e.g. int, float, string, point, color, etc.)",
+						IGamlIssue.UNMATCHED_TYPES, emfContext);
+				return false;
+			}
+			return true;
+		}
+
+	}
+
 	@operator (
 			value = { "sort_by", "sort" },
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
@@ -1275,7 +1299,8 @@ public class Containers {
 	@doc (
 			value = "Returns a list, containing the elements of the left-hand operand sorted in ascending order by the value of the right-hand operand when it is evaluated on them. ",
 			comment = "the left-hand operand is casted to a list before applying the operator. In the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
-			special_cases = { "if the left-hand operand is nil, sort_by throws an error" },
+			special_cases = {
+					"if the left-hand operand is nil, sort_by throws an error. If the sorting function returns values that cannot be compared, an error will be thrown as well" },
 			examples = { @example (
 					value = "[1,2,4,3,5,7,6,8] sort_by (each)",
 					equals = "[1,2,3,4,5,6,7,8]"),
@@ -1294,6 +1319,7 @@ public class Containers {
 							value = "[1::2, 5::6, 3::4] sort_by (each)",
 							equals = "[2, 4, 6]") },
 			see = { "group_by" })
+	@validator (SortValidator.class)
 	public static IList sort(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).sortedBy(with(scope, filter)).toCollection(listLike(c));
 	}

@@ -9,8 +9,9 @@ import java.lang.annotation.Target;
 import msi.gaml.compilation.IValidator;
 
 /**
- * Allows to declare a custom validator for Symbols. This validator, if declared on subclasses of Symbol, will be called
- * after the standard validation is done. The validator must be subclass of IDescriptionValidator
+ * Allows to declare a custom validator for Symbols and Operators. This validator, if declared on subclasses of Symbol,
+ * will be called after the standard validation is done. The validator must be subclass of IDescriptionValidator in that
+ * case. If invoked on operators, the class should be a subclass of IOperatorValidator.
  *
  * @author drogoul
  * @since 11 nov. 2014

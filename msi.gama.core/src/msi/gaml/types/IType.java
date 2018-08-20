@@ -196,6 +196,11 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	public boolean isDrawable();
 
+	public default boolean isComparable() {
+		if (Comparable.class.isAssignableFrom(toClass())) { return true; }
+		return false;
+	}
+
 	public IType<?> getWrappedType();
 
 	SpeciesDescription getDenotedSpecies();
