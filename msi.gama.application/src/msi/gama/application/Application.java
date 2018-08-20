@@ -36,7 +36,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class Application implements IApplication {
 
 	{
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public static OpenDocumentEventProcessor processor;
@@ -50,7 +50,7 @@ public class Application implements IApplication {
 
 	public static boolean IsClearWorkspace() {
 		final boolean result = PrefUtil.getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE);
-		DEBUG.OUT("Value of clearWorkspace pref" + result);
+		DEBUG.OUT("Value of clearWorkspace pref: " + result);
 		return result;
 	}
 
