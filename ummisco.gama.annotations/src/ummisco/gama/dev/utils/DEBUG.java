@@ -1,8 +1,10 @@
 package ummisco.gama.dev.utils;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -18,6 +20,18 @@ public class DEBUG {
 	static Map<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	static boolean GLOBAL_OFF = false;
 	static boolean GLOBAL_ON = false;
+	static Map<Class<?>, Function<Object, String>> ARRAY_TO_STRING = new ConcurrentHashMap<>();
+
+	static {
+		ARRAY_TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
+		ARRAY_TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
+		ARRAY_TO_STRING.put(float.class, (o) -> Arrays.toString((float[]) o));
+		ARRAY_TO_STRING.put(byte.class, (o) -> Arrays.toString((byte[]) o));
+		ARRAY_TO_STRING.put(boolean.class, (o) -> Arrays.toString((boolean[]) o));
+		ARRAY_TO_STRING.put(long.class, (o) -> Arrays.toString((long[]) o));
+		ARRAY_TO_STRING.put(short.class, (o) -> Arrays.toString((short[]) o));
+		ARRAY_TO_STRING.put(char.class, (o) -> Arrays.toString((char[]) o));
+	}
 
 	/**
 	 * Uses the stack trace to find the calling class. Use of reflection would be faster, but more prone to Oracle
@@ -64,9 +78,9 @@ public class DEBUG {
 	}
 
 	/**
-	 * Simple timing utility to measure the number of ms taken by a runnable. If the class is registered, outputs the
-	 * title provided and the time taken once the runnable is finished, otherwise simply runs the runnable (the overhead
-	 * is minimal compared to simply executing the contents of the runnable).
+	 * Simple timing utility to measure and output the number of ms taken by a runnable. If the class is registered,
+	 * outputs the title provided and the time taken once the runnable is finished, otherwise simply runs the runnable
+	 * (the overhead is minimal compared to simply executing the contents of the runnable).
 	 * 
 	 * Usage: DEBUG.TIMER("Important task", ()-> importantTask(...)); Output: Important Taks: 100ms
 	 * 
@@ -87,10 +101,10 @@ public class DEBUG {
 	}
 
 	/**
-	 * Simple timing utility to measure the number of ms taken by the execution of a Supplier. Contrary to the timer
-	 * accepting a runnable, this one returns a result. If the class is registered, outputs the title provided and the
-	 * time taken once the supplier is finished and returns its result, otherwise simply returns the result of the
-	 * supplier (the overhead is minimal compared to simply executing the contents of the provider)
+	 * Simple timing utility to measure and output the number of ms taken by the execution of a Supplier. Contrary to
+	 * the timer accepting a runnable, this one returns a result. If the class is registered, outputs the title provided
+	 * and the time taken once the supplier is finished and returns its result, otherwise simply returns the result of
+	 * the supplier (the overhead is minimal compared to simply executing the contents of the provider)
 	 * 
 	 * Usage: Integer i = DEBUG.TIMER("My important integer computation", ()->myIntegerComputation()); // provided
 	 * myIntegerComputation() returns an Integer.
@@ -124,9 +138,9 @@ public class DEBUG {
 	}
 
 	/**
-	 * Turns DEBUG off for the calling class. This call can be avoided in a static context (no calls to ON() will
-	 * prevent the calling class from debugging), but it can be used to disable logging based on some user actions, for
-	 * instance.
+	 * Turns DEBUG off for the calling class. This call can be avoided in a static context (not calling ON() will
+	 * prevent the calling class from debugging anyway), but it can be used to disable logging based on some user
+	 * actions, for instance.
 	 */
 	public static final void OFF() {
 		if (GLOBAL_OFF) { return; }
@@ -146,7 +160,7 @@ public class DEBUG {
 	}
 
 	/**
-	 * Will always output to System.err except if GLOBAL_OFF is true
+	 * Unconditional output to System.err except if GLOBAL_OFF is true
 	 * 
 	 * @param string
 	 */
@@ -157,7 +171,7 @@ public class DEBUG {
 	}
 
 	/**
-	 * Will always output to System.out except if GLOBAL_OFF is true
+	 * Unconditional output to System.out except if GLOBAL_OFF is true.
 	 * 
 	 * @param string
 	 */
@@ -168,21 +182,44 @@ public class DEBUG {
 	}
 
 	/**
-	 * Will always output to System.out (using print if 'ln' is false) except if GLOBAL_OFF is true
+	 * Will always output to System.out (using print if 'ln' is false) except if GLOBAL_OFF is true. Takes care of
+	 * arrays so as to output their contents (and not their identity)
 	 * 
-	 * @param string
+	 * @param object
 	 *            the message to output
 	 * @param newLine
 	 *            whether to pass a new line after or not
 	 */
-	public static void LOG(final Object string, final boolean newLine) {
+	public static void LOG(final Object object, final boolean newLine) {
 		if (!GLOBAL_OFF) {
 			if (newLine) {
-				System.out.println(string);
+				System.out.println(TO_STRING(object));
 			} else {
-				System.out.print(string);
+				System.out.print(TO_STRING(object));
 			}
 		}
+	}
+
+	/**
+	 * Tries to obtain a correct string representation of the object, including when it is an array (or an array of
+	 * arrays). Made public to be used outside the debug sessions
+	 * 
+	 * @param object
+	 *            any object
+	 * @return its string representation
+	 */
+	public static String TO_STRING(final Object object) {
+		if (object == null) { return "null"; }
+		if (object.getClass().isArray()) {
+			final Class<?> clazz = object.getClass().getComponentType();
+			if (clazz.isPrimitive()) {
+				return ARRAY_TO_STRING.get(clazz).apply(object);
+			} else {
+				return Arrays.deepToString((Object[]) object);
+			}
+		}
+		return object.toString();
+
 	}
 
 	private static boolean IS_ON(final String className) {
@@ -236,6 +273,7 @@ public class DEBUG {
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
 		if (GLOBAL_OFF) { return; }
+		if (title == null) { return; }
 		if (GLOBAL_ON || IS_ON(findCallingClassName())) {
 			LOG(PAD(title, pad) + Objects.toString(other));
 		}
@@ -253,8 +291,9 @@ public class DEBUG {
 	 * 
 	 */
 	public static final void SECTION(final String s) {
+		if (s == null) { return; }
 		LINE();
-		LOG(PAD("---------- " + s + " ", 80, '-'));
+		LOG(PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
 		LINE();
 	}
 
