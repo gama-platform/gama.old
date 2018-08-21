@@ -195,7 +195,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 * Reshapes the GL world to comply with a new view size and computes the resulting ratios between pixels and world
 	 * coordinates
 	 * 
-	 * @param gl
+	 * @param newGL
 	 *            the (possibly new) GL2 context
 	 * @param width
 	 *            the width of the view (in pixels)
@@ -203,17 +203,17 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 *            the height of the view (in pixels)
 	 * @return
 	 */
-	public void reshape(final GL2 gl, final int width, final int height) {
-		setGL2(gl);
-		gl.glViewport(0, 0, width, height);
+	public void reshape(final GL2 newGL, final int width, final int height) {
+		setGL2(newGL);
+		newGL.glViewport(0, 0, width, height);
 		viewWidth = width;
 		viewHeight = height;
 		resetMatrix(GL2.GL_MODELVIEW);
 		resetMatrix(GL2.GL_PROJECTION);
 		updatePerspective();
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
+		newGL.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		newGL.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+		newGL.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 
 		final double[] pixelSize = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, pixelSize, 0);

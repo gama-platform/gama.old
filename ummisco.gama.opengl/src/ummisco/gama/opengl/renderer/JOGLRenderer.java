@@ -201,6 +201,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		if (width <= 0 || height <= 0) { return; }
+		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) { return; }
 		DEBUG.OUT("Reshaped to " + width + " x " + height);
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);

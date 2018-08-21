@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
@@ -99,15 +100,18 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			view.setFocus();
 		} else {
 			fullScreenShell = createFullScreenShell();
+			if (DEBUG.IS_ON()) {
+				DEBUG.SECTION(" FULLSCREEN WITH SIZE " + fullScreenShell.getSize());
+			}
 			normalParentOfFullScreenControl = view.controlToSetFullScreen().getParent();
-			view.controlToSetFullScreen().setParent(fullScreenShell);
+			final Control display = view.controlToSetFullScreen();
+			display.setParent(fullScreenShell);
 			createOverlay();
 			adaptToolbar();
-			DEBUG.OUT("Fullscreen set");
 			fullScreenShell.layout(true, true);
 			fullScreenShell.setVisible(true);
-			fullScreenShell.getChildren()[0].forceFocus();
-			// view.getZoomableControls()[0].forceFocus();
+			view.fullScreenSet();
+			display.setFocus();
 		}
 	}
 

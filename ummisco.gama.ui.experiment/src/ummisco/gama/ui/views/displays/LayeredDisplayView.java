@@ -409,4 +409,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		toolbar.hide();
 	}
 
+	/**
+	 * A call indicating that fullscreen has been set on the display. Views might decide to do something or not. Default
+	 * is to do nothing.
+	 */
+	public void fullScreenSet() {}
+
 }
