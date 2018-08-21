@@ -82,10 +82,6 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	@Override
 	public abstract IGamaFile copy(IScope scope);
 
-	public default boolean shouldExist() {
-		return getBuffer() == null;
-	}
-
 	public C getBuffer();
 
 	@getter (

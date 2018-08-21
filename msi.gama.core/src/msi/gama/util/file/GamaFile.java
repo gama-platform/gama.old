@@ -55,7 +55,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		this(scope, pn, true);
 	}
 
-	private GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
+	protected GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
 		String tempPath = originalPath;
 		if (originalPath == null) { throw GamaRuntimeException
@@ -77,7 +77,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 				tempPath = FileUtils.constructAbsoluteTempFilePath(scope, url);
 			}
 		} else {
-			tempPath = FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist());
+			tempPath = FileUtils.constructAbsoluteFilePath(scope, originalPath, forReading);
 		}
 
 		localPath = tempPath;
