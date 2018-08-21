@@ -119,9 +119,7 @@ public class Containers {
 
 	public static <T> Function<Object, T> with(final IScope scope, final IExpression filter) {
 		return (t) -> {
-			// Issue #2521. Extra step to coerce the type of 'each' to what's expected by the filter (problem with ints
-			// and floats)
-			scope.setEach(filter.getGamlType().cast(scope, t, null, false));
+			scope.setEach(t);
 			return (T) filter.value(scope);
 		};
 	}

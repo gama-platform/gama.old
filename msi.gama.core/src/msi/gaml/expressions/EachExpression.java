@@ -25,7 +25,9 @@ public class EachExpression extends VariableExpression {
 	@Override
 	public Object _value(final IScope scope) {
 		// see Issue #return scope.getVarValue(getName());
-		return scope.getEach();
+		// Issue #2521. Extra step to coerce the type of 'each' to what's expected by the expression (problem with ints
+		// and floats)
+		return type.cast(scope, scope.getEach(), null, false);
 	}
 
 	@Override
