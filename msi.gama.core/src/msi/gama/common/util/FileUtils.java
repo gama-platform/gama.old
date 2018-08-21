@@ -68,7 +68,7 @@ public class FileUtils {
 	static IFileSystem FILE_SYSTEM = EFS.getLocalFileSystem();
 	static String USER_HOME = System.getProperty("user.home");
 	static final URI WORKSPACE_URI = URI.createURI(ROOT.getLocationURI().toString(), false);
-	static final File CACHE;
+	public static final File CACHE;
 
 	static {
 		DEBUG.OFF();

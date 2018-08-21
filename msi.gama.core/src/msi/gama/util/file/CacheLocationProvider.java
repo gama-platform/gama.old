@@ -16,9 +16,7 @@ public class CacheLocationProvider extends PathVariableResolver {
 
 	@Override
 	public String getValue(final String variable, final IResource resource) {
-		return resource.getWorkspace().getRoot().getFolder(FileUtils.CACHE_FOLDER_PATH).getLocationURI()
-				.toASCIIString();
-
+		return FileUtils.CACHE.getAbsolutePath();
 	}
 
 }
