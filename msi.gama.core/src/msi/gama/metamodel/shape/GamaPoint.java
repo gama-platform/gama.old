@@ -685,6 +685,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	}
 
+	@Override
 	public GamaPoint withPrecision(final int i) {
 		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}

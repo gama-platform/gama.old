@@ -70,7 +70,9 @@ public interface ILocation extends IShape, Comparable {
 	public abstract GamaPoint toGamaPoint();
 
 	public abstract ILocation yNegated();
-	
+
 	public boolean equalsWithTolerance(Coordinate c, double tolerance);
+
+	public ILocation withPrecision(int i);
 
 }

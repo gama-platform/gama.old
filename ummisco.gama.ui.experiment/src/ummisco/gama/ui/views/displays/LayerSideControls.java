@@ -236,10 +236,12 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				String text = IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().serialize(false);
+				String text = IKeyword.CAMERA_POS + ": "
+						+ cameraPos.getCurrentValue().yNegated().withPrecision(4).serialize(false);
 				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
-						+ cameraTarget.getCurrentValue().yNegated().serialize(false);
-				text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().serialize(false);
+						+ cameraTarget.getCurrentValue().yNegated().withPrecision(4).serialize(false);
+				text += " " + IKeyword.CAMERA_UP_VECTOR + ": "
+						+ cameraUp.getCurrentValue().withPrecision(4).serialize(false);
 				WorkbenchHelper.copy(text);
 			}
 
