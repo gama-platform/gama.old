@@ -8,20 +8,20 @@ saveSimu
       <string>name</string>
       <string>location</string>
       <string>shape</string>
-      <string>time</string>
-      <string>color</string>
-      <string>cycle</string>
-      <string>machine_time</string>
-      <string>duration</string>
-      <string>rng_usage</string>
       <string>paused</string>
-      <string>starting_date</string>
-      <string>current_date</string>
-      <string>average_duration</string>
+      <string>duration</string>
+      <string>color</string>
+      <string>time</string>
+      <string>cycle</string>
       <string>step</string>
       <string>rng</string>
+      <string>current_date</string>
+      <string>machine_time</string>
+      <string>average_duration</string>
       <string>seed</string>
+      <string>starting_date</string>
       <string>total_duration</string>
+      <string>rng_usage</string>
       <string>roads_weight</string>
       <string>road_network</string>
       <string>slow_coeff</string>
@@ -112,26 +112,16 @@ saveSimu
           </valuesMapReducer>
         </attributes>
       </msi.gama.metamodel.shape.GamaShape>
-      <double>5.0</double>
+      <boolean>true</boolean>
+      <string>1</string>
       <msi.gama.util.GamaColor>
         <value>-11902576</value>
         <falpha>0.0</falpha>
       </msi.gama.util.GamaColor>
+      <double>5.0</double>
       <int>5</int>
-      <double>1.534167821455E12</double>
-      <string>1</string>
-      <int>28</int>
-      <boolean>true</boolean>
-      <msi.gama.util.GamaDate>
-        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
-          <byte>10</byte>
-          <int>1970</int>
-          <byte>1</byte>
-          <byte>1</byte>
-          <byte>-8</byte>
-          <byte>4</byte>
-        </internal>
-      </msi.gama.util.GamaDate>
+      <double>1.0</double>
+      <string>mersenne</string>
       <msi.gama.util.GamaDate>
         <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
           <byte>10</byte>
@@ -144,11 +134,21 @@ saveSimu
           <byte>4</byte>
         </internal>
       </msi.gama.util.GamaDate>
-      <string>1.6</string>
-      <double>1.0</double>
-      <string>mersenne</string>
-      <double>0.4131565601197029</double>
-      <string>8</string>
+      <double>1.534953785557E12</double>
+      <string>3.4</string>
+      <double>0.855015655825016</double>
+      <msi.gama.util.GamaDate>
+        <internal class="java.time.OffsetDateTime" resolves-to="java.time.Ser">
+          <byte>10</byte>
+          <int>1970</int>
+          <byte>1</byte>
+          <byte>1</byte>
+          <byte>-8</byte>
+          <byte>4</byte>
+        </internal>
+      </msi.gama.util.GamaDate>
+      <string>17</string>
+      <int>28</int>
       <msi.gama.util.GamaMap>
         <keysType class="msi.gaml.types.GamaAgentType">
           <GamaType>road</GamaType>
@@ -497,13 +497,13 @@ saveSimu
           <keys>
             <string>name</string>
             <string>shape</string>
-            <string>speed</string>
-            <string>destination</string>
-            <string>location</string>
-            <string>current_path</string>
             <string>real_speed</string>
+            <string>current_path</string>
+            <string>destination</string>
             <string>heading</string>
+            <string>location</string>
             <string>current_edge</string>
+            <string>speed</string>
             <string>roads_knowledge</string>
             <string>the_target</string>
             <string>color</string>
@@ -539,13 +539,7 @@ saveSimu
                 </valuesMapReducer>
               </attributes>
             </msi.gama.metamodel.shape.GamaShape>
-            <double>1.0</double>
-            <msi.gama.metamodel.shape.GamaPoint>
-              <x>10.0</x>
-              <y>24.0</y>
-              <z>0.0</z>
-            </msi.gama.metamodel.shape.GamaPoint>
-            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+            <double>5.0</double>
             <msi.gama.util.path.GamaSpatialPath>
               <g class="msi.gama.metamodel.topology.graph.GamaSpatialGraph" reference="../../../../../../../variables/data/msi.gama.metamodel.topology.graph.GamaSpatialGraph"/>
               <start class="msi.gama.metamodel.shape.GamaPoint">
@@ -568,9 +562,15 @@ saveSimu
               </edges>
               <spatial>true</spatial>
             </msi.gama.util.path.GamaSpatialPath>
-            <double>5.0</double>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>10.0</x>
+              <y>24.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
             <double>270.0</double>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
             <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[3]/msi.gama.metamodel.agent.GamlAgent"/>
+            <double>1.0</double>
             <msi.gama.util.GamaMap reference="../../../../../../variables/data/msi.gama.util.GamaMap"/>
             <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
             <msi.gama.util.GamaColor_-NamedGamaColor>
@@ -597,13 +597,13 @@ saveSimu
           <keys>
             <string>name</string>
             <string>shape</string>
-            <string>speed</string>
-            <string>destination</string>
-            <string>location</string>
-            <string>current_path</string>
             <string>real_speed</string>
+            <string>current_path</string>
+            <string>destination</string>
             <string>heading</string>
+            <string>location</string>
             <string>current_edge</string>
+            <string>speed</string>
             <string>roads_knowledge</string>
             <string>the_target</string>
             <string>color</string>
@@ -639,13 +639,7 @@ saveSimu
                 </valuesMapReducer>
               </attributes>
             </msi.gama.metamodel.shape.GamaShape>
-            <double>1.0</double>
-            <msi.gama.metamodel.shape.GamaPoint>
-              <x>19.333333333333332</x>
-              <y>50.0</y>
-              <z>0.0</z>
-            </msi.gama.metamodel.shape.GamaPoint>
-            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+            <double>1.6666666666666667</double>
             <msi.gama.util.path.GamaSpatialPath>
               <g class="msi.gama.metamodel.topology.graph.GamaSpatialGraph" reference="../../../../../../../variables/data/msi.gama.metamodel.topology.graph.GamaSpatialGraph"/>
               <start class="msi.gama.metamodel.shape.GamaPoint">
@@ -666,9 +660,15 @@ saveSimu
               </edges>
               <spatial>true</spatial>
             </msi.gama.util.path.GamaSpatialPath>
-            <double>1.6666666666666667</double>
+            <msi.gama.metamodel.shape.GamaPoint>
+              <x>19.333333333333332</x>
+              <y>50.0</y>
+              <z>0.0</z>
+            </msi.gama.metamodel.shape.GamaPoint>
             <double>0.0</double>
+            <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
             <msi.gama.metamodel.agent.GamlAgent reference="../../../../../../variables/data/msi.gama.util.GamaMap/valuesMapReducer/entry[4]/msi.gama.metamodel.agent.GamlAgent"/>
+            <double>1.0</double>
             <msi.gama.util.GamaMap>
               <keysType class="msi.gaml.types.GamaAgentType" reference="../../../../../../../variables/data/msi.gama.util.GamaMap/keysType"/>
               <dataType class="msi.gaml.types.GamaFloatType" reference="../../../../../../../variables/data/msi.gama.util.GamaMap/dataType"/>

@@ -46,11 +46,11 @@ import msi.gama.util.file.GamaFileMetaData;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
 import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
-import msi.gama.util.file.GamaSavedSimulationFile;
-import msi.gama.util.file.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import ummisco.gama.dev.utils.DEBUG;
+// BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile;
+// BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
@@ -252,7 +252,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					put(OSM_CT_ID, OSMInfo.class);
 					put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
 					put("project", ProjectInfo.class);
-					put(GSIM_CT_ID, SavedSimulationInfo.class);
+// BEN					put(GSIM_CT_ID, SavedSimulationInfo.class);
 				}
 			};
 
@@ -341,9 +341,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							case SHAPEFILE_SUPPORT_CT_ID:
 								data[0] = createShapeFileSupportMetaData(theFile);
 								break;
-							case GSIM_CT_ID:
-								data[0] = createSacedSimulationFileMetaData(theFile);
-								break;
+// BEN							case GSIM_CT_ID:
+// BEN								data[0] = createSacedSimulationFileMetaData(theFile);
+// BEN								break;
 						}
 						// Last chance: we generate a generic info
 						if (data[0] == null) {
@@ -512,9 +512,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
 
-	private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
-		return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
-	}
+// BEN	private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
+// BEN		return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
+// BEN	}
 
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
