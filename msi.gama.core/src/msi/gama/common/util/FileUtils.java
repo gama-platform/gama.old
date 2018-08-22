@@ -97,7 +97,8 @@ public class FileUtils {
 		return Paths.get(filePath).isAbsolute();
 	}
 
-	// Add a thin layer of workspace-based searching in order to resolve linked resources.
+	// Add a thin layer of workspace-based searching in order to resolve linked
+	// resources.
 	// Should be able to catch most of the calls to relative resources as well
 	static public String constructAbsoluteFilePath(final IScope scope, final String filePath, final boolean mustExist) {
 		String fp;
@@ -167,7 +168,8 @@ public class FileUtils {
 	}
 
 	public static IFile createLinkToExternalFile(final String path, final URI workspaceResource) {
-		// Always try to return the full file, without creating a link, if the file happens to be in the workspace
+		// Always try to return the full file, without creating a link, if the file
+		// happens to be in the workspace
 		// (manageable by it)
 		final IPath filePath = new Path(path);
 		final IResource[] resources = ROOT.findFilesForLocation(filePath);
@@ -195,13 +197,15 @@ public class FileUtils {
 	}
 
 	/**
-	 * Returns a best guess URI based on the target string and an optional URI specifying from where the relative URI
-	 * should be run. If existingResource is null, then the root of the workspace is used as the relative URI
+	 * Returns a best guess URI based on the target string and an optional URI
+	 * specifying from where the relative URI should be run. If existingResource is
+	 * null, then the root of the workspace is used as the relative URI
 	 * 
 	 * @param target
 	 *            a String giving the path
 	 * @param existingResource
-	 *            the URI of the resource from which relative URIs should be interpreted
+	 *            the URI of the resource from which relative URIs should be
+	 *            interpreted
 	 * @author Alexis Drogoul, July 2018
 	 * @return an URI or null if it cannot be determined.
 	 */
@@ -251,8 +255,10 @@ public class FileUtils {
 		return null;
 	}
 
-	// public static IFile linkAndGetExternalFile(final URI uri, final URI workspaceResource) {
-	// final String path = URI.decode(uri.isFile() ? uri.toFileString() : uri.toString());
+	// public static IFile linkAndGetExternalFile(final URI uri, final URI
+	// workspaceResource) {
+	// final String path = URI.decode(uri.isFile() ? uri.toFileString() :
+	// uri.toString());
 	// return linkAndGetExternalFile(URI.decode(path), workspaceResource);
 	// }
 
@@ -380,7 +386,8 @@ public class FileUtils {
 					.readTimeout(GamaPreferences.External.CORE_HTTP_READ_TIMEOUT.getValue())
 					.retry(GamaPreferences.External.CORE_HTTP_RETRY_NUMBER.getValue(), false).asStream().getBody();) {
 				final java.net.URI uri = URIUtil.toURI(pathName);
-				pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
+				pathName = ROOT.getPathVariableManager().resolvePath(new Path(pathName)).toOSString();
+				// pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
 				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (final IOException | WebbException e) {
