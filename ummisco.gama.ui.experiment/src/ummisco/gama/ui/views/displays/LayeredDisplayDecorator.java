@@ -26,6 +26,7 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.controls.SimulationSpeedContributionItem;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -55,7 +56,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	boolean isOverlayTemporaryVisible, sideControlsVisible, interactiveConsoleVisible;
 	protected IPerspectiveListener perspectiveListener;
 	final GamaCommand toggleSideControls, toggleOverlay, takeSnapshot, toggleFullScreen, toggleInteractiveConsole,
-			runExperiment, stepExperiment, closeExperiment;
+			runExperiment, stepExperiment, closeExperiment, relaunchExperiment;
 
 	LayeredDisplayDecorator(final LayeredDisplayView view) {
 		this.view = view;
@@ -84,6 +85,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				e -> GAMA.stepFrontmostExperiment());
 		closeExperiment = new GamaCommand("toolbar.stop2", "Closes experiment " + GamaKeyBindings.QUIT_STRING,
 				e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
+		relaunchExperiment = new GamaCommand("menu.reload4", "Reload experiment" + GamaKeyBindings.RELOAD_STRING,
+				e -> GAMA.reloadFrontmostExperiment());
 
 	}
 
@@ -136,6 +139,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 			toolbar.button(runExperiment, SWT.LEFT);
 			toolbar.button(stepExperiment, SWT.LEFT);
+			toolbar.control(SimulationSpeedContributionItem.getInstance().createControl(toolbar.getToolbar(SWT.LEFT)),
+					SimulationSpeedContributionItem.totalWidth(), SWT.LEFT);
+			toolbar.button(relaunchExperiment, SWT.LEFT);
 			toolbar.button(closeExperiment, SWT.LEFT);
 			tp = toolbar.getParent();
 			final Composite forToolbar =

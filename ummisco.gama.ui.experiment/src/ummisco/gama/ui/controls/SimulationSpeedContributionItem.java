@@ -1,14 +1,16 @@
 /*********************************************************************************************
  *
- * 'SimulationSpeedContributionItem.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationSpeedContributionItem.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,6 +22,7 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -38,13 +41,18 @@ import ummisco.gama.ui.resources.IGamaIcons;
 public class SimulationSpeedContributionItem extends WorkbenchWindowControlContribution
 		implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 
+	static {
+		DEBUG.ON();
+	}
+
 	private static SimulationSpeedContributionItem instance;
 	double max = 1000;
 	protected final GamaUIColor popupColor;
 	protected final GamaUIColor sliderColor;
 	public final static int widthSize = 100;
+	public final static int marginWidth = 16;
 	public final static int heightSize = 16;
-	protected SimpleSlider slider;
+	protected List<SimpleSlider> sliders = new ArrayList<>();
 
 	/**
 	 *
@@ -79,6 +87,10 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		instance = this;
 	}
 
+	public static int totalWidth() {
+		return widthSize + 2 * marginWidth;
+	}
+
 	@Override
 	public Control createControl(final Composite parent) {
 
@@ -87,13 +99,13 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
-		layout.marginWidth = 16;
+		layout.marginWidth = marginWidth;
 		composite.setLayout(layout);
 		composite.setBackground(parent.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = widthSize;
 		data.minimumWidth = widthSize;
-		slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(),
+		final SimpleSlider slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(),
 				GamaIcons.create(IGamaIcons.TOOLBAR_KNOB).image());
 		slider.setTooltipInterperter(this);
 		slider.setLayoutData(data);
@@ -104,6 +116,11 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
 		slider.setBackground(parent.getBackground());
+		slider.addDisposeListener(e -> {
+			sliders.remove(slider);
+			DEBUG.OUT("Slider " + slider + " is disposed");
+		});
+		sliders.add(slider);
 		return composite;
 	}
 
@@ -129,13 +146,15 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		if (i > max) {
 			max = i;
 		}
-		if (slider == null) {
-			return;
+		for (final SimpleSlider slider : sliders) {
+			if (slider == null) {
+				continue;
+			}
+			if (slider.isDisposed()) {
+				continue;
+			}
+			slider.updateSlider(i, notify);
 		}
-		if (slider.isDisposed()) {
-			return;
-		}
-		slider.updateSlider(i, notify);
 	}
 
 	/**
@@ -154,8 +173,15 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 * @see ummisco.gama.ui.controls.IPositionChangeListener#positionChanged(double)
 	 */
 	@Override
-	public void positionChanged(final double position) {
+	public void positionChanged(final SimpleSlider s, final double position) {
+		DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
+		for (final SimpleSlider slider : sliders) {
+			if (slider == s) {
+				continue;
+			}
+			slider.updateSlider(position, false);
+		}
 	}
 
 	public static SimulationSpeedContributionItem getInstance() {

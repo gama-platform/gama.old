@@ -51,8 +51,9 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 			formatter.setMinimumIntegerDigits(nbInts);
 			formatter.setGroupingUsed(false);
 			stepValue = getStep();
-			if (stepValue == null)
+			if (stepValue == null) {
 				stepValue = 1;
+			}
 		}
 
 		@Override
@@ -74,10 +75,11 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
 			final String[] segments = String.valueOf(stepValue).split("\\.");
-			if (segments.length > 1)
+			if (segments.length > 1) {
 				nbFracs = segments[1].length();
-			else
+			} else {
 				nbFracs = 1;
+			}
 			formatter.setMaximumFractionDigits(nbFracs);
 			formatter.setMinimumFractionDigits(nbFracs);
 			formatter.setGroupingUsed(false);
@@ -116,9 +118,9 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	}
 
 	@Override
-	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
+	protected Control createCustomParameterControl(final Composite comp) throws GamaRuntimeException {
 
-		slider = new SimpleSlider(composite, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
+		slider = new SimpleSlider(comp, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
 				GamaIcons.create("small.slider2").image(), false) {};
 
 		if (stepValue != null) {
@@ -126,7 +128,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 			slider.setStep(realStep);
 		}
 
-		slider.addPositionChangeListener(position -> modifyAndDisplayValue(computeValue(position)));
+		slider.addPositionChangeListener((s, position) -> modifyAndDisplayValue(computeValue(position)));
 		slider.pack(true);
 		return slider;
 	}
@@ -167,11 +169,12 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 		toolbar.setLayoutData(data);
 		toolbar.layout();
 	}
-	
+
+	@Override
 	protected Composite createToolbar2() {
-		Composite t = super.createToolbar2();
+		final Composite t = super.createToolbar2();
 		t.setBackground(getNormalBackground());
-		for (Control c: t.getChildren()) {
+		for (final Control c : t.getChildren()) {
 			c.setBackground(getNormalBackground());
 		}
 		return t;

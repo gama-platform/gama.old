@@ -116,7 +116,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	Popup2 popup = null;
 	int thumbWidth = 0;
 	private boolean notify = true;
-	private final IPositionChangeListener popupListener = position -> popup.display();
+	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
 	public SimpleSlider(final Composite parent, final Color color, final Image thumbImageNormal) {
 		this(parent, color, color, thumbImageNormal);
@@ -223,7 +223,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			popup = null;
 		}
 		if (DEBUG.IS_ON()) {
-			addPositionChangeListener(position -> DEBUG.OUT("Position changed to : " + position));
+			addPositionChangeListener((slider, position) -> DEBUG.OUT("Position changed to : " + position));
 		}
 	}
 
@@ -255,7 +255,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			// synchronized (positionChangedListeners) {
 			final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 			while (iter.hasNext()) {
-				iter.next().positionChanged(perc);
+				iter.next().positionChanged(SimpleSlider.this, perc);
 			}
 		}
 		// }
@@ -403,7 +403,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	@Override
 	public Point getAbsoluteOrigin() {
-		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, sliderHeight * 2));
+		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, -sliderHeight));
 	}
 
 	@Override
