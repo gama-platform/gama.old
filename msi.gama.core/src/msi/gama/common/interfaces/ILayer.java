@@ -42,9 +42,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	void draw(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
 
-	default void dispose() {
-
-	}
+	default void dispose() {}
 
 	default Integer getOrder() {
 		return getDefinition().getOrder();
@@ -91,11 +89,6 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	default ILocation getExtent() {
 		return getData().getSize();
 	}
-	//
-	// default void setElevation(final Double elevation) {
-	// final ILocation original = getData().getPosition();
-	// getData().setPosition(original.getX(), original.getY(), elevation);
-	// }
 
 	default Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final Envelope3D envelope = geometry.getEnvelope();
@@ -180,6 +173,17 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	default Boolean isSelectable() {
 		return getData().isSelectable();
+	}
+
+	/**
+	 * Whether the layer is to be displayed in the side controls so that the user can control its properties. Default is
+	 * true.
+	 * 
+	 * @return true by default, false if the layer shouldnt be displayed in the layer side controls
+	 */
+
+	default Boolean isControllable() {
+		return true;
 	}
 
 }

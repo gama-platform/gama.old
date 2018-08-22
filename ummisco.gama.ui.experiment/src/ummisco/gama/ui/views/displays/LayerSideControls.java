@@ -29,7 +29,6 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.AgentLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -392,11 +391,11 @@ public class LayerSideControls {
 
 	private void fillLayerParameters(final ParameterExpandBar viewer, final ILayer layer,
 			final LayeredDisplayView view) {
-		final Composite contents = createContentsComposite(viewer);
-		if (layer instanceof AbstractLayer) {
+		if (layer.isControllable()) {
+			final Composite contents = createContentsComposite(viewer);
 			fill(contents, layer, view.getDisplaySurface());
+			createItem(viewer, "Layer " + layer.getName(), layer, contents);
 		}
-		createItem(viewer, "Layer " + layer.getName(), layer, contents);
 	}
 
 	public void fill(final Composite compo, final ILayer layer, final IDisplaySurface container) {

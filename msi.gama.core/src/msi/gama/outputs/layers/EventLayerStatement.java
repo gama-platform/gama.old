@@ -71,7 +71,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
 						optional = false,
-						doc = @doc ("Either a block of statements to execute in the context of the simulation or the identifier of the action to be executed. This action needs to be defined in 'global' or in the current experiment, without any arguments. The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location")) },
+						doc = @doc ("Either a block of statements to execute in the context of the experiment or the identifier of the action to be executed in the context of the simulation. This action needs to be defined in 'global' or in the current experiment, without any arguments. The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location")) },
 		omissible = IKeyword.NAME)
 @validator (EventLayerValidator.class)
 @doc (
@@ -151,9 +151,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 						IGamlIssue.UNKNOWN_ACTION, ACTION);
 				return;
 			} else if (sd.getPassedArgs().size() > 0) {
-				description.error(
-						"Action '" + actionName
-								+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",
+				description.error("Action '" + actionName
+						+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",
 						IGamlIssue.DIFFERENT_ARGUMENTS, ACTION);
 			}
 		}

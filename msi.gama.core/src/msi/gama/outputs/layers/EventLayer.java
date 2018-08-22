@@ -199,4 +199,9 @@ public class EventLayer extends AbstractLayer {
 		getData().compute(scope, g);
 	}
 
+	@Override
+	public Boolean isControllable() {
+		return false;
+	}
+
 }
