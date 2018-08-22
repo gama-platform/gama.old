@@ -12,7 +12,6 @@ import java.util.Map;
 import com.thoughtworks.xstream.XStream;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.file.GamaSavedSimulationFile;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.IType;

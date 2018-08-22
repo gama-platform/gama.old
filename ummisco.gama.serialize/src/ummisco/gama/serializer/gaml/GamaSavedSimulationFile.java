@@ -1,4 +1,4 @@
-package msi.gama.util.file;
+package ummisco.gama.serializer.gaml;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,13 +8,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaFileMetaData;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
@@ -44,7 +51,6 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		
 			final File f = new File(fileName);
 			final GamaSavedSimulationFile simulationFile = new GamaSavedSimulationFile(null, f.getAbsolutePath(), false);
-
 			
 			savedModel = simulationFile.getModelName();
 			savedExperiment = simulationFile.getExperiment();
@@ -97,15 +103,28 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 	private String savedModelPath;	
 	private String savedModelName;
 
+	@doc("Constructor for saved simulation files: read the metadata and content.")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, true);
 	}	
 
-	public GamaSavedSimulationFile(final IScope scope, final String pathName, final IList<String> text) {
-		super(scope, pathName, text);
-		fillBuffer(scope);		
-	}		
-	
+	@doc("Constructor for saved simulation files from a list of agents: it is used with aim of saving a simulation agent.")	
+	public GamaSavedSimulationFile(final IScope scope, final String pathName, final GamaList<IAgent> contents) {
+		super(scope, pathName, null);
+		IAgent agent = contents.firstValue(scope);
+		
+		// Set first the metadata
+		setMetadata(scope);
+		
+		// Set the buffer
+		final String serializedAgent = ReverseOperators.serializeAgent(scope, agent);
+		IList<String> c = GamaListFactory.create();
+		c.add(serializedAgent);
+		
+		setContents(c);
+	}	
+
+	@doc("Constructor for saved simulation files: read the metadata. If and only if the boolean operand is true, the content of the file is read.")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName, boolean fillBuffer) throws GamaRuntimeException {
 		super(scope, pathName);
 				
@@ -115,7 +134,16 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 			metadataOnly(scope);			
 		}
 	}
-
+	
+	private void setMetadata(final IScope scope) {
+		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		final SimulationAgent simAgt = expAgt.getSimulation();
+		savedCycle = simAgt.getClock().getCycle();
+		savedModelPath = expAgt.getModel().getFilePath();
+		savedExperiment = (String) expAgt.getSpecies().getFacet(IKeyword.NAME).value(scope);		
+		savedModelName = (new File(savedModelPath)).getName();		
+	}
+	
 	private void metadataOnly(final IScope scope) {		
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			readMetada(in);
@@ -191,6 +219,12 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		if (getBuffer() != null && !getBuffer().isEmpty()) {
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFile(scope)))) {
+				// Write the Metadata
+				writer.append(savedModelPath).append(Strings.LN);
+				writer.append(savedExperiment).append(Strings.LN);
+				writer.append(""+savedCycle).append(Strings.LN);
+				
+				// Write the Buffer
 				for (final String s : getBuffer()) {
 					writer.append(s).append(Strings.LN);
 				}
