@@ -42,7 +42,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	private static SimulationSpeedContributionItem instance;
