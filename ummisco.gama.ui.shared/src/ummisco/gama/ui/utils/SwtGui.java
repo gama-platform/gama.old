@@ -104,7 +104,7 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
 		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) { return true; }
-		openSimulationPerspective(true);
+		PerspectiveHelper.openSimulationPerspective();
 		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
 				+ "' of model '" + exp.getModel().getName() + "' ?");
 	}
@@ -246,22 +246,8 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public final boolean openSimulationPerspective(final boolean immediately) {
-		final IModel model = GAMA.getModel();
-		if (model == null) { return false; }
-		final IExperimentPlan p = GAMA.getExperiment();
-		if (p == null) { return false; }
-		final String id = p.getName();
-		return openSimulationPerspective(model, id, immediately);
-	}
-
-	@Override
-	public final boolean openSimulationPerspective(final IModel model, final String experimentName,
-			final boolean immediately) {
-		if (model == null) { return false; }
-		final String name = PerspectiveHelper.getNewPerspectiveName(model.getName(), experimentName);
-		return PerspectiveHelper.openPerspective(name, immediately, false);
-
+	public final boolean openSimulationPerspective(final IModel model, final String experimentName) {
+		return PerspectiveHelper.openSimulationPerspective(model, experimentName);
 	}
 
 	@Override

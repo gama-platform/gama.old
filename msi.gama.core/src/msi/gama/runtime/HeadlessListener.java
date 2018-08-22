@@ -140,7 +140,7 @@ public class HeadlessListener implements IGui {
 	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {}
 
 	@Override
-	public boolean openSimulationPerspective(final IModel model, final String id, final boolean immediately) {
+	public boolean openSimulationPerspective(final IModel model, final String id) {
 		return true;
 	}
 
@@ -294,11 +294,6 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void updateExperimentState(final IScope scope) {}
-
-	@Override
-	public boolean openSimulationPerspective(final boolean immediately) {
-		return true;
-	}
 
 	@Override
 	public void updateViewTitle(final IDisplayOutput output, final SimulationAgent agent) {}

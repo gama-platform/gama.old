@@ -33,9 +33,14 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.model.IModel;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class PerspectiveHelper {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -101,6 +106,39 @@ public class PerspectiveHelper {
 	public static final boolean openModelingPerspective(final boolean immediately) {
 		// AD 08/18: turn off autosave to prevent workspace corruption
 		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, false);
+	}
+
+	public static final boolean openSimulationPerspective() {
+		if ( currentSimulationPerspective == null ) { return false; }
+		IWorkbenchPage activePage = null;
+		try {
+			activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		if ( activePage == null ) { return false; }
+		final IWorkbenchPage page = activePage;
+		if ( page.getPerspective().equals(currentSimulationPerspective) ) { return true; }
+		Display.getDefault().syncExec(() -> {
+			try {
+				memorizeActiveEditor(page);
+				page.setPerspective(currentSimulationPerspective);
+				applyActiveEditor(page);
+			} catch (final NullPointerException e) {
+				// DEBUG.ERR(
+				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
+				// Working around the bug in e4...");
+				page.setPerspective(currentSimulationPerspective);
+			}
+		});
+		currentPerspectiveId = currentSimulationPerspective.getId();
+		return true;
+	}
+
+	public static final boolean openSimulationPerspective(final IModel model, final String experimentName) {
+		if ( model == null ) { return false; }
+		final String name = getNewPerspectiveName(model.getName(), experimentName);
+		return openPerspective(name, true, false);
 	}
 
 	static PerspectiveDescriptor getSimulationDescriptor() {
@@ -186,6 +224,8 @@ public class PerspectiveHelper {
 
 			currentPerspectiveId = perspectiveId;
 			if ( isSimulationPerspective(perspectiveId) && !descriptor.equals(currentSimulationPerspective) ) {
+				// Early activation or deactivation of editors based on the global preference
+				page.setEditorAreaVisible(!GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue());
 				deleteCurrentSimulationPerspective();
 				currentSimulationPerspective = descriptor;
 			}
@@ -251,6 +291,10 @@ public class PerspectiveHelper {
 		} else {
 			return true;
 		}
+	}
+
+	public static boolean showOverlays() {
+		return GamaPreferences.Displays.CORE_OVERLAY.getValue();
 	}
 
 	public static class SimulationPerspectiveFactory implements IPerspectiveFactory {

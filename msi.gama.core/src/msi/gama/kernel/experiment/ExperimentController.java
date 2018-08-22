@@ -16,6 +16,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ExperimentController implements Runnable, IExperimentController {
 
@@ -93,8 +94,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 						;
 					}
 				} catch (final Exception e) {
-					// scope.getGui().debug("Error when opening the experiment: " +
-					// e.getMessage());
+					DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
 				}
 				break;
@@ -196,7 +196,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	@Override
 	public void dispose() {
 		if (experiment != null) {
-			// DEBUG.LOG("Contoller.dipose BEGIN");
+			DEBUG.OUT("Contoller.dipose BEGIN");
 			final IScope scope = experiment.getExperimentScope();
 			try {
 				scheduler.pause();
@@ -213,7 +213,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				if (commandThread != null && commandThread.isAlive()) {
 					commands.offer(-1);
 				}
-				// DEBUG.LOG("Contoller.dipose END");
+				DEBUG.OUT("Contoller.dipose END");
 			}
 		}
 	}

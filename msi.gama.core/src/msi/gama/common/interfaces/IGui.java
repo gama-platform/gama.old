@@ -93,9 +93,7 @@ public interface IGui {
 
 	boolean confirmClose(IExperimentPlan experiment);
 
-	boolean openSimulationPerspective(boolean immediately);
-
-	boolean openSimulationPerspective(IModel model, String experimentId, boolean immediately);
+	boolean openSimulationPerspective(IModel model, String experimentId);
 
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
