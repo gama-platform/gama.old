@@ -498,7 +498,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		createAgent();
 		myScope.getGui().prepareForExperiment(myScope, this);
 		agent.schedule(agent.getScope());
-		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
 			agent.getScope().getGui().getStatus(agent.getScope())
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
@@ -596,15 +595,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	protected IParameter.Batch checkGetParameterByTitle(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameterByTitle(parameterName);
-		if (v == null) { throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
-				getExperimentScope()); }
+		if (v == null) { throw GamaRuntimeException
+				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope()); }
 		return v;
 	}
 
 	protected IParameter.Batch checkGetParameter(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(parameterName);
-		if (v == null) { throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
-				getExperimentScope()); }
+		if (v == null) { throw GamaRuntimeException
+				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope()); }
 		return v;
 	}
 

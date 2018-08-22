@@ -409,6 +409,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		toolbar.hide();
 	}
 
+	@Override
+	public void showOverlay() {
+		decorator.overlay.setVisible(true);
+	}
+
+	@Override
+	public void hideOverlay() {
+		decorator.overlay.setVisible(false);
+	}
+
 	/**
 	 * A call indicating that fullscreen has been set on the display. Views might decide to do something or not. Default
 	 * is to do nothing.

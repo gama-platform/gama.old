@@ -30,6 +30,7 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class OutputManager.
@@ -92,6 +93,10 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	public static ExperimentOutputManager createEmpty() {
 		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
 	}
@@ -102,6 +107,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
+		DEBUG.OUT("ExperimentOutputManager init");
 		final Symbol layoutDefinition = layout == null ? this : layout;
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =
@@ -115,15 +121,13 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 			editors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 		}
 		scope.getGui().hideScreen();
-		if (super.init(scope)) {
-			scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars, editors);
-			scope.getGui().showScreen();
-			if (scope.getExperiment().getSpecies().isAutorun()) {
-				GAMA.startFrontmostExperiment();
-			}
-			return true;
+		scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars, editors);
+		scope.getGui().showScreen();
+		super.init(scope);
+		if (scope.getExperiment().getSpecies().isAutorun()) {
+			GAMA.startFrontmostExperiment();
 		}
-		return false;
+		return true;
 	}
 
 	// We dont allow permanent outputs for batch experiments to do their first step (to fix Issue

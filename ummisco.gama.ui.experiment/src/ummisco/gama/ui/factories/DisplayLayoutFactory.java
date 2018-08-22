@@ -29,16 +29,18 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 	@Override
 	public void applyLayout(final Object layout, final boolean keepTabs, final boolean keepToolbars,
 			final boolean showEditors) {
-
-		WorkbenchHelper.asyncRun(() -> {
+		WorkbenchHelper.run(() -> {
+			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
+		});
+		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
 			final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
 			if (sd != null) {
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
 			}
 			ArrangeDisplayViews.execute(layout);
-			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 		});
+
 	}
 
 	@Override

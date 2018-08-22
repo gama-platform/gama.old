@@ -155,7 +155,7 @@ public class ExperimentScheduler implements Runnable {
 		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
-		// GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
+		// DEBUG.OUT("ExperimentScheduler.schedule " + stepable);
 		try {
 			if (!scope.init(stepable).passed()) {
 				toStop.add(stepable);

@@ -43,6 +43,10 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GAMA {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	public final static String VERSION = "GAMA 1.8";
 	public static final String _WARNINGS = "warnings";
 	private static PlatformAgent agent;
@@ -72,12 +76,10 @@ public class GAMA {
 	 * @param model
 	 */
 	public static void runGuiExperiment(final String id, final IModel model) {
-		// DEBUG.LOG("Launching experiment " + id + " of model " +
-		// model.getFilePath());
+		DEBUG.OUT("Launching experiment " + id + " of model " + model.getFilePath());
 		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if (newExperiment == null) {
-			// DEBUG.LOG("No experiment " + id + " in model " +
-			// model.getFilePath());
+			DEBUG.OUT("No experiment " + id + " in model " + model.getFilePath());
 			return;
 		}
 		IExperimentController controller = getFrontmostController();
@@ -93,7 +95,7 @@ public class GAMA {
 			closeAllExperiments(false, false);
 		}
 
-		if (getGui().openSimulationPerspective(model, id, true)) {
+		if (getGui().openSimulationPerspective(model, id)) {
 			controllers.add(controller);
 			startBenchmark(newExperiment);
 			controller.userOpen();

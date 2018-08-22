@@ -91,21 +91,25 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				&& StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
 			WorkaroundForIssue1353.install();
 		}
-		if (tree == null) { return; }
-		// DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
-		// + tree.getRoot().getChildren().get(0).getWeight());
-		if (tree.getRoot().getChildren().get(0).getWeight() == null) {
-			tree.getRoot().getChildren().get(0).setWeight(5000);
+
+		if (tree != null) {
+			// DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
+			// + tree.getRoot().getChildren().get(0).getWeight());
+			if (tree.getRoot().getChildren().get(0).getWeight() == null) {
+				tree.getRoot().getChildren().get(0).setWeight(5000);
+			}
+			final List<MPlaceholder> holders = listDisplayViews();
+			final MPartStack displayStack = getDisplaysPlaceholder();
+			if (displayStack == null) { return; }
+			displayStack.setToBeRendered(true);
+			final MElementContainer<?> root = displayStack.getParent();
+			hideDisplays(displayStack, holders);
+			process(root, tree.getRoot().getChildren().get(0), holders);
+			showDisplays(root, holders);
+		} else {
+			decorateDisplays();
 		}
-		final List<MPlaceholder> holders = listDisplayViews();
-		final MPartStack displayStack = getDisplaysPlaceholder();
-		if (displayStack == null) { return; }
-		displayStack.setToBeRendered(true);
-		final MElementContainer<?> root = displayStack.getParent();
-		hideDisplays(displayStack, holders);
-		process(root, tree.getRoot().getChildren().get(0), holders);
-		showDisplays(root, holders);
-		activateDisplays(holders, true);
+
 	}
 
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
@@ -121,18 +125,28 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
 		// root.setToBeRendered(true);
+		decorateDisplays();
+		holders.forEach((ph) -> {
+			ph.setVisible(true);
+			// ph.setToBeRendered(true);
+		});
+		activateDisplays(holders, true);
+	}
+
+	public static void decorateDisplays() {
 		WorkbenchHelper.getDisplayViews().forEach(v -> {
 			if (PerspectiveHelper.keepToolbars()) {
 				v.showToolbar();
 			} else {
 				v.hideToolbar();
 			}
+			if (PerspectiveHelper.showOverlays()) {
+				v.showOverlay();
+			} else {
+				v.hideOverlay();
+			}
+
 		});
-		holders.forEach((ph) -> {
-			ph.setVisible(true);
-			// ph.setToBeRendered(true);
-		});
-		activateDisplays(holders, true);
 	}
 
 	public static void hideDisplays(final MPartStack displayStack, final List<MPlaceholder> holders) {

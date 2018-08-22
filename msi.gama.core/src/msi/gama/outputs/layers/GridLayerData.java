@@ -90,7 +90,14 @@ public class GridLayerData extends LayerData {
 			} else if (!gridPop.isGrid()) { throw error("Species named " + name + " is not a grid", scope); }
 			grid = (IGrid) gridPop.getTopology().getPlaces();
 			final Envelope env = grid.getEnvironmentFrame().getEnvelope();
-			cellSize = new GamaPoint(env.getWidth() / grid.getCols(scope), env.getHeight() / grid.getRows(scope));
+			final Envelope env2 = scope.getSimulation().getEnvelope();
+			final double width = env2.getWidth();
+			final double height = env2.getHeight();
+			final double width2 = env2.getWidth();
+			final double height2 = env2.getHeight();
+			final double cols = grid.getCols(scope);
+			final double rows = grid.getRows(scope);
+			cellSize = new GamaPoint(width / cols, height / rows);
 		}
 		super.compute(scope, g);
 		if (shouldComputeImage) {

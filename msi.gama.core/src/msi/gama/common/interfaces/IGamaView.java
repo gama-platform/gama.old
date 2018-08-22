@@ -47,6 +47,10 @@ public interface IGamaView {
 
 		void toggleOverlay();
 
+		void showOverlay();
+
+		void hideOverlay();
+
 		void hideToolbar();
 
 		void showToolbar();

@@ -170,7 +170,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
 			final boolean indiv, final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
 		super(100, 100, Types.GEOMETRY);
-		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create
+		// DEBUG.OUT("GamaSpatialMatrix.GamaSpatialMatrix create
 		// new");
 		numRows = gfile.getNbRows(scope);
 		numCols = gfile.getNbCols(scope);

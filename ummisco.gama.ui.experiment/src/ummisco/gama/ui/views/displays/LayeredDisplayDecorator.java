@@ -176,7 +176,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (wasVisible) {
 			overlay.setVisible(true);
 		}
-		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
+
 		if (overlay.isVisible()) {
 			overlay.update();
 		}
@@ -283,6 +283,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	public void toggleOverlay() {
 		overlay.setVisible(!overlay.isVisible());
+	}
+
+	public void makeOverlayVisibleByDefault() {
+		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 	}
 
 	public void toggleSideControls() {
