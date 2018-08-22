@@ -93,12 +93,10 @@ public class Random {
 	}
 
 	@operator(value = "gauss", category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
-	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", usages = {
-			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
-			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
-					@example(value = "gauss({0,0.3})", equals = "0.22354", test = false),
-					@example(value = "gauss({0,0.3})", equals = "-0.1357", test = false) }, see = { "truncated_gauss",
-							"poisson" })
+	@doc(value = "The operator can be used with an operand of type point {meand,standardDeviation}.", usages = {
+			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}")}, examples = {
+					@example(value = "gauss({0,0.3})", equals = "0.22354", test = false) }, 
+			see = { "truncated_gauss","poisson" })
 	public static Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
@@ -106,11 +104,9 @@ public class Random {
 	}
 
 	@operator(value = "gauss", category = { IOperatorCategory.RANDOM }, concept = {})
-	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", usages = {
-			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}"),
+	@doc(value = "A value from a normally distributed random variable with expected value (mean as first operand) and variance (standardDeviation as second operand). The probability density function of such a variable is a Gaussian.", usages = {
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
-					@example(value = "gauss(0,0.3)", equals = "0.22354", test = false),
-					@example(value = "gauss(0,0.3)", equals = "-0.1357", test = false) }, see = { "skew_gauss", "truncated_gauss",
+					@example(value = "gauss(0,0.3)", equals = "0.22354", test = false)}, see = { "skew_gauss", "truncated_gauss",
 							"poisson" })
 	public static Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd);
