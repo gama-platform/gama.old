@@ -239,13 +239,9 @@ public interface IDescription
 
 	public boolean visitOwnChildren(DescriptionVisitor visitor);
 
-	// void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
-
 	public void document(EObject s, IGamlDescription desc);
 
 	public Facets getFacets();
-
-	// public boolean isSynthetic();
 
 	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
 

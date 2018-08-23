@@ -27,11 +27,6 @@ import msi.gaml.types.IType;
  */
 public interface IExpressionDescription extends IGamlable, IDisposable {
 
-	public static interface IExpressionVisitor {
-
-		boolean visit(IExpression exp);
-	}
-
 	public abstract void setExpression(final IExpression expr);
 
 	public abstract IExpression compile(final IDescription context);
@@ -52,8 +47,7 @@ public interface IExpressionDescription extends IGamlable, IDisposable {
 
 	public abstract IExpressionDescription cleanCopy();
 
-	@SuppressWarnings ("rawtypes")
-	public abstract IType getDenotedType(IDescription context);
+	public abstract IType<?> getDenotedType(IDescription context);
 
 	// public abstract void collectMetaInformation(GamlProperties meta);
 
