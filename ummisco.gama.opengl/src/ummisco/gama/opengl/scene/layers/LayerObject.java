@@ -73,7 +73,7 @@ public class LayerObject {
 		this.layer = layer;
 		this.overlay = computeOverlay();
 		currentList = newCurrentList();
-		if (layer != null && layer.getTrace() != null || renderer.useShader()) {
+		if (layer != null && layer.getData().getTrace() != null || renderer.useShader()) {
 			traces = new LinkedList();
 			traces.add(currentList);
 		} else {
@@ -94,7 +94,7 @@ public class LayerObject {
 	}
 
 	protected boolean isPickable() {
-		return layer == null ? false : layer.isSelectable();
+		return layer == null ? false : layer.getData().isSelectable();
 	}
 
 	public void draw(final OpenGL gl) {
@@ -212,7 +212,7 @@ public class LayerObject {
 
 	public boolean isStatic() {
 		if (layer == null) { return true; }
-		return !layer.isDynamic();
+		return !layer.getData().isDynamic();
 	}
 
 	public void setAlpha(final Double a) {
@@ -295,13 +295,13 @@ public class LayerObject {
 
 	protected int getTrace() {
 		if (layer == null) { return 0; }
-		final Integer trace = layer.getTrace();
+		final Integer trace = layer.getData().getTrace();
 		return trace == null ? 0 : trace;
 	}
 
 	protected boolean getFading() {
 		if (layer == null) { return false; }
-		final Boolean fading = layer.getFading();
+		final Boolean fading = layer.getData().getFading();
 		return fading == null ? false : fading;
 	}
 

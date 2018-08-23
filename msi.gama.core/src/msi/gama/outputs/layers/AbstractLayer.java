@@ -56,7 +56,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (!g.is2D() && !isDynamic() && hasBeenDrawnOnce) { return; }
+		if (!g.is2D() && !getData().isDynamic() && hasBeenDrawnOnce) { return; }
 		if (g.isNotReadyToUpdate() && hasBeenDrawnOnce) { return; }
 		getData().compute(scope, g);
 		g.setOpacity(getData().getTransparency());

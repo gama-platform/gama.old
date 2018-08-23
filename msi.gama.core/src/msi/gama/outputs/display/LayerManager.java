@@ -252,7 +252,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public boolean addItem(final ILayer obj) {
-		obj.setOrder(count++);
+		obj.getDefinition().setOrder(count++);
 		enabledLayers.add(obj);
 		Collections.sort(enabledLayers);
 		obj.firstLaunchOn(surface);

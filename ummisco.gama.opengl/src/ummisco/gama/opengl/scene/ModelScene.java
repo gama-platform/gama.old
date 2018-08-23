@@ -191,8 +191,7 @@ public class ModelScene {
 
 	public void beginDrawingLayer(final ILayer layer, final GamaPoint offset, final GamaPoint scale,
 			final Double alpha) {
-		final int id = layer.getOrder();
-		final String key = layer.getName() + id;
+		final String key = layer.getName() + layer.getDefinition().getOrder();
 		currentLayer = layers.get(key);
 		if (currentLayer == null) {
 			currentLayer = createRegularLayer(renderer, layer);

@@ -81,9 +81,9 @@ public class SceneHelper extends AbstractRendererHelper {
 
 		}
 		if (!layer.isOverlay()) {
-			double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+			double currentZLayer = getMaxEnvDim() * layer.getData().getPosition().getZ();
 			currentZLayer += layer.getData().getAddedElevation() * getMaxEnvDim();
-			double zScale = layer.getExtent().getZ();
+			double zScale = layer.getData().getSize().getZ();
 			if (zScale <= 0) {
 				zScale = 1;
 			}
@@ -96,7 +96,7 @@ public class SceneHelper extends AbstractRendererHelper {
 		GamaPoint currentScale;
 		final GamaPoint currentOffset = computeOffsetOf(layer);
 		if (!layer.isOverlay()) {
-			double zScale = layer.getExtent().getZ();
+			double zScale = layer.getData().getSize().getZ();
 			if (zScale <= 0) {
 				zScale = 1;
 			}

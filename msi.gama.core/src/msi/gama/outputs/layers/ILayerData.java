@@ -75,4 +75,13 @@ public interface ILayerData {
 
 	public abstract double getAddedElevation();
 
+	/**
+	 * Whether the layer is to be refreshed dynamically everytime the surface displays itself
+	 * 
+	 * @return true if the layer is dynamic, false otherwise
+	 */
+	default boolean isDynamic() {
+		return getRefresh() == null || getRefresh();
+	}
+
 }

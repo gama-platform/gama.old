@@ -114,7 +114,7 @@ public class DisplaySurfaceMenu {
 		if (displays.isEmpty()) { return; }
 		final Set<IAgent> all = new LinkedHashSet<>();
 		for (final ILayer display : displays) {
-			if (display.isSelectable()) {
+			if (display.getData().isSelectable()) {
 				final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
 				if (agents.isEmpty()) {
 					continue;
@@ -225,7 +225,7 @@ public class DisplaySurfaceMenu {
 		} else {
 
 			for (final ILayer layer : surface.getManager().getItems()) {
-				if (layer.isSelectable()) {
+				if (layer.getData().isSelectable()) {
 					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
 					pop = new ArrayList<>(pop);
 					if (pop.isEmpty()) {

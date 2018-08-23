@@ -406,17 +406,17 @@ public class LayerSideControls {
 
 		EditorFactory.create(container.getScope(), compo, "Transparency:", layer.getData().getTransparency(), 0.0, 1.0,
 				0.1, false, newValue -> {
-					layer.setTransparency(1 - newValue);
+					layer.getData().setTransparency(1 - newValue);
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Position:", layer.getData().getPosition(),
 				(EditorListener<ILocation>) newValue -> {
-					layer.setPosition(newValue);
+					layer.getData().setPosition(newValue);
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Size:", layer.getData().getSize(),
 				(EditorListener<ILocation>) newValue -> {
-					layer.setExtent(newValue);
+					layer.getData().setSize(newValue);
 					updateIfPaused(layer, container);
 				});
 
