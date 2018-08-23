@@ -21,6 +21,9 @@ import msi.gaml.compilation.ISymbol;
  * information on a concrete support, only computing it. They however control whatever concrete support they represent
  * (opening, closing, pausing, updating and refreshing it).
  * 
+ * @update Since 2018, the role of ouputs in the computation has been reduced, so as to not weigh too much on the
+ *         simulation thread. More computations are now taken in charge by the concrete implementations of the output
+ * 
  * @author Alexis Drogoul, IRD
  * @revised in Dec. 2015 to simplify and document the interface of outputs
  */
@@ -72,7 +75,7 @@ public interface IOutput extends ISymbol, IStepable, IScoped {
 	 */
 	public void setRefreshRate(int rate);
 
-	/*
+	/**
 	 * Called by the output thread to perform the actual "refresh" of the concrete support of the output (whereas
 	 * step(), from IStepable, performs the computations described in GAML, that will serve as a model for this
 	 * refresh).
@@ -88,12 +91,36 @@ public interface IOutput extends ISymbol, IStepable, IScoped {
 	@Override
 	public IScope getScope();
 
+	/**
+	 * Returns the original name of the output (as it has been declared by the modeler). This name can be changed later
+	 * to accomoadate different display configuration in the UI
+	 * 
+	 * @return the string representing the original (unaltered) name of the output as defined by the modeler
+	 */
 	public String getOriginalName();
 
+	/**
+	 * Returns the identifier (should be unique) of this output
+	 * 
+	 * @return a string representing the unique identifier of this output (especially important for UI outputs)
+	 */
 	public String getId();
+
+	/**
+	 * Whether this output should (and can) be refreshed. It should not be paused, its scope should not be interrupted,
+	 * and its refresh rate must be in sync with the current cycle
+	 * 
+	 * @return true if the output can be refreshed, false otherwise
+	 */
 
 	public boolean isRefreshable();
 
+	/**
+	 * Sets whether this output has been created by the user or from the model
+	 * 
+	 * @param b
+	 *            true if the user has created this output
+	 */
 	public void setUserCreated(boolean b);
 
 }
