@@ -128,10 +128,6 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	@Override
 	public ILocation getPosition() {
 		return position.get();
-		// if (addedElevation > 0) {
-		// return position.get().toGamaPoint().plus(0, 0, addedElevation);
-		// }
-		// return position.get();
 	}
 
 	@Override

@@ -31,6 +31,8 @@ public interface ILayerData {
 
 	public abstract void setTransparency(final double f);
 
+	public abstract Double getTransparency();
+
 	public abstract void setSize(final ILocation p);
 
 	public abstract void setSize(final double width, final double height, final double depth);
@@ -44,8 +46,6 @@ public interface ILayerData {
 	public abstract void setPosition(final double x, final double y, final double z);
 
 	public abstract void setRefresh(final Boolean r);
-
-	public abstract Double getTransparency();
 
 	public abstract ILocation getPosition();
 

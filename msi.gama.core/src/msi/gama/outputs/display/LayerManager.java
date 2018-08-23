@@ -106,8 +106,7 @@ public class LayerManager implements ILayerManager {
 		disabledLayers.clear();
 	}
 
-	@Override
-	public ILayer addLayer(final ILayer d) {
+	protected ILayer addLayer(final ILayer d) {
 		if (addItem(d)) { return d; }
 		return null;
 	}
@@ -159,34 +158,12 @@ public class LayerManager implements ILayerManager {
 		Collections.sort(enabledLayers);
 	}
 
-	@Override
-	public boolean isEnabled(final ILayer item) {
-		return enabledLayers.contains(item);
-	}
-
 	void disable(final ILayer found) {
 		if (found != null) {
 			found.disableOn(surface);
 			removeLayer(found);
 			disabledLayers.add(found);
 		}
-	}
-
-	@Override
-	public void enableLayer(final ILayer layer, final Boolean enable) {
-
-		surface.runAndUpdate(() -> {
-			if (enable) {
-				enable(layer);
-			} else {
-				disable(layer);
-			}
-			for (final ILayer l : enabledLayers) {
-				l.forceRedrawingOnce();
-			}
-			surface.layersChanged();
-
-		});
 	}
 
 	@Override
@@ -302,7 +279,18 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public void makeItemVisible(final ILayer obj, final boolean b) {
-		enableLayer(obj, b);
+		surface.runAndUpdate(() -> {
+			if (b) {
+				enable(obj);
+			} else {
+				disable(obj);
+			}
+			for (final ILayer l : enabledLayers) {
+				l.forceRedrawingOnce();
+			}
+			surface.layersChanged();
+
+		});
 	}
 
 	/**
