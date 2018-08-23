@@ -11,6 +11,7 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ImageLayerStatement.ImageLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -184,7 +185,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		if (hasFacet(IKeyword.GIS)) { return LayerType.GIS; }
 		return LayerType.IMAGE;
 	}

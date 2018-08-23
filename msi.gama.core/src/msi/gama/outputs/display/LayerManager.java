@@ -46,8 +46,8 @@ import msi.gama.util.GamaColor;
  */
 public class LayerManager implements ILayerManager {
 
-	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
-		switch (layer.getType()) {
+	public static ILayer createLayer(final LayeredDisplayOutput output, final ILayerStatement layer) {
+		switch (layer.getType(output)) {
 			case GRID:
 				return new GridLayer(layer);
 			case AGENTS:
@@ -57,7 +57,7 @@ public class LayerManager implements ILayerManager {
 			case SPECIES:
 				return new SpeciesLayer(layer);
 			case IMAGE:
-				return new ImageLayer(scope, layer);
+				return new ImageLayer(output.getScope(), layer);
 			case GIS:
 				return new GisLayer(layer);
 			case CHART:
@@ -84,7 +84,7 @@ public class LayerManager implements ILayerManager {
 		final List<AbstractLayerStatement> layers = output.getLayers();
 		for (final AbstractLayerStatement layer : layers) {
 			if (layer.isToCreate()) {
-				final ILayer result = createLayer(output.getScope(), layer);
+				final ILayer result = createLayer(output, layer);
 				if (result instanceof OverlayLayer) {
 					overlay = (OverlayLayer) result;
 				} else {

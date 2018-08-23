@@ -9,8 +9,11 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
+import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.GridLayerStatement.GridLayerSerializer;
 import msi.gama.outputs.layers.GridLayerStatement.GridLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -24,6 +27,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
@@ -33,8 +37,8 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -184,29 +188,46 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			if (exp != null && exp.isConst()) {
 				final Integer n = (Integer) exp.getConstValue();
 				if (n == 6) {
-					d.setFacet("hexagonal", IExpressionFactory.TRUE_EXPR);
+					d.setFacet("hexagonal", TRUE_EXPR);
+				}
+			}
+			final IExpression tx = d.getFacetExpr(TEXTURE);
+			final IExpression el = d.getFacetExpr(ELEVATION);
+			if (el == null || FALSE.equals(el.serialize(true))) {
+				if (tx == null) {
+					d.setFacet("flat", TRUE_EXPR);
+				} else {
+					// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
+					// not be drawn
+					d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));
 				}
 			}
 		}
 
 	}
 
+	final boolean isHexagonal, isFlatGrid;
+
 	public GridLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 		isHexagonal = desc.hasFacet("hexagonal");
+		isFlatGrid = desc.hasFacet("flat");
 	}
-
-	final boolean isHexagonal;
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		return true;
 	}
 
+	boolean isOpenGLFlatGrid(final LayeredDisplayOutput out) {
+		final boolean isOpenGL = out.getData().isOpenGL();
+		return isOpenGL && isFlatGrid;
+	}
+
 	@Override
-	public LayerType getType() {
-		return isHexagonal ? LayerType.GRID_AGENTS : LayerType.GRID;
+	public LayerType getType(final LayeredDisplayOutput out) {
+		return isHexagonal || isOpenGLFlatGrid(out) ? LayerType.GRID_AGENTS : LayerType.GRID;
 	}
 
 	@Override

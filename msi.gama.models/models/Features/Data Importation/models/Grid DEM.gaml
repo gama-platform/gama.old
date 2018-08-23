@@ -77,7 +77,7 @@ experiment GridDEMComplete type: gui {
 
 		//Display the grid on a plan with cell color (if defined otherwise in black)
 		display grid type: opengl { //Same as in java2D
-			grid cell;
+			grid cell lines:#black ;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)

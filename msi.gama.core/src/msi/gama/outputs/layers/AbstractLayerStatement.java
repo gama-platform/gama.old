@@ -79,9 +79,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public abstract LayerType getType();
-
-	@Override
 	public final boolean step(final IScope scope) throws GamaRuntimeException {
 		if (!scope.interrupted()) { return _step(scope); }
 		return false;

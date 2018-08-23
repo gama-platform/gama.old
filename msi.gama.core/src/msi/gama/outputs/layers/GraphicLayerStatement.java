@@ -10,6 +10,7 @@
 package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -102,7 +103,8 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		final IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + LayerIndex++);
+		final IDescription d =
+				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + LayerIndex++);
 		aspect = new AspectStatement(d);
 	}
 
@@ -116,7 +118,7 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.GRAPHICS;
 	}
 

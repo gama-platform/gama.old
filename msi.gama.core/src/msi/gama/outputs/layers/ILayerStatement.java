@@ -12,6 +12,7 @@ package msi.gama.outputs.layers;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 
@@ -59,7 +60,7 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 
 	}
 
-	public abstract LayerType getType();
+	public abstract LayerType getType(LayeredDisplayOutput output);
 
 	public abstract void setDisplayOutput(IDisplayOutput output);
 

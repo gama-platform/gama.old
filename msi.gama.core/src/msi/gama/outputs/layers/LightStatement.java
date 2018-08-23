@@ -12,6 +12,7 @@ package msi.gama.outputs.layers;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -199,7 +200,7 @@ public class LightStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.LIGHT;
 	}
 

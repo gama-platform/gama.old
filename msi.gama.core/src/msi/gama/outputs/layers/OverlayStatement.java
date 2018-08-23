@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterMessage;
 import msi.gama.common.interfaces.IUpdaterTarget;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -168,7 +169,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.OVERLAY;
 	}
 

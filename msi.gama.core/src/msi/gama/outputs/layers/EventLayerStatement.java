@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -195,7 +196,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.EVENT;
 	}
 

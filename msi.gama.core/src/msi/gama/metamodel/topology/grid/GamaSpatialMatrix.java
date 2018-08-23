@@ -174,7 +174,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// new");
 		numRows = gfile.getNbRows(scope);
 		numCols = gfile.getNbCols(scope);
-		environmentFrame = gfile.getGeometry(scope);
+
+		environmentFrame = scope.getSimulation().getGeometry();
+		// environmentFrame = gfile.getGeometry(scope);
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / numCols;
 		cellHeight = bounds.getHeight() / numRows;
@@ -223,7 +225,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final GamaGridFile gfile = gfiles.firstValue(scope);
 		numRows = gfile.getNbRows(scope);
 		numCols = gfile.getNbCols(scope);
-		environmentFrame = gfile.getGeometry(scope);
+		environmentFrame = scope.getSimulation().getGeometry();
+		// environmentFrame = gfile.getGeometry(scope);
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / numCols;
 		cellHeight = bounds.getHeight() / numRows;

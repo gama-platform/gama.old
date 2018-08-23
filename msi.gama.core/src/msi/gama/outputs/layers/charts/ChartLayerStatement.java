@@ -18,6 +18,7 @@ import org.jfree.chart.JFreeChart;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -718,7 +719,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.CHART;
 	}
 

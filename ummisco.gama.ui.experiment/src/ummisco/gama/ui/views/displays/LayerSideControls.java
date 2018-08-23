@@ -420,7 +420,7 @@ public class LayerSideControls {
 					updateIfPaused(layer, container);
 				});
 
-		switch (definition.getType()) {
+		switch (definition.getType(container.getOutput())) {
 
 			case GRID: {
 				EditorFactory.create(container.getScope(), compo, "Draw grid:",

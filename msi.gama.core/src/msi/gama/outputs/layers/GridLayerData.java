@@ -89,12 +89,12 @@ public class GridLayerData extends LayerData {
 				throw error("No grid species named " + name + " can be found", scope);
 			} else if (!gridPop.isGrid()) { throw error("Species named " + name + " is not a grid", scope); }
 			grid = (IGrid) gridPop.getTopology().getPlaces();
-			final Envelope env = grid.getEnvironmentFrame().getEnvelope();
+			// final Envelope env = grid.getEnvironmentFrame().getEnvelope();
 			final Envelope env2 = scope.getSimulation().getEnvelope();
 			final double width = env2.getWidth();
 			final double height = env2.getHeight();
-			final double width2 = env2.getWidth();
-			final double height2 = env2.getHeight();
+			// final double width2 = env2.getWidth();
+			// final double height2 = env2.getHeight();
 			final double cols = grid.getCols(scope);
 			final double rows = grid.getRows(scope);
 			cellSize = new GamaPoint(width / cols, height / rows);

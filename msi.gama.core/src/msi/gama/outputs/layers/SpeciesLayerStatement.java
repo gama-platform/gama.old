@@ -14,6 +14,7 @@ import java.util.List;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.SpeciesLayerStatement.SpeciesLayerSerializer;
 import msi.gama.outputs.layers.SpeciesLayerStatement.SpeciesLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -237,7 +238,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public LayerType getType() {
+	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.SPECIES;
 	}
 
