@@ -1,11 +1,12 @@
 /*********************************************************************************************
  *
- * 'SyntacticFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * SyntacticFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. 
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- *
  **********************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -28,14 +29,39 @@ import msi.gaml.statements.Facets;
  */
 public class SyntacticFactory {
 
+	/**
+	 * The Constant SPECIES_VAR.
+	 */
 	public static final String SPECIES_VAR = "species_var";
+	
+	/**
+	 * The Constant SYNTHETIC_MODEL.
+	 */
 	public static final String SYNTHETIC_MODEL = "synthetic_model";
+	
+	/**
+	 * The Constant EXPERIMENT_MODEL.
+	 */
 	public static final String EXPERIMENT_MODEL = "experiment_model";
 
+	/**
+	 * Creates a new Syntactic object.
+	 *
+	 * @param statement the statement
+	 * @return the syntactic model element
+	 */
 	public static SyntacticModelElement createSyntheticModel(final EObject statement) {
 		return new SyntacticModelElement(SYNTHETIC_MODEL, null, statement, null);
 	}
 
+	/**
+	 * Creates a new Syntactic object.
+	 *
+	 * @param root the root
+	 * @param expObject the exp object
+	 * @param path the path
+	 * @return the syntactic experiment model element
+	 */
 	public static SyntacticExperimentModelElement createExperimentModel(final EObject root, final EObject expObject,
 			final String path) {
 		final SyntacticExperimentModelElement model = new SyntacticExperimentModelElement(EXPERIMENT_MODEL, root, path);
@@ -44,16 +70,44 @@ public class SyntacticFactory {
 		return model;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param keyword the keyword
+	 * @param statement the statement
+	 * @param withChildren the with children
+	 * @param data the data
+	 * @return the i syntactic element
+	 */
 	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren,
 			final Object... data) {
 		return create(keyword, null, statement, withChildren, data);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param keyword the keyword
+	 * @param facets the facets
+	 * @param withChildren the with children
+	 * @param data the data
+	 * @return the i syntactic element
+	 */
 	public static ISyntacticElement create(final String keyword, final Facets facets, final boolean withChildren,
 			final Object... data) {
 		return create(keyword, facets, null, withChildren, data);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param keyword the keyword
+	 * @param facets the facets
+	 * @param statement the statement
+	 * @param withChildren the with children
+	 * @param data the data
+	 * @return the i syntactic element
+	 */
 	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement,
 			final boolean withChildren, final Object... data) {
 		if (keyword.equals(MODEL)) {
@@ -69,6 +123,14 @@ public class SyntacticFactory {
 		return new SyntacticComposedElement(keyword, facets, statement);
 	}
 
+	/**
+	 * Creates a new Syntactic object.
+	 *
+	 * @param keyword the keyword
+	 * @param name the name
+	 * @param stm the stm
+	 * @return the i syntactic element
+	 */
 	public static ISyntacticElement createVar(final String keyword, final String name, final EObject stm) {
 		return new SyntacticAttributeElement(keyword, name, stm);
 	}

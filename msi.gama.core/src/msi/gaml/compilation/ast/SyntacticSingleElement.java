@@ -1,12 +1,12 @@
 /*********************************************************************************************
  *
- * 'SyntacticSingleElement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * SyntacticSingleElement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. 
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- *
  **********************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -24,10 +24,20 @@ import msi.gaml.statements.Facets;
  */
 public class SyntacticSingleElement extends AbstractSyntacticElement {
 
+	/**
+	 * Instantiates a new syntactic single element.
+	 *
+	 * @param keyword the keyword
+	 * @param facets the facets
+	 * @param statement the statement
+	 */
 	SyntacticSingleElement(final String keyword, final Facets facets, final EObject statement) {
 		super(keyword, facets, statement);
 	}
 
+	/* (non-Javadoc)
+	 * @see msi.gaml.compilation.ast.ISyntacticElement#hasChildren()
+	 */
 	@Override
 	public boolean hasChildren() {
 		return false;
