@@ -11,18 +11,24 @@ package msi.gama.common.interfaces;
 
 import java.util.Map;
 
+/**
+ * Represents objects that are provided with attributes (collection of string-value pairs)
+ * 
+ * @author drogoul
+ *
+ */
 public interface IAttributed {
 
 	/**
-	 * Allows to retrieve the attributes of the object as a GamaMap
+	 * Allows to retrieve the attributes of the object as a Map
 	 * 
 	 * @return a map containing the attributes or null if no attributes are defined
 	 */
 	public Map<String, Object> getAttributes();
 
 	/**
-	 * Allows to retrieve the attributes of the object as a GamaMap. If the object has no attributes, should return an
-	 * empty map
+	 * Allows to retrieve the attributes of the object as a Map. If the object has no attributes, should return an empty
+	 * map than can be filled and modified
 	 * 
 	 * @return a map containing the attributes or an empty map if no attributes are defined
 	 */

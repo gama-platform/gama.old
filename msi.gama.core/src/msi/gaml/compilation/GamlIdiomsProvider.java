@@ -59,8 +59,8 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 			new GamlIdiomsProvider<>("statement", "Statements", DescriptionFactory.getStatementProtos());
 	public final static GamlIdiomsProvider<UnitConstantExpression> CONSTANTS =
 			new GamlIdiomsProvider<>(IKeyword.CONST, "Constant & Units", IUnits.UNITS_EXPR.values());
-	public final static GamlIdiomsProvider<OperatorProto> OPERATORS =
-			new GamlIdiomsProvider<>("operator", "Operators", IExpressionCompiler.getAllOperators());
+	public final static GamlIdiomsProvider<OperatorProto> OPERATORS = new GamlIdiomsProvider<>("operator", "Operators",
+			Iterables.concat(Iterables.transform(IExpressionCompiler.OPERATORS.values(), (each) -> each.values())));
 	public final static GamlIdiomsProvider<IType<?>> TYPES =
 			new GamlIdiomsProvider<>("type", "Types", Types.builtInTypes.getAllTypes());
 	public final static GamlIdiomsProvider<FacetProto> FACETS =
@@ -119,9 +119,9 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	private void init() {
 
 		sortedElements = Iterables.toArray(elements, IGamlDescription.class);
-		if (titles == null)
+		if (titles == null) {
 			Arrays.sort(sortedElements, (e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
-		else {
+		} else {
 			Arrays.sort(sortedElements, (e1, e2) -> titles.get(e1).compareTo(titles.get(e2)));
 		}
 		byName = Multimaps.index(elements, (each) -> each.getName());

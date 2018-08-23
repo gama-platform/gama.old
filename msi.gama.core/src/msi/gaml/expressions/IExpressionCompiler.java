@@ -14,10 +14,9 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.Iterables;
-
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.IExecutionContext;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
@@ -32,7 +31,7 @@ import msi.gaml.types.Signature;
  * @todo Description
  * 
  */
-public interface IExpressionCompiler<T> {
+public interface IExpressionCompiler<T> extends IDisposable {
 
 	public static final THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap<>();
 	public static final Set<String> ITERATORS = new THashSet<>();
@@ -53,11 +52,5 @@ public interface IExpressionCompiler<T> {
 
 	public List<IDescription> compileBlock(final String string, final IDescription actionContext,
 			IExecutionContext tempContext);
-
-	public abstract void dispose();
-
-	public static Iterable<? extends OperatorProto> getAllOperators() {
-		return Iterables.concat(Iterables.transform(OPERATORS.values(), (each) -> each.values()));
-	}
 
 }
