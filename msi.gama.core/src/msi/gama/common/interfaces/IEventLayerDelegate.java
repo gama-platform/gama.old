@@ -13,7 +13,7 @@ import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.IScope;
 
 /**
- * Class ICreateDelegate.
+ * Class IEventLayerDelegate. Represents a delegate to the EventLayers that accepts other inputs than keyboard inputs
  *
  * @author drogoul
  * @since 27 mai 2015

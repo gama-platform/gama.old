@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -214,8 +213,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	@Override
 	public SpeciesDescription getDenotedSpecies() {
 		final SpeciesDescription result = type.getSpecies();
-		if (result != null)
-			return result;
+		if (result != null) { return result; }
 		return contentsType.getSpecies();
 	}
 
@@ -491,12 +489,12 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	@Override
 	public void setDefiningPlugin(final String plugin) {}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		type.collectMetaInformation(meta);
-		contentsType.collectMetaInformation(meta);
-		keyType.collectMetaInformation(meta);
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// type.collectMetaInformation(meta);
+	// contentsType.collectMetaInformation(meta);
+	// keyType.collectMetaInformation(meta);
+	// }
 
 	@Override
 	public boolean isNumber() {

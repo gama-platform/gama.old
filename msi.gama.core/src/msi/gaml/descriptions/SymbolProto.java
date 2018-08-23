@@ -22,7 +22,6 @@ import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
@@ -271,10 +270,10 @@ public class SymbolProto extends AbstractProto {
 		}
 		return getName() + " " + sb.toString();
 	}
-
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.STATEMENTS, name);
-	}
+	//
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// meta.put(GamlProperties.STATEMENTS, name);
+	// }
 
 }

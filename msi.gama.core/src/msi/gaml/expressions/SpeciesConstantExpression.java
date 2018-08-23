@@ -12,7 +12,6 @@ package msi.gaml.expressions;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.ModelDescription;
@@ -73,16 +72,16 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		final SpeciesDescription sd = getGamlType().getContentType().getSpecies();
-		if (sd != null) {
-			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
-			if (sd.isBuiltIn()) {
-				meta.put(GamlProperties.SPECIES, (String) value);
-			}
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// final SpeciesDescription sd = getGamlType().getContentType().getSpecies();
+	// if (sd != null) {
+	// meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
+	// if (sd.isBuiltIn()) {
+	// meta.put(GamlProperties.SPECIES, (String) value);
+	// }
+	// }
+	// }
 
 	@Override
 	public boolean isContextIndependant() {

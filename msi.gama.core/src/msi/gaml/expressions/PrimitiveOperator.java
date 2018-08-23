@@ -14,7 +14,6 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -140,19 +139,19 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
-		if (action.isBuiltIn()) {
-			meta.put(GamlProperties.ACTIONS, action.getName());
-		}
-		if (parameters != null) {
-			parameters.forEachValue(exp -> {
-				exp.collectMetaInformation(meta);
-				return true;
-			});
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
+	// if (action.isBuiltIn()) {
+	// meta.put(GamlProperties.ACTIONS, action.getName());
+	// }
+	// if (parameters != null) {
+	// parameters.forEachValue(exp -> {
+	// exp.collectMetaInformation(meta);
+	// return true;
+	// });
+	// }
+	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {

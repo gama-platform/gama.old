@@ -35,7 +35,6 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -316,9 +315,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public String getDefiningPlugin() {
 		return "msi.gama.core";
 	}
-
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	//
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {

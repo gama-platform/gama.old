@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -87,15 +86,15 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		if (definitionDescription != null) {
-			final IDescription var = definitionDescription.getSpeciesContext().getAttribute(getName());
-			if (var != null) {
-				meta.put(GamlProperties.PLUGINS, var.getDefiningPlugin());
-			}
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// if (definitionDescription != null) {
+	// final IDescription var = definitionDescription.getSpeciesContext().getAttribute(getName());
+	// if (var != null) {
+	// meta.put(GamlProperties.PLUGINS, var.getDefiningPlugin());
+	// }
+	// }
+	// }
 
 	@Override
 	public boolean isContextIndependant() {

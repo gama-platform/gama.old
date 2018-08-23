@@ -11,7 +11,6 @@ package msi.gama.common.interfaces;
 
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
-import msi.gama.precompiler.GamlProperties;
 
 @FunctionalInterface
 public interface IDisplayCreator {
@@ -110,10 +109,10 @@ public interface IDisplayCreator {
 		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
-		@Override
-		public void collectMetaInformation(final GamlProperties meta) {
-			meta.put(GamlProperties.PLUGINS, plugin);
-		}
+		// @Override
+		// public void collectMetaInformation(final GamlProperties meta) {
+		// meta.put(GamlProperties.PLUGINS, plugin);
+		// }
 	}
 
 	IDisplaySurface create(Object... args);

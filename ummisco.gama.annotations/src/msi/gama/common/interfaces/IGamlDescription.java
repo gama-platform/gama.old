@@ -9,10 +9,8 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import msi.gama.precompiler.GamlProperties;
-
 /**
- * The class IGamlDescription.
+ * The interface IGamlDescription. Represents objects that can be presented in the online documentation.
  *
  * @author drogoul
  * @since 27 avr. 2012
@@ -20,21 +18,36 @@ import msi.gama.precompiler.GamlProperties;
  */
 public interface IGamlDescription extends INamed {
 
+	/**
+	 * Returns the title of this object (ie. the first line in the online documentation)
+	 * 
+	 * @return a string representing the title of this object (default is its name)
+	 */
 	default String getTitle() {
 		return getName();
 	}
 
+	/**
+	 * Returns the documentation attached to this object
+	 * 
+	 * @return a string that represents the documentation of this object
+	 */
 	default public String getDocumentation() {
 		return "";
 	}
 
+	/**
+	 * Returns the plugin in which this object has been defined (if it has one)
+	 * 
+	 * @return a string containing the identifier of the plugin in which this object has been defined, or null
+	 */
 	default String getDefiningPlugin() {
 		// Null by default
 		return null;
 	}
 
-	default void collectMetaInformation(final GamlProperties meta) {
-		// Does nothing by default
-	}
+	// default void collectMetaInformation(final GamlProperties meta) {
+	// // Does nothing by default
+	// }
 
 }

@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
@@ -135,11 +134,11 @@ public class PrimitiveDescription extends ActionDescription {
 		this.plugin = plugin;
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.PLUGINS, plugin);
-		meta.put(GamlProperties.ACTIONS, getName());
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// meta.put(GamlProperties.PLUGINS, plugin);
+	// meta.put(GamlProperties.ACTIONS, getName());
+	// }
 
 	@Override
 	public void dispose() {

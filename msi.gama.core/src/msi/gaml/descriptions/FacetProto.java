@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -204,8 +203,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	public void buildDoc(final Class<?> c) {
 		final facets facets = c.getAnnotation(facets.class);

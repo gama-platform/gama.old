@@ -15,7 +15,6 @@ import java.util.Collections;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.TypeExpression;
@@ -51,12 +50,12 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		return expression == null ? toOwnString() : expression.serialize(includingBuiltIn);
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		if (expression != null) {
-			expression.collectMetaInformation(meta);
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// if (expression != null) {
+	// expression.collectMetaInformation(meta);
+	// }
+	// }
 
 	@Override
 	public boolean equals(final Object c) {

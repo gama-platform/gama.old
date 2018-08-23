@@ -10,7 +10,6 @@
 package msi.gaml.expressions;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -85,10 +84,10 @@ public class ConstantExpression extends AbstractExpression {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	//
+	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}

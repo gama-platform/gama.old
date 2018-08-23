@@ -24,7 +24,6 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISymbol;
@@ -192,10 +191,10 @@ public abstract class SymbolDescription implements IDescription {
 		return getSerializer().serialize(this, includingBuiltIn);
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		getSerializer().collectMetaInformation(this, meta);
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// getSerializer().collectMetaInformation(this, meta);
+	// }
 
 	@Override
 	public boolean isDocumenting() {

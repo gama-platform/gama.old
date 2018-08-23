@@ -14,7 +14,6 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -159,14 +158,14 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		for (final IExpression e : elements) {
-			if (e != null) {
-				e.collectMetaInformation(meta);
-			}
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// for (final IExpression e : elements) {
+	// if (e != null) {
+	// e.collectMetaInformation(meta);
+	// }
+	// }
+	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {

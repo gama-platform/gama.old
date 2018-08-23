@@ -12,7 +12,6 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.precompiler.GamlProperties;
 
 @FunctionalInterface
 public interface IExperimentAgentCreator {
@@ -102,10 +101,10 @@ public interface IExperimentAgentCreator {
 		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
-		@Override
-		public void collectMetaInformation(final GamlProperties meta) {
-			meta.put(GamlProperties.PLUGINS, plugin);
-		}
+		// @Override
+		// public void collectMetaInformation(final GamlProperties meta) {
+		// meta.put(GamlProperties.PLUGINS, plugin);
+		// }
 	}
 
 	IExperimentAgent create(IPopulation<? extends IAgent> pop, int index);

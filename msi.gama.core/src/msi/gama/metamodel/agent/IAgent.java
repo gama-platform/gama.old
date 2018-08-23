@@ -72,7 +72,6 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 *
 	 * @return
 	 */
-	// @getter(IKeyword.TOPOLOGY)
 	public abstract ITopology getTopology();
 
 	@setter (IKeyword.PEERS)
@@ -129,8 +128,6 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	public abstract void schedule(IScope scope);
 
-	// public abstract void scheduleAndExecute(RemoteSequence sequence);
-
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for GIS/CSV attributes
 	 * 
@@ -140,8 +137,6 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	public abstract int getIndex();
 
-	// public abstract void setIndex(int index);
-
 	public String getSpeciesName();
 
 	public abstract ISpecies getSpecies();
@@ -150,44 +145,11 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
-	// public void setHeading(Integer heading);
-
-	// public Integer getHeading();
-
 	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
 	public abstract List<IAgent> getMacroAgents();
-
-	/**
-	 * Acquires the object's intrinsic lock.
-	 *
-	 * Solves the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 *
-	 * The synchronization problem may happen when 1. The Event Dispatch Thread is drawing an agent while the Execution
-	 * Thread tries to it; 2. The Execution Thread is disposing the agent while the Event Dispatch Thread tries to draw
-	 * it.
-	 *
-	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before drawing or disposing
-	 * the agent. After finish the task, the thread invokes "releaseLock" to release the agent's lock.
-	 *
-	 * return true if the agent instance is available for use false otherwise
-	 */
-	// public abstract void acquireLock();
-
-	/**
-	 * Releases the object's intrinsic lock.
-	 */
-	// public abstract void releaseLock();
-
-	/**
-	 * Tells this agent that the host has changed its shape. This agent will then ask the topology to add its shape to
-	 * the new ISpatialIndex.
-	 */
-	// public abstract void hostChangesShape();
-
-	// public ActionExecuter getScheduler();
 
 	public IModel getModel();
 

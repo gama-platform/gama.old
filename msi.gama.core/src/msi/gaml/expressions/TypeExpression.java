@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -93,10 +92,10 @@ public class TypeExpression extends AbstractExpression {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		type.collectMetaInformation(meta);
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// type.collectMetaInformation(meta);
+	// }
 
 	@Override
 	public boolean isContextIndependant() {

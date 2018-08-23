@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -274,11 +273,11 @@ public class OperatorProto extends AbstractProto {
 		}
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		super.collectMetaInformation(meta);
-		meta.put(GamlProperties.OPERATORS, name);
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// super.collectMetaInformation(meta);
+	// meta.put(GamlProperties.OPERATORS, name);
+	// }
 
 	public OperatorProto copyWithSignature(final IType gamaType) {
 		return new OperatorProto(this, gamaType);

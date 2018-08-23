@@ -21,7 +21,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -477,13 +476,13 @@ public abstract class GamaType<Support> implements IType<Support> {
 		this.plugin = plugin;
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		if (plugin != null) {
-			meta.put(GamlProperties.PLUGINS, this.plugin);
-			meta.put(GamlProperties.TYPES, this.name);
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// if (plugin != null) {
+	// meta.put(GamlProperties.PLUGINS, this.plugin);
+	// meta.put(GamlProperties.TYPES, this.name);
+	// }
+	// }
 
 	@Override
 	public boolean isDrawable() {

@@ -18,7 +18,6 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.precompiler.GamlProperties;
 
 public class DocumentationNode implements IGamlDescription {
 
@@ -62,8 +61,8 @@ public class DocumentationNode implements IGamlDescription {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
 	public String getDocumentation() {

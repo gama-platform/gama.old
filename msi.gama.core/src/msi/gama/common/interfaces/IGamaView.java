@@ -20,9 +20,32 @@ import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.test.CompoundSummary;
 
 /**
+ * An abstract representation of the 'views', in a UI sense, that are used to display outputs or present information to
+ * the user. A view can display one or several outputs (for instance, several monitors)
+ * 
  * @author drogoul
  */
 public interface IGamaView {
+
+	public void update(IDisplayOutput output);
+
+	public void addOutput(IDisplayOutput output);
+
+	public void removeOutput(IDisplayOutput putput);
+
+	IDisplayOutput getOutput();
+
+	public void close(IScope scope);
+
+	public void changePartNameWithSimulation(SimulationAgent agent);
+
+	public void reset();
+
+	public String getPartName();
+
+	public void setName(String name);
+
+	public void updateToolbarState();
 
 	public interface Test {
 		public void addTestResult(final CompoundSummary<?, ?> summary);
@@ -88,25 +111,5 @@ public interface IGamaView {
 	public interface User {
 		public void initFor(final IScope scope, final UserPanelStatement panel);
 	}
-
-	public void update(IDisplayOutput output);
-
-	public void addOutput(IDisplayOutput output);
-
-	IDisplayOutput getOutput();
-
-	public void close(IScope scope);
-
-	public void removeOutput(IDisplayOutput putput);
-
-	public void changePartNameWithSimulation(SimulationAgent agent);
-
-	public void reset();
-
-	public String getPartName();
-
-	public void setName(String name);
-
-	public void updateToolbarState();
 
 }

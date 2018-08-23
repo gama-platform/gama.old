@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -169,8 +168,8 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 		return false;
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}

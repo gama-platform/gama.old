@@ -14,7 +14,6 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -205,20 +204,20 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		for (final IExpression e : keys) {
-			if (e != null) {
-				e.collectMetaInformation(meta);
-			}
-		}
-
-		for (final IExpression e : vals) {
-			if (e != null) {
-				e.collectMetaInformation(meta);
-			}
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// for (final IExpression e : keys) {
+	// if (e != null) {
+	// e.collectMetaInformation(meta);
+	// }
+	// }
+	//
+	// for (final IExpression e : vals) {
+	// if (e != null) {
+	// e.collectMetaInformation(meta);
+	// }
+	// }
+	// }
 
 	@Override
 	public boolean isContextIndependant() {

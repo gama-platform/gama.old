@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlable;
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
@@ -56,6 +55,6 @@ public interface IExpressionDescription extends IGamlable, IDisposable {
 	@SuppressWarnings ("rawtypes")
 	public abstract IType getDenotedType(IDescription context);
 
-	public abstract void collectMetaInformation(GamlProperties meta);
+	// public abstract void collectMetaInformation(GamlProperties meta);
 
 }

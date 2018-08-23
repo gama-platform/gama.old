@@ -31,10 +31,10 @@ import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
 
 /**
- * The class IGui.
+ * The interface IGui. Represents objects that act on behalf of a concrete GUI implementation (RCP, Headless, etc.)
  *
  * @author drogoul
- * @since 18 d�c. 2011
+ * @since 18 dec. 2011
  *
  */
 public interface IGui {

@@ -20,7 +20,6 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 import java.util.function.Predicate;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -188,11 +187,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return i == 0 ? child : null;
 	}
 
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		prototype.collectMetaInformation(meta);
-		child.collectMetaInformation(meta);
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// prototype.collectMetaInformation(meta);
+	// child.collectMetaInformation(meta);
+	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {

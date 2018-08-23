@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractProto.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,7 +16,6 @@ import java.util.Collections;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.GamlProperties;
 
 /**
  * Class AbstractProto.
@@ -42,9 +40,7 @@ public abstract class AbstractProto implements IGamlDescription {
 	@Override
 	public String getDocumentation() {
 		final doc d = getDocAnnotation();
-		if (d == null) {
-			return "";
-		}
+		if (d == null) { return ""; }
 		final StringBuilder sb = new StringBuilder(200);
 		String s = d.value();
 		if (s != null && !s.isEmpty()) {
@@ -63,28 +59,19 @@ public abstract class AbstractProto implements IGamlDescription {
 	}
 
 	public String getDeprecated() {
-		if (deprecated != null)
-			return deprecated.isEmpty() ? null : deprecated;
+		if (deprecated != null) { return deprecated.isEmpty() ? null : deprecated; }
 		final doc d = getDocAnnotation();
-		if (d == null) {
-			return null;
-		}
+		if (d == null) { return null; }
 		deprecated = d.deprecated();
-		if (deprecated.isEmpty()) {
-			return null;
-		}
+		if (deprecated.isEmpty()) { return null; }
 		return deprecated;
 	}
 
 	public String getMainDoc() {
 		final doc d = getDocAnnotation();
-		if (d == null) {
-			return null;
-		}
+		if (d == null) { return null; }
 		final String s = d.value();
-		if (s.isEmpty()) {
-			return null;
-		}
+		if (s.isEmpty()) { return null; }
 		return s;
 	}
 
@@ -109,16 +96,13 @@ public abstract class AbstractProto implements IGamlDescription {
 	 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(final String newName) {
-	}
+	public void setName(final String newName) {}
 
 	public Iterable<usage> getUsages() {
 		final doc d = getDocAnnotation();
 		if (d != null) {
 			final usage[] tt = d.usages();
-			if (tt.length > 0) {
-				return Arrays.asList(tt);
-			}
+			if (tt.length > 0) { return Arrays.asList(tt); }
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -127,11 +111,11 @@ public abstract class AbstractProto implements IGamlDescription {
 	public String getDefiningPlugin() {
 		return plugin;
 	}
-
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.PLUGINS, plugin);
-	}
+	//
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// meta.put(GamlProperties.PLUGINS, plugin);
+	// }
 
 	public AnnotatedElement getSupport() {
 		return support;

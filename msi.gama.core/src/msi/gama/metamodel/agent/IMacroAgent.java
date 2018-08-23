@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IMacroAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IMacroAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -24,20 +23,24 @@ import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@vars({ @variable(name = IKeyword.MEMBERS, type = IType.LIST, of = IType.AGENT, doc = {
-		@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct host") }),
-		@variable(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = {
-				@doc("Returns the list of agents for the population(s) of which the receiver agent is a direct or undirect host") }) })
+@vars ({ @variable (
+		name = IKeyword.MEMBERS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = { @doc ("Returns the list of agents for the population(s) of which the receiver agent is a direct host") }),
+		@variable (
+				name = IKeyword.AGENTS,
+				type = IType.LIST,
+				of = IType.AGENT,
+				doc = { @doc ("Returns the list of agents for the population(s) of which the receiver agent is a direct or undirect host") }) })
 public interface IMacroAgent extends IAgent {
 
 	/**
-	 * Verifies if this agent can capture other agent as the specified
-	 * micro-species.
+	 * Verifies if this agent can capture other agent as the specified micro-species.
 	 *
-	 * An agent A can capture another agent B as newSpecies if the following
-	 * conditions are correct: 1. other is not this agent; 2. other is not
-	 * "world" agent; 3. newSpecies is a (direct) micro-species of A's species;
-	 * 4. newSpecies is a direct sub-species of B's species.
+	 * An agent A can capture another agent B as newSpecies if the following conditions are correct: 1. other is not
+	 * this agent; 2. other is not "world" agent; 3. newSpecies is a (direct) micro-species of A's species; 4.
+	 * newSpecies is a direct sub-species of B's species.
 	 *
 	 * @param other
 	 * @return true if this agent can capture other agent false otherwise
@@ -48,12 +51,11 @@ public interface IMacroAgent extends IAgent {
 			throws GamaRuntimeException;
 
 	/**
-	 * Captures some agents as micro-agents with the specified micro-species as
-	 * their new species.
+	 * Captures some agents as micro-agents with the specified micro-species as their new species.
 	 *
 	 * @param microSpecies
-	 *            the species that the captured agents will become, this must be
-	 *            a micro-species of this agent's species.
+	 *            the species that the captured agents will become, this must be a micro-species of this agent's
+	 *            species.
 	 * @param microAgents
 	 * @return
 	 * @throws GamaRuntimeException
@@ -66,7 +68,7 @@ public interface IMacroAgent extends IAgent {
 	 *
 	 * @return
 	 */
-	@getter(IKeyword.MEMBERS)
+	@getter (IKeyword.MEMBERS)
 	public abstract IContainer<?, IAgent> getMembers(IScope scope);
 
 	/**
@@ -109,8 +111,7 @@ public interface IMacroAgent extends IAgent {
 	// public abstract void initializeMicroPopulations(IScope scope);
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another
-	 * micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
 	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
@@ -120,8 +121,7 @@ public interface IMacroAgent extends IAgent {
 			final ISpecies newMicroSpecies);
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another
-	 * micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
 	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
@@ -140,45 +140,22 @@ public interface IMacroAgent extends IAgent {
 	public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
 			throws GamaRuntimeException;
 
-	@setter(IKeyword.MEMBERS)
+	@setter (IKeyword.MEMBERS)
 	public abstract void setMembers(IList<IAgent> members);
 
-	@setter(IKeyword.AGENTS)
+	@setter (IKeyword.AGENTS)
 	public abstract void setAgents(IList<IAgent> agents);
 
 	/**
-	 * Returns all the agents which consider this agent as direct or in-direct
-	 * host.
+	 * Returns all the agents which consider this agent as direct or in-direct host.
 	 *
 	 * @return
 	 */
-	@getter(IKeyword.AGENTS)
+	@getter (IKeyword.AGENTS)
 	public abstract IList<IAgent> getAgents(IScope scope);
 
-	/**
-	 * 
-	 * AD Warning: commented all of this Returns the number of agents which
-	 * consider this agent as direct host.
-	 *
-	 * @return
-	 */
-	// public abstract int getNbAgents();
-	//
-	// public abstract void addSubAgents(int nb);
-	//
-	// public abstract void removeAgent();
-	/**
-	 * @return
-	 */
-	// public abstract boolean mustScheduleMembers();
-
-	// hqnghi manipulate micro-models
 	public abstract void addExternMicroPopulation(final String expName, final IPopulation<? extends IAgent> pop);
 
 	public abstract IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName);
-
-	// public abstract GamaMap<String, IPopulation<? extends IAgent>>
-	// getExternMicroPopulations();
-	// end-hqnghi
 
 }

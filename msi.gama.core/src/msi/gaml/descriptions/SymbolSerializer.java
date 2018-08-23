@@ -18,7 +18,6 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
@@ -36,12 +35,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	protected SymbolSerializer() {}
 
 	public static class VarSerializer extends SymbolSerializer<VariableDescription> {
-
-		@Override
-		protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
-			plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
-			// plugins.put(GamlProperties.STATEMENTS, desc.keyword);
-		}
+		//
+		// @Override
+		// protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
+		// plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+		// // plugins.put(GamlProperties.STATEMENTS, desc.keyword);
+		// }
 
 		@Override
 		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
@@ -88,20 +87,20 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
-		@Override
-		protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
-			plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
-			plugins.put(GamlProperties.SKILLS, ((SpeciesDescription) desc).getSkillsNames());
-		}
-
-		@Override
-		protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
-				final GamlProperties plugins) {
-			final IExpressionDescription ed = desc.getFacet(key);
-			if (ed == null) { return; }
-
-			ed.collectMetaInformation(plugins);
-		}
+		// @Override
+		// protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
+		// plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+		// plugins.put(GamlProperties.SKILLS, ((SpeciesDescription) desc).getSkillsNames());
+		// }
+		//
+		// @Override
+		// protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
+		// final GamlProperties plugins) {
+		// final IExpressionDescription ed = desc.getFacet(key);
+		// if (ed == null) { return; }
+		//
+		// ed.collectMetaInformation(plugins);
+		// }
 
 		// @Override
 		// protected void collectPluginsInFacetValue(final SpeciesDescription s,
@@ -201,17 +200,17 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	}
 
 	public static class StatementSerializer extends SymbolSerializer<StatementDescription> {
-
-		@Override
-		protected void collectMetaInformationInFacets(final SymbolDescription desc, final GamlProperties plugins) {
-			super.collectMetaInformationInFacets(desc, plugins);
-			// if (desc.formalArgs == null || desc.formalArgs.isEmpty()) {
-			// return;
-			// }
-			// for (final StatementDescription arg : desc.formalArgs.values()) {
-			// collectMetaInformation(arg, plugins);
-			// }
-		}
+		//
+		// @Override
+		// protected void collectMetaInformationInFacets(final SymbolDescription desc, final GamlProperties plugins) {
+		// super.collectMetaInformationInFacets(desc, plugins);
+		// // if (desc.formalArgs == null || desc.formalArgs.isEmpty()) {
+		// // return;
+		// // }
+		// // for (final StatementDescription arg : desc.formalArgs.values()) {
+		// // collectMetaInformation(arg, plugins);
+		// // }
+		// }
 
 		@Override
 		protected void serializeFacets(final SymbolDescription s, final StringBuilder sb,
@@ -368,51 +367,51 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
-	protected void collectMetaInformation(final SymbolDescription desc, final GamlProperties plugins) {
-		collectMetaInformationInSymbol(desc, plugins);
-		collectMetaInformationInFacets(desc, plugins);
-		collectMetaInformationInChildren(desc, plugins);
-		desc.getGamlType().collectMetaInformation(plugins);
-	}
+	// protected void collectMetaInformation(final SymbolDescription desc, final GamlProperties plugins) {
+	// collectMetaInformationInSymbol(desc, plugins);
+	// collectMetaInformationInFacets(desc, plugins);
+	// collectMetaInformationInChildren(desc, plugins);
+	// desc.getGamlType().collectMetaInformation(plugins);
+	// }
 
-	protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
-		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
-		plugins.put(GamlProperties.STATEMENTS, desc.getKeyword());
-	}
+	// protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
+	// plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
+	// plugins.put(GamlProperties.STATEMENTS, desc.getKeyword());
+	// }
 
 	/**
 	 * @param desc
 	 * @param plugins
 	 */
-	protected void collectMetaInformationInFacets(final SymbolDescription desc, final GamlProperties plugins) {
-		desc.visitFacets((key, exp) -> {
-			collectMetaInformationInFacetValue(desc, key, plugins);
-			return true;
-		});
-	}
+	// protected void collectMetaInformationInFacets(final SymbolDescription desc, final GamlProperties plugins) {
+	// desc.visitFacets((key, exp) -> {
+	// collectMetaInformationInFacetValue(desc, key, plugins);
+	// return true;
+	// });
+	// }
 
 	/**
 	 * @param desc
 	 * @param key
 	 * @param plugins
 	 */
-	protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
-			final GamlProperties plugins) {
-		final IExpressionDescription ed = desc.getFacet(key);
-		if (ed == null) { return; }
-		ed.collectMetaInformation(plugins);
-	}
+	// protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
+	// final GamlProperties plugins) {
+	// final IExpressionDescription ed = desc.getFacet(key);
+	// if (ed == null) { return; }
+	// ed.collectMetaInformation(plugins);
+	// }
 
 	/**
 	 * @param desc
 	 * @param plugins
 	 */
-	protected void collectMetaInformationInChildren(final SymbolDescription desc, final GamlProperties plugins) {
-		desc.visitChildren(s -> {
-			s.collectMetaInformation(plugins);
-			return true;
-		});
-
-	}
+	// protected void collectMetaInformationInChildren(final SymbolDescription desc, final GamlProperties plugins) {
+	// desc.visitChildren(s -> {
+	// s.collectMetaInformation(plugins);
+	// return true;
+	// });
+	//
+	// }
 
 }

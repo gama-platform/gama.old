@@ -10,9 +10,10 @@
 package msi.gama.common.interfaces;
 
 /**
- * Written by drogoul Modified on 10 nov. 2009
+ * Interface INamed. Represents objects that can be provided with a name.
  * 
- * @todo Description
+ * @author A. Drogoul
+ * @since 10 nov. 2009
  */
 public interface INamed extends IGamlable {
 

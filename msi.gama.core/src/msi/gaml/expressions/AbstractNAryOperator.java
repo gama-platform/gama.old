@@ -22,7 +22,6 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -243,18 +242,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-		prototype.collectMetaInformation(meta);
-		meta.put(GamlProperties.OPERATORS, prototype.getName());
-		if (exprs != null) {
-			for (final IExpression e : exprs) {
-				if (e != null) {
-					e.collectMetaInformation(meta);
-				}
-			}
-		}
-	}
+	// @Override
+	// public void collectMetaInformation(final GamlProperties meta) {
+	// prototype.collectMetaInformation(meta);
+	// meta.put(GamlProperties.OPERATORS, prototype.getName());
+	// if (exprs != null) {
+	// for (final IExpression e : exprs) {
+	// if (e != null) {
+	// e.collectMetaInformation(meta);
+	// }
+	// }
+	// }
+	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
