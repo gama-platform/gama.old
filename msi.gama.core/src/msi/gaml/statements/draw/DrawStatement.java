@@ -155,7 +155,7 @@ import msi.gaml.types.Types;
 						type = IType.MATERIAL,
 						optional = true,
 						doc = @doc (
-								value = "Set a particular material to the object (only if you are in the \"use_shader\" mode).")),
+								value = "Set a particular material to the object (only if you use it in an \"opengl2\" display).")),
 				@facet (
 						name = IKeyword.WIDTH,
 						type = IType.FLOAT,

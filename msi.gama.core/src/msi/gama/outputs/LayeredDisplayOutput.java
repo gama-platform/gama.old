@@ -138,7 +138,9 @@ import msi.gaml.types.IType;
 						name = IKeyword.SCALE,
 						type = { IType.BOOL, IType.FLOAT },
 						optional = true,
-						doc = @doc ("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
+						doc = @doc (
+								value = "Allows to display a scale bar in the overlay. Accepts true/false or an unit name",
+								deprecated = "Not functional anymore. Scale is now displayed by default")),
 				@facet (
 						name = IKeyword.SHOWFPS,
 						internal = true,
@@ -216,7 +218,9 @@ import msi.gaml.types.IType;
 						name = "use_shader",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Under construction...")),
+						doc = @doc (
+								value = "Used to invoke the new OpenGL architecture",
+								deprecated = "If the coresponding plugin has been installed, use 'display type: opengl2' instead")),
 				@facet (
 						name = IKeyword.KEYSTONE,
 						type = IType.CONTAINER,

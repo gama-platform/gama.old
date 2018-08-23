@@ -245,6 +245,7 @@ public class PerspectiveHelper {
 		final IEditorPart part = page.findEditor(activeEditor);
 		if ( part != null ) {
 			page.activate(part);
+			DEBUG.OUT("Applying memorized editor = " + activeEditor.getName());
 			// page.bringToTop(part);
 		}
 
@@ -254,6 +255,7 @@ public class PerspectiveHelper {
 		final IEditorPart part = page.getActiveEditor();
 		if ( part == null ) { return; }
 		activeEditor = part.getEditorInput();
+		DEBUG.OUT("Memorized editor = " + activeEditor.getName());
 
 	}
 

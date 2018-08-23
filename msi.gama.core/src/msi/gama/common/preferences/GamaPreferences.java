@@ -345,11 +345,11 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_OVERLAY =
 				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL, true).in(NAME,
 						PRESENTATION);
-		public static final Pref<Boolean> CORE_SCALE =
-				create("pref_display_show_scale", "Show scale bar", false, IType.BOOL, true).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> CORE_SHOW_FPS =
-				create("pref_display_show_fps", "Show number of frames per second", false, IType.BOOL, true).in(NAME,
-						PRESENTATION);
+		// public static final Pref<Boolean> CORE_SCALE =
+		// create("pref_display_show_scale", "Show scale bar", false, IType.BOOL, true).in(NAME, PRESENTATION);
+		// public static final Pref<Boolean> CORE_SHOW_FPS =
+		// create("pref_display_show_fps", "Show number of frames per second", false, IType.BOOL, true).in(NAME,
+		// PRESENTATION);
 
 		/**
 		 * Charts

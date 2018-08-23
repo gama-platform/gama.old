@@ -130,7 +130,6 @@ public class LayeredDisplayData {
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
-	private boolean useShader = false;
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
@@ -139,7 +138,7 @@ public class LayeredDisplayData {
 	 * Overlay
 	 */
 
-	private boolean isDisplayingScale = GamaPreferences.Displays.CORE_SCALE.getValue();
+	// private boolean isDisplayingScale = GamaPreferences.Displays.CORE_SCALE.getValue();
 	private int fullScreen = -1;
 
 	/**
@@ -170,10 +169,6 @@ public class LayeredDisplayData {
 	public void setBackgroundColor(final GamaColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
 		notifyListeners(Changes.BACKGROUND, backgroundColor);
-	}
-
-	public boolean useShader() {
-		return useShader;
 	}
 
 	/**
@@ -214,20 +209,20 @@ public class LayeredDisplayData {
 		this.ortho = ortho;
 	}
 
-	/**
-	 * @return the displayScale
-	 */
-	public boolean isDisplayScale() {
-		return isDisplayingScale;
-	}
+	// /**
+	// * @return the displayScale
+	// */
+	// public boolean isDisplayScale() {
+	// return isDisplayingScale;
+	// }
 
-	/**
-	 * @param displayScale
-	 *            the displayScale to set
-	 */
-	public void setDisplayScale(final boolean displayScale) {
-		this.isDisplayingScale = displayScale;
-	}
+	// /**
+	// * @param displayScale
+	// * the displayScale to set
+	// */
+	// public void setDisplayScale(final boolean displayScale) {
+	// this.isDisplayingScale = displayScale;
+	// }
 
 	/**
 	 * @return the showfps
@@ -736,14 +731,14 @@ public class LayeredDisplayData {
 		if (toolbar != null) {
 			setToolbarVisible(Cast.asBool(scope, toolbar.value(scope)));
 		}
-		final IExpression scale = facets.getExpr(IKeyword.SCALE);
-		if (scale != null) {
-			if (scale.getGamlType().equals(Types.BOOL)) {
-				setDisplayScale(Cast.asBool(scope, scale.value(scope)));
-			} else {
-				setDisplayScale(true);
-			}
-		}
+		// final IExpression scale = facets.getExpr(IKeyword.SCALE);
+		// if (scale != null) {
+		// if (scale.getGamlType().equals(Types.BOOL)) {
+		// setDisplayScale(Cast.asBool(scope, scale.value(scope)));
+		// } else {
+		// setDisplayScale(true);
+		// }
+		// }
 		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
 		if (fps != null) {
 			setShowfps(Cast.asBool(scope, fps.value(scope)));
@@ -857,10 +852,10 @@ public class LayeredDisplayData {
 			setFullScreen(monitor);
 		}
 
-		final IExpression use_shader = facets.getExpr("use_shader");
-		if (use_shader != null) {
-			this.useShader = Cast.asBool(scope, use_shader.value(scope));
-		}
+		// final IExpression use_shader = facets.getExpr("use_shader");
+		// if (use_shader != null) {
+		// this.useShader = Cast.asBool(scope, use_shader.value(scope));
+		// }
 
 		final IExpression color = facets.getExpr(IKeyword.BACKGROUND);
 		if (color != null) {

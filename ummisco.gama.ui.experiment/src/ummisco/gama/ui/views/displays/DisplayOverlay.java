@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_SHOW_FPS;
-
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,7 +44,6 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterTarget;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
@@ -136,9 +133,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		if (provider != null) {
 			provider.setTarget(new ThreadedOverlayUpdater(this), view.getDisplaySurface());
 		}
-		if (GamaPreferences.Displays.CORE_SHOW_FPS.getValue()) {
-			timer.schedule(new FPSTask(), 0, 1000);
-		}
+		// if (GamaPreferences.Displays.CORE_SHOW_FPS.getValue()) {
+		timer.schedule(new FPSTask(), 0, 1000);
+		// }
 	}
 
 	public void relocateOverlay(final Shell newShell) {
@@ -189,7 +186,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		zoom = label(top, SWT.CENTER);
 		// scalebar overlay info
 		scalebar = new Canvas(top, SWT.None);
-		scalebar.setVisible(getView().getOutput().getData().isDisplayScale());
+		scalebar.setVisible(true);
 		final GridData scaleData = new GridData(SWT.RIGHT, SWT.CENTER, true, false);
 		scaleData.minimumWidth = 140;
 		scaleData.widthHint = 140;
@@ -568,10 +565,10 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public void getOverlayZoomInfo(final StringBuilder sb) {
 		final IDisplaySurface surface = view.getDisplaySurface();
 		if (surface == null) { return; }
-		if (CORE_SHOW_FPS.getValue()) {
-			sb.append(surface.getFPS());
-			sb.append(" fps | ");
-		}
+		// if (CORE_SHOW_FPS.getValue()) {
+		sb.append(surface.getFPS());
+		sb.append(" fps | ");
+		// }
 		int zl = 0;
 		if (view.getOutput() != null) {
 			final Double dataZoom = view.getOutput().getData().getZoomLevel();
