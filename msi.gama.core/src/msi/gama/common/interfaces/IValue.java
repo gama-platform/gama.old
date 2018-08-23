@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IValue.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IValue.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,15 +13,33 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
- * Written by drogoul Modified on 19 nov. 2008
+ * Represents a 'value' in GAML (a Java object that can provide a GAML type, be serializable into a GAML expression, and
+ * be copied
  * 
- * @todo Description
+ * @author drogoul
+ * @since 19 nov. 2008
  * 
  */
 public interface IValue extends IGamlable, ITyped {
 
+	/**
+	 * Returns the string 'value' of this value.
+	 * 
+	 * @param scope
+	 *            the current GAMA scope
+	 * @return a string representing this value (not necessarily its serialization in GAML)
+	 * @throws GamaRuntimeException
+	 */
 	public abstract String stringValue(IScope scope) throws GamaRuntimeException;
 
+	/**
+	 * Returns a copy of this value
+	 * 
+	 * @param scope
+	 *            the current GAMA scope
+	 * @return a copy of this value. The definition of copy (whether shallow or deep, etc.) depends on the subclasses
+	 * @throws GamaRuntimeException
+	 */
 	public abstract IValue copy(IScope scope) throws GamaRuntimeException;
 
 }
