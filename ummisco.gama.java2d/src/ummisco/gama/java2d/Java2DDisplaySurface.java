@@ -375,7 +375,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 				&& origin.y + getDisplayHeight() < getHeight();
 	}
 
-	@Override
 	public boolean resizeImage(final int x, final int y, final boolean force) {
 		if (!force && x == getDisplayWidth() && y == getDisplayHeight()) { return true; }
 		if (x < 10 || y < 10) { return false; }

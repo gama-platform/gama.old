@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.google.common.base.Predicate;
 
+import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -38,7 +39,7 @@ import msi.gaml.variables.IVariable;
  *
  */
 public interface IPopulation<T extends IAgent>
-		extends Comparable<IPopulation<T>>, IList<T>, IStepable, IPopulationSet<T> {
+		extends Comparable<IPopulation<T>>, IList<T>, IStepable, IDisposable, IPopulationSet<T> {
 
 	public interface Listener {
 
@@ -71,7 +72,7 @@ public interface IPopulation<T extends IAgent>
 	}
 
 	public static IPopulation<? extends IAgent> createEmpty(final ISpecies species) {
-		return new GamaPopulation<IAgent>(null, species);
+		return new GamaPopulation<>(null, species);
 	}
 
 	public abstract void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;

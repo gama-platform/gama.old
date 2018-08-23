@@ -225,16 +225,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
-	/**
-	 * Method resizeImage()
-	 * 
-	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int, boolean)
-	 */
-	@Override
-	public boolean resizeImage(final int x, final int y, final boolean force) {
-		return true;
-	}
-
 	@Override
 	public double getDisplayWidth() {
 		return renderer.getWidth();

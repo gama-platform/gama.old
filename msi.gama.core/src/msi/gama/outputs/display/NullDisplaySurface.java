@@ -70,16 +70,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void updateDisplay(final boolean force) {}
 
 	/**
-	 * Method resizeImage()
-	 * 
-	 * @see msi.gama.common.interfaces.IDisplaySurface#resizeImage(int, int)
-	 */
-	@Override
-	public boolean resizeImage(final int width, final int height, final boolean force) {
-		return false;
-	}
-
-	/**
 	 * Method zoomIn()
 	 * 
 	 * @see msi.gama.common.interfaces.IDisplaySurface#zoomIn()

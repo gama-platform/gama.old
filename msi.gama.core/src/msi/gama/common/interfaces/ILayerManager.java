@@ -15,10 +15,10 @@ import java.util.List;
 import msi.gama.metamodel.shape.IShape;
 
 /**
- * The class IDisplayManager.
+ * The class ILayerManager. Manages a fixed set of layers on behalf of a IDisplaySurface
  *
  * @author drogoul
- * @since 15 d�c. 2011
+ * @since 15 dec. 2011
  *
  */
 public interface ILayerManager extends ItemList<ILayer>, IDisposable {

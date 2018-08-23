@@ -27,17 +27,28 @@ import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gaml.statements.draw.DrawingAttributes;
 
 /**
- * Written by drogoul Modified on 26 nov. 2009
- *
- * @todo Description
+ * Class IDisplaySurface. Represents a concrete object on which layers can be drawn on screen. Instances of subclasses
+ * are the 'display's of GAMA (java2D, openGL, image)
+ * 
+ * Written by A. Drogoul
+ * 
+ * @since26 nov. 2009
  *
  */
-public interface IDisplaySurface extends DisplayDataListener, IScoped {
+public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposable {
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final double MIN_ZOOM_FACTOR = 0.1;
 	static final int MAX_ZOOM_FACTOR = 10;
+	public static final double SELECTION_SIZE = 5; // pixels
+	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
 
+	/**
+	 * This sub-interface represents display surfaces relying on OpenGL
+	 * 
+	 * @author drogoul
+	 *
+	 */
 	public interface OpenGL extends IDisplaySurface {
 
 		Envelope3D getROIDimensions();
@@ -50,24 +61,29 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 
 	}
 
-	public static final double SELECTION_SIZE = 5; // pixels
-	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
-
-	BufferedImage getImage(int width, int height);
-
-	void dispose();
+	/**
+	 * Returns a BufferedImage that captures the current state of the surface on screen.
+	 * 
+	 * @param width
+	 *            the desired width of the image
+	 * @param height
+	 *            the desired height of the image
+	 * @return a BufferedImage of size {width, height} with all layers drawn on it
+	 */
+	public BufferedImage getImage(int width, int height);
 
 	/**
 	 * Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance)
 	 **/
-	void updateDisplay(boolean force);
+	public void updateDisplay(boolean force);
 
 	/**
+	 * Sets a concrete menu manager to be used for displaying menus on this surface
+	 * 
 	 * @param displaySurfaceMenu
+	 *            an object, normally instance of DisplaySurfaceMenu
 	 */
-	void setMenuManager(Object displaySurfaceMenu);
-
-	boolean resizeImage(int width, int height, boolean force);
+	public void setMenuManager(Object displaySurfaceMenu);
 
 	void zoomIn();
 
@@ -154,7 +170,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 	boolean isRendered();
 
 	/**
-	 * @return true if the surface has been 'disposed' by SWT
+	 * @return true if the surface has been 'disposed' already
 	 */
 	boolean isDisposed();
 

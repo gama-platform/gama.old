@@ -119,7 +119,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return manager;
 	}
 
-	@Override
 	public boolean resizeImage(final int newWidth, final int newHeight, final boolean force) {
 		if (!force && width == newWidth && height == newHeight) { return false; }
 		this.width = newWidth;
