@@ -54,11 +54,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	}
 
 	@Override
-	public IOutput get(final String id) {
+	public IOutput getOutputWithId(final String id) {
 		return outputs.get(id);
 	}
 
-	@Override
 	public IOutput getOutputWithName(final String s) {
 		return Iterables.find(this, each -> each.getName().equals(s), null);
 	}
@@ -82,13 +81,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		}
 	}
 
-	// hqnghi add output with alias name from micro-model
-	@Override
-	public void put(final String s, final IOutput output) {
-		outputs.put(s, output);
-	}
-
-	// end-hqnghi
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
