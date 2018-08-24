@@ -194,13 +194,8 @@ public class NetworkSkill extends MessagingSkill {
 			agt.setAttribute(INetworkSkill.NET_AGENT_SERVER, serverList);
 		}
 
-		try {
-			connector.connect(agt);
-			serverList.add(serverURL);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		connector.connect(agt);
+		serverList.add(serverURL);
 
 		// register connected agent to global groups;
 		for (final String grp : INetworkSkill.DEFAULT_GROUP) {

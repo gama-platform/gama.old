@@ -19,7 +19,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 
 public interface IConnector {
-	public void connect(IAgent agent) throws Exception;
+	public void connect(IAgent agent) throws GamaNetworkException;
 
 	public void close(final IScope scope) throws GamaNetworkException;
 

@@ -15,7 +15,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaNetworkException extends GamaRuntimeException {
 
-	public static String CONNECTION_FAILURE = "Network cannot be reach!";
+	public static String CONNECTION_FAILURE = "Network cannot be reached! Check that your server is connected.";
 	public static String DISCONNECTION_FAILURE = "Cannot be disconnected!";
 	public static String SUBSCRIBE_FAILURE = "Cannot subscribe to the expected topic!";
 	public static String SENDING_FAILURE = "Cannot send the message to agent!";
