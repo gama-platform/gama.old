@@ -42,17 +42,17 @@ import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
 
 @vars ({ @variable (
-		name = INetworkSkill.NET_AGENT_NAME,
-		type = IType.STRING,
-		doc = @doc ("Net ID of the agent")),
+				name = INetworkSkill.NET_AGENT_NAME,
+				type = IType.STRING,
+				doc = @doc ("Net ID of the agent")),
 		@variable (
 				name = INetworkSkill.NET_AGENT_GROUPS,
 				type = IType.LIST,
-				doc = @doc ("Net ID of the agent")),
+				doc = @doc ("The set of groups the agent belongs to")),
 		@variable (
 				name = INetworkSkill.NET_AGENT_SERVER,
 				type = IType.LIST,
-				doc = @doc ("Net ID of the agent")) })
+				doc = @doc ("The list of all the servers to which the agent is connected")) })
 @skill (
 		name = INetworkSkill.NETWORK_SKILL,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
