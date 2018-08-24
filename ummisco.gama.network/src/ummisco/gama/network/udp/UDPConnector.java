@@ -96,14 +96,16 @@ public class UDPConnector extends Connector {
 			GamaList<ConnectorMessage> m = null;
 
 			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
-			// receivedMessage.get(agt).addAll(m);
-			for (final ConnectorMessage cm : m) {
-				receivedMessage.get(agt).add(cm);
+			if(m != null) {
+				// receivedMessage.get(agt).addAll(m);
+				for (final ConnectorMessage cm : m) {
+					receivedMessage.get(agt).add(cm);
+				}
+				m.clear();
+				agt.setAttribute("message" + agt, m);
+				// scope.getAgentScope().setAttribute("messages" +
+				// scope.getAgentScope(), null);
 			}
-			m.clear();
-			agt.setAttribute("message" + agt, m);
-			// scope.getAgentScope().setAttribute("messages" +
-			// scope.getAgentScope(), null);
 		}
 		return super.fetchAllMessages();
 	}
