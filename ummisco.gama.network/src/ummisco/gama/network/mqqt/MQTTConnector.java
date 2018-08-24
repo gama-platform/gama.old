@@ -65,8 +65,10 @@ public final class MQTTConnector extends Connector {
 	@Override
 	protected void releaseConnection(final IScope scope) {
 		try {
-			sendConnection.disconnect();
-			sendConnection = null;
+			if( (sendConnection != null) && (sendConnection.isConnected()) ) {
+				sendConnection.disconnect();
+				sendConnection = null;
+			}
 		} catch (final MqttException e) {
 			throw GamaNetworkException.cannotBeDisconnectedFailure(scope);
 		}
@@ -128,7 +130,7 @@ public final class MQTTConnector extends Connector {
 				connOpts.setPassword(password.toCharArray());
 				sendConnection.connect(connOpts);
 			} catch (final MqttException e) {
-				e.printStackTrace();
+				throw GamaNetworkException.cannotBeConnectedFailure(simulationScope);
 			}
 
 		}
