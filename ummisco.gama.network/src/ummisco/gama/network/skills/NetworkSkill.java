@@ -56,6 +56,7 @@ import ummisco.gama.network.udp.UDPConnector;
 @skill (
 		name = INetworkSkill.NETWORK_SKILL,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
+@doc("The "+INetworkSkill.NETWORK_SKILL+" skill provides new features to let agents exchange message through network.")
 public class NetworkSkill extends MessagingSkill {
 
 	static {
@@ -99,37 +100,39 @@ public class NetworkSkill extends MessagingSkill {
 	@action (
 			name = INetworkSkill.CONNECT_TOPIC,
 			args = { @arg (
-					name = INetworkSkill.PROTOCOL,
-					type = IType.STRING,
-					doc = @doc ("protocol type (udp, tcp, mqqt)")),
+						name = INetworkSkill.PROTOCOL,
+						type = IType.STRING,
+						doc = @doc ("protocol type (UDP, TCP, MQTT (by default)): the possible value ares '" + INetworkSkill.UDP_SERVER+"', '" + INetworkSkill.UDP_CLIENT + "', '"+
+																								INetworkSkill.TCP_SERVER+"', '" + INetworkSkill.TCP_CLIENT + "', otherwise the MQTT protocol is used.")),
 					@arg (
 							name = INetworkSkill.PORT,
 							type = IType.INT,
-							doc = @doc ("port number")),
+							doc = @doc ("Port number")),
 					@arg (
 							name = INetworkSkill.WITHNAME,
 							type = IType.STRING,
 							optional = true,
-							doc = @doc ("server nameL")),
+							doc = @doc ("name of the agent on the server")),
 					@arg (
 							name = INetworkSkill.LOGIN,
 							type = IType.STRING,
 							optional = true,
-							doc = @doc ("server nameL")),
+							doc = @doc ("login for the connection to the server")),
 					@arg (
 							name = INetworkSkill.PASSWORD,
 							type = IType.STRING,
 							optional = true,
-							doc = @doc ("server nameL")),
+							doc = @doc ("password associated to the login")),
 					@arg (
 							name = INetworkSkill.SERVER_URL,
 							type = IType.STRING,
 							optional = true,
-							doc = @doc ("server URL")) },
+							doc = @doc ("server URL (localhost or a server URL)")) },
 			doc = @doc (
-					value = "",
-					returns = "",
-					examples = { @example ("") }))
+					value = "Action used by a networking agent to connect to a server or as a server.",
+					examples = { @example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
+								 @example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
+								 @example (" do connect  with_name:\"any_name\";") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
@@ -205,16 +208,27 @@ public class NetworkSkill extends MessagingSkill {
 
 	@action (
 			name = INetworkSkill.FETCH_MESSAGE)
+	@doc(value="Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
+		 examples = {
+			 @example("message mess <- fetch_message();")
+		})
 	public GamaMessage fetchMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
-		final GamaMessage msg = box.get(0);
-		box.remove(0);
+		GamaMessage msg = null;
+		if(!box.isEmpty()) {
+			box.get(0);
+			box.remove(0);			
+		}
 		return msg;
 	}
 
 	@action (
 			name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
+	@doc(value="Check whether the mailbox contains any message.",
+	 examples = {
+		 @example("bool mailbox_contain_messages <- has_more_message();")
+	})	
 	public boolean hasMoreMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
@@ -235,19 +249,20 @@ public class NetworkSkill extends MessagingSkill {
 
 	@action (
 			name = INetworkSkill.LEAVE_THE_GROUP,
-			args = { @arg (
-					name = INetworkSkill.WITHNAME,
+			args = { 
+				@arg (
+					name = INetworkSkill.FROM,
 					type = IType.STRING,
 					optional = true,
-					doc = @doc ("name of the group agent want to leave")) },
+					doc = @doc ("name of the group the agent wants to leave")) },
 			doc = @doc (
 					value = "leave a group of agent",
 					returns = "",
-					examples = { @example ("") }))
+					examples = { @example (" do leave_the_group from: \"my_group\";\n") }))
 	public void leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final String serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		final String groupName = (String) scope.getArg(INetworkSkill.TO, IType.STRING);
+		final String groupName = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 		final IConnector connector = getRegisteredServers(scope).get(serverName);
 		connector.leaveTheGroup(agent, groupName);
 	}
