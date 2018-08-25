@@ -23,7 +23,7 @@ import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.NetworkMessage;
 import ummisco.gama.network.skills.INetworkSkill;
 
-public class MultiThreadedUDPServer extends Thread {
+public class old_MultiThreadedUDPServer extends Thread {
 
 	private final IAgent myAgent;
 	public boolean OnServer = true;
@@ -54,6 +54,8 @@ public class MultiThreadedUDPServer extends Thread {
 		this.myUDPServerSocket = u;
 	}
 
+	public void setClosed(boolean c) { closed = c;}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -63,7 +65,7 @@ public class MultiThreadedUDPServer extends Thread {
 	// closed =true;
 	// }
 
-	public MultiThreadedUDPServer(final IAgent a, final DatagramSocket ss) {
+	public old_MultiThreadedUDPServer(final IAgent a, final DatagramSocket ss) {
 		myAgent = a;
 		myUDPServerSocket = ss;
 	}
@@ -119,6 +121,7 @@ public class MultiThreadedUDPServer extends Thread {
 
 			} catch (final SocketTimeoutException ste) {
 				closed = true;
+				// ste.printStackTrace();
 				// DEBUG.LOG("closed ");
 
 			} catch (final Exception ioe) {

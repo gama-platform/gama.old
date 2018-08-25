@@ -9,10 +9,11 @@
  **********************************************************************************************/
 package ummisco.gama.network.udp;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.BindException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
-import ummisco.gama.network.skills.INetworkSkill;
+import ummisco.gama.network.udp.ClientServiceThread;
 
 public class UDPConnector extends Connector {
 
@@ -36,6 +37,9 @@ public class UDPConnector extends Connector {
 	public static String _UDP_CLIENT = "__udp_client";
 	public static Integer _UDP_SO_TIMEOUT = 10000;
 
+	public static String DEFAULT_HOST = "localhost";
+	public static String DEFAULT_PORT = "1988";
+	
 	private boolean is_server = false;
 	// private final IScope myScope;
 
@@ -115,9 +119,9 @@ public class UDPConnector extends Connector {
 
 		if (agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port) == null) {
 			try {
-				final DatagramSocket sersock = new DatagramSocket(port);
+				final ServerSocket sersock = new ServerSocket(port);
 				sersock.setSoTimeout(_UDP_SO_TIMEOUT);
-				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
+				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(agent, sersock);
 				ssThread.start();
 				agent.getScope().getSimulation().setAttribute(_UDP_SERVER + port, ssThread);
 
@@ -130,30 +134,29 @@ public class UDPConnector extends Connector {
 	}
 
 	public void connectToServerSocket(final IAgent agent) {
-
-		// InetAddress IPAddress = InetAddress.getByName("localhost");
-		//
-		// byte[] sendData = new byte[1024];
-		// byte[] receiveData = new byte[1024];
-		// sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress,
-		// 9876);
-		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
-
-		if (agent.getAttribute(_UDP_CLIENT + port) == null) {
-
+		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_UDP_SOCKET);
+		Socket sock = null;
+		if (c != null) {
+			sock = c.getMyClientSocket();
+		}
+		if (sock == null) {
 			try {
-				final DatagramSocket sersock = new DatagramSocket();
-				sersock.setSoTimeout(_UDP_SO_TIMEOUT);
-				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
-				ssThread.OnServer = false;
-				ssThread.start();
-				agent.setAttribute(_UDP_CLIENT + port, ssThread);
 
-			} catch (final BindException be) {
-				throw GamaRuntimeException.create(be, agent.getScope());
+				String server = this.getConfigurationParameter(SERVER_URL);
+				String port = this.getConfigurationParameter(SERVER_PORT);
+				server = server == null ? DEFAULT_HOST : server;
+				port = port == null ? DEFAULT_PORT : port;
+				sock = new Socket(server, Cast.asInt(agent.getScope(), port));
+				sock.setSoTimeout(_UDP_SO_TIMEOUT);
+
+				final ClientServiceThread cSock = new ClientServiceThread(agent, sock);
+				cSock.start();
+				agent.setAttribute(_UDP_SOCKET, cSock);
+				// return sock.toString();
 			} catch (final Exception e) {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
+
 		}
 	}
 
@@ -166,44 +169,68 @@ public class UDPConnector extends Connector {
 		}
 	}
 
-	public void sendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
-		// int port = (int) agent.getAttribute("port");
-		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
-
-		final MultiThreadedUDPServer ssThread =
-				(MultiThreadedUDPServer) agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port);
-		final InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
-		final int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
-		if (ssThread == null || IPAddress == null) { return; }
-		final byte[] sendData = ((String) data).getBytes();
-		final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
+	public void sendToClient(final IAgent agent, final String cli, final String data) throws GamaRuntimeException {
 		try {
-			ssThread.setSendPacket(sendPacket);
-			// DEBUG.LOG("SENT: "+replyport);
+			final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_UDP_CLIENT + cli);
+			Socket sock = null;
+			if (c != null) {
+				sock = c.getMyClientSocket();
+			}
+			if (sock == null) { return; }
+			final OutputStream ostream = sock.getOutputStream();
+			final PrintWriter pwrite = new PrintWriter(ostream, true);
+			pwrite.println(data);
+			pwrite.flush();
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw GamaRuntimeException.create(e, agent.getScope());
 		}
 	}
 
-	public void sendToServer(final IAgent agent, final Object data) throws GamaRuntimeException {
-		final String sport = this.getConfigurationParameter(SERVER_PORT);
-		final Integer port = Cast.asInt(agent.getScope(), sport);
-		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
-		if (ssThread == null) { return; }
+	public void sendToServer(final IAgent agent, final String data) throws GamaRuntimeException {
+		OutputStream ostream = null;
+		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_UDP_SOCKET);
+		Socket sock = null;
+		if (c != null) {
+			sock = c.getMyClientSocket();
+		}
+		if (sock == null || sock.isClosed() || sock.isInputShutdown()) { return; }
 		try {
-			final DatagramSocket clientSocket = ssThread.getMyServerSocket();
-			final InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
-			final byte[] sendData = ((String) data).getBytes();
-			final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-			sendPacket.setData(sendData);
-			clientSocket.send(sendPacket);
+			ostream = sock.getOutputStream();
+			final PrintWriter pwrite = new PrintWriter(ostream, true);
+			pwrite.println(data);
+			pwrite.flush();
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw GamaRuntimeException.create(e, agent.getScope());
 		}
 
-	}
+	}	
+	
+//	public void sendToServer(final IAgent agent, final Object data) throws GamaRuntimeException {
+//		final String sport = this.getConfigurationParameter(SERVER_PORT);
+//		final Integer port = Cast.asInt(agent.getScope(), sport);
+//		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
+//		if (ssThread == null) { return; }
+//		try {
+//			DatagramSocket clientSocket = ssThread.getMyServerSocket();
+//			final InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
+//			final byte[] sendData = ((String) data).getBytes();
+//			final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+//			sendPacket.setData(sendData);
+//			
+//			if(clientSocket.isClosed()) {
+//				clientSocket = new DatagramSocket();
+//				clientSocket.setSoTimeout(_UDP_SO_TIMEOUT);
+//				ssThread.setMyServerSocket(clientSocket);
+//				ssThread.setClosed(false);
+//			}					
+//			
+//			clientSocket.send(sendPacket);
+//		} catch (final Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
 
 	@Override
 	protected void sendMessage(final IAgent sender, final String receiver, final String cont)
