@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExperimentAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gama.kernel.experiment.ExperimentAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
@@ -468,6 +469,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return this;
 	}
 
+	@action (
+			name = "compact_memory",
+			doc = { @doc ("Forces a 'garbage collect' of the unused objects in GAMA") })
+	public Object compactMemory(final IScope scope) {
+		System.gc();
+		return this;
+
+	}
+
 	@Override
 	@getter (
 			value = GAMA._WARNINGS,
@@ -685,7 +695,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (this.getModel().getSpecies()
 					.hasVar(varName)) { return getModel().getSpecies().getVar(varName).getInitialValue(this); }
 			// Fourth case: this is a parameter, so we get it from the species
-			if (getSpecies().hasParameter(varName)) { return getSpecies().getExperimentScope().getGlobalVarValue(varName); }
+			if (getSpecies()
+					.hasParameter(varName)) { return getSpecies().getExperimentScope().getGlobalVarValue(varName); }
 			// Fifth case: it is an extra parameter
 			return extraParametersMap.get(varName);
 		}
