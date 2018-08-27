@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaNavigator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.ui.navigator.GamaNavigator.java, in plugin ummisco.gama.ui.navigator,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
 import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
@@ -228,7 +229,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			final CommonViewer tree = getCommonViewer();
 			if (tree.getExpandedState(element)) {
 				final Object[] contents = ((VirtualContent<?>) element).getNavigatorChildren();
-				tree.reveal(contents[contents.length - 1]);
+				if (contents.length > 0) {
+					tree.reveal(contents[contents.length - 1]);
+				}
 			}
 		}
 	}

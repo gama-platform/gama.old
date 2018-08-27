@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.FileUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.util.FileUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -25,7 +25,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -198,15 +197,13 @@ public class FileUtils {
 	}
 
 	/**
-	 * Returns a best guess URI based on the target string and an optional URI
-	 * specifying from where the relative URI should be run. If existingResource is
-	 * null, then the root of the workspace is used as the relative URI
+	 * Returns a best guess URI based on the target string and an optional URI specifying from where the relative URI
+	 * should be run. If existingResource is null, then the root of the workspace is used as the relative URI
 	 * 
 	 * @param target
 	 *            a String giving the path
 	 * @param existingResource
-	 *            the URI of the resource from which relative URIs should be
-	 *            interpreted
+	 *            the URI of the resource from which relative URIs should be interpreted
 	 * @author Alexis Drogoul, July 2018
 	 * @return an URI or null if it cannot be determined.
 	 */
@@ -274,6 +271,7 @@ public class FileUtils {
 		try {
 			file.createLink(resolvedURI, IResource.NONE, null);
 		} catch (final CoreException e) {
+			// e.printStackTrace();
 			return null;
 		}
 		return file;
@@ -349,6 +347,12 @@ public class FileUtils {
 	}
 
 	public static String constructAbsoluteTempFilePath(final IScope scope, final URL url) {
+		return CACHE.getAbsolutePath() + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
+				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT);
+
+	}
+
+	private static String constructRelativeTempFilePath(final IScope scope, final URL url) {
 		return "" + CacheLocationProvider.NAME + "" + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
 				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT);
 
@@ -376,7 +380,7 @@ public class FileUtils {
 	}
 
 	public static String fetchToTempFile(final IScope scope, final URL url) {
-		String pathName = constructAbsoluteTempFilePath(scope, url);
+		String pathName = constructRelativeTempFilePath(scope, url);
 		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf(SEPARATOR));
 		scope.getGui().getStatus(scope).beginSubStatus(status);
@@ -386,7 +390,7 @@ public class FileUtils {
 					.connectTimeout(GamaPreferences.External.CORE_HTTP_CONNECT_TIMEOUT.getValue())
 					.readTimeout(GamaPreferences.External.CORE_HTTP_READ_TIMEOUT.getValue())
 					.retry(GamaPreferences.External.CORE_HTTP_RETRY_NUMBER.getValue(), false).asStream().getBody();) {
-				final java.net.URI uri = URIUtil.toURI(pathName);
+				// final java.net.URI uri = URIUtil.toURI(pathName);
 				pathName = ROOT.getPathVariableManager().resolvePath(new Path(pathName)).toOSString();
 				// pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
 				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
