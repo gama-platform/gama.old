@@ -31,6 +31,7 @@ import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 
 /**
@@ -98,7 +99,7 @@ public class GamaToolbar2 extends Composite {
 		final GamaIcon icon = GamaIcons.createSizer(getBackground(), n, height);
 		final ToolItem item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
 		item.setDisabledImage(icon.image());
-		item.setEnabled(false);
+		if (!PlatformHelper.isLinux()) item.setEnabled(false);
 		return item;
 	}
 
