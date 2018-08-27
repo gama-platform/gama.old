@@ -91,9 +91,6 @@ init {
 	//Show errors thrown in displays and outputs
 	write sample(gama.pref_display_show_errors);
 
-	//Show number of frames per second
-	write sample(gama.pref_display_show_fps);
-
 	//Show the display bottom overlay
 	write sample(gama.pref_display_show_overlay);
 
@@ -102,9 +99,6 @@ init {
 
 	//Draw rotation axes
 	write sample(gama.pref_display_show_rotation);
-
-	//Show scale bar
-	write sample(gama.pref_display_show_scale);
 
 	//Show the display top toolbar
 	write sample(gama.pref_display_show_toolbar);
@@ -361,9 +355,6 @@ init {
 	//Show errors thrown in displays and outputs
 	gama.pref_display_show_errors <- false;
 
-	//Show number of frames per second
-	gama.pref_display_show_fps <- false;
-
 	//Show the display bottom overlay
 	gama.pref_display_show_overlay <- false;
 
@@ -372,9 +363,6 @@ init {
 
 	//Draw rotation axes
 	gama.pref_display_show_rotation <- true;
-
-	//Show scale bar
-	gama.pref_display_show_scale <- false;
 
 	//Show the display top toolbar
 	gama.pref_display_show_toolbar <- true;
