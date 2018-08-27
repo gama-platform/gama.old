@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SimulationSpeedContributionItem.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
- * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.ui.controls.SimulationSpeedContributionItem.java, in plugin ummisco.gama.ui.experiment, is part of the
+ * source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
 import java.util.ArrayList;
@@ -38,29 +39,28 @@ import ummisco.gama.ui.resources.IGamaIcons;
  * @modification now obeys a cubic power law from 0 to BASE_UNIT milliseconds
  *
  */
-public class SimulationSpeedContributionItem extends WorkbenchWindowControlContribution
-		implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
+public class SimulationSpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer {
 
 	static {
 		DEBUG.OFF();
 	}
 
 	private static SimulationSpeedContributionItem instance;
-	double max = 1000;
-	protected final GamaUIColor popupColor;
-	protected final GamaUIColor sliderColor;
+	static double max = 1000;
+	protected final static GamaUIColor popupColor = IGamaColors.OK;
+	protected final static GamaUIColor sliderColor = IGamaColors.GRAY_LABEL;
 	public final static int widthSize = 100;
 	public final static int marginWidth = 16;
 	public final static int heightSize = 16;
-	protected List<SimpleSlider> sliders = new ArrayList<>();
+	protected static List<SimpleSlider> sliders = new ArrayList<>();
 
 	/**
 	 *
 	 * @param v
-	 *            in milliseconds
+	 *            in millisecondsmax
 	 * @return
 	 */
-	public double positionFromValue(final double v) {
+	public static double positionFromValue(final double v) {
 		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0
 		// milliseconds).
 		return 1 - v / max;
@@ -77,13 +77,11 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 * @param v
 	 * @return
 	 */
-	public double valueFromPosition(final double v) {
+	public static double valueFromPosition(final double v) {
 		return max - v * max;
 	}
 
 	public SimulationSpeedContributionItem() {
-		popupColor = IGamaColors.OK;
-		sliderColor = IGamaColors.GRAY_LABEL;
 		instance = this;
 	}
 
@@ -93,7 +91,10 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	@Override
 	public Control createControl(final Composite parent) {
+		return create(parent);
+	}
 
+	public static Control create(final Composite parent) {
 		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED);
 		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
@@ -107,12 +108,12 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		data.minimumWidth = widthSize;
 		final SimpleSlider slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(),
 				GamaIcons.create(IGamaIcons.TOOLBAR_KNOB).image());
-		slider.setTooltipInterperter(this);
+		slider.setTooltipInterperter(TOOLTIP_PROVIDER);
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);
 		slider.specifyHeight(heightSize); // fix the problem of wrong position
 		// for the tooltip. Certainly not the best way but it does the trick
-		slider.addPositionChangeListener(this);
+		slider.addPositionChangeListener(POSITION_LISTENER);
 		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
 		slider.setBackground(parent.getBackground());
@@ -122,9 +123,10 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		});
 		sliders.add(slider);
 		return composite;
+
 	}
 
-	protected double getInitialValue() {
+	protected static double getInitialValue() {
 		final ExperimentAgent a = GAMA.getExperiment() == null ? null : GAMA.getExperiment().getAgent();
 		double value = 0d;
 		double maximum = 1000d;
@@ -157,32 +159,20 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		}
 	}
 
-	/**
-	 * Method getToolTipText()
-	 * 
-	 * @see ummisco.gama.ui.controls.IToolTipProvider#getToolTipText(double)
-	 */
-	@Override
-	public String getToolTipText(final double position) {
-		return "Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s";
-	}
+	static IToolTipProvider TOOLTIP_PROVIDER =
+			position -> "Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s";
 
-	/**
-	 * Method positionChanged()
-	 * 
-	 * @see ummisco.gama.ui.controls.IPositionChangeListener#positionChanged(double)
-	 */
-	@Override
-	public void positionChanged(final SimpleSlider s, final double position) {
+	static IPositionChangeListener POSITION_LISTENER = (s, position) -> {
 		DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
-		for (final SimpleSlider slider : sliders) {
-			if (slider == s) {
+		for (final SimpleSlider slider2 : sliders) {
+			if (slider2 == s) {
 				continue;
 			}
-			slider.updateSlider(position, false);
+			slider2.updateSlider(position, false);
 		}
-	}
+
+	};
 
 	public static SimulationSpeedContributionItem getInstance() {
 		return instance;

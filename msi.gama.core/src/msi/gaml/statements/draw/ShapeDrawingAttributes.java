@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ShapeDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gaml.statements.draw.ShapeDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.util.List;
@@ -67,13 +68,13 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	 */
 	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color,
 			final GamaColor border) {
-		this(shape, agent, color, border, null);
+		this(shape, agent, color, border, shape.getGeometricalType(), null);
 	}
 
 	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border,
-			final Double lineWidth) {
+			final IShape.Type type, final Double lineWidth) {
 		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null, agent,
-				shape.getGeometricalType(), lineWidth, null);
+				type, lineWidth, null);
 	}
 
 	public void setHeightIfAbsent(final Double d) {

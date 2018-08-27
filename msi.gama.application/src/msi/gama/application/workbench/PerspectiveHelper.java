@@ -1,13 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'PerspectiveHelper.java, in plugin msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gama.application.workbench.PerspectiveHelper.java, in plugin msi.gama.application,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.application.workbench;
 
 import java.util.HashSet;
@@ -277,7 +277,7 @@ public class PerspectiveHelper {
 
 	}
 
-	public final static boolean keepTabs() {
+	public final static Boolean keepTabs() {
 		final IPerspectiveDescriptor d = getActivePerspective();
 		if ( d instanceof SimulationPerspectiveDescriptor ) {
 			return ((SimulationPerspectiveDescriptor) d).keepTabs;
@@ -286,10 +286,10 @@ public class PerspectiveHelper {
 		}
 	}
 
-	public final static boolean keepToolbars() {
+	public final static Boolean keepToolbars() {
 		final IPerspectiveDescriptor d = getActivePerspective();
 		if ( d instanceof SimulationPerspectiveDescriptor ) {
-			return ((SimulationPerspectiveDescriptor) d).keepToolbars;
+			return ((SimulationPerspectiveDescriptor) d).keepToolbars();
 		} else {
 			return true;
 		}
@@ -317,8 +317,8 @@ public class PerspectiveHelper {
 
 	public static class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
 
-		boolean keepTabs = true;
-		boolean keepToolbars = true;
+		Boolean keepTabs = true;
+		Boolean keepToolbars = null;
 
 		SimulationPerspectiveDescriptor(final String id) {
 			super(id, id, getSimulationDescriptor());
@@ -367,19 +367,19 @@ public class PerspectiveHelper {
 			return getSimulationDescriptor().getPluginId();
 		}
 
-		public boolean keepTabs() {
+		public Boolean keepTabs() {
 			return keepTabs;
 		}
 
-		public void keepTabs(final boolean b) {
+		public void keepTabs(final Boolean b) {
 			keepTabs = b;
 		}
 
-		public boolean keepToolbars() {
+		public Boolean keepToolbars() {
 			return keepToolbars;
 		}
 
-		public void keepToolbars(final boolean b) {
+		public void keepToolbars(final Boolean b) {
 			keepToolbars = b;
 		}
 

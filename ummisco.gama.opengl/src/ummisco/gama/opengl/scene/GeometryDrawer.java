@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Geometryjava, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.GeometryDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
@@ -31,7 +32,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 
@@ -65,47 +65,26 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	}
 
 	/**
-	 * Applies a translation to the gl context (only useful for geometries read from files right now)
-	 * 
-	 * @param object
-	 *            the object defining the translation
-	 * @return true if a translation occured, false otherwise
-	 */
-	protected boolean applyTranslation(final GeometryObject object) {
-		final GamaPoint loc = object.getLocation();
-		if (object.getFile() != null && loc != null) {
-			gl.translateBy(loc.x, -loc.y, loc.z);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * The inherited drawing method. Applies the rotation, translation and scaling declared in the draw statement,
 	 * computes a number of properties attached to the geometry object, and calls the main drawing method
 	 */
 	@Override
 	protected final void _draw(final GeometryObject object) {
-		final boolean push = object.getRotation() != null || object.getInitRotation() != null
-				|| object.getDimensions() != null || object.getFile() != null;
+		final boolean push = object.getAttributes().getRotation() != null || object.getAttributes().getSize() != null;
 		try {
 			if (push) {
 				gl.pushMatrix();
 				applyRotation(object);
-				applyTranslation(object);
 				applyScaling(object);
 			}
 			final boolean solid = object.isFilled() || gl.isTextured();
-			final Color border = !solid && object.getBorder() == null ? object.getColor() : object.getBorder();
-			final GamaGeometryFile file = object.getFile();
-			final Geometry geometry = object.getGeometry();
-			if (geometry == null && file != null) {
-				gl.drawCachedGeometry(file, border);
-			} else {
-				final double height = object.getHeight() == null ? 0d : object.getHeight();
-				final IShape.Type type = object.getType();
-				drawGeometry(geometry, solid, border, height, type);
-			}
+			final Color border = !solid && object.getAttributes().getBorder() == null
+					? object.getAttributes().getColor() : object.getAttributes().getBorder();
+			final Geometry geometry = object.getObject();
+			final double height = object.getAttributes().getHeight() == null ? 0d : object.getAttributes().getHeight();
+			final IShape.Type type = object.getAttributes().getType();
+			drawGeometry(geometry, solid, border, height, type);
+
 		} finally {
 			if (push) {
 				gl.popMatrix();

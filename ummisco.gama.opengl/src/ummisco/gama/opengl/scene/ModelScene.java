@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ModelScene.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.ModelScene.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
@@ -21,10 +22,10 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -130,7 +131,7 @@ public class ModelScene {
 		return object;
 	}
 
-	public StringObject addString(final String string, final DrawingAttributes attributes) {
+	public StringObject addString(final String string, final TextDrawingAttributes attributes) {
 		if (cannotAdd()) { return null; }
 		return configure(currentLayer.addString(string, attributes));
 	}
@@ -145,7 +146,7 @@ public class ModelScene {
 		return configure(currentLayer.addFile(file, attributes));
 	}
 
-	public GeometryObject addImage(final BufferedImage img, final DrawingAttributes attributes) {
+	public GeometryObject addImage(final BufferedImage img, final FileDrawingAttributes attributes) {
 		if (cannotAdd()) { return null; }
 		return configure(currentLayer.addImage(img, attributes));
 	}

@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'LayeredDisplayData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gama.outputs.LayeredDisplayData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.outputs;
 
 import java.awt.Color;
@@ -731,14 +732,6 @@ public class LayeredDisplayData {
 		if (toolbar != null) {
 			setToolbarVisible(Cast.asBool(scope, toolbar.value(scope)));
 		}
-		// final IExpression scale = facets.getExpr(IKeyword.SCALE);
-		// if (scale != null) {
-		// if (scale.getGamlType().equals(Types.BOOL)) {
-		// setDisplayScale(Cast.asBool(scope, scale.value(scope)));
-		// } else {
-		// setDisplayScale(true);
-		// }
-		// }
 		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
 		if (fps != null) {
 			setShowfps(Cast.asBool(scope, fps.value(scope)));

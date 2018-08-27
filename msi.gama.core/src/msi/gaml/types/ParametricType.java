@@ -1,17 +1,24 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ParametricType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gaml.types.ParametricType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.types;
 
+import static com.google.common.cache.CacheBuilder.newBuilder;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.cache.Cache;
 
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -23,13 +30,27 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Class ParametrizedType. A class that allows to build composed types with a content type and a key type
+ * Class ParametricType. A class that allows to build composed types with a content type and a key type
  *
  * @author drogoul
  * @since 19 janv. 2014
  *
  */
 public class ParametricType implements IContainerType<IContainer<?, ?>> {
+
+	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(1, MINUTES).build();
+	static boolean USE_CACHE = false;
+
+	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
+			final IType<?> ct) {
+		if (USE_CACHE) {
+			try {
+				return CACHE2.get(t.hashCode() + ct.hashCode() * 100 + kt.hashCode() * 10000,
+						() -> new ParametricType(t, kt, ct));
+			} catch (final ExecutionException e) {}
+		}
+		return new ParametricType(t, kt, ct);
+	}
 
 	private final IContainerType<IContainer<?, ?>> type;
 	private final IType<?> contentsType;
@@ -420,7 +441,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 			final IType<?> genericCast = type.typeIfCasting(exp);
 			final IType<?> ct = contentsType == Types.NO_TYPE ? genericCast.getContentType() : contentsType;
 			final IType<?> kt = keyType == Types.NO_TYPE ? genericCast.getKeyType() : keyType;
-			return new ParametricType(type, kt, ct);
+			return createParametricType(type, kt, ct);
 		}
 		return this;
 	}
@@ -477,7 +498,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		if (kt == Types.NO_TYPE) {
 			kt = getKeyType();
 		}
-		return new ParametricType(this, kt, ct);
+		return createParametricType(this, kt, ct);
 
 	}
 

@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
- * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gaml.types.GamaType.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.types;
 
 import java.util.Collections;
@@ -392,7 +393,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 		if (keyType == Types.NO_TYPE && contentType == Types.NO_TYPE) { return t; }
 		final IType<?> kt = keyType == Types.NO_TYPE ? t.getGamlType().getKeyType() : keyType;
 		final IType<?> ct = contentType == Types.NO_TYPE ? t.getGamlType().getContentType() : contentType;
-		return new ParametricType(t.getGamlType(), kt, ct);
+		return ParametricType.createParametricType(t.getGamlType(), kt, ct);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

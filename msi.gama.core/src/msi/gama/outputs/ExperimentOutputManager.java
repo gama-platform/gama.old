@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExperimentOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * msi.gama.outputs.ExperimentOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.outputs;
 
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
@@ -112,8 +113,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-		final boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
-		final boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", true);
+		final Boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", null);
+		final Boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", null);
 		boolean editors;
 		if (layoutDefinition.hasFacet("editors")) {
 			editors = layoutDefinition.getFacetValue(scope, "editors", false);

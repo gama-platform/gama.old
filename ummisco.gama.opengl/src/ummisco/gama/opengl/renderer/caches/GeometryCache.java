@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.renderer.caches.GeometryCache.java, in plugin ummisco.gama.opengl,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
 import static com.google.common.cache.CacheBuilder.newBuilder;
@@ -179,13 +180,13 @@ public class GeometryCache {
 
 	public void processUnloaded() {
 		for (final ResourceObject object : geometriesToProcess.values()) {
-			get(object.getFile());
+			get(object.getObject());
 		}
 		geometriesToProcess.clear();
 	}
 
 	public void process(final ResourceObject object) {
-		final GamaGeometryFile file = object.getFile();
+		final GamaGeometryFile file = object.getObject();
 		if (file == null) { return; }
 		final String path = file.getPath(scope);
 		if (fileCache.getIfPresent(path) != null) { return; }

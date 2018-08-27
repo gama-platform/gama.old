@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'StringDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.StringDrawer.java, in plugin ummisco.gama.opengl,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Font;
@@ -36,8 +37,8 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 	protected void _draw(final StringObject s) {
 		try {
 			gl.pushMatrix();
-			final AxisAngle rotation = s.getRotation();
-			GamaPoint p = s.getLocation();
+			final AxisAngle rotation = s.getAttributes().getRotation();
+			GamaPoint p = s.getAttributes().getLocation();
 			if (rotation != null) {
 				gl.translateBy(p.x, p.y, p.z);
 				final GamaPoint axis = rotation.getAxis();
@@ -46,12 +47,12 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 				// Voids the location so as to make only one translation
 				p = GamaPoint.NULL_POINT;
 			}
-			if (s.getFont() != null && s.iisInPerspective()) {
-				final Font f = s.getFont();
-				gl.perspectiveText(s.string, f, p.x, p.y, p.z, s.getAnchor());
+			if (s.getAttributes().font != null && s.getAttributes().perspective) {
+				final Font f = s.getAttributes().font;
+				gl.perspectiveText(s.getObject(), f, p.x, p.y, p.z, s.getAttributes().getAnchor());
 			} else {
 				int fontToUse = GLUT.BITMAP_HELVETICA_18;
-				final Font f = s.getFont();
+				final Font f = s.getAttributes().font;
 				if (f != null) {
 					if (f.getSize() < 10) {
 						fontToUse = GLUT.BITMAP_HELVETICA_10;
@@ -59,7 +60,7 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 						fontToUse = GLUT.BITMAP_HELVETICA_12;
 					}
 				}
-				gl.rasterText(s.string, fontToUse, p.x, p.y, p.z);
+				gl.rasterText(s.getObject(), fontToUse, p.x, p.y, p.z);
 			}
 		} finally {
 			gl.popMatrix();

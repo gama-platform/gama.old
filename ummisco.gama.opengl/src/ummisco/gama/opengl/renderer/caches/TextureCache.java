@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ummisco.gama.opengl.renderer.caches.TextureCache.java, in plugin ummisco.gama.opengl, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
 import java.awt.Graphics2D;
@@ -25,7 +35,7 @@ import msi.gama.common.util.ImageUtils;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 
-public class TextureCache {
+public class TextureCache implements ITextureCache {
 
 	private final LoadingCache<BufferedImage, TextureRenderer> volatileTextures;
 	private final Cache<String, TextureRenderer> staticTextures =
@@ -45,6 +55,12 @@ public class TextureCache {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#initialize()
+	 */
+	@Override
 	public void initialize() {
 		if (isNonPowerOf2TexturesAvailable == null) {
 			isNonPowerOf2TexturesAvailable =
@@ -58,6 +74,12 @@ public class TextureCache {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#deleteVolatileTextures()
+	 */
+	@Override
 	public void deleteVolatileTextures() {
 		final Collection<TextureRenderer> textures = volatileTextures.asMap().values();
 		for (final TextureRenderer t : textures) {
@@ -66,8 +88,14 @@ public class TextureCache {
 		volatileTextures.invalidateAll();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#dispose()
+	 */
+	@Override
 	public void dispose() {
-		volatileTextures.invalidateAll();
+		deleteVolatileTextures();
 		staticTextures.asMap().forEach((s, t) -> {
 			t.dispose();
 		});
@@ -75,18 +103,36 @@ public class TextureCache {
 		staticTextures.cleanUp();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processs(java.io.File)
+	 */
+	@Override
 	public void processs(final File file) {
 		if (!texturesToProcess.contains(file.getAbsolutePath())) {
 			texturesToProcess.add(file.getAbsolutePath());
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processUnloaded()
+	 */
+	@Override
 	public void processUnloaded() {
 		for (final String path : texturesToProcess) {
 			getTextureRenderer(new File(path), false, true);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#getTexture(java.awt.image.BufferedImage)
+	 */
+	@Override
 	public Texture getTexture(final BufferedImage img) {
 		final TextureRenderer renderer = volatileTextures.getUnchecked(img);
 		if (renderer == null) { return null; }
@@ -110,6 +156,12 @@ public class TextureCache {
 		return texture;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#getTexture(java.io.File, boolean, boolean)
+	 */
+	@Override
 	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
 		if (file == null) { return null; }
 		final TextureRenderer renderer = getTextureRenderer(file, isAnimated, useCache);

@@ -1,16 +1,18 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Locale;
 
 import com.google.common.base.MoreObjects;
@@ -22,6 +24,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.file.GamaImageFile;
 import ummisco.gama.opengl.OpenGL;
 
 /**
@@ -47,21 +50,21 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	protected void _draw(final FieldObject demObj) {
 		try {
 			gl.pushMatrix();
-			if (demObj.values == null) {
+			if (demObj.getObject() == null) {
 				drawFromImage(demObj);
 				return;
 			}
-			final double altFactor = MoreObjects.firstNonNull(demObj.getHeight(), 1.0);
-			final double maxZ = Doubles.max(demObj.values);
-			if (demObj.isGrayScaled()) {
+			final double altFactor = MoreObjects.firstNonNull(demObj.getAttributes().getHeight(), 1.0);
+			final double maxZ = Doubles.max(demObj.getObject());
+			if (demObj.getAttributes().grayScaled) {
 				gl.disableTextures();
 			}
-			if (demObj.isTriangulated()) {
+			if (demObj.getAttributes().triangulated) {
 				drawAsTriangles(demObj, altFactor, maxZ);
 			} else {
 				drawAsRectangles(demObj, altFactor, maxZ);
 			}
-			if (demObj.isShowText() && demObj.values != null) {
+			if (demObj.getAttributes().withText && demObj.getObject() != null) {
 				drawLabels(demObj, altFactor);
 			}
 		} finally {
@@ -70,18 +73,18 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	}
 
 	public void drawLabels(final FieldObject demObj, final double altFactor) {
-		final GamaPoint cellDim = demObj.getCellSize();
+		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		// Draw gridvalue as text inside each cell
 		gl.setCurrentColor(Color.black);
-		final String[] strings = new String[demObj.values.length];
+		final String[] strings = new String[demObj.getObject().length];
 		final double[] coords = new double[strings.length * 3];
 		for (int i = 0, c = 0; i < columns; i++) {
 			final double stepX = i * cellDim.x;
 			for (int j = 0; j < rows; j++, c += 3) {
 				final double stepY = j * cellDim.y;
-				final double gridValue = demObj.values[(int) (j * columns + i)];
+				final double gridValue = demObj.getObject()[(int) (j * columns + i)];
 				strings[(int) (j * columns + i)] = String.format(Locale.US, "%.2f", gridValue);
 				coords[c] = stepX + cellDim.x / 2;
 				coords[c + 1] = -(stepY + cellDim.y / 2);
@@ -93,7 +96,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	}
 
 	public void drawAsTriangles(final FieldObject demObj, final double altFactor, final double maxZ) {
-		final GamaPoint cellDim = demObj.getCellSize();
+		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		for (int i = 0; i < columns; i++) {
@@ -103,17 +106,18 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				final double y1 = -j * cellDim.y;
 				final double y2 = y1 - cellDim.y;
 				double z1 = 0d, z2 = 0d, z3 = 0d, z4 = 0d;
-				if (demObj.values != null) {
-					z1 = Math.min(maxZ, Math.abs(demObj.values[(int) (j * columns + i)]));
+				final double[] values = demObj.getObject();
+				if (values != null) {
+					z1 = Math.min(maxZ, Math.abs(values[(int) (j * columns + i)]));
 					if (i < columns - 1 && j < rows - 1) {
-						z2 = Math.min(maxZ, Math.abs(demObj.values[(int) ((j + 1) * columns + i)]));
-						z3 = Math.min(maxZ, Math.abs(demObj.values[(int) ((j + 1) * columns + (i + 1))]));
-						z4 = Math.min(maxZ, Math.abs(demObj.values[(int) (j * columns + (i + 1))]));
+						z2 = Math.min(maxZ, Math.abs(values[(int) ((j + 1) * columns + i)]));
+						z3 = Math.min(maxZ, Math.abs(values[(int) ((j + 1) * columns + (i + 1))]));
+						z4 = Math.min(maxZ, Math.abs(values[(int) (j * columns + (i + 1))]));
 					} else if (j == (int) rows - 1 && i < columns - 1) {// Last rows
 						z2 = z1;
-						z3 = z4 = Math.min(maxZ, Math.abs(demObj.values[(int) (j * columns + (i + 1))]));
+						z3 = z4 = Math.min(maxZ, Math.abs(values[(int) (j * columns + (i + 1))]));
 					} else if (i == (int) columns - 1 && j < rows - 1) {// Last cols
-						z2 = z3 = Math.min(maxZ, Math.abs(demObj.values[(int) ((j + 1) * columns + i)]));
+						z2 = z3 = Math.min(maxZ, Math.abs(values[(int) ((j + 1) * columns + i)]));
 						z4 = z1;
 					} else if (i == (int) columns - 1 && j == (int) rows - 1) { // last cell
 						z2 = z3 = z4 = z1;
@@ -122,11 +126,11 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				fourPoints.setTo(x1, y1, z1 * altFactor, x1, y2, z2 * altFactor, x2, y1, z4 * altFactor, x2, y2,
 						z3 * altFactor);
 				gl.setNormal(fourPoints, true);
-				final Color lineColor = demObj.getBorder();
+				final Color lineColor = demObj.getAttributes().getBorder();
 				if (lineColor != null) {
 					drawTriangleLines(fourPoints, lineColor);
 				} else {
-					if (demObj.isGrayScaled()) {
+					if (demObj.getAttributes().grayScaled) {
 						drawGrayScaledTriangle(maxZ, fourPoints);
 
 					} else {
@@ -170,25 +174,26 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	}
 
 	public void drawAsRectangles(final FieldObject demObj, final double altFactor, final double maxZ) {
-		final GamaPoint cellDim = demObj.getCellSize();
+		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
 		for (int i = 0; i < columns; i++) {
 			final double x1 = i * cellDim.x, x2 = x1 + cellDim.x;
+			final double[] values = demObj.getObject();
 			for (int j = 0; j < rows; j++) {
 				final double y1 = -j * cellDim.y, y2 = y1 - cellDim.y;
-				final double zValue = Math.min(Math.abs(demObj.values[(int) (j * columns + i)]), maxZ);
+				final double zValue = Math.min(Math.abs(values[(int) (j * columns + i)]), maxZ);
 				final double scaledZ = zValue * altFactor;
 				// Explicitly create a ring
 				fivePoints.setTo(x1, y1, scaledZ, x2, y1, scaledZ, x2, y2, scaledZ, x1, y2, scaledZ, x1, y1, scaledZ);
-				final Color lineColor = demObj.getBorder();
+				final Color lineColor = demObj.getAttributes().getBorder();
 				if (lineColor != null) {
 					gl.setCurrentColor(lineColor);
 					gl.drawClosedLine(fivePoints, 4);
 				} else {
 					gl.setNormal(fivePoints, true);
 					// _normal(fivePoints, true);
-					if (demObj.isGrayScaled()) {
+					if (demObj.getAttributes().grayScaled) {
 						drawGrayScaledCell(maxZ, zValue, fivePoints);
 					} else {
 						drawTexturedCell(1 / columns, 1 / rows, i, j, fivePoints);
@@ -214,12 +219,12 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		// final double vx, vy;
 		double ts, tt, tw, th;
 		// Not y-flipped
-		final BufferedImage dem = demObj.getDirectImage(1);
+		final BufferedImage dem = getDirectImage(demObj, 1);
 		rows = dem.getHeight() - 1;
 		cols = dem.getWidth() - 1;
 		ts = 1.0f / cols;
 		tt = 1.0f / rows;
-		final double altFactor = MoreObjects.firstNonNull(demObj.getHeight(), 1.0);
+		final double altFactor = MoreObjects.firstNonNull(demObj.getAttributes().getHeight(), 1.0);
 		final double centerX = gl.getWorldWidth() / 2;
 		final double centerY = gl.getWorldHeight() / 2;
 		tw = 2 * centerX / cols;
@@ -248,6 +253,15 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		}
 		gl.popMatrix();
 
+	}
+
+	public BufferedImage getDirectImage(final FieldObject object, final int order) {
+		final List<?> textures = object.getAttributes().getTextures();
+		if (textures == null || textures.size() > order + 1) { return null; }
+		final Object t = textures.get(order);
+		if (t instanceof BufferedImage) { return (BufferedImage) t; }
+		if (t instanceof GamaImageFile) { return ((GamaImageFile) t).getImage(null, true); }
+		return null;
 	}
 
 }

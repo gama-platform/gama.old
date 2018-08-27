@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.ui.views.toolbar.GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.jface.action.Action;
@@ -165,23 +166,6 @@ public class GamaToolbarFactory {
 	}
 
 	public static Composite createToolbars(final IToolbarDecoratedView view, final Composite composite) {
-		// Composite view_parent = composite;
-		// while (view_parent != null) {
-		// final Layout layout = view_parent.getLayout();
-		// if (layout != null) {
-		// DEBUG.LOG("View: " + ((IWorkbenchPart) view).getTitle() + " | Class of composite : "
-		// + view_parent.getClass().toString() + " | Class of layout : " + layout.getClass().toString());
-		//
-		// if (layout instanceof FillLayout) {
-		// ((FillLayout) layout).marginHeight = 0;
-		// ((FillLayout) layout).marginWidth = 0;
-		// } else if (layout instanceof StackLayout) {
-		// ((StackLayout) layout).marginHeight = 0;
-		// ((StackLayout) layout).marginWidth = 0;
-		// }
-		// }
-		// view_parent = view_parent.getParent();
-		// }
 		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
 		final Composite toolbarComposite = createToolbarComposite(intermediateComposite);
 		final Composite childComposite = new Composite(intermediateComposite, SWT.None);
@@ -245,6 +229,11 @@ public class GamaToolbarFactory {
 
 		if (!view.toolbarVisible()) {
 			toggle.run();
+			// tb.setVisible(false);
+			// ((GridData) tb.getParent().getLayoutData()).exclude = true;
+			// tb.getParent().setVisible(false);
+			// tb.getParent().getParent().layout();
+			// toggle.setIcon(false);
 		}
 		return childComposite;
 	}
@@ -252,6 +241,7 @@ public class GamaToolbarFactory {
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if (tb != null && !tb.isDisposed()) {
 			tb.dispose();
+
 		}
 	}
 

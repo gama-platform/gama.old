@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ummisco.gama.ui.commands.CopyLayout.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -19,9 +29,16 @@ public class CopyLayout extends AbstractHandler {
 		if (tree == null) { return this; }
 		final GamaNode<String> firstSash = tree.getRoot().getChildren().get(0);
 		firstSash.setWeight(null);
-		WorkbenchHelper.copy(IKeyword.PERMANENT + " layout: " + firstSash + " tabs:" + PerspectiveHelper.keepTabs()
-				+ " toolbars:" + PerspectiveHelper.keepToolbars() + " editors: "
-				+ WorkbenchHelper.getPage().isEditorAreaVisible() + ";");
+		final StringBuilder sb = new StringBuilder();
+		sb.append(IKeyword.PERMANENT).append(" layout: " + firstSash);
+		if (PerspectiveHelper.keepTabs() != null) {
+			sb.append(" tabs:").append(PerspectiveHelper.keepTabs());
+		}
+		if (PerspectiveHelper.keepToolbars() != null) {
+			sb.append(" toolbars:").append(PerspectiveHelper.keepTabs());
+		}
+		sb.append(" editors: ").append(WorkbenchHelper.getPage().isEditorAreaVisible()).append(";");
+		WorkbenchHelper.copy(sb.toString());
 		tree.dispose();
 		return this;
 	}

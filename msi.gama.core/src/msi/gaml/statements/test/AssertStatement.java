@@ -1,13 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * msi.gaml.statements.test.AssertStatement.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- * 'AssertStatement.java', in plugin 'irit.gaml.extensions.test', is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.statements.test;
 
 import java.util.Collection;

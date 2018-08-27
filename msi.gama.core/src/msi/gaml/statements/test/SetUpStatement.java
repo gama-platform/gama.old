@@ -1,13 +1,13 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'SetUpStatement.java', in plugin 'irit.gaml.extensions.test', is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * msi.gaml.statements.test.SetUpStatement.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gaml.statements.test;
 
 import msi.gama.precompiler.GamlAnnotations.doc;

@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'LayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.layers.LayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
 import java.util.ArrayList;
@@ -20,22 +21,26 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldObject;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.GeometryObject.GeometryObjectWithAnimation;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringObject;
 
@@ -244,19 +249,19 @@ public class LayerObject {
 		// this.scale.setLocation(scale);
 	}
 
-	public StringObject addString(final String string, final DrawingAttributes attributes) {
+	public StringObject addString(final String string, final TextDrawingAttributes attributes) {
 		final StringObject object = new StringObject(string, attributes);
 		currentList.add(object);
 		return object;
 	}
 
-	public ResourceObject addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
+	public ResourceObject addFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
 		final ResourceObject resource = new ResourceObject(file, attributes);
 		currentList.add(resource);
 		return resource;
 	}
 
-	public GeometryObject addImage(final Object o, final DrawingAttributes attributes) {
+	public GeometryObject addImage(final Object o, final FileDrawingAttributes attributes) {
 		// If no dimensions have been defined, then the image is considered as wide and tall as the environment
 		Scaling3D size = attributes.getSize();
 		if (size == null) {
@@ -281,14 +286,9 @@ public class LayerObject {
 		return field;
 	}
 
-	public GeometryObject addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		final GeometryObject geom;
-		if (attributes.isAnimated()) {
-			isAnimated = true;
-			geom = new GeometryObjectWithAnimation(geometry, attributes);
-		} else {
-			geom = new GeometryObject(geometry, attributes);
-		}
+	public GeometryObject addGeometry(final Geometry geometry, final FileDrawingAttributes attributes) {
+		final GeometryObject geom = new GeometryObject(geometry, attributes);
+		isAnimated = attributes.isAnimated();
 		currentList.add(geom);
 		return geom;
 	}
@@ -361,6 +361,16 @@ public class LayerObject {
 
 	public boolean canSplit() {
 		return true;
+	}
+
+	protected static GeometryObject build(final IShape shape, final GamaColor color, final IShape.Type type,
+			final boolean empty) {
+		final ShapeDrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
+				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
+		att.setEmpty(empty);
+		att.setHeight(shape.getDepth());
+		att.withLighting(false);
+		return new GeometryObject(shape.getInnerGeometry(), att);
 	}
 
 }

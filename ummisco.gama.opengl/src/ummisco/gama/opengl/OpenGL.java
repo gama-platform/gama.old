@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ummisco.gama.opengl.OpenGL.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl;
 
 import static com.jogamp.opengl.glu.GLU.gluTessBeginContour;
@@ -25,6 +35,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
@@ -46,13 +57,15 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.caches.FontCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
-import ummisco.gama.opengl.renderer.caches.TextureCache;
+import ummisco.gama.opengl.renderer.caches.ITextureCache;
+import ummisco.gama.opengl.renderer.caches.TextureCache2;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
 import ummisco.gama.opengl.scene.GeometryDrawer;
 import ummisco.gama.opengl.scene.ObjectDrawer;
+import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringDrawer;
 
@@ -80,6 +93,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	private final GeometryDrawer geometryDrawer;
 	private final StringDrawer stringDrawer;
 	private final FieldDrawer fieldDrawer;
+	private final ResourceDrawer resourceDrawer;
 
 	// Matrices of the display
 	final int[] viewport = new int[4];
@@ -94,7 +108,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	private final PickingHelper pickingState;
 
 	// Textures
-	private final TextureCache textureCache = new TextureCache(this);
+	private final ITextureCache textureCache = new TextureCache2(this);
 	private final Envelope3D textureEnvelope = new Envelope3D();
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
 	private boolean textured;
@@ -151,9 +165,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		geometryDrawer = new GeometryDrawer(this);
 		fieldDrawer = new FieldDrawer(this);
 		stringDrawer = new StringDrawer(this);
+		resourceDrawer = new ResourceDrawer(this);
 	}
 
-	public ObjectDrawer<? extends AbstractObject> getDrawerFor(final AbstractObject.DrawerType type) {
+	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final AbstractObject.DrawerType type) {
 		switch (type) {
 			case STRING:
 				return stringDrawer;
@@ -161,6 +176,8 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 				return geometryDrawer;
 			case FIELD:
 				return fieldDrawer;
+			case RESOURCE:
+				return resourceDrawer;
 		}
 		return null;
 	}
@@ -768,8 +785,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		geometryCache.process(object);
 	}
 
-	public Envelope3D getEnvelopeFor(final GamaGeometryFile file) {
-		return geometryCache.getEnvelope(file);
+	public Envelope3D getEnvelopeFor(final Object obj) {
+		if (obj instanceof GamaGeometryFile) { return geometryCache.getEnvelope((GamaGeometryFile) obj); }
+		if (obj instanceof Geometry) { return Envelope3D.of((Geometry) obj); }
+		return null;
 	}
 
 	// TEXT
@@ -971,10 +990,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public void beginObject(final AbstractObject object) {
 		setWireframe(isWireframe);
-		setLineWidth(object.getLineWidth());
+		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
-		setCurrentColor(object.getColor());
-		if (object.isFilled() && !object.isSynthetic()) {
+		setCurrentColor(object.getAttributes().getColor());
+		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
 		}
 
@@ -983,7 +1002,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void endObject(final AbstractObject object) {
 		disableTextures();
 		translateByZIncrement();
-		if (object.isFilled() && !object.isSynthetic()) {
+		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		}
 

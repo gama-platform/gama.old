@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.ui.commands.ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
@@ -135,10 +136,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static void decorateDisplays() {
 		WorkbenchHelper.getDisplayViews().forEach(v -> {
-			if (PerspectiveHelper.keepToolbars()) {
-				v.showToolbar();
-			} else {
-				v.hideToolbar();
+			final Boolean tb = PerspectiveHelper.keepToolbars();
+			if (tb != null) {
+				if (tb) {
+					v.showToolbar();
+				} else {
+					v.hideToolbar();
+				}
 			}
 			if (PerspectiveHelper.showOverlays()) {
 				v.showOverlay();

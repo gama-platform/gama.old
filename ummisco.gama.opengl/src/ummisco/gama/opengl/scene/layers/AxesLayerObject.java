@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AxesLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.layers.AxesLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
 import static msi.gama.common.geometry.Rotation3D.MINUS_I;
@@ -31,7 +32,6 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.scene.StringObject;
 
 public class AxesLayerObject extends StaticLayerObject.World {
@@ -90,14 +90,15 @@ public class AxesLayerObject extends StaticLayerObject.World {
 		for (int i = 0; i < 3; i++) {
 			final GamaPoint p = dirs[i];
 			// build axis
-			list.add(new GeometryObject(axes[i], COLORS[i], IShape.Type.LINECYLINDER, false));
+			list.add(build(axes[i], COLORS[i], IShape.Type.LINECYLINDER, false));
 			// build labels
 			final TextDrawingAttributes text = new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(),
 					ANCHORS[i], COLORS[i], AXES_FONT, false);
 			list.add(new StringObject(LABELS[i], text));
 			// build arrows
 			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
-			list.add(new GeometryObject(s, COLORS[i], IShape.Type.CONE, false));
+			list.add(build(s, COLORS[i], IShape.Type.CONE, false));
 		}
 	}
+
 }

@@ -1,8 +1,21 @@
+/*******************************************************************************************************
+ *
+ * ummisco.gama.ui.views.displays.LayeredDisplayDecorator.java, in plugin ummisco.gama.ui.experiment, is part of the
+ * source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
 import static ummisco.gama.ui.bindings.GamaKeyBindings.COMMAND;
 import static ummisco.gama.ui.bindings.GamaKeyBindings.format;
+import static ummisco.gama.ui.controls.SimulationSpeedContributionItem.create;
+import static ummisco.gama.ui.controls.SimulationSpeedContributionItem.totalWidth;
 import static ummisco.gama.ui.resources.IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT;
+import static ummisco.gama.ui.views.toolbar.GamaToolbarFactory.createToolbarComposite;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
@@ -26,7 +39,6 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.controls.SimulationSpeedContributionItem;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -139,13 +151,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 			toolbar.button(runExperiment, SWT.LEFT);
 			toolbar.button(stepExperiment, SWT.LEFT);
-			toolbar.control(SimulationSpeedContributionItem.getInstance().createControl(toolbar.getToolbar(SWT.LEFT)),
-					SimulationSpeedContributionItem.totalWidth(), SWT.LEFT);
+			toolbar.control(create(toolbar.getToolbar(SWT.LEFT)), totalWidth(), SWT.LEFT);
 			toolbar.button(relaunchExperiment, SWT.LEFT);
 			toolbar.button(closeExperiment, SWT.LEFT);
 			tp = toolbar.getParent();
-			final Composite forToolbar =
-					GamaToolbarFactory.createToolbarComposite(view.getParentComposite().getParent());
+			final Composite forToolbar = createToolbarComposite(view.getParentComposite().getParent());
 			toolbar.setParent(forToolbar);
 		} else { // We're leaving full screen
 			final Composite forToolbar = toolbar.getParent();

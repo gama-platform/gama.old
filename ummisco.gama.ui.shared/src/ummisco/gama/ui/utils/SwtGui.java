@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SwtGui.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.ui.utils.SwtGui.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
 import java.io.IOException;
@@ -519,17 +520,13 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		// DEBUG.LOG("STATE: " + forcedState);
+		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
-		// stateProvider.updateStateTo(forcedState);
 		if (stateProvider != null) {
 			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
 		}
-		/*
-		 * WorkbenchHelper.run(() -> { WorkbenchHelper.getWindow().getShell().forceActive(); });
-		 */
 	}
 
 	@Override
@@ -584,7 +581,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void applyLayout(final IScope scope, final Object layout, final boolean keepTabs, final boolean keepToolbars,
+	public void applyLayout(final IScope scope, final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
 			final boolean showEditors) {
 		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
 		if (manager != null) {
