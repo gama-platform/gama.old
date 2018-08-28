@@ -25,6 +25,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -262,7 +263,8 @@ public class FileUtils {
 
 	private static IFile createLinkedFile(final String path, final IFile file) {
 		java.net.URI resolvedURI = null;
-		final java.net.URI javaURI = new java.io.File(path).toURI();
+		final java.net.URI javaURI = URIUtil.toURI(path);// new java.io.File(path).toURI();
+
 		try {
 			resolvedURI = ROOT.getPathVariableManager().convertToRelative(javaURI, true, null);
 		} catch (final CoreException e1) {
@@ -271,7 +273,7 @@ public class FileUtils {
 		try {
 			file.createLink(resolvedURI, IResource.NONE, null);
 		} catch (final CoreException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 		return file;
