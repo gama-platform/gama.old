@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.JOGLRenderer.java, in plugin ummisco.gama.opengl,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * ummisco.gama.opengl.renderer.JOGLRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -46,7 +46,6 @@ import ummisco.gama.opengl.renderer.helpers.LightHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
-import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -203,7 +202,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 			final int height) {
 		if (width <= 0 || height <= 0) { return; }
 		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) { return; }
-		DEBUG.OUT("Reshaped to " + width + " x " + height);
+		// DEBUG.OUT("Reshaped to " + width + " x " + height);
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
@@ -229,24 +228,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean cannotDraw() {
-		return sceneHelper.getSceneToUpdate() != null && sceneHelper.getSceneToUpdate().cannotAdd();
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
+		return scene != null && scene.cannotAdd();
 	}
 
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (sceneHelper.getSceneToUpdate() == null) { return null; }
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		tryToHighlight(attributes);
 		if (file instanceof GamaGeometryFile) {
-			final ResourceObject object =
-					sceneHelper.getSceneToUpdate().addGeometryFile((GamaGeometryFile) file, attributes);
-			if (object != null) {
-				openGL.cacheGeometry(object);
-			}
+			scene.addGeometryFile((GamaGeometryFile) file, attributes);
+			openGL.cacheGeometry((GamaGeometryFile) file);
 		} else if (file instanceof GamaImageFile) {
 			if (attributes.useCache()) {
 				openGL.cacheTexture(file.getFile(getSurface().getScope()));
 			}
-			sceneHelper.getSceneToUpdate().addImageFile((GamaImageFile) file, attributes);
+			scene.addImage(file, attributes);
 		}
 
 		return rect;
@@ -254,7 +251,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (sceneHelper.getSceneToUpdate() == null) { return null; }
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		final List<?> textures = attributes.getTextures();
 		if (textures != null && !textures.isEmpty()) {
 			for (final Object img : textures) {
@@ -263,7 +260,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 				}
 			}
 		}
-		sceneHelper.getSceneToUpdate().addField(fieldValues, attributes);
+		scene.addField(fieldValues, attributes);
 		/*
 		 * This line has been removed to fix the issue 1174 if ( gridColor != null ) { drawGridLine(img, gridColor); }
 		 */
@@ -277,16 +274,16 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes) {
 		if (shape == null) { return null; }
-		if (sceneHelper.getSceneToUpdate() == null) { return null; }
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		tryToHighlight(attributes);
-		sceneHelper.getSceneToUpdate().addGeometry(shape, attributes);
+		scene.addGeometry(shape, attributes);
 		return rect;
 	}
 
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		if (sceneHelper.getSceneToUpdate() == null) { return null; }
-		sceneHelper.getSceneToUpdate().addImage(img, attributes);
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
+		scene.addImage(img, attributes);
 		tryToHighlight(attributes);
 		if (attributes.getBorder() != null) {
 			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
@@ -296,14 +293,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public Rectangle2D drawChart(final ChartOutput chart) {
-		if (sceneHelper.getSceneToUpdate() == null) { return null; }
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		int x = getLayerWidth();
 		int y = getLayerHeight();
 		x = (int) (Math.min(x, y) * 0.80);
 		y = x;
 		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
-		sceneHelper.getSceneToUpdate().addImage(im, new FileDrawingAttributes(null, true));
+		scene.addImage(im, new FileDrawingAttributes(null, true));
 		return rect;
 	}
 
@@ -314,7 +311,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
-		if (sceneHelper.getSceneToUpdate() == null) { return; }
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		double stepX, stepY;
 		final double cellWidth = getEnvHeight() / dimensions.x;
 		final double cellHeight = getEnvWidth() / dimensions.y;
@@ -328,13 +325,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 				final Geometry g = GamaGeometryType
 						.buildRectangle(cellWidth, cellHeight, new GamaPoint(stepX * cellWidth, stepY * cellHeight))
 						.getInnerGeometry();
-				sceneHelper.getSceneToUpdate().addGeometry(g, attributes);
+				scene.addGeometry(g, attributes);
 			}
 		}
 	}
 
 	@Override
 	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
+		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
 			for (final String s : string.split("\n")) {
@@ -346,7 +344,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		}
 		openGL.cacheFont(attributes.font);
 		attributes.getLocation().setY(-attributes.getLocation().getY());
-		sceneHelper.getSceneToUpdate().addString(string, attributes);
+		scene.addString(string, attributes);
 		return null;
 	}
 

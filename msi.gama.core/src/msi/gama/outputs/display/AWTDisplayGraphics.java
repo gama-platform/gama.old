@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.AWTDisplayGraphics.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.outputs.display.AWTDisplayGraphics.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -51,7 +51,6 @@ import com.vividsolutions.jts.geom.Puntal;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
@@ -173,8 +172,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final AxisAngle rotation = attributes.getRotation();
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
-		return drawShape(shape.getInnerGeometry(),
-				new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
+		return drawShape(shape.getInnerGeometry(), new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c));
 	}
 
 	AffineTransform imageTransform = new AffineTransform();

@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
@@ -125,40 +123,46 @@ public class ModelScene {
 		if (currentLayer == null) { return true; }
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
+	//
+	// private <T extends AbstractObject> T configure(final T object) {
+	// objectNumber += currentLayerTrace;
+	// return object;
+	// }
 
-	private <T extends AbstractObject> T configure(final T object) {
+	private boolean increment() {
+		if (cannotAdd()) { return false; }
 		objectNumber += currentLayerTrace;
-		return object;
+		return true;
 	}
 
-	public StringObject addString(final String string, final TextDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addString(string, attributes));
+	public void addString(final String string, final TextDrawingAttributes attributes) {
+		if (increment()) {
+			currentLayer.addString(string, attributes);
+		}
 	}
 
-	public GeometryObject addImageFile(final GamaImageFile file, final FileDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addImage(file, attributes));
+	public void addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+		if (increment()) {
+			currentLayer.addFile(file, attributes);
+		}
 	}
 
-	public ResourceObject addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addFile(file, attributes));
+	public void addImage(final Object img, final FileDrawingAttributes attributes) {
+		if (increment()) {
+			currentLayer.addImage(img, attributes);
+		}
 	}
 
-	public GeometryObject addImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addImage(img, attributes));
+	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+		if (increment()) {
+			currentLayer.addGeometry(geometry, attributes);
+		}
 	}
 
-	public GeometryObject addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addGeometry(geometry, attributes));
-	}
-
-	public FieldObject addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (cannotAdd()) { return null; }
-		return configure(currentLayer.addField(fieldValues, attributes));
+	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+		if (increment()) {
+			currentLayer.addField(fieldValues, attributes);
+		}
 	}
 
 	public void dispose() {

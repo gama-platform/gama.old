@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.FileExecuter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gaml.statements.draw.FileExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -18,7 +18,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
@@ -71,7 +70,7 @@ class FileExecuter extends DrawExecuter {
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
 		if (!gisFile) {
-			attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
+			attributes.setLocationIfAbsent(scope.getAgent().getLocation().toGamaPoint());
 		}
 		if (imageFile) {
 			// If the size is provided, we automatically center the file

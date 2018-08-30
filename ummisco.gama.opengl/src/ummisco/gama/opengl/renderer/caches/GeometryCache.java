@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.caches.GeometryCache.java, in plugin ummisco.gama.opengl,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * ummisco.gama.opengl.renderer.caches.GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -50,7 +50,6 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.files.GamaObjFile;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.scene.ResourceObject;
 
 public class GeometryCache {
 
@@ -112,7 +111,7 @@ public class GeometryCache {
 	private final Cache<IShape.Type, BuiltInGeometry> builtInCache;
 	private final LoadingCache<String, Integer> fileCache;
 	private final Map<String, GamaGeometryFile> fileMap = new ConcurrentHashMap<>();
-	private final Map<String, ResourceObject> geometriesToProcess = new ConcurrentHashMap<>();
+	private final Map<String, GamaGeometryFile> geometriesToProcess = new ConcurrentHashMap<>();
 	private final Cache<String, Envelope3D> envelopes;
 	private final IScope scope;
 	private final Consumer<Geometry> drawer;
@@ -179,20 +178,19 @@ public class GeometryCache {
 	}
 
 	public void processUnloaded() {
-		for (final ResourceObject object : geometriesToProcess.values()) {
-			get(object.getObject());
+		for (final GamaGeometryFile object : geometriesToProcess.values()) {
+			get(object);
 		}
 		geometriesToProcess.clear();
 	}
 
-	public void process(final ResourceObject object) {
-		final GamaGeometryFile file = object.getObject();
+	public void process(final GamaGeometryFile file) {
 		if (file == null) { return; }
 		final String path = file.getPath(scope);
 		if (fileCache.getIfPresent(path) != null) { return; }
 		fileMap.putIfAbsent(path, file);
 		if (!geometriesToProcess.containsKey(path)) {
-			geometriesToProcess.put(path, object);
+			geometriesToProcess.put(path, file);
 		}
 	}
 

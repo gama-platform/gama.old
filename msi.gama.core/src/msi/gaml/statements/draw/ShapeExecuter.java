@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.ShapeExecuter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gaml.statements.draw.ShapeExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -23,14 +23,12 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -175,48 +173,22 @@ class ShapeExecuter extends DrawExecuter {
 		return result;
 	}
 
-	// private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
-	// if (!hasArrows) { return g1; }
-	// final ICoordinates points = GeometryUtils.getContourCoordinates(g1);
-	// final int size = points.size();
-	// if (size < 2) { return g1; }
-	// Geometry end = null, begin = null;
-	// if (endArrow != null || constantEnd != null) {
-	// final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.get()(scope)) : constantEnd;
-	// if (width > 0) {
-	// end = GamaGeometryType
-	// .buildArrow(points.at(size - 2), points.at(size - 1), width, width + width / 3, fill)
-	// .getInnerGeometry();
-	// }
-	// }
-	// if (beginArrow != null || constantBegin != null) {
-	// final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.get()(scope)) : constantBegin;
-	// if (width > 0) {
-	// begin = GamaGeometryType.buildArrow(points.at(1), points.at(0), width, width + width / 3, fill)
-	// .getInnerGeometry();
-	// }
-	// }
-	// return GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(new Geometry[] { g1, begin, end });
-	// }
-
 	private IShape addArrows(final IScope scope, final IShape g1, final Boolean fill) {
 		if (!hasArrows) { return g1; }
-		final IList<? extends ILocation> points = g1.getPoints();
-		final int size = points.size();
+		final GamaPoint[] points = GeometryUtils.getPointsOf(g1);
+		final int size = points.length;
 		if (size < 2) { return g1; }
 		IShape end = null, begin = null;
 		if (endArrow != null || constantEnd != null) {
 			final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
 			if (width > 0) {
-				end = GamaGeometryType.buildArrow(new GamaPoint(points.get(size - 2)),
-						new GamaPoint(points.get(size - 1)), width, width + width / 3, fill);
+				end = GamaGeometryType.buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill);
 			}
 		}
 		if (beginArrow != null || constantBegin != null) {
 			final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
 			if (width > 0) {
-				begin = GamaGeometryType.buildArrow(new GamaPoint(points.get(1)), new GamaPoint(points.get(0)), width,
-						width + width / 3, fill);
+				begin = GamaGeometryType.buildArrow(points[1], points[0], width, width + width / 3, fill);
 			}
 		}
 		return GamaGeometryType.buildMultiGeometry(g1, begin, end);
