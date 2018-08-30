@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Spatial.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gaml.operators.Spatial.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -1281,7 +1281,7 @@ public abstract class Spatial {
 				env = new Envelope3D(0, 100, 0, 100, 0, 100);
 			}
 			final IShape shape = GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
-					new GamaPoint((ILocation) env.centre()));
+					env.centre().toGamaPoint());
 			return shape;
 		}
 	}
@@ -1787,7 +1787,7 @@ public abstract class Spatial {
 			List<Geometry> geoms = null;
 			if (geom.getInnerGeometry() instanceof LineString) {
 				final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
-				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation()));
+				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt.getLocation().toGamaPoint());
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;

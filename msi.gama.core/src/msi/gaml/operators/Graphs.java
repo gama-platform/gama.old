@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Graphs.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gaml.operators.Graphs.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -21,14 +21,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.In;
@@ -145,8 +148,9 @@ public class Graphs {
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
 			final Set<ILocation> cp = new HashSet<>();
-			for (final ILocation pt : p2.getPoints()) {
-				if (p1.getPoints().contains(pt)) {
+			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
+			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
+				if (ArrayUtils.contains(lp1, pt)) {
 					cp.add(pt);
 				}
 			}

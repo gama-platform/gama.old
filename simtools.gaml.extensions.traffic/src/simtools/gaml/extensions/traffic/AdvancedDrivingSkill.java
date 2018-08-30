@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AdvancedDrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source code of the GAMA
- * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * simtools.gaml.extensions.traffic.AdvancedDrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of
+ * the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.Collection;
@@ -654,7 +655,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 				// if ( dr.euclidianDistanceTo(driver) < vL / 2 + secDist +
 				// getVehiculeLength(dr) / 2 ) { return false; }
-				if (road.getPoints().get(0).euclidianDistanceTo(dr) < vL / 2
+				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(dr) < vL / 2
 						+ getVehiculeLength(dr) / 2) { return false; }
 			}
 		}
@@ -846,7 +847,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		double remainingTime = 1.0;
 		while (remainingTime > 0.0) {
 			final IAgent road = getCurrentRoad(agent);
-			final GamaPoint target = (GamaPoint) road.getPoints().lastValue(scope);
+			final GamaPoint target = GeometryUtils.getLastPointOf(road);
 			argsSC.put("new_road", ConstantExpressionDescription.create(road));
 			actionSC.setRuntimeArgs(scope, argsSC);
 			final double speed = (Double) actionSC.executeOn(scope);
@@ -1584,7 +1585,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		 * endIndexSegment = (Integer) indexVals.get(1);
 		 */
 		int indexSegment = getSegmentIndex(agent);
-		final int endIndexSegment = currentRoad.getPoints().size() - 1;
+		final int endIndexSegment = GeometryUtils.getPointsOf(currentRoad).length - 1;
 
 		// if ( indexSegment > endIndexSegment ) { return 0.0; }
 		double distance = _distance;

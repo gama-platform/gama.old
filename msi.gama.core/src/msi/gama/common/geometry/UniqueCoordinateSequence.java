@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.UniqueCoordinateSequence.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.UniqueCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -113,8 +113,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void visit(final IndexedVisitor v, final int max, final boolean reversed) {
-		if (max == 0)
-			return;
+		if (max == 0) { return; }
 		v.process(0, point.x, point.y, point.z);
 	}
 
@@ -135,8 +134,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public ICoordinates setTo(final GamaPoint... points) {
-		if (points.length == 0)
-			return this;
+		if (points.length == 0) { return this; }
 		final GamaPoint p = points[0];
 		point.x = p.x;
 		point.y = p.y;
@@ -146,8 +144,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public ICoordinates setTo(final double... points) {
-		if (points.length < 3)
-			return this;
+		if (points.length < 3) { return this; }
 		point.x = points[0];
 		point.y = points[1];
 		point.z = points[2];
@@ -178,8 +175,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final int i, final double x, final double y, final double z) {
-		if (i != 0)
-			return;
+		if (i != 0) { return; }
 		point.setLocation(x, y, z);
 
 	}
@@ -211,22 +207,22 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	}
 
-	@Override
-	public void visitCounterClockwise(final VertexVisitor v) {
-		v.process(point.x, point.y, point.z);
-
-	}
+	// @Override
+	// public void visitCounterClockwise(final VertexVisitor v) {
+	// v.process(point.x, point.y, point.z);
+	//
+	// }
 
 	@Override
 	public void visitYNegatedCounterClockwise(final VertexVisitor v) {
 		v.process(point.x, -point.y, point.z);
 
 	}
-
-	@Override
-	public void visitYNegatedClockwise(final VertexVisitor v) {
-		v.process(point.x, -point.y, point.z);
-	}
+	//
+	// @Override
+	// public void visitYNegatedClockwise(final VertexVisitor v) {
+	// v.process(point.x, -point.y, point.z);
+	// }
 
 	@Override
 	public boolean isClockwise() {

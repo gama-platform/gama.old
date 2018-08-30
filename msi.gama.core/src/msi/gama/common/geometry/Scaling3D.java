@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.Scaling3D.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.Scaling3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -41,7 +41,7 @@ public abstract class Scaling3D implements Transformation3D {
 	}
 
 	public static class Uniform extends Scaling3D {
-		double factor;
+		final double factor;
 
 		public Uniform(final double f) {
 			factor = f;

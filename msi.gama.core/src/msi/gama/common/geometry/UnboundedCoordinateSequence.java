@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.UnboundedCoordinateSequence.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.UnboundedCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -148,10 +148,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	public void visit(final IndexedVisitor v, final int max, final boolean clockwise) {
 		final int limit = max < 0 || max > points.size() ? points.size() : max;
 		final boolean reversed = isRing(points) && !clockwise;
-		if (reversed)
+		if (reversed) {
 			reverseVisit(v, limit);
-		else
+		} else {
 			visit(v, limit);
+		}
 	}
 
 	private void visit(final IndexedVisitor v, final int max) {
@@ -177,16 +178,16 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		}
 
 	}
-
-	@Override
-	public void visitCounterClockwise(final VertexVisitor v) {
-		final int min = isRing(points) ? 1 : 0;
-		for (int i = points.size() - 1; i >= min; i--) {
-			final GamaPoint p = points.get(i);
-			v.process(p.x, p.y, p.z);
-		}
-
-	}
+	//
+	// @Override
+	// public void visitCounterClockwise(final VertexVisitor v) {
+	// final int min = isRing(points) ? 1 : 0;
+	// for (int i = points.size() - 1; i >= min; i--) {
+	// final GamaPoint p = points.get(i);
+	// v.process(p.x, p.y, p.z);
+	// }
+	//
+	// }
 
 	@Override
 	public void visitYNegatedCounterClockwise(final VertexVisitor v) {
@@ -198,15 +199,15 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	}
 
-	@Override
-	public void visitYNegatedClockwise(final VertexVisitor v) {
-		final int min = isRing(points) ? 1 : 0;
-		for (int i = points.size() - 1; i >= min; i--) {
-			final GamaPoint p = points.get(i);
-			v.process(p.x, -p.y, p.z);
-		}
-
-	}
+	// @Override
+	// public void visitYNegatedClockwise(final VertexVisitor v) {
+	// final int min = isRing(points) ? 1 : 0;
+	// for (int i = points.size() - 1; i >= min; i--) {
+	// final GamaPoint p = points.get(i);
+	// v.process(p.x, -p.y, p.z);
+	// }
+	//
+	// }
 
 	@Override
 	public void visit(final PairVisitor v) {
@@ -218,8 +219,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, 0);
-		if (points.size() < 3)
-			return;
+		if (points.size() < 3) { return; }
 		for (int i = 0; i < points.size() - 1; i++) {
 			final GamaPoint v0 = points.get(i);
 			final GamaPoint v1 = points.get(i + 1);
@@ -248,8 +248,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public double averageZ() {
 		double sum = 0d;
-		if (points.size() == 0)
-			return sum;
+		if (points.size() == 0) { return sum; }
 		for (final GamaPoint p : points) {
 			sum += p.z;
 		}
@@ -280,8 +279,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final int i, final double x, final double y, final double z) {
-		if (i < 0 || i >= points.size())
-			return;
+		if (i < 0 || i >= points.size()) { return; }
 		points.get(i).setLocation(x, y, z);
 
 	}
@@ -290,11 +288,12 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	public GamaPoint directionBetweenLastPointAndOrigin() {
 		final GamaPoint result = new GamaPoint();
 		final GamaPoint origin = points.get(0);
-		for (int i = points.size() - 1; i > 0; i--)
+		for (int i = points.size() - 1; i > 0; i--) {
 			if (!points.get(i).equals(origin)) {
 				result.setLocation(points.get(i)).subtract(origin).normalize();
 				return result;
 			}
+		}
 		return result;
 	}
 
@@ -309,8 +308,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	public boolean isHorizontal() {
 		final double z = points.get(0).z;
 		for (int i = 1; i < points.size(); i++) {
-			if (points.get(i).z != z)
-				return false;
+			if (points.get(i).z != z) { return false; }
 		}
 		return true;
 	}
@@ -326,15 +324,15 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void setAllZ(final double elevation) {
-		for (final GamaPoint p : points)
+		for (final GamaPoint p : points) {
 			p.z = elevation;
+		}
 	}
 
 	@Override
 	public boolean isCoveredBy(final Envelope3D envelope3d) {
 		for (final GamaPoint p : points) {
-			if (!envelope3d.covers(p))
-				return false;
+			if (!envelope3d.covers(p)) { return false; }
 		}
 		return true;
 	}
@@ -363,8 +361,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	public static List<GamaPoint> turnClockwise(final List<GamaPoint> points) {
-		if (!isRing(points))
-			return points;
+		if (!isRing(points)) { return points; }
 		if (signedArea(points) <= 0) {
 			Collections.reverse(points);
 		}
@@ -372,8 +369,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	public static double signedArea(final List<GamaPoint> ring) {
-		if (ring.size() < 3)
-			return 0.0;
+		if (ring.size() < 3) { return 0.0; }
 		double sum = 0.0;
 		/**
 		 * Based on the Shoelace formula. http://en.wikipedia.org/wiki/Shoelace_formula
@@ -393,8 +389,9 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		for (final GamaPoint p : other.toCoordinateArray()) {
 			points.add(p.yNegated());
 		}
-		if (isRing(points))
+		if (isRing(points)) {
 			Collections.reverse(points);
+		}
 	}
 
 	public void setTo(final ICoordinates other) {

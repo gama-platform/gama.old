@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaShape.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.metamodel.shape.GamaShape.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -173,7 +173,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (bounds != null && !isPoint()) {
 			final Envelope3D env = getEnvelope();
 			final GamaPoint previous = getLocation();
-			//			final boolean flat = env.isFlat();
+			// final boolean flat = env.isFlat();
 			if (isBoundingBox) {
 				geometry.apply(bounds.asBoundingBoxIn(env));
 			} else {
@@ -286,8 +286,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public void setLocation(final ILocation l) {
 		if (isPoint()) {
 			geometry = GeometryUtils.GEOMETRY_FACTORY.createPoint(l.toGamaPoint());
-		}
-		else {
+		} else {
 			final GamaPoint previous = getLocation();
 			final GamaPoint location = l.toGamaPoint();
 			final double dx = location.x - previous.x;
@@ -353,7 +352,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (isPoint()) { return getLocation(); }
 		final Coordinate c = geometry.getCentroid().getCoordinate();
 		c.z = computeAverageZOrdinate();
-		return new GamaPoint(c);
+		return (GamaPoint) c;
 	}
 
 	@Override
@@ -365,15 +364,15 @@ public class GamaShape implements IShape /* , IContainer */ {
 			result = ((Polygon) result).getExteriorRing();
 		} else
 
-			if (result instanceof MultiPolygon) {
-				final MultiPolygon mp = (MultiPolygon) result;
-				final LineString lines[] = new LineString[mp.getNumGeometries()];
-				for (int i = 0; i < mp.getNumGeometries(); i++) {
-					lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
-				}
-				result = GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
-
+		if (result instanceof MultiPolygon) {
+			final MultiPolygon mp = (MultiPolygon) result;
+			final LineString lines[] = new LineString[mp.getNumGeometries()];
+			for (int i = 0; i < mp.getNumGeometries(); i++) {
+				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
+			result = GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
+
+		}
 		return new GamaShape(result);
 	}
 

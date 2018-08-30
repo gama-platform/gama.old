@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaProxyGeometry.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.metamodel.shape.GamaProxyGeometry.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -361,8 +361,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public void dispose() {
-		if (attributes != null)
+		if (attributes != null) {
 			attributes.clear();
+		}
 		attributes = null;
 	}
 
@@ -443,7 +444,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public GamaPoint getCentroid() {
-		return new GamaPoint(absoluteLocation);
+		return absoluteLocation.toGamaPoint();
 	}
 
 	/**

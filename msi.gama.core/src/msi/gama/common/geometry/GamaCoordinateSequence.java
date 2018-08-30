@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.GamaCoordinateSequence.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.GamaCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -85,8 +85,9 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	GamaCoordinateSequence(final int size) {
 		points = new GamaPoint[size < 0 ? 0 : size];
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < size; i++) {
 			points[i] = new GamaPoint(0d, 0d, 0d);
+		}
 	}
 
 	/**
@@ -265,8 +266,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @return
 	 */
 	public static GamaPoint[] turnClockwise(final GamaPoint... points) {
-		if (!isRing(points))
-			return points;
+		if (!isRing(points)) { return points; }
 		if (signedArea(points) <= 0) {
 			ArrayUtils.reverse(points);
 		}
@@ -277,10 +277,11 @@ public class GamaCoordinateSequence implements ICoordinates {
 	public void visit(final IndexedVisitor v, final int max, final boolean clockwise) {
 		final int limit = max < 0 || max > points.length ? points.length : max;
 		final boolean reversed = isRing(points) && !clockwise;
-		if (reversed)
+		if (reversed) {
 			reverseVisit(v, limit);
-		else
+		} else {
 			visit(v, limit);
+		}
 	}
 
 	private void visit(final IndexedVisitor v, final int max) {
@@ -326,8 +327,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, 0);
-		if (points.length < 3)
-			return;
+		if (points.length < 3) { return; }
 		for (int i = 0; i < points.length - 1; i++) {
 			final GamaPoint v0 = points[i];
 			final GamaPoint v1 = points[i + 1];
@@ -356,8 +356,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public double averageZ() {
 		double sum = 0d;
-		if (points.length == 0)
-			return sum;
+		if (points.length == 0) { return sum; }
 		for (final GamaPoint p : points) {
 			sum += p.z;
 		}
@@ -391,11 +390,12 @@ public class GamaCoordinateSequence implements ICoordinates {
 	public GamaPoint directionBetweenLastPointAndOrigin() {
 		final GamaPoint result = new GamaPoint();
 		final GamaPoint origin = points[0];
-		for (int i = points.length - 1; i > 0; i--)
+		for (int i = points.length - 1; i > 0; i--) {
 			if (!points[i].equals(origin)) {
 				result.setLocation(points[i]).subtract(origin).normalize();
 				return result;
 			}
+		}
 		return result;
 	}
 
@@ -408,8 +408,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final int i, final double x, final double y, final double z) {
-		if (i < 0 || i >= points.length)
-			return;
+		if (i < 0 || i >= points.length) { return; }
 		points[i].setLocation(x, y, z);
 
 	}
@@ -418,8 +417,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	public boolean isHorizontal() {
 		final double z = points[0].z;
 		for (int i = 1; i < points.length; i++) {
-			if (points[i].z != z)
-				return false;
+			if (points[i].z != z) { return false; }
 		}
 		return true;
 	}
@@ -444,8 +442,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
 		for (int i = 0; i < points.length; i++) {
-			if (!env.covers(points[i]))
-				return false;
+			if (!env.covers(points[i])) { return false; }
 		}
 		return true;
 	}
@@ -460,28 +457,28 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	}
 
-	@Override
-	public void visitCounterClockwise(final VertexVisitor v) {
-		final int min = isRing(points) ? 1 : 0;
-		for (int i = points.length - 1; i >= min; i--) {
-			final GamaPoint p = points[i];
-			v.process(p.x, p.y, p.z);
-		}
-
-	}
-
-	/**
-	 * Same as counter-clockwise, since it visits the coordinates with y-negated
-	 */
-	@Override
-	public void visitYNegatedClockwise(final VertexVisitor v) {
-		final int min = isRing(points) ? 1 : 0;
-		for (int i = points.length - 1; i >= min; i--) {
-			final GamaPoint p = points[i];
-			v.process(p.x, -p.y, p.z);
-		}
-
-	}
+	// @Override
+	// public void visitCounterClockwise(final VertexVisitor v) {
+	// final int min = isRing(points) ? 1 : 0;
+	// for (int i = points.length - 1; i >= min; i--) {
+	// final GamaPoint p = points[i];
+	// v.process(p.x, p.y, p.z);
+	// }
+	//
+	// }
+	//
+	// /**
+	// * Same as counter-clockwise, since it visits the coordinates with y-negated
+	// */
+	// @Override
+	// public void visitYNegatedClockwise(final VertexVisitor v) {
+	// final int min = isRing(points) ? 1 : 0;
+	// for (int i = points.length - 1; i >= min; i--) {
+	// final GamaPoint p = points[i];
+	// v.process(p.x, -p.y, p.z);
+	// }
+	//
+	// }
 
 	/**
 	 * Same as clockwise, since it visits the coordinates with y-negated
@@ -508,8 +505,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void translateBy(final double x, final double y, final double z) {
-		for (int i = 0; i < points.length; i++) {
-			final GamaPoint p = points[i];
+		for (final GamaPoint p : points) {
 			p.add(x, y, z);
 		}
 
@@ -522,8 +518,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public boolean equals(final Object object) {
-		if (!(object instanceof GamaCoordinateSequence))
-			return false;
+		if (!(object instanceof GamaCoordinateSequence)) { return false; }
 		final GamaCoordinateSequence other = (GamaCoordinateSequence) object;
 		return Arrays.equals(points, other.points);
 	}

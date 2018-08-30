@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.PathFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.util.path.PathFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -10,6 +10,12 @@
  ********************************************************************************************************/
 package msi.gama.util.path;
 
+import static msi.gama.common.geometry.GeometryUtils.getFirstPointOf;
+import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
+
+import com.vividsolutions.jts.geom.Coordinate;
+
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -34,7 +40,7 @@ public class PathFactory {
 		} else if (nodes.get(0) instanceof ILocation || g instanceof GamaSpatialGraph) {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IList<IShape>) nodes);
 		} else {
-			return new GamaPath<V, E, IGraph<V, E>>(g, nodes);
+			return new GamaPath<>(g, nodes);
 		}
 	}
 
@@ -44,7 +50,7 @@ public class PathFactory {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IShape) start, (IShape) target,
 					(IList<IShape>) edges);
 		} else {
-			return new GamaPath<V, E, IGraph<V, E>>(g, start, target, edges);
+			return new GamaPath<>(g, start, target, edges);
 		}
 	}
 
@@ -54,16 +60,16 @@ public class PathFactory {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IShape) start, (IShape) target,
 					(IList<IShape>) edges, modify_edges);
 		} else {
-			return new GamaPath<V, E, IGraph<V, E>>(g, start, target, edges, modify_edges);
+			return new GamaPath<>(g, start, target, edges, modify_edges);
 		}
 	}
 
 	// With Topology
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g,
-			final IList<? extends IShape> nodes, double weight) {
+			final IList<? extends IShape> nodes, final double weight) {
 		GamaSpatialPath path;
 		if (g instanceof GraphTopology) {
-			path =  (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
+			path = (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
 		} else if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
 			path = new GamaSpatialPath(null, nodes);
 		} else if (g instanceof GridTopology) {
@@ -79,12 +85,13 @@ public class PathFactory {
 			final IShape target, final IList<IShape> edges) {
 		if (g instanceof GraphTopology) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges);
-		} else {//if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
+		} else {// if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
 			return new GamaSpatialPath(start, target, edges);
 		}
-		/*} else {
-			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account", scope);
-		}*/
+		/*
+		 * } else { throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account",
+		 * scope); }
+		 */
 	}
 
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,
@@ -104,8 +111,7 @@ public class PathFactory {
 		if (isEdges) {
 			final GamaShape shapeS = (GamaShape) edgesNodes.get(0).getGeometry();
 			final GamaShape shapeT = (GamaShape) edgesNodes.get(edgesNodes.size() - 1).getGeometry();
-			return new GamaSpatialPath(null, shapeS.getPoints().get(0),
-					shapeT.getPoints().get(shapeT.getPoints().size() - 1), edgesNodes, false);
+			return new GamaSpatialPath(null, getFirstPointOf(shapeS), getLastPointOf(shapeT), edgesNodes, false);
 		}
 		return new GamaSpatialPath(edgesNodes);
 	}

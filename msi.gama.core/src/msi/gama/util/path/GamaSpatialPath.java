@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.GamaSpatialPath.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.util.path.GamaSpatialPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -9,6 +9,8 @@
  * 
  ********************************************************************************************************/
 package msi.gama.util.path;
+
+import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 
 import org.jgrapht.Graph;
 
@@ -26,13 +28,11 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
@@ -122,7 +122,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 						pt = c1;
 					}
 					if (cpt == 0 && !source.equals(pt)) {
-						GamaPoint falseSource = new GamaPoint(source.getLocation());
+						GamaPoint falseSource = source.getLocation().toGamaPoint();
 						if (source.euclidianDistanceTo(edge2) > FastMath.min(0.01, edge2.getPerimeter() / 1000)) {
 							falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
 							falseSource.z = zVal(falseSource, edge2);
@@ -132,7 +132,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					if (cpt == _edges.size() - 1 && !target.equals(
 							edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
 
-						GamaPoint falseTarget = new GamaPoint(target.getLocation());
+						GamaPoint falseTarget = target.getLocation().toGamaPoint();
 						if (target.euclidianDistanceTo(edge2) > FastMath.min(0.01, edge2.getPerimeter() / 1000)) {
 							falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 							falseTarget.z = zVal(falseTarget, edge2);
@@ -157,13 +157,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	protected double zVal(final GamaPoint point, final IShape edge) {
 		double z = 0.0;
-		final int nbSp = edge.getPoints().size();
+		final int nbSp = getPointsOf(edge).length;
 		final Coordinate[] temp = new Coordinate[2];
 		final Point pointGeom = (Point) point.getInnerGeometry();
 		double distanceS = Double.MAX_VALUE;
+		final GamaPoint[] edgePoints = GeometryUtils.getPointsOf(edge);
 		for (int i = 0; i < nbSp - 1; i++) {
-			temp[0] = (Coordinate) edge.getPoints().get(i);
-			temp[1] = (Coordinate) edge.getPoints().get(i + 1);
+			temp[0] = edgePoints[i];
+			temp[1] = edgePoints[i + 1];
 			final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
 			final double distS = segment.distance(pointGeom);
 			if (distS < distanceS) {
@@ -332,7 +333,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 		final IShape lineEnd = segments.get(nb - 1);
 		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
-		GamaPoint falseTarget = new GamaPoint(target.getLocation());
+		GamaPoint falseTarget = target.getLocation().toGamaPoint();
 		if (!keepTarget) {
 			falseTarget = (GamaPoint) Punctal._closest_point_to(getEndVertex(), lineEnd);
 			endIndexSegment = 1;
@@ -402,12 +403,15 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			if (segments.size() == 1) {
 				shape = new GamaShape(segments.get(0));
 			} else {
-				IList<IShape> pts = GamaListFactory.create(Types.POINT);
+				final IList<IShape> pts = GamaListFactory.create(Types.POINT);
 				for (final IShape ent : segments) {
-					pts.addAll(ent.getPoints());
+					for (final GamaPoint p : GeometryUtils.getPointsOf(ent)) {
+						if (!pts.contains(p)) {
+							pts.add(p);
+						}
+					}
 				}
 				if (pts.size() > 0) {
-					pts = Containers.remove_duplicates(GAMA.getRuntimeScope(), pts);
 					shape = GamaGeometryType.buildPolyline(pts);
 				}
 			}
@@ -445,10 +449,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			IShape g = null;
 			for (final Object ed : getEdgeList()) {
 				g = (IShape) ed;
-				vertices.add(g.getPoints().get(0));
+				vertices.add(GeometryUtils.getFirstPointOf(g));
 			}
 			if (g != null) {
-				vertices.add(g.getPoints().get(g.getPoints().size() - 1));
+				vertices.add(GeometryUtils.getLastPointOf(g));
 			}
 			return vertices;
 		}

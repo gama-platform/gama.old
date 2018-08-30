@@ -1,24 +1,23 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * simtools.gaml.extensions.traffic.RoadSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- * 'RoadSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -194,7 +193,7 @@ public class RoadSkill extends Skill {
 				getAgents(road).add(driver);
 			}
 			driver.setAttribute(AdvancedDrivingSkill.DISTANCE_TO_GOAL,
-					driver.getLocation().euclidianDistanceTo(road.getPoints().get(indexSegment + 1)));
+					driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_ROAD, road);
 			driver.setAttribute(AdvancedDrivingSkill.CURRENT_LANE, lane);
 			driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX,
@@ -204,23 +203,18 @@ public class RoadSkill extends Skill {
 	}
 
 	public static int getSegmentIndex(final IAgent road, final IAgent driver) {
-		final Coordinate[] coords = road.getInnerGeometry().getCoordinates();
+		final GamaPoint[] coords = GeometryUtils.getPointsOf(road);
 		if (coords.length == 2) { return 0; }
 
-		final ILocation loc = driver.getLocation();
+		final GamaPoint loc = driver.getLocation().toGamaPoint();
 		for (int i = 0; i < coords.length - 1; i++) {
 			if (coords[i].equals(loc)) { return i; }
 		}
 		double distanceS = Double.MAX_VALUE;
 		int indexSegment = 0;
-		final Point pointS = (Point) loc.getInnerGeometry();
 		final int nbSp = coords.length;
-		final Coordinate[] temp = new Coordinate[2];
 		for (int i = 0; i < nbSp - 1; i++) {
-			temp[0] = coords[i];
-			temp[1] = coords[i + 1];
-			final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
-			final double distS = segment.distance(pointS);
+			final double distS = CGAlgorithms.distancePointLine(loc, coords[i], coords[i + 1]);
 			if (distS < distanceS) {
 				distanceS = distS;
 				indexSegment = i;

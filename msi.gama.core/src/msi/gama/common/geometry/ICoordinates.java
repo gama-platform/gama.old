@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.ICoordinates.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.ICoordinates.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -81,8 +81,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return a point or null
 	 */
 	default GamaPoint at(final int i) {
-		if (i > size() || i < 0)
-			return null;
+		if (i > size() || i < 0) { return null; }
 		return getCoordinate(i);
 	}
 
@@ -121,15 +120,16 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 *            the visitor (cannot be null)
 	 */
 	void visitClockwise(VertexVisitor v);
-
-	/**
-	 * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done in
-	 * the counter-clockwise order. In the case of a line string, the first point is not visited.
-	 * 
-	 * @param v
-	 *            the visitor (cannot be null)
-	 */
-	void visitCounterClockwise(VertexVisitor v);
+	//
+	// /**
+	// * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done
+	// in
+	// * the counter-clockwise order. In the case of a line string, the first point is not visited.
+	// *
+	// * @param v
+	// * the visitor (cannot be null)
+	// */
+	// void visitCounterClockwise(VertexVisitor v);
 
 	/**
 	 * Visits all the coordinates, passing the x, -y, z ordinates of each coordinate to the visitor. The visit is done
@@ -149,7 +149,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @param v
 	 *            the visitor (cannot be null)
 	 */
-	void visitYNegatedClockwise(VertexVisitor v);
+	// void visitYNegatedClockwise(VertexVisitor v);
 
 	/**
 	 * Visits all the coordinates by pairs of adjacent coordinates (n, n+1)
