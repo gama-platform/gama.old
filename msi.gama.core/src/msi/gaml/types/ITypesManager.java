@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.ITypesManager.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gaml.types.ITypesManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -10,19 +10,18 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IDisposable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 
-public interface ITypesManager {
+public interface ITypesManager extends IDisposable {
 
 	void alias(String existingTypeName, String otherTypeName);
 
 	boolean containsType(String s);
 
 	IType<?> get(String type);
-
-	void dispose();
 
 	IType<? extends IAgent> addSpeciesType(SpeciesDescription species);
 

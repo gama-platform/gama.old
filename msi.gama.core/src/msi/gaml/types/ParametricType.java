@@ -14,7 +14,6 @@ import static com.google.common.cache.CacheBuilder.newBuilder;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -28,6 +27,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class ParametricType. A class that allows to build composed types with a content type and a key type
@@ -38,16 +38,25 @@ import msi.gaml.expressions.IExpression;
  */
 public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
-	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(1, MINUTES).build();
-	static boolean USE_CACHE = false;
+	static {
+		DEBUG.OFF();
+	}
+
+	static Cache<Integer, ParametricType> CACHE2 =
+			newBuilder().expireAfterAccess(1, MINUTES).weakValues()./* recordStats(). */ build();
+	static boolean USE_CACHE = true;
 
 	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
 			final IType<?> ct) {
 		if (USE_CACHE) {
-			try {
-				return CACHE2.get(t.hashCode() + ct.hashCode() * 100 + kt.hashCode() * 10000,
-						() -> new ParametricType(t, kt, ct));
-			} catch (final ExecutionException e) {}
+			final Integer key = t.hashCode() + ct.hashCode() * 100 + kt.hashCode() * 10000;
+			ParametricType p = CACHE2.getIfPresent(key);
+			if (p == null) {
+				p = new ParametricType(t, kt, ct);
+				CACHE2.put(key, p);
+				// DEBUG.OUT(CACHE2.stats().toString() + " Size: " + CACHE2.size());
+			}
+			return p;
 		}
 		return new ParametricType(t, kt, ct);
 	}
