@@ -113,7 +113,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-		final Boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", null);
+		final Boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
 		final Boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", null);
 		boolean editors;
 		if (layoutDefinition.hasFacet("editors")) {
