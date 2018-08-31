@@ -41,7 +41,7 @@ public interface INetworkSkill  {
 	
 	// CONNECTION PROTOCOL
 	public final static String UDP_SERVER = "udp_server";
-	public final static String UDP_CLIENT = "udp_client";
+	public final static String UDP_CLIENT = "udp_emitter";
 	public final static String TCP_SERVER = "tcp_server";
 	public final static String TCP_CLIENT = "tcp_client";
 	public final static String MQTT = "mqtt";

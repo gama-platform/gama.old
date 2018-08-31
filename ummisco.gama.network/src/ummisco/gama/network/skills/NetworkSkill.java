@@ -150,28 +150,28 @@ public class NetworkSkill extends MessagingSkill {
 		if (connector == null) {
 
 			if (protocol != null && protocol.equals(INetworkSkill.UDP_SERVER)) {
+				DEBUG.OUT("create UDP server");				
 				connector = new UDPConnector(scope, true);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.UDP_CLIENT)) {
-				DEBUG.OUT("create udp client");
+				DEBUG.OUT("create UDP client");
 				connector = new UDPConnector(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_SERVER)) {
-				DEBUG.OUT("create tcp serveur");
+				DEBUG.OUT("create TCP serveur");
 				connector = new TCPConnector(scope, true);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
-
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_CLIENT)) {
-				DEBUG.OUT("create tcp client");
+				DEBUG.OUT("create TCP client");
 				connector = new TCPConnector(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
-				DEBUG.OUT("create mqtt serveur " + login + " " + password);
+				DEBUG.OUT("create MQTT serveur " + login + " " + password);
 				connector = new MQTTConnector(scope);
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
