@@ -55,6 +55,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequenceFactory;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
@@ -810,9 +811,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (ag.getInnerGeometry() == null) {
 					continue;
 				}
+				//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
+				
 				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 
 				g = fixesPolygonCWS(g);
+				g = geometryCollectionManagement(g);
 
 				values.add(g);
 				if (ag instanceof IAgent) {
@@ -852,6 +856,35 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} finally {
 			store.dispose();
 		}
+	}
+	
+	private static Geometry geometryCollectionManagement(Geometry gg) {
+		if (gg instanceof GeometryCollection) {
+			boolean isMultiPolygon = true;
+			boolean isMultiPoint = true;
+			boolean isMultiLine = true;
+			int nb = ((GeometryCollection)gg).getNumGeometries();
+			for (int i = 0; i < nb ; i++) {
+				Geometry g = (((GeometryCollection)gg)).getGeometryN(i);
+				if (!(g instanceof Polygon)) isMultiPolygon = false;
+				if (!(g instanceof LineString)) isMultiLine = false;
+				if (!(g instanceof Point)) isMultiPoint = false;
+			}
+			if (isMultiPolygon) {
+				Polygon[] polygons = new Polygon[nb];
+				for (int i = 0; i < nb ; i++) {polygons[i] = (Polygon)  (((GeometryCollection)gg)).getGeometryN(i);}
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
+			} if (isMultiLine) {
+				LineString[] lines = new LineString[nb];
+				for (int i = 0; i < nb ; i++) {lines[i] = (LineString)  (((GeometryCollection)gg)).getGeometryN(i);}
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
+			} if (isMultiPoint) {
+				Point[] points = new Point[nb];
+				for (int i = 0; i < nb ; i++) {points[i] = (Point)  (((GeometryCollection)gg)).getGeometryN(i);}
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(points);
+			}
+		}
+		return gg;
 	}
 
 	private static void writePRJ(final IScope scope, final String path, final IProjection gis) {
