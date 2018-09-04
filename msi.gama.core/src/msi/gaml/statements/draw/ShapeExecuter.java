@@ -78,7 +78,7 @@ class ShapeExecuter extends DrawExecuter {
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
 		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
-		if (shape == null) { return null; }
+		if (shape == null || shape.getInnerGeometry() == null) { return null; }
 		// final Geometry geom = shape.getInnerGeometry();
 		final ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry

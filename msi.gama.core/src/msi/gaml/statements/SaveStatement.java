@@ -511,7 +511,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		String geomType = "";
 		for (final IShape be : agents) {
 			final IShape geom = be.getGeometry();
-			if (geom != null) {
+			if (geom != null && geom.getInnerGeometry() != null) {
 				geomType = geom.getInnerGeometry().getClass().getSimpleName();
 				if (geom.getInnerGeometry().getNumGeometries() > 1) {
 					if (geom.getInnerGeometry().getGeometryN(0).getClass() == Point.class) {
@@ -525,7 +525,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 		}
-
 		if ("DynamicLineString".equals(geomType)) {
 			geomType = LineString.class.getSimpleName();
 		}
@@ -545,7 +544,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
-
+		System.out.println("geomType: " + geomType);
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation
@@ -804,11 +803,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			final List<Object> values = new ArrayList<>();
+			System.out.println("size: "+  agents.size());
 			for (final IShape ag : agents) {
 				values.clear();
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				// geometry is by convention (in specs) at position 0
+				if (ag.getInnerGeometry() == null) {
+					System.out.println("geometry null");
+					continue;
+				}
 				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+
 				g = fixesPolygonCWS(g);
 
 				values.add(g);

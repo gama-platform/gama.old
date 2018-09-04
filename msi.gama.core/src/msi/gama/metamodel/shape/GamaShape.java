@@ -674,6 +674,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public Type getGeometricalType() {
 		if (hasAttribute(TYPE_ATTRIBUTE)) { return (Type) getAttribute(TYPE_ATTRIBUTE); }
+		if (getInnerGeometry() == null) return Type.NULL;
 		final String type = getInnerGeometry().getGeometryType();
 		if (JTS_TYPES.containsKey(type)) { return JTS_TYPES.get(type); }
 		return Type.NULL;
