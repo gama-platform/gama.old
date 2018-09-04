@@ -70,13 +70,12 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 */
 	@Override
 	protected final void _draw(final GeometryObject object) {
-		final boolean push = object.getAttributes().getRotation() != null || object.getAttributes().getSize() != null;
+		gl.pushMatrix();
 		try {
-			if (push) {
-				gl.pushMatrix();
-				applyRotation(object);
-				applyScaling(object);
-			}
+
+			applyRotation(object);
+			applyTranslation(object);
+			applyScaling(object);
 			final boolean solid = object.isFilled() || gl.isTextured();
 			final Color border = !solid && object.getAttributes().getBorder() == null
 					? object.getAttributes().getColor() : object.getAttributes().getBorder();
@@ -84,11 +83,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final double height = object.getAttributes().getHeight() == null ? 0d : object.getAttributes().getHeight();
 			final IShape.Type type = object.getAttributes().getType();
 			drawGeometry(geometry, solid, border, height, type);
-
 		} finally {
-			if (push) {
-				gl.popMatrix();
-			}
+			gl.popMatrix();
 		}
 	}
 

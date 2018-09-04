@@ -12,6 +12,8 @@ package ummisco.gama.opengl.scene;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 
 public class GeometryObject extends AbstractObject<Geometry, FileDrawingAttributes> {
@@ -23,6 +25,35 @@ public class GeometryObject extends AbstractObject<Geometry, FileDrawingAttribut
 	@Override
 	public DrawerType getDrawerType() {
 		return DrawerType.GEOMETRY;
+	}
+
+	@Override
+	public void getTranslationInto(final GamaPoint p) {
+		final GamaPoint explicitLocation = getAttributes().getLocation();
+		if (explicitLocation == null) {
+			p.setLocation(0, 0, 0);
+		} else {
+			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
+			p.negate();
+			p.add(explicitLocation);
+		}
+	}
+
+	@Override
+	public void getTranslationForRotationInto(final GamaPoint p) {
+		final GamaPoint explicitLocation = getAttributes().getLocation();
+		if (explicitLocation == null) {
+			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
+		} else {
+			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
+			p.negate();
+			p.add(explicitLocation);
+		}
+	}
+
+	@Override
+	public void getTranslationForScalingInto(final GamaPoint p) {
+		GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
 	}
 
 }

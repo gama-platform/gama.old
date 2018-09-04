@@ -41,7 +41,7 @@ class FileExecuter extends DrawExecuter {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
 		if (file == null) { return null; }
 		final FileDrawingAttributes attributes =
-				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile);
+				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile, g.is2D());
 
 		// XXX EXPERIMENTAL See Issue #1521
 		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue()
@@ -63,7 +63,7 @@ class FileExecuter extends DrawExecuter {
 	}
 
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
-			final boolean gisFile) {
+			final boolean gisFile, final boolean twoD) {
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(Scaling3D.of(data.size.get()),
 				data.rotation.get(), data.getLocation(), data.getCurrentColor(), data.border.get(), scope.getAgent(),
 				data.lineWidth.get(), imageFile, data.lighting.get());
@@ -72,15 +72,18 @@ class FileExecuter extends DrawExecuter {
 		if (!gisFile) {
 			attributes.setLocationIfAbsent(scope.getAgent().getLocation().toGamaPoint());
 		}
-		if (imageFile) {
-			// If the size is provided, we automatically center the file
-			final Scaling3D size = attributes.getSize();
-			if (size != null) {
-				// New location
-				attributes
-						.setLocation(attributes.getLocation().minus(size.getX() / 2, size.getY() / 2, size.getZ() / 2));
+		if (twoD) {
+			if (imageFile) {
+				// If the size is provided, we automatically center the file
+				final Scaling3D size = attributes.getSize();
+				if (size != null) {
+					// New location
+					attributes.setLocation(
+							attributes.getLocation().minus(size.getX() / 2, size.getY() / 2, size.getZ() / 2));
+				}
 			}
 		}
+
 		return attributes;
 	}
 }

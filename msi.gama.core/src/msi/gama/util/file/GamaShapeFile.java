@@ -349,6 +349,9 @@ public class GamaShapeFile extends GamaGisFile {
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
+						if (!g.isValid()) {
+							g = g.buffer(0.0);
+						}
 						g = gis.transform(g);
 						if (!with3D) {
 							g.apply(ZERO_Z);

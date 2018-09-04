@@ -1043,7 +1043,7 @@ public class MovingSkill extends Skill {
 
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
-		path.setSource(currentLocation.copy(scope));
+		path.setSource(currentLocation/* .copy(scope) */);
 
 	}
 

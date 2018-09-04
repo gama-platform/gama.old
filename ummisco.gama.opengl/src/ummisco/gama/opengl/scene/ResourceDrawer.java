@@ -27,22 +27,6 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 	}
 
 	/**
-	 * Applies a translation to the gl context (only useful for geometries read from files right now)
-	 * 
-	 * @param object
-	 *            the object defining the translation
-	 * @return true if a translation occured, false otherwise
-	 */
-	protected boolean applyTranslation(final ResourceObject object) {
-		final GamaPoint loc = object.getAttributes().getLocation();
-		if (loc != null) {
-			gl.translateBy(loc.x, -loc.y, loc.z);
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Takes into account the initial rotation of the file
 	 */
 
@@ -77,8 +61,8 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 
 	@Override
 	protected void _draw(final ResourceObject object) {
-		final boolean push = object.getAttributes().getRotation() != null || object.getObject().getInitRotation() != null
-				|| object.getAttributes().getSize() != null;
+		final boolean push = object.getAttributes().getRotation() != null
+				|| object.getObject().getInitRotation() != null || object.getAttributes().getSize() != null;
 		try {
 			if (push) {
 				gl.pushMatrix();

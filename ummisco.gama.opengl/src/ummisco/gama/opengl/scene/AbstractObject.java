@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -131,6 +132,23 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 
 	public ATT getAttributes() {
 		return attributes;
+	}
+
+	public void getTranslationInto(final GamaPoint p) {
+		final GamaPoint explicitLocation = getAttributes().getLocation();
+		if (explicitLocation == null) {
+			p.setLocation(0, 0, 0);
+		} else {
+			p.setLocation(explicitLocation);
+		}
+	}
+
+	public void getTranslationForRotationInto(final GamaPoint p) {
+		getTranslationInto(p);
+	}
+
+	public void getTranslationForScalingInto(final GamaPoint p) {
+		p.setLocation(0, 0, 0);
 	}
 
 }

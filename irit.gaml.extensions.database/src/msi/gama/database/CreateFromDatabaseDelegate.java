@@ -42,7 +42,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	 */
 	@Override
 	public boolean acceptSource(IScope scope, final Object source) {
-		return source instanceof IList && ((IList) source).get(0) instanceof List;
+		return source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof List;
 	}
 
 	/**

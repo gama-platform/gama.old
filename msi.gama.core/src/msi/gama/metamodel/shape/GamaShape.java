@@ -506,7 +506,10 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public int hashCode() {
-		return geometry == null ? super.hashCode() : geometry.hashCode();
+		return super.hashCode();
+		// if (geomtry == null) return s
+		// return GeometryUtils.getContourCoordinates(geometry)..
+		// return geometry == null ? super.hashCode() : geometry.hashCode();
 	}
 
 	@Override
@@ -674,6 +677,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public Type getGeometricalType() {
 		if (hasAttribute(TYPE_ATTRIBUTE)) { return (Type) getAttribute(TYPE_ATTRIBUTE); }
+		if (getInnerGeometry() == null) { return Type.NULL; }
 		final String type = getInnerGeometry().getGeometryType();
 		if (JTS_TYPES.containsKey(type)) { return JTS_TYPES.get(type); }
 		return Type.NULL;

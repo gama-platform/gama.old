@@ -139,7 +139,7 @@ species boids_goal skills: [moving] {
 	
 	aspect default {
 		draw circle(10) color: rgb ('red');
-		draw circle(40) color: rgb ('orange') size: 40 empty: true;
+		draw circle(40) color: rgb ('orange')  empty: true;
 	}
 	
 	aspect sphere{
@@ -343,7 +343,7 @@ species boids skills: [moving] {
 	aspect dynamicColor{
 		rgb cc <- hsb (float(heading)/360.0,1.0,1.0);
 		draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
-		draw name;
+		draw name color: #yellow font: font("Helvetica", 18,#bold);
 	}
 } 
 
@@ -420,10 +420,10 @@ experiment SpaceTimeCube type: gui {
 }
 
 experiment MultipleView type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {
-
-
-		display RealBoids   type:opengl {
+		layout #split;
+		display RealBoids   type:opengl synchronized: true{
 			image 'background' file:file_path_to_ocean;
 			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
