@@ -217,7 +217,7 @@ public class NetworkSkill extends MessagingSkill {
 		final GamaMailbox box = getMailbox(agent);
 		GamaMessage msg = null;
 		if(!box.isEmpty()) {
-			box.get(0);
+			msg = box.get(0);
 			box.remove(0);			
 		}
 		return msg;
