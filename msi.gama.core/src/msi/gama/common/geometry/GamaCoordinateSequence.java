@@ -63,15 +63,13 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 *            an array of points
 	 */
 	GamaCoordinateSequence(final boolean copy, final Coordinate... points2) {
-
 		if (copy) {
 			final int size = points2.length;
-			final GamaPoint[] result = new GamaPoint[size];
+			points = new GamaPoint[size];
 			for (int i = 0; i < size; i++) {
-				result[i] = new GamaPoint(points2[i]);
+				points[i] = new GamaPoint(points2[i]);
 			}
-			points = turnClockwise(result);
-
+			ensureClockwiseness();
 		} else {
 			points = (GamaPoint[]) points2;
 		}
@@ -258,21 +256,6 @@ public class GamaCoordinateSequence implements ICoordinates {
 		return result;
 	}
 
-	/**
-	 * Turns this sequence of coordinates into a clockwise orientation. Only done for rings (as it may change the
-	 * definition of line strings)
-	 * 
-	 * @param points
-	 * @return
-	 */
-	public static GamaPoint[] turnClockwise(final GamaPoint... points) {
-		if (!isRing(points)) { return points; }
-		if (signedArea(points) <= 0) {
-			ArrayUtils.reverse(points);
-		}
-		return points;
-	}
-
 	@Override
 	public void visit(final IndexedVisitor v, final int max, final boolean clockwise) {
 		final int limit = max < 0 || max > points.length ? points.length : max;
@@ -369,7 +352,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 		for (int i = 0; i < size; i++) {
 			points[i].setCoordinate(points2[i]);
 		}
-		turnClockwise(points);
+		ensureClockwiseness();
 		return this;
 	}
 
@@ -382,7 +365,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 			self.y = points2[i + 1];
 			self.z = points2[i + 2];
 		}
-		turnClockwise(points);
+		ensureClockwiseness();
 		return this;
 	}
 
@@ -457,29 +440,6 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	}
 
-	// @Override
-	// public void visitCounterClockwise(final VertexVisitor v) {
-	// final int min = isRing(points) ? 1 : 0;
-	// for (int i = points.length - 1; i >= min; i--) {
-	// final GamaPoint p = points[i];
-	// v.process(p.x, p.y, p.z);
-	// }
-	//
-	// }
-	//
-	// /**
-	// * Same as counter-clockwise, since it visits the coordinates with y-negated
-	// */
-	// @Override
-	// public void visitYNegatedClockwise(final VertexVisitor v) {
-	// final int min = isRing(points) ? 1 : 0;
-	// for (int i = points.length - 1; i >= min; i--) {
-	// final GamaPoint p = points[i];
-	// v.process(p.x, -p.y, p.z);
-	// }
-	//
-	// }
-
 	/**
 	 * Same as clockwise, since it visits the coordinates with y-negated
 	 */
@@ -511,9 +471,19 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	}
 
+	/**
+	 * Turns this sequence of coordinates into a clockwise orientation. Only done for rings (as it may change the
+	 * definition of line strings)
+	 * 
+	 * @param points
+	 * @return
+	 */
 	@Override
 	public void ensureClockwiseness() {
-		turnClockwise(points);
+		if (!isRing(points)) { return; }
+		if (signedArea(points) <= 0) {
+			ArrayUtils.reverse(points);
+		}
 	}
 
 	@Override

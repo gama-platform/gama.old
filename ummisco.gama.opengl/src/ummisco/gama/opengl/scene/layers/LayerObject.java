@@ -264,10 +264,10 @@ public class LayerObject {
 			attributes.setSize(size);
 		}
 		final GamaPoint loc = attributes.getLocation();
-		final Scaling3D inc = attributes.getSize().dividedBy(2);
-		final GamaPoint newLoc = loc == null ? inc.toGamaPoint() : loc.plus(inc.getX(), inc.getY(), inc.getZ());
+		final GamaPoint newLoc = loc == null ? size.toGamaPoint().dividedBy(2) : loc;
 		// We build a rectangle that will serve as a "support" for the image (which will become its texture)
-		final Geometry geometry = GamaGeometryType.buildRectangle(size.getX(), size.getY(), newLoc).getInnerGeometry();
+		final Geometry geometry =
+				GamaGeometryType.buildRectangle(size.getX(), size.getY(), GamaPoint.NULL_POINT).getInnerGeometry();
 
 		attributes.setLocation(newLoc);
 		attributes.setTexture(o);

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaPoint.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.metamodel.shape.GamaPoint.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -44,7 +44,94 @@ import msi.gaml.types.Types;
 public class GamaPoint extends Coordinate implements ILocation {
 
 	private static final double[] EMPTY = new double[] {};
-	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d);
+	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d) {
+		@Override
+		public void setLocation(final ILocation al) {}
+
+		@Override
+		public GamaPoint add(final double ax, final double ay, final double az) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint add(final GamaPoint loc) {
+			return this;
+		}
+
+		@Override
+		public Object clone() {
+			return this;
+		}
+
+		@Override
+		public GamaPoint divideBy(final double value) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint multiplyBy(final double value) {
+			return this;
+		}
+
+		@Override
+		public void negate() {}
+
+		@Override
+		public GamaPoint normalize() {
+			return this;
+		}
+
+		@Override
+		public void setAgent(final IAgent agent) {}
+
+		@Override
+		public void setAttribute(final String key, final Object value) {}
+
+		@Override
+		public void setCoordinate(final Coordinate c) {}
+
+		@Override
+		public void setDepth(final double depth) {}
+
+		@Override
+		public void setInnerGeometry(final Geometry point) {}
+
+		@Override
+		public GamaPoint subtract(final GamaPoint loc) {
+			return this;
+		}
+
+		@Override
+		public void setGeometry(final IShape g) {}
+
+		@Override
+		public void setLocation(final double... coords) {}
+
+		@Override
+		public GamaPoint setLocation(final double x, final double y, final double z) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint setLocation(final GamaPoint al) {
+			return this;
+		}
+
+		@Override
+		public void setOrdinate(final int i, final double v) {}
+
+		@Override
+		public void setX(final double xx) {}
+
+		@Override
+		public void setY(final double yy) {}
+
+		@Override
+		public void setZ(final double zz) {}
+
+		@Override
+		public void copyShapeAttributesFrom(final IShape other) {}
+	};
 
 	{
 		x = 0.0d;

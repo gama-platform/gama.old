@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.GamaCoordinateSequenceFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.common.geometry.GamaCoordinateSequenceFactory.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -25,9 +25,13 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	 */
 	@Override
 	public ICoordinates create(final Coordinate[] coordinates) {
-		if (coordinates.length == 1)
-			return new UniqueCoordinateSequence(coordinates[0]);
+		if (coordinates.length == 1) { return new UniqueCoordinateSequence(coordinates[0]); }
 		return new GamaCoordinateSequence(coordinates);
+	}
+
+	public ICoordinates create(final GamaPoint[] coordinates, final boolean copy) {
+		if (coordinates.length == 1) { return new UniqueCoordinateSequence(coordinates[0]); }
+		return new GamaCoordinateSequence(copy, coordinates);
 	}
 
 	/**
@@ -37,10 +41,8 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	 */
 	@Override
 	public ICoordinates create(final CoordinateSequence coordSeq) {
-		if (coordSeq.size() == 1)
-			return new UniqueCoordinateSequence(coordSeq.getCoordinate(0));
-		if (coordSeq instanceof GamaCoordinateSequence)
-			return ((GamaCoordinateSequence) coordSeq).clone();
+		if (coordSeq.size() == 1) { return new UniqueCoordinateSequence(coordSeq.getCoordinate(0)); }
+		if (coordSeq instanceof GamaCoordinateSequence) { return ((GamaCoordinateSequence) coordSeq).clone(); }
 		return new GamaCoordinateSequence(coordSeq.toCoordinateArray());
 	}
 
@@ -51,8 +53,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	 */
 	@Override
 	public ICoordinates create(final int size, final int dimension) {
-		if (size == 1)
-			return new UniqueCoordinateSequence(new GamaPoint());
+		if (size == 1) { return new UniqueCoordinateSequence(new GamaPoint()); }
 		return new GamaCoordinateSequence(size);
 	}
 
