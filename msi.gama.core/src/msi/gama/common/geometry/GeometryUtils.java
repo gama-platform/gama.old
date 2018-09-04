@@ -133,6 +133,7 @@ public class GeometryUtils {
 			if (geom.getArea() > 0) {
 				final double y = rand.between(yMin, yMax);
 				final UniqueCoordinateSequence ucs = (UniqueCoordinateSequence) ICoordinates.ofLength(1);
+				ucs.setTo(x, y, 0);
 				final Point pt = GEOMETRY_FACTORY.createPoint(ucs);
 				while (!geom.intersects(pt)) {
 					ucs.setTo(rand.between(xMin, xMax), rand.between(yMin, yMax), 0);
