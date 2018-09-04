@@ -36,6 +36,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @symbol(name = FocusStatement.FOCUS, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
 		IConcept.BDI })
@@ -210,7 +211,7 @@ public class FocusStatement extends AbstractStatement {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					final String nameVar = variable.getName();
-					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, Types.STRING, Types.NO_TYPE);
 					if (expression != null) {
 						tempValues.put(nameVar + "_value", expression.value(scope));
 					} else {
