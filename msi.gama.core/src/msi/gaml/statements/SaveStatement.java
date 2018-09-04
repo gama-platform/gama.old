@@ -544,7 +544,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
-		System.out.println("geomType: " + geomType);
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation
@@ -787,6 +786,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
 			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
+		if (agents == null || agents.isEmpty()) return;
 		final File f = new File(path);
 		createParents(f);
 
@@ -803,13 +803,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			final List<Object> values = new ArrayList<>();
-			System.out.println("size: "+  agents.size());
 			for (final IShape ag : agents) {
 				values.clear();
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				// geometry is by convention (in specs) at position 0
 				if (ag.getInnerGeometry() == null) {
-					System.out.println("geometry null");
 					continue;
 				}
 				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
