@@ -100,10 +100,12 @@ class ShapeExecuter extends DrawExecuter {
 				gg = GeometryUtils.GEOMETRY_FACTORY.createPoint(attributes.getLocation());
 			} else {
 				final GamaPoint location = attributes.getLocation();
-				final double dx = location.x - center.x;
-				final double dy = location.y - center.y;
-				final double dz = location.z - center.z;
-				GeometryUtils.translate(gg, dx, dy, dz);
+				if (location != null) {
+					final double dx = location.x - center.x;
+					final double dy = location.y - center.y;
+					final double dz = location.z - center.z;
+					GeometryUtils.translate(gg, dx, dy, dz);
+				}
 			}
 			gg.geometryChanged();
 		}
