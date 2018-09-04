@@ -8,7 +8,7 @@
 model MQQT_HelloWorld_Send
 
 global {	
-	list<string> clients <-["send","receive"];
+	list<string> clients <-["sender","receiver"];
 	init {
 		write "A MQTT server should run." color: #red;
 		write "Another instance of GAMA should run the model Example_MQTT_Receive.gaml, too show how agents receive messages.";
