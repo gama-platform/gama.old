@@ -54,7 +54,7 @@ species NetworkingAgent skills:[network]{
 	{
 		write "sending message: " + self;
 		do send to:"sender" contents:self;
-		do send to:"receive" contents:self;
+		do send to:"receiver" contents:self;
 	}
 	
 	reflex receive
