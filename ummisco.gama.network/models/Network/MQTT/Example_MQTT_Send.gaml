@@ -53,7 +53,7 @@ species NetworkingAgent skills:[network]{
 	reflex send3 when: cycle mod 10  = 8
 	{
 		write "sending message: " + self;
-		do send to:"send" contents:self;
+		do send to:"sender" contents:self;
 		do send to:"receive" contents:self;
 	}
 	

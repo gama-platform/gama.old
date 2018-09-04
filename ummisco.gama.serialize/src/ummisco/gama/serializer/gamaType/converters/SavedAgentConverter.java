@@ -67,9 +67,12 @@ public class SavedAgentConverter implements Converter {
 		writer.endNode();
 		
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		writer.startNode("innerPopulations");
-		context.convertAnother(inPop);
-		writer.endNode();
+		if(inPop!=null)
+		{
+			writer.startNode("innerPopulations");
+			context.convertAnother(inPop);
+			writer.endNode();			
+		}
 	}
 
 	@Override
@@ -91,11 +94,14 @@ public class SavedAgentConverter implements Converter {
 		for (int ii = 0; ii < keys.size(); ii++) {
 			localData.put(keys.get(ii), datas.get(ii));
 		}
-		
-		reader.moveDown();
 		Map<String, List<SavedAgent>> inPop = null;
-		inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
-		reader.moveUp();
+		
+		if(reader.hasMoreChildren())
+		{
+			reader.moveDown();
+			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
+			reader.moveUp();			
+		}
 
 		final SavedAgent agtToReturn = new SavedAgent(index, localData, inPop);
 
