@@ -157,7 +157,7 @@ public class FocusStatement extends AbstractStatement {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					String nameVarTemp;
-					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, Types.STRING, Types.NO_TYPE);
 					final IList<?> variablesTemp = ((IContainer<?, ?>) variable.value(scope)).listValue(scope, null,
 							true);
 					for (int temp = 0; temp < variablesTemp.length(scope); temp++) {
