@@ -27,7 +27,7 @@ global
 		create Flooding."Adapter";
 	
 		//create the Evacuation micro-model's experiment
-		create Evacuation."Adapter" number:length(offset)
+		create Evacuation."Adapter of Evacuation" number:length(offset)
 		{
 			centroid <- myself.offset[int(self)];
 			target_point <- myself.exits[int(self)];
@@ -53,14 +53,14 @@ global
 		}
 
 		//people evacate 
-		ask Evacuation."Adapter" collect each.simulation
+		ask Evacuation."Adapter of Evacuation" collect each.simulation
 		{
 			//depending on the real plan of evacuation, we can test the speed of the evacuation with the speed of flooding by doing more or less simulation step 
 				do _step_;
 		}
 		
 		//loop over the population
-		loop thePeople over: Evacuation."Adapter"  accumulate each.get_people()
+		loop thePeople over: Evacuation."Adapter of Evacuation"  accumulate each.get_people()
 		{
 			//get the cell at people's location 
 			cell theWater <- cell(first(Flooding."Adapter").get_cell_at(thePeople.location));
@@ -87,8 +87,8 @@ experiment simple type: gui
 	{
 		display "Comodel Display"  type:opengl
 		{
-			agents "building" value: Evacuation."Adapter"  accumulate each.get_building();
-			agents "people" value:  Evacuation."Adapter"  accumulate each.get_people();
+			agents "building" value: Evacuation."Adapter of Evacuation"  accumulate each.get_building();
+			agents "people" value:  Evacuation."Adapter of Evacuation"  accumulate each.get_people();
 			graphics "exits" refresh:false{
 				loop e over: exits
 				{
@@ -101,7 +101,7 @@ experiment simple type: gui
 			agents "dyke" value: first(Flooding."Adapter").get_dyke() aspect: geometry ;
 			graphics 'CasualtyView' 
 			{
-				draw ('Casualty: ' + casualty) at: { 1500, 5200 } font: font("Arial", 24, # bold) color: # red;
+				draw ('Casualty: ' + casualty +"/"+sum(Evacuation."Adapter of Evacuation"  accumulate (each.simulation.nb_people))) at: { 1000, 5200 } font: font("Arial", 24, # bold) color: # red;
 			}
 		}
 

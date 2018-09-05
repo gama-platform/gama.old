@@ -7,7 +7,7 @@
 model evacuation_adapter
 
 import "../../../../Toy Models/Evacuation/models/Continuous Move.gaml"
-experiment "Adapter" type: gui
+experiment "Adapter of Evacuation" type: gui
 {
 	point centroid <- { 200, 580 };
 	list<building> get_building

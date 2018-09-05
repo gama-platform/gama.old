@@ -8,7 +8,7 @@ model predator_prey_adapter
 
 import "../../../../Tutorials/Predator Prey/models/Model 06.gaml"
 
-experiment Adapter type: gui
+experiment Adapter2 type: gui
 {
 	point centroid <- { 0, 100 };
  

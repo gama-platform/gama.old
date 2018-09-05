@@ -11,7 +11,7 @@ import "Adapters/Voronoi Adapter.gaml" as Voronoi
 
 global
 {
-	int width_and_height_of_environment<-100;
+	int width_and_height_of_environment<-200;
 	// set the bound of the environment
 	geometry shape <- envelope(width_and_height_of_environment);
 	
@@ -24,7 +24,7 @@ global
 			number_of_agents::10
 		];
 		//create experiment form micro-model Voronoi
-		create Voronoi."Adapter" with:[
+		create Voronoi."Adapter 2" with:[
 			num_points::Boids."Adapter"[0].simulation.number_of_agents, 
 			env_width::width_and_height_of_environment, 
 			env_height::width_and_height_of_environment
@@ -38,7 +38,7 @@ global
 		//get all boids's location into a list
 		list<point> theLocations<-(Boids."Adapter" accumulate each.get_boids()) collect each.location;
 		//myVoronoi do a step with the location of their agent from the location list above 
-		ask (Voronoi."Adapter" collect each.simulation){ ask center{location<-theLocations at (int(self)); }do _step_;}
+		ask (Voronoi."Adapter 2" collect each.simulation){ ask center{location<-theLocations at (int(self)); }do _step_;}
 	}
 
 }
@@ -49,11 +49,11 @@ experiment main type: gui
 	{
 		display "Comodel Display"  
 		{
-			agents "cell" value: (Voronoi."Adapter" accumulate each.get_cell()) transparency:0.5;
+			agents "cell" value: (Voronoi."Adapter 2" accumulate each.get_cell()) transparency:0.5;
 			
 			agents "boids_goal" value: (Boids."Adapter" accumulate each.get_boids_goal()) aspect:default;
 			
-			agents "boids" value: (Boids."Adapter" accumulate each.get_boids()) {draw triangle(5) color:#blue;}
+			agents "boids" value: (Boids."Adapter" accumulate each.get_boids())  aspect:default;
 			
 		}
 
