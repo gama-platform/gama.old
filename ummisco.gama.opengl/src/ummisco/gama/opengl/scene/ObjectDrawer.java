@@ -54,13 +54,31 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 					factor = Math.min(min_xy, size.getZ() / env.getDepth());
 				}
 				if (factor != 1d) {
+					object.getTranslationForScalingInto(loc);
+					gl.translateBy(loc.x * (1 - factor), -loc.y * (1 - factor), loc.z * (1 - factor));
 					gl.scaleBy(factor, factor, factor);
+
 				}
 				return true;
 			}
 		}
 		return false;
 
+	}
+
+	private final GamaPoint loc = new GamaPoint();
+
+	/**
+	 * Applies a translation to the gl context
+	 * 
+	 * @param object
+	 *            the object defining the translation
+	 * @return true if a translation occured, false otherwise
+	 */
+	protected boolean applyTranslation(final T object) {
+		object.getTranslationInto(loc);
+		gl.translateBy(loc.x, -loc.y, loc.z);
+		return true;
 	}
 
 	protected boolean isDrawing2D(final Scaling3D size, final Envelope3D env, final T object) {
@@ -78,16 +96,12 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	protected boolean applyRotation(final T object) {
 		final AxisAngle rotation = object.getAttributes().getRotation();
 		if (rotation == null) { return false; }
-		final GamaPoint loc = object.getAttributes().getLocation();
-		try {
-			gl.translateBy(loc.x, -loc.y, loc.z);
-			final GamaPoint axis = rotation.getAxis();
-			// AD Change to a negative rotation to fix Issue #1514
-			gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
-
-		} finally {
-			gl.translateBy(-loc.x, loc.y, -loc.z);
-		}
+		object.getTranslationForRotationInto(loc);
+		gl.translateBy(loc.x, -loc.y, loc.z);
+		final GamaPoint axis = rotation.getAxis();
+		// AD Change to a negative rotation to fix Issue #1514
+		gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
+		gl.translateBy(-loc.x, loc.y, -loc.z);
 		return true;
 	}
 

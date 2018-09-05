@@ -141,7 +141,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	// Working objects
 	final GamaPoint workingPoint = new GamaPoint();
 	final GamaPoint currentNormal = new GamaPoint();
-	final GamaPoint currentScale = new GamaPoint(1, 1, 1);
+	// final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
@@ -449,7 +449,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void scaleBy(final double x, final double y, final double z) {
-		currentScale.setLocation(x, y, z);
+		// currentScale.setLocation(x, y, z);
 		gl.glScaled(x, y, z);
 	}
 

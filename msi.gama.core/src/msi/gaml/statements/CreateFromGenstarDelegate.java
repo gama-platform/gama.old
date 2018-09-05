@@ -38,7 +38,7 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	 */
 	@Override
 	public boolean acceptSource(IScope scope, final Object source) {
-		return source instanceof List && ((List) source).get(0) instanceof String
+		return source instanceof List && !((List) source).isEmpty() && ((List) source).get(0) instanceof String
 				&& ((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION);
 	}
 

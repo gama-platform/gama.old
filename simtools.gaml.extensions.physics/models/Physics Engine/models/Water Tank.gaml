@@ -14,7 +14,7 @@ global {
 	int height_of_environment parameter: 'Dimensions' init: 100;
 	
 	//Parameters for the ball species
-	int nb_balls parameter: 'Number of Agents' min: 1 <- 500;
+	int nb_balls parameter: 'Number of Agents' min: 1 <- 1000;
 	int size_of_agents parameter: 'Size of Agents' min: 1 <- 1;
 	
 	

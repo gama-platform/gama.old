@@ -169,8 +169,8 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	// Connect connection parameters with the new parameter
 	public Map<String, Object> createConnectionParams(final IScope scope, final Map<String, Object> params) {
-		final Map<String, Object> connectionParameters = new HashMap<>();
-
+		final Map<String, Object> connectionParameters = new HashMap<String, Object>();
+		
 		final String dbtype = (String) params.get("dbtype");
 		final String host = (String) params.get("host");
 		final String port = (String) params.get("port");

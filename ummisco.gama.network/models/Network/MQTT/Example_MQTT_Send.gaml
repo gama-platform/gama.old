@@ -8,7 +8,7 @@
 model MQQT_HelloWorld_Send
 
 global {	
-	list<string> clients <-["send","receive"];
+	list<string> clients <-["sender","receiver"];
 	init {
 		write "A MQTT server should run." color: #red;
 		write "Another instance of GAMA should run the model Example_MQTT_Receive.gaml, too show how agents receive messages.";
@@ -53,8 +53,8 @@ species NetworkingAgent skills:[network]{
 	reflex send3 when: cycle mod 10  = 8
 	{
 		write "sending message: " + self;
-		do send to:"send" contents:self;
-		do send to:"receive" contents:self;
+		do send to:"sender" contents:self;
+		do send to:"receiver" contents:self;
 	}
 	
 	reflex receive

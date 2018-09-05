@@ -1,22 +1,21 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * simtools.gaml.extensions.traffic.DrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- * 'DrivingSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the GAMA modeling
- * and simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.Collection;
 import java.util.Collections;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.GeometryUtils;
@@ -650,21 +649,15 @@ public class DrivingSkill extends MovingSkill {
 			double distanceS = Double.MAX_VALUE;
 			double distanceT = Double.MAX_VALUE;
 			final IShape line = currentRoad.getGeometry();
-			final Point pointS = (Point) currentLocation.getInnerGeometry();
-			final Point pointT = (Point) falseTarget.getInnerGeometry();
-			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+			final GamaPoint coords[] = GeometryUtils.getPointsOf(line); // .getInnerGeometry().getCoordinates();
 			final int nbSp = coords.length;
-			final Coordinate[] temp = new Coordinate[2];
 			for (int i = 0; i < nbSp - 1; i++) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
-				final double distS = segment.distance(pointS);
+				final double distS = CGAlgorithms.distancePointLine(currentLocation, coords[i], coords[i + 1]);
 				if (distS < distanceS) {
 					distanceS = distS;
 					indexSegment = i + 1;
 				}
-				final double distT = segment.distance(pointT);
+				final double distT = CGAlgorithms.distancePointLine(falseTarget, coords[i], coords[i + 1]);
 				if (distT < distanceT) {
 					distanceT = distT;
 					endIndexSegment = i + 1;

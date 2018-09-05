@@ -10,30 +10,37 @@
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
+import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
+import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
+import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
+import static msi.gama.common.geometry.GeometryUtils.rotate;
+import static msi.gama.common.geometry.GeometryUtils.translate;
+import static msi.gama.common.geometry.Scaling3D.of;
+import static msi.gama.metamodel.shape.IShape.DEPTH_ATTRIBUTE;
+import static msi.gama.util.GamaListFactory.create;
+import static msi.gaml.operators.Cast.asFloat;
+import static msi.gaml.operators.Cast.asGeometry;
+import static msi.gaml.types.GamaFileType.createFile;
+import static msi.gaml.types.GamaGeometryType.buildArrow;
+
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.geometry.AxisAngle;
-import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
 class ShapeExecuter extends DrawExecuter {
@@ -42,15 +49,16 @@ class ShapeExecuter extends DrawExecuter {
 	final IShape constantShape;
 	final Double constantEnd, constantBegin;
 	final boolean hasArrows;
+	final GamaPoint center = new GamaPoint();
 
 	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
 			throws GamaRuntimeException {
 		super(item);
-		constantShape = item.isConst() ? Cast.asGeometry(null, item.getConstValue()) : null;
+		constantShape = item.isConst() ? asGeometry(null, item.getConstValue()) : null;
 		hasArrows = beginArrow != null || endArrow != null;
 		if (beginArrow != null) {
 			if (beginArrow.isConst()) {
-				constantBegin = Cast.asFloat(null, beginArrow.getConstValue());
+				constantBegin = asFloat(null, beginArrow.getConstValue());
 				this.beginArrow = null;
 			} else {
 				constantBegin = null;
@@ -62,7 +70,7 @@ class ShapeExecuter extends DrawExecuter {
 		}
 		if (endArrow != null) {
 			if (endArrow.isConst()) {
-				constantEnd = Cast.asFloat(null, endArrow.getConstValue());
+				constantEnd = asFloat(null, endArrow.getConstValue());
 				this.endArrow = null;
 			} else {
 				constantEnd = null;
@@ -77,31 +85,41 @@ class ShapeExecuter extends DrawExecuter {
 
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
-		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
+		final IShape shape = constantShape == null ? asGeometry(scope, item.value(scope), false) : constantShape;
 		if (shape == null) { return null; }
-		// final Geometry geom = shape.getInnerGeometry();
 		final ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
-		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
-		// otherwise we just pre-translate it (the rotation in 3D will be
-		// handled separately once the complete shapes are built)
+		Geometry gg = shape.getInnerGeometry();
+		if (gg == null) { return null; }
+		final ICoordinates ic = getContourCoordinates(gg);
+		ic.ensureClockwiseness();
 
+		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
 		if (gr.is2D()) {
-			final AxisAngle rotation = attributes.getRotation();
-			shape = new GamaShape(shape, null, rotation, attributes.getLocation());
-		} else {
-			shape = new GamaShape(shape, null, null, attributes.getLocation());
+			ic.getCenter(center);
+			rotate(gg, center, attributes.getRotation());
+			final GamaPoint location = attributes.getLocation();
+			if (location != null) {
+				if (gg.getNumPoints() == 1) {
+					gg = GEOMETRY_FACTORY.createPoint(location);
+				} else {
+					translate(gg, center, location);
+				}
+			}
+			gg.geometryChanged();
 		}
-		// We add the arrows if any
-		shape = addArrows(scope, shape, !attributes.isEmpty());
-		// As well as the parts of the shape that can belong to a toroidal
-		// representation
-		shape = addToroidalParts(scope, shape);
-		// In case the shape has been changed
-		attributes.type = shape.getGeometricalType();
+		final Geometry withArrows = addArrows(scope, gg, !attributes.isEmpty());
+		if (withArrows != gg) {
+			gg = withArrows;
+			attributes.type = IShape.Type.NULL;
+		}
+		final Geometry withTorus = addToroidalParts(scope, gg);
+		if (withTorus != gg) {
+			gg = withTorus;
+			attributes.type = IShape.Type.NULL;
+		}
 
 		// XXX EXPERIMENTAL See Issue #1521
-		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue()
-				&& /* !GAMA.isInHeadLessMode() */ !scope.getExperiment().isHeadless()) {
+		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !scope.getExperiment().isHeadless()) {
 			final Envelope e = shape.getEnvelope();
 			final Envelope visible = gr.getVisibleRegion();
 			if (visible != null) {
@@ -113,20 +131,16 @@ class ShapeExecuter extends DrawExecuter {
 		// The textures are computed as well in advance
 		addTextures(scope, attributes);
 		// And we ask the IGraphics object to draw the shape
-		return gr.drawShape(shape.getInnerGeometry(), attributes);
+		return gr.drawShape(gg, attributes);
 	}
 
 	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(Scaling3D.of(data.size.get()),
-				data.depth.get(), data.rotation.get(), data.getLocation(), data.empty.get(), data.getCurrentColor(),
-				data.getColors(), data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(of(data.size.get()), data.depth.get(),
+				data.rotation.get(), data.getLocation(), data.empty.get(), data.getCurrentColor(), data.getColors(),
+				data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
 				shape.getGeometricalType(), data.lineWidth.get(), data.lighting.get());
 		// We push the depth of the geometry if none have been specified already
-		attributes.setHeightIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
-		// We push the (perhaps new) location of the shape to the attributes.
-		// Can be necessary as
-		// the attributes can have a wrong location
-		attributes.setLocationIfAbsent(shape.getLocation().toGamaPoint());
+		attributes.setHeightIfAbsent((Double) shape.getAttribute(DEPTH_ATTRIBUTE));
 		return attributes;
 	}
 
@@ -137,7 +151,7 @@ class ShapeExecuter extends DrawExecuter {
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if (attributes.getTextures() == null) { return; }
-		final List textures = GamaListFactory.create(Types.STRING);
+		final List textures = create(Types.STRING);
 		textures.addAll(attributes.getTextures());
 		attributes.getTextures().clear();
 		for (final Object s : textures) {
@@ -145,7 +159,7 @@ class ShapeExecuter extends DrawExecuter {
 			if (s instanceof GamaImageFile) {
 				image = (GamaImageFile) s;
 			} else if (s instanceof String) {
-				image = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
+				image = (GamaImageFile) createFile(scope, (String) s, null);
 			}
 			if (image == null || !image.exists(scope)) {
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
@@ -160,37 +174,43 @@ class ShapeExecuter extends DrawExecuter {
 	 * @param shape
 	 * @return
 	 */
-	private IShape addToroidalParts(final IScope scope, final IShape shape) {
-		IShape result = shape;
+	private Geometry addToroidalParts(final IScope scope, final Geometry shape) {
+		Geometry result = shape;
 		final ITopology t = scope.getTopology();
 		if (t != null && t.isTorus()) {
-			final List<Geometry> geoms = t.listToroidalGeometries(shape.getInnerGeometry());
-			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
+			final List<Geometry> geoms = t.listToroidalGeometries(shape);
+			final Geometry all = GEOMETRY_FACTORY.buildGeometry(geoms);
 			final Geometry world = scope.getSimulation().getInnerGeometry();
-			result = new GamaShape(all.intersection(world));
+			result = all.intersection(world);
 			// WARNING Does not correctly handle rotations or translations
 		}
 		return result;
 	}
 
-	private IShape addArrows(final IScope scope, final IShape g1, final Boolean fill) {
+	private final List<Geometry> tempArrowList = new ArrayList<>();
+
+	private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
 		if (!hasArrows) { return g1; }
-		final GamaPoint[] points = GeometryUtils.getPointsOf(g1);
+		final GamaPoint[] points = getPointsOf(g1);
 		final int size = points.length;
 		if (size < 2) { return g1; }
-		IShape end = null, begin = null;
+		tempArrowList.clear();
+		tempArrowList.add(g1);
+		Geometry end = null, begin = null;
 		if (endArrow != null || constantEnd != null) {
-			final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;
+			final double width = constantEnd == null ? asFloat(scope, endArrow.value(scope)) : constantEnd;
 			if (width > 0) {
-				end = GamaGeometryType.buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill);
+				end = buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill).getInnerGeometry();
+				tempArrowList.add(end);
 			}
 		}
 		if (beginArrow != null || constantBegin != null) {
-			final double width = constantBegin == null ? Cast.asFloat(scope, beginArrow.value(scope)) : constantBegin;
+			final double width = constantBegin == null ? asFloat(scope, beginArrow.value(scope)) : constantBegin;
 			if (width > 0) {
-				begin = GamaGeometryType.buildArrow(points[1], points[0], width, width + width / 3, fill);
+				begin = buildArrow(points[1], points[0], width, width + width / 3, fill).getInnerGeometry();
+				tempArrowList.add(begin);
 			}
 		}
-		return GamaGeometryType.buildMultiGeometry(g1, begin, end);
+		return GEOMETRY_FACTORY.createGeometryCollection(tempArrowList.toArray(new Geometry[tempArrowList.size()]));
 	}
 }

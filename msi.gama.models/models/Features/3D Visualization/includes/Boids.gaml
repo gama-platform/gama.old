@@ -161,7 +161,7 @@ species boids skills: [moving] {
 	}
 	
 	aspect image {
-		draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]);      
+		draw (images at (rnd(2))) size: 35 rotate: heading color: rgb([0,0,rnd(200) + 55]) ;      
 	}
 	aspect circle { 
 		draw circle(15) rotate: 90 + heading color: #red;
@@ -216,7 +216,7 @@ experiment Boids_gui type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		display Sky type: opengl
+		display Sky type: opengl synchronized: true
 		{
 			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;

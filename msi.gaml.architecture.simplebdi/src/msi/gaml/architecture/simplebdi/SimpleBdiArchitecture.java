@@ -2100,7 +2100,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primOnHoldIntention(final IScope scope) throws GamaRuntimeException {
-		final Predicate predicate = currentIntention(scope).getPredicate();
+		Predicate predicate = null; 
+		if(currentIntention(scope)!=null) {
+			predicate = currentIntention(scope).getPredicate();
+		}
 		final Object until = scope.hasArg("until") ? scope.getArg("until", IType.NONE) : null;
 		if (predicate != null) {
 			if (until == null) {

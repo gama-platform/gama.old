@@ -334,7 +334,7 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					<useProjectSettings>true</useProjectSettings>
+					<useProjectSettings>false</useProjectSettings>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -193,9 +193,9 @@ public class SolveStatement extends AbstractStatement {
 		if (solver == null)
 			return null;
 		double sss=scope.getSimulation().getTimeStep(scope);
-		final double timeInit = timeInitExp == null ? scope.getSimulation().getClock().getCycle() / sss
+		final double timeInit = timeInitExp == null ? scope.getSimulation().getClock().getCycle() * sss
 				: Cast.asFloat(scope, timeInitExp.value(scope));
-		final double timeFinal = timeFinalExp == null ? (scope.getSimulation().getClock().getCycle() + 1)/sss// scope.getSimulationScope().getClock().getStep()
+		final double timeFinal = timeFinalExp == null ? (scope.getSimulation().getClock().getCycle() + 1) * sss// scope.getSimulationScope().getClock().getStep()
 				: Cast.asFloat(scope, timeFinalExp.value(scope));
 		// if (cycleLength > 1.0) {
 		// timeInit /= cycleLength;
