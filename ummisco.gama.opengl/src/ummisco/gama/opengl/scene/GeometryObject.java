@@ -45,9 +45,7 @@ public class GeometryObject extends AbstractObject<Geometry, FileDrawingAttribut
 		if (explicitLocation == null) {
 			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
 		} else {
-			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
-			p.negate();
-			p.add(explicitLocation);
+			p.setLocation(explicitLocation);
 		}
 	}
 

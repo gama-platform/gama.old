@@ -1007,12 +1007,26 @@ public class GeometryUtils {
 		}
 	}
 
+	public static void translate(final Geometry geometry, final GamaPoint previous, final GamaPoint location) {
+		final double dx = location.x - previous.x;
+		final double dy = location.y - previous.y;
+		final double dz = location.z - previous.z;
+		translate(geometry, dx, dy, dz);
+	}
+
 	public static void translate(final Geometry geometry, final double dx, final double dy, final double dz) {
 		geometry.apply((final Coordinate p) -> {
 			p.x += dx;
 			p.y += dy;
 			p.z += dz;
 		});
+		geometry.geometryChanged();
+	}
+
+	public static void rotate(final Geometry geometry, final GamaPoint center, final AxisAngle rotation) {
+		if (rotation == null) { return; }
+		final Rotation3D r = new Rotation3D.CenteredOn(rotation, center);
+		geometry.apply(r);
 		geometry.geometryChanged();
 	}
 

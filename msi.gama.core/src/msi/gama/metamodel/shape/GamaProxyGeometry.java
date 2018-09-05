@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import static msi.gama.common.geometry.GeometryUtils.translate;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
@@ -253,11 +255,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	@Override
 	public Geometry getInnerGeometry() {
 		final Geometry copy = (Geometry) getReferenceGeometry().getInnerGeometry().clone();
-		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
-		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
-		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
-		GeometryUtils.translate(copy, dx, dy, dz);
-		copy.geometryChanged();
+		translate(copy, getReferenceGeometry().getLocation().toGamaPoint(), getLocation().toGamaPoint());
 		return copy;
 	}
 

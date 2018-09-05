@@ -206,6 +206,8 @@ experiment traffic type: gui {
 	parameter "maximal speed" var: max_speed category: "People" ;
 	
 	output {
+		layout #split;
+		
 		display city_display {
 			species road aspect: road_width ;
 			species building aspect: base;
@@ -220,7 +222,7 @@ experiment traffic type: gui {
 				data "Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: #green ;
 				data "Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: #red ;
 			}
-			chart "People Objectif" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
+			chart "People Goals" type: pie style: exploded size: {0.9, 0.4} position: {0.05, 0.55} {
 				data "Working" value: length ((people as list) where (each.objective="working")) color: #green ;
 				data "Staying home" value: length ((people as list) where (each.objective="go home")) color: #blue ;
 			}
