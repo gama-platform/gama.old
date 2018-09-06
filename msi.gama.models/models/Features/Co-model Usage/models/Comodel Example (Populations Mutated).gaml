@@ -16,7 +16,7 @@ global
 	init
 	{
 		//instantiate three instant of micro-model PreyPredator
-		create Organism.Simple with: [shape::square(100), preyinit::rnd(20), predatorinit::1] number: 3;
+		create Organism.Simple with: [shape::square(100), preyinit::20, predatorinit::1] number: 3;
 		
 		//explicitly save the orginal population of predator and original population of prey of each micro-model
 		
@@ -78,7 +78,7 @@ experiment main type: gui
 	output
 	{
 		//a mixing display of all agents from all populations
-		display "Comodel display"
+		display "Comodel display" synchronized:true
 		{
 			agents "agentprey" value: (Organism.Simple accumulate each.get_prey());
 			agents "agentpredator" value: (Organism.Simple accumulate each.get_predator());

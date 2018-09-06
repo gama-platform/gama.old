@@ -9,7 +9,7 @@ model voronoi_adapter
 import "../../../../Toy Models/Voronoi/Voronoi.gaml"
 
 
-experiment "Adapter" type:gui  {
+experiment "Adapter 2" type:gui  {
 	
 	list<center> get_center{
 		return list(center);

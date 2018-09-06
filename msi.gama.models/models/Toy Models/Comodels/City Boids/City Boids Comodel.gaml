@@ -18,7 +18,7 @@ global
 	init
 	{	
 		//create experiment from micro-model Boids
-		create Boids."Adapter" with: [
+		create Boids."Adapter of Boids" with: [
 			shape::square(width_and_height_of_environment), 
 			width_and_height_of_environment::width_and_height_of_environment, 
 			z_max::100,
@@ -27,7 +27,7 @@ global
 		//create experiment form micro-model Procedural City
 		create City."Adapter" 
 		with:[
-			 number_of_building::Boids."Adapter"[0].simulation.number_of_agents,
+			 number_of_building::Boids."Adapter of Boids"[0].simulation.number_of_agents,
 			width_and_height_of_environment::width_and_height_of_environment
 		];
 	}
@@ -37,7 +37,7 @@ global
  
 		
 		//loop over the population
-		loop theBoid over: (Boids."Adapter"[0]).get_boids()
+		loop theBoid over: (Boids."Adapter of Boids"[0]).get_boids()
 		{
 			Building theBuilding <- Building((City."Adapter"[0]).get_building_at(theBoid)); 
 			if(theBuilding != nil){				
@@ -53,7 +53,7 @@ global
 		
 		
 		//tell myBoids to step a cycle
-		ask (Boids."Adapter" collect each.simulation){ do _step_;}
+		ask (Boids."Adapter of Boids" collect each.simulation){ do _step_;}
 	}
 
 }
@@ -67,9 +67,9 @@ experiment main type: gui
 		{
 			agents "Building" value: (City."Adapter" accumulate each.get_building()) aspect:textured;		
 			
-			agents "boids_goal" value: (Boids."Adapter" accumulate each.get_boids_goal()) ;
+			agents "boids_goal" value: (Boids."Adapter of Boids" accumulate each.get_boids_goal()) ;
 			
-			agents "boids" value: (Boids."Adapter" accumulate each.get_boids())  aspect: image;
+			agents "boids" value: (Boids."Adapter of Boids" accumulate each.get_boids())  aspect: image;
 			
 		}
 

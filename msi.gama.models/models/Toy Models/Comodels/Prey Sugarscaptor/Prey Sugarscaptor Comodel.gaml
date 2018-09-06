@@ -31,7 +31,7 @@ global
 	init
 	{  
 		int i <- -1;
-		create Preydator.Adapter number: grid_size_Preydator*grid_size_Preydator
+		create Preydator.Adapter2 number: grid_size_Preydator*grid_size_Preydator
 		{
 			seed<-float(rnd(1111));
 			i<-i+1;
@@ -48,7 +48,7 @@ global
 			do transform_environment;
 		} 
 		
-		micro_models_Preydator<- Preydator.Adapter collect each.simulation;
+		micro_models_Preydator<- Preydator.Adapter2 collect each.simulation;
 		micro_models_Sugar<- Sugar.Adapter collect each.simulation;
 
 	}
@@ -84,11 +84,11 @@ experiment main type: gui
 
 				grid G lines: # red transparency:0.2;				
 				
-				agents "vegetation_cell" value: Preydator.Adapter accumulate each.simulation.vegetation_cell ;
+				agents "vegetation_cell" value: Preydator.Adapter2 accumulate each.simulation.vegetation_cell ;
 				
 				agents "sugar_cell" value: Sugar.Adapter accumulate each.simulation.sugar_cell transparency:0.7;
 
-				agents "prey" value: Preydator.Adapter accumulate each.simulation.prey aspect:base;
+				agents "prey" value: Preydator.Adapter2 accumulate each.simulation.prey aspect:base;
 						
 				agents "animal" value: Sugar.Adapter accumulate each.simulation.animal aspect:default;
 				

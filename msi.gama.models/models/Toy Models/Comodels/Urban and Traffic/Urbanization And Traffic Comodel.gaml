@@ -24,7 +24,7 @@ global
 	init
 	{
 		//create Traffic micro-model's experiment
-		create Traffic."Adapter"{
+		create Traffic."Adapter of Traffice"{
 			do transform;
 		}
 		//create Urban micro-model;s experiment
@@ -35,7 +35,7 @@ global
 	reflex simulate_micro_models
 	{
 		//ask simulation of micro-model step one
-		ask Traffic."Adapter" collect each.simulation
+		ask Traffic."Adapter of Traffice" collect each.simulation
 		{
 			do _step_;
 		}
@@ -47,7 +47,7 @@ global
 			{
 				do _step_;
 			}
-			loop r over: Traffic."Adapter"[0].simulation.road
+			loop r over: Traffic."Adapter of Traffice"[0].simulation.road
 			{
 				// compute the cell overlaps the road, which means the size of population
 				list l <- Urbanization."Adapter"[0].simulation.plot where (each.grid_value = 1.0 and each overlaps r);
@@ -73,14 +73,14 @@ global
 	
 	action build_a_new_road
 	{
-		road r1 <- any(Traffic."Adapter"[0].simulation.road);
-		road r2 <- any(Traffic."Adapter"[0].simulation.road);
+		road r1 <- any(Traffic."Adapter of Traffice"[0].simulation.road);
+		road r2 <- any(Traffic."Adapter of Traffice"[0].simulation.road);
 		point p1 <- any_point_in(r1.shape);
 		point p2 <- any_point_in(r2.shape);
 		geometry newroad <- line([p1, p2]);
 		list<geometry> nr <- [];
 		list<point> i1 <- [p1, p2];
-		list rrr <- (Traffic."Adapter"[0].simulation.road) sort_by (each distance_to p1);
+		list rrr <- (Traffic."Adapter of Traffice"[0].simulation.road) sort_by (each distance_to p1);
 		loop i from: 0 to: length(rrr) - 1
 		{
 			if (newroad intersects rrr[i])
@@ -93,7 +93,7 @@ global
 					if (length(s) > 1)
 					{
 						rrr[i].shape <- s[0];
-						ask Traffic."Adapter"[0].simulation
+						ask Traffic."Adapter of Traffice"[0].simulation
 						{
 							create road from: list(s[1]);
 						}
@@ -110,7 +110,7 @@ global
 		loop i from: 0 to: length(i1) - 2
 		{
 			nr <+ line([i1[i], i1[i + 1]]);
-			ask Traffic."Adapter"[0].simulation
+			ask Traffic."Adapter of Traffice"[0].simulation
 			{
 				road_network << edge(i1[i], i1[i + 1]);
 			}
@@ -121,7 +121,7 @@ global
 		{
 			if(ee!=nil){
 				
-			ask Traffic."Adapter"[0].simulation
+			ask Traffic."Adapter of Traffice"[0].simulation
 			{
 				create road from: list(ee)
 				{
@@ -144,9 +144,9 @@ experiment main type: gui
 		{
 			agents "cell" value: (Urbanization."Adapter"[0]).get_plot() transparency:0.75;
 
-			agents "road" 		value: Traffic."Adapter"[0].get_road();
-			agents "building" 	value: Traffic."Adapter"[0].get_building();
-			agents "people" 	value: Traffic."Adapter"[0].get_people();
+			agents "road" 		value: Traffic."Adapter of Traffice"[0].get_road();
+			agents "building" 	value: Traffic."Adapter of Traffice"[0].get_building();
+			agents "people" 	value: Traffic."Adapter of Traffice"[0].get_people() aspect:default;
 		}
 
 	}
