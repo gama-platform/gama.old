@@ -47,18 +47,9 @@ species preSI {
 
 	// must be followed with exact order S, I, t  and N,beta
 	equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
-	/*reflex solving {
-		list i_list;
-		//solve eqSI method: "dp853" step: 0.01 cycle_length: 100 min_step: 1 max_step: 1 scalAbsoluteTolerance: 1 scalRelativeTolerance: 1 integrated_times: i_list ;
-		//solve eqSI method:rk4 step:h;
-	}*/
 	
 	reflex solving {
-		list i_list;
-		list v_list ;
-		solve eqSI method: "rk4" step: h ;//cycle_length: 1/h integrated_times: i_list integrated_values: v_list;
-		write "i_list: " + i_list;
-		write "v_list:" + v_list;
+		solve eqSI method: rk4 step: h ;
 	}
 }
 
@@ -74,8 +65,10 @@ species userSI {
 		diff(S,t) = -beta * S * I / N ;
 		diff(I,t) = beta * S * I / N ;
 	}		
-	reflex solving{solve eqSI method:rk4 step:h;}
 	
+	reflex solving{
+		solve eqSI method: rk4 step: h;
+	}
 }
 
 
@@ -90,8 +83,9 @@ species preSIS {
 
 	// must be followed with exact order S, I, t  and N,beta
 	equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
+	
 	reflex solving {
-		solve eqSIS method:rk4 step:h;
+		solve eqSIS method: rk4 step: h;
 	}
 }
 
@@ -108,8 +102,9 @@ species userSIS {
 		diff(S,t) = -beta * S * I / N + gamma * I;
 		diff(I,t) = beta * S * I / N - gamma * I;
 	}		
+	
 	reflex solving {	
-		solve eqSIS method:rk4 step:h;
+		solve eqSIS method: rk4 step: h;
 	}
 }
 
@@ -124,10 +119,11 @@ species preSIR {
 	float beta<-0.4;
 	float gamma<-0.01; 
 
-	// must be followed with exact order S, I, R, t  and N,beta,delta
-	equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma] ;
+	// must be followed with exact order S, I, R, t  and N, beta, gamma
+	equation eqSIR type: SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
+	
 	reflex solving {	
-		solve eqSIR method:rk4 step:h;
+		solve eqSIR method: rk4 step: h;
 	}
 }
 
@@ -146,8 +142,9 @@ species userSIR{
 		diff(I,t) = (beta * S * I / N) - (gamma * I);
 		diff(R,t) = (gamma * I);
 	}		
+	
 	reflex solving {
-		solve eqSIR method:rk4 step:h;
+		solve eqSIR method: rk4 step: h;
 	}
 }
 
@@ -164,10 +161,11 @@ species preSIRS {
 	float omega <- 0.05;
 	float mu <- 0.01;
 
-	// must be followed with exact order S, I, R, t  and N,beta,delta
+	// must be followed with exact order S, I, R, t  and N,beta,gamma,omega,mu
 	equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
+	
 	reflex solving {
-		solve eqSIRS method:rk4 step:h;
+		solve eqSIRS method: rk4 step: h;
 	}
 }
 
@@ -188,8 +186,9 @@ species userSIRS {
 		 diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
 		 diff(R,t) = gamma * I - omega * R - mu * R ;
 	}		
+	
 	reflex solving {
-		solve eqSIRS method:rk4 step:h;
+		solve eqSIRS method: rk4 step: h;
 	}
 }
 
@@ -209,8 +208,9 @@ species preSEIR {
 
 	// must be followed with exact order S, E, I, R, t  and N,beta,gamma,sigma,mu
 	equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
+	
 	reflex solving {
-		solve eqSEIR method:rk4 step:h;
+		solve eqSEIR method: rk4 step: h;
 	}
 }
 
@@ -233,8 +233,9 @@ species userSEIR {
 		diff(I,t) = sigma * E - mu * I - gamma * I;
 		diff(R,t) = gamma * I - mu * R ;
 	}		
+	
 	reflex solving {
-	solve eqSEIR method:rk4 step:h;
+		solve eqSEIR method: rk4 step: h;
 	}
 }
 
@@ -251,8 +252,9 @@ species preLV {
 
 	// must be followed with exact order x, y, t  and  alpha,beta,delta,gamma
 	equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
+	
 	reflex solving {
-		solve eqLV method:rk4 step:h;
+		solve eqLV method: rk4 step: h;
 	}
 }
 
@@ -270,8 +272,9 @@ species userLV {
 		diff(x,t) =   x * (alpha - beta * y);
 		diff(y,t) = - y * (delta - gamma * x);
     }		
+    
 	reflex solving {
-		solve eqLV method:rk4 step:h;
+		solve eqLV method: rk4 step: h;
 	}
 }
 

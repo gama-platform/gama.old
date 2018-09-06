@@ -8,7 +8,7 @@
 model simple_ODE_SIR
 
 global {
-	init{
+	init {
 		create agent_with_SIR_dynamic number:1;
 	}
 }
@@ -35,7 +35,7 @@ species agent_with_SIR_dynamic {
 	}
                 
     reflex solving {
-    	solve SIR method: "rk4" step: h ;//cycle_length: 1/h ;
+    	solve SIR method: rk4 step: h ;
     }    
 }
 
@@ -44,9 +44,9 @@ experiment maths type: gui {
 	output { 
 		display display_charts {
 			chart "SIR_agent" type: series background: #white {
-				data 'S' value: first(list(agent_with_SIR_dynamic)).S color: #green ;				
-				data 'I' value: first(list(agent_with_SIR_dynamic)).I color: #red ;
-				data 'R' value: first(list(agent_with_SIR_dynamic)).R color: #blue ;
+				data 'S' value: first(agent_with_SIR_dynamic).S color: #green ;				
+				data 'I' value: first(agent_with_SIR_dynamic).I color: #red ;
+				data 'R' value: first(agent_with_SIR_dynamic).R color: #blue ;
 			}
 		}
 	}
