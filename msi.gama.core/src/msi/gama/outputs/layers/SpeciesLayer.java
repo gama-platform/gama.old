@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.SpeciesLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.outputs.layers.SpeciesLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -82,7 +82,7 @@ public class SpeciesLayer extends AgentLayer {
 			if (a == null || a.dead()) {
 				continue;
 			}
-			ExecutionResult result;
+			ExecutionResult result = null;
 			if (a == scope.getGui().getHighlightedAgent()) {
 				IExecutable hAspect = population.getSpecies().getAspect("highlighted");
 				if (hAspect == null) {
@@ -92,7 +92,10 @@ public class SpeciesLayer extends AgentLayer {
 			} else {
 				result = scope.execute(aspect, a, null);
 			}
-			if (result.getValue() instanceof Rectangle2D) {
+			if (result == IScope.FAILED) {
+				break;
+			}
+			if (result != null && result.getValue() instanceof Rectangle2D) {
 				final Rectangle2D r = (Rectangle2D) result.getValue();
 				if (r != null) {
 					shapes.put(a, r);
