@@ -37,7 +37,7 @@ import ummisco.gama.opengl.OpenGL;
 public class TextureCache2 implements ITextureCache {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	private final LoadingCache<BufferedImage, Texture> volatileTextures;

@@ -37,6 +37,10 @@ import ummisco.gama.opengl.OpenGL;
 
 public class TextureCache implements ITextureCache {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	private final LoadingCache<BufferedImage, TextureRenderer> volatileTextures;
 	private final Cache<String, TextureRenderer> staticTextures =
 			CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).build();

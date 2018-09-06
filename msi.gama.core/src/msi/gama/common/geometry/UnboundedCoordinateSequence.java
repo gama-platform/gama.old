@@ -21,7 +21,9 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class UnboundedCoordinateSequence implements ICoordinates {
-	final GamaPoint[] points = new GamaPoint[500];
+
+	final static int MAX_SIZE = 20000;
+	final GamaPoint[] points = new GamaPoint[MAX_SIZE];
 	int nbPoints = 0;
 	final GamaPoint temp = new GamaPoint();
 
