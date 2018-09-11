@@ -31,28 +31,28 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86.zip"
-NEWFILES[$n]='GAMA1.8_Linux_32'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Linux_32bits'$SUFFIX
 n=1
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Linux_64'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Linux_64bits'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Mac_64'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Mac_64bits'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-win32.win32.x86.zip"
-NEWFILES[$n]='GAMA1.8_Win_32'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Win_32bits'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Win_64'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Linux_64_withJDK'$SUFFIX
+NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_Linux_64bits'$SUFFIX
 n=6
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Win_64_withJDK'$SUFFIX
+NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_Win_64bits'$SUFFIX
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Mac_64_withJDK'$SUFFIX
+NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_MacOS'$SUFFIX
 
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
