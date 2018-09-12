@@ -46,13 +46,13 @@ RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_Linux_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Linux_64bits'$SUFFIX
 n=6
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Win_64bits'$SUFFIX
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_RC2_EmbeddedJDK_MacOS'$SUFFIX
+NEWFILES[$n]='GAMA1.8_EmbeddedJDK_MacOS'$SUFFIX
 
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
