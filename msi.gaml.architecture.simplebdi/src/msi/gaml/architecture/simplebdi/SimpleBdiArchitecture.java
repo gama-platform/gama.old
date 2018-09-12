@@ -356,10 +356,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 			// if (!agent.dead()) {
 			// Part that manage the lifetime of predicates
-			if (result != null) {
+//			if (result != null) {
 				updateLifeTimePredicates(scope);
 				updateEmotionsIntensity(scope);
-			}
+//			}
 		}
 		return result;
 	}
@@ -454,8 +454,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				if (currentIntention(scope) == null) {
 					addThoughts(scope, "I want nothing...");
 					// update the lifetime of beliefs
-					updateLifeTimePredicates(scope);
-					updateEmotionsIntensity(scope);
+//					updateLifeTimePredicates(scope);
+//					updateEmotionsIntensity(scope);
 					return null;
 				}
 				// check and choose a norm to apply to the current intention
@@ -467,8 +467,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (currentIntention(scope) != null && currentIntention(scope).getPredicate() == null) {
 						addThoughts(scope, "I want nothing...");
 						// update the lifetime of beliefs
-						updateLifeTimePredicates(scope);
-						updateEmotionsIntensity(scope);
+//						updateLifeTimePredicates(scope);
+//						updateEmotionsIntensity(scope);
 						return null;
 					}
 					_persistentNorm = selectExecutableNormWithHighestPriority(scope);
@@ -485,8 +485,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					if (currentIntention(scope) != null && currentIntention(scope).getPredicate() == null) {
 						addThoughts(scope, "I want nothing...");
 						// update the lifetime of beliefs
-						updateLifeTimePredicates(scope);
-						updateEmotionsIntensity(scope);
+//						updateLifeTimePredicates(scope);
+//						updateEmotionsIntensity(scope);
 						return null;
 					}
 					_persistentTask = selectExecutablePlanWithHighestPriority(scope);
