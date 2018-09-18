@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.GamaQuadTree.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * msi.gama.metamodel.topology.GamaQuadTree.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
@@ -13,6 +13,8 @@ package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -23,6 +25,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gama.util.TOrderedHashMap;
@@ -159,7 +162,8 @@ public class GamaQuadTree implements ISpatialIndex {
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
-		private final TOrderedHashMap<IAgent, Envelope> objects = new TOrderedHashMap(maxCapacity);
+		private final Map<IAgent, Envelope> objects = GamaExecutorService.CONCURRENCY_SPECIES.getValue()
+				? new ConcurrentHashMap(maxCapacity) : new TOrderedHashMap<>(maxCapacity);
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
@@ -262,11 +266,10 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (bounds.intersects(r)) {
-				objects.forEachEntry((a, env) -> {
+				objects.forEach((a, env) -> {
 					if (env != null && env.intersects(r)) {
 						result.add(a);
 					}
-					return true;
 				});
 				// }
 				if (nodes != null) {
