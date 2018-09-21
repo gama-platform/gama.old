@@ -3246,6 +3246,7 @@ public abstract class Spatial {
 		public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
+			if (source == null || target == null) {return null;}
 			final ITopology topo = cells.get(0).getTopology();
 			if (topo instanceof GridTopology) {
 				return ((GridTopology) topo).pathBetween(scope, source, target, cells);
