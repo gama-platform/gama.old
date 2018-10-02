@@ -122,7 +122,7 @@ public class FileUtils {
 				return file;
 			}
 		}
-		if (scope != null) {
+		if (scope != null && !scope.getExperiment().isHeadless()) {
 			final IExperimentAgent a = scope.getExperiment();
 			// No need to search more if the experiment is null
 			if (a == null) { return fp; }
