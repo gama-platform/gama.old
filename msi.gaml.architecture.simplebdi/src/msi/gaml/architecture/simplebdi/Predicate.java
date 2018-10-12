@@ -380,7 +380,7 @@ public class Predicate implements IValue {
 
 	@Override
 	public Predicate copy(final IScope scope) throws GamaRuntimeException {
-		return new Predicate(name, new LinkedHashMap<String, Object>(values));
+		return new Predicate(name, values == null ? null : new LinkedHashMap<String, Object>(values));
 	}
 
 	public Predicate copy() throws GamaRuntimeException {
