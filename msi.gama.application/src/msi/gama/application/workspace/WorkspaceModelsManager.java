@@ -55,7 +55,6 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import msi.gama.common.interfaces.IEventLayerDelegate;
-import msi.gama.common.interfaces.ILauncher;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
