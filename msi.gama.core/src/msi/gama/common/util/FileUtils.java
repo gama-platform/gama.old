@@ -122,18 +122,20 @@ public class FileUtils {
 				return file;
 			}
 		}
-		if (scope != null && !scope.getExperiment().isHeadless()) {
+		if (scope != null) {
 			final IExperimentAgent a = scope.getExperiment();
 			// No need to search more if the experiment is null
 			if (a == null) { return fp; }
-			// Necessary to ask the workspace for the containers as projects might be linked
-			final List<IContainer> paths = a.getWorkingPaths().stream()
-					.map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
-			for (final IContainer folder : paths) {
-				final String file = findInWorkspace(fp, folder, mustExist);
-				if (file != null) {
-					DEBUG.OUT("Hit with workspace-based search: " + file);
-					return file;
+			if(!a.isHeadless()) {
+				// Necessary to ask the workspace for the containers as projects might be linked
+				final List<IContainer> paths = a.getWorkingPaths().stream()
+						.map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
+				for (final IContainer folder : paths) {
+					final String file = findInWorkspace(fp, folder, mustExist);
+					if (file != null) {
+						DEBUG.OUT("Hit with workspace-based search: " + file);
+						return file;
+					}
 				}
 			}
 		}
