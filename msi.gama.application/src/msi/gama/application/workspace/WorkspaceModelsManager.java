@@ -54,6 +54,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
+import msi.gama.common.interfaces.IEventLayerDelegate;
+import msi.gama.common.interfaces.ILauncher;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
@@ -77,9 +80,8 @@ public class WorkspaceModelsManager {
 	// private static String BUILTIN_VERSION = null;
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
-
-	public void openModelPassedAsArgument(final String modelPath) {
-
+ 
+	public void openModelPassedAsArgument(final String modelPath) { 
 		// printAllGuaranteedProperties();
 
 		String filePath = modelPath;
@@ -101,7 +103,7 @@ public class WorkspaceModelsManager {
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
 			final String en = expName;
-			final Runnable run = () -> {
+//			final Runnable run = () -> {
 				try {
 					// DEBUG.OUT(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
 					// Force the project to rebuild itself in order to load the various XText plugins.
@@ -130,8 +132,8 @@ public class WorkspaceModelsManager {
 					GAMA.getGui().runModel(file, en);
 				}
 
-			};
-			new Thread(run, "Automatic opening of " + filePath).start();
+//			};
+//			new Thread(run, "Automatic opening of " + filePath).start();
 
 		}
 	}

@@ -162,7 +162,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	private final boolean executesInSimulation;
 	private final IExpression type;
-	private static List<IEventLayerDelegate> delegates = new ArrayList<>();
+	public static List<IEventLayerDelegate> delegates = new ArrayList<>();
 
 	/**
 	 * @param createExecutableExtension

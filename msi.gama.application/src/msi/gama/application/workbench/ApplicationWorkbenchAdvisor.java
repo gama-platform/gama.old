@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -36,8 +37,10 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.FileUtils;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import ummisco.gama.dev.utils.DEBUG;
@@ -88,9 +91,17 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
 		DEBUG.OUT("Arguments received by GAMA : " + Arrays.toString(args));
-		if ( args.length > 0 && args[0].contains("launcher.defaultAction") ) { return; }
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction") && !args[0].contains("--launcher.defaultAction") ) { return; }
 		if ( args.length >= 1 ) {
-			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
+//			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
+
+			if ( args[args.length - 1].endsWith(".gamr") ) {
+				for ( final IEventLayerDelegate delegate : EventLayerStatement.delegates ) {
+					if ( delegate.acceptSource(null, "launcher") ) {
+						delegate.createFrom(null, args[args.length - 1], null);
+					}
+				}
+			}
 		}
 	}
 
