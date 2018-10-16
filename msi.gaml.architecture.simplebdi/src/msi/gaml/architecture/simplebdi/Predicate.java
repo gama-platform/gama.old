@@ -446,24 +446,24 @@ public class Predicate implements IValue {
 			return false;
 		}
 
-		if (subintentions == null) {
-			if (other.subintentions != null && !other.subintentions.isEmpty()) {
-				return false;
-			}
-		} else if (!subintentions.equals(other.subintentions)) {
-			return false;
-		}
-		if (superIntention == null) {
-			if (other.superIntention != null) {
-				return false;
-			}
-		} else if (superIntention.getPredicate() == null) {
-			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-				return false;
-			}
-		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-			return false;
-		}
+//		if (subintentions == null) {
+//			if (other.subintentions != null && !other.subintentions.isEmpty()) {
+//				return false;
+//			}
+//		} else if (!subintentions.equals(other.subintentions)) {
+//			return false;
+//		}
+//		if (superIntention == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.getPredicate() == null) {
+//			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+//				return false;
+//			}
+//		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+//			return false;
+//		}
 		if (is_true != other.is_true) {
 			return false;
 		}
@@ -519,17 +519,17 @@ public class Predicate implements IValue {
 		} else if (!name.equals(other.name)) {
 			return false;
 		}
-		if (superIntention == null) {
-			if (other.superIntention != null) {
-				return false;
-			}
-		} else if (superIntention.getPredicate() == null) {
-			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-				return false;
-			}
-		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-			return false;
-		}
+//		if (superIntention == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.getPredicate() == null) {
+//			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+//				return false;
+//			}
+//		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+//			return false;
+//		}
 		if (is_true != other.is_true) {
 			return false;
 		}
@@ -584,20 +584,20 @@ public class Predicate implements IValue {
 		} else if (!name.equals(other.name)) {
 			return false;
 		}
-		if (subintentions != null) {
-			if (!subintentions.equals(other.subintentions)) {
-				return false;
-			}
-		}
-		if (superIntention == null) {
-			if (other.superIntention!=null && other.superIntention != null) {
-				return false;
-			}
-		} else if (superIntention.getPredicate() != null) {
-			if (!superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-				return false;
-			}
-		}
+//		if (subintentions != null) {
+//			if (!subintentions.equals(other.subintentions)) {
+//				return false;
+//			}
+//		}
+//		if (superIntention == null) {
+//			if (other.superIntention!=null && other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.getPredicate() != null) {
+//			if (!superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+//				return false;
+//			}
+//		}
 		if (is_true != other.is_true) {
 			return false;
 		}
@@ -652,24 +652,24 @@ public class Predicate implements IValue {
 		} else if (!name.equals(other.name)) {
 			return false;
 		}
-		if (subintentions == null) {
-			if (other.subintentions != null && !other.subintentions.isEmpty()) {
-				return false;
-			}
-		} else if (!subintentions.equals(other.subintentions)) {
-			return false;
-		}
-		if (superIntention == null) {
-			if (other.superIntention != null) {
-				return false;
-			}
-		} else if (superIntention.getPredicate() == null) {
-			if (other.superIntention != null) {
-				return false;
-			}
-		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-			return false;
-		}
+//		if (subintentions == null) {
+//			if (other.subintentions != null && !other.subintentions.isEmpty()) {
+//				return false;
+//			}
+//		} else if (!subintentions.equals(other.subintentions)) {
+//			return false;
+//		}
+//		if (superIntention == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.getPredicate() == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+//			return false;
+//		}
 		if (is_true != other.is_true) {
 			if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) {
 				return true;
@@ -724,24 +724,24 @@ public class Predicate implements IValue {
 			return false;
 		}
 
-		if (subintentions == null) {
-			if (other.subintentions != null && !other.subintentions.isEmpty()) {
-				return false;
-			}
-		} else if (!subintentions.equals(other.subintentions)) {
-			return false;
-		}
-		if (superIntention == null) {
-			if (other.superIntention != null) {
-				return false;
-			}
-		} else if (superIntention.getPredicate() == null) {
-			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-				return false;
-			}
-		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-			return false;
-		}
+//		if (subintentions == null) {
+//			if (other.subintentions != null && !other.subintentions.isEmpty()) {
+//				return false;
+//			}
+//		} else if (!subintentions.equals(other.subintentions)) {
+//			return false;
+//		}
+//		if (superIntention == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.getPredicate() == null) {
+//			if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
+//				return false;
+//			}
+//		} else if (other.superIntention!=null && !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
+//			return false;
+//		}
 		if (is_true != other.is_true) {
 			return false;
 		}
