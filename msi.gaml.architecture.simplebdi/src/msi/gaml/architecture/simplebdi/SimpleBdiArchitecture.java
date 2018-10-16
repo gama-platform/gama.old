@@ -413,7 +413,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				// Desire/Obligation
 				MentalState intentionTemp;
 				if (currentIntention(scope) != null) {
-					intentionTemp = new MentalState("Intention", currentIntention(scope).getPredicate());
+					intentionTemp = currentIntention(scope);
 				} else {
 					intentionTemp = new MentalState("Intention", currentIntention(scope));
 				}
@@ -1221,7 +1221,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public boolean testOnHold(final IScope scope, final MentalState intention) {
 		if (intention == null) { return false; }
 		if (intention.getPredicate() == null) { return false; }
-		if (intention.getPredicate().onHoldUntil == null) { return false; }
+		if (intention.onHoldUntil == null) { return false; }
 		if (intention.getPredicate().getValues() != null) {
 			if (intention.getPredicate().getValues().containsKey("and")) {
 				final Object cond = intention.getPredicate().onHoldUntil;
@@ -1289,7 +1289,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		final Object cond = intention.getPredicate().onHoldUntil;
+		final Object cond = intention.onHoldUntil;
 		if (cond instanceof ArrayList) {
 			final GamaList desbase = getBase(scope, DESIRE_BASE);
 			if (desbase.isEmpty()) { return false; }
@@ -1528,7 +1528,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 				List<MentalState> statementSubintention = null;
 				if (((MentalState) statement).getPredicate() != null) {
-					statementSubintention = ((MentalState) statement).getPredicate().getSubintentions();
+					statementSubintention = ((MentalState) statement).getSubintentions();
 				}
 				if (statementSubintention != null) {
 					if (statementSubintention.contains(predicateDirect)) {
@@ -1537,7 +1537,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 				List<MentalState> statementOnHoldUntil = null;
 				if (((MentalState) statement).getPredicate() != null) {
-					statementOnHoldUntil = ((MentalState) statement).getPredicate().getOnHoldUntil();
+					statementOnHoldUntil = ((MentalState) statement).getOnHoldUntil();
 				}
 				if (statementOnHoldUntil != null) {
 					if (statementOnHoldUntil.contains(predicateDirect)) {
@@ -2100,9 +2100,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primOnHoldIntention(final IScope scope) throws GamaRuntimeException {
-		Predicate predicate = null; 
+		MentalState predicate = null; 
 		if(currentIntention(scope)!=null) {
-			predicate = currentIntention(scope).getPredicate();
+			predicate = currentIntention(scope);
 		}
 		final Object until = scope.hasArg("until") ? scope.getArg("until", IType.NONE) : null;
 		if (predicate != null) {
@@ -2113,14 +2113,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			} else {
 				if (predicate.onHoldUntil == null) {
-					predicate.onHoldUntil = GamaListFactory.create(Types.get(PredicateType.id));
+					predicate.onHoldUntil = GamaListFactory.create(Types.get(MentalStateType.id));
 				}
 				if (predicate.getSubintentions() == null) {
-					predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
+					predicate.subintentions = GamaListFactory.create(Types.get(MentalStateType.id));
 				}
-				final MentalState tempState = new MentalState("Intention", predicate);
+				final MentalState tempState = new MentalState("Intention", predicate.getPredicate());
 				final MentalState tempUntil = new MentalState("Desire", (Predicate) until);
-				((Predicate) until).setSuperIntention(tempState);
+				tempUntil.setSuperIntention(tempState);
 				predicate.onHoldUntil.add(tempUntil);
 				predicate.getSubintentions().add(tempUntil);
 				addToBase(scope, tempUntil, DESIRE_BASE);
@@ -2133,14 +2133,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_subintention",
 			args = { @arg (
 					name = PREDICATE,
-					type = PredicateType.id,
+					type = MentalStateType.id,
 					optional = false,
-					doc = @doc ("predicate name")),
+					doc = @doc ("the intention that receives the sub_intention")),
 					@arg (
 							name = PREDICATE_SUBINTENTIONS,
 							type = PredicateType.id,
 							optional = false,
-							doc = @doc ("the subintention to add to the predicate")),
+							doc = @doc ("the predicate to add as a subintention to the intention")),
 					@arg (
 							name = "add_as_desire",
 							type = IType.BOOL,
@@ -2151,8 +2151,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean addSubIntention(final IScope scope) throws GamaRuntimeException {
-		final Predicate predicate =
-				(Predicate) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, PredicateType.id) : null);
+		final MentalState predicate =
+				(MentalState) (scope.hasArg(PREDICATE) ? scope.getArg(PREDICATE, MentalStateType.id) : null);
 		final Predicate subpredicate = (Predicate) (scope.hasArg(PREDICATE_SUBINTENTIONS)
 				? scope.getArg(PREDICATE_SUBINTENTIONS, PredicateType.id) : null);
 
@@ -2161,7 +2161,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Boolean) (scope.hasArg("add_as_desire") ? scope.getArg("add_as_desire", IType.BOOL) : false);
 		MentalState superState = null;
 		for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
-			if (mental.getPredicate() != null && predicate.equals(mental.getPredicate())) {
+			if (mental != null && predicate.equals(mental)) {
 				superState = mental;
 				break;
 			}
@@ -2169,7 +2169,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (superState == null) { return false; }
 
 		if (predicate.getSubintentions() == null) {
-			predicate.subintentions = GamaListFactory.create(Types.get(PredicateType.id));
+			predicate.subintentions = GamaListFactory.create(Types.get(MentalStateType.id));
 		}
 		final MentalState subState = new MentalState("Desire", subpredicate);
 		subpredicate.setSuperIntention(superState);
@@ -2953,14 +2953,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 			if (((MentalState) statement).getPredicate() != null) {
 				final List<MentalState> statementSubintention =
-						((MentalState) statement).getPredicate().getSubintentions();
+						((MentalState) statement).getSubintentions();
 				if (statementSubintention != null) {
 					if (statementSubintention.contains(pred)) {
 						statementSubintention.remove(pred);
 					}
 				}
 				final List<MentalState> statementOnHoldUntil =
-						((MentalState) statement).getPredicate().getOnHoldUntil();
+						((MentalState) statement).getOnHoldUntil();
 				if (statementOnHoldUntil != null) {
 					if (statementOnHoldUntil.contains(pred)) {
 						statementOnHoldUntil.remove(pred);

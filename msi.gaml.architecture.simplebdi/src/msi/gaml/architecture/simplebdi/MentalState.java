@@ -1,5 +1,8 @@
 package msi.gaml.architecture.simplebdi;
 
+import java.util.List;
+import java.util.Set;
+
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -27,6 +30,9 @@ public class MentalState implements IValue {
 	MentalState mental;
 	Emotion emo;
 	IAgent owner;
+	List<MentalState> onHoldUntil;
+	List<MentalState> subintentions;
+	MentalState superIntention;
 	
 	@getter("modality")
 	public String getModality(){
@@ -63,6 +69,20 @@ public class MentalState implements IValue {
 		return owner;
 	}
 	
+	@getter("subintentions")
+	public List<MentalState> getSubintentions() {
+		return subintentions;
+	}
+
+	@getter("superIntention")
+	public MentalState getSuperIntention() {
+		return superIntention;
+	}
+	
+	public List<MentalState> getOnHoldUntil() {
+		return onHoldUntil;
+	}
+	
 	public void setModality(String mod){
 		this.modality=mod;
 	}
@@ -89,6 +109,18 @@ public class MentalState implements IValue {
 	
 	public void setOwner(IAgent ag){
 		this.owner=ag;
+	}
+	
+	public void setSubintentions(final List<MentalState> subintentions) {
+		this.subintentions = subintentions;
+	}
+	
+	public void setSuperIntention(final MentalState superPredicate) {
+		this.superIntention = superPredicate;
+	}
+
+	public void setOnHoldUntil(final List<MentalState> onHoldUntil) {
+		this.onHoldUntil = onHoldUntil;
 	}
 	
 	public void updateLifetime(){
@@ -434,6 +466,20 @@ public class MentalState implements IValue {
 		if(this.emo!=null && other.getEmotion()!=null){
 			if(!other.getEmotion().equals(this.emo)){return false;}
 		}
+//		if (subintentions == null) {
+//			if (other.subintentions != null && !other.subintentions.isEmpty()) {
+//				return false;
+//			}
+//		} else if (!subintentions.equals(other.subintentions)) {
+//			return false;
+//		}
+//		if (superIntention == null) {
+//			if (other.superIntention != null) {
+//				return false;
+//			}
+//		} else if (superIntention.partialEquality(other.superIntention)) {
+//			return false;
+//		}
 		if(this.owner!=null && other.getOwner()!=null){
 			if(!other.getOwner().equals(this.owner)){return false;}
 		}
@@ -441,4 +487,47 @@ public class MentalState implements IValue {
 		return true;
 	}
 
+	private boolean partialEquality(final Object obj) {
+		// You don't test the sub-intentions. Used when testing the equality of
+		// the super-intention
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final MentalState other = (MentalState)obj;
+//		if(other.getModality()!=this.modality){return false;}
+		if(this.predicate==null && other.getPredicate()!=null){return false;}
+		if(this.predicate!=null && other.getPredicate()==null){return false;}
+		if(this.predicate!=null && other.getPredicate()!=null){
+			if(!other.getPredicate().equals(this.predicate)){return false;}
+		}
+		if(this.mental==null && other.getMentalState()!=null){return false;}
+		if(this.mental!=null && other.getMentalState()==null){return false;}
+		if(this.mental!=null && other.getMentalState()!=null){
+			if(!other.getMentalState().equals(this.mental)){return false;}
+		}
+		if(this.emo==null && other.getEmotion()!=null){return false;}
+		if(this.emo!=null && other.getEmotion()==null){return false;}
+		if(this.emo!=null && other.getEmotion()!=null){
+			if(!other.getEmotion().equals(this.emo)){return false;}
+		}
+		if (superIntention == null) {
+			if (other.superIntention != null) {
+				return false;
+			}
+		} else if (superIntention.partialEquality(other.superIntention)) {
+			return false;
+		}
+		if(this.owner!=null && other.getOwner()!=null){
+			if(!other.getOwner().equals(this.owner)){return false;}
+		}
+//		if(other.getStrength()!=this.strength){return false;}
+		return true;
+	}
+	
 }

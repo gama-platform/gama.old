@@ -114,8 +114,15 @@ species people skills: [moving] control: simple_bdi{
 	//if the agent perceives other people agents in their neighborhood that have fear, it can be contaminate by this emotion
 	perceive target:people in: other_distance when: not escape_mode {
 		emotional_contagion emotion_detected:fearConfirmed when: fearful;
-		unconscious_contagion emotion:new_emotion("fear") charisma: charisma receptivity:receptivity;
-		conscious_contagion emotion_detected:fearConfirmed emotion_created:fear;
+		emotional_contagion emotion_detected:new_emotion("fear") charisma: charisma receptivity:receptivity;
+		emotional_contagion emotion_detected:fearConfirmed emotion_created:fear;
+	}
+	emotion joy <- nil;
+	
+	
+	perceive target:people in: other_distance{
+		emotional_contagion emotion_detected: joy;
+		emotional_contagion emotion_detected:fearConfirmed emotion_created:fear;
 	}
 	
 	//if the agent has a fear confirmed, it has the desire to go to a shelter

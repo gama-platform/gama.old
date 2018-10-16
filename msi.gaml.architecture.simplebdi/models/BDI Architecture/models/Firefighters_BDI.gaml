@@ -104,7 +104,7 @@ species firefighter skills: [moving] control: simple_bdi{
 				do goto(target: target_fire);
 			}
 		} else {
-			do add_subintention(get_predicate(get_current_intention()),water_predicate,true);
+			do add_subintention(get_current_intention(),water_predicate,true);
 			do current_intention_on_hold();
 		}
 	}  

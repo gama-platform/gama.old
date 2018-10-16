@@ -43,6 +43,8 @@ species miner skills: [moving] control:simple_bdi {
 	predicate wander <- new_predicate("wander");
 	predicate return_base <- new_predicate("return_base");
 	
+	predicate sac <- new_predicate("sac",["contenance"::5]);
+	
 	//we define in the same way a belief that I have already gold that I have to return to the base
 	predicate has_gold <- new_predicate("has_gold");
 	
@@ -51,6 +53,13 @@ species miner skills: [moving] control:simple_bdi {
 	//at the vreation of the agent, we add the desire to patrol (wander)
 	init
 	{
+		agent friend <- nil;
+		
+		do add_social_link(new_social_link(friend));
+		
+		emotion joie <- new_emotion("joie",wander);
+		do add_emotion(joie);
+		
 		do add_desire(wander);
 	}
 	
@@ -60,9 +69,16 @@ species miner skills: [moving] control:simple_bdi {
 		ask myself {do remove_intention(wander, false);}
 	}
 	
+	
+		perceive target:miner in: /*2**/viewdist{
+		enforcement law:"working" sanction:"sanctionToLaw";
+		enforcement obligation:has_gold sanction: "sanctionToObligation" reward:"rewardToObligation";
+		enforcement norm:"share_information" reward:"rewardToNorm";
+	}
+	
 	//if the agent has the belief that their is gold at given location, it adds the desire to get gold 
 	rule belief: new_predicate("location_gold") new_desire: get_gold strength:10.0;
-	rule belief: new_predicate("location_gold") new_desire: new_predicate("toto") all: true strength:0.1;
+//	rule belief: new_predicate("location_gold") new_desire: new_predicate("toto") all: true strength:0.1;
 	
 	//if the agent has the belief that it has gold, it adds the desire to return to the base
 	rule belief: has_gold new_desire: return_base strength:100;
@@ -79,7 +95,7 @@ species miner skills: [moving] control:simple_bdi {
 	{
 		//if the agent does not have chosen a target location, it adds the sub-intention to define a target and puts its current intention on hold
 		if (target = nil) {
-			do add_subintention(get_gold,define_gold_target, true);
+			do add_subintention(get_current_intention(),define_gold_target, true);
 			do current_intention_on_hold();
 		} else {
 			do goto target: target ;
