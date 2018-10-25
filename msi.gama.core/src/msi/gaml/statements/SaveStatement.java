@@ -843,6 +843,46 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return g;
 	}
 
+		public static boolean buildFeature(IScope scope, SimpleFeature ff, IShape ag, final IProjection gis, Collection<IExpression> attributeValues) {
+			List<Object> values = new ArrayList<>();
+			// geometry is by convention (in specs) at position 0
+			if (ag.getInnerGeometry() == null) {
+				return false ;
+			}
+			//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
+			
+			Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+
+			g = fixesPolygonCWS(g);
+			g = geometryCollectionManagement(g);
+
+			values.add(g);
+			if (ag instanceof IAgent) {
+				for (final IExpression variable : attributeValues) {
+					Object val = scope.evaluate(variable, (IAgent) ag).getValue();
+					if (variable.getGamlType().equals(Types.STRING)) {
+						if (val == null) {
+							val = "";
+						} else {
+							final String val2 = val.toString();
+							if (val2.startsWith("'") && val2.endsWith("'")
+									|| val2.startsWith("\"") && val2.endsWith("\"")) {
+								val = val2.substring(1, val2.length() - 1);
+							}
+						}
+					}
+					values.add(val);
+				}
+			}
+			// AD Assumes that the type is ok.
+			// AD TODO replace this list of variable names by expressions
+			// (to be
+			// evaluated by agents), so that dynamic values can be passed
+			// AD WARNING Would require some sort of iterator operator that
+			// would collect the values beforehand
+			ff.setAttributes(values);
+			return true;
+		}
 	
 	
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
@@ -864,50 +904,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				// AD Builds once the list of agent attributes to evaluate
 				final Collection<IExpression> attributeValues =
 						attributes == null ? Collections.EMPTY_LIST : attributes.values();
-				final List<Object> values = new ArrayList<>();
 				int i = 0;
 				for (final IShape ag : agents) {
-					values.clear();
 					final SimpleFeature ff = builder.buildFeature( i+"");
 					i++;
-					// geometry is by convention (in specs) at position 0
-					if (ag.getInnerGeometry() == null) {
+					boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
+					if (! ok) {
 						continue;
-					}
-					//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
-					
-					Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-
-					g = fixesPolygonCWS(g);
-					g = geometryCollectionManagement(g);
-
-					values.add(g);
-					if (ag instanceof IAgent) {
-						for (final IExpression variable : attributeValues) {
-							Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-							if (variable.getGamlType().equals(Types.STRING)) {
-								if (val == null) {
-									val = "";
-								} else {
-									final String val2 = val.toString();
-									if (val2.startsWith("'") && val2.endsWith("'")
-											|| val2.startsWith("\"") && val2.endsWith("\"")) {
-										val = val2.substring(1, val2.length() - 1);
-									}
-								}
-							}
-							values.add(val);
-						}
-					}
-					// AD Assumes that the type is ok.
-					// AD TODO replace this list of variable names by expressions
-					// (to be
-					// evaluated by agents), so that dynamic values can be passed
-					// AD WARNING Would require some sort of iterator operator that
-					// would collect the values beforehand
-					ff.setAttributes(values);
+					}	
 					featureCollection.add(ff);
-					 
 				}
 				
 				 FeatureJSON io = new FeatureJSON();
@@ -936,47 +941,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// AD Builds once the list of agent attributes to evaluate
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
-			final List<Object> values = new ArrayList<>();
 			for (final IShape ag : agents) {
-				values.clear();
 				final SimpleFeature ff = (SimpleFeature) fw.next();
-				// geometry is by convention (in specs) at position 0
-				if (ag.getInnerGeometry() == null) {
+				boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
+				if (! ok) {
 					continue;
-				}
-				//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
-				
-				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-
-				g = fixesPolygonCWS(g);
-				g = geometryCollectionManagement(g);
-
-				values.add(g);
-				if (ag instanceof IAgent) {
-					for (final IExpression variable : attributeValues) {
-						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-						if (variable.getGamlType().equals(Types.STRING)) {
-							if (val == null) {
-								val = "";
-							} else {
-								final String val2 = val.toString();
-								if (val2.startsWith("'") && val2.endsWith("'")
-										|| val2.startsWith("\"") && val2.endsWith("\"")) {
-									val = val2.substring(1, val2.length() - 1);
-								}
-							}
-						}
-						values.add(val);
-					}
-				}
-				// AD Assumes that the type is ok.
-				// AD TODO replace this list of variable names by expressions
-				// (to be
-				// evaluated by agents), so that dynamic values can be passed
-				// AD WARNING Would require some sort of iterator operator that
-				// would collect the values beforehand
-				ff.setAttributes(values);
-				fw.write();
+				}	
 			}
 			// store.dispose();
 			if (gis != null) {
