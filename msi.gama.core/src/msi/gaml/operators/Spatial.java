@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -2793,17 +2792,23 @@ public abstract class Spatial {
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
 			final IList<IShape> split_lines = split_lines(scope, geoms);
-			if (readAttributes) {
+				if (readAttributes) {
 				for (final IShape line : split_lines) {
-					final Optional<IShape> opt = geoms.stream(scope)
-							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry()));
-					final IShape matchingGeom = opt.isPresent() ? opt.get() : null;
-					if (matchingGeom == null || matchingGeom.getAttributes() == null) {
-						continue;
+					IShape matchingGeom = null;
+						if (matchingGeom == null) {
+						final IList<IShape> shapes = (IList<IShape>) Spatial.Queries.overlapping(scope, geoms, line.getGeometricEnvelope());
+						if (!shapes.isEmpty()) {
+							matchingGeom = Spatial.Queries.closest_to(scope, shapes, line.getLocation());
+						}
+						if (matchingGeom == null || matchingGeom.getAttributes() == null) {
+							continue;
+						}
+						for (final String att : matchingGeom.getAttributes().keySet()) {
+							
+							line.setAttribute(att, matchingGeom.getAttribute(att));
+						}
 					}
-					for (final String att : matchingGeom.getAttributes().keySet()) {
-						line.setAttribute(att, matchingGeom.getAttribute(att));
-					}
+					
 				}
 			}
 
@@ -2864,28 +2869,32 @@ public abstract class Spatial {
 
 			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
 			boolean modif = true;
-			while (modif) {
-				for (final IShape geom : geomsTmp) {
-					final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
-					modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
-					if (modif) {
-						geomsTmp = GamaListFactory.create();
-						geomsTmp.addAll(geoms);
-						break;
+			if (tolerance > 0 ) {
+				
+				
+				while (modif) {
+					for (final IShape geom : geomsTmp) {
+						final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+						modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
+						if (modif) {
+							geomsTmp = GamaListFactory.create();
+							geomsTmp.addAll(geoms);
+							break;
+						}
+						final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+						modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
+						if (modif) {
+							geomsTmp = GamaListFactory.create();
+							geomsTmp.addAll(geoms);
+							break;
+						}
+						results.add(geom);
+						geoms.remove(geom);
 					}
-					final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
-					modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
-					if (modif) {
-						geomsTmp = GamaListFactory.create();
-						geomsTmp.addAll(geoms);
-						break;
-					}
-					results.add(geom);
-					geoms.remove(geom);
 				}
 			}
 			results.removeIf(
-					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
+						a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
 			if (splitlines) {
 				results = Transformations.split_lines(scope, results, true);
 			}
