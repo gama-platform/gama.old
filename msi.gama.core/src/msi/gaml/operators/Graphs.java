@@ -595,12 +595,15 @@ public class Graphs {
 				mainCC = c;
 			}
 		}
-		final Set vs = graph.vertexSet();
-		vs.removeAll(mainCC);
-		for (final Object v : vs) {
-			newGraph.removeAllEdges(graph.edgesOf(v));
-			newGraph.removeVertex(v);
+		if (mainCC != null) {
+			final Set vs = graph.vertexSet();
+			vs.removeAll(mainCC);
+			for (final Object v : vs) {
+				newGraph.removeAllEdges(graph.edgesOf(v));
+				newGraph.removeVertex(v);
+			}
 		}
+		
 		return newGraph;
 	}
 
