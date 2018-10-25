@@ -2892,6 +2892,8 @@ public abstract class Spatial {
 						geoms.remove(geom);
 					}
 				}
+			} else {
+				results = geomsTmp;
 			}
 			results.removeIf(
 						a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
