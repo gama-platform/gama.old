@@ -34,6 +34,9 @@ public interface ISpatialIndex {
 
 	public abstract IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 
+	public abstract Collection<IAgent> firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f, int number, Collection<IAgent> alreadyChosen );
+
+	
 	public abstract Collection<IAgent> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
 			final IAgentFilter f, boolean contained);
 

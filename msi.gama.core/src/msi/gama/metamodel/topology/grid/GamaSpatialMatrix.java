@@ -1376,6 +1376,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (shapes.isEmpty()) { return null; }
 		return ordering.min(shapes);
 	}
+	
+	@Override
+	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f, int number, Collection<IAgent> alreadyChosen ) {
+		final double exp = dist * Maths.SQRT2;
+		final Envelope3D env = new Envelope3D(source.getEnvelope());
+		env.expandBy(exp);
+		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
+		shapes.removeAll(alreadyChosen);
+		if (shapes.size() <= number) return shapes;
+		boolean gridSpe = (f.getSpecies() != null) && (f.getSpecies().isGrid());
+		final Ordering<IShape> ordering = gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation())) : Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+		return ordering.leastOf(shapes, number);
+	}
 
 	private Set<IAgent> inEnvelope(final Envelope env) {
 		// TODO Is it really efficient?

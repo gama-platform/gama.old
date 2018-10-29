@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.algorithm.Centroid;
 import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
 import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
@@ -4064,6 +4066,36 @@ public abstract class Spatial {
 					.isTranslatableInto(Types.GEOMETRY)) { return geomClostestTo(scope, list, source); }
 			return null;
 		}
+		
+		@operator (
+				value = { "closest_to" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "The N agents or geometries among the left-operand list of agents, species or meta-population (addition of species), that are the closest to the operand (casted as a geometry).",
+				comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] closest_to(self, 2)",
+						equals = "return the 2 closest agents among ag1, ag2 and ag3 to the agent applying the operator.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) closest_to (self, 5)",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "inside", "overlapping", "agents_overlapping", "agents_inside",
+						"agent_closest_to" })
+		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, final int number) {
+			if (list == null) { return null; }
+			final IType contentType = list.getGamlType().getContentType();
+			if (contentType.isAgentType()) {
+				return (IList) _closest(scope, In.list(scope, list), source, number);
+			} else if (list.getGamlType().getContentType()
+					.isTranslatableInto(Types.GEOMETRY)) { return (IList<IShape>) geomClostestTo(scope, list, source, number); }
+			return null;
+		}
+
 
 		@operator (
 				value = { "farthest_to" },
@@ -4108,6 +4140,16 @@ public abstract class Spatial {
 				}
 			}
 			return shp;
+		}
+		
+		public static Collection<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, int number) {
+			IList<IShape> shapes = (IList<IShape>) list.listValue(scope, Types.GEOMETRY, true);
+			shapes.removeIf(a -> ((a == null) || !(a instanceof IShape))) ;
+			if (shapes.size() <= number) return shapes;
+			scope.getRandom().shuffle(shapes);
+			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+			return GamaListFactory.createWithoutCasting(Types.GEOMETRY, ordering.leastOf(shapes, number));
 		}
 
 		public static IShape geomFarthestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
@@ -4231,6 +4273,11 @@ public abstract class Spatial {
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
 			if (filter == null || source == null) { return null; }
 			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
+		}
+		
+		private static Collection<IAgent> _closest(final IScope scope, final IAgentFilter filter, final Object source, final int number) {
+			if (filter == null || source == null) { return null; }
+			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter, number);
 		}
 
 		private static IAgent _farthest(final IScope scope, final IAgentFilter filter, final Object source) {

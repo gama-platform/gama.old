@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.Filer;
-
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -381,6 +379,14 @@ public abstract class AbstractTopology implements ITopology {
 			}
 		}
 	}
+	
+	@Override
+	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
+		insertAgents(scope,filter);
+		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create()); }
+		return null;
+	}
+
 
 
 	@Override

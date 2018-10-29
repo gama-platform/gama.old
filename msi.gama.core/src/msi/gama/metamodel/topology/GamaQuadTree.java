@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -27,6 +28,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Maths;
@@ -122,6 +124,21 @@ public class GamaQuadTree implements ISpatialIndex {
 		result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 		return result;
 	}
+	
+	@Override
+	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f, final int number, Collection<IAgent> alreadyChosen ) {
+		final double exp = dist * Maths.SQRT2;
+		final Envelope3D env = new Envelope3D(source.getEnvelope());
+		env.expandBy(exp);
+		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
+		in_square.removeAll(alreadyChosen );
+		if (in_square.isEmpty()) { return GamaListFactory.create(); }
+		
+		if (in_square.size() <= number) return in_square;
+		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+		return ordering.leastOf(in_square, number);
+	}
+
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
