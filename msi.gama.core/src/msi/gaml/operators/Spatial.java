@@ -2801,6 +2801,8 @@ public abstract class Spatial {
 						final IList<IShape> shapes = (IList<IShape>) Spatial.Queries.overlapping(scope, geoms, line.getGeometricEnvelope());
 						if (!shapes.isEmpty()) {
 							matchingGeom = Spatial.Queries.closest_to(scope, shapes, line.getLocation());
+						} else {
+							matchingGeom = Spatial.Queries.closest_to(scope, geoms, line.getLocation());
 						}
 						if (matchingGeom == null || matchingGeom.getAttributes() == null) {
 							continue;
