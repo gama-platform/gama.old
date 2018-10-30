@@ -2802,19 +2802,32 @@ public abstract class Spatial {
 				IList<IShape> lines2 = GamaListFactory.createWithoutCasting(Types.GEOMETRY,lines);
 				for (IShape l : lines) {
 					lines2.remove(l);
-					/*IsSimpleOp simpleOp = new IsSimpleOp(l.getInnerGeometry());
-					
-					if (!simpleOp.isSimple()) {
-						
-						GamaPoint pt = new GamaPoint(simpleOp.getNonSimpleLocation());
-						IList<IShape> res1 = Spatial.Operators.split_at(l, pt);
-						res1.removeIf(a -> a.getPerimeter() == 0.0);
-						if(res1.size() > 1 ) {
-							change = true;
-							lines2.addAll(res1);
-							break;
+					if (!l.getInnerGeometry().isSimple()) {
+						IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
+						for (int i = 0; i < l.getPoints().size() - 1; i++) {
+							IList<IShape> points = GamaListFactory.create(Types.POINT);
+							points.add(l.getPoints().get(i));
+							points.add(l.getPoints().get(i + 1));
+							segments.add(Spatial.Creation.line(scope, points));
 						}
-					}*/
+						final IShape line = Spatial.Operators.union(scope, segments);
+						final Geometry nodedLineStrings = line.getInnerGeometry();
+						
+						for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
+							final Geometry g = nodedLineStrings.getGeometryN(i);
+							if (g instanceof LineString) {
+								IShape gS = new GamaShape(g);
+								if (l.getAttributes() != null)
+									gS.getAttributes().putAll(l.getAttributes());
+								lines2.add(new GamaShape(g));
+							}
+						}
+						change = true;
+
+						lines = lines2;
+						break;
+					}
+					
 					List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, (IContainer<?, ? extends IShape>) lines2, l);
 					if(!ls.isEmpty()) {
 						ILocation pto =  l.getPoints().firstValue(scope);
