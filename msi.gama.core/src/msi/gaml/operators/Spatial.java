@@ -4156,13 +4156,13 @@ public abstract class Spatial {
 						"agent_closest_to" })
 		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
-			if (list == null) { return null; }
+			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return (IList) _closest(scope, In.list(scope, list), source, number);
 			} else if (list.getGamlType().getContentType()
 					.isTranslatableInto(Types.GEOMETRY)) { return (IList<IShape>) geomClostestTo(scope, list, source, number); }
-			return null;
+			return GamaListFactory.create(contentType);
 		}
 
 

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -384,7 +385,18 @@ public abstract class AbstractTopology implements ITopology {
 	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
 		insertAgents(scope,filter);
 		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create()); }
-		return null;
+		final Geometry g0 = returnToroidalGeom(source.getGeometry());
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		agents.remove(g0);
+		if (agents.keySet().size() <= number) return agents.values();
+		List<Geometry> ggs = new ArrayList<>(agents.keySet());
+		scope.getRandom().shuffle(ggs);
+		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));
+		IList<IAgent> shapes = GamaListFactory.create(Types.AGENT);
+		for (Geometry g : ordering.leastOf(ggs, number)) {
+			shapes.add(agents.get(g));
+		}
+		return shapes;
 	}
 
 
@@ -396,6 +408,7 @@ public abstract class AbstractTopology implements ITopology {
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		
 		double distMin = Double.MAX_VALUE;
 		for (final Geometry g1 : agents.keySet()) {
 			final IAgent ag = agents.get(g1);
