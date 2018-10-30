@@ -2793,8 +2793,62 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			final IList<IShape> split_lines = split_lines(scope, geoms);
-				if (readAttributes) {
+			boolean change = true;
+			IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
+			lines.addAll((Collection<? extends IShape>) geoms);
+			IList<IShape> split_lines = GamaListFactory.create(Types.GEOMETRY);
+			while(change) {
+				change = false;
+				IList<IShape> lines2 = GamaListFactory.createWithoutCasting(Types.GEOMETRY,lines);
+				for (IShape l : lines) {
+					lines2.remove(l);
+					/*IsSimpleOp simpleOp = new IsSimpleOp(l.getInnerGeometry());
+					
+					if (!simpleOp.isSimple()) {
+						
+						GamaPoint pt = new GamaPoint(simpleOp.getNonSimpleLocation());
+						IList<IShape> res1 = Spatial.Operators.split_at(l, pt);
+						res1.removeIf(a -> a.getPerimeter() == 0.0);
+						if(res1.size() > 1 ) {
+							change = true;
+							lines2.addAll(res1);
+							break;
+						}
+					}*/
+					List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, (IContainer<?, ? extends IShape>) lines2, l);
+					if(!ls.isEmpty()) {
+						ILocation pto =  l.getPoints().firstValue(scope);
+						ILocation ptd =  l.getPoints().lastValue(scope);
+						PreparedGeometry pg = PreparedGeometryFactory.prepare(l.getInnerGeometry().buffer(Math.min(0.001, l.getPerimeter() / 1000.0),10));
+						for (IShape l2 : ls) {
+							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) continue;
+							IShape it = Spatial.Operators.inter(scope, l, l2);
+							if (it.getPerimeter() > 0.0) continue;
+							if (!it.getLocation().equals(pto)  && !it.getLocation().equals(ptd)) {
+								ILocation pt = it.getPoints().firstValue(scope);
+								IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
+								res1.removeIf(a -> a.getPerimeter() == 0.0);
+								IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
+								res2.removeIf(a -> a.getPerimeter() == 0.0);
+								if(res1.size() > 1 && res2.size() > 1) {
+									change = true;
+									lines2.addAll(res1);
+									lines2.addAll(res2);
+									lines2.remove(l2);
+									break;
+								}
+							}
+						}
+						if (change) {
+							lines = lines2;
+							break;
+						}
+					} 
+					split_lines.add(l);
+				}
+				
+			}
+			/*if (readAttributes) {
 				for (final IShape line : split_lines) {
 					IShape matchingGeom = null;
 						if (matchingGeom == null) {
@@ -2814,7 +2868,7 @@ public abstract class Spatial {
 					}
 					
 				}
-			}
+			}*/
 
 			return split_lines;
 		}
