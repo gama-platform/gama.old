@@ -480,7 +480,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		if (geometry == null) return 0;
+		return geometry.hashCode();
+		//return super.hashCode();
 		// if (geomtry == null) return s
 		// return GeometryUtils.getContourCoordinates(geometry)..
 		// return geometry == null ? super.hashCode() : geometry.hashCode();
