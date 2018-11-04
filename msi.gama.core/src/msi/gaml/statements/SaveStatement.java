@@ -13,6 +13,7 @@ package msi.gaml.statements;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -930,6 +931,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		createParents(f);
 
 		final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
+		store.setCharset(Charset.forName("UTF8"));
 		// The name of the type and the name of the feature source shoud now be
 		// the same.
 		final SimpleFeatureType type =

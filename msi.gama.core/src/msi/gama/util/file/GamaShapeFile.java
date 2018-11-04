@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -324,6 +325,7 @@ public class GamaShapeFile extends GamaGisFile {
 		store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
 		store.setBufferCachingEnabled(true);
 		store.setMemoryMapped(true);
+		store.setCharset(Charset.forName("UTF8"));
 		return store;
 	}
 

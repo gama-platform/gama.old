@@ -12,6 +12,7 @@ package ummisco.gama.ui.viewers.gis;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		try {
 			pathStr = f.getAbsolutePath();
 			final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
+			store.setCharset(Charset.forName("UTF8"));
 			content = new MapContent();
 			featureSource = store.getFeatureSource();
 			style = Utils.createStyle(f, featureSource);
