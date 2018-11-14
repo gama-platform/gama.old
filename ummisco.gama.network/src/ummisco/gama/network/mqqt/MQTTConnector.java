@@ -34,7 +34,7 @@ public final class MQTTConnector extends Connector {
 	public static String DEFAULT_USER = "gama_demo";
 	public static String DEFAULT_LOCAL_NAME = "gama-" + Calendar.getInstance().getTimeInMillis() + "@";
 	public static String DEFAULT_PASSWORD = "gama_demo";
-	public static String DEFAULT_HOST = "195.221.248.15";
+	public static String DEFAULT_HOST = "vmpams.ird.fr";
 	public static String DEFAULT_PORT = "1935";
 
 	protected MqttClient sendConnection = null;
@@ -119,6 +119,8 @@ public final class MQTTConnector extends Connector {
 			password = password == null ? DEFAULT_PASSWORD : userName;
 			localName = localName == null ? DEFAULT_LOCAL_NAME + server : localName;
 
+			System.out.println("url "+ "tcp://" + server + ":" + port);
+			
 			try {
 				sendConnection = new MqttClient("tcp://" + server + ":" + port, localName, new MemoryPersistence());
 				final MqttConnectOptions connOpts = new MqttConnectOptions();
