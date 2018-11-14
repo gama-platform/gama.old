@@ -19,7 +19,7 @@ global {
 		}
 		
 		aspect default {
-			draw file("../images/fish3.gif") size: {10,10} rotate: heading-45 ;
+			draw file("../images/fish3.gif") size: {10,10} rotate: heading+45 ;
 		}
 	}
 

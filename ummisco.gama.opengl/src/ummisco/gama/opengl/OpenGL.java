@@ -567,7 +567,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 			textureCoords.setLocation(x, y, z);
 			currentTextureRotation.applyTo(textureCoords);
 			final double u = 1 - (textureCoords.x - textureEnvelope.getMinX()) / textureEnvelope.getWidth();
-			final double v = (textureCoords.y - textureEnvelope.getMinY()) / textureEnvelope.getHeight();
+			final double v = 1 - (textureCoords.y - textureEnvelope.getMinY()) / textureEnvelope.getHeight();
 			outputTexCoord(u, v);
 		}
 		outputVertex(x, y, z);
