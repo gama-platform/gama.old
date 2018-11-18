@@ -220,9 +220,10 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			};
 			cd.visitOwnChildrenRecursively(finder);
 			if (returns.isEmpty()) {
-				if(cd instanceof ActionDescription && !((ActionDescription)cd).isAbstract())
-				cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
-				return;
+				if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
+					cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
+					return;
+				}
 			}
 			for (final StatementDescription ret : returns) {
 				final IExpression ie = ret.getFacetExpr(VALUE);
