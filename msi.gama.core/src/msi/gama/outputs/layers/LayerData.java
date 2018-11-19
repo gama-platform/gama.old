@@ -73,7 +73,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 				? Integer.MAX_VALUE : Cast.asInt(scope, exp.value(scope)), INT, 0);
 		selectable = create(SELECTABLE, BOOL, true);
 		transparency = create(TRANSPARENCY,
-				(scope, exp) -> Cast.asFloat(scope, exp.value(scope)), FLOAT, 1d);
+				(scope, exp) -> Math.min(Math.max(Cast.asFloat(scope, exp.value(scope)), 0d), 1d), FLOAT, 0d);
 
 	}
 
@@ -85,7 +85,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public void setTransparency(final double f) {
-		transparency = create(TRANSPARENCY, f);
+		transparency = create(TRANSPARENCY, Math.min(Math.max(f, 0d), 1d));
 	}
 
 	@Override
