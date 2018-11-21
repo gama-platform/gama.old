@@ -6,8 +6,8 @@
 */
 model simple_comodeling_example
 
-import "Flies.gaml" as Flies
-import "Mosquitos.gaml" as Mosquitos
+import "../Adapters/Flies Adapter.gaml" as Flies
+import "../Adapters/Mosquitos Adapter.gaml" as Mosquitos
 
 
 global
@@ -15,7 +15,7 @@ global
 	init
 	{
 	//micro_model must be instantiated by create statement. We create an experiment inside the micro-model and the simulation will be created implicitly (1 experiment have only 1 simulation).
-		create Flies.Simple  number: 5;
+		create Flies.Simple  number: 2;
 		create Mosquitos.Generic;
 	}
 
@@ -24,12 +24,6 @@ global
 
 	//tell the first experiment of micro_model_1 do 1 step;
 		ask first(Flies.Simple).simulation
-		{
-			do _step_;
-		}
-
-		//tell the  experiment at 3 of micro_model_1 do 1 step;
-		ask (Flies.Simple at 3).simulation
 		{
 			do _step_;
 		}
