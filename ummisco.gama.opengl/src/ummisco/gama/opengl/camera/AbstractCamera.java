@@ -18,6 +18,7 @@ import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.glu.GLU;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
@@ -65,6 +66,8 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected boolean keystoneMode = false;
 	protected double zCorrector = 1d;
+	private final boolean useNumKeys = GamaPreferences.Displays.OPENGL_NUM_KEYS_CAM.getValue();
+
 
 	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
@@ -501,16 +504,16 @@ public abstract class AbstractCamera implements ICamera {
 						zoom(false);
 						break;
 					case '4':
-						quickLeftTurn();
+						if(useNumKeys) quickLeftTurn();
 						break;
 					case '6':
-						quickRightTurn();
+						if(useNumKeys) quickRightTurn();
 						break;
 					case '8':
-						quickUpTurn();
+						if(useNumKeys) quickUpTurn();
 						break;
 					case '2':
-						quickDownTurn();
+						if(useNumKeys) quickDownTurn();
 						break;
 					case 'k':
 						if (!GamaKeyBindings.ctrl(e)) {
