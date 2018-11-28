@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
+ *
+ * msi.gaml.extensions.fipa.UnknownProtocolException.java, in plugin msi.gaml.extensions.fipa,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * 'UnknownProtocolException.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import msi.gama.runtime.IScope;
@@ -24,9 +23,10 @@ public class UnknownProtocolException extends CommunicatingException {
 	/**
 	 * Instantiates a new unknown protocol exception.
 	 * 
-	 * @param message the message
+	 * @param message
+	 *            the message
 	 */
-	protected UnknownProtocolException(final IScope scope, final Integer message) {
+	protected UnknownProtocolException(final IScope scope, final String message) {
 		super(scope, "Unknown protocol: " + message);
 	}
 }

@@ -141,19 +141,19 @@ public class FIPASkill extends MessagingSkill {
 			concept = { IConcept.FIPA, IConcept.SKILL, IConcept.COMMUNICATION })
 	public static class Deprecated extends FIPASkill {}
 
-	/** The protocol indexes. */
-	private static Map<String, Integer> protocolIndexes = new HashMap();
+	// /** The protocol indexes. */
+	// private static Map<String, Integer> protocolIndexes = new HashMap();
 
 	/** The performative indexes. */
 	protected static Map<String, Integer> performativeIndexes = new HashMap();
 	static {
 		int i = 0;
-		for (final String name : FIPAConstants.protocolNames) {
-			protocolIndexes.put(name, i);
-			i++;
-		}
+		// for (final String name : FIPAConstants.protocolNames) {
+		// protocolIndexes.put(name, i);
+		// i++;
+		// }
 
-		i = 0;
+		// i = 0;
 		for (final String name : FIPAConstants.performativeNames) {
 			performativeIndexes.put(name, i);
 			i++;
@@ -240,7 +240,7 @@ public class FIPASkill extends MessagingSkill {
 			protocol = FIPAConstants.Protocols.NO_PROTOCOL_STR;
 		}
 
-		MessageBroker.getInstance(scope).scheduleForDelivery(scope, message, protocolIndexes.get(protocol));
+		MessageBroker.getInstance(scope).scheduleForDelivery(scope, message, protocol);
 
 		return message;
 	}
