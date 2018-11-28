@@ -1,28 +1,22 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SceneBuffer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.renderer.helpers.SceneHelper.java, in plugin ummisco.gama.opengl, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.IScope;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.PixelUnitExpression;
-import msi.gaml.operators.Cast;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.ModelScene;
-import ummisco.gama.opengl.scene.layers.LayerObject;
 
 /**
  * Class SceneHelper. Manages the interactions between the updating and the rendering tasks by keeping hold of three
@@ -51,65 +45,14 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	public void layerOffsetChanged() {
 		if (getSceneToRender() == null) { return; }
-		for (final LayerObject layer : getSceneToRender().getLayers()) {
-			if (layer.canSplit()) {
-				layer.setOffset(computeOffsetOf(layer.layer));
-			}
-		}
-	}
-
-	GamaPoint computeOffsetOf(final ILayer layer) {
-		GamaPoint currentOffset = new GamaPoint(0, 0);
-		final IScope scope = getSurface().getScope();
-		final IExpression expr = layer.getDefinition().getFacet(IKeyword.POSITION);
-
-		if (expr != null) {
-			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
-			currentOffset = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
-			if (Math.abs(currentOffset.x) <= 1 && !containsPixels) {
-				currentOffset.x *= getRenderer().getEnvWidth();
-			}
-			if (currentOffset.x < 0) {
-				currentOffset.x = getRenderer().getEnvWidth() - currentOffset.x;
-			}
-			if (Math.abs(currentOffset.y) <= 1 && !containsPixels) {
-				currentOffset.y *= getRenderer().getEnvHeight();
-			}
-			if (currentOffset.y < 0) {
-				currentOffset.y = getRenderer().getEnvHeight() - currentOffset.y;
-			}
-
-		}
-		if (!layer.isOverlay()) {
-			double currentZLayer = getMaxEnvDim() * layer.getData().getPosition().getZ();
-			currentZLayer += layer.getData().getAddedElevation() * getMaxEnvDim();
-			double zScale = layer.getData().getSize().getZ();
-			if (zScale <= 0) {
-				zScale = 1;
-			}
-			currentOffset = new GamaPoint(currentOffset.x, currentOffset.y, currentZLayer);
-		}
-		return currentOffset;
+		getSceneToRender().layerOffsetChanged();
 	}
 
 	public void beginDrawingLayer(final ILayer layer, final Double currentLayerAlpha) {
-		GamaPoint currentScale;
-		final GamaPoint currentOffset = computeOffsetOf(layer);
-		if (!layer.isOverlay()) {
-			double zScale = layer.getData().getSize().getZ();
-			if (zScale <= 0) {
-				zScale = 1;
-			}
-			currentScale = new GamaPoint(getRenderer().getLayerWidth() / getRenderer().getWidth(),
-					getRenderer().getLayerHeight() / getRenderer().getHeight(), zScale);
-		} else {
-			currentScale = new GamaPoint(0.9, 0.9, 1);
-		}
 		final ModelScene scene = getSceneToUpdate();
 		if (scene != null) {
-			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentLayerAlpha);
+			scene.beginDrawingLayer(layer, currentLayerAlpha);
 		}
-
 	}
 
 	public boolean beginUpdatingScene() {
@@ -262,20 +205,27 @@ public class SceneHelper extends AbstractRendererHelper {
 	}
 
 	public void draw() {
+		final OpenGL gl = getOpenGL();
 		// Do some garbage collecting in model scenes
-		garbageCollect(getOpenGL());
+		garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color
-		if (getRenderer().getPickingHelper().isBeginningPicking()) {
-			getRenderer().getPickingHelper().beginPicking();
-			getSceneToRender().draw(getOpenGL());
-			getRenderer().getPickingHelper().endPicking();
+		final PickingHelper picking = getRenderer().getPickingHelper();
+		if (picking.isBeginningPicking()) {
+			picking.beginPicking();
+			getSceneToRender().draw(gl);
+			picking.endPicking();
 		}
 		// we draw the scene on screen
-		getSceneToRender().draw(getOpenGL());
+		getSceneToRender().draw(gl);
 	}
 
 	public boolean isReady() {
 		return getSceneToRender() != null;
+	}
+
+	public void reshape(final int width, final int height) {
+		if (getSceneToRender() == null) { return; }
+		getSceneToRender().recomputeLayoutDimensions();
 	}
 
 }

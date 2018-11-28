@@ -30,6 +30,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -68,8 +69,8 @@ public class LayerObject {
 	volatile boolean locked;
 	boolean isAnimated;
 	protected final IOpenGLRenderer renderer;
-	protected final LinkedList<List<AbstractObject>> traces;
-	protected List<AbstractObject> currentList;
+	protected final LinkedList<List<AbstractObject<?, ?>>> traces;
+	protected List<AbstractObject<?, ?>> currentList;
 	protected Integer openGLListIndex;
 	protected boolean isFading;
 
@@ -77,12 +78,56 @@ public class LayerObject {
 		this.renderer = renderer2;
 		this.layer = layer;
 		this.overlay = computeOverlay();
+		computeOffset();
+		computeScale();
 		currentList = newCurrentList();
 		if (layer != null && layer.getData().getTrace() != null || renderer.useShader()) {
 			traces = new LinkedList();
 			traces.add(currentList);
 		} else {
 			traces = null;
+		}
+	}
+
+	public void computeScale() {
+		if (!overlay) {
+			double zScale = layer.getData().getSize().getZ();
+			if (zScale <= 0) {
+				zScale = 1;
+			}
+			scale.setLocation(renderer.getLayerWidth() / renderer.getWidth(),
+					renderer.getLayerHeight() / renderer.getHeight(), zScale);
+		} else {
+			scale.setLocation(0.9, 0.9, 1);
+		}
+
+	}
+
+	public void computeOffset() {
+		final IScope scope = renderer.getSurface().getScope();
+		final IExpression expr = layer.getDefinition().getFacet(IKeyword.POSITION);
+
+		if (expr != null) {
+			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
+			offset.setLocation((GamaPoint) Cast.asPoint(scope, expr.value(scope)));
+			if (Math.abs(offset.x) <= 1 && !containsPixels) {
+				offset.x *= renderer.getEnvWidth();
+			}
+			if (offset.x < 0) {
+				offset.x = renderer.getEnvWidth() - offset.x;
+			}
+			if (Math.abs(offset.y) <= 1 && !containsPixels) {
+				offset.y *= renderer.getEnvHeight();
+			}
+			if (offset.y < 0) {
+				offset.y = renderer.getEnvHeight() - offset.y;
+			}
+
+		}
+		if (!overlay) {
+			double currentZLayer = renderer.getMaxEnvDim() * layer.getData().getPosition().getZ();
+			currentZLayer += layer.getData().getAddedElevation() * renderer.getMaxEnvDim();
+			offset.z = currentZLayer;
 		}
 	}
 
@@ -108,7 +153,6 @@ public class LayerObject {
 	}
 
 	private void drawWithoutShader(final OpenGL gl) {
-		final GamaPoint scale = getScale();
 
 		if (overlay) {
 			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
@@ -133,9 +177,10 @@ public class LayerObject {
 		}
 		try {
 			gl.push(GL2.GL_MODELVIEW);
-			final GamaPoint offset = getOffset();
-			gl.translateBy(offset.x, -offset.y, overlay ? 0 : offset.z);
-			gl.scaleBy(scale.x, scale.y, scale.z);
+			final GamaPoint nonNullOffset = getOffset();
+			gl.translateBy(nonNullOffset.x, -nonNullOffset.y, overlay ? 0 : nonNullOffset.z);
+			final GamaPoint nonNullScale = getScale();
+			gl.scaleBy(nonNullScale.x, nonNullScale.y, nonNullScale.z);
 
 			final boolean picking = renderer.getPickingHelper().isPicking() && isPickable();
 			if (picking) {
@@ -165,23 +210,23 @@ public class LayerObject {
 	}
 
 	private void addFrame(final OpenGL gl) {
-		GamaPoint scale = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
+		GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
 		final IScope scope = renderer.getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
 		if (expr != null) {
-			scale = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
-			if (scale.x <= 1) {
-				scale.x *= renderer.getEnvWidth();
+			size = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
+			if (size.x <= 1) {
+				size.x *= renderer.getEnvWidth();
 			}
-			if (scale.y <= 1) {
-				scale.y *= renderer.getEnvHeight();
+			if (size.y <= 1) {
+				size.y *= renderer.getEnvHeight();
 			}
 		}
 		gl.pushMatrix();
-		gl.translateBy(0, -scale.y, 0);
-		gl.scaleBy(scale.x, scale.y, 1);
+		gl.translateBy(0, -size.y, 0);
+		gl.scaleBy(size.x, size.y, 1);
 		gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope));
-		gl.setCurrentObjectAlpha(1-((OverlayLayer) layer).getData().getTransparency(scope));
+		gl.setCurrentObjectAlpha(((OverlayLayer) layer).getData().getTransparency(scope));
 		gl.drawCachedGeometry(IShape.Type.ROUNDED, true, null);
 		gl.popMatrix();
 	}
@@ -197,7 +242,7 @@ public class LayerObject {
 				delta = size == 0 ? 0 : 1d / size;
 			}
 			double alpha = 0d;
-			for (final List<AbstractObject> list : traces) {
+			for (final List<AbstractObject<?, ?>> list : traces) {
 				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
 				drawObjects(gl, list, alpha, picking);
 			}
@@ -206,7 +251,7 @@ public class LayerObject {
 		}
 	}
 
-	protected void drawObjects(final OpenGL gl, final List<AbstractObject> list, final double alpha,
+	protected void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
 			final boolean picking) {
 		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
@@ -354,14 +399,20 @@ public class LayerObject {
 		return true;
 	}
 
-	protected static GeometryObject build(final IShape shape, final GamaColor color, final IShape.Type type,
-			final boolean empty) {
+	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
+			final IShape.Type type, final boolean empty) {
 		final ShapeDrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
 				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		att.setEmpty(empty);
 		att.setHeight(shape.getDepth());
 		att.withLighting(false);
-		return new GeometryObject(shape.getInnerGeometry(), att);
+		list.add(new GeometryObject(shape.getInnerGeometry(), att));
+	}
+
+	public void forceRedraw() {
+		if (layer == null) { return; }
+		layer.draw(renderer.getSurface().getScope(), renderer);
+
 	}
 
 }
