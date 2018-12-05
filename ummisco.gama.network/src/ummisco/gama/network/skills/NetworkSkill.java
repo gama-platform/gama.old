@@ -60,7 +60,7 @@ import ummisco.gama.network.udp.UDPConnector;
 public class NetworkSkill extends MessagingSkill {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	final static String REGISTERED_AGENTS = "registred_agents";
@@ -175,12 +175,21 @@ public class NetworkSkill extends MessagingSkill {
 				connector = new MQTTConnector(scope);
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
-				}
-				if (login != null) {
-					connector.configure(IConnector.LOGIN, login);
-				}
-				if (password != null) {
-					connector.configure(IConnector.PASSWORD, password);
+					if(port==0)
+					{
+						connector.configure(IConnector.SERVER_PORT, "1883");
+					}
+					else
+					{
+						connector.configure(IConnector.SERVER_PORT, port.toString());
+
+					}
+					if (login != null) {
+						connector.configure(IConnector.LOGIN, login);
+					}
+					if (password != null) {
+						connector.configure(IConnector.PASSWORD, password);
+					}
 				}
 			}
 			myConnectors.put(serverURL, connector);
