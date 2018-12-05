@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SWTOpenGLDisplaySurface.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.view.SWTOpenGLDisplaySurface.java, in plugin ummisco.gama.opengl, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
 import static org.eclipse.swt.internal.DPIUtil.autoScaleUp;

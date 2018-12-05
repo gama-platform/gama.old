@@ -1,14 +1,13 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'FIPAConstants.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * msi.gaml.extensions.fipa.FIPAConstants.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 /**
@@ -17,13 +16,13 @@ package msi.gaml.extensions.fipa;
 public interface FIPAConstants {
 
 	/**
-	 * Constants identifying the FIPA performatives. These performatives will be employed to
-	 * implement the interaction protocol in GAMA.
+	 * Constants identifying the FIPA performatives. These performatives will be employed to implement the interaction
+	 * protocol in GAMA.
 	 */
-	public static String[] performativeNames = { "accept_proposal", "agree", "cancel", "cfp",
-		"confirm", "disconfirm", "failure", "inform", "inform_if", "inform_ref", "not_understood",
-		"propagate", "propose", "proxy", "query", "refuse", "reject_proposal", "request",
-		"request_when", "request_whenever", "request_whomever", "subscribe", "end_conversation" };
+	public static String[] performativeNames = { "accept_proposal", "agree", "cancel", "cfp", "confirm", "disconfirm",
+			"failure", "inform", "inform_if", "inform_ref", "not_understood", "propagate", "propose", "proxy", "query",
+			"refuse", "reject_proposal", "request", "request_when", "request_whenever", "request_whomever", "subscribe",
+			"end_conversation" };
 
 	/**
 	 * The Interface Performatives.
@@ -109,9 +108,8 @@ public interface FIPAConstants {
 
 	/** The FIPA Interaction Protocols. */
 
-	public static String[] protocolNames = { "fipa-brokering", "fipa-contract-net",
-		"fipa-iterated-contract-net", "fipa-propose", "fipa-query", "fipa-request",
-		"fipa-request-when", "fipa-subscribe", "no-protocol" };
+	// public static String[] protocolNames = { "fipa-brokering", "fipa-contract-net", "fipa-iterated-contract-net",
+	// "fipa-propose", "fipa-query", "fipa-request", "fipa-request-when", "fipa-subscribe", "no-protocol" };
 
 	/**
 	 * The Interface Protocols.
@@ -119,42 +117,41 @@ public interface FIPAConstants {
 	public interface Protocols {
 
 		/** Constant field FIPA_BROKERING. */
-		public static final int FIPA_BROKERING = 0;
+		// public static final int FIPA_BROKERING = 0;
 		public static final String FIPA_BROKERING_STR = "fipa-brokering";
 
 		/** Constant field FIPA_CONTRACT_NET. */
-		public static final int FIPA_CONTRACT_NET = 1;
+		// public static final int FIPA_CONTRACT_NET = 1;
 		public static final String FIPA_CONTRACT_NET_STR = "fipa-contract-net";
 
 		/** Constant field FIPA_ITERATED_CONTRACT_NET. */
-		public static final int FIPA_ITERATED_CONTRACT_NET = 2;
+		// public static final int FIPA_ITERATED_CONTRACT_NET = 2;
 		public static final String FIPA_ITERATED_CONTRACT_NET_STR = "contract";
 
 		/** Constant field FIPA_PROPOSE. */
-		public static final int FIPA_PROPOSE = 3;
+		// public static final int FIPA_PROPOSE = 3;
 		public static final String FIPA_PROPOSE_STR = "fipa-propose";
 
 		/** Constant field FIPA_QUERY. */
-		public static final int FIPA_QUERY = 4;
+		// public static final int FIPA_QUERY = 4;
 		public static final String FIPA_QUERY_STR = "fipa-query";
 
 		/** Constant field FIPA_REQUEST. */
-		public static final int FIPA_REQUEST = 5;
+		// public static final int FIPA_REQUEST = 5;
 		public static final String FIPA_REQUEST_STR = "fipa-request";
 
 		/** Constant field FIPA_REQUEST_WHEN. */
-		public static final int FIPA_REQUEST_WHEN = 6;
+		// public static final int FIPA_REQUEST_WHEN = 6;
 		public static final String FIPA_REQUEST_WHEN_STR = "fipa-request-when";
 
 		/** Constant field FIPA_SUBSCRIBE. */
-		public static final int FIPA_SUBSCRIBE = 7;
+		// public static final int FIPA_SUBSCRIBE = 7;
 		public static final String FIPA_SUBSCRIBE_STR = "fipa-subcribe";
 
 		/** Constant field NO_PROTOCOL. */
-		public static final int NO_PROTOCOL = 8;
+		// public static final int NO_PROTOCOL = 8;
 		public static final String NO_PROTOCOL_STR = "no-protocol";
 	}
-
 
 	/** Conversation has ended. */
 	public static final int CONVERSATION_END = -1;
@@ -164,5 +161,5 @@ public interface FIPAConstants {
 
 	/** Conversation requires Agent interaction. */
 	public static final int AGENT_ACTION_REQ = -3;
-	
+
 }

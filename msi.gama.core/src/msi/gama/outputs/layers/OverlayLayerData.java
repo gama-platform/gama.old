@@ -14,6 +14,7 @@ import java.awt.Color;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.Types;
@@ -32,9 +33,9 @@ public class OverlayLayerData extends LayerData {
 		rounded = create(IKeyword.ROUNDED, Types.BOOL, true);
 	}
 
-	public Color getBackgroundColor() {
+	public Color getBackgroundColor(final IScope scope) {
 		return new Color(background.get().getRed(), background.get().getGreen(), background.get().getBlue(),
-				(int) (getTransparency() * 255));
+				(int) (getTransparency(scope) * 255));
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public interface ILayerData {
 
 	public abstract void setTransparency(final double f);
 
-	public abstract Double getTransparency();
+	public abstract Double getTransparency(final IScope scope);
 
 	public abstract void setSize(final ILocation p);
 

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * msi.gaml.extensions.fipa.MessageBroker.java, in plugin msi.gaml.extensions.fipa,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- * 'MessageBroker.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.ArrayList;
@@ -29,21 +28,21 @@ import msi.gaml.types.Types;
 /**
  * The Class MessageBroker.
  * 
- * TODO Provide this class with a copy of the scope with which it is created to
- * simplify the API by removing the scope in the parameters
+ * TODO Provide this class with a copy of the scope with which it is created to simplify the API by removing the scope
+ * in the parameters
  *
  * @author drogoul
  */
 public class MessageBroker {
 
 	/** The messages to deliver. */
-	private final Map<IAgent, List<FIPAMessage>> messagesToDeliver = new HashMap<IAgent, List<FIPAMessage>>();
+	private final Map<IAgent, List<FIPAMessage>> messagesToDeliver = new HashMap<>();
 
 	/**
-	 * Centralized storage of Conversations and Messages to facilitate Garbage
-	 * Collection
+	 * Centralized storage of Conversations and Messages to facilitate Garbage Collection
 	 */
-	private final Map<IAgent, ConversationsMessages> conversationsMessages = new HashMap<IAgent, ConversationsMessages>();
+	private final Map<IAgent, ConversationsMessages> conversationsMessages =
+			new HashMap<>();
 
 	/** The instance. */
 	private static Map<SimulationAgent, MessageBroker> instances = new HashMap<>();
@@ -60,9 +59,7 @@ public class MessageBroker {
 	 */
 	public IList<FIPAMessage> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
 		final List<FIPAMessage> messagesForA = messagesToDeliver.get(a);
-		if (messagesForA == null) {
-			return GamaListFactory.create();
-		}
+		if (messagesForA == null) { return GamaListFactory.create(); }
 
 		final IList<FIPAMessage> successfulDeliveries = GamaListFactory.create(Types.get(IType.MESSAGE));
 		final IList<FIPAMessage> failedDeliveries = GamaListFactory.create(Types.get(IType.MESSAGE));
@@ -98,9 +95,7 @@ public class MessageBroker {
 	 *             the gaml exception
 	 */
 	protected FIPAMessage failureMessageInReplyTo(final IScope scope, final FIPAMessage m) throws GamaRuntimeException {
-		if (m.getPerformative() == FIPAConstants.Performatives.FAILURE) {
-			return null;
-		}
+		if (m.getPerformative() == FIPAConstants.Performatives.FAILURE) { return null; }
 
 		final FIPAMessage f = new FIPAMessage(scope);
 		f.setSender(null);
@@ -141,7 +136,7 @@ public class MessageBroker {
 	 * @param m
 	 *            the m
 	 * @param protocol
-	 *            the protocol
+	 *            the protocol name
 	 *
 	 * @throws UnknownProtocolException
 	 *             the unknown protocol exception
@@ -150,7 +145,7 @@ public class MessageBroker {
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
-	public void scheduleForDelivery(final IScope scope, final FIPAMessage m, final Integer protocol) {
+	public void scheduleForDelivery(final IScope scope, final FIPAMessage m, final String protocol) {
 		Conversation conv;
 		conv = new Conversation(scope, protocol, m);
 		m.setConversation(conv);
@@ -176,8 +171,9 @@ public class MessageBroker {
 				return null;
 			});
 			scope.getSimulation().postDisposeAction(scope1 -> {
-				if (instances.get(scope1.getSimulation()) != null)
+				if (instances.get(scope1.getSimulation()) != null) {
 					instances.get(scope1.getSimulation()).schedulerDisposed();
+				}
 				instances.remove(scope1.getSimulation());
 				return null;
 			});
@@ -190,17 +186,13 @@ public class MessageBroker {
 	}
 
 	public IList<FIPAMessage> getMessagesFor(final IAgent agent) {
-		if (!conversationsMessages.containsKey(agent)) {
-			return GamaListFactory.create();
-		}
+		if (!conversationsMessages.containsKey(agent)) { return GamaListFactory.create(); }
 
 		return conversationsMessages.get(agent).messages;
 	}
 
 	public List<Conversation> getConversationsFor(final IAgent agent) {
-		if (!conversationsMessages.containsKey(agent)) {
-			return GamaListFactory.create();
-		}
+		if (!conversationsMessages.containsKey(agent)) { return GamaListFactory.create(); }
 
 		return conversationsMessages.get(agent).conversations;
 	}

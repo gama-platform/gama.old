@@ -377,7 +377,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void beginOverlay(final OverlayLayer layer) {
 		currentRenderer = overlayRenderer;
-		currentRenderer.setColor(layer.getData().getBackgroundColor());
+		currentRenderer.setColor(layer.getData().getBackgroundColor(getSurface().getScope()));
 		final int x = (int) getXOffsetInPixels();
 		final int y = (int) getYOffsetInPixels();
 		final int w = getLayerWidth();

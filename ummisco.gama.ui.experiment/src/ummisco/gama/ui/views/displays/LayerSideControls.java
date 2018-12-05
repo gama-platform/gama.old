@@ -404,9 +404,9 @@ public class LayerSideControls {
 
 		final ILayerStatement definition = layer.getDefinition();
 
-		EditorFactory.create(container.getScope(), compo, "Transparency:", layer.getData().getTransparency(), 0.0, 1.0,
+		EditorFactory.create(container.getScope(), compo, "Transparency:", layer.getData().getTransparency(container.getScope()), 0.0, 1.0,
 				0.1, false, newValue -> {
-					layer.getData().setTransparency(1 - newValue);
+					layer.getData().setTransparency(newValue);
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Position:", layer.getData().getPosition(),

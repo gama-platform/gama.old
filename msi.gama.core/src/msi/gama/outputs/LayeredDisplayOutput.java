@@ -47,6 +47,7 @@ import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
@@ -319,6 +320,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 			// Are we in OpenGL world ?
 			final IExpressionDescription type = d.getFacet(TYPE);
+			final Boolean isOpenGLDefault = !GamaPreferences.Displays.CORE_DISPLAY.getValue().equals("Java2D");
+			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
+					: type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 			if (type != null) {
 				// Addresses and fixes Issue 833.
 				final String s = type.getExpression().literalValue();
@@ -329,10 +333,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					return;
 				}
 				;
+			}else {
+				if (isOpenGLDefault) {
+					d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
+				}
 			}
-			final Boolean isOpenGLDefault = !GamaPreferences.Displays.CORE_DISPLAY.getValue().equals("Java2D");
-			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
-					: type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 
 			final IExpressionDescription camera =
 					d.getFacet(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR, CAMERA_LENS);
