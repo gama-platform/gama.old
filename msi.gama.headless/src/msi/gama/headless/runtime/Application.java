@@ -46,6 +46,7 @@ import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
+import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
@@ -55,8 +56,10 @@ public class Application implements IApplication {
 	}
 
 	final public static String CONSOLE_PARAMETER = "-c";
+	final public static String GAMA_VERSION = "-version";
 	final public static String TUNNELING_PARAMETER = "-p";
 	final public static String THREAD_PARAMETER = "-hpc";
+	final public static String SOCKET_PARAMETER = "-socket";
 	final public static String VERBOSE_PARAMETER = "-v";
 	final public static String HELP_PARAMETER = "-help";
 	final public static String BUILD_XML_PARAMETER = "-xml";
@@ -66,25 +69,31 @@ public class Application implements IApplication {
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
+	public int socket = -1;
 	public boolean consoleMode = false;
 	public boolean tunnelingMode = false;
 	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
 
 	private static String showHelp() {
-		final String res = " sh ./gama-headless.sh [Options] [XML Input] [output directory]\n"
+		final String res = " Welcome to Gama-platform.org version "+GAMA.VERSION
+				+ "\n"
+				+ "sh ./gama-headless.sh [Options] [XML Input] [output directory]\n"
 				+ "\nList of available options:"
-				+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
-				+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
-				+ "\n      -failed		   				-- only display the failed and aborted test results"
 				+ "\n      -help     				 	-- get the help of the command line"
+				+ "\n      -version     				-- get the the version of gama"
 				+ "\n      -m mem    					-- allocate memory (ex 2048m)"
 				+ "\n      -c        					-- start the console to write xml parameter file"
 				+ "\n      -v 							-- verbose mode"
 				+ "\n      -hpc core 					-- set the number of core available for experimentation"
+				+ "\n      -socket      				-- start socket pipeline to interact with another framework" + "\n"
 				+ "\n      -p        					-- start pipeline to interact with another framework" + "\n"
+				+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
+				+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
+				+ "\n      -failed		   				-- only display the failed and aborted test results"
 				+ "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
 				+ "\n      build an xml parameter file from a model" + "\n" + "\n";
+		
 		return res;
 	}
 
@@ -106,6 +115,14 @@ public class Application implements IApplication {
 			mustContainInFile = false;
 		}
 		if (args.contains(TUNNELING_PARAMETER)) {
+			size = size - 1;
+			mustContainOutFile = false;
+		}
+		if (args.contains(SOCKET_PARAMETER)) {
+			size = size - 2;
+			mustContainOutFile = false;
+		}
+		if (args.contains(GAMA_VERSION)) {
 			size = size - 1;
 			mustContainOutFile = false;
 		}
@@ -162,7 +179,9 @@ public class Application implements IApplication {
 		SystemLogger.removeDisplay();
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
-		if (args.contains(HELP_PARAMETER)) {
+		if(args.contains(GAMA_VERSION)) {
+			
+		} else if (args.contains(HELP_PARAMETER)) {
 			DEBUG.LOG(showHelp());
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
 			return ModelLibraryValidator.getInstance().start(args);
@@ -273,6 +292,13 @@ public class Application implements IApplication {
 		HeadlessSimulationLoader.preloadGAMA();
 		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
 		this.consoleMode = args.contains(CONSOLE_PARAMETER);
+		if (args.contains(SOCKET_PARAMETER)) {
+			this.socket = Integer.valueOf(after(args, SOCKET_PARAMETER));
+		}
+		else {
+			this.socket = -1;
+		}
+		
 		if (args.contains(THREAD_PARAMETER)) {
 			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
 		} else {
