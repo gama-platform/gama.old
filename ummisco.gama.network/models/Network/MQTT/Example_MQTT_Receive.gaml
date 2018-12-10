@@ -21,8 +21,8 @@ global {
 			 */
 			do connect  with_name:"receiver";
 			
-			//default ActiveMQ mqtt login is "admin", the password is "password"
-			//do connect to:"localhost" with_name:name;
+			//default ActiveMQ mqtt login is "admin", the password is "admin"
+			// do connect to:"localhost" with_name:"receiver" login: "admin" password: "admin";
 		}
 	}
 }
