@@ -175,5 +175,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/msi.gama.ext/kml/JavaAPIforKml-2.2.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-example-1.14.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
