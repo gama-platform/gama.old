@@ -988,7 +988,7 @@ public class MovingSkill extends Skill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				final double dis = pt.distance(currentLocation);
+				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 
 				if (distance < dist) {
