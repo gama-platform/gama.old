@@ -740,14 +740,14 @@ public class MovingSkill extends Skill {
 							distanceT = distT;
 							endIndexSegment = i + 1;
 							falseTarget.z = points[i].z + (points[i + 1].z - points[i].z)
-									* falseTarget.distance(points[i]) / points[i].distance(points[i + 1]);
+									* falseTarget.distance3D(points[i]) / points[i].distance3D(points[i + 1]);
 						}
 					}
 				} else {
 					final ILocation c0 = points[0];
 					final ILocation c1 = points[1];
 					falseTarget.z = c0.getZ()
-							+ (c1.getZ() - c0.getZ()) * falseTarget.distance((Coordinate) c0) / lineEnd.getPerimeter();
+							+ (c1.getZ() - c0.getZ()) * falseTarget.distance3D((Coordinate) c0) / lineEnd.getPerimeter();
 				}
 			}
 		}
