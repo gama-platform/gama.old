@@ -16,6 +16,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -28,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -71,6 +73,7 @@ import msi.gaml.types.IType;
 @skill (
 		name = IKeyword.MOVING_3D_SKILL,
 		concept = { IConcept.THREED, IConcept.SKILL })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MovingSkill3D extends MovingSkill {
 
 	@Override
@@ -189,12 +192,22 @@ public class MovingSkill3D extends MovingSkill {
 		final double heading = computeHeadingFromAmplitude(scope, agent);
 		final double pitch = computePitchFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-		Double newHeading = null;
 		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
+			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
+			Double newHeading = null;
+			if (on != null && on instanceof GamaSpatialGraph) {
+				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
+				GamaMap<IShape, Double> probaDeplacement = null;
+				if (scope.hasArg("proba_edges")) {
+					probaDeplacement = (GamaMap<IShape, Double>) scope.getVarValue("proba_edges");
+				}
+				moveToNextLocAlongPathSimplified(scope, agent, graph, dist, probaDeplacement);
+				return;
+			}
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if (bounds != null) {
 				IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
@@ -215,7 +228,6 @@ public class MovingSkill3D extends MovingSkill {
 					}
 				}
 			}
-
 			setLocation(agent, loc);
 
 			// only used for particuler case of bounded wandering
@@ -234,7 +246,8 @@ public class MovingSkill3D extends MovingSkill {
 			setPitch(agent, pitch);
 		}
 	}
-
+	
+	
 	@Override
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 
