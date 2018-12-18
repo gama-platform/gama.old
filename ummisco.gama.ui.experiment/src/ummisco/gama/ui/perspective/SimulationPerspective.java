@@ -40,6 +40,7 @@ public class SimulationPerspective implements IPerspectiveFactory {
 				lay.createPlaceholderFolder("displays", IPageLayout.TOP, 0.7f, editor);
 		displays.addPlaceholder(IGui.LAYER_VIEW_ID + ":*");
 		displays.addPlaceholder(IGui.GL_LAYER_VIEW_ID + ":*");
+		displays.addPlaceholder(IGui.GL_LAYER_VIEW_ID2 + ":*");
 
 		final IPlaceholderFolderLayout inspect =
 				lay.createPlaceholderFolder("inspect", IPageLayout.RIGHT, 0.6f, "displays");
