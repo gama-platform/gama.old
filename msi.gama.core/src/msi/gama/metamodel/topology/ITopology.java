@@ -68,6 +68,8 @@ public interface ITopology extends IValue {
 
 	public abstract List<Geometry> listToroidalGeometries(final Geometry geom);
 
+	public abstract Collection<IAgent> getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter, int number);
+
 	public abstract IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
 
 	public abstract IAgent getAgentFarthestTo(IScope scope, final IShape source, IAgentFilter filter);

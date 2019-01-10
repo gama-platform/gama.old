@@ -13,6 +13,7 @@ package msi.gaml.statements;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,9 +30,13 @@ import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.gce.image.WorldImageWriter;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -115,7 +120,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz" },
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz", "json" },
 				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
@@ -318,7 +323,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				agents = scope.getAgent().getPopulationFor((ISpecies) agents);
 			}
 			if (!(agents instanceof IList)) { return null; }
-			saveShape((IList<? extends IShape>) agents, path, scope);
+			saveShape((IList<? extends IShape>) agents, path, scope, false);
+		} else  if (type.equals("json")) {
+				if (item == null) { return null; }
+				Object agents = item.value(scope);
+				if (agents instanceof ISpecies) {
+					agents = scope.getAgent().getPopulationFor((ISpecies) agents);
+				}
+				if (!(agents instanceof IList)) { return null; }
+				saveShape((IList<? extends IShape>) agents, path, scope, true);
+			
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
@@ -532,7 +546,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return geomType;
 	}
 
-	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
+	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope, boolean geoJson)
 			throws GamaRuntimeException {
 		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
 			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
@@ -540,7 +554,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			for (int i = 0; i < collec.getNumGeometries(); i++) {
 				shapes.add(new GamaShape(collec.getGeometryN(i)));
 			}
-			saveShape(shapes, path, scope);
+			saveShape(shapes, path, scope,geoJson);
 			return;
 		}
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
@@ -566,6 +580,53 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 
+			if(! geoJson) 
+				saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
+			else 
+				saveGeoJSonFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
+		} catch (final GamaRuntimeException e) {
+			throw e;
+		} catch (final Throwable e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
+
+	}
+
+	
+	public void saveGeoJson(final IList<? extends IShape> agents, final String path, final IScope scope)
+			throws GamaRuntimeException {
+		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
+			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
+			final IList<IShape> shapes = GamaListFactory.create();
+			for (int i = 0; i < collec.getNumGeometries(); i++) {
+				shapes.add(new GamaShape(collec.getGeometryN(i)));
+			}
+			saveGeoJson(shapes, path, scope);
+			return;
+		}
+		final StringBuilder specs = new StringBuilder(agents.size() * 20);
+		final String geomType = getGeometryType(agents);
+		specs.append("geometry:" + geomType);
+		try {
+			final SpeciesDescription species = agents instanceof IPopulation
+					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
+					: agents.getGamlType().getContentType().getSpecies();
+			final Map<String, IExpression> attributes = GamaMapFactory.create();
+			if (species != null) {
+				if (withFacet != null) {
+					computeInitsFromWithFacet(scope, withFacet, attributes, species);
+				} else if (attributesFacet != null) {
+					computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
+				}
+				for (final String e : attributes.keySet()) {
+					final IExpression var = attributes.get(e);
+					String name = e.replaceAll("\"", "");
+					name = name.replaceAll("'", "");
+					final String type = type(var);
+					specs.append(',').append(name).append(':').append(type);
+				}
+			}
+			
 			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -575,6 +636,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
+	
 	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
 		if (crsCode != null) {
@@ -782,6 +844,83 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return g;
 	}
 
+		public static boolean buildFeature(IScope scope, SimpleFeature ff, IShape ag, final IProjection gis, Collection<IExpression> attributeValues) {
+			List<Object> values = new ArrayList<>();
+			// geometry is by convention (in specs) at position 0
+			if (ag.getInnerGeometry() == null) {
+				return false ;
+			}
+			//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
+			
+			Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+
+			g = fixesPolygonCWS(g);
+			g = geometryCollectionManagement(g);
+
+			values.add(g);
+			if (ag instanceof IAgent) {
+				for (final IExpression variable : attributeValues) {
+					Object val = scope.evaluate(variable, (IAgent) ag).getValue();
+					if (variable.getGamlType().equals(Types.STRING)) {
+						if (val == null) {
+							val = "";
+						} else {
+							final String val2 = val.toString();
+							if (val2.startsWith("'") && val2.endsWith("'")
+									|| val2.startsWith("\"") && val2.endsWith("\"")) {
+								val = val2.substring(1, val2.length() - 1);
+							}
+						}
+					}
+					values.add(val);
+				}
+			}
+			// AD Assumes that the type is ok.
+			// AD TODO replace this list of variable names by expressions
+			// (to be
+			// evaluated by agents), so that dynamic values can be passed
+			// AD WARNING Would require some sort of iterator operator that
+			// would collect the values beforehand
+			ff.setAttributes(values);
+			return true;
+		}
+	
+	
+	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
+		public static void saveGeoJSonFile(final IScope scope, final String path, final List<? extends IShape> agents,
+				/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+				final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
+			// AD 11/02/15 Added to allow saving to new directories
+			if (agents == null || agents.isEmpty()) return;
+			final File f = new File(path);
+			createParents(f);
+			
+			// The name of the type and the name of the feature source shoud now be
+			// the same.
+			final SimpleFeatureType type =
+					DataUtilities.createType("geojson", specs);
+			 SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
+			 DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+		
+				// AD Builds once the list of agent attributes to evaluate
+				final Collection<IExpression> attributeValues =
+						attributes == null ? Collections.EMPTY_LIST : attributes.values();
+				int i = 0;
+				for (final IShape ag : agents) {
+					final SimpleFeature ff = builder.buildFeature( i+"");
+					i++;
+					boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
+					if (! ok) {
+						continue;
+					}	
+					featureCollection.add(ff);
+				}
+				
+				 FeatureJSON io = new FeatureJSON();
+				 io.writeFeatureCollection(featureCollection, path);
+			
+			
+		}
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
 			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
@@ -792,6 +931,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		createParents(f);
 
 		final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
+		store.setCharset(Charset.forName("UTF8"));
 		// The name of the type and the name of the feature source shoud now be
 		// the same.
 		final SimpleFeatureType type =
@@ -803,47 +943,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// AD Builds once the list of agent attributes to evaluate
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
-			final List<Object> values = new ArrayList<>();
 			for (final IShape ag : agents) {
-				values.clear();
 				final SimpleFeature ff = (SimpleFeature) fw.next();
-				// geometry is by convention (in specs) at position 0
-				if (ag.getInnerGeometry() == null) {
+				boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
+				if (! ok) {
 					continue;
-				}
-				//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
-				
-				Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-
-				g = fixesPolygonCWS(g);
-				g = geometryCollectionManagement(g);
-
-				values.add(g);
-				if (ag instanceof IAgent) {
-					for (final IExpression variable : attributeValues) {
-						Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-						if (variable.getGamlType().equals(Types.STRING)) {
-							if (val == null) {
-								val = "";
-							} else {
-								final String val2 = val.toString();
-								if (val2.startsWith("'") && val2.endsWith("'")
-										|| val2.startsWith("\"") && val2.endsWith("\"")) {
-									val = val2.substring(1, val2.length() - 1);
-								}
-							}
-						}
-						values.add(val);
-					}
-				}
-				// AD Assumes that the type is ok.
-				// AD TODO replace this list of variable names by expressions
-				// (to be
-				// evaluated by agents), so that dynamic values can be passed
-				// AD WARNING Would require some sort of iterator operator that
-				// would collect the values beforehand
-				ff.setAttributes(values);
-				fw.write();
+				}	
 			}
 			// store.dispose();
 			if (gis != null) {

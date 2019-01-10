@@ -4,28 +4,29 @@
 * Description: This is a dummy model that show the randomly movement of the flies.
 * Tags: comodel
 */
-model Flies
+model Mosquitos
 
 
 global
 {
 	geometry shape<-square(100);
-	file icon<-file("../img/fly.gif");
-	int n <- 50;
+	file icon<-file("../img/mosquito.png");
+	int n <- 1;
 	init
 	{
-		create Fly number: n;
+		create Mosquito number: n;
 	}
 
 }
 
-species Fly skills: [moving]
+species Mosquito skills: [moving]
 {
 	geometry shape<-circle(1);
 	int durability<- rnd(100);
 	reflex dolive
 	{	
-		do wander amplitude:200.0;		
+		write "I can bite";
+		do wander amplitude:rnd(30.0) speed:0.5;		
 	}
 
 	aspect default
@@ -35,13 +36,13 @@ species Fly skills: [moving]
 
 }
 
-experiment Simple type: gui
+experiment Generic type: gui
 { 
 	output
 	{
-		display "Flies display"
+		display "Mosquitos display"
 		{
-			species Fly aspect: default;
+			species Mosquito aspect: default;
 		}
 
 	}

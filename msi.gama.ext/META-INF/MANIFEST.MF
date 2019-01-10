@@ -52,6 +52,7 @@ Export-Package: com.kitfox.svg;
  com.vividsolutions.jts.triangulate;uses:="com.vividsolutions.jts.index.kdtree,com.vividsolutions.jts.geom,com.vividsolutions.jts.triangulate.quadedge",
  com.vividsolutions.jts.triangulate.quadedge;uses:="com.vividsolutions.jts.geom,com.vividsolutions.jts.math",
  com.vividsolutions.jts.util;uses:="com.vividsolutions.jts.geom",
+ com.vividsolutions.jtsexample.geom,
  crosby.binary.osmosis;
   uses:="org.openstreetmap.osmosis.core.container.v0_6,
    org.openstreetmap.osmosis.core.pipeline.common,
@@ -945,5 +946,6 @@ Bundle-ClassPath: .,
  streamex 0.6.7/streamex-0.6.7.jar,
  kml/jars/jaxb-impl.jar,
  kml/jars/jaxb-api.jar,
- kml/jars/jaxb-core.jar
+ kml/jars/jaxb-core.jar,
+ jts 1.14/jars/jts-example-1.14.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

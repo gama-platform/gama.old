@@ -53,6 +53,7 @@ public interface IGui {
 	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	public static final String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
+	public static final String GL_LAYER_VIEW_ID2 = "msi.gama.application.view.OpenGLDisplayView2";
 	public static final String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String TEST_VIEW_ID = "msi.gama.application.view.TestView";

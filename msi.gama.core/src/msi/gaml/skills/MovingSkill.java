@@ -740,14 +740,14 @@ public class MovingSkill extends Skill {
 							distanceT = distT;
 							endIndexSegment = i + 1;
 							falseTarget.z = points[i].z + (points[i + 1].z - points[i].z)
-									* falseTarget.distance(points[i]) / points[i].distance(points[i + 1]);
+									* falseTarget.distance3D(points[i]) / points[i].distance3D(points[i + 1]);
 						}
 					}
 				} else {
 					final ILocation c0 = points[0];
 					final ILocation c1 = points[1];
 					falseTarget.z = c0.getZ()
-							+ (c1.getZ() - c0.getZ()) * falseTarget.distance((Coordinate) c0) / lineEnd.getPerimeter();
+							+ (c1.getZ() - c0.getZ()) * falseTarget.distance3D((Coordinate) c0) / lineEnd.getPerimeter();
 				}
 			}
 		}
@@ -829,13 +829,13 @@ public class MovingSkill extends Skill {
 								distanceS = distS;
 								indexSegment = i + 1;
 								currentLocation.z = points[i].z + (points[i + 1].z - points[i].z)
-										* currentLocation.distance(points[i]) / points[i].distance(points[i + 1]);
+										* currentLocation.distance3D(points[i]) / points[i].distance3D(points[i + 1]);
 							}
 						}
 					} else {
 						indexSegment = 1;
 						currentLocation.z = points[0].getZ() + (points[1].z - points[0].z)
-								* currentLocation.distance(points[0]) / line.getPerimeter();
+								* currentLocation.distance3D(points[0]) / line.getPerimeter();
 					}
 				}
 			}
@@ -847,7 +847,7 @@ public class MovingSkill extends Skill {
 		return initVals;
 	}
 
-	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final GamaSpatialGraph graph,
+	public void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final GamaSpatialGraph graph,
 			final double d, final GamaMap probaEdge) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(scope, agent, graph, currentLocation);
@@ -872,7 +872,7 @@ public class MovingSkill extends Skill {
 			final double weight = graph.getEdgeWeight(edge) / edge.getGeometry().getPerimeter();
 			for (int j = indexSegment; j < coords.length; j++) {
 				final GamaPoint pt = new GamaPoint(coords[j]);
-				final double dis = pt.distance(currentLocation);
+				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 
 				if (distance < dist) {
@@ -988,7 +988,7 @@ public class MovingSkill extends Skill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				final double dis = pt.distance(currentLocation);
+				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 
 				if (distance < dist) {
@@ -1093,7 +1093,7 @@ public class MovingSkill extends Skill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				final double dis = pt.distance(currentLocation);
+				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 
 				if (distance < dist) {

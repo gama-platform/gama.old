@@ -17,6 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Ordering;
+import com.vividsolutions.jts.geom.Geometry;
+
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
@@ -141,6 +144,7 @@ public class GraphTopology extends AbstractTopology {
 
 		IShape edgeS = null, edgeT = null;
 		final boolean optimization = graph.edgeSet().size() > 1000;
+		
 		final double dist =
 				optimization ? Math.sqrt(scope.getSimulation().getArea()) / graph.edgeSet().size() * 100 : -1;
 		
@@ -1043,31 +1047,37 @@ public class GraphTopology extends AbstractTopology {
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		// A better solution is required !!! this solution is just here to
 		// ensure the consistency of the closest operator on graph !
-
-		List<IAgent> listAgents = null;
-		if (filter instanceof GamaSpatialGraph) {
-			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
-		} else if (filter.getSpecies() != null) {
-			listAgents =
-					new ArrayList<IAgent>(filter.getSpecies().getAgents(scope).listValue(scope, Types.AGENT, false));
-		} else if (filter instanceof In) {
-			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
-		} else {
-			listAgents =
-					new ArrayList<IAgent>(scope.getSimulation().getAgents(scope).listValue(scope, Types.AGENT, false));
-		}
+		List<IAgent> listAgents = new ArrayList(); 
+		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
 		listAgents.remove(source);
 		IAgent closest = null;
 		double minDist = Double.POSITIVE_INFINITY;
 		for (final IAgent ag : listAgents) {
 			final Double dist = this.distanceBetween(scope, source, ag);
 			if (dist != null && dist < minDist) {
-				if (dist == 0)
-					return ag;
 				closest = ag;
 				minDist = dist;
+				if (dist == 0)
+					break;
 			}
+			
 		}
 		return closest;
+	}
+	
+	@Override
+	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
+			// A better solution is required !!! this solution is just here to
+		// ensure the consistency of the closest operator on graph !
+
+		List<IAgent> listAgents = new ArrayList(); 
+		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
+		
+		listAgents.remove(source);
+		if (listAgents.size() <= number) return GamaListFactory.createWithoutCasting(Types.AGENT, listAgents);
+		scope.getRandom().shuffle(listAgents);
+		final Ordering<IAgent> ordering = Ordering.natural().onResultOf(input -> distanceBetween(scope, source, input));
+		return GamaListFactory.createWithoutCasting(Types.AGENT, ordering.leastOf(listAgents, number));
+		
 	}
 }

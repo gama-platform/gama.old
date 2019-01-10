@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -219,8 +220,10 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			};
 			cd.visitOwnChildrenRecursively(finder);
 			if (returns.isEmpty()) {
-				cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
-				return;
+				if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
+					cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
+					return;
+				}
 			}
 			for (final StatementDescription ret : returns) {
 				final IExpression ie = ret.getFacetExpr(VALUE);

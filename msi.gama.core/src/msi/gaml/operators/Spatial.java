@@ -16,11 +16,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +28,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.algorithm.Centroid;
 import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
 import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
@@ -2792,20 +2793,95 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			final IList<IShape> split_lines = split_lines(scope, geoms);
-			if (readAttributes) {
-				for (final IShape line : split_lines) {
-					final Optional<IShape> opt = geoms.stream(scope)
-							.findFirst(g -> g.getInnerGeometry().buffer(0.1).covers(line.getInnerGeometry()));
-					final IShape matchingGeom = opt.isPresent() ? opt.get() : null;
-					if (matchingGeom == null || matchingGeom.getAttributes() == null) {
-						continue;
+			boolean change = true;
+			IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
+			lines.addAll((Collection<? extends IShape>) geoms);
+			IList<IShape> split_lines = GamaListFactory.create(Types.GEOMETRY);
+			while(change) {
+				change = false;
+				IList<IShape> lines2 = GamaListFactory.createWithoutCasting(Types.GEOMETRY,lines);
+				for (IShape l : lines) {
+					lines2.remove(l);
+					if (!l.getInnerGeometry().isSimple()) {
+						IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
+						for (int i = 0; i < l.getPoints().size() - 1; i++) {
+							IList<IShape> points = GamaListFactory.create(Types.POINT);
+							points.add(l.getPoints().get(i));
+							points.add(l.getPoints().get(i + 1));
+							segments.add(Spatial.Creation.line(scope, points));
+						}
+						final IShape line = Spatial.Operators.union(scope, segments);
+						final Geometry nodedLineStrings = line.getInnerGeometry();
+						
+						for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
+							final Geometry g = nodedLineStrings.getGeometryN(i);
+							if (g instanceof LineString) {
+								IShape gS = new GamaShape(g);
+								if (l.getAttributes() != null)
+									gS.getAttributes().putAll(l.getAttributes());
+								lines2.add(new GamaShape(g));
+							}
+						}
+						change = true;
+
+						lines = lines2;
+						break;
 					}
-					for (final String att : matchingGeom.getAttributes().keySet()) {
-						line.setAttribute(att, matchingGeom.getAttribute(att));
-					}
+					
+					List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, (IContainer<?, ? extends IShape>) lines2, l);
+					if(!ls.isEmpty()) {
+						ILocation pto =  l.getPoints().firstValue(scope);
+						ILocation ptd =  l.getPoints().lastValue(scope);
+						PreparedGeometry pg = PreparedGeometryFactory.prepare(l.getInnerGeometry().buffer(Math.min(0.001, l.getPerimeter() / 1000.0),10));
+						for (IShape l2 : ls) {
+							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) continue;
+							IShape it = Spatial.Operators.inter(scope, l, l2);
+							if (it.getPerimeter() > 0.0) continue;
+							if (!it.getLocation().equals(pto)  && !it.getLocation().equals(ptd)) {
+								ILocation pt = it.getPoints().firstValue(scope);
+								IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
+								res1.removeIf(a -> a.getPerimeter() == 0.0);
+								IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
+								res2.removeIf(a -> a.getPerimeter() == 0.0);
+								if(res1.size() > 1 && res2.size() > 1) {
+									change = true;
+									lines2.addAll(res1);
+									lines2.addAll(res2);
+									lines2.remove(l2);
+									break;
+								}
+							}
+						}
+						if (change) {
+							lines = lines2;
+							break;
+						}
+					} 
+					split_lines.add(l);
 				}
+				
 			}
+			/*if (readAttributes) {
+				for (final IShape line : split_lines) {
+					IShape matchingGeom = null;
+						if (matchingGeom == null) {
+						final IList<IShape> shapes = (IList<IShape>) Spatial.Queries.overlapping(scope, geoms, line.getGeometricEnvelope());
+						if (!shapes.isEmpty()) {
+							matchingGeom = Spatial.Queries.closest_to(scope, shapes, line.getLocation());
+						} else {
+							matchingGeom = Spatial.Queries.closest_to(scope, geoms, line.getLocation());
+						}
+						if (matchingGeom == null || matchingGeom.getAttributes() == null) {
+							continue;
+						}
+						for (final String att : matchingGeom.getAttributes().keySet()) {
+							
+							line.setAttribute(att, matchingGeom.getAttribute(att));
+						}
+					}
+					
+				}
+			}*/
 
 			return split_lines;
 		}
@@ -2864,28 +2940,34 @@ public abstract class Spatial {
 
 			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
 			boolean modif = true;
-			while (modif) {
-				for (final IShape geom : geomsTmp) {
-					final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
-					modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
-					if (modif) {
-						geomsTmp = GamaListFactory.create();
-						geomsTmp.addAll(geoms);
-						break;
+			if (tolerance > 0 ) {
+				
+				
+				while (modif) {
+					for (final IShape geom : geomsTmp) {
+						final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+						modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
+						if (modif) {
+							geomsTmp = GamaListFactory.create();
+							geomsTmp.addAll(geoms);
+							break;
+						}
+						final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+						modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
+						if (modif) {
+							geomsTmp = GamaListFactory.create();
+							geomsTmp.addAll(geoms);
+							break;
+						}
+						results.add(geom);
+						geoms.remove(geom);
 					}
-					final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
-					modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
-					if (modif) {
-						geomsTmp = GamaListFactory.create();
-						geomsTmp.addAll(geoms);
-						break;
-					}
-					results.add(geom);
-					geoms.remove(geom);
 				}
+			} else {
+				results = geomsTmp;
 			}
 			results.removeIf(
-					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
+						a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
 			if (splitlines) {
 				results = Transformations.split_lines(scope, results, true);
 			}
@@ -4053,6 +4135,36 @@ public abstract class Spatial {
 					.isTranslatableInto(Types.GEOMETRY)) { return geomClostestTo(scope, list, source); }
 			return null;
 		}
+		
+		@operator (
+				value = { "closest_to" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "The N agents or geometries among the left-operand list of agents, species or meta-population (addition of species), that are the closest to the operand (casted as a geometry).",
+				comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] closest_to(self, 2)",
+						equals = "return the 2 closest agents among ag1, ag2 and ag3 to the agent applying the operator.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) closest_to (self, 5)",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "inside", "overlapping", "agents_overlapping", "agents_inside",
+						"agent_closest_to" })
+		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, final int number) {
+			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
+			final IType contentType = list.getGamlType().getContentType();
+			if (contentType.isAgentType()) {
+				return (IList) _closest(scope, In.list(scope, list), source, number);
+			} else if (list.getGamlType().getContentType()
+					.isTranslatableInto(Types.GEOMETRY)) { return (IList<IShape>) geomClostestTo(scope, list, source, number); }
+			return GamaListFactory.create(contentType);
+		}
+
 
 		@operator (
 				value = { "farthest_to" },
@@ -4097,6 +4209,16 @@ public abstract class Spatial {
 				}
 			}
 			return shp;
+		}
+		
+		public static Collection<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, int number) {
+			IList<IShape> shapes = (IList<IShape>) list.listValue(scope, Types.GEOMETRY, true);
+			shapes.removeIf(a -> ((a == null) || !(a instanceof IShape))) ;
+			if (shapes.size() <= number) return shapes;
+			scope.getRandom().shuffle(shapes);
+			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+			return GamaListFactory.createWithoutCasting(Types.GEOMETRY, ordering.leastOf(shapes, number));
 		}
 
 		public static IShape geomFarthestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
@@ -4220,6 +4342,11 @@ public abstract class Spatial {
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
 			if (filter == null || source == null) { return null; }
 			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
+		}
+		
+		private static Collection<IAgent> _closest(final IScope scope, final IAgentFilter filter, final Object source, final int number) {
+			if (filter == null || source == null) { return null; }
+			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter, number);
 		}
 
 		private static IAgent _farthest(final IScope scope, final IAgentFilter filter, final Object source) {

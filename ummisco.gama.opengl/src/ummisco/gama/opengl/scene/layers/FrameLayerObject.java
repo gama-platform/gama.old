@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FrameLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * ummisco.gama.opengl.scene.layers.FrameLayerObject.java, in plugin ummisco.gama.opengl,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class FrameLayerObject extends StaticLayerObject.World {
 	}
 
 	@Override
-	public void fillWithObjects(final List<AbstractObject> list) {
+	public void fillWithObjects(final List<AbstractObject<?, ?>> list) {
 		final double w = renderer.getData().getEnvWidth();
 		final double h = renderer.getData().getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));

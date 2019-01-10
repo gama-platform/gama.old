@@ -945,6 +945,10 @@ public class LayeredDisplayData {
 			}
 		}
 
+	} 
+
+	public boolean isOpenGL2() {
+		return displayType.equals(OPENGL2);
 	}
 
 	public boolean isOpenGL() {

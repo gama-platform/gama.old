@@ -30,6 +30,12 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
+		public void computeScale() {}
+
+		@Override
+		public void computeOffset() {}
+
+		@Override
 		public boolean isLightInteraction() {
 			return false;
 		}
@@ -55,7 +61,7 @@ public class StaticLayerObject extends LayerObject {
 			return false;
 		}
 
-		public abstract void fillWithObjects(List<AbstractObject> currentList);
+		public abstract void fillWithObjects(List<AbstractObject<?, ?>> list);
 	}
 
 	public StaticLayerObject(final IOpenGLRenderer renderer) {

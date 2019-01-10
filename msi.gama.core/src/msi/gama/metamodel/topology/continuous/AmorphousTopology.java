@@ -127,6 +127,12 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getAgentClosestTo(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.environment.IAgentFilter)
 	 */
+	
+	@Override
+	public IList<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
+		return GamaListFactory.create();
+	}
+	
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		return null;

@@ -523,7 +523,7 @@ public class Graphs {
 		ci = new ConnectivityInspector((DirectedGraph) graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getContentType(), (Set) obj));
 
 		}
 		return results;
@@ -595,12 +595,14 @@ public class Graphs {
 				mainCC = c;
 			}
 		}
-		final Set vs = graph.vertexSet();
-		vs.removeAll(mainCC);
-		for (final Object v : vs) {
-			newGraph.removeAllEdges(graph.edgesOf(v));
-			newGraph.removeVertex(v);
+		if (mainCC != null) {
+			final Set vs = graph.vertexSet();
+			vs.removeAll(mainCC);
+			for (final Object v : vs) {
+				newGraph.removeVertex(v);
+			}
 		}
+		
 		return newGraph;
 	}
 

@@ -55,11 +55,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
+import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.ui.utils.PlatformHelper;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public abstract class SwingControl extends Composite {
-
+	
+	public AWTDisplayView awtview;
 	JApplet applet;
 
 	// Whether to print debugging information regarding size propagation
@@ -416,6 +418,9 @@ public abstract class SwingControl extends Composite {
 			applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 		}
 
+		if (PlatformHelper.isLinux()) {
+			awtview.addEvent(applet);
+		}
 		frame.add(applet);
 		return applet;
 	}

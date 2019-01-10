@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -28,6 +29,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 import msi.gaml.operators.fastmaths.FastMath;
 
@@ -71,6 +73,21 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 			si.remove(previous, o);
 		}
 	}
+	
+	private Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
+			final ISpatialIndex index, int number, Collection<IAgent> alreadyChosen) {
+		Collection<IAgent> closestEnt = GamaListFactory.create();
+		closestEnt.addAll(alreadyChosen);
+		for (int i = 0; i < steps.length; i++) {
+			final Collection<IAgent> firsts = index.firstAtDistance(scope, source, steps[i], filter, number - closestEnt.size(), closestEnt);
+			if (firsts.isEmpty()) continue;
+			
+			closestEnt.addAll(firsts);
+			if (closestEnt.size() == number) { return closestEnt; }
+		}
+		return closestEnt;
+	}
+
 
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
 			final ISpatialIndex index) {
@@ -81,6 +98,26 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		return null;
 	}
 
+	
+	private Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter, int number, Collection<IAgent> alreadyChosen ) {
+		if (disposed) { return null; }
+		final List<IAgent> shapes = new ArrayList<>(alreadyChosen);
+		for (int i = 0; i < steps.length; i++) {
+			for (final ISpatialIndex si : getAllSpatialIndexes()) {
+				final Collection<IAgent> firsts = si.firstAtDistance(scope, source, steps[i], filter,number, shapes );
+				shapes.addAll(firsts);
+			}
+			if (shapes.size() >= number) {
+				break;
+			}
+		}
+		
+		if (shapes.size() <= number) return shapes;
+		scope.getRandom().shuffle(shapes);
+		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+		return ordering.leastOf(shapes, number);
+	}
+	
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter) {
 		if (disposed) { return null; }
 		final List<IAgent> shapes = new ArrayList<>();
@@ -110,6 +147,14 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		}
 		return min_agent;
 
+	}
+	
+	@Override
+	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f, int number,Collection<IAgent> alreadyChosen ) {
+		// TODO -- Verify : dist not taken into account here. Normal ?
+		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
+		if (id != null) { return firstAtDistance(scope, source, f, id, number,alreadyChosen); }
+		return firstAtDistance(scope, source, f, number, alreadyChosen);
 	}
 
 	@Override

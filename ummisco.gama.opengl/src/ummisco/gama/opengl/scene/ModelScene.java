@@ -17,7 +17,6 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
@@ -123,11 +122,6 @@ public class ModelScene {
 		if (currentLayer == null) { return true; }
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
-	//
-	// private <T extends AbstractObject> T configure(final T object) {
-	// objectNumber += currentLayerTrace;
-	// return object;
-	// }
 
 	private boolean increment() {
 		if (cannotAdd()) { return false; }
@@ -194,16 +188,13 @@ public class ModelScene {
 		layers.put(name, null);
 	}
 
-	public void beginDrawingLayer(final ILayer layer, final GamaPoint offset, final GamaPoint scale,
-			final Double alpha) {
+	public void beginDrawingLayer(final ILayer layer, final Double alpha) {
 		final String key = layer.getName() + layer.getDefinition().getOrder();
 		currentLayer = layers.get(key);
 		if (currentLayer == null) {
 			currentLayer = createRegularLayer(renderer, layer);
 			layers.put(key, currentLayer);
 		}
-		currentLayer.setOffset(offset);
-		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
 		currentLayerTrace = currentLayer.numberOfTraces();
 	}
@@ -237,6 +228,22 @@ public class ModelScene {
 
 	public Collection<LayerObject> getLayers() {
 		return layers.values();
+	}
+
+	public void layerOffsetChanged() {
+		for (final LayerObject layer : getLayers()) {
+			if (layer.canSplit()) {
+				layer.computeOffset();
+			}
+		}
+	}
+
+	public void recomputeLayoutDimensions() {
+		for (final LayerObject layer : getLayers()) {
+			if (layer.isOverlay()) {
+				layer.forceRedraw();
+			}
+		}
 	}
 
 }

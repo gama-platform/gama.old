@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * msi.gaml.extensions.fipa.Conversation.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ * 
+ * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
- * 'Conversation.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import java.util.Collection;
@@ -29,26 +28,37 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * This class represents the notion of a Conversation which is comprised of
- * several Messages, the order of which follow a certain interaction protocol
- * (e.g. FIPA-Request, FIPA-Subscribe,...). The methods it provides allow
- * retrieval of information about the conversation.
+ * This class represents the notion of a Conversation which is comprised of several Messages, the order of which follow
+ * a certain interaction protocol (e.g. FIPA-Request, FIPA-Subscribe,...). The methods it provides allow retrieval of
+ * information about the conversation.
  *
- * This is the base class of all the classes that implement the concrete
- * interaction protocols. The protocol models are defined in the corresponding
- * sub-classes.
+ * This is the base class of all the classes that implement the concrete interaction protocols. The protocol models are
+ * defined in the corresponding sub-classes.
  */
 
-@vars({ @variable(name = Conversation.MESSAGES, type = IType.LIST, of = IType.MESSAGE, doc = {
-		@doc("Returns the list of messages that compose this conversation") }),
-		@variable(name = Conversation.PROTOCOL, type = IType.STRING, doc = {
-				@doc("Returns the name of the protocol followed by the conversation") }),
-		@variable(name = Conversation.INITIATOR, type = IType.AGENT, doc = {
-				@doc("Returns the agent that has initiated this conversation") }),
-		@variable(name = Conversation.PARTICIPANTS, type = IType.LIST, of = IType.AGENT, doc = {
-				@doc("Returns the list of agents that participate to this conversation") }),
-		@variable(name = Conversation.ENDED, type = IType.BOOL, init = "false", doc = {
-				@doc("Returns whether this conversation has ended or not") }) })
+@vars ({ @variable (
+		name = Conversation.MESSAGES,
+		type = IType.LIST,
+		of = IType.MESSAGE,
+		doc = { @doc ("Returns the list of messages that compose this conversation") }),
+		@variable (
+				name = Conversation.PROTOCOL,
+				type = IType.STRING,
+				doc = { @doc ("Returns the name of the protocol followed by the conversation") }),
+		@variable (
+				name = Conversation.INITIATOR,
+				type = IType.AGENT,
+				doc = { @doc ("Returns the agent that has initiated this conversation") }),
+		@variable (
+				name = Conversation.PARTICIPANTS,
+				type = IType.LIST,
+				of = IType.AGENT,
+				doc = { @doc ("Returns the list of agents that participate to this conversation") }),
+		@variable (
+				name = Conversation.ENDED,
+				type = IType.BOOL,
+				init = "false",
+				doc = { @doc ("Returns whether this conversation has ended or not") }) })
 public class Conversation extends GamaList<FIPAMessage> {
 
 	/** The protocol. */
@@ -67,16 +77,15 @@ public class Conversation extends GamaList<FIPAMessage> {
 	private final IList<IAgent> participants = GamaListFactory.create(Types.AGENT);
 
 	/** The protocol node participant map. */
-	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<IAgent, ProtocolNode>();
+	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<>();
 
 	/** The no protocol node participant map. */
-	private final Map<IAgent, FIPAMessage> noProtocolNodeParticipantMap = new HashMap<IAgent, FIPAMessage>();
+	private final Map<IAgent, FIPAMessage> noProtocolNodeParticipantMap = new HashMap<>();
 
 	/** The current node in the protocol tree. */
 	// private ProtocolNode currentNode;
 	/**
-	 * Plays the role of a mailbox, contains all the messages sent by the other
-	 * agent in this Conversation.
+	 * Plays the role of a mailbox, contains all the messages sent by the other agent in this Conversation.
 	 */
 	private final IList<FIPAMessage> messages = GamaListFactory.create(Types.get(IType.MESSAGE));
 
@@ -85,13 +94,13 @@ public class Conversation extends GamaList<FIPAMessage> {
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             Method to dynamically load a Conversation instance which
-	 *             follows the given protocol and belongs to the given Agent.
+	 *             Method to dynamically load a Conversation instance which follows the given protocol and belongs to
+	 *             the given Agent.
 	 *
 	 * @param sim
 	 *            the sim
-	 * @param p
-	 *            the protocol id
+	 * @param protocolName
+	 *            the protocol name
 	 * @param message
 	 *            the message
 	 *
@@ -105,22 +114,19 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *             the gaml exception
 	 *
 	 * @exception UnknownProtocolException
-	 *                Thrown if a Conversation class cannot be loaded for the
-	 *                given class
+	 *                Thrown if a Conversation class cannot be loaded for the given class
 	 */
-	protected Conversation(final IScope scope, final Integer p, final FIPAMessage message) throws GamaRuntimeException {
+	protected Conversation(final IScope scope, final String protocolName, final FIPAMessage message)
+			throws GamaRuntimeException {
 		super(0, Types.get(IType.MESSAGE));
-		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;
-		protocol = FIPAProtocol.named(proto);
-		if (protocol == null) {
-			throw new UnknownProtocolException(scope, proto);
-		}
+		if (protocolName == null) { throw new UnknownProtocolException(scope, "undefined"); }
+		protocol = FIPAProtocol.named(protocolName);
+		if (protocol == null) { throw new UnknownProtocolException(scope, protocolName); }
 		initiator = message.getSender();
 
 		participants.addAll(message.getReceivers());
-		if (participants.isEmpty() || participants.contains(null)) {
-			throw new ProtocolErrorException(scope, "The message : " + message.toString() + " has no receivers.");
-		}
+		if (participants.isEmpty() || participants.contains(null)) { throw new ProtocolErrorException(scope,
+				"The message : " + message.toString() + " has no receivers."); }
 
 		MessageBroker.getInstance(scope).addConversation(this);
 	}
@@ -151,11 +157,9 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *             the conversation finished exception
 	 *
 	 * @exception ProtocolErrorException
-	 *                Thrown when the message to be added doesn't follow the
-	 *                correct protocol
+	 *                Thrown when the message to be added doesn't follow the correct protocol
 	 * @exception InvalidConversationException
-	 *                Thrown when the conversation ID of the ACLMessage is
-	 *                different to that of the conversation
+	 *                Thrown when the conversation ID of the ACLMessage is different to that of the conversation
 	 * @exception ConversationFinishedException
 	 *                Thrown when the conversation has already finished
 	 */
@@ -166,9 +170,8 @@ public class Conversation extends GamaList<FIPAMessage> {
 
 		// Check if the message belongs to this conversation
 		final Conversation msgConv = message.getConversation();
-		if (msgConv == null || msgConv != this) {
-			throw new InvalidConversationException(scope, "Conversation is invalid or not specified");
-		}
+		if (msgConv == null || msgConv != this) { throw new InvalidConversationException(scope,
+				"Conversation is invalid or not specified"); }
 
 		if (protocol.hasProtocol()) {
 			/** we use a protocol for this Conversation */
@@ -184,8 +187,8 @@ public class Conversation extends GamaList<FIPAMessage> {
 						protocolNodeParticipantMap.put(receiver, protocol.getNode(scope, message, currentNode,
 								message.getPerformative(), senderIsInitiator));
 					} else {
-						currentNode = protocol.getNode(scope, message, null, message.getPerformative(),
-								senderIsInitiator);
+						currentNode =
+								protocol.getNode(scope, message, null, message.getPerformative(), senderIsInitiator);
 
 						if (currentNode != null) {
 							protocolNodeParticipantMap.put(receiver, currentNode);
@@ -216,11 +219,9 @@ public class Conversation extends GamaList<FIPAMessage> {
 			if (senderIsInitiator) {
 				currentMessage = noProtocolNodeParticipantMap.get(receiver);
 
-				if (currentMessage != null
-						&& currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) {
-					throw new ConversationFinishedException(scope,
-							"Message received in conversation which has already ended." + message + this);
-				}
+				if (currentMessage != null && currentMessage
+						.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) { throw new ConversationFinishedException(
+								scope, "Message received in conversation which has already ended." + message + this); }
 
 				if (currentMessage != null) {
 					noProtocolNodeParticipantMap.remove(receiver);
@@ -230,11 +231,9 @@ public class Conversation extends GamaList<FIPAMessage> {
 			} else if (participants.contains(message.getSender())) {
 				currentMessage = noProtocolNodeParticipantMap.get(message.getSender());
 
-				if (currentMessage != null
-						&& currentMessage.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) {
-					throw new ConversationFinishedException(scope,
-							"Message received in conversation which has already ended." + message + this);
-				}
+				if (currentMessage != null && currentMessage
+						.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) { throw new ConversationFinishedException(
+								scope, "Message received in conversation which has already ended." + message + this); }
 
 				if (currentMessage != null) {
 					noProtocolNodeParticipantMap.remove(message.getSender());
@@ -247,12 +246,12 @@ public class Conversation extends GamaList<FIPAMessage> {
 	}
 
 	/**
-	 * Retrieves all the messages kept by this role of the conversation. Note:
-	 * There are two roles in a conversation : initiator and participant.
+	 * Retrieves all the messages kept by this role of the conversation. Note: There are two roles in a conversation :
+	 * initiator and participant.
 	 *
 	 * @return the messages
 	 */
-	@getter(MESSAGES)
+	@getter (MESSAGES)
 	public IList<FIPAMessage> getMessages() {
 		return messages;
 	}
@@ -262,7 +261,7 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *
 	 * @return the intitiator
 	 */
-	@getter(INITIATOR)
+	@getter (INITIATOR)
 	public IAgent getIntitiator() {
 		return initiator;
 	}
@@ -272,7 +271,7 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *
 	 * @return the participants
 	 */
-	@getter(PARTICIPANTS)
+	@getter (PARTICIPANTS)
 	public IList<IAgent> getParticipants() {
 		return participants;
 	}
@@ -282,12 +281,10 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *
 	 * @return the protocol name
 	 */
-	@getter(PROTOCOL)
+	@getter (PROTOCOL)
 	public String getProtocolName() {
-		if (protocol == null) {
-			return null;
-		}
-		return FIPAConstants.protocolNames[protocol.getIndex()];
+		if (protocol == null) { return null; }
+		return protocol.getName();
 	}
 
 	/**
@@ -295,16 +292,14 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *
 	 * @return true, if is ended
 	 */
-	@getter(ENDED)
+	@getter (ENDED)
 	public boolean isEnded() {
 		return ended || areAllNodeEnded();
 	}
 
 	public boolean areMessagesRead() {
 		for (final FIPAMessage m : messages) {
-			if (m.isUnread()) {
-				return false;
-			}
+			if (m.isUnread()) { return false; }
 		}
 
 		return true;
@@ -318,24 +313,16 @@ public class Conversation extends GamaList<FIPAMessage> {
 	private boolean areAllNodeEnded() {
 		if (protocol != null && protocol.hasProtocol()) {
 			final Collection<ProtocolNode> protocolNodes = protocolNodeParticipantMap.values();
-			if (protocolNodes.isEmpty()) {
-				return false;
-			}
+			if (protocolNodes.isEmpty()) { return false; }
 			for (final ProtocolNode node : protocolNodes) {
-				if (!(node != null && node.isTerminal())) {
-					return false;
-				}
+				if (!(node != null && node.isTerminal())) { return false; }
 			}
 			return true;
 		}
 		final Collection<FIPAMessage> finalMsgs = noProtocolNodeParticipantMap.values();
-		if (finalMsgs.isEmpty()) {
-			return false;
-		}
+		if (finalMsgs.isEmpty()) { return false; }
 		for (final FIPAMessage finalMsg : finalMsgs) {
-			if (finalMsg.getPerformative() != FIPAConstants.Performatives.END_CONVERSATION) {
-				return false;
-			}
+			if (finalMsg.getPerformative() != FIPAConstants.Performatives.END_CONVERSATION) { return false; }
 		}
 		return true;
 	}

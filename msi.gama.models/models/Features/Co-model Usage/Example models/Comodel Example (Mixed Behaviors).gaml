@@ -6,8 +6,8 @@
 */
 model comodel_mix_behaviors
 
-import "Prey Predator Adapter.gaml" as Organism
-import "Ants Adapter.gaml" as Ant
+import "../Adapters/Prey Predator Adapter.gaml" as Organism
+import "../Adapters/Ants Adapter.gaml" as Ant
 
 
 global

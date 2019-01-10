@@ -429,6 +429,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
 				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
 						.in(NAME, RENDERING);
+		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
+				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true)
+						.in(NAME, RENDERING);
 	}
 
 	public static class External {

@@ -9,9 +9,12 @@
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JApplet;
 import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
@@ -21,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public class AWTDisplayView extends LayeredDisplayView {
 
@@ -78,9 +82,84 @@ public class AWTDisplayView extends LayeredDisplayView {
 		};
 		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
-
+		((SwingControl)surfaceComposite).awtview=this;
 		return surfaceComposite;
 	}
+	
+	
+
+	volatile boolean inMenu=false;
+	public void addEvent(JApplet a) {
+		IToolbarDecoratedView.Zoomable s =((IToolbarDecoratedView.Zoomable )this);  
+		a.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+			
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (e.getPreciseWheelRotation()> 0) {
+					s.zoomOut();
+				} else {
+					s.zoomIn();
+				}				
+				
+			}
+		});  
+		a.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(java.awt.event.MouseEvent e) {
+				getDisplaySurface().setMousePosition(e.getX(), e.getY());  
+ 
+//				getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
+
+			}
+			
+			@Override
+			public void mouseDragged(java.awt.event.MouseEvent e) { 
+					getDisplaySurface().draggedTo(e.getX(), e.getY());  
+				
+			}
+		});
+		a.addMouseListener(new java.awt.event.MouseListener() {
+			
+			@Override
+			public void mouseReleased(java.awt.event.MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(java.awt.event.MouseEvent e) {
+				// TODO Auto-generated method stub
+				inMenu=false;
+			}
+			
+			@Override
+			public void mouseExited(java.awt.event.MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(java.awt.event.MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+			    if(e.getClickCount() == 2) {
+			    	s.zoomFit();
+			    }
+			    if(e.getButton()==3 && !inMenu) {
+					// DEBUG.LOG("Menu detected on " + view.getPartName());
+					inMenu = true;
+					getDisplaySurface().setMousePosition(e.getX(), e.getY());
+					getDisplaySurface().selectAgentsAroundMouse();
+			    }
+			}
+		});
+	}
+
 
 	/**
 	 * Wait for the AWT environment to be initialized, preventing a thread lock when two views want to open at the same
