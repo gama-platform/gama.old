@@ -138,7 +138,7 @@ public class FocusStatement extends AbstractStatement {
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			final IAgent[] stack = scope.getAgentsStack();
-			final IAgent mySelfAgent = stack[1/*stack.length - 1*/];
+			final IAgent mySelfAgent = stack[stack.length > 2 ? 1 : 0];
 			IScope scopeMySelf = null;
 			if (mySelfAgent != null) {
 				scopeMySelf = mySelfAgent.getScope().copy("in FocusStatement");
