@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Containers.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Containers.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -197,11 +197,13 @@ public class Containers {
 			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
 			if (start.equals(end)) { return GamaListFactory.createWithoutCasting(Types.INT, start); }
 			if (end > start) {
-				if (step < 0) { throw GamaRuntimeException.error("Negative step would result in an infinite range",
-						scope); }
+				if (step < 0) {
+					throw GamaRuntimeException.error("Negative step would result in an infinite range", scope);
+				}
 			} else {
-				if (step > 0) { throw GamaRuntimeException.error("Positive step would result in an infinite range",
-						scope); }
+				if (step > 0) {
+					throw GamaRuntimeException.error("Positive step would result in an infinite range", scope);
+				}
 			}
 			return IntStreamEx.rangeClosed(start, end, step).boxed().toCollection(listOf(Types.INT));
 
@@ -215,8 +217,9 @@ public class Containers {
 		@doc (
 				value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
 		public static IList every(final IScope scope, final IList source, final Integer step) {
-			if (step <= 0) { throw GamaRuntimeException.error("The step value in `every` should be strictly positive",
-					scope); }
+			if (step <= 0) {
+				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
+			}
 			return IntStreamEx.range(0, notNull(scope, source).size(), step).mapToObj(source::get)
 					.toCollection(listLike(source));
 		}
@@ -800,9 +803,9 @@ public class Containers {
 			see = { "" + IKeyword.MINUS })
 	public static IContainer plus(final IScope scope, final IContainer c1, final IContainer c2) {
 		// special case for the addition of two populations or meta-populations
-		if (c1 instanceof IPopulationSet
-				&& c2 instanceof IPopulationSet) { return new MetaPopulation((IPopulationSet) c1,
-						(IPopulationSet) c2); }
+		if (c1 instanceof IPopulationSet && c2 instanceof IPopulationSet) {
+			return new MetaPopulation((IPopulationSet) c1, (IPopulationSet) c2);
+		}
 		return (IContainer) stream(scope, c1).append(stream(scope, c2)).toCollection(listLike(c1, c2));
 	}
 
@@ -1552,6 +1555,69 @@ public class Containers {
 	}
 
 	@operator (
+			value = { "one_matches", "one_verifies" },
+			iterator = true,
+			expected_content_type = IType.BOOL,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "Returns true if at least one of the elements of the left-hand operand make the right-hand operand evaluate to true.  Returns false if the left-hand operand is empty. 'c one_matches each.property' is strictly equivalent to '(c count each.property) > 0' but faster in most cases (as it is a shortcircuited operator) ",
+			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
+			usages = { @usage ("if the left-hand operand is nil, one_matches throws an error") },
+			examples = { @example (
+					value = "[1,2,3,4,5,6,7,8] one_matches (each > 3)",
+					equals = "true"),
+					@example (
+							value = "[1::2, 3::4, 5::6] one_matches (each > 4)",
+							equals = "true") },
+			see = { "none_matches", "all_match", "count" })
+	public static Boolean one_matches(final IScope scope, final IContainer original, final IExpression filter) {
+		return notNull(scope, original).stream(scope).anyMatch(by(scope, filter));
+	}
+
+	@operator (
+			value = { "none_matches", "none_verifies" },
+			iterator = true,
+			expected_content_type = IType.BOOL,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "Returns true if none of the elements of the left-hand operand make the right-hand operand evaluate to true.  Returns true if the left-hand operand is empty. 'c none_matches each.property' is strictly equivalent to '(c count each.property) = 0'",
+			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
+			usages = { @usage ("if the left-hand operand is nil, none_matches throws an error") },
+			examples = { @example (
+					value = "[1,2,3,4,5,6,7,8] none_matches (each > 3)",
+					equals = "false"),
+					@example (
+							value = "[1::2, 3::4, 5::6] none_matches (each > 4)",
+							equals = "false") },
+			see = { "one_matches", "all_match", "count" })
+	public static Boolean none_matches(final IScope scope, final IContainer original, final IExpression filter) {
+		return notNull(scope, original).stream(scope).noneMatch(by(scope, filter));
+	}
+
+	@operator (
+			value = { "all_match", "all_verify" },
+			iterator = true,
+			expected_content_type = IType.BOOL,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "Returns true if all the elements of the left-hand operand make the right-hand operand evaluate to true. Returns true if the left-hand operand is empty. 'c all_match each.property' is strictly equivalent to '(c count each.property)  = length(c)' but faster in most cases (as it is a shortcircuited operator)",
+			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
+			usages = { @usage ("if the left-hand operand is nil, all_match throws an error") },
+			examples = { @example (
+					value = "[1,2,3,4,5,6,7,8] all_match (each > 3)",
+					equals = "false"),
+					@example (
+							value = "[1::2, 3::4, 5::6] all_match (each > 4)",
+							equals = "false") },
+			see = { "none_matches", "one_matches", "count" })
+	public static Boolean all_match(final IScope scope, final IContainer original, final IExpression filter) {
+		return notNull(scope, original).stream(scope).allMatch(by(scope, filter));
+	}
+
+	@operator (
 			value = { "index_by" },
 			iterator = true,
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
@@ -1596,11 +1662,13 @@ public class Containers {
 							equals = "[2::4, 4::8, 6::12] ") },
 			see = {})
 	public static GamaMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
-		if (!(filter instanceof BinaryOperator)) { throw GamaRuntimeException
-				.error("'as_map' expects a pair as second argument", scope); }
+		if (!(filter instanceof BinaryOperator)) {
+			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
+		}
 		final BinaryOperator pair = (BinaryOperator) filter;
-		if (!pair.getName().equals(
-				"::")) { throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope); }
+		if (!pair.getName().equals("::")) {
+			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
+		}
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
 		return (GamaMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
@@ -1638,8 +1706,9 @@ public class Containers {
 			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
 		}
 		final HashSet newSet = new HashSet(keys);
-		if (newSet.size() < keys.length(scope)) { throw GamaRuntimeException
-				.error("'create_map' expects unique values in the keys list", scope); }
+		if (newSet.size() < keys.length(scope)) {
+			throw GamaRuntimeException.error("'create_map' expects unique values in the keys list", scope);
+		}
 		return GamaMapFactory.create(scope, keys.getGamlType(), values.getGamlType(), keys, values);
 	}
 
