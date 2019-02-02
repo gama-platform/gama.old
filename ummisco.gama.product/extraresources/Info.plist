@@ -48,7 +48,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Gama</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Gama 1.7.0, modeling and simulation platform</string>
+	<string>Gama 1.8.0, modeling and simulation platform</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -60,7 +60,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.7.0</string>
+	<string>1.8.0</string>
 	<key>CFBundleSignature</key>
 	<string>GAMA</string>
 	<key>CFBundleVersion</key>
@@ -70,6 +70,6 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>UMMISCO IRD/UPMC and partners 2006-2017 http://gama-platform.org</string>
+	<string>UMMISCO IRD/UPMC and partners 2006-2019 http://gama-platform.org</string>
 </dict>
 </plist>
