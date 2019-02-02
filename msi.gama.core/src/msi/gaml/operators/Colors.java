@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Colors.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Colors.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -385,8 +385,8 @@ public class Colors {
 			category = { IOperatorCategory.COLOR },
 			concept = { IConcept.COLOR, IConcept.RANDOM })
 	@doc (
-			value = "rgb color",
-			comment = "Return a random color equivalent to rgb(rnd(first_op, last_op),rnd(first_op, last_op),rnd(first_op, last_op))",
+			value = "Return a random color equivalent to rgb(rnd(first_op, last_op),rnd(first_op, last_op),rnd(first_op, last_op))",
+			comment = "",
 			examples = @example (
 					value = "rnd_color(100, 200)",
 					equals = "a random color, equivalent to rgb(rnd(100, 200),rnd(100, 200),rnd(100, 200))",
@@ -512,8 +512,9 @@ public class Colors {
 			see = { "brewer_palettes" })
 	public static IList<GamaColor> brewerPaletteColors(final String type, final int nbClasses) {
 		final IList<GamaColor> cols = brewerPaletteColors(type);
-		if (cols.size() < nbClasses) { throw GamaRuntimeException
-				.error(type + " has less than " + nbClasses + " colors", null); }
+		if (cols.size() < nbClasses) {
+			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", null);
+		}
 		while (cols.size() > nbClasses) {
 			cols.remove(cols.size() - 1);
 		}
