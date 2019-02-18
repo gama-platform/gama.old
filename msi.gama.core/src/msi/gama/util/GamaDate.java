@@ -79,6 +79,10 @@ import msi.gaml.types.Types;
 				type = IType.INT,
 				doc = { @doc ("Returns the number of days of the month (28-31) of this date") }),
 		@variable (
+				name = "day_of_year",
+				type = IType.INT,
+				doc = { @doc ("Returns the current day number of the year of this date") }),
+		@variable (
 				name = "days_in_year",
 				type = IType.INT,
 				doc = { @doc ("Returns the number of days of the year (365-366) of this date") }),
