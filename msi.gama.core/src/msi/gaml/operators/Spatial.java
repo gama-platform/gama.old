@@ -2501,6 +2501,8 @@ public abstract class Spatial {
 					|| geom.getInnerGeometry().getArea() <= 0) { return GamaListFactory.create(Types.GEOMETRY); }
 			return GeometryUtils.squareDiscretization(geom.getInnerGeometry(), nbSquares, overlaps, 0.99);
 		}
+		
+		
 
 		@operator (
 				value = "to_squares",
@@ -2616,6 +2618,41 @@ public abstract class Spatial {
 			final double y_size = envelope.getHeight() / nbRows;
 
 			return GeometryUtils.geometryDecomposition(geom, x_size, y_size);
+		}
+		
+		@operator (
+				value = "to_segments",
+				type = IType.LIST,
+				content_type = IType.GEOMETRY,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (
+				value = "A list of a segments resulting from the decomposition of the geometry (or its contours for polygons) into sgements",
+				examples = { @example (
+						value = "to_segments(line([{10,10},{80,10},{80,80}]))",
+						equals = "[line([{10,10},{80,10}]), line([{80,10},{80,80}])]",
+						test = false) })
+		public static IList<IShape> toSegments(final IScope scope, final IShape geom) {
+			if (geom == null) { return GamaListFactory.create(Types.GEOMETRY); }
+			IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
+			if (geom.isMultiple()) {
+				for (IShape g : geom.getGeometries()) {
+					segments.addAll(toSegments(scope, g));
+				}
+			} else {
+				if (geom.isPoint()) {
+					segments.add(new GamaShape(geom));
+				} else {
+					for (int i = 1; i < geom.getPoints().size(); i++) {
+						IList<IShape> points = GamaListFactory.create(Types.POINT);
+						points.add(geom.getPoints().get(i- 1));
+						points.add(geom.getPoints().get(i));
+						segments.add(Spatial.Creation.line(scope, points));
+					}
+				}
+			}
+			
+			return segments;
 		}
 
 		@operator (
