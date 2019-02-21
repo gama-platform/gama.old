@@ -333,7 +333,7 @@ public class NetworkSkill extends MessagingSkill {
 		scope.getSimulation().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
 	}
 
-	private void startSkill(final IScope scope) {
+	protected void startSkill(final IScope scope) {
 		initialize(scope);
 		registerSimulationEvent(scope);
 	}
