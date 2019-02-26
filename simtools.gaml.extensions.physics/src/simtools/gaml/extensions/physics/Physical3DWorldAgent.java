@@ -67,7 +67,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	private final IList<IAgent> registeredAgents = GamaListFactory.create(Types.AGENT);
 	private final HashMap<IAgent, RigidBody> registeredMap = new HashMap<>();
-	private final PhysicsWorldJBullet world;
+	private PhysicsWorldJBullet world;
 
 	public Physical3DWorldAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
@@ -84,6 +84,8 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		if (agents.size() > PhysicsWorldJBullet.MAX_OBJECTS) {
 			GamaRuntimeException.error("Physic engine cannot manage more than " + PhysicsWorldJBullet.MAX_OBJECTS + "agents", GAMA.getRuntimeScope());
 		} else {
+
+			world = new PhysicsWorldJBullet(true);
 			cleanRegisteredAgents();
 			registeredAgents.addAll(agents);
 			setRegisteredAgentsToWorld();
