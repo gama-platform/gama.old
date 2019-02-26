@@ -33,6 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -80,9 +81,14 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	@setter (IKeyword.AGENTS)
 	public void setRegisteredAgents(final IList<IAgent> agents) {
-		cleanRegisteredAgents();
-		registeredAgents.addAll(agents);
-		setRegisteredAgentsToWorld();
+		if (agents.size() > PhysicsWorldJBullet.MAX_OBJECTS) {
+			GamaRuntimeException.error("Physic engine cannot manage more than " + PhysicsWorldJBullet.MAX_OBJECTS + "agents", GAMA.getRuntimeScope());
+		} else {
+			cleanRegisteredAgents();
+			registeredAgents.addAll(agents);
+			setRegisteredAgentsToWorld();
+		}
+		
 	}
 
 	@getter ("gravity")

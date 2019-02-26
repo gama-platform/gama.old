@@ -12,7 +12,7 @@ package simtools.gaml.extensions.physics;
 
 import javax.vecmath.Vector3f;
 
-import com.bulletphysics.collision.broadphase.AxisSweep3;
+import com.bulletphysics.collision.broadphase.AxisSweep3_32;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
 import com.bulletphysics.collision.dispatch.CollisionDispatcher;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
@@ -32,7 +32,8 @@ import com.bulletphysics.linearmath.Transform;
 public class PhysicsWorldJBullet {
 
 	DiscreteDynamicsWorld dynamicsWorld;
-
+	final public static int MAX_OBJECTS = 16384;
+	
 	public PhysicsWorldJBullet(final boolean gravity) {
 
 		// collision configuration contains default setup for memory, collision
@@ -49,8 +50,7 @@ public class PhysicsWorldJBullet {
 		// quality and performance
 		final Vector3f worldAabbMin = new Vector3f(-10000, -10000, -10000);
 		final Vector3f worldAabbMax = new Vector3f(10000, 10000, 10000);
-		final int maxProxies = 1024;
-		final AxisSweep3 overlappingPairCache = new AxisSweep3(worldAabbMin, worldAabbMax, maxProxies);
+		final AxisSweep3_32 overlappingPairCache = new AxisSweep3_32(worldAabbMin, worldAabbMax, MAX_OBJECTS);
 
 		final SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
 
