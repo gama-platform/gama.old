@@ -30,23 +30,17 @@ echo $SUFFIX
 
 
 n=0
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86.zip"
-NEWFILES[$n]='GAMA1.8_Linux_32'$SUFFIX
-n=1
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Linux_64'$SUFFIX
-n=2
+n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Mac_64'$SUFFIX
-n=3
-RELEASEFILES[$n]="$thePATH-win32.win32.x86.zip"
-NEWFILES[$n]='GAMA1.8_Win_32'$SUFFIX
-n=4
+n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA1.8_Win_64'$SUFFIX
 
 i=0
-for (( i=0; i<5; i++ ))
+for (( i=0; i<3; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
@@ -88,7 +82,7 @@ echo $RELEASEID
 
 check=${#RESULT}
 
-if [ $check -ge 5 ]; then
+if [ $check -ge 3 ]; then
 	echo 
 	echo "Remove old files..."
 	echo
@@ -117,7 +111,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<5; i++ ))
+for (( i=0; i<3; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"

@@ -97,19 +97,19 @@
 			<id>portfolio-non-maven-dependencies</id>
 			<url>http://buchen.github.io/maven-repo</url>
 		</repository>
-		<repository>
-			<id>eclipse-oxygenepp</id>
-			<url>http://download.eclipse.org/technology/epp/packages/oxygen/</url>
+		<!--   repository>
+			<id>eclipse-2018-12pp</id>
+			<url>http://download.eclipse.org/technology/epp/packages/2018-12/</url>
 			<layout>p2</layout>
-		</repository>
+		</repository-->
 		<repository>
-			<id>eclipse-oxygen</id>
-			<url>http://download.eclipse.org/releases/oxygen/</url>
+			<id>eclipse-1812</id>
+			<url>http://download.eclipse.org/releases/2018-12</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.14.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -541,21 +541,25 @@
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
 					<environments>
+						<!--  obsolete on 1812 
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
 							<arch>x86</arch>
 						</environment>
+						-->
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
 							<arch>x86_64</arch>
 						</environment>
+						<!--  obsolete on 1812 
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86</arch>
 						</environment>
+						-->
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>

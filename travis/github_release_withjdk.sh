@@ -30,27 +30,21 @@ echo $SUFFIX
 
 
 n=0
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86.zip"
-NEWFILES[$n]='GAMA1.8_Linux_32bits'$SUFFIX
-n=1
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Linux_64bits'$SUFFIX
-n=2
+NEWFILES[$n]='GAMA1.8_Linux_64bits'$SUFFIX 
+n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Mac_64bits'$SUFFIX
-n=3
-RELEASEFILES[$n]="$thePATH-win32.win32.x86.zip"
-NEWFILES[$n]='GAMA1.8_Win_32bits'$SUFFIX
-n=4
+n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA1.8_Win_64bits'$SUFFIX
-n=5
+n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Linux_64bits'$SUFFIX
-n=6
+n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Win_64bits'$SUFFIX
-n=7
+n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_EmbeddedJDK_MacOS'$SUFFIX
 
@@ -69,7 +63,7 @@ sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.p
 	
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-sudo zip -qr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
+sudo zip -qr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
 
 cd ../../../../../../../
 
@@ -78,7 +72,7 @@ cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
-sudo zip -qr "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
+sudo zip -qr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
 
 cd ../../../../../../../
 
@@ -88,13 +82,13 @@ cd ../../../../../../../
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
 
-sudo zip -qyr "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
+sudo zip -qyr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
 
 cd ../../../../../../../
 
 
 i=0
-for (( i=0; i<8; i++ ))
+for (( i=0; i<6; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
@@ -136,7 +130,7 @@ echo $RELEASEID
 
 check=${#RESULT}
 
-if [ $check -ge 5 ]; then
+if [ $check -ge 3 ]; then
 	echo 
 	echo "Remove old files..."
 	echo
@@ -165,7 +159,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<8; i++ ))
+for (( i=0; i<6; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
