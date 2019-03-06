@@ -510,7 +510,7 @@ public class GeometryUtils {
 		final double elevation = getContourCoordinates(clip).averageZ();
 		final boolean setZ = elevation != 0.0;
 		final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
-		final Geometry bufferClip = clip.buffer(sizeTol, 5, 0);
+		final Geometry bufferClip = sizeTol != 0.0 ? clip.buffer(sizeTol, 5, 0) : clip;
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
 		for (int i = 0; i < geom.getNumGeometries(); i++) {
@@ -521,7 +521,7 @@ public class GeometryUtils {
 					? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
 							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
 							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
-					: gg.covers(gg));
+					: bufferClip.covers(gg));
 			if (cond) {
 				if (setZ) {
 					final ICoordinates cc = getContourCoordinates(gg);
