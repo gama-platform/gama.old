@@ -249,6 +249,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
+
+		//UGLY FIX TO CENTERED THE PYRAMID
+		_center.z = _center.z - height/2.0;
 		_scale.setTo(_tangent.norm(), _vertices.at(2).euclidianDistanceTo(_vertices.at(1)), height);
 		drawCachedGeometry(Type.CUBE, solid, border);
 	}
@@ -258,7 +261,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
+
+		//UGLY FIX TO CENTERED THE PYRAMID
+		_center.z = _center.z - height;
 		_scale.setTo(height);
+		
 		drawCachedGeometry(Type.PYRAMID, solid, border);
 	}
 
@@ -267,6 +274,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
+		
+		//UGLY FIX TO CENTERED THE SPHERE
+		_center.z = _center.z - height;
 		_scale.setTo(height);
 		drawCachedGeometry(Type.SPHERE, solid, border);
 	}
@@ -295,6 +305,9 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getNormal(true, 1, _normal);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(radius, radius, height);
+
+		//UGLY FIX TO CENTERED THE CYLINDER
+		_center.z = _center.z - height/2.0;
 		drawCachedGeometry(Type.CYLINDER, solid, border);
 	}
 
