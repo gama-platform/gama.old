@@ -16,8 +16,10 @@ import javax.vecmath.Vector3f;
 
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.collision.shapes.ConvexHullShape;
 import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.util.ObjectArrayList;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -25,6 +27,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -131,53 +135,61 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 		// Double mass = 1.0;
 		CollisionShape shape = null;
-		;
-
-		// FIXME: As getLocation() is not working in 3D (hard to compute a 3D
+				// FIXME: As getLocation() is not working in 3D (hard to compute a 3D
 		// centroid)
 		// e;G The location of a plan with a z value will be at 0.
 		// Basic way to set the right z get the first coordinate of the shape,
 		// problem if the shape
 		// is not in the z plan it is totally wrong.
+		
+		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
+		final Vector3f _velocity =
+				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
+
+		final Double mass = (Double) geom.getAttribute("mass");
+		Vector3f position = new Vector3f(0,0,0);
+		final GamaMap<String, ?> collisionBound = geom.hasAttribute("collisionBound") ? Cast.asMap(null, geom.getAttribute("collisionBound"), false) : null;
+
+		if (collisionBound == null) { // Default collision uses the shape of the object: only work for convex objects
+			shape = defaultCollisionShape(geom);
+		} else {
+
+			String shapeType = (String) collisionBound.get("shape");
+			if (shapeType == null) shapeType = "";
+			if (shapeType.equalsIgnoreCase("sphere")) {
+				final Double radius = Cast.asFloat(null, collisionBound.get("radius"));
+				shape = new SphereShape(radius.floatValue());
+				position = positionFromLocation(geom);
+			}
+			else if (shapeType.equalsIgnoreCase("floor")) {
+				final double x = Cast.asFloat(null, collisionBound.get("x"));
+				final double y = Cast.asFloat(null, collisionBound.get("y"));
+				final double z = Cast.asFloat(null, collisionBound.get("z"));
+				shape = new BoxShape(new Vector3f((float) x, (float) y, (float) z));
+				position = positionFromLocation(geom);
+			} else {
+				shape = defaultCollisionShape(geom);
+			}
+
+		}
+		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity);
+	}
+	
+	private Vector3f positionFromLocation(IShape geom) {
 		float computedZLocation;
 		if (Double.isNaN(geom.getInnerGeometry().getCoordinates()[0].z) == true) {
 			computedZLocation = (float) geom.getLocation().getZ();
 		} else {
 			computedZLocation = (float) geom.getInnerGeometry().getCoordinates()[0].z;
 		}
-		final Vector3f position =
-				new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(), computedZLocation);
+		return new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(), computedZLocation);
 
-		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
-		final Vector3f _velocity =
-				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
-
-		final Double mass = (Double) geom.getAttribute("mass");
-
-		final Object collBObj = geom.getAttribute("collisionBound");
-		final GamaMap<String, ?> collisionBound = Cast.asMap(null, collBObj, false);
-
-		if (collisionBound.isEmpty()) { // Default collision shape is a sphere
-			// of radius 1.0;
-			final Double radius = 1.0;
-			shape = new SphereShape(radius.floatValue());
-		} else {
-
-			final String shapeType = (String) collisionBound.get("shape");
-
-			if (shapeType.equalsIgnoreCase("sphere")) {
-				final Double radius = Cast.asFloat(null, collisionBound.get("radius"));
-				shape = new SphereShape(radius.floatValue());
-			}
-
-			if (shapeType.equalsIgnoreCase("floor")) {
-				final double x = Cast.asFloat(null, collisionBound.get("x"));
-				final double y = Cast.asFloat(null, collisionBound.get("y"));
-				final double z = Cast.asFloat(null, collisionBound.get("z"));
-				shape = new BoxShape(new Vector3f((float) x, (float) y, (float) z));
-			}
-		}
-		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity);
+	}
+	private CollisionShape defaultCollisionShape(IShape geom) {
+		ObjectArrayList<Vector3f> points = new ObjectArrayList<Vector3f>();
+		for (ILocation loc : geom.getPoints()) 
+			points.add(new Vector3f((float)loc.toGamaPoint().x,(float)loc.toGamaPoint().y,(float)loc.toGamaPoint().z));
+		return new ConvexHullShape(points);
 	}
 
 	private void cleanRegisteredAgents() {
@@ -212,12 +224,15 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		final Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;
 		// DEBUG.LOG("Time step : "+ timeStep);
 		world.update(timeStep.floatValue());
-
+		registeredMap.keySet().removeIf(entry -> entry == null || entry.dead());
 		for (final IAgent ia : registeredMap.keySet()) {
+			if((Double) ia.getAttribute("mass") == 0.0) continue;
+
 			final RigidBody node = registeredMap.get(ia);
 			final Vector3f _position = world.getNodePosition(node);
 			final GamaPoint position =
 					new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
+			
 			ia.setLocation(position);
 			final Coordinate[] coordinates = ia.getInnerGeometry().getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) {
