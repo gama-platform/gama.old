@@ -63,7 +63,7 @@ public class PhysicsWorldJBullet {
 	}
 
 	public RigidBody addCollisionObject(final CollisionShape shape, final float mass, final Vector3f position,
-			final Vector3f velocity) {
+			final Vector3f velocity, float friction, float lin_damping, float ang_damping, float restitution) {
 
 		final Transform startTransform = new Transform();
 		startTransform.setIdentity();
@@ -84,8 +84,10 @@ public class PhysicsWorldJBullet {
 		// DEBUG.OUT(velocity);
 		// body.applyCentralForce(velocity);
 		body.setLinearVelocity(velocity);
+		body.setFriction(friction);
+		body.setDamping(lin_damping, ang_damping);
+		body.setRestitution(restitution);
 		dynamicsWorld.addRigidBody(body);
-
 		return body;
 	}
 

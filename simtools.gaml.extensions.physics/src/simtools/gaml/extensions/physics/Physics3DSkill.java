@@ -23,6 +23,10 @@ import msi.gaml.types.IType;
 
 @vars({ @variable(name = "space", type = IType.AGENT), @variable(name = "density", type = IType.FLOAT, init = "1.0"),
 		@variable(name = "mass", type = IType.FLOAT, init = "1.0"),
+		@variable(name = "friction", type = IType.FLOAT, init = "0.5"),
+		@variable(name = "restitution", type = IType.FLOAT, init = "0.0"),
+		@variable(name = "lin_damping", type = IType.FLOAT, init = "0.1"),
+		@variable(name = "ang_damping", type = IType.FLOAT, init = "0.1"),
 		@variable(name = "velocity", type = IType.LIST, init = "[0.0, 0.0, 0.0]"),
 		@variable(name = "collisionBound", type = IType.MAP),
 		@variable(name = "motor", type = IType.POINT, init = "{0.0, 0.0}") })

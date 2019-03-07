@@ -147,6 +147,10 @@ public class Physical3DWorldAgent extends MinimalAgent {
 				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
 		final Double mass = (Double) geom.getAttribute("mass");
+		final Double friction = (Double) geom.getAttribute("friction");
+		final Double restitution = (Double) geom.getAttribute("restitution");
+		final Double lin_damping = (Double) geom.getAttribute("lin_damping");
+		final Double ang_damping = (Double) geom.getAttribute("ang_damping");
 		Vector3f position = new Vector3f(0,0,0);
 		final GamaMap<String, ?> collisionBound = geom.hasAttribute("collisionBound") ? Cast.asMap(null, geom.getAttribute("collisionBound"), false) : null;
 
@@ -172,7 +176,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 			}
 
 		}
-		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity);
+		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity, friction.floatValue(), lin_damping.floatValue(), ang_damping.floatValue(), restitution.floatValue());
 	}
 	
 	private Vector3f positionFromLocation(IShape geom) {
