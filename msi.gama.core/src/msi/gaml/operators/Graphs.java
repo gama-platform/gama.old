@@ -28,6 +28,8 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -143,10 +145,25 @@ public class Graphs {
 
 	private static class IntersectionRelationLineTriangle implements VertexRelationship<IShape> {
 
-		IntersectionRelationLineTriangle() {}
+		final boolean optimizedForTriangulation ;
+		IntersectionRelationLineTriangle(boolean optimizedForTriangulation) {
+			this.optimizedForTriangulation = optimizedForTriangulation;
+		}
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
+			if (optimizedForTriangulation) {
+				int nb = 0;
+				Coordinate[] coord1 = p1.getInnerGeometry().getCoordinates();
+				Coordinate[] coord2 = p2.getInnerGeometry().getCoordinates();
+				
+				for (int i = 0; i < 3; i++) {
+					if (ArrayUtils.contains(coord2, coord1[i])) nb++;
+				}
+
+				return nb == 2;
+			}
+			
 			final Set<ILocation> cp = new HashSet<>();
 			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
 			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
@@ -160,6 +177,7 @@ public class Graphs {
 
 		@Override
 		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
+			if(optimizedForTriangulation) return p1 == p2;
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
 		}
 
@@ -1050,10 +1068,38 @@ public class Graphs {
 	}
 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLineTriangle(), null, scope,
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLineTriangle(true), null, scope,
 				vertices.getGamlType().getContentType(), Types.GEOMETRY);
 	}
-
+	public static IGraph spatialLineIntersectionTriangle(final IScope scope, final IContainer vertices) {
+		IGraph g =  new GamaSpatialGraph(scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		for (Object o : vertices.iterable(scope)) {
+			g.addVertex(o); 
+		}
+		for (Object o1 : vertices.iterable(scope)) {
+			Coordinate[] coord1 = ((IShape)o1).getInnerGeometry().getCoordinates();
+			for (Object o2 : vertices.iterable(scope)) {
+				Coordinate[] coord2 = ((IShape)o2).getInnerGeometry().getCoordinates();
+				if (o1 != o2 && lineInter(coord1,coord2))  {
+					g.addEdge(o1, o2);
+				}
+			}	
+		}
+		return g;
+	}
+	
+	static boolean lineInter(Coordinate[] coord1, Coordinate[] coord2) {
+		int nb = 0;
+		for (int i = 0; i < 3; i++) {
+			Coordinate c1 = coord1[i];
+			for (int j = 0; j < 3; j++) {
+				Coordinate c2 = coord2[j];
+				if ((c1.x == c2.x) && (c1.y == c2.y))
+					nb++;
+			}
+		}
+		return nb == 2;
+	}
 	@operator (
 			value = "as_distance_graph",
 			content_type = IType.GEOMETRY,

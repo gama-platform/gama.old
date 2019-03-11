@@ -570,8 +570,7 @@ public class GeometryUtils {
 		final List<LineString> network = new ArrayList<>();
 		final IList polys =
 				GeometryUtils.triangulation(scope, geom, toleranceTriangulation, toleranceClip, approxClipping);
-		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
-		// final Collection<GamaShape> nodes = graph.vertexSet();
+		final IGraph graph = Graphs.spatialLineIntersectionTriangle(scope, polys);
 		final IList<IList> ccs = Graphs.connectedComponentOf(scope, graph);
 		for (final IList cc : ccs) {
 			if (cc.size() > 2) {
