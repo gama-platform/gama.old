@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.OpenGL.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl;
 
@@ -73,7 +73,7 @@ import ummisco.gama.opengl.scene.StringDrawer;
  * commands sent to opengl to either record them and ouput VBOs or send them immediately (in immediate mode). Only the
  * immediate mode is implemented now. This class also manages the different caches (textures, geometries, envelopes,
  * text renderers)
- * 
+ *
  * @author drogoul
  *
  */
@@ -210,7 +210,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Reshapes the GL world to comply with a new view size and computes the resulting ratios between pixels and world
 	 * coordinates
-	 * 
+	 *
 	 * @param newGL
 	 *            the (possibly new) GL2 context
 	 * @param width
@@ -353,7 +353,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	/**
 	 * Returns the previous state
-	 * 
+	 *
 	 * @param lighted
 	 * @return
 	 */
@@ -462,7 +462,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Draws an arbitrary shape using a set of vertices as input, computing the normal if necessary and drawing the
 	 * contour if a border is present
-	 * 
+	 *
 	 * @param yNegatedVertices
 	 *            the set of vertices to draw
 	 * @param number
@@ -490,7 +490,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	/**
 	 * Use whatever triangulator is available (JTS or GLU) to draw a polygon
-	 * 
+	 *
 	 * @param p
 	 * @param yNegatedVertices
 	 * @param clockwise
@@ -533,7 +533,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	/**
 	 * Outputs a single vertex to OpenGL, applying the z-translation to it and computing the maximum z outputted so far
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @param z
@@ -567,7 +567,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 			textureCoords.setLocation(x, y, z);
 			currentTextureRotation.applyTo(textureCoords);
 			final double u = 1 - (textureCoords.x - textureEnvelope.getMinX()) / textureEnvelope.getWidth();
-			final double v = 1 - (textureCoords.y - textureEnvelope.getMinY()) / textureEnvelope.getHeight();
+			final double v = (textureCoords.y - textureEnvelope.getMinY()) / textureEnvelope.getHeight();
 			outputTexCoord(u, v);
 		}
 		outputVertex(x, y, z);
@@ -583,7 +583,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Draw the vertices using the style provided and uses the double[] parameter to determine the texture coordinates
 	 * associated with each vertex
-	 * 
+	 *
 	 * @param glQuads
 	 * @param yNegatedVertices
 	 * @param i
@@ -622,7 +622,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Replaces the current color by the parameter, sets the alpha of the parameter to be the one of the current color,
 	 * and returns the ex-current color
-	 * 
+	 *
 	 * @param color
 	 *            a Color
 	 * @return the previous current color
@@ -704,7 +704,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Sets the id of the textures to enable. If the first is equal to NO_TEXTURE, all textures are disabled. If the
 	 * second is equal to NO_TEXTURE, then the first one is also bound to the second unit.
-	 * 
+	 *
 	 * @param t
 	 *            the id of the texture to enable. NO_TEXTURE means disabling textures
 	 */
@@ -801,7 +801,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Draws one string in raster at the given coords and with the given font. Enters and exits raster mode before and
 	 * after drawing the string
-	 * 
+	 *
 	 * @param seq
 	 *            the string to draw
 	 * @param font
@@ -823,7 +823,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	/**
 	 * Draws a sequence of strings at the given coords (where s.length = 3 * coords.length). Enters and exits raster
 	 * mode before and after drawing the sequence
-	 * 
+	 *
 	 * @param seq
 	 *            the sequence of strings
 	 * @param font
@@ -858,7 +858,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	/**
 	 * Draws a string in perspective in the current color, with the given font, at the given position
-	 * 
+	 *
 	 * @param string
 	 *            the string to draw
 	 * @param font
@@ -1108,9 +1108,9 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	/**
-	 * 
+	 *
 	 * DECORATIONS: ROI, Rotation, FPS
-	 * 
+	 *
 	 */
 
 	public void isInRotationMode(final boolean b) {

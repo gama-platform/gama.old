@@ -2,17 +2,16 @@
  *
  * ummisco.gama.opengl.renderer.caches.TextureCache2.java, in plugin ummisco.gama.opengl, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -60,7 +59,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#initialize()
 	 */
 	@Override
@@ -79,7 +78,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#deleteVolatileTextures()
 	 */
 	@Override
@@ -93,7 +92,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#dispose()
 	 */
 	@Override
@@ -108,7 +107,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processs(java.io.File)
 	 */
 	@Override
@@ -120,7 +119,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processUnloaded()
 	 */
 	@Override
@@ -132,7 +131,7 @@ public class TextureCache2 implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#getTexture(java.awt.image.BufferedImage)
 	 */
 	@Override
@@ -162,20 +161,23 @@ public class TextureCache2 implements ITextureCache {
 	}
 
 	private Texture buildTexture(final GL gl, final File file) {
-		try {
-			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), file, true, null);
-			final Texture texture = new Texture(gl, data);
-			data.flush();
-			return texture;
-		} catch (final GLException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+
+		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file, true, true));
+
+		// try {
+		// final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), file, true, null);
+		// final Texture texture = new Texture(gl, data);
+		// data.flush();
+		// return texture;
+		// } catch (final GLException | IOException e) {
+		// e.printStackTrace();
+		// return null;
+		// }
 	}
 
 	Texture buildTexture(final GL gl, final BufferedImage im) {
 		try {
-			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, false);
+			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
 			final Texture texture = new Texture(gl, data);
 			data.flush();
 			return texture;
