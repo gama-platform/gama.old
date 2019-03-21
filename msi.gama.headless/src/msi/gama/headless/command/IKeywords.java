@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package ummisco.gaml.hpc.multicore.command;
+package msi.gama.headless.command;
 
 public interface IKeywords {
 	public final static String RUNSIMULARTION = "run";

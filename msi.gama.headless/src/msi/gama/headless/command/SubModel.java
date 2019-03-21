@@ -1,4 +1,4 @@
-package ummisco.gaml.hpc.multicore.command;
+package msi.gama.headless.command;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.IType;
 
 public class SubModel {
 
@@ -51,9 +52,11 @@ public class SubModel {
 
 	@operator (
 			value = IKeywords.LOADSUBMODEL,
-			can_be_const = true,
-			category = IOperatorCategory.FILE,
-			concept = { IConcept.HEADLESS })
+			//can_be_const = true,
+			type=IType.AGENT
+			//category = IOperatorCategory.FILE,
+			//concept = { IConcept.HEADLESS }
+			)
 	@doc (
 			value = "Load a submodel",
 			comment = "loaded submodel")
