@@ -75,6 +75,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	public boolean containsValue(final Object o) {
 		if (o == null) { return false; }
 		for (final IExpression exp : elements) {
+			if (exp == null) continue;
 			if (!(exp.isConst())) { return false; }
 			final Object e = exp.getConstValue();
 			if (o.equals(e)) { return true; }
