@@ -120,7 +120,7 @@ public class ExamplesToTests implements XMLElements {
 				if (operatorElement.hasAttribute("HAS_TESTS")) {
 					list(operatorElement.getElementsByTagName(CATEGORY)).stream()
 							.filter(o -> o.getAttribute("id").equals(category))
-							.map(o -> tempDocument.importNode(o.cloneNode(true), true))
+                            .map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true))
 							.forEach(o -> rootOperators.appendChild(o));
 				}
 			}
