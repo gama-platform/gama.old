@@ -41,6 +41,7 @@ import msi.gama.precompiler.doc.utils.XMLElements;
 
 public class ExamplesToTests implements XMLElements {
 
+	public static final String ATT_NAME_FILE = "fileName";
 	static final TransformerFactory factoryT = TransformerFactory.newInstance();
 	static final URL OPERATORS_XSL = GamaProcessor.class.getClassLoader()
 			.getResource("msi/gama/precompiler/resources/testGaml-Operators-xml2test.xsl");
@@ -114,6 +115,7 @@ public class ExamplesToTests implements XMLElements {
 			final Document tempDocument = context.getBuilder().newDocument();
 			documents.put(nameFileSpecies + ".experiment", tempDocument);
 			final org.w3c.dom.Element root = tempDocument.createElement(DOC);
+			root.setAttribute(ATT_NAME_FILE, nameFileSpecies);
 			final org.w3c.dom.Element rootOperators = tempDocument.createElement(OPERATORS);
 
 			for (final org.w3c.dom.Element operatorElement : operators) {
