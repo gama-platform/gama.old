@@ -53,9 +53,9 @@
 
 <xsl:template match="/">
  	<xsl:text>/**
- *  Op</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>
- *  Author: automatic generator
- *  Description: Unity Test of operators belonging to category </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>.
+ *  </xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>
+ *  Author: GAMA Automatic Generator
+ *  Description: Unit tests of operators belonging to "</xsl:text><xsl:value-of select="doc/@fileName"/><xsl:text>".
  */
 
 experiment "Run Tests" type: test {	
@@ -74,7 +74,7 @@ experiment "Run Tests" type: test {
  <xsl:template name="buildOperatorsTest"> 
     <xsl:for-each select="doc/operators/operator">
     	<xsl:sort select="@name" />
-		test <xsl:call-template name="checkName"/>Op {
+		test "<xsl:call-template name="checkName"/>" {
 <xsl:for-each select="documentation/usages/usage" >  
 <xsl:call-template name="generateTestFromExample"/>  
 </xsl:for-each>
