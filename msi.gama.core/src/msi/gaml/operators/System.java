@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.System.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.System.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -148,8 +148,9 @@ public class System {
 				output.append(line + Strings.LN);
 			}
 
-			if (returnValue != 0) { throw GamaRuntimeException.error("Error in console command." + output.toString(),
-					scope); }
+			if (returnValue != 0) {
+				throw GamaRuntimeException.error("Error in console command." + output.toString(), scope);
+			}
 		} catch (final IOException | InterruptedException e) {
 			throw GamaRuntimeException.error("Error in console command. " + e.getMessage(), scope);
 		}
@@ -174,13 +175,15 @@ public class System {
 							value = "agent1.location",
 							equals = "the location of the agent agent1",
 							isExecutable = false),
-						//	@example (value = "map(nil).keys", raises = "exception", isTestOnly = false) 
+					// @example (value = "map(nil).keys", raises = "exception", isTestOnly = false)
 					}))
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 			throws GamaRuntimeException {
 		if (a == null) {
-			if (!scope.interrupted()) { throw GamaRuntimeException
-					.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is nil", scope); }
+			if (!scope.interrupted()) {
+				throw GamaRuntimeException
+						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is nil", scope);
+			}
 			return null;
 		}
 		if (a.dead()) {
@@ -209,7 +212,7 @@ public class System {
 	}
 
 	@operator (
-			value = "user_input",
+			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = { IConcept.SYSTEM, IConcept.GUI })
 	@doc (
@@ -225,7 +228,8 @@ public class System {
 							returnType = "int",
 							isTestOnly = true),
 					@example (
-							value = " (values at \"Location\") as point", equals = "{10,10}",
+							value = " (values at \"Location\") as point",
+							equals = "{10,10}",
 							returnType = "point",
 							isTestOnly = true),
 					@example (
@@ -237,7 +241,7 @@ public class System {
 	}
 
 	@operator (
-			value = "user_input",
+			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = {})
 	@doc (
