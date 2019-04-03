@@ -449,11 +449,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		if (ses != null) {
 			// final int n = equations.size();
 			for (final SingleEquationStatement e : ses.equations.values()) {
-				equations.values().remove(e);
 				for (final IExpression eV : e.getVars()) {
 					variables_diff.values().remove(eV);
 				}
 			}
+			equations.values().removeAll(ses.equations.values());
 			// for (final Integer s : ses.equations.keySet()) {
 			// equations.remove(n - s - 1);
 			// variables_diff.remove(n - s - 1);
