@@ -56,6 +56,7 @@ import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
+import msi.gaml.types.GamaSpeciesType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -247,9 +248,16 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 						cd.warning("Facet " + IKeyword.SPECIES + " expects a species name and not an agent",
 								IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
 					}
+					
+					if( ( cd.getGamlType().getDenotedSpecies() == null ) && (type instanceof GamaSpeciesType)) {
+						cd.warning("The facet species can be evaluated only at runtime.",
+								IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);	
+						return;
+					}
 				}
 			}
 			final SpeciesDescription species = cd.getGamlType().getDenotedSpecies();
+		
 			// final SpeciesDescription species =
 			// cd.getModelDescription().getSpeciesReferencedBy(cd);
 			if (species != null) {
