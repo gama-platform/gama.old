@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
@@ -236,8 +236,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
 					IGamlIssue.DEPRECATED, e);
 		}
-		if (isSpeciesName(
-				op)) { return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr()); }
+		if (isSpeciesName(op)) {
+			return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
+		}
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context,
 		// e, expr, skill(op)); }
 		return getFactory().createOperator(op, getContext(), e, expr);
@@ -426,10 +427,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	private IExpression binaryIs(final IExpression left, final Expression e2) {
 		final String type = EGaml.getKeyOf(e2);
-		if (isTypeName(type)) { return getFactory().createOperator(IS, getContext(), e2.eContainer(), left,
-				getFactory().createConst(type, Types.STRING)); }
-		if (isSkillName(type)) { return getFactory().createOperator(IS_SKILL, getContext(), e2.eContainer(), left,
-				getFactory().createConst(type, Types.SKILL)); }
+		if (isTypeName(type)) {
+			return getFactory().createOperator(IS, getContext(), e2.eContainer(), left,
+					getFactory().createConst(type, Types.STRING));
+		}
+		if (isSkillName(type)) {
+			return getFactory().createOperator(IS_SKILL, getContext(), e2.eContainer(), left,
+					getFactory().createConst(type, Types.SKILL));
+		}
 		getContext().error("'is' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
 		return null;
@@ -500,8 +505,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final SpeciesDescription sd = type.getContentType().getSpecies();
 			if (sd instanceof ModelDescription) {
 				final ModelDescription md = (ModelDescription) sd;
-				if (md.hasExperiment(
-						name)) { return getFactory().createConst(name, GamaType.from(md.getExperiment(name))); }
+				if (md.hasExperiment(name)) {
+					return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
+				}
 			}
 		}
 		getContext().error("Only experiments can be accessed using their plain name", IGamlIssue.UNKNOWN_FIELD);
@@ -518,8 +524,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (type.getContentType().getSpecies() instanceof ModelDescription) {
 				final ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
 				final String var = EGaml.getKeyOf(fieldExpr);
-				if (sd.hasExperiment(
-						var)) { return getFactory().createConst(var, GamaType.from(sd.getExperiment(var))); }
+				if (sd.hasExperiment(var)) {
+					return getFactory().createConst(var, GamaType.from(sd.getExperiment(var)));
+				}
 			}
 		}
 		// end-hqnghi
@@ -803,8 +810,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// Case of dates: #month and #year
 		final String name = EGaml.toString(object.getRight());
-		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(
-				name)) { return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight()); }
+		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(name)) {
+			return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
+		}
 		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to
 		// the whole expression.
 		// final IExpression right = compile(object.getRight());
@@ -875,9 +883,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (species != null) {
 				final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
 				for (final IDescription equation : equations) {
-					if (equation.manipulatesVar(
-							varDiff.getName())) { return getFactory().createOperator("internal_integrated_value",
-									getContext(), object, ((IVarExpression.Agent) container).getOwner(), varDiff); }
+					if (equation.manipulatesVar(varDiff.getName())) {
+						return getFactory().createOperator("internal_integrated_value", getContext(), object,
+								((IVarExpression.Agent) container).getOwner(), varDiff);
+					}
 
 				}
 			}
@@ -889,7 +898,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseArray(final Array object) {
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getExprs());
-		final boolean allPairs = !list.isEmpty() && Iterables.all(list, each -> "::".equals(EGaml.getKeyOf(each)));
+		// Awkward expression, but necessary to fix Issue #2612
+		final boolean allPairs = !list.isEmpty()
+				&& Iterables.all(list, each -> (each instanceof ArgumentPair) || "::".equals(EGaml.getKeyOf(each)));
 		final Iterable<IExpression> result = Iterables.transform(list, input -> compile(input));
 		return allPairs ? getFactory().createMap(result) : getFactory().createList(result);
 	}
@@ -1233,7 +1244,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	/**
 	 * Method getFacetExpression()
-	 * 
+	 *
 	 * @see msi.gaml.expressions.IExpressionCompiler#getFacetExpression(msi.gaml.descriptions.IDescription,
 	 *      java.lang.Object)
 	 */
