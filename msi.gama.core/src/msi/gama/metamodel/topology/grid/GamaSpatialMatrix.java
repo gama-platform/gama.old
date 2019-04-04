@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GamaSpatialMatrix.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.grid.GamaSpatialMatrix.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -504,8 +504,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	final int getPlaceIndexAt(final int xx, final int yy) {
 		if (isHexagon) { return yy * numCols + xx; }
-		if (isTorus) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols
-				+ (xx < 0 ? xx + numCols : xx) % numCols; }
+		if (isTorus) {
+			return (yy < 0 ? yy + numCols : yy) % numRows * numCols + (xx < 0 ? xx + numCols : xx) % numCols;
+		}
 		if (xx < 0 || xx >= numCols || yy < 0 || yy >= numRows) {
 			;
 			return -1;
@@ -699,7 +700,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/**
 	 * Method usesIndiviualShapes()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.grid.IGrid#usesIndiviualShapes()
 	 */
 	@Override
@@ -751,7 +752,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * Returns the cells making up the neighborhood of a geometrical shape. First, the cells covered by this shape are
 	 * computed, then their neighbors are collated (excluding the previous ones). A special case is made for point
 	 * geometries and for agents contained in this matrix.
-	 * 
+	 *
 	 * @param source
 	 * @param distance
 	 * @return
@@ -762,9 +763,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		// If the shape is a point or if it is a cell of this matrix, we run the
 		// method with an ILocation instead
-		if (shape.isPoint()
-				|| shape.getAgent() != null && shape.getAgent().getSpecies() == cellSpecies) { return getNeighborsOf(
-						scope, shape.getLocation(), distance, filter); }
+		if (shape.isPoint() || shape.getAgent() != null && shape.getAgent().getSpecies() == cellSpecies) {
+			return getNeighborsOf(scope, shape.getLocation(), distance, filter);
+		}
 
 		// We compute all the cells covered by the shape (we know that it is not
 		// a cell of the matrix) -- no filter used
@@ -1098,14 +1099,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		if (dx != 0 && dy != 0) {
 			if (walkable(scope, x - dx, y + dy, open) && notwalkable(scope, x - dx, y, open)
-					|| walkable(scope, x + dx, y - dy, open) && notwalkable(scope, x, y - dy, open)) { return node; }
+					|| walkable(scope, x + dx, y - dy, open) && notwalkable(scope, x, y - dy, open)) {
+				return node;
+			}
 		} else {
 			if (dx != 0) {
 				if (walkable(scope, x + dx, y + 1, open) && notwalkable(scope, x, y + 1, open)
-						|| walkable(scope, x + dx, y - 1, open) && notwalkable(scope, x, y - 1, open)) { return node; }
+						|| walkable(scope, x + dx, y - 1, open) && notwalkable(scope, x, y - 1, open)) {
+					return node;
+				}
 			} else {
 				if (walkable(scope, x + 1, y + dy, open) && notwalkable(scope, x + 1, y, open)
-						|| walkable(scope, x - 1, y + dy, open) && notwalkable(scope, x - 1, y, open)) { return node; }
+						|| walkable(scope, x - 1, y + dy, open) && notwalkable(scope, x - 1, y, open)) {
+					return node;
+				}
 			}
 		}
 
@@ -1376,17 +1383,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (shapes.isEmpty()) { return null; }
 		return ordering.min(shapes);
 	}
-	
+
 	@Override
-	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f, int number, Collection<IAgent> alreadyChosen ) {
+	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
+			final IAgentFilter f, int number, Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
 		shapes.removeAll(alreadyChosen);
-		if (shapes.size() <= number) return shapes;
+		if (shapes.size() <= number)
+			return shapes;
 		boolean gridSpe = (f.getSpecies() != null) && (f.getSpecies().isGrid());
-		final Ordering<IShape> ordering = gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation())) : Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+		final Ordering<IShape> ordering =
+				gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation()))
+						: Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 		return ordering.leastOf(shapes, number);
 	}
 
@@ -1437,7 +1448,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/**
 	 * Method isTorus()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.grid.IGrid#isTorus()
 	 */
 	@Override
@@ -1447,7 +1458,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/**
 	 * Method getEnvironmentFrame()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.grid.IGrid#getEnvironmentFrame()
 	 */
 	@Override
@@ -1463,7 +1474,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		/**
 		 * Method getReferenceGeometry(). Directly refers to the reference shape declared by the matrix.
-		 * 
+		 *
 		 * @see msi.gama.metamodel.shape.GamaProxyGeometry#getReferenceGeometry()
 		 */
 		@Override
@@ -1489,7 +1500,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		/**
 		 * Method getGeometries()
-		 * 
+		 *
 		 * @see msi.gama.metamodel.shape.IShape#getGeometries()
 		 */
 		@Override
@@ -1510,7 +1521,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		/**
 		 * Method isMultiple()
-		 * 
+		 *
 		 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 		 */
 		@Override
@@ -1743,7 +1754,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 				throws GamaRuntimeException {
 			if (contentsType == null || contentsType.id() == IType.NONE || contentsType.getSpeciesName() != null
-					&& contentsType.getSpeciesName().equals(getSpecies().getName())) { return GamaSpatialMatrix.this; }
+					&& contentsType.getSpeciesName().equals(getSpecies().getName())) {
+				return GamaSpatialMatrix.this;
+			}
 			return GamaSpatialMatrix.this.matrixValue(scope, contentsType, copy);
 		}
 
@@ -1751,8 +1764,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public IMatrix matrixValue(final IScope scope, final IType type, final ILocation size, final boolean copy)
 				throws GamaRuntimeException {
 
-			if (type == null || type.id() == IType.NONE || type.getSpeciesName() != null
-					&& type.getSpeciesName().equals(getSpecies().getName())) { return GamaSpatialMatrix.this; }
+			if (type == null || type.id() == IType.NONE
+					|| type.getSpeciesName() != null && type.getSpeciesName().equals(getSpecies().getName())) {
+				return GamaSpatialMatrix.this;
+			}
 			return GamaSpatialMatrix.this.matrixValue(scope, type, copy);
 		}
 
@@ -1899,7 +1914,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getPoints()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getPoints()
 			 */
 			@Override
@@ -1915,7 +1930,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getArea()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getArea()
 			 */
 			@Override
@@ -1925,7 +1940,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getVolume()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getVolume()
 			 */
 			@Override
@@ -1935,7 +1950,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getPerimeter()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
 			 */
 			@Override
@@ -1945,7 +1960,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getHoles()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getHoles()
 			 */
 			@Override
@@ -1955,7 +1970,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getCentroid()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getCentroid()
 			 */
 			@Override
@@ -1965,7 +1980,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getExteriorRing()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getExteriorRing(msi.gama.runtime.IScope)
 			 */
 			@Override
@@ -1975,7 +1990,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getWidth()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getWidth()
 			 */
 			@Override
@@ -1985,7 +2000,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getHeight()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getHeight()
 			 */
 			@Override
@@ -1995,7 +2010,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getDepth()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getDepth()
 			 */
 			@Override
@@ -2005,7 +2020,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method getGeometricEnvelope()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 			 */
 			@Override
@@ -2020,7 +2035,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			/**
 			 * Method isMultiple()
-			 * 
+			 *
 			 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 			 */
 			@Override
@@ -2044,7 +2059,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/**
 	 * Method usesNeighborsCache()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.grid.IGrid#usesNeighborsCache()
 	 */
 	@Override
@@ -2058,6 +2073,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (index > lastCell) { return null; }
 		return matrix[index];
 	}
+
+	@Override
+	protected void setNthElement(final IScope scope, final int index, final Object value) {}
 
 	@Override
 	public Collection<IAgent> allAgents() {

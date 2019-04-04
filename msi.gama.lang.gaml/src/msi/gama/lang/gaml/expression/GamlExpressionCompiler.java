@@ -847,7 +847,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// If no container is defined, return a null expression
 		if (container == null) { return null; }
 		final IType contType = container.getGamlType();
-		final boolean isMatrix = contType.id() == IType.MATRIX;
+		final boolean isMatrix = Types.MATRIX.isAssignableFrom(contType);
 		final IType keyType = contType.getKeyType();
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getRight());
 		final List<IExpression> result = new ArrayList<>();
@@ -857,11 +857,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final IExpression e = compile(eExpr);
 			if (e != null) {
 				final IType elementType = e.getGamlType();
-				if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getGamlType())) {
-					if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
-						getContext().warning("a " + contType.toString() + " cannot be accessed using a "
+				if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)) {
+					if (!(isMatrix && elementType.id() == IType.INT)) {
+						getContext().warning("a " + contType.toString() + " should not be accessed using a "
 								+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
 					}
+					// if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
+					//
+					// }
 				}
 				result.add(e);
 			}

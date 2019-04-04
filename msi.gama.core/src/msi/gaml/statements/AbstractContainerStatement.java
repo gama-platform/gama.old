@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractContainerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AbstractContainerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -50,7 +50,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -205,11 +205,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 				final IType<?> keyType = list.getGamlType().getKeyType();
 				if (index != null && keyType != Types.NO_TYPE && !index.getGamlType().isTranslatableInto(keyType)) {
-					cd.warning(
-							"The type of the index of " + list.serialize(false) + " (" + keyType
-									+ ") does not match with the type of " + index.serialize(false) + " ("
-									+ index.getGamlType() + "). The latter will be casted to " + keyType,
-							IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
+					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && index.getGamlType() == Types.INT))
+						cd.warning(
+								"The type of the index of " + list.serialize(false) + " (" + keyType
+										+ ") does not match with the type of " + index.serialize(false) + " ("
+										+ index.getGamlType() + "). The latter will be casted to " + keyType,
+								IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 				}
 			}
 		}
@@ -300,7 +301,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	/**
 	 * Method to add, remove or put one individual item
-	 * 
+	 *
 	 * @param scope
 	 * @param object
 	 * @param position
@@ -415,7 +416,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	@operator (
 			value = "edge",
 			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME This is
-												// false
+			// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph",
@@ -438,7 +439,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	@operator (
 			value = "edge",
 			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME this is
-												// false
+			// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ",

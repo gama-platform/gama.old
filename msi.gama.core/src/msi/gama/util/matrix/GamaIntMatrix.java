@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaIntMatrix.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.matrix.GamaIntMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -46,17 +46,20 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	static public GamaIntMatrix from(final IScope scope, final IMatrix m) {
 		if (m instanceof GamaIntMatrix) { return (GamaIntMatrix) m; }
-		if (m instanceof GamaObjectMatrix) { return new GamaIntMatrix(scope, m.getCols(scope), m.getRows(scope),
-				((GamaObjectMatrix) m).getMatrix()); }
-		if (m instanceof GamaFloatMatrix) { return new GamaIntMatrix(m.getCols(scope), m.getRows(scope),
-				((GamaFloatMatrix) m).getMatrix()); }
+		if (m instanceof GamaObjectMatrix) {
+			return new GamaIntMatrix(scope, m.getCols(scope), m.getRows(scope), ((GamaObjectMatrix) m).getMatrix());
+		}
+		if (m instanceof GamaFloatMatrix) {
+			return new GamaIntMatrix(m.getCols(scope), m.getRows(scope), ((GamaFloatMatrix) m).getMatrix());
+		}
 		return null;
 	}
 
 	static public GamaIntMatrix from(final IScope scope, final int c, final int r, final IMatrix m) {
 		if (m instanceof GamaIntMatrix) { return new GamaIntMatrix(c, r, ((GamaIntMatrix) m).getMatrix()); }
-		if (m instanceof GamaObjectMatrix) { return new GamaIntMatrix(scope, c, r,
-				((GamaObjectMatrix) m).getMatrix()); }
+		if (m instanceof GamaObjectMatrix) {
+			return new GamaIntMatrix(scope, c, r, ((GamaObjectMatrix) m).getMatrix());
+		}
 		if (m instanceof GamaFloatMatrix) { return new GamaIntMatrix(c, r, ((GamaFloatMatrix) m).getMatrix()); }
 		return null;
 	}
@@ -439,7 +442,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	/**
 	 * Method iterator()
-	 * 
+	 *
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
 	@Override
@@ -618,6 +621,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		if (index == null) { return 0; }
 		if (index > getMatrix().length) { return 0; }
 		return getMatrix()[index];
+	}
+
+	@Override
+	protected void setNthElement(final IScope scope, final int index, final Object value) {
+		getMatrix()[index] = Cast.asInt(scope, value);
 	}
 
 	@Override

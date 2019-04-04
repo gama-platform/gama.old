@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaObjectMatrix.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.matrix.GamaObjectMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -37,15 +37,11 @@ import one.util.streamex.StreamEx;
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	static public GamaObjectMatrix from(final int c, final int r, final IMatrix<?> m) {
-		if (m instanceof GamaFloatMatrix) {
-			return new GamaObjectMatrix(c, r, ((GamaFloatMatrix) m).getMatrix());
-		}
+		if (m instanceof GamaFloatMatrix) { return new GamaObjectMatrix(c, r, ((GamaFloatMatrix) m).getMatrix()); }
 		if (m instanceof GamaObjectMatrix) {
 			return new GamaObjectMatrix(c, r, ((GamaObjectMatrix) m).getMatrix(), m.getGamlType().getContentType());
 		}
-		if (m instanceof GamaIntMatrix) {
-			return new GamaObjectMatrix(c, r, ((GamaIntMatrix) m).matrix);
-		}
+		if (m instanceof GamaIntMatrix) { return new GamaObjectMatrix(c, r, ((GamaIntMatrix) m).matrix); }
 		if (m instanceof GamaSpatialMatrix) {
 			return new GamaObjectMatrix(c, r, ((GamaSpatialMatrix) m).getMatrix(), m.getGamlType().getContentType());
 		}
@@ -94,8 +90,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final boolean requiresCasting = GamaType.requiresCasting(contentsType, objects.getGamlType().getContentType());
 		if (preferredSize != null) {
 			for (int i = 0, stop = CmnFastMath.min(getMatrix().length, objects.size()); i < stop; i++) {
-				getMatrix()[i] = requiresCasting ? contentsType.cast(scope, objects.get(i), null, false)
-						: objects.get(i);
+				getMatrix()[i] =
+						requiresCasting ? contentsType.cast(scope, objects.get(i), null, false) : objects.get(i);
 			}
 		} else if (isFlat(objects)) {
 			for (int i = 0, stop = objects.size(); i < stop; i++) {
@@ -123,26 +119,20 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public boolean _contains(final IScope scope, final Object o) {
 		for (int i = 0; i < getMatrix().length; i++) {
-			if (getMatrix()[i].equals(o)) {
-				return true;
-			}
+			if (getMatrix()[i].equals(o)) { return true; }
 		}
 		return false;
 	}
 
 	@Override
 	public Object _first(final IScope scope) {
-		if (getMatrix().length == 0) {
-			return null;
-		}
+		if (getMatrix().length == 0) { return null; }
 		return getMatrix()[0];
 	}
 
 	@Override
 	public Object _last(final IScope scope) {
-		if (getMatrix().length == 0) {
-			return null;
-		}
+		if (getMatrix().length == 0) { return null; }
 		return getMatrix()[getMatrix().length - 1];
 	}
 
@@ -152,8 +142,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	/**
-	 * Take two matrices (with the same number of columns) and create a big
-	 * matrix putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix on the
+	 * right side of the first matrix
 	 *
 	 * @param two
 	 *            matrix to concatenate
@@ -168,10 +158,10 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final Object[] ma = a.getMatrix();
 		final Object[] mb = ((GamaObjectMatrix) b).getMatrix();
 		final Object[] mab = ArrayUtils.addAll(ma, mb);
-		final IType<?> newContentsType = GamaType.findCommonType(getGamlType().getContentType(),
-				b.getGamlType().getContentType());
-		final IMatrix<?> fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab,
-				newContentsType);
+		final IType<?> newContentsType =
+				GamaType.findCommonType(getGamlType().getContentType(), b.getGamlType().getContentType());
+		final IMatrix<?> fl =
+				new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab, newContentsType);
 
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not
 		// implemented. Returns nil for the moment");
@@ -179,8 +169,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	/**
-	 * Take two matrices (with the same number of rows) and create a big matrix
-	 * putting the second matrix on the right side of the first matrix
+	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
+	 * side of the first matrix
 	 *
 	 * @param two
 	 *            matrix to concatenate
@@ -254,9 +244,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public boolean _isEmpty(final IScope scope) {
 		for (int i = 0; i < getMatrix().length; i++) {
-			if (getMatrix()[i] != null) {
-				return false;
-			}
+			if (getMatrix()[i] != null) { return false; }
 		}
 		return true;
 	}
@@ -300,12 +288,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public boolean equals(final Object m) {
-		if (this == m) {
-			return true;
-		}
-		if (!(m instanceof GamaObjectMatrix)) {
-			return false;
-		}
+		if (this == m) { return true; }
+		if (!(m instanceof GamaObjectMatrix)) { return false; }
 		final GamaObjectMatrix mat = (GamaObjectMatrix) m;
 		return Arrays.equals(this.getMatrix(), mat.getMatrix());
 	}
@@ -336,25 +320,19 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public Object get(final IScope scope, final int col, final int row) {
-		if (col >= numCols || col < 0 || row >= numRows || row < 0) {
-			return null;
-		}
+		if (col >= numCols || col < 0 || row >= numRows || row < 0) { return null; }
 		return getMatrix()[row * numCols + col];
 	}
 
 	@Override
 	public void set(final IScope scope, final int col, final int row, final Object obj) {
-		if (col >= numCols || col < 0 || row >= numRows || row < 0) {
-			return;
-		}
+		if (col >= numCols || col < 0 || row >= numRows || row < 0) { return; }
 		getMatrix()[row * numCols + col] = GamaType.toType(scope, obj, getGamlType().getContentType(), false);
 	}
 
 	@Override
 	public Object remove(final IScope scope, final int col, final int row) {
-		if (col >= numCols || col < 0 || row >= numRows || row < 0) {
-			return null;
-		}
+		if (col >= numCols || col < 0 || row >= numRows || row < 0) { return null; }
 		final Object o = getMatrix()[row * numCols + col];
 		getMatrix()[row * numCols + col] = null;
 		return o;
@@ -417,7 +395,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	/**
 	 * Method iterator()
-	 * 
+	 *
 	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
 	 */
 	@Override
@@ -433,19 +411,20 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		this.matrix = matrix;
 	}
 
+	@Override
+	protected void setNthElement(final IScope scope, final int index, final Object value) {
+		getMatrix()[index] = value;
+	}
+
 	/**
 	 * Method getNthElement()
-	 * 
+	 *
 	 * @see msi.gama.util.matrix.GamaMatrix#getNthElement(java.lang.Integer)
 	 */
 	@Override
 	protected Object getNthElement(final Integer index) {
-		if (index == null) {
-			return null;
-		}
-		if (index > getMatrix().length) {
-			return null;
-		}
+		if (index == null) { return null; }
+		if (index > getMatrix().length) { return null; }
 		return getMatrix()[index];
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaMatrix.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.matrix.GamaMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -199,17 +199,22 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
-		if (this instanceof GamaIntMatrix
-				&& b instanceof GamaIntMatrix) { return ((GamaIntMatrix) this)._opAppendVertically(scope, b); }
-		if (this instanceof GamaFloatMatrix
-				&& b instanceof GamaFloatMatrix) { return ((GamaFloatMatrix) this)._opAppendVertically(scope, b); }
-		if (this instanceof GamaIntMatrix
-				&& b instanceof GamaFloatMatrix) { return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())
-						._opAppendVertically(scope, b); }
-		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) { return ((GamaFloatMatrix) this)
-				._opAppendVertically(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
-		if (this instanceof GamaObjectMatrix
-				&& b instanceof GamaObjectMatrix) { return ((GamaObjectMatrix) this)._opAppendVertically(scope, b); }
+		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaIntMatrix) this)._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix) {
+			return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendVertically(scope,
+					new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix()));
+		}
+		if (this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix) {
+			return ((GamaObjectMatrix) this)._opAppendVertically(scope, b);
+		}
 		/*
 		 * Object[] ma = this.getMatrix(); Object[] mb = b.getMatrix(); Object[] mab = ArrayUtils.addAll(ma, mb);
 		 *
@@ -236,17 +241,22 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
-		if (this instanceof GamaIntMatrix
-				&& b instanceof GamaIntMatrix) { return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b); }
-		if (this instanceof GamaFloatMatrix
-				&& b instanceof GamaFloatMatrix) { return ((GamaFloatMatrix) this)._opAppendHorizontally(scope, b); }
-		if (this instanceof GamaIntMatrix
-				&& b instanceof GamaFloatMatrix) { return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())
-						._opAppendHorizontally(scope, b); }
-		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) { return ((GamaFloatMatrix) this)
-				._opAppendHorizontally(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
-		if (this instanceof GamaObjectMatrix
-				&& b instanceof GamaObjectMatrix) { return ((GamaObjectMatrix) this)._opAppendHorizontally(scope, b); }
+		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix) {
+			return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendHorizontally(scope,
+					new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix()));
+		}
+		if (this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix) {
+			return ((GamaObjectMatrix) this)._opAppendHorizontally(scope, b);
+		}
 
 		return this;
 	}
@@ -381,7 +391,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			for (final Object o : ((IContainer) object).iterable(scope)) {
 				if (!checkBounds(scope, o, forAdding)) { return false; }
 			}
-		}
+		} else if (object instanceof Integer) { return ((Integer) object) < numCols * numRows; }
 		return false;
 	}
 
@@ -504,10 +514,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// set, that takes a mandatory index (also replaces the parameter)
 	@Override
 	public void setValueAtIndex(final IScope scope, final Object index, final T value) {
+		if (index instanceof Integer) {
+			setNthElement(scope, (int) index, value);
+			return;
+		}
 		final ILocation p = buildIndex(scope, index);
 		set(scope, (int) p.getX(), (int) p.getY(), value);
 
 	}
+
+	protected abstract void setNthElement(IScope scope, int index, Object value);
 
 	// Then, methods for "all" operations
 	// Adds the values if possible, without replacing existing ones
