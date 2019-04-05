@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.UnaryOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.UnaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -30,6 +30,7 @@ import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
+import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -159,13 +160,18 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		type = computeType(prototype.typeProvider, type);
 		if (type.isContainer()) {
 			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType());
-			// WARNING Special case for pairs of map. See if it works for other
-			// fields as well
-			if (contentType.isContainer() && contentType.getKeyType() == Types.NO_TYPE
-					&& contentType.getContentType() == Types.NO_TYPE) {
-				contentType = GamaType.from(contentType, child.getGamlType().getKeyType(),
-						child.getGamlType().getContentType());
+			if (contentType.isContainer()) {
+				// WARNING Special case for pairs of map. See if it works for other
+				// fields as well
+				if (contentType.getKeyType() == Types.NO_TYPE && contentType.getContentType() == Types.NO_TYPE) {
+					contentType = GamaType.from(contentType, child.getGamlType().getKeyType(),
+							child.getGamlType().getContentType());
+				}
+				IType contentContentType =
+						computeType(prototype.contentTypeContentTypeProvider, contentType.getContentType());
+				contentType = ((IContainerType<?>) contentType).of(contentContentType);
 			}
+
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
 			type = GamaType.from(type, keyType, contentType);
 

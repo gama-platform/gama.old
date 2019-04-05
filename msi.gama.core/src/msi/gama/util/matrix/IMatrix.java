@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.IMatrix.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.matrix.IMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -78,6 +78,7 @@ public interface IMatrix<T>
 			value = "rows_list",
 			can_be_const = true,
 			content_type = IType.LIST,
+			content_type_content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -92,6 +93,7 @@ public interface IMatrix<T>
 			value = "columns_list",
 			can_be_const = true,
 			content_type = IType.LIST,
+			content_type_content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -337,7 +339,7 @@ public interface IMatrix<T>
 			value = "inverse",
 			can_be_const = true,
 			content_type = IType.FLOAT,
-		//	ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			// ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
