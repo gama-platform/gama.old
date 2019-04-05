@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GamaGraph.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.GamaGraph.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -371,7 +371,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method removeIndexes()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
@@ -656,8 +656,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public boolean removeEdge(final Object e) {
 		if (e == null) { return false; }
 		final _Edge<V, E> edge = getEdge(e);
-		if (edge == null
-				&& e instanceof GamaPair) { return removeEdge(((GamaPair) e).first(), ((GamaPair) e).last()) != null; }
+		if (edge == null && e instanceof GamaPair) {
+			return removeEdge(((GamaPair) e).first(), ((GamaPair) e).last()) != null;
+		}
 
 		if (edge == null) { return false; }
 		incVersion();
@@ -1303,9 +1304,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * ConcurrentHashMap<Pair<V, V>, IList<IList<E>>>(); final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix); if
 	 * (pathFindingAlgo == shortestPathAlgorithm.FloydWarshall) { optimizer = new FloydWarshallShortestPathsGAMA(this,
 	 * mat);
-	 * 
+	 *
 	 * return; }
-	 * 
+	 *
 	 * final Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType()); for (int i =
 	 * 0; i < nbvertices; i++) { final V v1 = vertices.get(i); for (int j = 0; j < nbvertices; j++) { final V v2 =
 	 * vertices.get(j); final Pair<V, V> vv = new Pair<V, V>(v1, v2); final IList<E> edges =
@@ -1318,7 +1319,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * this.getAllEdges(vs, vn); for (final E ed : eds) { if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
 	 * edge = ed; } } edgesVertices.put(id, edge); } if (edge == null) { break; } edges.add(edge); previous = next; next
 	 * = mat.get(scope, j, next);
-	 * 
+	 *
 	 * vs = vn; } while (previous != j); final IList<IList<E>> spl =
 	 * GamaListFactory.create(Types.LIST.of(getType().getContentType())); spl.add(edges); shortestPathComputed.put(vv,
 	 * spl); } } }
@@ -1513,25 +1514,28 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public GraphObjectToAdd buildValue(final IScope scope, final Object object) {
-		if (object instanceof NodeToAdd) { return new NodeToAdd(
-				type.getKeyType().cast(scope, ((NodeToAdd) object).object, null, false), ((NodeToAdd) object).weight); }
-		if (object instanceof EdgeToAdd) { return new EdgeToAdd(
-				type.getKeyType().cast(scope, ((EdgeToAdd) object).source, null, false),
-				type.getKeyType().cast(scope, ((EdgeToAdd) object).target, null, false),
-				type.getContentType().cast(scope, ((EdgeToAdd) object).object, null, false),
-				((EdgeToAdd) object).weight); }
+		if (object instanceof NodeToAdd) {
+			return new NodeToAdd(type.getKeyType().cast(scope, ((NodeToAdd) object).object, null, false),
+					((NodeToAdd) object).weight);
+		}
+		if (object instanceof EdgeToAdd) {
+			return new EdgeToAdd(type.getKeyType().cast(scope, ((EdgeToAdd) object).source, null, false),
+					type.getKeyType().cast(scope, ((EdgeToAdd) object).target, null, false),
+					type.getContentType().cast(scope, ((EdgeToAdd) object).object, null, false),
+					((EdgeToAdd) object).weight);
+		}
 		return new EdgeToAdd(null, null, type.getContentType().cast(scope, object, null, false), 0.0);
 	}
 
 	/**
 	 * Method buildValues()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
 	 *      msi.gaml.types.IContainerType)
 	 */
@@ -1552,7 +1556,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildIndex()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */

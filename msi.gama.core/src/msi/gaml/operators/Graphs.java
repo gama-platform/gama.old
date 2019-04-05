@@ -2,11 +2,11 @@
  *
  * msi.gaml.operators.Graphs.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -70,6 +70,9 @@ import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.AbstractContainerStatement.EdgeToAdd;
+import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
+import msi.gaml.statements.AbstractContainerStatement.NodeToAdd;
 import msi.gaml.types.GamaGraphType;
 import msi.gaml.types.GamaPathType;
 import msi.gaml.types.IType;
@@ -145,7 +148,8 @@ public class Graphs {
 
 	private static class IntersectionRelationLineTriangle implements VertexRelationship<IShape> {
 
-		final boolean optimizedForTriangulation ;
+		final boolean optimizedForTriangulation;
+
 		IntersectionRelationLineTriangle(boolean optimizedForTriangulation) {
 			this.optimizedForTriangulation = optimizedForTriangulation;
 		}
@@ -156,14 +160,15 @@ public class Graphs {
 				int nb = 0;
 				Coordinate[] coord1 = p1.getInnerGeometry().getCoordinates();
 				Coordinate[] coord2 = p2.getInnerGeometry().getCoordinates();
-				
+
 				for (int i = 0; i < 3; i++) {
-					if (ArrayUtils.contains(coord2, coord1[i])) nb++;
+					if (ArrayUtils.contains(coord2, coord1[i]))
+						nb++;
 				}
 
 				return nb == 2;
 			}
-			
+
 			final Set<ILocation> cp = new HashSet<>();
 			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
 			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
@@ -177,7 +182,8 @@ public class Graphs {
 
 		@Override
 		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
-			if(optimizedForTriangulation) return p1 == p2;
+			if (optimizedForTriangulation)
+				return p1 == p2;
 			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
 		}
 
@@ -257,8 +263,10 @@ public class Graphs {
 							equals = "true") },
 			see = { "contains_edge" })
 	public static Boolean containsVertex(final IScope scope, final GamaGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the contains_vertex operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the contains_vertex operator, the graph should not be null!", scope);
+		}
+		if (vertex instanceof NodeToAdd) { return graph.containsVertex(((NodeToAdd) vertex).object); }
 		return graph.containsVertex(vertex);
 	}
 
@@ -277,8 +285,16 @@ public class Graphs {
 							equals = "true") },
 			see = { "contains_vertex" })
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the contains_edge operator, the graph should not be null!", scope); }
+		if (graph == null) { throw GamaRuntimeException.error("graph is nil", scope); }
+		if (edge instanceof EdgeToAdd) {
+			final EdgeToAdd edge2 = (EdgeToAdd) edge;
+			if (edge2.object != null) {
+				return graph.containsEdge(edge2.object);
+			} else if (edge2.source != null && edge2.target != null) {
+				return graph.containsEdge(edge2.source, edge2.target);
+			}
+
+		}
 		return graph.containsEdge(edge);
 	}
 
@@ -300,8 +316,9 @@ public class Graphs {
 									equals = "true",
 									isExecutable = false) }))
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final GamaPair edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the contains_edge operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!", scope);
+		}
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
@@ -328,8 +345,9 @@ public class Graphs {
 							equals = "{1,5}") },
 			see = { "target_of" })
 	public static Object sourceOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the source_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the source_of operator, the graph should not be null!", scope);
+		}
 		if (graph.containsEdge(edge)) { return graph.getEdgeSource(edge); }
 		return null;
 	}
@@ -354,8 +372,9 @@ public class Graphs {
 							equals = "{12,45}") },
 			see = "source_of")
 	public static Object targetOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the target_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the target_of operator, the graph should not be null!", scope);
+		}
 		if (graph.containsEdge(edge)) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
@@ -375,8 +394,18 @@ public class Graphs {
 							value = "graphFromMap weight_of(link({1,5},{12,45}))",
 							equals = "1.0") })
 	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the weight_of operator, the graph should not be null!", scope); }
+		if (graph == null) { throw GamaRuntimeException.error("graph is nil", scope); }
+		if (edge instanceof GraphObjectToAdd) {
+			if (edge instanceof EdgeToAdd) {
+				final EdgeToAdd edge2 = (EdgeToAdd) edge;
+				if (edge2.object != null) {
+					return graph.getEdgeWeight(edge2.object);
+				} else if (edge2.source != null && edge2.target != null) {
+					Object edge3 = graph.getEdge(edge2.source, edge2.target);
+					return graph.getEdgeWeight(edge3);
+				}
+			} else if (edge instanceof NodeToAdd) { return graph.getVertexWeight(((NodeToAdd) edge).object); }
+		}
 		if (graph.containsEdge(edge)) {
 			return graph.getEdgeWeight(edge);
 		} else if (graph.containsVertex(edge)) { return graph.getVertexWeight(edge); }
@@ -400,10 +429,12 @@ public class Graphs {
 							test = false) },
 			see = "out_edges_of")
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the in_edges_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getContentType(),
-				graph.incomingEdgesOf(vertex)); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!", scope);
+		}
+		if (graph.containsVertex(vertex)) {
+			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.incomingEdgesOf(vertex));
+		}
 		return GamaListFactory.create(graph.getGamlType().getContentType());
 	}
 
@@ -419,10 +450,12 @@ public class Graphs {
 					isExecutable = false) },
 			see = { "out_edges_of", "in_edges_of" })
 	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the edge_between operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(verticePair.key) && graph
-				.containsVertex(verticePair.value)) { return graph.getEdge(verticePair.key, verticePair.value); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the edge_between operator, the graph should not be null!", scope);
+		}
+		if (graph.containsVertex(verticePair.key) && graph.containsVertex(verticePair.value)) {
+			return graph.getEdge(verticePair.key, verticePair.value);
+		}
 		return null;
 	}
 
@@ -442,8 +475,9 @@ public class Graphs {
 							test = false) },
 			see = { "out_degree_of", "degree_of" })
 	public static int inDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the in_degree_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
+		}
 		if (graph.containsVertex(vertex)) { return graph.inDegreeOf(vertex); }
 		return 0;
 	}
@@ -466,10 +500,12 @@ public class Graphs {
 							test = false) },
 			see = "in_edges_of")
 	public static IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the out_edges_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getContentType(),
-				graph.outgoingEdgesOf(vertex)); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the out_edges_of operator, the graph should not be null!", scope);
+		}
+		if (graph.containsVertex(vertex)) {
+			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.outgoingEdgesOf(vertex));
+		}
 		return GamaListFactory.create(graph.getGamlType().getContentType());
 	}
 
@@ -489,8 +525,9 @@ public class Graphs {
 							test = false) },
 			see = { "in_degree_of", "degree_of" })
 	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the in_degree_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
+		}
 		if (graph.containsVertex(vertex)) { return graph.outDegreeOf(vertex); }
 		return 0;
 	}
@@ -511,8 +548,9 @@ public class Graphs {
 							test = false) },
 			see = { "in_degree_of", "out_degree_of" })
 	public static int degreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the in_degree_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
+		}
 		if (graph.containsVertex(vertex)) { return graph.degreeOf(vertex); }
 		return 0;
 	}
@@ -533,8 +571,10 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
+					scope);
+		}
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -563,8 +603,10 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
+					scope);
+		}
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -600,8 +642,10 @@ public class Graphs {
 					test = false) },
 			see = { "connected_components_of" })
 	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the connected_components_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
+					scope);
+		}
 
 		final IList<IList> cc = connectedComponentOf(scope, graph);
 		final IGraph newGraph = (IGraph) graph.copy(scope);
@@ -620,7 +664,7 @@ public class Graphs {
 				newGraph.removeVertex(v);
 			}
 		}
-		
+
 		return newGraph;
 	}
 
@@ -640,8 +684,10 @@ public class Graphs {
 							test = false) },
 			see = { "biggest_cliques_of" })
 	public static IList<IList> getMaximalCliques(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the maximal_cliques_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the maximal_cliques_of operator, the graph should not be null!",
+					scope);
+		}
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		final Collection cliques = cls.getAllMaximalCliques();
@@ -667,8 +713,10 @@ public class Graphs {
 							test = false) },
 			see = { "maximal_cliques_of" })
 	public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the biggest_cliques_of operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the biggest_cliques_of operator, the graph should not be null!",
+					scope);
+		}
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
@@ -694,8 +742,9 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "beta_index", "gamma_index", "connectivity_index" })
 	public static int nbCycles(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the nb_cycles operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the nb_cycles operator, the graph should not be null!", scope);
+		}
 		final int S = graph.vertexSet().size();
 		final int C = connectedComponentOf(scope, graph).size();
 		final int L = graph.edgeSet().size();
@@ -717,8 +766,9 @@ public class Graphs {
 							test = false) },
 			see = { "beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
 	public static double alphaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the alpha_index operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the alpha_index operator, the graph should not be null!", scope);
+		}
 		final int S = graph.vertexSet().size();
 		return nbCycles(scope, graph) / (2.0 * S - 5);
 	}
@@ -737,8 +787,9 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "gamma_index", "nb_cycles", "connectivity_index" })
 	public static double betaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the beta_index operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the beta_index operator, the graph should not be null!", scope);
+		}
 		return (graph.edgeSet().size() + 0.0) / graph.vertexSet().size();
 	}
 
@@ -756,8 +807,9 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "beta_index", "nb_cycles", "connectivity_index" })
 	public static double gammaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the gamma_index operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the gamma_index operator, the graph should not be null!", scope);
+		}
 		return graph.edgeSet().size() / (2.0 * graph.vertexSet().size() - 5);
 	}
 
@@ -775,8 +827,10 @@ public class Graphs {
 							test = false) },
 			see = { "alpha_index", "beta_index", "gamma_index", "nb_cycles" })
 	public static double connectivityIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the connectivity_index operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the connectivity_index operator, the graph should not be null!",
+					scope);
+		}
 		final int S = graph.vertexSet().size();
 		final int C = connectedComponentOf(scope, graph).size();
 		return (S - C) / (S - 1.0);
@@ -798,8 +852,10 @@ public class Graphs {
 							test = false) },
 			see = {})
 	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the betweenness_centrality operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the betweenness_centrality operator, the graph should not be null!",
+					scope);
+		}
 		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
@@ -851,8 +907,9 @@ public class Graphs {
 							test = false) },
 			see = {})
 	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the edge_betweenness operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the edge_betweenness operator, the graph should not be null!", scope);
+		}
 		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
@@ -898,10 +955,13 @@ public class Graphs {
 							isExecutable = false) },
 			see = { "predecessors_of", "successors_of" })
 	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the neighbors_of operator, the graph should not be null!", scope); }
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
-				org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the neighbors_of operator, the graph should not be null!", scope);
+		}
+		if (graph.containsVertex(vertex)) {
+			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
+					org.jgrapht.Graphs.neighborListOf(graph, vertex));
+		}
 		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
@@ -926,8 +986,10 @@ public class Graphs {
 							test = false) },
 			see = { "neighbors_of", "successors_of" })
 	public static IList predecessorsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
-				org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
+		if (graph.containsVertex(vertex)) {
+			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
+					org.jgrapht.Graphs.predecessorListOf(graph, vertex));
+		}
 		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
@@ -949,8 +1011,10 @@ public class Graphs {
 							equals = "[]") },
 			see = { "predecessors_of", "neighbors_of" })
 	public static IList successorsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph.containsVertex(vertex)) { return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
-				org.jgrapht.Graphs.successorListOf(graph, vertex)); }
+		if (graph.containsVertex(vertex)) {
+			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
+					org.jgrapht.Graphs.successorListOf(graph, vertex));
+		}
 		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
@@ -1071,23 +1135,24 @@ public class Graphs {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLineTriangle(true), null, scope,
 				vertices.getGamlType().getContentType(), Types.GEOMETRY);
 	}
+
 	public static IGraph spatialLineIntersectionTriangle(final IScope scope, final IContainer vertices) {
-		IGraph g =  new GamaSpatialGraph(scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		IGraph g = new GamaSpatialGraph(scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
 		for (Object o : vertices.iterable(scope)) {
-			g.addVertex(o); 
+			g.addVertex(o);
 		}
 		for (Object o1 : vertices.iterable(scope)) {
-			Coordinate[] coord1 = ((IShape)o1).getInnerGeometry().getCoordinates();
+			Coordinate[] coord1 = ((IShape) o1).getInnerGeometry().getCoordinates();
 			for (Object o2 : vertices.iterable(scope)) {
-				Coordinate[] coord2 = ((IShape)o2).getInnerGeometry().getCoordinates();
-				if (o1 != o2 && lineInter(coord1,coord2))  {
+				Coordinate[] coord2 = ((IShape) o2).getInnerGeometry().getCoordinates();
+				if (o1 != o2 && lineInter(coord1, coord2)) {
 					g.addEdge(o1, o2);
 				}
-			}	
+			}
 		}
 		return g;
 	}
-	
+
 	static boolean lineInter(Coordinate[] coord1, Coordinate[] coord2) {
 		int nb = 0;
 		for (int i = 0; i < 3; i++) {
@@ -1100,6 +1165,7 @@ public class Graphs {
 		}
 		return nb == 2;
 	}
+
 	@operator (
 			value = "as_distance_graph",
 			content_type = IType.GEOMETRY,
@@ -1429,8 +1495,9 @@ public class Graphs {
 			throws GamaRuntimeException {
 		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
 		// Cast.asTopology(scope, graph));
-		if (graph instanceof GamaSpatialGraph) { return Cast.asTopology(scope, graph).pathBetween(scope, source,
-				target); }
+		if (graph instanceof GamaSpatialGraph) {
+			return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
+		}
 		return graph.computeShortestPathBetween(scope, source, target);
 		// return graph.computeShortestPathBetween(sourTarg.key,
 		// sourTarg.value);
@@ -1757,8 +1824,10 @@ public class Graphs {
 					isExecutable = false) })
 	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
 			throws GamaRuntimeException {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the load_shortest_paths operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the load_shortest_paths operator, the graph should not be null!",
+					scope);
+		}
 		// final int n = graph.vertexSet().size();
 		graph.loadShortestPaths(scope, matrix);
 		return graph;
@@ -1781,8 +1850,10 @@ public class Graphs {
 					isExecutable = false) })
 	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)
 			throws GamaRuntimeException {
-		if (graph == null) { throw GamaRuntimeException
-				.error("In the all_pairs_shortest_paths operator, the graph should not be null!", scope); }
+		if (graph == null) {
+			throw GamaRuntimeException.error("In the all_pairs_shortest_paths operator, the graph should not be null!",
+					scope);
+		}
 		return graph.saveShortestPaths(scope);
 	}
 
@@ -1862,8 +1933,10 @@ public class Graphs {
 	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
 		final GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		if (graph == null || graph.isEmpty(scope)) { return results; }
-		if (!graph.getConnected() || graph.hasCycle()) { throw GamaRuntimeException
-				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope); }
+		if (!graph.getConnected() || graph.hasCycle()) {
+			throw GamaRuntimeException
+					.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope);
+		}
 
 		List currentEdges = (List) graph.getEdges().stream().filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0)
 				.collect(Collectors.toList());

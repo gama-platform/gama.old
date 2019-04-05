@@ -415,7 +415,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME This is
+			type = IType.NONE, // ITypeProvider.TYPE_AT_INDEX + 1, // FIXME This is
 			// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
@@ -438,7 +438,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@operator (
 			value = "edge",
-			type = ITypeProvider.TYPE_AT_INDEX + 1, // FIXME this is
+			type = IType.NONE, // ITypeProvider.TYPE_AT_INDEX + 1, // FIXME this is
 			// false
 			category = { IOperatorCategory.GRAPH },
 			doc = @doc (
