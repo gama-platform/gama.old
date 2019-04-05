@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.PutStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.PutStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -37,46 +37,126 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
-@facets(value = { @facet(name = IKeyword.AT, type = IType.NONE, optional = true, doc = @doc("any expression")),
-		@facet(name = IKeyword.KEY, type = IType.NONE, optional = true, doc = @doc("any expression")),
-		@facet(name = IKeyword.ALL, type = IType.NONE, optional = true, doc = @doc("any expression")),
-		@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true, doc = @doc("any expression")),
-		@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true, doc = @doc("Indicates that the item to put should be considered as an edge of the receiving graph. Soon to be deprecated, use 'put edge(item)...' instead")),
-		@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true, doc = @doc("an expression that evaluates to a float")),
-		@facet(name = IKeyword.IN, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
-				IType.GEOMETRY }, optional = false, doc = @doc("an expression that evaluates to a container")) }, omissible = IKeyword.ITEM)
-@symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.CONTAINER,
-		IConcept.MAP, IConcept.MATRIX, IConcept.LIST })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER }, symbols = IKeyword.CHART)
-@validator(PutValidator.class)
-@doc(value = "Allows the agent to replace a value in a container at a given position (in a list or a map) or for a given key (in a map). Note that the behavior and the type of the attributes depends on the specific kind of container.", usages = {
-		@usage(value = "The allowed parameters configurations are the following ones:", examples = {
-				@example(value = "put expr at: expr in: expr_container;", isExecutable = false),
-				@example(value = "put all: expr in: expr_container;", isExecutable = false) }),
-		@usage(value = "In the case of a list, the position should an integer in the bound of the list. The facet all: is used to replace all the elements of the list by the given value.", examples = {
-				@example(var = "putList", value = "[1,2,3,4,5]", returnType = "list<int>", equals = "[1,2,3,4,5]"),
-				@example(value = "put -10 at: 1 in: putList;", var = "putList", equals = "[1,-10,3,4,5]"),
-				@example(value = "put 10 all: true in: putList;", var = "putList", equals = "[10,10,10,10,10]") }), // ,@example(value="put
-																													// 11
-																													// at:7
-																													// in:
-																													// putList;",raises="error",
-																													// isTestOnly=true)}),
-		@usage(value = "In the case of a matrix, the position should be a point in the bound of the matrix. The facet all: is used to replace all the elements of the matrix by the given value.", examples = {
-				@example(var = "putMatrix", value = "matrix([[0,1],[2,3]])", returnType = "matrix<int>", equals = "matrix([[0,1],[2,3]])"),
-				@example(value = "put -10 at: {1,1} in: putMatrix;", var = "putMatrix", equals = "matrix([[0,1],[2,-10]])"),
-				@example(value = "put 10 all: true in: putMatrix;", var = "putMatrix", equals = "matrix([[10,10],[10,10]])") }),
-		@usage(value = "In the case of a map, the position should be one of the key values of the map. Notice that if the given key value does not exist in the map, the given pair key::value will be added to the map. The facet all is used to replace the value of all the pairs of the map.", examples = {
-				@example(var = "putMap", value = "[\"x\"::4,\"y\"::7]", returnType = "map<string,int>", equals = "[\"x\"::4,\"y\"::7]"),
-				@example(value = "put -10 key: \"y\" in: putMap;", var = "putMap", equals = "[\"x\"::4,\"y\"::-10]"),
-				@example(value = "put -20 key: \"z\" in: putMap;", var = "putMap", equals = "[\"x\"::4,\"y\"::-10, \"z\"::-20]"),
-				@example(value = "put -30 all: true in: putMap;", var = "putMap", equals = "[\"x\"::-30,\"y\"::-30, \"z\"::-30]") }) })
-@serializer(PutSerializer.class)
+@facets (
+		value = { @facet (
+				name = IKeyword.AT,
+				type = IType.NONE,
+				optional = true,
+				doc = @doc ("any expression")),
+				@facet (
+						name = IKeyword.KEY,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression")),
+				@facet (
+						name = IKeyword.ALL,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression")),
+				@facet (
+						name = IKeyword.ITEM,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression")),
+				@facet (
+						name = IKeyword.EDGE,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc (
+								deprecated = "use the 'edge' operator instead (e.g. 'put edge(...) in: g')",
+								value = "Indicates that the item to put should be considered as an edge of the receiving graph. Soon to be deprecated, use 'put edge(item)...' instead")),
+				@facet (
+						name = IKeyword.WEIGHT,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc (
+								deprecated = "use the 'edge' or 'node' operators with a weight parameter",
+								value = "an expression that evaluates to a float")),
+				@facet (
+						name = IKeyword.IN,
+						type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
+						optional = false,
+						doc = @doc ("an expression that evaluates to a container")) },
+		omissible = IKeyword.ITEM)
+@symbol (
+		name = IKeyword.PUT,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.CONTAINER, IConcept.MAP, IConcept.MATRIX, IConcept.LIST })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER },
+		symbols = IKeyword.CHART)
+@validator (PutValidator.class)
+@doc (
+		value = "Allows the agent to replace a value in a container at a given position (in a list or a map) or for a given key (in a map). Note that the behavior and the type of the attributes depends on the specific kind of container.",
+		usages = { @usage (
+				value = "The allowed parameters configurations are the following ones:",
+				examples = { @example (
+						value = "put expr at: expr in: expr_container;",
+						isExecutable = false),
+						@example (
+								value = "put all: expr in: expr_container;",
+								isExecutable = false) }),
+				@usage (
+						value = "In the case of a list, the position should an integer in the bound of the list. The facet all: is used to replace all the elements of the list by the given value.",
+						examples = { @example (
+								var = "putList",
+								value = "[1,2,3,4,5]",
+								returnType = "list<int>",
+								equals = "[1,2,3,4,5]"),
+								@example (
+										value = "put -10 at: 1 in: putList;",
+										var = "putList",
+										equals = "[1,-10,3,4,5]"),
+								@example (
+										value = "put 10 all: true in: putList;",
+										var = "putList",
+										equals = "[10,10,10,10,10]") }), // ,@example(value="put
+																			// 11
+																			// at:7
+																			// in:
+																			// putList;",raises="error",
+																			// isTestOnly=true)}),
+				@usage (
+						value = "In the case of a matrix, the position should be a point in the bound of the matrix. The facet all: is used to replace all the elements of the matrix by the given value.",
+						examples = { @example (
+								var = "putMatrix",
+								value = "matrix([[0,1],[2,3]])",
+								returnType = "matrix<int>",
+								equals = "matrix([[0,1],[2,3]])"),
+								@example (
+										value = "put -10 at: {1,1} in: putMatrix;",
+										var = "putMatrix",
+										equals = "matrix([[0,1],[2,-10]])"),
+								@example (
+										value = "put 10 all: true in: putMatrix;",
+										var = "putMatrix",
+										equals = "matrix([[10,10],[10,10]])") }),
+				@usage (
+						value = "In the case of a map, the position should be one of the key values of the map. Notice that if the given key value does not exist in the map, the given pair key::value will be added to the map. The facet all is used to replace the value of all the pairs of the map.",
+						examples = { @example (
+								var = "putMap",
+								value = "[\"x\"::4,\"y\"::7]",
+								returnType = "map<string,int>",
+								equals = "[\"x\"::4,\"y\"::7]"),
+								@example (
+										value = "put -10 key: \"y\" in: putMap;",
+										var = "putMap",
+										equals = "[\"x\"::4,\"y\"::-10]"),
+								@example (
+										value = "put -20 key: \"z\" in: putMap;",
+										var = "putMap",
+										equals = "[\"x\"::4,\"y\"::-10, \"z\"::-20]"),
+								@example (
+										value = "put -30 all: true in: putMap;",
+										var = "putMap",
+										equals = "[\"x\"::-30,\"y\"::-30, \"z\"::-30]") }) })
+@serializer (PutSerializer.class)
 public class PutStatement extends AddStatement {
 
 	public static class PutSerializer extends SymbolSerializer<SymbolDescription> {

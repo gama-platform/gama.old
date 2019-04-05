@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AddStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AddStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -88,7 +88,9 @@ import msi.gaml.types.Types;
 						name = IKeyword.WEIGHT,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("An optional float value representing the weight to attach to this element in case the container is a graph")) },
+						doc = @doc (
+								deprecated = "use the 'edge' or 'node' operators with a weight parameter",
+								value = "An optional float value representing the weight to attach to this element in case the container is a graph")) },
 		omissible = IKeyword.ITEM)
 @doc (
 		value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container will produce a warning and let the container unmodified. If all: is specified, it has no effect if its argument is not a container, or if its argument is 'true' and the item to add is not a container. In that latter case",
@@ -324,8 +326,10 @@ public class AddStatement extends AbstractContainerStatement {
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {
-		if (position != null && !container.checkBounds(scope, position, true)) { throw GamaRuntimeException
-				.warning("Index " + position + " out of bounds of " + list.serialize(false), scope); }
+		if (position != null && !container.checkBounds(scope, position, true)) {
+			throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + list.serialize(false),
+					scope);
+		}
 		if (!asAll) {
 			if (position == null) {
 				container.addValue(scope, object);
