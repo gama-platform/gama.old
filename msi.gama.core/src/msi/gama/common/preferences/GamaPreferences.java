@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.preferences.GamaPreferences.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.preferences.GamaPreferences.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.preferences;
 
@@ -74,7 +74,7 @@ public class GamaPreferences {
 			() -> new GamaColor(195, 98, 43), () -> new GamaColor(150, 132, 106) };
 
 	/**
-	 * 
+	 *
 	 * Interface tab
 	 *
 	 */
@@ -133,7 +133,7 @@ public class GamaPreferences {
 	}
 
 	/**
-	 * 
+	 *
 	 * Modeling tab
 	 *
 	 */
@@ -213,7 +213,7 @@ public class GamaPreferences {
 	}
 
 	/**
-	 * 
+	 *
 	 * Simulations tab
 	 *
 	 */
@@ -223,7 +223,7 @@ public class GamaPreferences {
 	}
 
 	/**
-	 * 
+	 *
 	 * Runtime tab
 	 *
 	 */
@@ -243,7 +243,7 @@ public class GamaPreferences {
 				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
 						true, IType.BOOL, true).in(NAME, EXECUTION);
 		public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
-				"Default step for the delay slider (in sec.)", 0.01, IType.FLOAT, true).in(NAME, EXECUTION);
+				"Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
 		public static final Pref<Boolean> CORE_SYNC =
 				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
@@ -430,8 +430,7 @@ public class GamaPreferences {
 				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
 						.in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
-				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true)
-						.in(NAME, RENDERING);
+				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true).in(NAME, RENDERING);
 	}
 
 	public static class External {
@@ -613,7 +612,7 @@ public class GamaPreferences {
 
 	/**
 	 * Lazy create (tries not to compute immediately the value)
-	 * 
+	 *
 	 * @param key
 	 * @param title
 	 * @param value
