@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.DrawStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -106,7 +106,7 @@ import msi.gaml.types.Types;
 						name = SIZE,
 						type = { IType.FLOAT, IType.POINT },
 						optional = true,
-						doc = @doc ("size of the object to draw, expressed as a bounding box (width, height, depth). If expressed as a float, represents the size in the three directions. ")),
+						doc = @doc ("Size of the shape/icon/image to draw, expressed as a bounding box (width, height, depth; if expressed as a float, represents the box as a cube). Does not apply to texts: use a font with the required size instead")),
 				@facet (
 						name = COLOR,
 						type = { IType.COLOR, IType.CONTAINER },
@@ -229,7 +229,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
