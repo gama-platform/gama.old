@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.OperatorProto.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.OperatorProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -85,8 +86,9 @@ public class OperatorProto extends AbstractProto {
 					if (isVarOrField) { return new TypeFieldExpression(this, context, exprs[0]); }
 					return UnaryOperator.create(this, context, exprs[0]);
 				case 2:
-					if (isVarOrField) { return new BinaryOperator.BinaryVarOperator(this, context, exprs[0],
-							(IVarExpression) exprs[1]); }
+					if (isVarOrField) {
+						return new BinaryOperator.BinaryVarOperator(this, context, exprs[0], (IVarExpression) exprs[1]);
+					}
 					return BinaryOperator.create(this, context, exprs);
 				default:
 					return NAryOperator.create(this, exprs);
@@ -183,8 +185,10 @@ public class OperatorProto extends AbstractProto {
 
 	@Override
 	public String getTitle() {
-		if (isVarOrField) { return "field " + getName() + " of type " + returnType + ", for values of type "
-				+ signature.asPattern(false); }
+		if (isVarOrField) {
+			return "field " + getName() + " of type " + returnType + ", for values of type "
+					+ signature.asPattern(false);
+		}
 		return "operator " + getName() + "(" + signature.asPattern(false) + "), returns " + returnType;
 	}
 
@@ -245,7 +249,7 @@ public class OperatorProto extends AbstractProto {
 
 	/**
 	 * Method getKind()
-	 * 
+	 *
 	 * @see msi.gaml.descriptions.AbstractProto#getKind()
 	 */
 	@Override
@@ -291,6 +295,20 @@ public class OperatorProto extends AbstractProto {
 				result.add(species.getAttribute(s));
 			}
 		}
+	}
+
+	@Override
+	public doc getDocAnnotation() {
+		doc d = super.getDocAnnotation();
+		if (d != null)
+			return d;
+		if (support != null && support.isAnnotationPresent(operator.class)) {
+			operator op = support.getAnnotation(operator.class);
+			doc[] docs = op.doc();
+			if (docs != null && docs.length > 0)
+				d = docs[0];
+		}
+		return d;
 	}
 
 }
