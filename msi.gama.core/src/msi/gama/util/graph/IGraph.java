@@ -31,8 +31,9 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.path.IPath;
+import msi.gaml.operators.Graphs;
+import msi.gaml.operators.Graphs.GraphObjectToAdd;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
 import msi.gaml.types.IType;
 
 /**
@@ -66,7 +67,7 @@ import msi.gaml.types.IType;
 				of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of vertices of the receiver graph") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, GraphObjectToAdd>,
+public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>,
 		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>,
 		DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
 
@@ -147,7 +148,7 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 	public abstract IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target,
 			int k);
 
-	public GraphObjectToAdd buildValue(IScope scope, Object object);
+	public Graphs.GraphObjectToAdd buildValue(IScope scope, Object object);
 
 	public IContainer buildValues(IScope scope, IContainer objects);
 

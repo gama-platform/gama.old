@@ -65,13 +65,10 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Graphs.EdgeToAdd;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.AbstractContainerStatement.EdgeToAdd;
-import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
-import msi.gaml.statements.AbstractContainerStatement.NodeToAdd;
-import msi.gaml.statements.AbstractContainerStatement.NodesToAdd;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.GamaPairType;
 import msi.gaml.types.IContainerType;
@@ -232,7 +229,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (edges != null) {
 			for (final Object p : edges.iterable(scope)) {
 				addEdge(p);
-				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+				final Object p2 = p instanceof msi.gaml.operators.Graphs.GraphObjectToAdd
+						? ((msi.gaml.operators.Graphs.GraphObjectToAdd) p).getObject() : p;
 				if (p2 instanceof IShape) {
 					final _Edge ed = getEdge(p2);
 					if (ed != null) {
@@ -247,7 +245,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (vertices != null) {
 			for (final Object p : vertices.iterable(scope)) {
 				addEdge(p);
-				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+				final Object p2 = p instanceof msi.gaml.operators.Graphs.GraphObjectToAdd
+						? ((msi.gaml.operators.Graphs.GraphObjectToAdd) p).getObject() : p;
 				if (p2 instanceof IShape) {
 					final _Edge ed = getEdge(p2);
 					if (ed != null) {
@@ -275,18 +274,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (e instanceof GamaPair) {
 			final GamaPair p = (GamaPair) e;
 			return addEdge(p.first(), p.last());
-		} else if (e instanceof GraphObjectToAdd) {
-			addValue(graphScope, (GraphObjectToAdd) e);
-			return ((GraphObjectToAdd) e).getObject();
+		} else if (e instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
+			addValue(graphScope, (msi.gaml.operators.Graphs.GraphObjectToAdd) e);
+			return ((msi.gaml.operators.Graphs.GraphObjectToAdd) e).getObject();
 		}
 		return addEdge(null, null, e) ? e : null;
 
 	}
 
 	@Override
-	public void addValue(final IScope scope, final GraphObjectToAdd value) {
-		if (value instanceof EdgeToAdd) {
-			final EdgeToAdd edge = (EdgeToAdd) value;
+	public void addValue(final IScope scope, final msi.gaml.operators.Graphs.GraphObjectToAdd value) {
+		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd) {
+			final msi.gaml.operators.Graphs.EdgeToAdd edge = (msi.gaml.operators.Graphs.EdgeToAdd) value;
 			if (edge.object == null) {
 				edge.object = addEdge(edge.source, edge.target);
 			}
@@ -295,7 +294,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				setEdgeWeight(edge.object, edge.weight);
 			}
 		} else {
-			final NodeToAdd node = (NodeToAdd) value;
+			final msi.gaml.operators.Graphs.NodeToAdd node = (msi.gaml.operators.Graphs.NodeToAdd) value;
 			this.addVertex(node.object);
 			if (node.weight != null) {
 				this.setVertexWeight(node.object, node.weight);
@@ -305,9 +304,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public void addValueAtIndex(final IScope scope, final Object idx, final GraphObjectToAdd value) {
+	public void addValueAtIndex(final IScope scope, final Object idx,
+			final msi.gaml.operators.Graphs.GraphObjectToAdd value) {
 		final GamaPair index = buildIndex(scope, idx);
-		final EdgeToAdd edge = new EdgeToAdd(index.key, index.value, null, null);
+		final EdgeToAdd edge = new EdgeToAdd(index.key, index.value, null, (Double) null);
 		if (value instanceof EdgeToAdd) {
 			edge.object = ((EdgeToAdd) value).object;
 			edge.weight = ((EdgeToAdd) value).weight;
@@ -320,7 +320,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public void setValueAtIndex(final IScope scope, final Object index, final GraphObjectToAdd value) {
+	public void setValueAtIndex(final IScope scope, final Object index,
+			final msi.gaml.operators.Graphs.GraphObjectToAdd value) {
 		addValueAtIndex(scope, index, value);
 	}
 
@@ -333,29 +334,29 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			return;
 		}
 		for (final Object o : values.iterable(scope)) {
-			if (o instanceof GraphObjectToAdd) {
-				addValue(scope, (GraphObjectToAdd) o);
+			if (o instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
+				addValue(scope, (msi.gaml.operators.Graphs.GraphObjectToAdd) o);
 			}
 		}
 
 	}
 
 	@Override
-	public void setAllValues(final IScope scope, final GraphObjectToAdd value) {
+	public void setAllValues(final IScope scope, final msi.gaml.operators.Graphs.GraphObjectToAdd value) {
 		// Not allowed for graphs ?
 	}
 
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
-		if (value instanceof EdgeToAdd) {
-			final EdgeToAdd edge = (EdgeToAdd) value;
+		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd) {
+			final msi.gaml.operators.Graphs.EdgeToAdd edge = (msi.gaml.operators.Graphs.EdgeToAdd) value;
 			if (edge.object != null) {
 				removeEdge(edge.object);
 			} else if (edge.source != null && edge.target != null) {
 				removeAllEdges(edge.source, edge.target);
 			}
-		} else if (value instanceof NodeToAdd) {
-			removeVertex(((NodeToAdd) value).object);
+		} else if (value instanceof msi.gaml.operators.Graphs.NodeToAdd) {
+			removeVertex(((msi.gaml.operators.Graphs.NodeToAdd) value).object);
 		} else if (!removeVertex(value)) {
 			removeEdge(value);
 		}
@@ -465,14 +466,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public boolean addVertex(final Object v) {
-		if (v instanceof GraphObjectToAdd) {
+		if (v instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
 			if (v instanceof IAgent) {
 				if (!this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies) {
 					vertexSpecies = null;
 				}
 			}
-			addValue(graphScope, (GraphObjectToAdd) v);
-			return ((GraphObjectToAdd) v).getObject() != null;
+			addValue(graphScope, (msi.gaml.operators.Graphs.GraphObjectToAdd) v);
+			return ((msi.gaml.operators.Graphs.GraphObjectToAdd) v).getObject() != null;
 		}
 		if (v == null || containsVertex(v)) { return false; }
 		_Vertex<V, E> vertex;
@@ -1519,18 +1520,22 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *      msi.gaml.types.IContainerType)
 	 */
 	@Override
-	public GraphObjectToAdd buildValue(final IScope scope, final Object object) {
-		if (object instanceof NodeToAdd) {
-			return new NodeToAdd(type.getKeyType().cast(scope, ((NodeToAdd) object).object, null, false),
-					((NodeToAdd) object).weight);
+	public msi.gaml.operators.Graphs.GraphObjectToAdd buildValue(final IScope scope, final Object object) {
+		if (object instanceof msi.gaml.operators.Graphs.NodeToAdd) {
+			return new msi.gaml.operators.Graphs.NodeToAdd(
+					type.getKeyType().cast(scope, ((msi.gaml.operators.Graphs.NodeToAdd) object).object, null, false),
+					((msi.gaml.operators.Graphs.NodeToAdd) object).weight);
 		}
-		if (object instanceof EdgeToAdd) {
-			return new EdgeToAdd(type.getKeyType().cast(scope, ((EdgeToAdd) object).source, null, false),
-					type.getKeyType().cast(scope, ((EdgeToAdd) object).target, null, false),
-					type.getContentType().cast(scope, ((EdgeToAdd) object).object, null, false),
-					((EdgeToAdd) object).weight);
+		if (object instanceof msi.gaml.operators.Graphs.EdgeToAdd) {
+			return new msi.gaml.operators.Graphs.EdgeToAdd(
+					type.getKeyType().cast(scope, ((msi.gaml.operators.Graphs.EdgeToAdd) object).source, null, false),
+					type.getKeyType().cast(scope, ((msi.gaml.operators.Graphs.EdgeToAdd) object).target, null, false),
+					type.getContentType().cast(scope, ((msi.gaml.operators.Graphs.EdgeToAdd) object).object, null,
+							false),
+					((msi.gaml.operators.Graphs.EdgeToAdd) object).weight);
 		}
-		return new EdgeToAdd(null, null, type.getContentType().cast(scope, object, null, false), 0.0);
+		return new msi.gaml.operators.Graphs.EdgeToAdd(null, null,
+				type.getContentType().cast(scope, object, null, false), 0.0);
 	}
 
 	/**
@@ -1540,15 +1545,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *      msi.gaml.types.IContainerType)
 	 */
 	@Override
-	public IContainer<?, GraphObjectToAdd> buildValues(final IScope scope, final IContainer objects) {
+	public IContainer<?, msi.gaml.operators.Graphs.GraphObjectToAdd> buildValues(final IScope scope,
+			final IContainer objects) {
 		final IList list = GamaListFactory.create();
-		if (!(objects instanceof NodesToAdd)) {
+		if (!(objects instanceof msi.gaml.operators.Graphs.NodesToAdd)) {
 			for (final Object o : objects.iterable(scope)) {
 				list.add(buildValue(scope, o));
 			}
 		} else {
 			for (final Object o : objects.iterable(scope)) {
-				list.add(buildValue(scope, new NodeToAdd(o)));
+				list.add(buildValue(scope, new msi.gaml.operators.Graphs.NodeToAdd(o)));
 			}
 		}
 		return list;
