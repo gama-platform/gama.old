@@ -93,7 +93,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		DEBUG.OUT("Arguments received by GAMA : " + Arrays.toString(args));
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") && !args[0].contains("--launcher.defaultAction") ) { return; }
 		if ( args.length >= 1 ) {
-//			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 
 			if ( args[args.length - 1].endsWith(".gamr") ) {
 				for ( final IEventLayerDelegate delegate : EventLayerStatement.delegates ) {
@@ -101,6 +100,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 						delegate.createFrom(null, args[args.length - 1], null);
 					}
 				}
+			}else {
+				WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 			}
 		}
 	}
