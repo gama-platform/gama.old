@@ -21,13 +21,14 @@ global {
 	//Center of the grid that will be used as a nest for the ants
 	point center const: true <- { (gridsize / 2),  (gridsize / 2)} ;
 	file types const: true <- (pgm_file('../images/environment75x75.pgm')) ;
-file ant_shape_empty const: true <- file('../icons/ant.png');
+	file ant_shape_empty const: true <- file('../icons/ant.png');
 	string ant_shape_full const: true <- '../icons/full_ant.png'  ;
 	rgb C00CC00 const: true <- rgb('#00CC00') ;    
 	rgb C009900 const: true <- rgb('#009900') ; 
 	rgb C005500 const: true <- rgb('#005500') ; 
 	int food_gathered <- 0 ;    
 	geometry shape <- square(gridsize);
+	
 	init{  
 		//Creation of the ants that will be placed randomly in the nest
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
@@ -111,18 +112,23 @@ species ant skills: [moving] control: fsm {	float speed <- 1.0;
 		transition to: wandering when: (pr < 0.05) or (next_place = nil);
 	}
 	
-		aspect info {
-			draw ant_shape_empty size: {7, 5} rotate: my heading + 1; 
+	aspect info {
+		if(use_icons) {
+			draw ant_shape_empty size: {7, 5} rotate: my heading + 1; 			
+		}
 		draw circle(1) empty: !has_food color: #red;
 		if (destination != nil) {
 			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1;
 		}
 		if (state != "wandering") {
-		draw circle(4) empty: true color: #white;
-		draw string(self as int) color: #white font: font("Helvetica", 14 , #bold) at: my location - {1, 1, -0.5};
-
-		draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5} ;}
-	}}
+			draw circle(4) empty: true color: #white;
+			draw string(self as int) color: #white font: font("Helvetica", 14 , #bold) at: my location - {1, 1, -0.5};			
+			if(display_state) {
+				draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5} ;
+			}
+		}
+	}
+}
 
 experiment Ant type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
