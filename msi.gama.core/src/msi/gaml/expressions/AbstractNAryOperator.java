@@ -1,18 +1,19 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.AbstractNAryOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.AbstractNAryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.ALL;
 import static msi.gama.precompiler.ITypeProvider.CONTENT_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
+import static msi.gama.precompiler.ITypeProvider.FLOAT_IN_CASE_OF_INT;
 import static msi.gama.precompiler.ITypeProvider.INDEXED_TYPES;
 import static msi.gama.precompiler.ITypeProvider.KEY_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE;
@@ -37,7 +38,7 @@ import msi.gaml.types.Types;
 
 /**
  * AbstractBinaryOperator
- * 
+ *
  * @author drogoul 23 august 07
  */
 @SuppressWarnings ({ "rawtypes" })
@@ -74,9 +75,12 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
-	protected IType computeType(final int typeProvider, final int contentTypeProvider, final IType defaultType,
-			final int kind) {
+	protected IType computeType(final int tp, final int contentTypeProvider, final IType defaultType, final int kind) {
 		IType result = defaultType;
+		int typeProvider = tp;
+		boolean returnFloatsInsteadOfInts = typeProvider < FLOAT_IN_CASE_OF_INT;
+		if (returnFloatsInsteadOfInts)
+			typeProvider = typeProvider - FLOAT_IN_CASE_OF_INT;
 		if (typeProvider >= 0) {
 			result = Types.get(typeProvider);
 		} else if (exprs != null) {
@@ -147,6 +151,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				result = ((IContainerType<?>) result).of(c);
 			}
 		}
+		if (returnFloatsInsteadOfInts && result == Types.INT)
+			return Types.FLOAT;
 		return result;
 	}
 
@@ -240,7 +246,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override

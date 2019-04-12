@@ -13,8 +13,8 @@ package msi.gaml.expressions;
 import static msi.gama.precompiler.ITypeProvider.CONTENT_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE;
+import static msi.gama.precompiler.ITypeProvider.FLOAT_IN_CASE_OF_INT;
 import static msi.gama.precompiler.ITypeProvider.KEY_TYPE_AT_INDEX;
-import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
@@ -128,32 +128,47 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return prototype.getDocumentation();
 	}
 
-	private IType computeType(final int t, final IType def) {
-		if (t == NONE) { return def; }
-		if (t == WRAPPED) { return child.getGamlType().getWrappedType(); }
-		if (t == FIRST_ELEMENT_CONTENT_TYPE) {
+	private IType computeType(final int theType, final IType def) {
+		int t = theType;
+		boolean returnFloatsInsteadOfInts = t < FLOAT_IN_CASE_OF_INT;
+		if (returnFloatsInsteadOfInts)
+			t = t - FLOAT_IN_CASE_OF_INT;
+		IType result = def;
+		if (t == WRAPPED) {
+			result = child.getGamlType().getWrappedType();
+		} else if (t == FIRST_ELEMENT_CONTENT_TYPE) {
 			if (child instanceof ListExpression) {
 				final IExpression[] array = ((ListExpression) child).getElements();
-				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getGamlType().getContentType();
+				if (array.length == 0) {
+					result = Types.NO_TYPE;
+				} else
+					result = array[0].getGamlType().getContentType();
 			} else if (child instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) child).valuesArray();
-				if (array.length == 0) { return Types.NO_TYPE; }
-				return array[0].getGamlType().getContentType();
+				if (array.length == 0) {
+					result = Types.NO_TYPE;
+				} else
+					result = array[0].getGamlType().getContentType();
 			} else {
 				final IType tt = child.getGamlType().getContentType().getContentType();
-				if (tt != Types.NO_TYPE) { return tt; }
+				if (tt != Types.NO_TYPE) {
+					result = tt;
+				}
 			}
-			return def;
 		} else if (t == FIRST_CONTENT_TYPE_OR_TYPE) {
 			final IType firstType = child.getGamlType();
 			final IType t2 = firstType.getContentType();
-			if (t2 == Types.NO_TYPE) { return firstType; }
-			return t2;
-		}
-		return t == TYPE_AT_INDEX + 1 ? child.getGamlType()
-				: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType()
-						: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
+			if (t2 == Types.NO_TYPE) {
+				result = firstType;
+			} else
+				result = t2;
+		} else
+			result = t == TYPE_AT_INDEX + 1 ? child.getGamlType() : t == CONTENT_TYPE_AT_INDEX + 1
+					? child.getGamlType().getContentType()
+					: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
+		if (returnFloatsInsteadOfInts && result == Types.INT)
+			return Types.FLOAT;
+		return result;
 	}
 
 	protected void computeType() {

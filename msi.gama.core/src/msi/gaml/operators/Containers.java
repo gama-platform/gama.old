@@ -1129,7 +1129,7 @@ public class Containers {
 	@operator (
 			value = "mean",
 			can_be_const = true,
-			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1 + ITypeProvider.FLOAT_IN_CASE_OF_INT,
 			expected_content_type = { IType.INT, IType.FLOAT, IType.POINT, IType.COLOR },
 			category = { IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER, IOperatorCategory.COLOR },
 			concept = { IConcept.STATISTIC, IConcept.COLOR })
@@ -1157,7 +1157,7 @@ public class Containers {
 
 	@operator (
 			value = { "mean_of" },
-			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			type = ITypeProvider.TYPE_AT_INDEX + 2 + ITypeProvider.FLOAT_IN_CASE_OF_INT,
 			iterator = true,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })

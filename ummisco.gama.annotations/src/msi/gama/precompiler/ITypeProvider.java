@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.precompiler;
@@ -29,7 +29,7 @@ public interface ITypeProvider {
 	/**
 	 * The type returned is the contents type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
 	 * second, etc.) so that, for instance, CONTENT_TYPE_AT_INDEX + 1 represents the contents type of the FIRST argument
-	 * (equivalent to FIRST_CONTENT_TYPE). Musth be followed by "+ n" with n>0 to be significant.
+	 * (equivalent to FIRST_CONTENT_TYPE). Must be followed by "+ n" with n>0 to be significant.
 	 */
 	static final int CONTENT_TYPE_AT_INDEX = -300;
 	/**
@@ -39,10 +39,16 @@ public interface ITypeProvider {
 	 */
 	static final int KEY_TYPE_AT_INDEX = -400;
 	/**
+	 * This constant can be used to indicate that the int type is superseded by float (i.e. if the type is int, then
+	 * float should be returned)
+	 */
+	static final int FLOAT_IN_CASE_OF_INT = -1000;
+	/**
 	 * The type returned is the content type of the first child of the expression
-	 * 
+	 *
 	 * @deprecated use CONTENT_TYPE_AT_INDEX + 1 instead (or OWNER_CONTENT_TYPE in case of a field)
 	 */
+
 	@Deprecated static final int FIRST_CONTENT_TYPE = CONTENT_TYPE_AT_INDEX + 1;
 	/**
 	 * The type returned is the content type of the first child (owner) of the expression
@@ -50,7 +56,7 @@ public interface ITypeProvider {
 	static final int OWNER_CONTENT_TYPE = FIRST_CONTENT_TYPE;
 	/**
 	 * The type returned is the key type of the first child of the expression
-	 * 
+	 *
 	 * @deprecated use KEY_TYPE_AT_INDEX + 1 instead (or OWNER_KEY_TYPE in case of a field)
 	 */
 	@Deprecated static final int FIRST_KEY_TYPE = KEY_TYPE_AT_INDEX + 1;
@@ -60,13 +66,13 @@ public interface ITypeProvider {
 	static final int OWNER_KEY_TYPE = FIRST_KEY_TYPE;
 	/**
 	 * The type returned is the content type of the second child of the expression
-	 * 
+	 *
 	 * @deprecated use CONTENT_TYPE_AT_INDEX+2 instead
 	 */
 	@Deprecated static final int SECOND_CONTENT_TYPE = CONTENT_TYPE_AT_INDEX + 2;
 	/**
 	 * The type returned is the key type of the second child of the expression
-	 * 
+	 *
 	 * @deprecated use KEY_TYPE_AT_INDEX + 2 instead
 	 */
 	@Deprecated static final int SECOND_KEY_TYPE = KEY_TYPE_AT_INDEX + 2;
@@ -76,7 +82,7 @@ public interface ITypeProvider {
 	static final int SECOND_DENOTED_TYPE = -32;
 	/**
 	 * The type returned is the type of the first child of the expression
-	 * 
+	 *
 	 * @deprecated use TYPE_AT_INDEX + 1 instead (or OWNER_TYPE in case of a field)
 	 */
 	@Deprecated static final int FIRST_TYPE = TYPE_AT_INDEX + 1;
@@ -86,7 +92,7 @@ public interface ITypeProvider {
 	static final int OWNER_TYPE = FIRST_TYPE;
 	/**
 	 * The type returned is the type of the second child of the expression
-	 * 
+	 *
 	 * @deprecated use TYPE_AT_INDEX + 2 instead
 	 */
 	@Deprecated static final int SECOND_TYPE = TYPE_AT_INDEX + 2;
