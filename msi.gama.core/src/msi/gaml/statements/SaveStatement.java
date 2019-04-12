@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.SaveStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.SaveStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -31,7 +31,6 @@ import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.DefaultFeatureCollection;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.gce.geotiff.GeoTiffWriter;
@@ -152,7 +151,7 @@ import msi.gaml.types.Types;
 						type = { IType.MAP },
 						optional = true,
 						doc = @doc (
-								value = "Allows to specify the attributes of a shape file where agents are saved. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value")),
+								value = "Allows to specify the attributes of a shape file where agents are saved. Must be expressed as a literal map. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value")),
 				@facet (
 						name = IKeyword.WITH,
 						type = { IType.MAP },
@@ -206,7 +205,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -216,6 +215,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Facets args = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
 			if (att != null) {
+				if (!(att instanceof MapExpression)) {
+					desc.error("attributes must be expressed as a literal map", IGamlIssue.WRONG_TYPE, ATTRIBUTES);
+					return;
+				}
+
 				if (args != null && !args.isEmpty()) {
 					desc.warning(
 							"'with' and 'attributes' are mutually exclusive. Only the first one will be considered",
@@ -257,7 +261,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private Arguments withFacet;
 	private final IExpression attributesFacet;
 	private final IExpression crsCode, item, file, rewriteExpr, header;
-	
+
 	public SaveStatement(final IDescription desc) {
 		super(desc);
 		crsCode = desc.getFacetExpr("crs");
@@ -324,15 +328,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			if (!(agents instanceof IList)) { return null; }
 			saveShape((IList<? extends IShape>) agents, path, scope, false);
-		} else  if (type.equals("json")) {
-				if (item == null) { return null; }
-				Object agents = item.value(scope);
-				if (agents instanceof ISpecies) {
-					agents = scope.getAgent().getPopulationFor((ISpecies) agents);
-				}
-				if (!(agents instanceof IList)) { return null; }
-				saveShape((IList<? extends IShape>) agents, path, scope, true);
-			
+		} else if (type.equals("json")) {
+			if (item == null) { return null; }
+			Object agents = item.value(scope);
+			if (agents instanceof ISpecies) {
+				agents = scope.getAgent().getPopulationFor((ISpecies) agents);
+			}
+			if (!(agents instanceof IList)) { return null; }
+			saveShape((IList<? extends IShape>) agents, path, scope, true);
+
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
@@ -554,7 +558,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			for (int i = 0; i < collec.getNumGeometries(); i++) {
 				shapes.add(new GamaShape(collec.getGeometryN(i)));
 			}
-			saveShape(shapes, path, scope,geoJson);
+			saveShape(shapes, path, scope, geoJson);
 			return;
 		}
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
@@ -569,7 +573,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (withFacet != null) {
 					computeInitsFromWithFacet(scope, withFacet, attributes, species);
 				} else if (attributesFacet != null) {
-					computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
+					computeInitsFromAttributesFacet(scope, attributes, species);
 				}
 				for (final String e : attributes.keySet()) {
 					final IExpression var = attributes.get(e);
@@ -580,9 +584,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 
-			if(! geoJson) 
+			if (!geoJson)
 				saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
-			else 
+			else
 				saveGeoJSonFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -592,7 +596,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	
 	public void saveGeoJson(final IList<? extends IShape> agents, final String path, final IScope scope)
 			throws GamaRuntimeException {
 		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
@@ -616,7 +619,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				if (withFacet != null) {
 					computeInitsFromWithFacet(scope, withFacet, attributes, species);
 				} else if (attributesFacet != null) {
-					computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
+					computeInitsFromAttributesFacet(scope, attributes, species);
 				}
 				for (final String e : attributes.keySet()) {
 					final IExpression var = attributes.get(e);
@@ -626,7 +629,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			
+
 			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -636,7 +639,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	
 	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
 		if (crsCode != null) {
@@ -792,8 +794,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	private void computeInitsFromAttributesFacet(final IScope scope, final IExpression attributesFacet,
-			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
+	private void computeInitsFromAttributesFacet(final IScope scope, final Map<String, IExpression> values,
+			final SpeciesDescription species) throws GamaRuntimeException {
 		if (attributesFacet instanceof MapExpression) {
 			final Map<IExpression, IExpression> map = ((MapExpression) attributesFacet).getElements();
 			map.forEach((key, value) -> {
@@ -844,89 +846,88 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return g;
 	}
 
-		public static boolean buildFeature(IScope scope, SimpleFeature ff, IShape ag, final IProjection gis, Collection<IExpression> attributeValues) {
-			List<Object> values = new ArrayList<>();
-			// geometry is by convention (in specs) at position 0
-			if (ag.getInnerGeometry() == null) {
-				return false ;
-			}
-			//System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
-			
-			Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+	public static boolean buildFeature(IScope scope, SimpleFeature ff, IShape ag, final IProjection gis,
+			Collection<IExpression> attributeValues) {
+		List<Object> values = new ArrayList<>();
+		// geometry is by convention (in specs) at position 0
+		if (ag.getInnerGeometry() == null) { return false; }
+		// System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
 
-			g = fixesPolygonCWS(g);
-			g = geometryCollectionManagement(g);
+		Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 
-			values.add(g);
-			if (ag instanceof IAgent) {
-				for (final IExpression variable : attributeValues) {
-					Object val = scope.evaluate(variable, (IAgent) ag).getValue();
-					if (variable.getGamlType().equals(Types.STRING)) {
-						if (val == null) {
-							val = "";
-						} else {
-							final String val2 = val.toString();
-							if (val2.startsWith("'") && val2.endsWith("'")
-									|| val2.startsWith("\"") && val2.endsWith("\"")) {
-								val = val2.substring(1, val2.length() - 1);
-							}
+		g = fixesPolygonCWS(g);
+		g = geometryCollectionManagement(g);
+
+		values.add(g);
+		if (ag instanceof IAgent) {
+			for (final IExpression variable : attributeValues) {
+				Object val = scope.evaluate(variable, (IAgent) ag).getValue();
+				if (variable.getGamlType().equals(Types.STRING)) {
+					if (val == null) {
+						val = "";
+					} else {
+						final String val2 = val.toString();
+						if (val2.startsWith("'") && val2.endsWith("'")
+								|| val2.startsWith("\"") && val2.endsWith("\"")) {
+							val = val2.substring(1, val2.length() - 1);
 						}
 					}
-					values.add(val);
 				}
+				values.add(val);
 			}
-			// AD Assumes that the type is ok.
-			// AD TODO replace this list of variable names by expressions
-			// (to be
-			// evaluated by agents), so that dynamic values can be passed
-			// AD WARNING Would require some sort of iterator operator that
-			// would collect the values beforehand
-			ff.setAttributes(values);
-			return true;
 		}
-	
-	
+		// AD Assumes that the type is ok.
+		// AD TODO replace this list of variable names by expressions
+		// (to be
+		// evaluated by agents), so that dynamic values can be passed
+		// AD WARNING Would require some sort of iterator operator that
+		// would collect the values beforehand
+		ff.setAttributes(values);
+		return true;
+	}
+
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
-		public static void saveGeoJSonFile(final IScope scope, final String path, final List<? extends IShape> agents,
-				/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
-				final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
-			// AD 11/02/15 Added to allow saving to new directories
-			if (agents == null || agents.isEmpty()) return;
-			final File f = new File(path);
-			createParents(f);
-			
-			// The name of the type and the name of the feature source shoud now be
-			// the same.
-			final SimpleFeatureType type =
-					DataUtilities.createType("geojson", specs);
-			 SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
-			 DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
-		
-				// AD Builds once the list of agent attributes to evaluate
-				final Collection<IExpression> attributeValues =
-						attributes == null ? Collections.EMPTY_LIST : attributes.values();
-				int i = 0;
-				for (final IShape ag : agents) {
-					final SimpleFeature ff = builder.buildFeature( i+"");
-					i++;
-					boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
-					if (! ok) {
-						continue;
-					}	
-					featureCollection.add(ff);
-				}
-				
-				 FeatureJSON io = new FeatureJSON();
-				 io.writeFeatureCollection(featureCollection, path);
-			
-			
+	public static void saveGeoJSonFile(final IScope scope, final String path, final List<? extends IShape> agents,
+			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
+		// AD 11/02/15 Added to allow saving to new directories
+		if (agents == null || agents.isEmpty())
+			return;
+		final File f = new File(path);
+		createParents(f);
+
+		// The name of the type and the name of the feature source shoud now be
+		// the same.
+		final SimpleFeatureType type = DataUtilities.createType("geojson", specs);
+		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
+		DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
+
+		// AD Builds once the list of agent attributes to evaluate
+		final Collection<IExpression> attributeValues =
+				attributes == null ? Collections.EMPTY_LIST : attributes.values();
+		int i = 0;
+		for (final IShape ag : agents) {
+			final SimpleFeature ff = builder.buildFeature(i + "");
+			i++;
+			boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
+			if (!ok) {
+				continue;
+			}
+			featureCollection.add(ff);
 		}
+
+		FeatureJSON io = new FeatureJSON();
+		io.writeFeatureCollection(featureCollection, path);
+
+	}
+
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
 			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
 			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
-		if (agents == null || agents.isEmpty()) return;
+		if (agents == null || agents.isEmpty())
+			return;
 		final File f = new File(path);
 		createParents(f);
 
@@ -945,10 +946,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			for (final IShape ag : agents) {
 				final SimpleFeature ff = (SimpleFeature) fw.next();
-				boolean ok =  buildFeature( scope, ff, ag,  gis, attributeValues);
-				if (! ok) {
+				boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
+				if (!ok) {
 					continue;
-				}	
+				}
 			}
 			// store.dispose();
 			if (gis != null) {
@@ -962,30 +963,41 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			store.dispose();
 		}
 	}
-	
+
 	private static Geometry geometryCollectionManagement(Geometry gg) {
 		if (gg instanceof GeometryCollection) {
 			boolean isMultiPolygon = true;
 			boolean isMultiPoint = true;
 			boolean isMultiLine = true;
-			int nb = ((GeometryCollection)gg).getNumGeometries();
-			for (int i = 0; i < nb ; i++) {
-				Geometry g = (((GeometryCollection)gg)).getGeometryN(i);
-				if (!(g instanceof Polygon)) isMultiPolygon = false;
-				if (!(g instanceof LineString)) isMultiLine = false;
-				if (!(g instanceof Point)) isMultiPoint = false;
+			int nb = ((GeometryCollection) gg).getNumGeometries();
+			for (int i = 0; i < nb; i++) {
+				Geometry g = (((GeometryCollection) gg)).getGeometryN(i);
+				if (!(g instanceof Polygon))
+					isMultiPolygon = false;
+				if (!(g instanceof LineString))
+					isMultiLine = false;
+				if (!(g instanceof Point))
+					isMultiPoint = false;
 			}
 			if (isMultiPolygon) {
 				Polygon[] polygons = new Polygon[nb];
-				for (int i = 0; i < nb ; i++) {polygons[i] = (Polygon)  (((GeometryCollection)gg)).getGeometryN(i);}
+				for (int i = 0; i < nb; i++) {
+					polygons[i] = (Polygon) (((GeometryCollection) gg)).getGeometryN(i);
+				}
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
-			} if (isMultiLine) {
+			}
+			if (isMultiLine) {
 				LineString[] lines = new LineString[nb];
-				for (int i = 0; i < nb ; i++) {lines[i] = (LineString)  (((GeometryCollection)gg)).getGeometryN(i);}
+				for (int i = 0; i < nb; i++) {
+					lines[i] = (LineString) (((GeometryCollection) gg)).getGeometryN(i);
+				}
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
-			} if (isMultiPoint) {
+			}
+			if (isMultiPoint) {
 				Point[] points = new Point[nb];
-				for (int i = 0; i < nb ; i++) {points[i] = (Point)  (((GeometryCollection)gg)).getGeometryN(i);}
+				for (int i = 0; i < nb; i++) {
+					points[i] = (Point) (((GeometryCollection) gg)).getGeometryN(i);
+				}
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(points);
 			}
 		}
