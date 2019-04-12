@@ -1,21 +1,30 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.CreateStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.CreateStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
+
+import static msi.gama.common.interfaces.IKeyword.AS;
+import static msi.gama.common.interfaces.IKeyword.CREATE;
+import static msi.gama.common.interfaces.IKeyword.FROM;
+import static msi.gama.common.interfaces.IKeyword.HEADER;
+import static msi.gama.common.interfaces.IKeyword.NUMBER;
+import static msi.gama.common.interfaces.IKeyword.RETURNS;
+import static msi.gama.common.interfaces.IKeyword.SPECIES;
+import static msi.gama.common.interfaces.IKeyword.WITH;
+import static msi.gama.precompiler.ISymbolKind.SEQUENCE_STATEMENT;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -78,49 +87,49 @@ import msi.gaml.types.Types;
  * read(int), the index of the column.
  */
 @symbol (
-		name = IKeyword.CREATE,
-		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		name = CREATE,
+		kind = SEQUENCE_STATEMENT,
 		with_sequence = true,
 		with_args = true,
 		concept = { IConcept.SPECIES },
 		remote_context = true)
 @inside (
-		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+		kinds = { ISymbolKind.BEHAVIOR, SEQUENCE_STATEMENT })
 @facets (
 		value = { @facet (
-				name = IKeyword.SPECIES,
+				name = SPECIES,
 				type = { IType.SPECIES, IType.AGENT },
 				optional = true,
 				doc = @doc ("an expression that evaluates to a species, the species of the agents to be created. In the case of simulations, the name 'simulation', which represents the current instance of simulation, can also be used as a proxy to their species")),
 				@facet (
-						name = IKeyword.RETURNS,
+						name = RETURNS,
 						type = IType.NEW_TEMP_ID,
 						optional = true,
 						doc = @doc ("a new temporary variable name containing the list of created agents (a list, even if only one agent has been created)")),
 				@facet (
-						name = IKeyword.FROM,
+						name = FROM,
 						type = IType.NONE,
 						optional = true,
 						doc = @doc ("an expression that evaluates to a localized entity, a list of localized entities, a string (the path of a file), a file (shapefile, a .csv, a .asc or a OSM file) or a container returned by a request to a database")),
 				@facet (
-						name = IKeyword.NUMBER,
+						name = NUMBER,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("an expression that evaluates to an int, the number of created agents")),
 				@facet (
-						name = IKeyword.AS,
+						name = AS,
 						type = { IType.SPECIES },
 						optional = true,
 						doc = @doc ("")),
 				@facet (
-						name = IKeyword.WITH,
+						name = WITH,
 						type = { IType.MAP },
 						of = IType.NONE,
 						index = IType.STRING,
 						optional = true,
 						doc = @doc ("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
 				@facet (
-						name = IKeyword.HEADER,
+						name = HEADER,
 						type = { IType.BOOL },
 						optional = true,
 						doc = @doc (
@@ -234,54 +243,52 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final StatementDescription cd) {
-			final IExpressionDescription desc = cd.getFacet(IKeyword.SPECIES);
+			final IExpressionDescription desc = cd.getFacet(SPECIES);
 			if (desc != null) {
 				final IExpression exp = desc.getExpression();
 				if (exp != null) {
 					final IType type = exp.getGamlType();
 					if (type.isAgentType() && !(type.getSpecies() instanceof ModelDescription)) {
-						cd.warning("Facet " + IKeyword.SPECIES + " expects a species name and not an agent",
-								IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+						cd.warning("Facet " + SPECIES + " expects a species name and not an agent", WRONG_TYPE,
+								SPECIES);
 					}
-					
-					if( ( cd.getGamlType().getDenotedSpecies() == null ) && (type instanceof GamaSpeciesType)) {
-						cd.warning("The facet species can be evaluated only at runtime.",
-								IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);	
-						return;
-					}
+
+					 if ((cd.getGamlType().getDenotedSpecies() == null) && (type instanceof GamaSpeciesType)) {
+					 cd.warning("The facet species can be evaluated only at runtime.", WRONG_TYPE, SPECIES);
+					 return;
+					 }
 				}
 			}
 			final SpeciesDescription species = cd.getGamlType().getDenotedSpecies();
-		
+
 			// final SpeciesDescription species =
 			// cd.getModelDescription().getSpeciesReferencedBy(cd);
 			if (species != null) {
 				if (species.isAbstract()) {
-					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated", WRONG_TYPE,
+							SPECIES);
 					return;
 				} else if (species.isMirror()) {
-					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated", WRONG_TYPE,
+							SPECIES);
 					return;
 				} else if (species.isBuiltIn()) {
 					cd.error("Species " + species.getName()
 							+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+							WRONG_TYPE, SPECIES);
 					return;
 				} else if (species.isGrid()) {
-					cd.error("Species " + species.getName() + " is a grid and cannot be instantiated",
-							IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+					cd.error("Species " + species.getName() + " is a grid and cannot be instantiated", WRONG_TYPE,
+							SPECIES);
 					return;
 				} else if (species instanceof ModelDescription
 						&& !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
-					cd.error("Simulations can only be created within experiments", IGamlIssue.WRONG_CONTEXT,
-							IKeyword.SPECIES);
+					cd.error("Simulations can only be created within experiments", WRONG_CONTEXT, SPECIES);
 				}
 
 				final SpeciesDescription callerSpecies = cd.getSpeciesContext();
@@ -311,14 +318,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					if (!found) {
 						cd.warning(
 								"Facet 'from' expects an expression with one of the following types: " + delegateTypes,
-								IGamlIssue.WRONG_TYPE, FROM);
+								WRONG_TYPE, FROM);
 					}
 				}
 				final Facets facets = cd.getPassedArgs();
 				for (final String att : facets.keySet()) {
 					if (!species.isExperiment() && !species.hasAttribute(att)) {
-						cd.error("Attribute " + att + " is not defined in species " + species.getName(),
-								IGamlIssue.UNKNOWN_VAR);
+						cd.error("Attribute " + att + " is not defined in species " + species.getName(), UNKNOWN_VAR);
 					}
 				}
 			} else {
@@ -372,11 +378,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	public CreateStatement(final IDescription desc) {
 		super(desc);
-		returns = getLiteral(IKeyword.RETURNS);
-		from = getFacet(IKeyword.FROM);
-		number = getFacet(IKeyword.NUMBER);
-		species = getFacet(IKeyword.SPECIES);
-		header = getFacet(IKeyword.HEADER);
+		returns = getLiteral(RETURNS);
+		from = getFacet(FROM);
+		number = getFacet(NUMBER);
+		species = getFacet(SPECIES);
+		header = getFacet(HEADER);
 		sequence = new RemoteSequence(description);
 		sequence.setName("commands of create ");
 		setName("create");
@@ -405,9 +411,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				s = scope.getModel().getSpecies(potentialSpeciesName);
 			}
 		}
-		if (s == null) { throw GamaRuntimeException.error(
-				"No population of " + species.serialize(false) + " is accessible in the context of " + executor + ".",
-				scope); }
+		if (s == null) {
+			throw GamaRuntimeException.error("No population of " + species.serialize(false)
+					+ " is accessible in the context of " + executor + ".", scope);
+		}
 		IPopulation pop = executor.getPopulationFor(s);
 		// hqnghi population of micro-model's experiment is not exist, we
 		// must create the new one
