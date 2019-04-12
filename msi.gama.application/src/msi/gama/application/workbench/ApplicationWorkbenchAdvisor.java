@@ -199,6 +199,17 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return super.preShutdown();
 
 	}
+	
+
+	@Override
+	public void postShutdown() {
+		try {
+			super.postShutdown();
+		} catch (Exception e) {
+			// Remove the trace of exceptions
+			// e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void preStartup() {

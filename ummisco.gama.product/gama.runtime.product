@@ -26,8 +26,6 @@ openFile
       </programArgs>
       <programArgsLin>--launcher.GTK_version 2
       </programArgsLin>
-      <programArgsMac>-nosplash
-      </programArgsMac>
       <vmArgs>-server
 -noverify
 -Xmn128m

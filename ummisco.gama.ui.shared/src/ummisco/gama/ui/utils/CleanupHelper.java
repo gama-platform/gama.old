@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
@@ -33,6 +33,7 @@ import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.ActionSetContributionItem;
+import org.eclipse.ui.internal.CoolBarToTrimManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
@@ -138,35 +139,42 @@ public class CleanupHelper {
 		@Override
 		public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
+			if (w.isClosing())
+				return;
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
-				// RearrangeMenus.run();
-				final IContributionItem[] items = w.getCoolBarManager2().getItems();
-				// DEBUG.LOG(Arrays.toString(items));
-				// We remove all contributions to the toolbar that do not
-				// relate
-				// to gama
-				for (final IContributionItem item : items) {
+				try {
+					// RearrangeMenus.run();
+					CoolBarToTrimManager cm = (CoolBarToTrimManager) w.getCoolBarManager2();
+					final IContributionItem[] items = cm.getItems();
+					// DEBUG.LOG(Arrays.toString(items));
+					// We remove all contributions to the toolbar that do not
+					// relate
+					// to gama
+					for (final IContributionItem item : items) {
 
-					for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
-						if (item.getId().contains(s1)) {
-							try {
-								if (w.getCoolBarManager2().find(item.getId()) != null) {
-									w.getCoolBarManager2().remove(item);
-								}
-							} catch (final Exception e) {}
+						for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
+							if (item.getId().contains(s1)) {
+								try {
+									if (w.getCoolBarManager2().find(item.getId()) != null) {
+										w.getCoolBarManager2().remove(item);
+									}
+								} catch (final Exception e) {}
+							}
 						}
 					}
-				}
 
-				// exploreMenus(w.getMenuBarManager(), "");
-				for (final String s2 : MENUS_TO_REMOVE) {
-					w.getMenuBarManager().remove(s2);
-					w.getMenuManager().remove(s2);
+					// exploreMenus(w.getMenuBarManager(), "");
+					for (final String s2 : MENUS_TO_REMOVE) {
+						w.getMenuBarManager().remove(s2);
+						w.getMenuManager().remove(s2);
+					}
+					// Update the tool and menu bars
+					w.getCoolBarManager2().update(true);
+					w.getMenuManager().update(true);
+					w.getMenuBarManager().update(true);
+				} catch (Exception e) {
+					// remove trace of exceptions
 				}
-				// Update the tool and menu bars
-				w.getCoolBarManager2().update(true);
-				w.getMenuManager().update(true);
-				w.getMenuBarManager().update(true);
 			});
 		}
 

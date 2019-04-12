@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -49,7 +49,7 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 				}
 				getSite().getPage().hideView(SWTDisplayView.this);
 			} catch (final Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 		});
 
