@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.ast.SyntacticComposedElement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.ast.SyntacticComposedElement.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -21,10 +21,10 @@ import msi.gaml.statements.Facets;
 
 /**
  * The class SyntacticElement.
- * 
+ *
  * @author drogoul
  * @since 5 f�vr. 2012
- * 
+ *
  */
 public class SyntacticComposedElement extends AbstractSyntacticElement {
 
@@ -49,7 +49,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.AbstractSyntacticElement#toString()
 	 */
 	@Override
@@ -61,11 +61,12 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.AbstractSyntacticElement#addChild(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
 	public void addChild(final ISyntacticElement e) {
+
 		if (e == null) { return; }
 		if (children == null) {
 			children = new ISyntacticElement[] { e };
@@ -77,7 +78,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * msi.gaml.compilation.ast.AbstractSyntacticElement#visitThisAndAllChildrenRecursively(msi.gaml.compilation.ast.
 	 * ISyntacticElement.SyntacticVisitor)
@@ -94,7 +95,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.AbstractSyntacticElement#visitChildren(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -123,7 +124,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#hasChildren()
 	 */
 	@Override
@@ -133,7 +134,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.AbstractSyntacticElement#dispose()
 	 */
 	@Override
@@ -145,6 +146,19 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 			}
 		}
 		children = null;
+	}
+	
+	
+// Added to fix Issue #2619
+	@Override
+	public void visitSpecies(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, SPECIES_FILTER);
+	}
+
+	// Added to fix Issue #2619
+	@Override
+	public void visitGrids(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, GRID_FILTER);
 	}
 
 }

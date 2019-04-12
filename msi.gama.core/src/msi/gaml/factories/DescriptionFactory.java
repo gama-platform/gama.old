@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.DescriptionFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.DescriptionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DescriptionFactory {
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
@@ -171,8 +171,8 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 			final IDescription superDesc, final Iterable<IDescription> children, final Facets facets) {
-		final IDescription result = create(SyntacticFactory.create(keyword, facets, children != null), superDesc,
-				children);
+		final IDescription result =
+				create(SyntacticFactory.create(keyword, facets, children != null), superDesc, children);
 		return result;
 	}
 
@@ -275,6 +275,7 @@ public class DescriptionFactory {
 
 			};
 			source.visitChildren(visitor);
+			source.visitGrids(visitor);
 			source.visitSpecies(visitor);
 			source.visitExperiments(visitor);
 			children = childrenList;
