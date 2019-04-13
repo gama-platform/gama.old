@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SymbolDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.SymbolDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -242,11 +242,10 @@ public abstract class SymbolDescription implements IDescription {
 		// throws a runtime exception if there is no way to signal the error in
 		// the source
 		// (i.e. we are probably in a runtime scenario)
-		if (e == null || e.eResource() == null
-				|| e.eResource().getURI().path()
-						.contains(SYNTHETIC_RESOURCES_PREFIX)) { throw warning
-								? GamaRuntimeException.warning(s, msi.gama.runtime.GAMA.getRuntimeScope())
-								: GamaRuntimeException.error(s, msi.gama.runtime.GAMA.getRuntimeScope()); }
+		if (e == null || e.eResource() == null || e.eResource().getURI().path().contains(SYNTHETIC_RESOURCES_PREFIX)) {
+			throw warning ? GamaRuntimeException.warning(s, msi.gama.runtime.GAMA.getRuntimeScope())
+					: GamaRuntimeException.error(s, msi.gama.runtime.GAMA.getRuntimeScope());
+		}
 		final ValidationContext c = getValidationContext();
 		if (c == null) {
 			DEBUG.ERR((warning ? "Warning" : "Error") + ": " + s);
@@ -466,7 +465,7 @@ public abstract class SymbolDescription implements IDescription {
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
 		final boolean isContainerWithNoKeyType = tt.isContainer() && kt == Types.NO_TYPE;
 		final boolean isSpeciesWithAgentType = tt.id() == IType.SPECIES && ct.id() == IType.AGENT;
-		if (isContainerWithNoContentsType || isContainerWithNoKeyType || isSpeciesWithAgentType) {
+		if (isContainerWithNoContentsType || isContainerWithNoKeyType /* || isSpeciesWithAgentType */) {
 			compileTypeProviderFacets();
 			final IExpression expr = getFacetExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
 			if (expr != null) {
@@ -477,7 +476,7 @@ public abstract class SymbolDescription implements IDescription {
 					if (isContainerWithNoKeyType) {
 						kt = exprType.getKeyType();
 					}
-					if (isContainerWithNoContentsType || isSpeciesWithAgentType) {
+					if (isContainerWithNoContentsType /* || isSpeciesWithAgentType */) {
 						ct = exprType.getContentType();
 					}
 				}
@@ -737,7 +736,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	/**
 	 * Method compileChildren()
-	 * 
+	 *
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
 	protected Iterable<? extends ISymbol> compileChildren() {

@@ -60,12 +60,12 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.SpeciesConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
-import msi.gaml.types.GamaSpeciesType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -248,87 +248,75 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		 */
 		@Override
 		public void validate(final StatementDescription cd) {
-			final IExpressionDescription desc = cd.getFacet(SPECIES);
-			if (desc != null) {
-				final IExpression exp = desc.getExpression();
-				if (exp != null) {
-					final IType type = exp.getGamlType();
-					if (type.isAgentType() && !(type.getSpecies() instanceof ModelDescription)) {
-						cd.warning("Facet " + SPECIES + " expects a species name and not an agent", WRONG_TYPE,
-								SPECIES);
-					}
-
-					 if ((cd.getGamlType().getDenotedSpecies() == null) && (type instanceof GamaSpeciesType)) {
-					 cd.warning("The facet species can be evaluated only at runtime.", WRONG_TYPE, SPECIES);
-					 return;
-					 }
-				}
+			final IExpression species = cd.getFacetExpr(SPECIES);
+			// If the species cannot be determined, issue an error and leave validation
+			if (species == null) {
+				cd.error("The species to instantiate cannot be determined", MISSING_TYPE, SPECIES);
+				return;
 			}
-			final SpeciesDescription species = cd.getGamlType().getDenotedSpecies();
 
-			// final SpeciesDescription species =
-			// cd.getModelDescription().getSpeciesReferencedBy(cd);
-			if (species != null) {
-				if (species.isAbstract()) {
-					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated", WRONG_TYPE,
-							SPECIES);
-					return;
-				} else if (species.isMirror()) {
-					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated", WRONG_TYPE,
-							SPECIES);
-					return;
-				} else if (species.isBuiltIn()) {
-					cd.error("Species " + species.getName()
-							+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
-							WRONG_TYPE, SPECIES);
-					return;
-				} else if (species.isGrid()) {
-					cd.error("Species " + species.getName() + " is a grid and cannot be instantiated", WRONG_TYPE,
-							SPECIES);
-					return;
-				} else if (species instanceof ModelDescription
-						&& !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
-					cd.error("Simulations can only be created within experiments", WRONG_CONTEXT, SPECIES);
-				}
+			final SpeciesDescription sd = species.getGamlType().getDenotedSpecies();
+			if (sd == null) {
+				cd.error("The species to instantiate cannot be determined", MISSING_TYPE, SPECIES);
+				return;
+			}
 
-				final SpeciesDescription callerSpecies = cd.getSpeciesContext();
-				final SpeciesDescription macro = species.getMacroSpecies();
-				if (macro == null) {
-					cd.error("The macro-species of " + species + " cannot be determined");
-					// hqnghi special case : create instances of model from
-					// model
-				} else if (macro instanceof ModelDescription && callerSpecies instanceof ModelDescription) {
-
-					// end-hqnghi
-				} else if (callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro)
-						&& !callerSpecies.hasParent(macro)) {
-					cd.error("No instance of " + macro.getName() + " available for creating instances of "
-							+ species.getName());
-				}
-				final IExpression exp = cd.getFacetExpr(FROM);
-				if (exp != null) {
-					final IType type = exp.getGamlType();
-					boolean found = false;
-					for (final IType delegateType : delegateTypes) {
-						found = delegateType.isAssignableFrom(type);
-						if (found) {
-							break;
-						}
-					}
-					if (!found) {
-						cd.warning(
-								"Facet 'from' expects an expression with one of the following types: " + delegateTypes,
-								WRONG_TYPE, FROM);
-					}
-				}
-				final Facets facets = cd.getPassedArgs();
-				for (final String att : facets.keySet()) {
-					if (!species.isExperiment() && !species.hasAttribute(att)) {
-						cd.error("Attribute " + att + " is not defined in species " + species.getName(), UNKNOWN_VAR);
-					}
+			if (species instanceof SpeciesConstantExpression) {
+				boolean abs = sd.isAbstract();
+				boolean mir = sd.isMirror();
+				boolean gri = sd.isGrid();
+				boolean bui = sd.isBuiltIn();
+				if (abs || mir || gri || bui) {
+					String p = abs ? "abstract" : mir ? "a mirror" : gri ? "a grid" : bui ? "built-in" : "";
+					cd.error(sd.getName() + " is " + p + " and cannot be instantiated", WRONG_TYPE, SPECIES);
+					return;
 				}
 			} else {
-				cd.error("Species cannot be determined");
+				cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
+						WRONG_TYPE, SPECIES);
+			}
+
+			if (sd instanceof ModelDescription && !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
+				cd.error("Simulations can only be created within experiments", WRONG_CONTEXT, SPECIES);
+				return;
+			}
+
+			final SpeciesDescription callerSpecies = cd.getSpeciesContext();
+			final SpeciesDescription macro = sd.getMacroSpecies();
+			if (macro == null) {
+				cd.error("The macro-species of " + species + " cannot be determined");
+				return;
+				// hqnghi special case : create instances of model from
+				// model
+			} else if (macro instanceof ModelDescription && callerSpecies instanceof ModelDescription) {
+
+				// end-hqnghi
+			} else if (callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro)
+					&& !callerSpecies.hasParent(macro)) {
+				cd.error("No instance of " + macro.getName() + " available for creating instances of " + sd.getName());
+				return;
+			}
+			final IExpression exp = cd.getFacetExpr(FROM);
+			if (exp != null) {
+				final IType type = exp.getGamlType();
+				boolean found = false;
+				for (final IType delegateType : delegateTypes) {
+					found = delegateType.isAssignableFrom(type);
+					if (found) {
+						break;
+					}
+				}
+				if (!found) {
+					cd.warning("Facet 'from' expects an expression with one of the following types: " + delegateTypes,
+							WRONG_TYPE, FROM);
+				}
+			}
+			final Facets facets = cd.getPassedArgs();
+			for (final String att : facets.keySet()) {
+				if (!sd.isExperiment() && !sd.hasAttribute(att)) {
+					cd.error("Attribute " + att + " is not defined in species " + species.getName(), UNKNOWN_VAR);
+					return;
+				}
 			}
 
 		}
@@ -431,7 +419,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public IList<? extends IAgent> privateExecuteIn(final IScope scope) {
+	public IList<? extends IAgent> privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
@@ -439,6 +427,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		// Next, we compute the species to instantiate
 		final IPopulation pop = findPopulation(scope);
+		// A check is made in order to address issues #2621 and #2611
+		if (pop == null || pop.getSpecies() == null)
+			throw GamaRuntimeException.error("Impossible to determine the species of the agents to create", scope);
+		checkPopulationValidity(pop, scope);
 
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
@@ -454,6 +446,35 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			scope.setVarValue(returns, agents);
 		}
 		return agents;
+	}
+
+	/**
+	 * A check made in order to address issues #2621 and #2611
+	 *
+	 * @param pop
+	 * @param scope
+	 * @throws GamaRuntimeException
+	 */
+	private void checkPopulationValidity(IPopulation pop, IScope scope) throws GamaRuntimeException {
+		SpeciesDescription sd = pop.getSpecies().getDescription();
+		if (sd.isAbstract()) {
+			throw GamaRuntimeException.error("Species " + sd.getName() + " is abstract and cannot be instantiated",
+					scope);
+		} else if (sd.isMirror()) {
+			throw GamaRuntimeException.error("Species " + sd.getName() + " is a mirror and cannot be instantiated",
+					scope);
+		} else if (sd.isBuiltIn()) {
+			throw GamaRuntimeException.error("Species " + sd.getName()
+					+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
+					scope);
+		} else if (sd.isGrid()) {
+			throw GamaRuntimeException.error("Species " + sd.getName() + " is a grid and cannot be instantiated",
+					scope);
+		} else if (sd instanceof ModelDescription
+				&& !(getDescription().getSpeciesContext() instanceof ExperimentDescription)) {
+			throw GamaRuntimeException.error("Simulations can only be created within experiments", scope);
+		}
+
 	}
 
 	private Object getSource(final IScope scope) {

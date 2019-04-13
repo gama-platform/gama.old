@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaSpeciesType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaSpeciesType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -94,6 +94,8 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 		switch (exp.getGamlType().id()) {
 			case SPECIES:
 				return itemType.getContentType();
+			case IType.STRING:
+				return Types.AGENT;
 		}
 		return exp.getGamlType();
 	}

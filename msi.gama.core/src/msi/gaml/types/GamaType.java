@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -399,8 +399,10 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {
 		if (t instanceof IContainerType) {
-			if (contentType.isAssignableFrom(t.getContentType())
-					&& keyType.isAssignableFrom(t.getKeyType())) { return t; }
+			if (!(t instanceof GamaSpeciesType))
+				if (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())) {
+					return t;
+				}
 			return from((IContainerType) t, keyType, contentType);
 		}
 		return t;
@@ -448,7 +450,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/**
 	 * Return the type of the object passed in parameter
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -467,8 +469,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	public static boolean requiresCasting(final IType<?> castingType, final IType<?> originalType) {
-		if (castingType == null || castingType == Types.NO_TYPE
-				|| castingType.isAssignableFrom(originalType)) { return false; }
+		if (castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType)) {
+			return false;
+		}
 		return true;
 	}
 
