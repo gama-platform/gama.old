@@ -274,8 +274,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					return;
 				}
 			} else {
-				cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
-						WRONG_TYPE, SPECIES);
+				if (!(sd instanceof ModelDescription))
+					cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
+							WRONG_TYPE, SPECIES);
 			}
 
 			if (sd instanceof ModelDescription && !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
