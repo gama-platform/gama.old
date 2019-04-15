@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.skills;
@@ -42,9 +42,9 @@ import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
 
 @vars ({ @variable (
-				name = INetworkSkill.NET_AGENT_NAME,
-				type = IType.STRING,
-				doc = @doc ("Net ID of the agent")),
+		name = INetworkSkill.NET_AGENT_NAME,
+		type = IType.STRING,
+		doc = @doc ("Net ID of the agent")),
 		@variable (
 				name = INetworkSkill.NET_AGENT_GROUPS,
 				type = IType.LIST,
@@ -56,7 +56,8 @@ import ummisco.gama.network.udp.UDPConnector;
 @skill (
 		name = INetworkSkill.NETWORK_SKILL,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
-@doc("The "+INetworkSkill.NETWORK_SKILL+" skill provides new features to let agents exchange message through network.")
+@doc ("The " + INetworkSkill.NETWORK_SKILL
+		+ " skill provides new features to let agents exchange message through network.")
 public class NetworkSkill extends MessagingSkill {
 
 	static {
@@ -100,10 +101,12 @@ public class NetworkSkill extends MessagingSkill {
 	@action (
 			name = INetworkSkill.CONNECT_TOPIC,
 			args = { @arg (
-						name = INetworkSkill.PROTOCOL,
-						type = IType.STRING,
-						doc = @doc ("protocol type (UDP, TCP, MQTT (by default)): the possible value ares '" + INetworkSkill.UDP_SERVER+"', '" + INetworkSkill.UDP_CLIENT + "', '"+
-																								INetworkSkill.TCP_SERVER+"', '" + INetworkSkill.TCP_CLIENT + "', otherwise the MQTT protocol is used.")),
+					name = INetworkSkill.PROTOCOL,
+					type = IType.STRING,
+					doc = @doc ("protocol type (UDP, TCP, MQTT (by default)): the possible value ares '"
+							+ INetworkSkill.UDP_SERVER + "', '" + INetworkSkill.UDP_CLIENT + "', '"
+							+ INetworkSkill.TCP_SERVER + "', '" + INetworkSkill.TCP_CLIENT
+							+ "', otherwise the MQTT protocol is used.")),
 					@arg (
 							name = INetworkSkill.PORT,
 							type = IType.INT,
@@ -130,9 +133,10 @@ public class NetworkSkill extends MessagingSkill {
 							doc = @doc ("server URL (localhost or a server URL)")) },
 			doc = @doc (
 					value = "Action used by a networking agent to connect to a server or as a server.",
-					examples = { @example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
-								 @example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
-								 @example (" do connect  with_name:\"any_name\";") }))
+					examples = {
+							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
+							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
+							@example (" do connect  with_name:\"any_name\";") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
@@ -145,12 +149,15 @@ public class NetworkSkill extends MessagingSkill {
 		final String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		final Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 
+		// Fix to Issue #2618
+		String serverKey = createServerKey(serverURL, port);
+
 		final Map<String, IConnector> myConnectors = this.getRegisteredServers(scope);
-		IConnector connector = myConnectors.get(serverURL);
+		IConnector connector = myConnectors.get(serverKey);
 		if (connector == null) {
 
 			if (protocol != null && protocol.equals(INetworkSkill.UDP_SERVER)) {
-				DEBUG.OUT("create UDP server");				
+				DEBUG.OUT("create UDP server");
 				connector = new UDPConnector(scope, true);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
@@ -175,12 +182,9 @@ public class NetworkSkill extends MessagingSkill {
 				connector = new MQTTConnector(scope);
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
-					if(port==0)
-					{
+					if (port == 0) {
 						connector.configure(IConnector.SERVER_PORT, "1883");
-					}
-					else
-					{
+					} else {
 						connector.configure(IConnector.SERVER_PORT, port.toString());
 
 					}
@@ -192,7 +196,8 @@ public class NetworkSkill extends MessagingSkill {
 					}
 				}
 			}
-			myConnectors.put(serverURL, connector);
+			// Fix to Issue #2618
+			myConnectors.put(serverKey, connector);
 
 		}
 
@@ -207,7 +212,7 @@ public class NetworkSkill extends MessagingSkill {
 		}
 
 		connector.connect(agt);
-		serverList.add(serverURL);
+		serverList.add(serverKey);
 
 		// register connected agent to global groups;
 		for (final String grp : INetworkSkill.DEFAULT_GROUP) {
@@ -215,29 +220,31 @@ public class NetworkSkill extends MessagingSkill {
 		}
 	}
 
+	private static String createServerKey(final String serverURL, final Integer port) {
+		return serverURL + "@@" + port;
+	}
+
 	@action (
 			name = INetworkSkill.FETCH_MESSAGE)
-	@doc(value="Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
-		 examples = {
-			 @example("message mess <- fetch_message();")
-		})
+	@doc (
+			value = "Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
+			examples = { @example ("message mess <- fetch_message();") })
 	public GamaMessage fetchMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
 		GamaMessage msg = null;
-		if(!box.isEmpty()) {
+		if (!box.isEmpty()) {
 			msg = box.get(0);
-			box.remove(0);			
+			box.remove(0);
 		}
 		return msg;
 	}
 
 	@action (
 			name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
-	@doc(value="Check whether the mailbox contains any message.",
-	 examples = {
-		 @example("bool mailbox_contain_messages <- has_more_message();")
-	})	
+	@doc (
+			value = "Check whether the mailbox contains any message.",
+			examples = { @example ("bool mailbox_contain_messages <- has_more_message();") })
 	public boolean hasMoreMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
@@ -246,10 +253,10 @@ public class NetworkSkill extends MessagingSkill {
 
 	/*
 	 * @action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
-	 * 
+	 *
 	 * @arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "",
 	 * returns = "", examples = {
-	 * 
+	 *
 	 * @example("") })) public void registerToGroup(final IScope scope) { IAgent agent = scope.getAgentScope(); String
 	 * serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER); String groupName =
 	 * (String)scope.getArg(INetworkSkill.TO, IType.STRING); IConnector
@@ -258,8 +265,7 @@ public class NetworkSkill extends MessagingSkill {
 
 	@action (
 			name = INetworkSkill.LEAVE_THE_GROUP,
-			args = { 
-				@arg (
+			args = { @arg (
 					name = INetworkSkill.FROM,
 					type = IType.STRING,
 					optional = true,
@@ -270,6 +276,7 @@ public class NetworkSkill extends MessagingSkill {
 					examples = { @example (" do leave_the_group from: \"my_group\";\n") }))
 	public void leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
+		// AD POTENTIAL BUG HERE: NET_AGENT_SERVER SEEMS TO BE A LIST OF STRINGS, NOT A STRING
 		final String serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		final String groupName = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 		final IConnector connector = getRegisteredServers(scope).get(serverName);
@@ -287,6 +294,7 @@ public class NetworkSkill extends MessagingSkill {
 		String destName = receiver.toString();
 		if (receiver instanceof IAgent && getRegisteredAgents(scope).contains(receiver)) {
 			final IAgent mReceiver = (IAgent) receiver;
+			// AD POTENTIAL BUG HERE: NET_AGENT_SERVER SEEMS TO BE A LIST OF STRINGS, NOT A STRING
 			destName = (String) mReceiver.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		}
 
@@ -351,7 +359,7 @@ public class NetworkSkill extends MessagingSkill {
 	}
 
 	private void closeAllConnection(final IScope scope) {
-		for (final IConnector connection : this.getRegisteredServers(scope).values()) {
+		for (final IConnector connection : getRegisteredServers(scope).values()) {
 			connection.close(scope);
 		}
 		this.initialize(scope);
