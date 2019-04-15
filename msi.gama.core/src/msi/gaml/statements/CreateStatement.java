@@ -19,6 +19,7 @@ import static msi.gama.common.interfaces.IKeyword.RETURNS;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.precompiler.ISymbolKind.SEQUENCE_STATEMENT;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.ExperimentPlan.ExperimentPopulation;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -456,25 +458,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @throws GamaRuntimeException
 	 */
 	private void checkPopulationValidity(IPopulation pop, IScope scope) throws GamaRuntimeException {
-		SpeciesDescription sd = pop.getSpecies().getDescription();
-		if (sd.isAbstract()) {
-			throw GamaRuntimeException.error("Species " + sd.getName() + " is abstract and cannot be instantiated",
-					scope);
-		} else if (sd.isMirror()) {
-			throw GamaRuntimeException.error("Species " + sd.getName() + " is a mirror and cannot be instantiated",
-					scope);
-		} else if (sd.isBuiltIn()) {
-			throw GamaRuntimeException.error("Species " + sd.getName()
-					+ " is built-in and cannot be instantiated. Instead, you might want to define a concrete child species and instantiate that one.",
-					scope);
-		} else if (sd.isGrid()) {
-			throw GamaRuntimeException.error("Species " + sd.getName() + " is a grid and cannot be instantiated",
-					scope);
-		} else if (sd instanceof ModelDescription
-				&& !(getDescription().getSpeciesContext() instanceof ExperimentDescription)) {
-			throw GamaRuntimeException.error("Simulations can only be created within experiments", scope);
+		if (pop instanceof SimulationPopulation && !(scope.getAgent() instanceof ExperimentAgent)) {
+			throw error("Simulations can only be created within experiments", scope);
 		}
-
+		SpeciesDescription sd = pop.getSpecies().getDescription();
+		String error = sd.isAbstract() ? "abstract"
+				: sd.isMirror() ? "a mirror" : sd.isBuiltIn() ? "built-in" : sd.isGrid() ? "a grid" : null;
+		if (error != null) { throw error(sd.getName() + "is " + error + " and cannot be instantiated.", scope); }
 	}
 
 	private Object getSource(final IScope scope) {
