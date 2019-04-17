@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.TypeDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.TypeDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -113,13 +113,13 @@ public abstract class TypeDescription extends SymbolDescription {
 		return accumulator;
 	}
 
-	public VariableDescription getAttribute(final String name) {
-		final VariableDescription attribute = attributes == null ? null : attributes.get(name);
-		if (attribute == null && parent != null && parent != this) { return getParent().getAttribute(name); }
+	public VariableDescription getAttribute(final String vn) {
+		final VariableDescription attribute = attributes == null ? null : attributes.get(vn);
+		if (attribute == null && parent != null && parent != this) { return getParent().getAttribute(vn); }
 		return attribute;
 	}
 
-	public boolean redefinesAttribute(final String name) {
+	public boolean redefinesAttribute(final String vn) {
 		if (!attributes.contains(name)) { return false; }
 		if (parent == null || parent == this) { return false; }
 		return parent.hasAttribute(name);
@@ -294,13 +294,15 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
-		attributes.forEachEntry((name, var) -> {
+		attributes.forEachEntry((an, var) -> {
 			dependencies.addVertex(var);
 			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
 			for (final VariableDescription newVar : varDependencies) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
-					dependencies.addEdge(newVar, var);
+					// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
+					if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar))
+						dependencies.addEdge(newVar, var);
 				}
 			}
 			if (var.isSyntheticSpeciesContainer()) {
@@ -316,19 +318,18 @@ public abstract class TypeDescription extends SymbolDescription {
 		while (iterator.hasNext()) {
 
 			final VariableDescription vd = iterator.next();
-			final String name = vd.getName();
-			if (accumulator.contains(name)) {
-				accumulator.remove(name);
-			}
-			accumulator.add(name);
+			final String vn = vd.getName();
+			// Make sure it is added at the end
+			accumulator.remove(vn);
+			accumulator.add(vn);
 		}
 		return accumulator;
 
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @return
 	 */
 	protected boolean verifyAttributeCycles() {
@@ -481,12 +482,12 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
+	public IDescription getDescriptionDeclaringAction(final String vn, final boolean superInvocation) {
 		if (superInvocation) {
 			if (parent == null) { return null; }
-			return parent.getDescriptionDeclaringAction(name, false);
+			return parent.getDescriptionDeclaringAction(vn, false);
 		}
-		return hasAction(name, false) ? this : null;
+		return hasAction(vn, false) ? this : null;
 	}
 
 	public final boolean isAbstract() {
@@ -726,12 +727,12 @@ public abstract class TypeDescription extends SymbolDescription {
 		return result;
 	}
 
-	public VariableDescription getOwnAttribute(final String keyword) {
-		return attributes == null ? null : attributes.get(keyword);
+	public VariableDescription getOwnAttribute(final String kw) {
+		return attributes == null ? null : attributes.get(kw);
 	}
 
-	public ActionDescription getOwnAction(final String keyword) {
-		return actions == null ? null : actions.get(keyword);
+	public ActionDescription getOwnAction(final String kw) {
+		return actions == null ? null : actions.get(kw);
 	}
 
 }
