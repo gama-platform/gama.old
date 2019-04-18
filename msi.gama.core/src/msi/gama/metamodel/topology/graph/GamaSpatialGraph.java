@@ -110,6 +110,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public GamaSpatialGraph copy(final IScope scope) {
 		final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), true, directed, vertexRelation,
 				edgeSpecies, scope, type.getKeyType(), type.getContentType());
+
+		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}

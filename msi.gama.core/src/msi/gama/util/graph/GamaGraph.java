@@ -1127,6 +1127,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public IGraph copy(final IScope scope) {
 		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(), true, directed, vertexRelation, edgeSpecies,
 				type.getKeyType(), type.getContentType());
+
+		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
