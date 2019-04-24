@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.indexer;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -220,7 +222,18 @@ public class GamlResourceIndexer {
 
 	public static LinkedHashMultimap<String, GamlResource> validateImportsOf(final GamlResource resource) {
 		final TOrderedHashMap<URI, String> uris = allLabeledImportsOf(resource);
-		uris.remove(GamlResourceServices.properlyEncodedURI(resource.getURI()));
+
+		URI mm = resource.getURI();
+		if(!mm.isPlatformResource()) {			
+			File file = new File(mm.toFileString());
+			try {
+				mm = URI.createFileURI(file.getCanonicalPath());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		uris.remove(GamlResourceServices.properlyEncodedURI(mm));
 		if (!uris.isEmpty()) {
 			final LinkedHashMultimap<String, GamlResource> imports = LinkedHashMultimap.create();
 			if (uris.forEachEntry((a, b) -> {
@@ -256,7 +269,16 @@ public class GamlResourceIndexer {
 	}
 
 	private static TOrderedHashMap<URI, String> allLabeledImportsOf(final URI uri) {
-		final URI newURI = GamlResourceServices.properlyEncodedURI(uri);
+		URI mm = uri;
+		if(!uri.isPlatformResource()) {			
+			File file = new File(uri.toFileString());
+			try {
+				mm = URI.createFileURI(file.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		final URI newURI = GamlResourceServices.properlyEncodedURI(mm);
 		final TOrderedHashMap<URI, String> result = new TOrderedHashMap();
 		allLabeledImports(newURI, null, result);
 		return result;
