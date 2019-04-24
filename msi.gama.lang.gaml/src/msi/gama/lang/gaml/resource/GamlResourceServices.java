@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -72,7 +73,17 @@ public class GamlResourceServices {
 	}
 
 	public static URI properlyEncodedURI(final URI uri) {
-		final URI result = URI.createURI(uri.toString(), true);
+		URI pre_properlyEncodedURI = uri;
+		if(!uri.isPlatformResource()) {			
+			File file = new File(uri.toFileString());
+			try {
+				pre_properlyEncodedURI = URI.createFileURI(file.getCanonicalPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		final URI result = URI.createURI(pre_properlyEncodedURI.toString(), true);
+		
 		return result;
 	}
 
