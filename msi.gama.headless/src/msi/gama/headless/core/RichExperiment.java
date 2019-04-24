@@ -12,6 +12,7 @@
 package msi.gama.headless.core;
 
 import msi.gama.headless.common.DataType;
+import msi.gama.headless.job.ExperimentJob.ListenedVariable;
 import msi.gama.headless.job.ExperimentJob.OutputType;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.IModel;
@@ -34,7 +35,8 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 	}
 
 	@Override
-	public RichOutput getRichOutput(final String parameterName) {
+	public RichOutput getRichOutput(final ListenedVariable v) {
+		final String parameterName=v.getName();
 		if(currentSimulation.dead()) {
 			return null;
 		}
@@ -60,9 +62,10 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 
 			
 		} else if ( output instanceof LayeredDisplayOutput ) {
-			val = ((LayeredDisplayOutput) output).getImage();
+			val = ((LayeredDisplayOutput) output).getImage(v.width,v.height);
 			tpe = DataType.DISPLAY2D;
 		} else if ( output instanceof LayeredDisplayOutput ) {
+			// TODO why these 2 conditions are the same? when will it return getFile????
 			val = ((FileOutput) output).getFile();
 			tpe = DataType.DISPLAY2D;
 		}

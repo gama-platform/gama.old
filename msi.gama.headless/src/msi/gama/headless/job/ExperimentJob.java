@@ -10,6 +10,7 @@
  **********************************************************************************************/
 package msi.gama.headless.job;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,8 @@ public class ExperimentJob implements IExperimentJob {
 	public static class ListenedVariable {
 
 		String name;
+		public int width;
+		public int height;
 		int frameRate;
 		OutputType type;
 		DataType dataType;
@@ -67,9 +70,11 @@ public class ExperimentJob implements IExperimentJob {
 		long step;
 		String path;
 
-		public ListenedVariable(final String name, final int frameRate, final OutputType type,
+		public ListenedVariable(final String name, final int width, final int height, final int frameRate, final OutputType type,
 				final String outputPath) {
 			this.name = name;
+			this.width = width;
+			this.height = height;
 			this.frameRate = frameRate;
 			this.type = type;
 			this.path = outputPath;
@@ -223,7 +228,7 @@ public class ExperimentJob implements IExperimentJob {
 		simulator.setup(experimentName, this.seed);
 		for (int i = 0; i < outputs.size(); i++) {
 			final Output temp = outputs.get(i);
-			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getFrameRate(),
+			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getWidth(), temp.getHeight(), temp.getFrameRate(),
 					simulator.getTypeOf(temp.getName()), temp.getOutputPath());
 		}
 
@@ -320,7 +325,7 @@ public class ExperimentJob implements IExperimentJob {
 		for (int i = 0; i < size; i++) {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
-				final RichOutput out = simulator.getRichOutput(v.getName());
+				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {
 					// LOGGER UNE ERREUR
 					// GAMA.reportError(this.

@@ -85,9 +85,10 @@ public class Reader {
 		final String name = getAttributeWithoutCase(e, XmlTAG.NAME_TAG);
 		final String id = getAttributeWithoutCase(e, XmlTAG.ID_TAG);
 		final String path = getAttributeWithoutCase(e, XmlTAG.OUTPUT_PATH);
-		final int framerate = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG));
-		;
-		return new Output(name, framerate, id, path);
+		final int width = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG):"500");
+		final int height = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG):"500");
+		final int framerate = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG):"1");
+		return new Output(name, width, height, framerate, id, path);
 	}
 
 	private List<Node> findElementByNameWithoutCase(final Node e, final String name) {

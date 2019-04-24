@@ -11,20 +11,28 @@
  **********************************************************************************************/
 package msi.gama.headless.job;
 
+import java.awt.Dimension;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.IDescription;
 
 public class Output {
+	public static final int DEFAULT_WIDTH = 500;
+	public static final int DEFAULT_HEIGHT = 500;
 	public static final int DEFAULT_FRAME_RATE = 1;
 
 	private static int OUTPUT_ID = 0;
 	public String name;
+	public int width;
+	public int height;
 	public int frameRate;
 	public String id;
 	public String path;
 
 	public Output(final Output o) {
 		this.id = new Integer(Output.generateID()).toString();
+		this.width = o.width;
+		this.height = o.height;
 		this.frameRate = o.frameRate;
 		this.name = o.name;
 	}
@@ -39,13 +47,15 @@ public class Output {
 
 	public static Output loadAndBuildOutput(final IDescription exp) {
 		final String name = exp.getLitteral(IKeyword.NAME);
-		final Output res = new Output(name, DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString(), null);
+		final Output res = new Output(name, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString(), null);
 		return res;
 	}
 
-	public Output(final String name, final int frameRate, final String id, final String path) {
+	public Output(final String name, final int width, final int height, final int frameRate, final String id, final String path) {
 		super();
 		this.name = name;
+		this.width = width;
+		this.height = height;
 		this.frameRate = frameRate;
 		this.id = id;
 		this.path = path;
@@ -57,6 +67,22 @@ public class Output {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(final int w) {
+		this.width = w;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(final int h) {
+		this.height = h;
 	}
 
 	public int getFrameRate() {
