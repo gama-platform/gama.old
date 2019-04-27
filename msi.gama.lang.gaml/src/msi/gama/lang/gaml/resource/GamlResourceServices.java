@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
@@ -39,14 +39,20 @@ import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceServices {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	private static int resourceCount = 0;
 	private static IDocManager documenter = new GamlResourceDocumenter();
@@ -72,10 +78,24 @@ public class GamlResourceServices {
 		return documentationCache.getUnchecked(properlyEncodedURI(r.getURI()));
 	}
 
+	/**
+	 * Properly encodes and partially verifies the uri passed in parameter. In the case of an URI that does not use the
+	 * "resource:" scheme, it is first converted into a file URI so that headless operations that do not use a workspace
+	 * can still perform correctly
+	 *
+	 * @param uri
+	 * @return null if the parameter is null or does not represent neither a file or a resource, otherwise a properly
+	 *         encoded version of the parameter.
+	 */
 	public static URI properlyEncodedURI(final URI uri) {
+		if (uri == null)
+			return null;
 		URI pre_properlyEncodedURI = uri;
-		if(!uri.isPlatformResource()) {			
-			File file = new File(uri.toFileString());
+		if (GAMA.isInHeadLessMode() && !uri.isPlatformResource()) {
+			String filePath = uri.toFileString();
+			if (filePath == null)
+				return null;
+			File file = new File(filePath);
 			try {
 				pre_properlyEncodedURI = URI.createFileURI(file.getCanonicalPath());
 			} catch (IOException e) {
@@ -83,7 +103,9 @@ public class GamlResourceServices {
 			}
 		}
 		final URI result = URI.createURI(pre_properlyEncodedURI.toString(), true);
-		
+		// if (DEBUG.IS_ON()) {
+		// DEBUG.OUT("Original URI: " + uri + " => " + result);
+		// }
 		return result;
 	}
 
@@ -145,7 +167,7 @@ public class GamlResourceServices {
 
 	/**
 	 * Returns the path from the root of the workspace
-	 * 
+	 *
 	 * @return an IPath. Never null.
 	 */
 	public static IPath getPathOf(final Resource r) {
