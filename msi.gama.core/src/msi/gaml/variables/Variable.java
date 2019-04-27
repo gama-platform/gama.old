@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.Variable.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.variables.Variable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -41,6 +41,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.TimeUnitConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;
@@ -148,7 +149,7 @@ public class Variable extends Symbol implements IVariable {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -180,11 +181,20 @@ public class Variable extends Symbol implements IVariable {
 				// expression to the update facet as well, so that it is
 				// recomputed every time it changes (necessary for
 				// time-dependent units. Should be done, actually, for any
-				// variable that manipulaes time-dependent units
+				// variable that manipulates time-dependent units
+				// May 2019: a warning is emitted instead (see why in #2574)
 				if (name.equals(STEP)) {
 					if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
-						cd.setFacet(UPDATE, cd.getFacet(INIT));
+						IExpression expr = cd.getFacetExpr(INIT);
+						if (expr.findAny(e -> (e instanceof TimeUnitConstantExpression) && (!e.isConst()))) {
+							cd.warning(
+									"Time dependent constants used in 'init' are computed once. The resulting durations may be irrelevant after a few cycles. An 'update' facet should better be defined to recompute 'step' every cycle",
+									IGamlIssue.CONFLICTING_FACETS, INIT);
+						}
 					}
+					// if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
+					// cd.setFacet(UPDATE, cd.getFacet(INIT));
+					// }
 				}
 			}
 			// The name is ok. Now verifying the logic of facets
@@ -607,7 +617,7 @@ public class Variable extends Symbol implements IVariable {
 
 	/**
 	 * Method isDefined()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
 	 */
 	@Override
@@ -617,7 +627,7 @@ public class Variable extends Symbol implements IVariable {
 
 	/**
 	 * Method setDefined()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#setDefined(boolean)
 	 */
 	@Override
